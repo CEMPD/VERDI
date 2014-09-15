@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/jpf-boot.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/jpf-boot-1.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jpf.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/jpf-1.5-sources.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="lib/jaramiko-151.jar" sourcepath="/verdi_core/lib_src/jaramiko_java.zip"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/verdi_saf_core_runtime"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/commons-logging-1.1.3.jar" sourcepath="/verdi_core/lib_src/commons-logging-1.1.3-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/j3dcore.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/j3dutils.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jai_core.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jai_imageio_windows-i586.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/log4j-1.2-api-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/apache-log4j-2.0-rc1-src/apache-log4j-2.0-rc1-src"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/log4j-api-2.0-rc1.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/log4j-api-2.0-rc1-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/log4j-core-2.0-rc1.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/log4j-core-2.0-rc1-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/log4j-jcl-2.0-rc1.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/log4j-jcl-2.0-rc1-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/log4j-taglib-2.0-rc1.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/log4j-taglib-2.0-rc1-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/vecmath.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/xstream-1.4.7.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/xstream-distribution-1.4.7-src.zip"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/anlBasic.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/bufr-3.0.jar" sourcepath="/verdi_core/lib_src/bufr-3.0-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/clibwrapper_jiio-1.1.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/commons-codec-1.9.jar" sourcepath="/verdi_core/lib_src/commons-codec-1.9-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/commons-collections-3.2.1.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/commons-collections-3.2.1-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/commons-httpclient-3.1.jar" sourcepath="/verdi_core/lib_src/commons-httpclient-3.1-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/commons-io-2.4.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/commons-io-2.4-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/epsgraphics-1.2.jar" sourcepath="/verdi_core/lib_src/epsgraphics-1.2-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/grib-8.0.29.jar" sourcepath="/verdi_core/lib_src/grib-8.0.29-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/GRIP.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-api-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-api-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-brewer-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-brewer-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-coverage-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-coverage-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-coverage-api-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-coverage-api-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-coveragetools-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-coveragetools-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-data-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-data-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-epsg-extension-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-epsg-extension-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-epsg-hsql-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-epsg-hsql-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-epsg-wkt-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-epsg-wkt-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-feature-aggregate-10.5.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-feature-pregeneralized-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-feature-pregeneralized-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-geometry-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-geometry-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-grid-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-grid-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-image-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-image-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-jts-wrapper-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-jts-wrapper-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-main-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-main-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-metadata-10.5.jar" sourcepath="/verdi_data_loaders/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-metadata-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-opengis-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-opengis-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-referencing-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-referencing-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-render-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-render-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-shapefile-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-old-10.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-shapefile-old-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-renderer-9.5.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-shapefile-renderer-9.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/hsqldb.jar" sourcepath="/verdi_core/lib_src/hsqldb-2.3.2.zip"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/icu4j-50_1_1.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/icu4j-50_1_1-src.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/icu4j-50_1_1-docs.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/verdi_core/lib/jai_codec.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jai_imageio.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jaramiko-151.jar" sourcepath="/verdi_core/lib_src/jaramiko_java.zip"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/javadbf-0.4.0.jar" sourcepath="/verdi_core/lib_src/javadbf-0.4.0-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jcommon-1.0.16.jar" sourcepath="/verdi_core/lib_src/jcommon-1.0.16-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jdom-2.0.5.jar" sourcepath="/verdi_core/lib_src/jdom-2.0.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jeo.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jfreechart-1.0.17.jar" sourcepath="/verdi_core/lib_src/jfreechart-1.0.17-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jide-oss-3.5.14.jar" sourcepath="/verdi_core/lib_src/jide-oss-3.5.14-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jmf.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jscience.jar" sourcepath="/verdi_core/lib_src/jscience-4.3.1-src.zip"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jsr-275-1.0-beta-2.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jts-1.13.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/junit-4.11.jar" sourcepath="/verdi_core/lib_src/junit-4.11-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/milStd2525_png.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/mlib_jai-1.1.2_01.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/mlibwrapper_jai-1.1.3.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-4.3.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/omcorba.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/omj3d.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/omsvg.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/org.apache.commons.lang_2.6.0.v201205030909.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/org.eclipse.osgi-3.9.1.v20130814-1242.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/org.eclipse.uomo.core_0.7.0.201404240011.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/org.eclipse.uomo.ucum_0.7.0.201404240011.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/org.eclipse.uomo.ui_0.7.0.201404240011.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/org.eclipse.uomo.units_0.7.0.201404240011.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/org.eclipse.uomo.util_0.7.0.201404240011.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/org.eclipse.uomo.xml_0.7.0.201404240011.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/piccolo.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/piccolo2d-core-3.0.jar" sourcepath="/verdi_core/lib_src/piccolo2d-core-3.0-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/piccolo2d-extras-3.0.jar" sourcepath="/verdi_core/lib_src/piccolo2d-extras-3.0-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/piccolo2d-swt-3.0.jar" sourcepath="/verdi_core/lib_src/piccolo2d-swt-3.0-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/piccolox.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/prefsAll.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/reference.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/repast_simphony_gis_2_1_0.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/sgt_v30.jar" sourcepath="/verdi_core/lib_src/sgt_src_v30.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/swingx-all-1.6.5.jar" sourcepath="/verdi_core/lib_src/swingx-all-1.6.5-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/unit-api-0.6.1.jar" sourcepath="/verdi_core/E:/JEB_Documents/VERDI_project/downloaded_libraries/unitsofmeasurement/unit-api"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/velocity-1.7.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/velocity-1.7.zip"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/visad.jar" sourcepath="/verdi_core/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/visad_src.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/xpp3_min-1.1.4c.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

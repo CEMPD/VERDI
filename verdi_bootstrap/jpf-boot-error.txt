@@ -1,0 +1,87 @@
+JPF Application boot failed.
+Fri Jun 06 16:27:18 EDT 2014
+
+-----------------------------------------------
+Exception details.
+
+Class: java.lang.IllegalArgumentException
+Message: unknown plug-in ID - null
+
+Stack trace:
+
+org.java.plugin.registry.xml.PluginRegistryImpl.getPluginDescriptor(PluginRegistryImpl.java:729)
+org.java.plugin.standard.StandardPluginManager.getPlugin(StandardPluginManager.java:213)
+org.java.plugin.boot.DefaultApplicationInitializer.initApplication(DefaultApplicationInitializer.java:312)
+org.java.plugin.boot.Boot.initApplication(Boot.java:538)
+org.java.plugin.boot.Boot.boot(Boot.java:343)
+org.java.plugin.boot.Boot.main(Boot.java:243)
+
+-----------------------------------------------
+System properties:
+
+awt.toolkit=sun.awt.windows.WToolkit
+file.encoding=Cp1252
+file.encoding.pkg=sun.io
+file.separator=\
+java.awt.graphicsenv=sun.awt.Win32GraphicsEnvironment
+java.awt.printerjob=sun.awt.windows.WPrinterJob
+java.class.path=E:\VERDI_Eclipse\VERDI_1.4.2\verdi_bootstrap\bin;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_bootstrap\lib\jpf.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_bootstrap\lib\jpf-tools.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_bootstrap\lib\jpf-boot.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_bootstrap\lib\jaramiko-151.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_saf_core_runtime\bin;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_core\lib\log4j-1.2-api-2.0-rc1.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_core\lib\log4j-api-2.0-rc1.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_core\lib\log4j-core-2.0-rc1.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_core\lib\log4j-jcl-2.0-rc1.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_core\lib\log4j-taglib-2.0-rc1.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_core\lib\xstream-1.4.7.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_core\lib\commons-logging-1.1.3.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_core\lib\j3dcore.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_core\lib\j3dutils.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_core\lib\jai_core.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_core\lib\jai_imageio_windows-i586.jar;E:\VERDI_Eclipse\VERDI_1.4.2\verdi_core\lib\vecmath.jar
+java.class.version=51.0
+java.endorsed.dirs=C:\Program Files\Java\jre7\lib\endorsed
+java.ext.dirs=C:\Program Files\Java\jre7\lib\ext;C:\Windows\Sun\Java\lib\ext
+java.home=C:\Program Files\Java\jre7
+java.io.tmpdir=C:\Users\ellenjo\AppData\Local\Temp\
+java.library.path=C:\Program Files\Java\jre7\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:/Program Files/Java/jre7/bin/server;C:/Program Files/Java/jre7/bin;C:/Program Files/Java/jre7/lib/amd64;C:\Program Files\Java\jre7\bin;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Microsoft SQL Server\100\Tools\Binn\VSShell\Common7\IDE\;C:\Program Files (x86)\Microsoft SQL Server\100\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\100\DTS\Binn\;C:\Program Files\TortoiseSVN\bin;C:\Program Files\doxygen\bin;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Program Files\Microsoft SQL Server\110\Tools\Binn\;C:\Program Files (x86)\Microsoft SDKs\TypeScript\1.0\;C:\Program Files (x86)\Graphviz2.36\bin;C:\Program Files (x86)\SSH Communications Security\SSH Secure Shell;C:\eclipse\eclipse;;.
+java.runtime.name=Java(TM) SE Runtime Environment
+java.runtime.version=1.7.0_55-b13
+java.specification.name=Java Platform API Specification
+java.specification.vendor=Oracle Corporation
+java.specification.version=1.7
+java.vendor=Oracle Corporation
+java.vendor.url=http://java.oracle.com/
+java.vendor.url.bug=http://bugreport.sun.com/bugreport/
+java.version=1.7.0_55
+java.vm.info=mixed mode
+java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+java.vm.specification.name=Java Virtual Machine Specification
+java.vm.specification.vendor=Oracle Corporation
+java.vm.specification.version=1.7
+java.vm.vendor=Oracle Corporation
+java.vm.version=24.55-b03
+jpf.boot.mode=shell
+line.separator=
+
+org.java.plugin.jpf-version=1.5.1
+os.arch=amd64
+os.name=Windows 7
+os.version=6.1
+path.separator=;
+sun.arch.data.model=64
+sun.boot.class.path=C:\Program Files\Java\jre7\lib\resources.jar;C:\Program Files\Java\jre7\lib\rt.jar;C:\Program Files\Java\jre7\lib\sunrsasign.jar;C:\Program Files\Java\jre7\lib\jsse.jar;C:\Program Files\Java\jre7\lib\jce.jar;C:\Program Files\Java\jre7\lib\charsets.jar;C:\Program Files\Java\jre7\lib\jfr.jar;C:\Program Files\Java\jre7\classes
+sun.boot.library.path=C:\Program Files\Java\jre7\bin
+sun.cpu.endian=little
+sun.cpu.isalist=amd64
+sun.desktop=windows
+sun.io.unicode.encoding=UnicodeLittle
+sun.java.command=org.java.plugin.boot.Boot
+sun.java.launcher=SUN_STANDARD
+sun.jnu.encoding=Cp1252
+sun.management.compiler=HotSpot 64-Bit Tiered Compilers
+sun.os.patch.level=Service Pack 1
+user.country=US
+user.dir=E:\VERDI_Eclipse\VERDI_1.4.2\verdi_bootstrap
+user.home=C:\Users\ellenjo
+user.language=en
+user.name=ellenjo
+user.script=
+user.timezone=America/New_York
+user.variant=
+
+-----------------------------------------------
+Runtime info:
+
+Memory TOTAL / FREE / MAX: 513802240 / 492223104 / 954728448
+Available processors: 4
+System class loader: sun.misc.Launcher$AppClassLoader@4806de4b
+Thread context class loader: sun.misc.Launcher$AppClassLoader@4806de4b
+Security manager: null

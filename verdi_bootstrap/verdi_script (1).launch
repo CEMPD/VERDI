@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="edu.buffalo.cse.jive.preferences.common_filters">
+<listEntry value="antlr.*"/>
+<listEntry value="com.apple.*"/>
+<listEntry value="com.mysql.*"/>
+<listEntry value="com.sun.*"/>
+<listEntry value="java.*"/>
+<listEntry value="javax.*"/>
+<listEntry value="org.apache.*"/>
+<listEntry value="org.eclipse.*"/>
+<listEntry value="org.hibernate.*"/>
+<listEntry value="org.jcp.*"/>
+<listEntry value="org.junit.*"/>
+<listEntry value="org.postgresql.*"/>
+<listEntry value="org.w3c.*"/>
+<listEntry value="org.xml.*"/>
+<listEntry value="sun.*"/>
+<listEntry value="$Proxy*"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/verdi_saf_core_runtime/src/saf/core/runtime/Boot.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="VERDI_HOME" value="C:\My Documents\VERDI_1.5.0_test0904_v58"/>
+</mapAttribute>
+<stringAttribute key="org.eclipse.debug.core.source_locator_id" value="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"/>
+<stringAttribute key="org.eclipse.debug.core.source_locator_memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#13;&#10;&lt;sourceLookupDirector&gt;&#13;&#10;&lt;sourceContainers duplicates=&quot;true&quot;&gt;&#13;&#10;&lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;default/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.debug.core.containerType.default&quot;/&gt;&#13;&#10;&lt;container memento=&quot;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot; standalone=&amp;quot;no&amp;quot;?&amp;gt;&amp;#13;&amp;#10;&amp;lt;folder nest=&amp;quot;false&amp;quot; path=&amp;quot;/verdi_core/src/anl/verdi/data&amp;quot;/&amp;gt;&amp;#13;&amp;#10;&quot; typeId=&quot;org.eclipse.debug.core.containerType.folder&quot;/&gt;&#13;&#10;&lt;/sourceContainers&gt;&#13;&#10;&lt;/sourceLookupDirector&gt;&#13;&#10;"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="saf.core.runtime.Boot"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="verdi_bootstrap"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx1024m -Dj3d.rend=d3d"/>
+</launchConfiguration>
