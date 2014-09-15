@@ -1,0 +1,582 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 1.0" "http://jpf.sourceforge.net/plugin_1_0.dtd">
+<plugin id="anl.verdi" version="1.0" class="anl.verdi.core.VerdiPlugin">
+	<requires>
+		<import plugin-id="saf.core.runtime" plugin-version="1.0"/>
+		<import plugin-id="saf.core.ui" plugin-version="1.0"/>
+	</requires>
+	<runtime>
+		<library id="testrun" path="core.jar" type="code">
+			<export prefix="*"/>
+			<!--
+				<doc caption="API documentation">
+				<doc-ref path="api/index.html" caption="javadoc"/>
+				</doc>
+			-->
+		</library>
+		<library type="resources" path="icons/" id="icons"/>
+		<library type="resources" path="help/" id="help"/>
+
+
+		<library id="jai_core" path="../core/lib/jai_core.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="jai_codec" path="../core/lib/jai_codec.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="jai_imageio" path="../core/lib/jai_imageio.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="jmf" path="../core/lib/jmf.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="eps" path="../core/lib/epsgraphics-1.2.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="velocity" path="../core/lib/velocity-1.7.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="netcdf" path="../core/lib/netcdfAll-4.3.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="log4j-1.2" path="../core/lib/log4j-1.2-api-2.0-rc1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="log4j-api" path="../core/lib/log4j-api-2.0-rc1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="log4j-core" path="../core/lib/log4j-core-2.0-rc1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="log4j-jcl" path="../core/lib/log4j-jcl-2.0-rc1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="log4j-taglib" path="../core/lib/log4j-taglib-2.0-rc1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="repast" path="../core/lib/repast_simphony_gis_2_1_0.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="bufr" path="../core/lib/bufr-3.0.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<!--<library id="grib" path="../core/lib/grib-8.0.29.jar" type="code">
+			<export prefix="*"/>
+		</library>-->
+		
+		<library id="jdom" path="../core/lib/jdom-2.0.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="commons-codec" path="../core/lib/commons-codec-1.9.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="commons-http" path="../core/lib/commons-httpclient-3.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="commons-logging" path="../core/lib/commons-logging-1.1.3.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="commons-io" path="../core/lib/commons-io-2.4.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="jsr-275-1" path="../core/lib/jsr-275-1.0-beta-2.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="sgt" path="../core/lib/sgt_v30.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jscience" path="../core/lib/jscience.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jcommon" path="../core/lib/jcommon-1.0.16.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="prefsAll" path="../core/lib/prefsAll.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jfree" path="../core/lib/jfreechart-1.0.17.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="visad" path="../core/lib/visad.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="swingx" path="../core/lib/swingx-all-1.6.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="reference" path="../core/lib/reference.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="xstream" path="../core/lib/xstream-1.4.7.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="xpp" path="../core/lib/xpp3_min-1.1.4c.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jide-common" path="../core/lib/jide-oss-3.5.14.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<!-- GIS Libraries -->
+		<library id="gt-api" path="../core/lib/gt-api-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-coverage" path="../core/lib/gt-coverage-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-coverage-api" path="../core/lib/gt-coverage-api-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-image" path="../core/lib/gt-image-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-main" path="../core/lib/gt-main-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-referencing" path="../core/lib/gt-referencing-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-render" path="../core/lib/gt-render-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-shapefile" path="../core/lib/gt-shapefile-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-shapefile-renderer" path="../core/lib/gt-shapefile-renderer-9.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-epsg-hsql" path="../core/lib/gt-epsg-hsql-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-epsg-ext" path="../core/lib/gt-epsg-extension-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-epsg-wkt" path="../core/lib/gt-epsg-wkt-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-coveraget" path="../core/lib/gt-coveragetools-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-geometry" path="../core/lib/gt-geometry-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-grid" path="../core/lib/gt-grid-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-data" path="../core/lib/gt-data-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-jts-wrapper" path="../core/lib/gt-jts-wrapper-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-feature-ag" path="../core/lib/gt-feature-aggregate-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-feature-pr" path="../core/lib/gt-feature-pregeneralized-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-opengis" path="../core/lib/gt-opengis-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="hsqldb" path="../core/lib/hsqldb.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jaramiko" path="../core/lib/jaramiko-151.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="javadbf" path="../core/lib/javadbf-0.4.0.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="piccolo2d-core" path="../core/lib/piccolo2d-core-3.0.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="piccolo2d-extras" path="../core/lib/piccolo2d-extras-3.0.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="piccolo2d-swt" path="../core/lib/piccolo2d-swt-3.0.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="GRIP" path="../core/lib/GRIP.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="jts" path="../core/lib/jts-1.13.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="piccolo" path="../core/lib/piccolo.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="piccolox.jar" path="../core/lib/piccolox.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="vecmath" path="../core/lib/vecmath.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<!-- library id="geoapi" path="../core/lib/geoapi-3.0.0.jar" type="code">
+			<export prefix="*"/>
+		</library -->
+
+		<!-- library id="geoapi-conf" path="../core/lib/geoapi-conformance-3.0.0.jar" type="code">
+			<export prefix="*"/>
+		</library -->
+
+		<library id="gt-metadata" path="../core/lib/gt-metadata-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-brewer" path="../core/lib/gt-brewer-10.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jeo" path="../core/lib/jeo.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="anlBasic" path="../core/lib/anlBasic.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="milStd2525" path="../core/lib/milStd2525_png.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="omcorba" path="../core/lib/omcorba.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="omj3d" path="../core/lib/omj3d.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="omsvg" path="../core/lib/omsvg.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="unit-api" path="../core/lib/unit-api-0.6.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="icu4j" path="../core/lib/icu4j-50_1_1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="osgi" path="../core/lib/org.eclipse.osgi-3.9.1.v20130814-1242.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="uomo-core" path="../core/lib/org.eclipse.uomo.core_0.7.0.201404240011.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="uomo-ucum" path="../core/lib/org.eclipse.uomo.ucum_0.7.0.201404240011.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="uomo-ui" path="../core/lib/org.eclipse.uomo.ui_0.7.0.201404240011.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="uomo-units" path="../core/lib/org.eclipse.uomo.units_0.7.0.201404240011.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="uomo-util" path="../core/lib/org.eclipse.uomo.util_0.7.0.201404240011.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="uomo-xml" path="../core/lib/org.eclipse.uomo.xml_0.7.0.201404240011.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+
+		
+		<!-- End Gis Imports -->
+	</runtime>
+
+	<!-- verdi extension points -->
+	<extension-point id="data.DataLoader">
+		<parameter-def id="class"/>
+		<parameter-def id="description" multiplicity="none-or-one"/>
+	</extension-point>
+
+	<!-- verdi extensions -->
+	<extension plugin-id="saf.core.runtime" point-id="IApplicationRunnable" id="VerdiRunnable">
+		<parameter id="class" value="anl.verdi.core.VerdiPlugin"/>
+		<parameter id="name" value="Verdi Application"/>
+		<parameter id="description" value="Verdi gui application"/>
+	</extension>
+
+
+	<extension plugin-id="saf.core.ui" point-id="ui.Perspectives" id="anl.verdi.core.perspectives">
+
+		<parameter id="perspective">
+			<parameter id="perspectiveID" value="anl.verdi.core.perspective_one"/>
+			<parameter id="name" value="Main"/>
+			<parameter id="viewGroup">
+				<parameter id="groupID" value="anl.verdi.core.main_group"/>
+			</parameter>
+
+			<parameter id="viewGroup">
+				<parameter id="groupID" value="anl.verdi.core.formula_dataset_group"/>
+				<parameter id="location" value="west"/>
+				<parameter id="parent" value="anl.verdi.core.main_group"/>
+				<parameter id="fillPercentage" value=".3"/>
+			</parameter>
+
+		</parameter>
+	</extension>
+
+
+	<extension plugin-id="saf.core.ui" point-id="ui.Menus" id="anl.verdi.core.menus">
+		<parameter id="menuSpec">
+			<parameter id="menuID" value="file"/>
+			<parameter id="label" value="&amp;File"/>
+		</parameter>
+
+		<parameter id="menuSpec">
+			<parameter id="menuID" value="plots"/>
+			<parameter id="label" value="&amp;Plots"/>
+		</parameter>
+
+		<parameter id="menuSpec">
+			<parameter id="menuID" value="help"/>
+			<parameter id="label" value="&amp;Help"/>
+		</parameter>
+	</extension>
+
+	<extension plugin-id="saf.core.ui" point-id="ui.Actions" id="verdi.actions">
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.core.action.OpenAction"/>
+			<parameter id="class" value="anl.verdi.core.action.OpenAction"/>
+			<parameter id="label" value="&amp;Open Project"/>
+			<parameter id="icon" value="project_open.png"/>
+			<parameter id="menuID" value="file"/>
+			<parameter id="groupID" value="file"/>
+			<parameter id="tooltip" value="Open project"/>
+		</parameter>
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.core.action.SaveAction"/>
+			<parameter id="class" value="anl.verdi.core.action.SaveAction"/>
+			<parameter id="label" value="&amp;Save Project"/>
+			<parameter id="icon" value="filesave.png"/>
+			<parameter id="menuID" value="file"/>
+			<parameter id="groupID" value="file"/>
+			<parameter id="tooltip" value="Save project"/>
+		</parameter>
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.core.action.SaveAsAction"/>
+			<parameter id="class" value="anl.verdi.core.action.SaveAsAction"/>
+			<parameter id="label" value="&amp;Save Project As"/>
+			<parameter id="menuID" value="file"/>
+			<parameter id="tooltip" value="Save project as"/>
+		</parameter>
+
+		<parameter id="separator">
+			<parameter id="menuID" value="file"/>
+		</parameter>
+		
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.core.action.RunBatchAction"/>
+			<parameter id="class" value="anl.verdi.core.action.RunBatchAction"/>
+			<parameter id="label" value="&amp;View Script Editor"/>
+			<parameter id="menuID" value="file"/>
+			<parameter id="tooltip" value="View Script Editor"/>
+		</parameter>
+		
+		<parameter id="separator">
+			<parameter id="menuID" value="file"/>
+		</parameter>
+		
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="saf.core.ui.actions.exit"/>
+			<parameter id="menuID" value="file"/>
+			<parameter id="class" value=""/>
+		</parameter>
+
+        <!--
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.plot.gui.action.TilePlot"/>
+			<parameter id="label" value="Tile Plot"/>
+			<parameter id="class" value="anl.verdi.plot.gui.action.TilePlot"/>
+			<parameter id="groupID" value="runGraph"/>
+			<parameter id="tooltip" value="Tile Plot"/>
+		</parameter>
+		-->
+		
+		<parameter id="actionSpec">
+          	<parameter id="actionID" value="anl.verdi.plot.gui.action.FastTilePlot"/>
+            <parameter id="label" value="Fast Tile Plot"/>
+            <parameter id="class" value="anl.verdi.plot.gui.action.FastTilePlot"/>
+            <parameter id="groupID" value="runGraph"/>
+            <parameter id="tooltip" value="Fast Tile Plot"/>
+        </parameter>
+        
+        <parameter id="actionSpec">
+             <parameter id="actionID" value="anl.verdi.plot.gui.action.ArealInterpolation"/>
+             <parameter id="label" value="Areal Interp"/>
+             <parameter id="class" value="anl.verdi.plot.gui.action.ArealInterpolation"/>
+             <parameter id="groupID" value="runGraph"/>
+             <parameter id="tooltip" value="Areal Interpolation"/>
+        </parameter>
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.plot.gui.action.VerticalCrossSection"/>
+			<parameter id="label" value="Vertical Cross Section"/>
+			<parameter id="class" value="anl.verdi.plot.gui.action.VerticalCrossSection"/>
+			<parameter id="groupID" value="runGraph"/>
+			<parameter id="tooltip" value="Vertical Cross Section Plot"/>
+		</parameter>
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.plot.gui.action.TimeSeriesPlot"/>
+			<parameter id="label" value="Time Series"/>
+			<parameter id="class" value="anl.verdi.plot.gui.action.TimeSeriesPlot"/>
+			<parameter id="groupID" value="runGraph"/>
+			<parameter id="tooltip" value="Time Series Plot"/>
+		</parameter>
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.plot.gui.action.TimeSeriesBarPlot"/>
+			<parameter id="label" value="Time Series Bar Plot"/>
+			<parameter id="class" value="anl.verdi.plot.gui.action.TimeSeriesBarPlot"/>
+			<parameter id="groupID" value="runGraph"/>
+			<parameter id="tooltip" value="Time Series Bar Plot"/>
+		</parameter>
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.plot.gui.action.ScatterPlot"/>
+			<parameter id="label" value="Scatter Plot"/>
+			<parameter id="class" value="anl.verdi.plot.gui.action.ScatterPlot"/>
+			<parameter id="groupID" value="runGraph"/>
+			<parameter id="tooltip" value="Scatter Plot"/>
+		</parameter>
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.plot.gui.action.VectorPlot"/>
+			<parameter id="label" value="Vector Plot"/>
+			<parameter id="class" value="anl.verdi.plot.gui.action.VectorPlot"/>
+			<parameter id="groupID" value="runGraph"/>
+			<parameter id="tooltip" value="Vector Plot"/>
+		</parameter>
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.plot.gui.action.Contour3DPlot"/>
+			<parameter id="label" value="Contour Plot"/>
+			<parameter id="class" value="anl.verdi.plot.gui.action.Contour3DPlot"/>
+			<parameter id="groupID" value="runGraph"/>
+			<parameter id="tooltip" value="Contour Plot"/>
+		</parameter>
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.core.action.UndockAllAction"/>
+			<parameter id="label" value="Undock All Plots"/>
+			<parameter id="icon" value="undock.png"/>
+			<parameter id="groupID" value="window"/>
+			<parameter id="class" value="anl.verdi.core.action.UndockAllAction"/>
+			<parameter id="tooltip" value="Undock All Plots"/>
+			<parameter id="menuID" value="plots"/>
+		</parameter>
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.core.action.AnimatePlots"/>
+			<parameter id="label" value="Animate Tile Plots"/>
+			<parameter id="class" value="anl.verdi.core.action.AnimatePlots"/>
+			<parameter id="menuID" value="plots"/>
+		</parameter>
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.core.action.Help"/>
+			<parameter id="label" value="VERDI Help Docs"/>
+			<parameter id="class" value="anl.verdi.core.action.Help"/>
+			<parameter id="menuID" value="help"/>
+		</parameter>
+
+		<parameter id="actionSpec">
+			<parameter id="actionID" value="anl.verdi.core.action.About"/>
+			<parameter id="label" value="&amp;About"/>
+			<parameter id="class" value="anl.verdi.core.action.About"/>
+			<parameter id="menuID" value="help"/>
+		</parameter>
+
+	</extension>
+
+	<extension plugin-id="saf.core.ui" point-id="ui.StatusBar" id="bar">
+		<parameter id="StatusField">
+			<parameter id="name" value="verdi.status.one"/>
+			<parameter id="fillPercentage" value=".65"/>
+		</parameter>
+
+		<parameter id="StatusField">
+			<parameter id="name" value="verdi.status.two"/>
+			<parameter id="fillPercentage" value=".35"/>
+		</parameter>
+		<!--
+			<parameter id="StatusField">
+			<parameter id="name" value="third"/>
+			<parameter id="fillPercentage" value=".25"/>
+			</parameter>
+		-->
+	</extension>
+</plugin>

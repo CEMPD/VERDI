@@ -1,0 +1,9 @@
+<PlotConfig>
+#foreach($property in $properties)
+		#if ($property.type.name == "anl.verdi.plot.color.ColorMap")
+			#parse("anl/verdi/plot/color/ColorMap.vt")
+		#else
+			<property type="$property.type.name" key="$property.key" value="$property.value" />
+		#end
+#end
+</PlotConfig>

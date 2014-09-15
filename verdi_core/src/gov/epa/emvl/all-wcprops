@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/verdi/!svn/ver/31/trunk/core/src/gov/epa/emvl
+END
+Stereographic.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/verdi/!svn/ver/31/trunk/core/src/gov/epa/emvl/Stereographic.java
+END
+ProjectorMixin.class
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/verdi/!svn/ver/31/trunk/core/src/gov/epa/emvl/ProjectorMixin.class
+END
+Stereographic.class
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/verdi/!svn/ver/31/trunk/core/src/gov/epa/emvl/Stereographic.class
+END
+Mapper.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/verdi/!svn/ver/30/trunk/core/src/gov/epa/emvl/Mapper.java
+END
+Numerics.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/verdi/!svn/ver/30/trunk/core/src/gov/epa/emvl/Numerics.java
+END
+Lambert.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/verdi/!svn/ver/30/trunk/core/src/gov/epa/emvl/Lambert.java
+END
+Projector.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/verdi/!svn/ver/30/trunk/core/src/gov/epa/emvl/Projector.java
+END
+MapLines.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/verdi/!svn/ver/31/trunk/core/src/gov/epa/emvl/MapLines.java
+END
+Numerics.class
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/verdi/!svn/ver/31/trunk/core/src/gov/epa/emvl/Numerics.class
+END
+Projector.class
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/verdi/!svn/ver/31/trunk/core/src/gov/epa/emvl/Projector.class
+END
+Mercator.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/verdi/!svn/ver/30/trunk/core/src/gov/epa/emvl/Mercator.java
+END
+ProjectorMixin.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/verdi/!svn/ver/30/trunk/core/src/gov/epa/emvl/ProjectorMixin.java
+END
+TilePlot.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/verdi/!svn/ver/30/trunk/core/src/gov/epa/emvl/TilePlot.java
+END

@@ -1,0 +1,14 @@
+<ColorMap intervalType="$map.intervalType" scaleType="$map.scaleType" logBase="$map.logBase" paletteType="$map.paletteType" min="$map.min" max="$map.max">
+    <Format type="$map.getNumberFormat().getClass().getCanonicalName()" pattern="$map.getNumberFormat().toPattern()" />
+    <Scale description="Color Scale">
+        #set( $len = $map.getMaxIndex() )
+        #foreach( $step in [0..$len] )
+        <Step>$map.getStep($step)</Step>
+        #end
+    </Scale>
+    <Palette description="$map.palette.description" reverseColors="$map.palette.reverseColors">
+        #foreach($color in $map.palette.getOriginalColors())
+        <Color>$color.getRGB()</Color>
+        #end
+    </Palette>
+</ColorMap>

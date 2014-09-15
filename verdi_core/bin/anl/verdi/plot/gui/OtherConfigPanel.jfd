@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<java version="1.6.0" class="java.beans.XMLDecoder"> 
+ <object class="com.jformdesigner.model.FormModel"> 
+  <void property="contentType"> 
+   <string>form/swing</string> 
+  </void> 
+  <void property="root"> 
+   <object class="com.jformdesigner.model.FormRoot"> 
+    <void method="add"> 
+     <object class="com.jformdesigner.model.FormContainer"> 
+      <string>javax.swing.JPanel</string> 
+      <object class="com.jformdesigner.model.FormLayoutManager"> 
+       <class>com.jgoodies.forms.layout.FormLayout</class> 
+       <void method="setProperty"> 
+        <string>$columnSpecs</string> 
+        <string>default:grow</string> 
+       </void> 
+       <void method="setProperty"> 
+        <string>$rowSpecs</string> 
+        <string>default, linegap, default, linegap, default</string> 
+       </void> 
+      </object> 
+      <void property="name"> 
+       <string>this</string> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>anl.verdi.plot.gui.GridLinePanel</string> 
+        <void property="name"> 
+         <string>gridLinePanel</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jgoodies.forms.layout.CellConstraints</class> 
+        <void method="setProperty"> 
+         <string>gridX</string> 
+         <int>1</int> 
+        </void> 
+        <void method="setProperty"> 
+         <string>gridY</string> 
+         <int>1</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>anl.verdi.plot.gui.SimpleColorPanel</string> 
+        <void method="setProperty"> 
+         <string>border</string> 
+         <object class="javax.swing.border.TitledBorder"> 
+          <null/> 
+          <string>Vector Arrow Color</string> 
+          <int>4</int> 
+          <int>2</int> 
+          <null/> 
+          <null/> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>vectorPanel</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jgoodies.forms.layout.CellConstraints</class> 
+        <void method="setProperty"> 
+         <string>gridY</string> 
+         <int>3</int> 
+        </void> 
+       </object> 
+      </void> 
+      <void method="add"> 
+       <object class="com.jformdesigner.model.FormComponent"> 
+        <string>anl.verdi.plot.gui.SimpleColorPanel</string> 
+        <void method="setProperty"> 
+         <string>border</string> 
+         <object class="javax.swing.border.TitledBorder"> 
+          <null/> 
+          <string>Series Color</string> 
+          <int>4</int> 
+          <int>2</int> 
+          <null/> 
+          <null/> 
+         </object> 
+        </void> 
+        <void property="name"> 
+         <string>seriesColorPanel</string> 
+        </void> 
+       </object> 
+       <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+        <class>com.jgoodies.forms.layout.CellConstraints</class> 
+        <void method="setProperty"> 
+         <string>gridY</string> 
+         <int>5</int> 
+        </void> 
+       </object> 
+      </void> 
+     </object> 
+     <object class="com.jformdesigner.model.FormLayoutConstraints"> 
+      <null/> 
+      <void method="setProperty"> 
+       <string>location</string> 
+       <object class="java.awt.Point"> 
+        <int>0</int> 
+        <int>0</int> 
+       </object> 
+      </void> 
+      <void method="setProperty"> 
+       <string>size</string> 
+       <object class="java.awt.Dimension"> 
+        <int>400</int> 
+        <int>180</int> 
+       </object> 
+      </void> 
+     </object> 
+    </void> 
+   </object> 
+  </void> 
+ </object> 
+</java> 
