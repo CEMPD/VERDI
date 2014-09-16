@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/forms-1.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/jh-2.0_02.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/l2fprod-common-all.jar"/>
+	<classpathentry kind="lib" path="lib/TableLayout.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/wizard-0.1.12.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/AppleJavaExtensions.jar"/>
+	<classpathentry kind="lib" path="lib/osx.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/verdi_saf_core_runtime"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/log4j-1.2-api-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/apache-log4j-2.0-rc1-src/apache-log4j-2.0-rc1-src"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/log4j-api-2.0-rc1.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/log4j-api-2.0-rc1-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/log4j-core-2.0-rc1.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/log4j-core-2.0-rc1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/dockingFramesCommon.jar"/>
+	<classpathentry kind="lib" path="lib/dockingFramesCore.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

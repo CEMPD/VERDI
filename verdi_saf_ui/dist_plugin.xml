@@ -1,0 +1,132 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 1.0" "http://jpf.sourceforge.net/plugin_1_0.dtd">
+<plugin id="saf.core.ui" version="1.0" class="saf.core.ui.UIPlugin">
+  
+  
+  <requires>
+    <import plugin-id="saf.core.runtime" plugin-version="1.0"/>
+  </requires>
+  <runtime>
+
+    <library id="ui" path="./saf.core.ui.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="osx" path="../saf.core.ui/lib/osx.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
+    <!--library id="docking" path="../saf.core.ui/lib/dockingFrames-1.0.8p5c.jar" type="code">
+      <export prefix="*"/>
+    </library -->
+   
+    <library id="dockingCommon" path="../saf.core.ui/lib/dockingFramesCommon.jar" type="code">
+	<export prefix="*"/>
+    </library>
+
+    <library id="dockingCore" path="../saf.core.ui/lib/dockingFramesCore.jar" type="code">
+	<export prefix="*"/>
+    </library>
+ 
+    <!--library id="docking-ext" path="../saf.core.ui/lib/docking-frames-ext-toolbar.jar" type="code">
+	<export prefix="*"/>
+    </library -->
+
+    <!-- library id="docking-ext-common" path="../saf.core.ui/lib/docking-frames-ext-toolbar-common.jar" type="code">
+	<export prefix="*"/>
+    </library -->
+
+    <library id="wizard" path="../saf.core.ui/lib/wizard-0.1.12.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="l2f-common" path="../saf.core.ui/lib/l2fprod-common-all.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="jgoodies" path="../saf.core.ui/lib/forms-1.0.5.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="javaHelp" path="../saf.core.ui/lib/jh-2.0_02.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+    <library id="TableLayout" path="../saf.core.ui/lib/TableLayout.jar" type="code">
+      <export prefix="*"/>
+    </library>
+
+	<library id="log4j-1.2" path="../core/lib/log4j-1.2-api-2.0-rc1.jar" type="code">
+		<export prefix="*"/>
+	</library>
+
+	<library id="log4j-api" path="../core/lib/log4j-api-2.0-rc1.jar" type="code">
+		<export prefix="*"/>
+	</library>
+
+	<library id="log4j-core" path="../core/lib/log4j-core-2.0-rc1.jar" type="code">
+		<export prefix="*"/>
+	</library>
+
+    <library type="resources" path="icons/" id="icons"/>
+  </runtime>
+
+  <extension-point id="ui.Perspectives">
+    <parameter-def id="perspective" type="null" multiplicity="one-or-more">
+      <parameter-def id="perspectiveID"/>
+      <parameter-def id="name"/>
+      <parameter-def id="viewGroup" type="null" multiplicity="one-or-more">
+        <parameter-def id="groupID"/>
+        <!-- one of north, south, east, west -->
+        <parameter-def id="location" multiplicity="none-or-one"/>
+        <!-- parent is the groupID of the parent of this group -->
+        <parameter-def id="parent" multiplicity="none-or-one"/>
+        <!-- defaults to .5 -->
+        <parameter-def id="fillPercentage" type="number" multiplicity="none-or-one"/>
+      </parameter-def>
+    </parameter-def>
+  </extension-point>
+
+  <extension-point id="ui.Menus">
+    <parameter-def id="menuSpec" type="null" multiplicity="one-or-more">
+      <parameter-def id="menuID"/>
+      <parameter-def id="label"/>
+      <parameter-def id="parentID" multiplicity="none-or-one"/>
+    </parameter-def>
+  </extension-point>
+
+  <extension-point id="ui.Actions">
+
+    <parameter-def id="actionSpec" type="null" multiplicity="one-or-more">
+      <parameter-def id="actionID"/>
+      <parameter-def id="label" multiplicity="none-or-one"/>
+      <!-- an optional action command for the button / menu item -->
+      <parameter-def id="command" multiplicity="none-or-one"/>
+      <parameter-def id="icon" multiplicity="none-or-one"/>
+      <!-- todo add parameters for the other sorts of icons - disabled etc. -->
+      <parameter-def id="menuID" multiplicity="none-or-one"/>
+      <parameter-def id="groupID" multiplicity="none-or-one"/>
+      <parameter-def id="tooltip" multiplicity="none-or-one"/>
+      <parameter-def id="class"/>
+    </parameter-def>
+
+    <parameter-def id="separator" type="null" multiplicity="any">
+      <parameter-def id="menuID" multiplicity="none-or-one"/>
+    </parameter-def>
+  </extension-point>
+
+  <extension-point id="ui.Help">
+    <parameter-def id="helpSet"/>
+  </extension-point>
+
+  <!--
+     A named status bar. User can provide X number of these each
+     taking up some percentage of the status area of the screen.
+   -->
+  <extension-point id="ui.StatusBar">
+    <parameter-def id="StatusField" type="null" multiplicity="one-or-more">
+      <parameter-def id="name"/>
+      <parameter-def id="fillPercentage" type="number"/>
+    </parameter-def>
+  </extension-point>
+</plugin>
