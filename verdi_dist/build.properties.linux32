@@ -1,0 +1,14 @@
+########
+# Please change the properties as needed
+# Properties for specify a local distribution directory
+
+# jdk home
+jdk.home=/usr/lib/jvm/java-7-oracle
+
+# app
+app.name=VERDI
+app.version=1.4.1
+  
+# basic settings - use '/' as a separator
+user.home=/home/jizhen
+install.dir=verdi_install

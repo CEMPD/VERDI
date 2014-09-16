@@ -1,0 +1,25 @@
+1. On a Clean Linux
+All the files need to be installed into jdk also available in ./verdi_dist/to_jdk folder.
+1.1 Download and Install Jdk to a directory (prefer to install in somewhere in your home dir, so it is separate from the system one), e.g. /home/jizhen/Applications/jdk_64_1.7.0_07
+1.2 Download and install JAI:
+    Prefer to use the .bin file for JDK.
+    http://download.java.net/media/jai/builds/release/1_1_3/
+    http://download.java.net/media/jai/builds/release/1_1_3/INSTALL.html#Linux
+    chmod 755 jai-1_1_3-lib-linux-amd64-jdk.bin
+    cd ${jdk_path}
+    ${jai_path}/jai-1_1_3-lib-linux-amd64-jdk.bin
+1.3 Download and install JAI-ImageIO   
+    Prefer to use the .bin file for JDK.
+    http://download.java.net/media/jai-imageio/builds/release/1.1/
+    http://www.java.net/node/671447
+    http://jira.codehaus.org/browse/GEOS-4568
+    #The 64bit version of imageio is corrupt. to fix after download
+	sed s/+215/-n+215/ jai_imageio-1_1-lib-linux-amd64-jre.bin > jai_imageio-1_1-lib-linux-amd64-jre-fixed.bin
+    sed s/+215/-n+215/ jai_imageio-1_1-lib-linux-amd64-jdk.bin > jai_imageio-1_1-lib-linux-amd64-jdk-fixed.bin
+    sed s/+215/-n+215/ jai_imageio-1_1-lib-linux-i586-jdk.bin > jai_imageio-1_1-lib-linux-i586-jdk-fixed.bin
+1.4 Download and install Java 3D
+    Prefer to use the .bin file for JDK.
+    http://www.oracle.com/technetwork/java/javase/tech/java3d-137523.html
+    http://java3d.java.net/binary-builds.html
+1.5 Modify the build.properties.linux(32/64) to fit your environment
+1.6 Run target build.linux.dist of build_dist_linux(32/64).xml according to your platform.

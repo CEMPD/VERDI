@@ -1,0 +1,14 @@
+########
+# Please copy it as build.properties (in the same folder as this file), 
+# and change the properties as needed
+
+# Properties for specify a local distribution directory
+
+# app
+app.name=VERDI
+app.version=1.02
+  
+# basic settings - use '/' as a separator
+dist.dir=<full path to distribution folder - use '/' as a separator>
+installer.home=<full path to installer home directory - use '/' as a separator>
+

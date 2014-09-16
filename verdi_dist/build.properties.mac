@@ -1,0 +1,18 @@
+########
+# Please copy it as build.properties (in the same folder as this file), 
+# and change the properties as needed
+
+# Properties for specify a local distribution directory
+
+# jdk home
+jdk.home=/System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/
+
+# app
+app.name=VERDI
+app.version=1.4.1
+  
+# basic settings - use '/' as a separator
+
+user.home=/Users/jizhen
+install.dir=verdi_install
+

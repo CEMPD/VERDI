@@ -1,0 +1,189 @@
+<project name="verdi_linux" default="jars" basedir=".">
+
+	<property file="build.properties" />
+	<property name="linux.dist.name" value="${app.name}_${app.version}"/>
+	<property name="dist.dir" value="${user.home}/${linux.dist.name}" />
+	<property name="plugins.dir" value="plugins"/>
+	<property name="plugins.dist.dir" value="${dist.dir}/${plugins.dir}"/>
+	<property name="plugins.home" value="${basedir}/.."/>
+	<property name="core.dir" value="${basedir}/../verdi_core"/>
+	<property name="bootstrap.dir" value="${basedir}/../verdi_bootstrap"/>
+	<property name="loaders.dir" value="${basedir}/../verdi_data_loaders"/>
+	<property name="saf.dir" value="${basedir}/../verdi_saf_ui"/>
+	<property name="linux.dir" value="${dist.dir}/linux_dist"/>
+	<property name="versiondir" value="../verdi_core/src/anl/verdi/util" />
+	<property name="versionbuild.dir" value="../verdi_core/bin/anl/verdi/util" />
+
+	<taskdef name="nsis" classname="net.sf.nsisant.Task">
+		<classpath location="./distlib/nsisant-1.2.jar"/>
+	</taskdef>
+	
+	<path id="classpath">
+		<pathelement location="../verdi_core/bin/" />
+        <fileset dir="../verdi_core/lib">
+            <include name="**/*.jar" />
+        </fileset>
+	</path>
+	
+	<target name="compile-version" depends="build-version">
+        <javac srcdir="${versiondir}"
+               destdir="${versionbuild.dir}"
+               classpathref="classpath"
+               debug="on"
+        />
+	</target>
+	
+    <target name="build-version"
+            description="Build VERDI version" >
+        <java classname="anl.verdi.util.WriteVersionInfo"
+              fork="true"
+              failonerror="true"
+    	      classpathref="classpath" >
+    	      <arg line="${app.version}"/>
+        </java>
+    </target>
+	
+	<target name="zip">
+		<zip destfile="${dist.dir}/src.zip">
+			<fileset dir="${plugins.home}">
+				<include name="*/src/**/*" />
+			</fileset>
+		</zip>
+	</target>
+
+	<target name="jars">
+		<jar destfile="${plugins.dist.dir}/core/core.jar"
+		     basedir="${core.dir}/bin"/>
+
+		<jar destfile="${plugins.dist.dir}/bootstrap/bootstrap.jar"
+		     basedir="${bootstrap.dir}/bin"/>
+
+		<jar destfile="${plugins.dist.dir}/verdi.data.loaders/data_loaders.jar"
+		     basedir="${loaders.dir}/bin"/>
+	</target>
+
+	<target name="prep.dist" depends="compile-version">
+		<delete dir="${dist.dir}" failonerror="true"/>
+		<mkdir dir="${dist.dir}"/>
+		<delete dir="${plugins.dist.dir}" failonerror="false"/>
+		<mkdir dir="${plugins.dist.dir}" />
+		<mkdir dir="${install.home}"/>
+
+		<copy todir="${plugins.dist.dir}/bootstrap">
+			<fileset file="${bootstrap.dir}/boot.properties"/>
+			<fileset file="${bootstrap.dir}/ui.properties"/>
+		</copy>
+
+		<copy todir="${plugins.dist.dir}/bootstrap/lib">
+			<fileset dir="${bootstrap.dir}/lib"/>
+		</copy>
+
+		<copy todir="${plugins.dist.dir}/bootstrap/data">
+			<fileset dir="${bootstrap.dir}/data"/>
+		</copy>
+		
+		<copy todir="${plugins.dist.dir}/bootstrap/help">
+			<fileset dir="${bootstrap.dir}/help"/>
+		</copy>
+
+		<jar destfile="${plugins.dist.dir}/bootstrap/bootstrap.jar"
+		     basedir="${bootstrap.dir}/bin"/>
+
+		<!-- core -->
+		<copy todir="${plugins.dist.dir}/core">
+			<fileset file="${core.dir}/dist_plugin.xml"/>
+			<mapper type="glob" from="dist_plugin.xml" to="plugin.xml"/>
+		</copy>
+
+		<copy todir="${plugins.dist.dir}/core/lib">
+			<fileset dir="${core.dir}/lib"/>
+		</copy>
+
+		<copy todir="${plugins.dist.dir}/core/help">
+			<fileset dir="${core.dir}/help"/>
+		</copy>
+
+		<copy todir="${plugins.dist.dir}/core/icons">
+			<fileset dir="${core.dir}/icons"/>
+		</copy>
+
+		<jar destfile="${plugins.dist.dir}/core/core.jar"
+		     basedir="${core.dir}/bin"/>
+
+		<!-- data loaders -->
+		<copy todir="${plugins.dist.dir}/verdi.data.loaders">
+			<fileset file="${loaders.dir}/dist_plugin.xml"/>
+			<mapper type="glob" from="dist_plugin.xml" to="plugin.xml"/>
+		</copy>
+
+		<copy todir="${plugins.dist.dir}/verdi.data.loaders/lib">
+			<fileset dir="${loaders.dir}/lib">
+				<exclude name="**/*.zip"/>
+			</fileset>
+		</copy>
+
+		<jar destfile="${plugins.dist.dir}/verdi.data.loaders/data_loaders.jar"
+		     basedir="${loaders.dir}/bin"/>
+
+		<!-- saf ui -->
+		<copy todir="${plugins.dist.dir}/saf.core.ui">
+			<fileset file="${saf.dir}/plugin.xml"/>
+			<fileset file="${saf.dir}/saf.core.ui.jar"/>
+		</copy>
+
+		<copy todir="${plugins.dist.dir}/saf.core.ui/lib">
+			<fileset dir="${saf.dir}/lib">
+				<exclude name="**/*.zip"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${plugins.dist.dir}/saf.core.ui/icons">
+			<fileset dir="${saf.dir}/icons"/>
+		</copy>
+	</target>
+	
+	<target name="build.linux.dist" depends="prep.dist">	  	       
+	        <unzip src="./distfiles/licenses.zip" dest="${dist.dir}"/>
+	        <unzip src="./distfiles/data.zip" dest="${dist.dir}"/>
+	    
+	        <copy todir="${dist.dir}">
+	            <fileset file="./distfiles/INSTALL.linux.txt"/>
+	            <fileset file="./distfiles/README.txt"/>
+	            <fileset file="./distfiles/RELEASE-NOTES.txt"/>
+	        	<fileset file="./distfiles/config.properties"/>
+	        	<fileset file="./distfiles/shape2bin.zip"/>
+	        	<fileset file="./distfiles/RemoteFileReader.tgz"/>
+	        </copy>	       	        
+		
+			<exec executable="cp">
+		  		<arg line="-p ./distfiles/verdi_linux.sh ${dist.dir}/verdi.sh"/>
+			</exec>
+		
+			<exec executable="cp">
+		  		<arg line="-p -R ./distfiles/jre1.6.0_13_linux ${dist.dir}/jre1.6.0"/>
+			</exec>
+				
+	        <delete failonerror="false">
+	            <fileset dir="${install.home}">
+	                <include name="**/${linux.dist.name}_linux.tar.gz" />
+	                <include name="**/${linux.dist.name}_linux.tar" />
+	            </fileset>
+	        </delete>
+	       
+			<exec executable="tar">
+				<arg line="-cpf ${install.home}/${linux.dist.name}_linux.tar ../../${linux.dist.name}"/>
+			</exec>
+	        
+	        <gzip destfile="${install.home}/${linux.dist.name}_linux.tar.gz">
+	            <fileset file="${install.home}/${linux.dist.name}_linux.tar"/>
+	        </gzip>
+	       
+	        <delete failonerror="false">
+	            <fileset dir="${install.home}">
+	                <include name="**/${linux.dist.name}_linux.tar" />
+	            </fileset>
+	        </delete>	       	        
+	    </target> 
+
+
+</project>
