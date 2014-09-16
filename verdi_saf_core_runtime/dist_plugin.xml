@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 1.0" "http://jpf.sourceforge.net/plugin_1_0.dtd">
+<plugin id="saf.core.runtime" version="1.0" class="saf.core.runtime.CorePlugin">
+	<runtime>
+    <library id="saf_core" path="../../bootstrap/lib/saf.core.runtime.jar" type="code">
+          <export prefix="*"/>
+     </library>
+    <library id="jaramiko" path="../../bootstrap/lib/jaramiko-151.jar" type="code">
+          <export prefix="*"/>
+     </library>
+     <library id="jpf" path="../../bootstrap/lib/jpf.jar" type="code">
+          <export prefix="*"/>
+     </library>
+     <library id="jpf-boot" path="../../bootstrap/lib/jpf-boot.jar" type="code">
+          <export prefix="*"/>
+     </library>
+      <library id="jpf-tools" path="../../bootstrap/lib/jpf-tools.jar" type="code">
+          <export prefix="*"/>
+     </library>
+     <library id="xstream" path="../../core/lib/xstream-1.4.7.jar" type="code">
+          <export prefix="*"/>
+     </library>
+     <library id="log4j-1.2" path="../../core/lib/log4j-1.2-api-2.0-rc1.jar" type="code">
+          <export prefix="*"/>
+     </library>
+     <library id="log4j-api" path="../../core/lib/log4j-api-2.0-rc1.jar" type="code">
+          <export prefix="*"/>
+     </library>
+     <library id="log4j-core" path="../../core/lib/log4j-core-2.0-rc1.jar" type="code">
+          <export prefix="*"/>
+     </library>
+     <library id="log4j-jcl" path="../../core/lib/log4j-jcl-2.0-rc1.jar" type="code">
+          <export prefix="*"/>
+     </library>
+     <library id="log4j-taglib" path="../../core/lib/log4j-taglib-2.0-rc1.jar" type="code">
+          <export prefix="*"/>
+     </library>
+    <!--
+		<library id="runtime" path="classes/" type="code">
+    -->
+			<!--
+			<doc caption="API documentation">
+				<doc-ref path="api/index.html" caption="javadoc"/>
+			</doc>
+      <export prefix="*"/>
+      </library>
+			-->
+	</runtime>
+	<extension-point id="IApplicationRunnable">
+		<parameter-def id="class"/>
+		<parameter-def id="name"/>
+		<parameter-def id="description" multiplicity="none-or-one"/>
+	</extension-point>
+</plugin>
