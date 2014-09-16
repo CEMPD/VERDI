@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+<!DOCTYPE plugin PUBLIC "-//JPF//Java Plug-in Manifest 1.0" "http://jpf.sourceforge.net/plugin_1_0.dtd">
+<plugin id="anl.verdi.data.loaders" version="1.0">
+	<requires>
+		<import plugin-id="saf.core.runtime" plugin-version="1.0"/>
+		<import plugin-id="anl.verdi" plugin-version="1.0"/>
+	</requires>
+	<runtime>
+		<library id="code" path="bin/" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jdom" path="../verdi_core/lib/jdom-2.0.5.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="commons-log" path="../verdi_core/lib/commons-logging-1.1.3.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="commons-http" path="../verdi_core/lib/commons-httpclient-3.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="grib" path="../verdi_core/lib/grib-8.0.29.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="netcdf" path="../verdi_core/lib/netcdfAll-4.3.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="commons-codec" path="../verdi_core/lib/commons-codec-1.9.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="bufr" path="../verdi_core/lib/bufr-3.0.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+	</runtime>
+
+	<!-- verdi extensions -->
+	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
+	           id="spreadsheet">
+		<parameter id="class" value="anl.verdi.loaders.SpreadsheetLoader"/>
+		<parameter id="description" value="Spreadsheet data loader"/>
+	</extension>
+	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
+	           id="cf">
+		<parameter id="class" value="anl.verdi.loaders.CFLoader"/>
+		<parameter id="description" value="CF data loader"/>
+	</extension>
+	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
+	           id="models3">
+		<parameter id="class" value="anl.verdi.loaders.Models3Loader"/>
+		<parameter id="description" value="Models-3 data loader"/>
+	</extension>
+	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
+	           id="wrf">
+		<parameter id="class" value="anl.verdi.loaders.WRFLoader"/>
+		<parameter id="description" value="WRF data loader"/>
+	</extension>
+	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
+	           id="csv">
+		<parameter id="class" value="anl.verdi.loaders.CSVLoader"/>
+		<parameter id="description" value="CSV data loader"/>
+	</extension>
+
+	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
+	           id="obs">
+		<parameter id="class" value="anl.verdi.loaders.Models3ObsLoader"/>
+		<parameter id="description" value="Observations data loader"/>
+	</extension>
+</plugin>

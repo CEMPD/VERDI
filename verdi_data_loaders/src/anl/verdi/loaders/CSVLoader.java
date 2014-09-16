@@ -1,0 +1,92 @@
+package anl.verdi.loaders;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
+
+import simphony.util.messages.MessageCenter;
+import anl.verdi.data.DataLoader;
+import anl.verdi.data.DataReader;
+import anl.verdi.data.Dataset;
+
+/**
+ * @author Nick Collier
+ * @author Mary Ann Bitz
+ * @author Eric Tatara
+ * @version $Revision$ $Date$
+ */
+public class CSVLoader implements DataLoader {
+
+	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(CSVLoader.class);
+
+	/**
+	 * Returns whether or not this DataLoader can handle the data at the specified
+	 * url.
+	 *
+	 * @param url the location of the data
+	 * @return true if this DataLoader can handle loading the data, otherwise
+	 *         false.
+	 */
+	public boolean canHandle(URL url) throws Exception{
+		//  try to open up the file
+		File file = null;
+		BufferedReader reader = null;
+		try {
+			String urlString = url.toExternalForm();
+			if (url.getProtocol().equals("file")) {
+				urlString = new URI(urlString).getPath();
+			}
+			file = new File(urlString);
+			
+			reader  = new BufferedReader(new FileReader(file));
+			
+//			return WRFConvention.isMine(file);
+      if (urlString.contains(".csv"))
+			  return true; // TODO how to check for CSV file type?
+			
+		} catch (IOException io) {
+			// just warn here because it be correct that
+			// this is not a netcdf file
+			msgCenter.warn("Error reading csv file", io);
+		} catch (URISyntaxException e) {
+			msgCenter.warn("Error reading csv file", e);
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		finally {
+			try {
+				if (reader != null) 
+					reader.close();
+			} catch (IOException e) {}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Creates a Dataset from the data at the specified URL.
+	 *
+	 * @param url the url of the data
+	 * @return a Dataset created from the data at the specified URL.
+	 */
+	public List<Dataset> createDatasets(URL url) {
+		CSVDatasetFactory factory = new CSVDatasetFactory();
+		return factory.createCSVDatasets(url);
+	}
+
+
+	/**
+	 * Creates a DataReader that can read a particular type of Dataset.
+	 *
+	 * @param set the data set
+	 * @return a DataReader created for the dataset.
+	 */
+	public DataReader<?> createReader(Dataset set) {
+		return new CSVReader((CSVDataset) set);
+	}
+}

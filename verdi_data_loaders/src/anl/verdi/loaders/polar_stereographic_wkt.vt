@@ -1,0 +1,17 @@
+PROJCS["WGS 84 / SCAR IMW SU36-40",  GEOGCS["WGS 84", 
+    DATUM["WGS_1984",
+      SPHEROID["SPHERE", 6371007.0, 0.0]],
+    PRIMEM["Greenwich",0, AUTHORITY["EPSG","8901"]],
+    UNIT["degree", 0.017453292519943295],
+    AXIS["Geodetic longitude", EAST],
+    AXIS["Geodetic latitude", NORTH]],
+  PROJECTION["Polar_Stereographic"],
+  PARAMETER["central_meridian", $central_meridian],
+  PARAMETER["latitude_of_origin", $lat_origin],
+  PARAMETER["scale_factor", $scale],
+  PARAMETER["false_easting", 0],
+  PARAMETER["false_northing", 0],
+  UNIT["m", 1.0],
+  AXIS["x", EAST],
+  AXIS["y", NORTH]]
+
