@@ -11,13 +11,13 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/verdi_core"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-opengis-10.5.jar" sourcepath="/verdi_core/lib_src/gt-opengis-10.5-sources.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/junit-4.11.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.1/verdi_core/lib_src/junit-4.11-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/junit-4.11.jar" sourcepath="/verdi_core/lib_src/junit-4.11-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-metadata-10.5.jar" sourcepath="/verdi_core/lib_src/gt-metadata-10.5-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-data-10.5.jar" sourcepath="/verdi_core/lib_src/gt-data-10.5-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-geometry-10.5.jar" sourcepath="/verdi_core/lib_src/gt-geometry-10.5-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-1.2-api-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/apache-log4j-2.0-rc1-src/apache-log4j-2.0-rc1-src"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/velocity-1.7.jar" sourcepath="/verdi_core/lib_src/velocity-1.7.zip"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/unit-api-0.6.1.jar" sourcepath="E:/JEB_Documents/VERDI_project/downloaded_libraries/unitsofmeasurement/unit-api"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/unit-api-0.6.1.jar" sourcepath="/verdi_core/lib_src/unitsofmeasurement.zip"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/org.eclipse.uomo.core_0.7.0.201404240011.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/org.eclipse.uomo.ucum_0.7.0.201404240011.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/org.eclipse.uomo.ui_0.7.0.201404240011.jar"/>
