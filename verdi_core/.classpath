@@ -6,8 +6,8 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/verdi_bootstrap"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/verdi_saf_ui"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
-	<classpathentry exported="true" kind="lib" path="lib/visad.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/visad_src.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-opengis-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-opengis-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/visad.jar" sourcepath="lib_src/visad_src.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-opengis-10.5.jar" sourcepath="lib_src/gt-opengis-10.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/sgt_v30.jar" sourcepath="lib_src/sgt_src_v30.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jscience.jar" sourcepath="lib_src/jscience-4.3.1-src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/reference.jar"/>
@@ -40,33 +40,33 @@
 	<classpathentry exported="true" kind="lib" path="lib/jide-oss-3.5.14.jar" sourcepath="lib_src/jide-oss-3.5.14-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/junit-4.11.jar" sourcepath="lib_src/junit-4.11-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swingx-all-1.6.5.jar" sourcepath="lib_src/swingx-all-1.6.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/velocity-1.7.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/velocity-1.7.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/velocity-1.7.jar" sourcepath="lib_src/velocity-1.7.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xstream-1.4.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-api-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-api-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-brewer-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-brewer-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-coverage-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-coverage-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-epsg-hsql-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-epsg-hsql-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-epsg-extension-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-epsg-extension-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-epsg-wkt-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-epsg-wkt-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-image-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-image-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-main-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-main-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-render-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-render-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-shapefile-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-coverage-api-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-coverage-api-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-coveragetools-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-coveragetools-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-geometry-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-geometry-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-grid-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-grid-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-data-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-data-10.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-jts-wrapper-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-jts-wrapper-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-api-10.5.jar" sourcepath="lib_src/gt-api-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-brewer-10.5.jar" sourcepath="lib_src/gt-brewer-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-coverage-10.5.jar" sourcepath="lib_src/gt-coverage-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-epsg-hsql-10.5.jar" sourcepath="lib_src/gt-epsg-hsql-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-epsg-extension-10.5.jar" sourcepath="lib_src/gt-epsg-extension-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-epsg-wkt-10.5.jar" sourcepath="lib_src/gt-epsg-wkt-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-image-10.5.jar" sourcepath="lib_src/gt-image-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-main-10.5.jar" sourcepath="lib_src/gt-main-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-render-10.5.jar" sourcepath="lib_src/gt-render-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-10.5.jar" sourcepath="lib_src/gt-shapefile-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-coverage-api-10.5.jar" sourcepath="lib_src/gt-coverage-api-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-coveragetools-10.5.jar" sourcepath="lib_src/gt-coveragetools-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-geometry-10.5.jar" sourcepath="lib_src/gt-geometry-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-grid-10.5.jar" sourcepath="lib_src/gt-grid-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-data-10.5.jar" sourcepath="lib_src/gt-data-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-jts-wrapper-10.5.jar" sourcepath="lib_src/gt-jts-wrapper-10.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-feature-aggregate-10.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-feature-pregeneralized-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-feature-pregeneralized-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-feature-pregeneralized-10.5.jar" sourcepath="lib_src/gt-feature-pregeneralized-10.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2-api-2.0-rc1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-renderer-9.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-shapefile-renderer-9.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-old-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-shapefile-old-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-renderer-9.5.jar" sourcepath="lib_src/gt-shapefile-renderer-9.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-old-10.5.jar" sourcepath="lib_src/gt-shapefile-old-10.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/piccolo.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/piccolox.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.4.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/commons-io-2.4-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.4.jar" sourcepath="lib_src/commons-io-2.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/unit-api-0.6.1.jar" sourcepath="E:/JEB_Documents/VERDI_project/downloaded_libraries/unitsofmeasurement/unit-api"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.uomo.core_0.7.0.201404240011.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.uomo.ucum_0.7.0.201404240011.jar"/>
@@ -76,22 +76,23 @@
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.uomo.xml_0.7.0.201404240011.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/verdi_saf_core_runtime"/>
 	<classpathentry kind="lib" path="lib/org.apache.commons.lang_2.6.0.v201205030909.jar"/>
-	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/commons-collections-3.2.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar" sourcepath="lib_src/commons-collections-3.2.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jai_imageio_windows-i586.jar"/>
 	<classpathentry kind="lib" path="lib/j3dcore.jar"/>
 	<classpathentry kind="lib" path="lib/j3dutils.jar"/>
 	<classpathentry kind="lib" path="lib/jai_core.jar"/>
 	<classpathentry kind="lib" path="lib/jai_imageio.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/netcdfAll-4.3.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/thredds"/>
+	<classpathentry exported="true" kind="lib" path="lib/netcdfAll-4.3.jar" sourcepath="/thredds"/>
 	<classpathentry exported="true" kind="lib" path="lib/repast_simphony_gis_2_1_0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsr-275-1.0-beta-2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/icu4j-50_1_1.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/icu4j-50_1_1-src.jar">
+	<classpathentry exported="true" kind="lib" path="lib/icu4j-50_1_1.jar" sourcepath="lib_src/icu4j-50_1_1-src.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/icu4j-50_1_1-docs.jar!/"/>
+			<attribute name="javadoc_location" value="jar:file:/lib_src/icu4j-50_1_1-docs.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.osgi-3.9.1.v20130814-1242.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-referencing-10.5.jar" sourcepath="E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-referencing-10.5-sources.jar"/>
-	<classpathentry kind="lib" path="lib/gt-metadata-10.5.jar" sourcepath="/verdi_data_loaders/E:/VERDI_Eclipse/VERDI_1.4.2/verdi_core/lib_src/gt-metadata-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-referencing-10.5.jar" sourcepath="lib_src/gt-referencing-10.5-sources.jar"/>
+	<classpathentry kind="lib" path="lib/gt-metadata-10.5.jar" sourcepath="verdi_data_loaders/lib_src/gt-metadata-10.5-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
