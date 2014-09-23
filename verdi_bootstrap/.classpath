@@ -97,7 +97,7 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/repast_simphony_gis_2_1_0.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/sgt_v30.jar" sourcepath="/verdi_core/lib_src/sgt_src_v30.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/swingx-all-1.6.5.jar" sourcepath="/verdi_core/lib_src/swingx-all-1.6.5-sources.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/unit-api-0.6.1.jar" sourcepath="verdi_core/E:/JEB_Documents/VERDI_project/downloaded_libraries/unitsofmeasurement/unit-api"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/unit-api-0.6.1.jar" sourcepath="verdi_core/lib_src/unitsofmeasurement.zip"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/velocity-1.7.jar" sourcepath="verdi_core/lib_src/velocity-1.7.zip"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/visad.jar" sourcepath="verdi_core/lib_src/visad_src.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/xpp3_min-1.1.4c.jar"/>
