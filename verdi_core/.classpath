@@ -67,7 +67,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/piccolo.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/piccolox.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.4.jar" sourcepath="lib_src/commons-io-2.4-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/unit-api-0.6.1.jar" sourcepath="E:/JEB_Documents/VERDI_project/downloaded_libraries/unitsofmeasurement/unit-api"/>
+	<classpathentry exported="true" kind="lib" path="lib/unit-api-0.6.1.jar" sourcepath="lib_src/unitsofmeasurement.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.uomo.core_0.7.0.201404240011.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.uomo.ucum_0.7.0.201404240011.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.uomo.ui_0.7.0.201404240011.jar"/>
