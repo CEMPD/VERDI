@@ -31,6 +31,7 @@ public class CSVCoordAxis implements CoordAxis {
 		this.type = type;
 		this.range = new Range(0, data.length);
 		this.data = data;
+System.out.println("in CSVCoordAxis constructor, unit = " + this.unit);
 	}
 
 	/**
@@ -49,6 +50,7 @@ public class CSVCoordAxis implements CoordAxis {
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
+System.out.println("in CSVCoordAxis.getUnits, unit = " + unit);
 		return unit;
 	}
 

@@ -18,6 +18,8 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+
+
 //import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 //NOTE: where FeatureLayer is now used in this code, MapLayer had been used
 import org.geotools.map.FeatureLayer;
@@ -43,11 +45,13 @@ public class FastTileLayerEditor extends JDialog {
 	public FastTileLayerEditor(Frame owner) {
 		super(owner);
 		initComponents();
+System.out.println("in FastTileLayerEditor constructor #1");
 	}
 
 	public FastTileLayerEditor(Dialog owner) {
 		super(owner);
 		initComponents();
+System.out.println("in FastTileLayerEditor constructor #2");
 	}
 
 	public void init(Mapper mapper) {

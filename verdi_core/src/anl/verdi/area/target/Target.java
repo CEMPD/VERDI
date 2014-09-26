@@ -29,8 +29,6 @@ import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureImpl;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.unitsofmeasurement.unit.Unit;
-//import javax.measure.units.Unit;		// JScience changed its hierarchy
-//import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.UnitConverter;
 
 import anl.exporters.Exporter;
@@ -39,11 +37,14 @@ import anl.verdi.area.AreaFile;
 import anl.verdi.area.AreaTilePlot;
 import anl.verdi.area.Units;
 import anl.verdi.data.DataUtilities;
+import anl.verdi.util.VUnits;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
 //import javax.measure.converters.UnitConverter;
 //import javax.measure.converter.UnitConverter;
+//import javax.measure.units.Unit;		// JScience changed its hierarchy
+//import javax.measure.unit.Unit;
 
 /**
  * 
@@ -76,6 +77,9 @@ public class Target implements Area{
 	public final static String NAME="Watershed Segment";
 	static AreaTilePlot currentTilePlot;
 	public static int currentGridNum=-1;
+	public static UnitConverter converterGrid=null;
+	public static UnitConverter converterTargetStandard=null;
+	public static UnitConverter converterTargetGrid=null;
 
 	public void setAreaInfo(int gridNum,int[] rowIndex,int[] colIndex, float[] overlapArea){
 		if(this.rowIndex.size()>gridNum){
@@ -529,21 +533,22 @@ public class Target implements Area{
 	public boolean isSelectedPolygon() {
 		return selectedTargets.contains(this);
 	}
-	public static void calculateAreasNow() {
-		(new TargetCalculator()).doWork();
-	}
+	
+//	public static void calculateAreasNow() {		// 2014 does not appear to be used
+//		(new TargetCalculator()).doWork();
+//	}
 	/**
 	 * Calculate the polygon area intersections and update the screen when done
 	 * @return whether it had to spawn a process to do it
 	 */
-	public static boolean calculateAreas() {
-
-		boolean calculateAreas = false;
-		TargetCalculator calc = new TargetCalculator();
-		calc.calculateIntersections(targets);
-
-		return calculateAreas;
-	}
+//	public static boolean calculateAreas() {		// 2014 does not appear to be used
+//
+//		boolean calculateAreas = false;
+//		TargetCalculator calc = new TargetCalculator();
+//		calc.calculateIntersections(targets);
+//
+//		return calculateAreas;
+//	}
 	/**
 	 * Get the default area units for target polygons.
 	 * @return the default units
@@ -560,21 +565,21 @@ public class Target implements Area{
 		int[]rows=rowIndex.get(gridIndex);
 		return (rows != null);
 	}
-	public static UnitConverter converterGrid=null;
-	public static UnitConverter converterTargetStandard=null;
-	public static UnitConverter converterTargetGrid=null;
+//	public static UnitConverter converterGrid=null;
+//	public static UnitConverter converterTargetStandard=null;
+//	public static UnitConverter converterTargetGrid=null;
 	public static void setUnitConverters(String gridUnit){
 //		UnitConverter identity = UnitConverter.IDENTITY;		// not an option, use isIdentity() as indicator if a converter is the identity converter
 		UnitConverter identity = AbstractConverter.IDENTITY;
 		if(Units.isUnitPerArea(gridUnit)){
 			Unit gridTopUnit=(Unit) Units.getTopUnit(gridUnit);
 			Unit gridAreaUnit=(Unit) Units.getAreaUnit(gridUnit);
-			Unit gridOriginalUnit = anl.verdi.util.VUnits.createUnit(gridUnit);
+			Unit gridOriginalUnit = VUnits.createUnit(gridUnit);
 
-			Unit targetUnit=anl.verdi.util.VUnits.createUnit(getDefaultUnits());
+			Unit targetUnit=VUnits.createUnit(getDefaultUnits());
 //			Unit standardOne = gridAreaUnit.getSystemUnit();	// JScience function name change but returns
 			// "the system unit this unit is derived from"
-			Unit standardOne = gridAreaUnit.getSystemUnit();	//.getStandardUnit();	// getStandardUnit() is not an option
+			Unit standardOne = gridAreaUnit.getSystemUnit();	//.getStandardUnit();	is not an option
 			Unit gridFinalUnit = gridTopUnit.divide(standardOne); 
 
 			converterGrid=gridOriginalUnit.getConverterTo(gridFinalUnit);
@@ -587,13 +592,18 @@ public class Target implements Area{
 				converterTargetGrid = identity;
 			}else{
 				if(Units.isLength(gridUnit)){
-					Unit targetUnit=anl.verdi.util.VUnits.createUnit(getDefaultUnits());
-					Unit gridOriginalUnit = anl.verdi.util.VUnits.createUnit(gridUnit);
+					Unit targetUnit=VUnits.createUnit(getDefaultUnits());
+					Unit gridOriginalUnit = VUnits.createUnit(gridUnit);
 					converterGrid=identity;
 					Unit gridUnitSquared = gridOriginalUnit.pow(2);		//.times(gridOriginalUnit);	// changed to squared
 
 					converterTargetStandard = targetUnit.getConverterTo(gridUnitSquared);
 					converterTargetGrid = converterTargetStandard;
+				}
+				else{
+					converterGrid=identity;
+					converterTargetStandard = identity;
+					converterTargetGrid = identity;
 				}
 			}
 		}
@@ -607,21 +617,24 @@ public class Target implements Area{
 
 		float val=calculateTotalDeposition(data);
 
-		val= val/(float)(converterTargetGrid.convert((float)area));
+		val= val/(float)(converterTargetGrid.convert((float)area));		// 2014 JEB
+//		val = val / (float)area;
 		return val;
 	}
 	public float calcAverageDeposition(float[][] data) {
 
 		float val=calcTotalDeposition(data);
 
-		val= val/(float)(converterTargetGrid.convert((float)area));
+		val= val/(float)(converterTargetGrid.convert((float)area));		// 2014 JEB
+//		val = val / (float)area;
 		return val;
 	}
 	public float getAverageDeposition() {
 
 		float val=getDeposition();
 
-		val= val/(float)(converterTargetGrid.convert((float)area));
+		val= val/(float)(converterTargetGrid.convert((float)area));		// 2014 JEB
+//		val = val / (float)area;
 		return val;
 	}
 	
@@ -644,6 +657,7 @@ public class Target implements Area{
 				}
 				if(rows[i]>data.length){
 					System.out.println("stop here");
+					continue;		// 2014 nothing was done after previous line saying "stop here"
 				}
 				float dataPoint = data[ rows[i] ][ cols[i] ];
 				
@@ -654,11 +668,12 @@ public class Target implements Area{
 				}
 				// TODO: NaN
 
+//				dep = dep + areas[i] * dataPoint;		// 2014 JEB
+						// 2014 remove unit conversion here 
 				dep = dep + (float) (converterTargetStandard.convert(areas[i]) * converterGrid.convert(dataPoint));
-
 			}
 		}
-//		System.out.println("returning from calcTotalDeposition, dep = " + dep);
+//System.out.println("returning from calcTotalDeposition, dep = " + dep);
 		return dep;
 	}
 	
@@ -673,7 +688,6 @@ public class Target implements Area{
 		deposition.set(plotIndex,new Float(dep));
 
 		return dep;
-
 	}
 
 	/**
@@ -812,32 +826,32 @@ public class Target implements Area{
 	 * Export the targets to an ESRI shape file
 	 * Currently not used.
 	 */
-	public static void exportTargets() {
-		String exporterName = "ESRIShapefileExporter";
-		HashMap l = new HashMap();
-		ArrayList targs = new ArrayList();
-		ArrayList targets = getTargets();
-		for (int i = 0; i < targets.size(); i++) {
-			targs.add(((Target)targets.get(i)).dataObject);
-		}
-		l.put(targetLayer, targs);
-
-		ArrayList props = new ArrayList();
-		props.addAll(Arrays.asList(new String[] { "CoordinateSystem:", "GeoCentric" }));
-		props.addAll(
-				Arrays.asList(
-						new String[] { anl.jeoviewer.exporters.AbstractGeoObjectExportAdaptor.EXPORT_FLAG_PROPERTY, anl.jeoviewer.exporters.AbstractGeoObjectExportAdaptor.EXPORT_ALL_FIELDS }));
-
-		//    String filename = ((Target)targets.get(0)).source;
-		//    // strip off the filename extension
-		//    int i = filename.lastIndexOf('.');
-		//    if (i >= 0)
-		//      filename = filename.substring(0, i);
-		//    filename = filename + "-3";
-		String filename="c:\\sample.shp";
-
-		Exporter.export(exporterName, filename, props, l, null);
-	}
+//	public static void exportTargets() {		// 2014 not used
+//		String exporterName = "ESRIShapefileExporter";
+//		HashMap l = new HashMap();
+//		ArrayList targs = new ArrayList();
+//		ArrayList targets = getTargets();
+//		for (int i = 0; i < targets.size(); i++) {
+//			targs.add(((Target)targets.get(i)).dataObject);
+//		}
+//		l.put(targetLayer, targs);
+//
+//		ArrayList props = new ArrayList();
+//		props.addAll(Arrays.asList(new String[] { "CoordinateSystem:", "GeoCentric" }));
+//		props.addAll(
+//				Arrays.asList(
+//						new String[] { anl.jeoviewer.exporters.AbstractGeoObjectExportAdaptor.EXPORT_FLAG_PROPERTY, anl.jeoviewer.exporters.AbstractGeoObjectExportAdaptor.EXPORT_ALL_FIELDS }));
+//
+//		//    String filename = ((Target)targets.get(0)).source;
+//		//    // strip off the filename extension
+//		//    int i = filename.lastIndexOf('.');
+//		//    if (i >= 0)
+//		//      filename = filename.substring(0, i);
+//		//    filename = filename + "-3";
+//		String filename="c:\\sample.shp";
+//
+//		Exporter.export(exporterName, filename, props, l, null);
+//	}
 	/**
 	 * Indicate that a source file has had its index loaded.
 	 * @param source the source file that was indexed
@@ -934,7 +948,6 @@ public class Target implements Area{
 			if(minmax[0]>val)minmax[0]=val;
 			if(minmax[1]<val)minmax[1]=val;
 		}
-
 	}
 	
 	public static void computeAverageDepositionRange(AreaTilePlot plot,double[] minmax,boolean selectedOnly){
@@ -949,13 +962,13 @@ public class Target implements Area{
 			if(minmax[0]>val)minmax[0]=val;
 			if(minmax[1]<val)minmax[1]=val;
 		}
-
 	}
 
 	private int getCurrentPlotNum(){
 		if(currentTilePlot==null)return 0;
 		return plots.indexOf(currentTilePlot);
 	}
+
 	// returns whether or not tile plot already in list
 	public static boolean setCurrentTilePlot(AreaTilePlot currentTilePlot) {
 		boolean plotExisting=plots.contains(currentTilePlot);
@@ -968,10 +981,12 @@ public class Target implements Area{
 		Target.currentTilePlot = currentTilePlot;
 		return plotExisting;
 	}
+
 	public static void setCurrentGridInfo(double[][]gridBounds,double[][] domain){
 		GridInfo grid=new GridInfo(gridBounds,domain);
 		setCurrentGridInfo(grid);
 	}
+
 	public static void setCurrentGridInfo(GridInfo grid){
 		int num=GridInfo.getGridNumber(grid);
 		if(num<0)num=GridInfo.addGrid(grid);
@@ -1018,6 +1033,7 @@ public class Target implements Area{
 				}
 				if(rows[i]>data.length){
 					System.out.println("stop here");
+					continue;		// 2014 nothing had been done after previous line saying "stop here"
 				}
 				float dataPoint = data[ rows[i] ][ cols[i] ];
 				
@@ -1029,9 +1045,8 @@ public class Target implements Area{
 					continue;
 				}
 				// TODO: NaN
-
+//				dep = dep + (float)(areas[i] * dataPoint);		// 2014 JEB
 				dep = dep + (float) (converterTargetStandard.convert(areas[i]) * converterGrid.convert(dataPoint));
-
 			}
 		}
 		return dep;
@@ -1040,12 +1055,13 @@ public class Target implements Area{
 	public void computeAverageDeposition(float[][] data, int gridIndex, TargetDeposition deposition) {
 
 		if ( data == null || deposition == null || gridIndex <0) {
-			System.out.println("Target computeAverageDeposition(...): invalid inputs!");
+			System.out.println("Target computeAverageDeposition(...): invalid inputs! Check that areas overlay grid cells.");
 			return;
 		}
 		float total=computeTotalDeposition(data, gridIndex);
 
-		float ave = total/(float)(converterTargetGrid.convert((float)area));
+		float ave = total/(float)(converterTargetGrid.convert((float)area));		// 2014 JEB
+//		float ave = total / (float)area;
 		deposition.average = ave;
 		deposition.total = total;
 	}

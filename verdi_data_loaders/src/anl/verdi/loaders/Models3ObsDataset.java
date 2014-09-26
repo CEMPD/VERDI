@@ -10,10 +10,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.SimpleTimeZone;
 
-
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
-import org.unitsofmeasurement.unit.*;
+import org.unitsofmeasurement.unit.Unit;
 
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayInt;
@@ -73,12 +72,18 @@ public class Models3ObsDataset extends AbstractDataset {
 		for (ucar.nc2.Variable var : vars) {
 			String name = var.getShortName();	// getName replaced by either getShortName or getFullName (with escapes)
 			Unit unit = VUnits.MISSING_UNIT;
+System.out.println("in Models3ObsDataset.initVariables, unit = " + unit);
 			for (Attribute attribute : (Iterable<Attribute>) var.getAttributes()) {
 				if (attribute.getShortName().equals("units")) {
 					unit = VUnits.createUnit(attribute.getStringValue());
+System.out.println("in Models3ObsDatabase.initVariables, unit now = " + unit);
 				}
 			}
-			if (!hiddenVars.contains(name)) variables.add(new DefaultVariable(name, name, unit, this));
+			if (!hiddenVars.contains(name)) 
+				{
+					variables.add(new DefaultVariable(name, name, unit, this));
+System.out.println("in Models3ObsDataset.initVariables, after check for hiddenVars, unit = " + unit);
+				}
 		}
 	}
 

@@ -7,20 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//import org.unitsofmeasurement.*;
 import org.unitsofmeasurement.unit.Unit;
 
-import anl.verdi.data.AbstractDataset;
-import anl.verdi.data.Axes;
-import anl.verdi.data.AxisType;
-import anl.verdi.data.CoordAxis;
-import anl.verdi.data.DefaultVariable;
-import anl.verdi.data.Variable;
-import anl.verdi.util.VUnits;
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import simphony.util.messages.MessageCenter;
-
 import ucar.nc2.Attribute;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -28,6 +19,13 @@ import ucar.nc2.dataset.VariableEnhanced;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
 import ucar.nc2.dt.grid.GridDataset;
+import anl.verdi.data.AbstractDataset;
+import anl.verdi.data.Axes;
+import anl.verdi.data.AxisType;
+import anl.verdi.data.CoordAxis;
+import anl.verdi.data.DefaultVariable;
+import anl.verdi.data.Variable;
+import anl.verdi.util.VUnits;
 /**
  * Abstract Dataset implementation for those datasets that are read using the netcdf library.
  *
@@ -146,6 +144,7 @@ public abstract class AbstractNetcdfDataset extends AbstractDataset {
 					for (Attribute attribute : (Iterable<Attribute>) var.getAttributes()) {
 						if (attribute.getShortName().equals("units")) {	// 2014 changed deprecated getName() to getShortName()
 							unit = VUnits.createUnit(attribute.getStringValue());
+System.out.println("in AbstractNetcdfDataset.createAxesVars, unit = " + unit);
 						}
 					}
 					vars.add(new DefaultVariable(var.getShortName(), var.getShortName(), unit, this));	// 2014 changed deprecated getName() to getShortName()

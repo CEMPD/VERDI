@@ -198,7 +198,7 @@ public class CSVDataset extends AbstractDataset {
 			list.clear();
 			list.addAll(set);
 			Collections.sort(list);
-			dim[i] = list.size();  // new array of size of unitque axis data values
+			dim[i] = list.size();  // new array of size of unique axis data values
 
 			// Also record the position of the data in the list for later retrieval
 			// since the data in the CSV file may not be ordered sequentially wrt
@@ -273,6 +273,7 @@ public class CSVDataset extends AbstractDataset {
 		vars = new ArrayList<Variable>();
 
 		Unit unit = VUnits.MISSING_UNIT;
+System.out.println("in CSVDataset.init, unit = " + unit);
 
 		String var = columnNameMap.get(fields[4]);
 		vars.add(new DefaultVariable(var, var, unit, (Dataset)this));

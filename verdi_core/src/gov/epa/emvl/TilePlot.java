@@ -138,8 +138,9 @@ public class TilePlot {
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data) {
-
+			final Color gridLineColor, final float[][] data) 
+	{
+System.out.println("in gov.epa.emvl.TilePlot.draw(lots of parameters), thread = " + Thread.currentThread().toString());
 		this.config = config;
 		this.numberFormat = format;
 		this.plotWidth = width;
@@ -151,27 +152,27 @@ public class TilePlot {
 		final int yMaximum = yHeightOffset;
 
 		// Draw grid boundary rectangle, labeled row/column axis and legend:
-
+System.out.println("ready to call graphics.setColor");
 		graphics.setColor(axisColor);
-
+System.out.println("ready to call drawGridBoundary");
 		drawGridBoundary(graphics, xMinimum, xMaximum, yMinimum, yMaximum);
-
+System.out.println("ready to call drawAxis");
 		drawAxis(graphics, xMinimum, xMaximum, yMinimum, yMaximum, firstRow,
 				lastRow, firstColumn, lastColumn);
-
+System.out.println("ready to call drawLegend");
 		drawLegend(graphics, xMaximum, yMinimum, yMaximum, legendLevels,
 				legendColors, units);
 
 		// Draw text label annotations (date-time, data min/max cells):
-
+System.out.println("ready to call graphics.setColor");
 		graphics.setColor(labelColor);
-
+System.out.println("ready to call drawLabels");
 		drawLabels(graphics, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
 				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn,
 				data);
 
 		// Draw legend-colored grid cells:
-
+System.out.println("ready to call drawGridCells");
 		drawGridCells(graphics, xMinimum, xMaximum, yMinimum, yMaximum,
 				firstRow, lastRow, firstColumn, lastColumn, legendLevels,
 				legendColors, data);
@@ -179,9 +180,11 @@ public class TilePlot {
 		// Draw grid lines:
 
 		if ( gridLineColor != null ) {
+System.out.println("ready to call drawGridLines");
 		  drawGridLines( graphics, xMinimum, xMaximum, yMinimum, yMaximum,
 				         firstRow, lastRow, firstColumn, lastColumn, gridLineColor);
 		}
+	System.out.println("all done with TilePlot.draw");
 	}
 	
 	public synchronized void drawBatchImage(final Graphics graphics, int xOffset, int yOffset,

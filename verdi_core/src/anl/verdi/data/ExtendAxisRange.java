@@ -47,6 +47,7 @@ public class ExtendAxisRange implements ExtendCoordAxis {
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
+System.out.println("in ExtendAxisRange.getUnits, Unit = " + axis.getUnits());
 		return axis.getUnits();
 	}
 
@@ -57,8 +58,8 @@ public class ExtendAxisRange implements ExtendCoordAxis {
 	 * can be used together in the same formula.
 	 *
 	 * @param axis the axis to check for compatibility
-	 * @return true if this axis is compatibilty with the other axis,
-	 *         otherise false.
+	 * @return true if this axis is compatible with the other axis,
+	 *         otherwise false.
 	 */
 	public boolean isCompatible(ExtendCoordAxis axis) {
 		if (this.axis.isCompatible(axis)) {

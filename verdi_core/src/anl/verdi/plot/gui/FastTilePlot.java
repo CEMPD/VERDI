@@ -534,14 +534,16 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 						final int stepsLapsed = timestep - firstTimestep;
 						final int statisticsSelection = statisticsMenu.getSelectedIndex();
+System.out.println("statisticsSelection = " + statisticsSelection);
 						final String statisticsUnits =
 							statisticsSelection == 0 ? null : GridCellStatistics.units( statisticsSelection - 1 );
+System.out.println("statisticsUnits = " + statisticsUnits);
 						final String plotVariable =
 							statisticsSelection == 0 ? variable
 							: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
 						final String plotUnits =
 							statisticsUnits != null ? statisticsUnits : units;
-
+System.out.println("units = " + units);
 						
 						if (get_draw_once_requests() > 0) {
 							draw_once_requests = 0;
@@ -551,12 +553,41 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 						}
 						
 						try {
+System.out.println("ready to call tilePlot.draw(); first resolve any function calls for argument values, thread = " + Thread.currentThread().toString());
+int aRow = firstRow + rowOrigin;
+System.out.println("aRow = " + aRow);
+int bRow = lastRow + rowOrigin;
+System.out.println("bRow = " + bRow);
+int aCol = firstColumn + columnOrigin;
+System.out.println("aCol = " + aCol);
+int bCol = lastColumn + columnOrigin;
+System.out.println("bCol = " + bCol);
+int aLegendLevelsLength = legendLevels.length;
+System.out.println("LegendLevels.length = " + aLegendLevelsLength);
+int aLegendColorsLength = legendColors.length;
+System.out.println("LegendColors.length = " + aLegendColorsLength);
+System.out.println("plotUnits = " + plotUnits);
+String aPlotUnits = (plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits;
+System.out.println("aPlotUnits = " + aPlotUnits);
+NumberFormat aNumberFormat = map.getNumberFormat();
+System.out.println("aNumberFormat = " + aNumberFormat);
+int aSubsetLayerDataLength = subsetLayerData.length;
+System.out.println("subsetLayerData.length = " + aSubsetLayerDataLength);
+System.out.println("ready to make revised function call to tilePlot.draw, thread = " + Thread.currentThread().toString());
+
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
-									width, height, stepsLapsed, layer, firstRow + rowOrigin,
-									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
+									width, height, stepsLapsed, layer, aRow,
+									bRow, aCol, bCol, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
-									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
+									aPlotUnits, 
+									config, aNumberFormat, gridLineColor,
 									subsetLayerData);
+//							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
+//									width, height, stepsLapsed, layer, firstRow + rowOrigin,
+//									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
+//									legendColors, axisColor, labelColor, plotVariable,
+//									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
+//									subsetLayerData);
 						} catch (Exception e) {
 							center.error("FastTilePlot's run method", e);
 						}
@@ -683,11 +714,14 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 				final int statisticsSelection = statisticsMenu.getSelectedIndex();
 				final String statisticsUnits =
 					statisticsSelection == 0 ? null : GridCellStatistics.units( statisticsSelection - 1 );
+System.out.println("statisticsUnit = " + statisticsUnits);
 				final String plotVariable =
 					statisticsSelection == 0 ? variable
 					: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
+System.out.println("plotVariable = " + plotVariable);
 				final String plotUnits =
 					statisticsUnits != null ? statisticsUnits : units;
+System.out.println("plotUnits = " + plotUnits);
 				final int stepsLapsed = timestep - firstTimestep;
 				try {
 					tilePlot.drawBatchImage(offScreenGraphics, xOffset, yOffset,
@@ -1232,9 +1266,13 @@ if (map.getPalette() == null)
 
 		final Variable dataFrameVariable = dataFrame.getVariable();
 		variable = dataFrameVariable.getName();
+System.out.println("dataFrameVariable = " + dataFrameVariable);
+System.out.println("dataFrameVariable name = " + variable);
 		units = dataFrameVariable.getUnit().toString();
+System.out.println("units of dataFrameVariable = " + units);
 		if ( units==null || units.trim().equals(""))
 			units = "none";
+System.out.println("now units = " + units);
 		
 		assert dataFrame.getAxes() != null;
 		final Axes<DataFrameAxis> axes = dataFrame.getAxes();
@@ -2120,8 +2158,8 @@ if(map.getPalette() == null)
 	}
 
 	private FastTileLayerEditor showGISLayersDialog() {
-		Window frame = SwingUtilities
-				.getWindowAncestor(this);
+System.out.println("in FastTilePlot.showGISLayersDialog()");
+		Window frame = SwingUtilities.getWindowAncestor(this);
 		FastTileLayerEditor editor = null;
 		
 		if (frame instanceof JFrame)
@@ -2172,7 +2210,8 @@ if(map.getPalette() == null)
 	private void showLayer(String layerKey, boolean show, JMenu addLayers) {
 		try {
 			if (show && layerKey.equals(STATES_LAYER)) {
-				MapLines map2Add = getEditedMapLayer(mapper.getUsaStatesMap());
+//				MapLines map2Add = getEditedMapLayer(mapper.getUsaStatesMap());
+				MapLines map2Add = mapper.getUsaStatesMap();
 				mapper.getLayers().add(map2Add);
 			}
 
@@ -2181,7 +2220,8 @@ if(map.getPalette() == null)
 			}
 			
 			if (show && layerKey.equals(COUNTIES_LAYER)) {
-				MapLines map2Add = getEditedMapLayer(mapper.getUsaCountiesMap());
+//				MapLines map2Add = getEditedMapLayer(mapper.getUsaCountiesMap());
+				MapLines map2Add = mapper.getUsaCountiesMap();
 				mapper.getLayers().add(map2Add);
 			}
 
@@ -2190,7 +2230,8 @@ if(map.getPalette() == null)
 			}
 
 			if (show && layerKey.equals(WORLD_LAYER)) {
-				MapLines map2Add = getEditedMapLayer(mapper.getWorldMap());
+//				MapLines map2Add = getEditedMapLayer(mapper.getWorldMap());
+				MapLines map2Add = mapper.getWorldMap();
 				mapper.getLayers().add(map2Add);
 			}
 
@@ -2199,7 +2240,8 @@ if(map.getPalette() == null)
 			}
 
 			if (show && layerKey.equals(NA_LAYER)) {
-				MapLines map2Add = getEditedMapLayer(mapper.getNorthAmericaMap());
+//				MapLines map2Add = getEditedMapLayer(mapper.getNorthAmericaMap());
+				MapLines map2Add = mapper.getNorthAmericaMap();
 				mapper.getLayers().add(map2Add);
 			}
 
@@ -2209,7 +2251,8 @@ if(map.getPalette() == null)
 
 			if (show && layerKey.equals(HUCS)) {
 				withHucs = show;
-				mapper.getLayers().add(getEditedMapLayer(mapper.getUSHucMap()));
+//				mapper.getLayers().add(getEditedMapLayer(mapper.getUSHucMap()));
+				mapper.getLayers().add(mapper.getUSHucMap());
 			}
 			
 			if (!show && layerKey.equals(HUCS)) {
@@ -2219,7 +2262,8 @@ if(map.getPalette() == null)
 
 			if (show && layerKey.equals(RIVERS)) {
 				withRivers = show;
-				mapper.getLayers().add(getEditedMapLayer(mapper.getUSRiversMap()));
+//				mapper.getLayers().add(getEditedMapLayer(mapper.getUSRiversMap()));
+				mapper.getLayers().add(mapper.getUSRiversMap());
 			}
 			
 			if (!show && layerKey.equals(RIVERS)) {
@@ -2229,7 +2273,8 @@ if(map.getPalette() == null)
 
 			if (show && layerKey.equals(ROADS)) {
 				withRoads = show;
-				mapper.getLayers().add(getEditedMapLayer(mapper.getUSRoadsMap()));
+//				mapper.getLayers().add(getEditedMapLayer(mapper.getUSRoadsMap()));	// 2014 getting rid of popup edit box
+				mapper.getLayers().add(mapper.getUSRoadsMap());
 			}
 			
 			if (!show && layerKey.equals(ROADS)) {
@@ -2246,11 +2291,14 @@ if(map.getPalette() == null)
 		}
 	}
 
-	private MapLines getEditedMapLayer(MapLines map) {
-		Window frame = SwingUtilities.getWindowAncestor(this);
-		FastTileAddLayerWizard wizard = new FastTileAddLayerWizard(new File(map.getMapFile()), createControlLayer(), map, false);
-		return wizard.display((JFrame)frame, true);
-	}
+//	private MapLines getEditedMapLayer(MapLines map) {
+//System.out.println("in FastTilePlot.getEditedMapLayer for map: " + map);
+//		Window frame = SwingUtilities.getWindowAncestor(this);
+//System.out.println("got window ancestor = " + frame.toString() + "\n\tReady to launch FastTileAddLayerWizard");
+//		FastTileAddLayerWizard wizard = new FastTileAddLayerWizard(new File(map.getMapFile()), createControlLayer(), map, false);
+//System.out.println("back from FastTileAddLayerWizard, now ready to return the display");
+//		return wizard.display((JFrame)frame, true);
+//	}
 
 	/**
 	 * Displays a dialog that allows the user to edit the properties for the

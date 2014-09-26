@@ -1,15 +1,19 @@
 package anl.verdi.gis;
 
+import gov.epa.emvl.MapLines;
+
 import java.awt.BorderLayout;
 
 import org.geotools.map.FeatureLayer;
-//import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
+import org.geotools.styling.Style;
+import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 									// NOTE: where FeatureLayer is now used in this code, MapLayer had been used
+									// GeoTools 13 - SNAPSHOT User's Guide says that MapLayer is now a shallow wrapper around FeatureLayer, etc. 
 import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
-//import repast.gis.styleEditor.StyleEditorPanel;
+//import repast.gis.styleEditor.StyleEditorPanel;		// 2014 Repast Simphony changed the package name
 import repast.simphony.gis.styleEditor.StyleEditorPanel;
 
 /**
@@ -25,14 +29,18 @@ public class FastTileEditorStep extends PanelWizardStep {
 	private StyleEditorPanel panel;
 	
 	private FeatureLayer controlLayer;
+//	private MapLayer aMapLayer;		// 2014 see above w.r.t. deprecated
 
 	public FastTileEditorStep() {
 		this(null);
+System.out.println("default constructor for FastTileEditorStep");
 	}
 	
 	public FastTileEditorStep(FeatureLayer control) {
 		super("Edit Style", "Please edit this layer's style");
+System.out.println("in constructor for FastTileEditorStep, control = " + control);
 		controlLayer = control;
+//		aMapLayer = control.;
 		setLayout(new BorderLayout());
 		setComplete(true);
 	}
@@ -43,13 +51,19 @@ public class FastTileEditorStep extends PanelWizardStep {
 	}
 
 //	@Override
-	public void JEBprepare() {
+	public void prepare() {
 		// NOTE: 2014 appears that MapLayer, FeatureLayer, etc. cannot be assigned to StyleEditorPanel at this time
 		// printing an error message if hit this function
-		panel = new StyleEditorPanel();
-		System.err.println("in anl.verdi.gis.FastTileEditorStep.prepare(); Unable to assign controlLayer this version of libraries.");
-//		if (controlLayer == null)
-//			controlLayer = model.getControlLayer();
+		
+//		System.err.println("in anl.verdi.gis.FastTileEditorStep.prepare(); Unable to assign controlLayer this version of libraries.");
+		if (controlLayer == null)
+			controlLayer = model.getControlLayer();
+		if(controlLayer == null)
+			panel = new StyleEditorPanel();
+		else
+//			panel = new StyleEditorPanel(controlLayer);		// 2014 does not work; only constructor is default constructor
+			panel = new StyleEditorPanel();	// need to give it a FeatureLayer
+		add(panel, BorderLayout.CENTER);
 //		
 ////		panel = (controlLayer != null) ? new StyleEditorPanel(controlLayer) : new StyleEditorPanel();
 //		if(controlLayer != null)
@@ -67,6 +81,15 @@ public class FastTileEditorStep extends PanelWizardStep {
 
 	@Override
 	public void applyState() throws InvalidStateException {
-		model.getLayer().setStyle(panel.getStyle());
+System.out.println("in FastTileEditorStep.applyState, ready for model");
+		FastTileAddLayerWizardModel aModel = model;
+System.out.println("got aModel, now ready to get MapLines");
+		MapLines aMapLines = aModel.getLayer();
+System.out.println("got MapLines, now ready to get the Style");
+		Style aStyle = panel.getStyle();		// 2014 throws NullPointerException
+System.out.println("get the style = " + aStyle + ", now ready to set the Style");
+		aMapLines.setStyle(aStyle);		// 2014 throws NullPointerException
+//		model.getLayer().setStyle(panel.getStyle());
+System.out.println("done in FastTileEditorStep.applyState & returning");
 	}
 }

@@ -147,48 +147,59 @@ public class FastTileLayerPanel extends JPanel {
 		}
 	}
 	
-	private void addBtnActionPerformed(ActionEvent e) {
-		FastTileAddLayerWizard wizard = new FastTileAddLayerWizard();
-		wizard.setControlLayer(controlLayer);
-		JDialog dialog = (JDialog)SwingUtilities.getWindowAncestor(this);
-		MapLines layer = wizard.display((JFrame)dialog.getParent(), false);
-
-		if (layer != null) {
-			((DefaultListModel) layerList.getModel()).add(0, layer);
-			addLayers.add(layer);
-			layerList.setSelectedIndex(0);
-			layerList.scrollRectToVisible(layerList.getCellBounds(0, 0));
-		}
-	}
+//	private void addBtnActionPerformed(ActionEvent e) {
+//		FastTileAddLayerWizard wizard = new FastTileAddLayerWizard();
+//		wizard.setControlLayer(controlLayer);
+//		JDialog dialog = (JDialog)SwingUtilities.getWindowAncestor(this);
+//		MapLines layer = wizard.display((JFrame)dialog.getParent(), false);
+//
+//		if (layer != null) {
+//			((DefaultListModel) layerList.getModel()).add(0, layer);
+//			addLayers.add(layer);
+//			layerList.setSelectedIndex(0);
+//			layerList.scrollRectToVisible(layerList.getCellBounds(0, 0));
+//		}
+//	}
 	
-	private void editLayerButtonPerformed(ActionEvent e) {
-		MapLines selected = (MapLines)layerList.getSelectedValue();
-		int index = layerList.getSelectedIndex();
-		
-		if (selected == null)
-			return;
-		
-		if (controlLayer != null && selected.getStyle() != null)
-			controlLayer.setStyle(selected.getStyle());
-		
-		File mapFile = new File(selected.getMapFile());
-		FastTileAddLayerWizard wizard = new FastTileAddLayerWizard(mapFile, controlLayer, selected, false);
-		JDialog dialog = (JDialog)SwingUtilities.getWindowAncestor(this);
-		MapLines layer = wizard.display((JFrame)dialog.getParent(), true);
-		
-		if (layer != null && !selected.equals(layer)) {
-			((DefaultListModel) layerList.getModel()).remove(index);
-			((DefaultListModel) layerList.getModel()).add(index, layer);
-			layers.remove(selected);
-			addLayers.remove(selected);
-			layerMoves.remove(selected);
-			removeLayers.add(selected);
-			addLayers.add(layer);
-			layerList.setSelectedIndex(index);
-			layerList.scrollRectToVisible(layerList.getCellBounds(index, index));
-			return;
-		}
-	}
+//	private void editLayerButtonPerformed(ActionEvent e) {
+//System.out.println("in FastTileLayerPlot.editLayerButtonPerformed");
+//		MapLines selected = (MapLines)layerList.getSelectedValue();
+//		int index = layerList.getSelectedIndex();
+//System.out.println("got index = " + index);		
+//		if (selected == null)
+//			return;
+//System.out.println("selected is not null");		
+//		if (controlLayer != null && selected.getStyle() != null)
+//		{
+//			controlLayer.setStyle(selected.getStyle());
+//System.out.println("just set selected style");
+//		}
+//
+//System.out.println("ready to instantiate mapFile");
+//		File mapFile = new File(selected.getMapFile());
+//System.out.println("ready to instantiate FastTileAddLayerWizard");
+//		FastTileAddLayerWizard wizard = new FastTileAddLayerWizard(mapFile, controlLayer, selected, false);
+//System.out.println("ready to start dialog");
+//		JDialog dialog = (JDialog)SwingUtilities.getWindowAncestor(this);
+//System.out.println("ready to display wizard");
+//		MapLines layer = wizard.display((JFrame)dialog.getParent(), true);
+//System.out.println("have a layer - ready to check it out");		
+//		if (layer != null && !selected.equals(layer)) {
+//System.out.println("ready to deal with layers");
+//			((DefaultListModel) layerList.getModel()).remove(index);
+//			((DefaultListModel) layerList.getModel()).add(index, layer);
+//			layers.remove(selected);
+//			addLayers.remove(selected);
+//			layerMoves.remove(selected);
+//			removeLayers.add(selected);
+//			addLayers.add(layer);
+//			layerList.setSelectedIndex(index);
+//			layerList.scrollRectToVisible(layerList.getCellBounds(index, index));
+//System.out.println("done dealing with layers, ready to return from FastTileLayerPlot.editLayerButtonPerformed");
+//			return;
+//		}
+//System.out.println("returning without dealing with layers, from FastTileLayerPlot.editLayerButtonPerformed");
+//	}
 
 	public void setContext(List<MapLines> layers) {
 		this.layers = layers;
@@ -277,11 +288,11 @@ public class FastTileLayerPanel extends JPanel {
 	}
 
 	private void layerListValueChanged(ListSelectionEvent e) {
-		if (layerList.getSelectedValue() != null)
-			editLayerButton.setEnabled(true);
+//		if (layerList.getSelectedValue() != null)
+//			editLayerButton.setEnabled(true);
 		
-		if (layerList.isSelectionEmpty())
-			editLayerButton.setEnabled(false);
+//		if (layerList.isSelectionEmpty())
+//			editLayerButton.setEnabled(false);
 		
 		if (layerList.getSelectedIndex() == 0) {
 			moveUpButton.setEnabled(false);
@@ -305,11 +316,11 @@ public class FastTileLayerPanel extends JPanel {
 		// Generated using JFormDesigner non-commercial license
 		scrollPane1 = new JScrollPane();
 		layerList = new JList();
-		addBtn = new JButton();
+//		addBtn = new JButton();
 		moveUpButton = new JButton();
 		moveDownButton = new JButton();
 		removeLayerButton = new JButton();
-		editLayerButton = new JButton();
+//		editLayerButton = new JButton();
 		CellConstraints cc = new CellConstraints();
 
 		//======== this ========
@@ -374,13 +385,13 @@ public class FastTileLayerPanel extends JPanel {
 		add(scrollPane1, cc.xywh(1, 1, 1, 13));
 
 		//---- addBtn ----
-		addBtn.setText("Add Layer");
-		addBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				addBtnActionPerformed(e);
-			}
-		});
-		add(addBtn, cc.xy(3, 3));
+//		addBtn.setText("Add Layer");	// 2014 removed button to avoid problems with Simphony
+//		addBtn.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				addBtnActionPerformed(e);
+//			}
+//		});
+//		add(addBtn, cc.xy(3, 3));
 
 		//---- moveUpButton ----
 		moveUpButton.setText("Move Up");
@@ -409,15 +420,15 @@ public class FastTileLayerPanel extends JPanel {
 		});
 		add(removeLayerButton, cc.xy(3, 9));
 		
-		//---- removeLayerButton ----
-		editLayerButton.setText("Edit Layer");
-		editLayerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				editLayerButtonPerformed(e);
-			}
-		});
-		add(editLayerButton, cc.xy(3, 11));
-		editLayerButton.setEnabled(false);
+		//---- editLayerButton ----		// 2014 removed Edit Layer button from interface - causes crash by Simphony 
+//		editLayerButton.setText("Edit Layer");
+//		editLayerButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				editLayerButtonPerformed(e);
+//			}
+//		});
+//		add(editLayerButton, cc.xy(3, 11));
+//		editLayerButton.setEnabled(false);
 		
 		// //GEN-END:initComponents
 	}
@@ -427,11 +438,11 @@ public class FastTileLayerPanel extends JPanel {
 	// Generated using JFormDesigner non-commercial license
 	private JScrollPane scrollPane1;
 	private JList layerList;
-	private JButton addBtn;
+//	private JButton addBtn;
 	private JButton moveUpButton;
 	private JButton moveDownButton;
 	private JButton removeLayerButton;
-	private JButton editLayerButton;
+//	private JButton editLayerButton;
 	// JFormDesigner - End of variables declaration //GEN-END:variables
 
 	public static void main(String[] args) {

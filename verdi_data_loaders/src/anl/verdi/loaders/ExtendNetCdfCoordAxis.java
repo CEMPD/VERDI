@@ -28,6 +28,7 @@ public class ExtendNetCdfCoordAxis implements ExtendCoordAxis {
 		//this.unit = Units.createUnit(axis.getUnitsString());
 		String unitString = axis.getUnitsString();
 		this.unit = VUnits.createUnit(unitString);
+System.out.println("in ExtendNetCdfCoordAxis constructor, unit = " + this.unit);
 		this.type = type;
 		this.range = new Range(0, axis.getSize());
 	}
@@ -54,6 +55,7 @@ public class ExtendNetCdfCoordAxis implements ExtendCoordAxis {
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
+System.out.println("in ExtendNetCdfCoordAxis.getUnits, unit = " + unit);
 		return unit;
 	}
 

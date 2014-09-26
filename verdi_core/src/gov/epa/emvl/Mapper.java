@@ -41,6 +41,7 @@ public class Mapper {
 
 	// Construct with URL or directory containing the map files.
 	public Mapper(String directoryName) {
+System.out.println("in constructor for Mapper, directoryName = " + directoryName);
 		mapFileDirectory = directoryName + "/";
 		try {
 			getWorldMap();
@@ -50,6 +51,7 @@ public class Mapper {
 			getUSHucMap();
 			getUSRiversMap();
 			getUSRoadsMap();
+System.out.println("done with get map functions, leaving Mapper constructor");
 		} catch (Exception e) {
 			//
 		}
@@ -61,7 +63,7 @@ public class Mapper {
 			final Projector projector, final Graphics graphics, int xOffset,
 			int yOffset, int width, int height, boolean withHucs,
 			boolean withRivers, boolean withRoads) {
-
+System.out.println("in Mapper.draw function");
 		final MapLines mapLines = chooseMap(domain); // MERCATOR
 
 		graphics.setColor(mapColor);
@@ -90,6 +92,7 @@ public class Mapper {
 	// Choose a map based on a domain.
 
 	private MapLines chooseMap(final double[][] domain) {
+System.out.println("in Mapper.chooseMap");
 		final double yMinimum = domain[Y][MINIMUM];
 		final double xMaximum = domain[X][MAXIMUM];
 		MapLines result = null;
@@ -147,6 +150,8 @@ public class Mapper {
 			if (worldMap == null) {
 				try {
 					worldMap = new MapLines(mapFileDirectory + worldMapFileName);
+System.out.println("got new MapLines worldMap = " + worldMap);
+
 				} catch (Exception unused) {
 				}
 			}
@@ -154,7 +159,8 @@ public class Mapper {
 			result = worldMap;
 		}
 
-		return layers.contains(result) ? null : result;
+		System.out.println("getting ready to return from Mapper.chooseMap, value = " + (layers.contains(result) ? null : result));
+		return layers.contains(result) ? null : result;		// 2014 Why is the line this way instead of the way that was commented out (below)?
 		//return layers.contains(result) ? result : null;
 	}
 
@@ -162,6 +168,7 @@ public class Mapper {
 		if (hucsMap == null) {
 			try {
 				hucsMap = new MapLines(mapFileDirectory + hucsMapFileName);
+System.out.println("got new MapLines hucsMap = " + hucsMap);
 			} catch (Exception unused) {
 			}
 		}
@@ -172,12 +179,14 @@ public class Mapper {
 	public void removeUSHucMap() {
 		if (layers.contains(hucsMap))
 			layers.remove(hucsMap);
+System.out.println("removed hucsMap");
 	}
 
 	public MapLines getUSRoadsMap() {
 		if (roadsMap == null) {
 			try {
 				roadsMap = new MapLines(mapFileDirectory + roadsMapFileName);
+System.out.println("got new MapLines roadsMap = " + roadsMap);
 			} catch (Exception unused) {
 			}
 		}
@@ -188,12 +197,14 @@ public class Mapper {
 	public void removeUSRoadsMap() {
 		if (layers.contains(roadsMap))
 			layers.remove(roadsMap);
+System.out.println("removed roadsMap");
 	}
 
 	public MapLines getUSRiversMap() {
 		if (riversMap == null) {
 			try {
 				riversMap = new MapLines(mapFileDirectory + riversMapFileName);
+System.out.println("got new MapLines riversMap = " + riversMap);
 			} catch (Exception unused) {
 			}
 		}
@@ -204,12 +215,14 @@ public class Mapper {
 	public void removeUSRiversMap() {
 		if (layers.contains(riversMap))
 			layers.remove(riversMap);
+System.out.println("removed riversMap");
 	}
 
 	public MapLines getUsaStatesMap() throws Exception {
 		try {
 			if (stateMap == null)
 				stateMap = new MapLines(mapFileDirectory + stateMapFileName);
+System.out.println("got new MapLines stateMap = " + stateMap);
 
 			return stateMap;
 		} catch (Exception e) {
@@ -222,6 +235,7 @@ public class Mapper {
 		try {
 			if (layers.contains(stateMap))
 				layers.remove(stateMap);
+System.out.println("removed layer stateMap");
 		} catch (Exception e) {
 			throw new Exception("Error removing USA states layer ("
 					+ e.getLocalizedMessage() + ").");
@@ -232,6 +246,7 @@ public class Mapper {
 		try {
 			if (countyMap == null)
 				countyMap = new MapLines(mapFileDirectory + countyMapFileName);
+System.out.println("got new MapLines countyMap = " + countyMap);
 
 			return countyMap;
 		} catch (Exception e) {
@@ -244,6 +259,7 @@ public class Mapper {
 		try {
 			if (layers.contains(countyMap))
 				layers.remove(countyMap);
+System.out.println("removed layer countyMap");
 		} catch (Exception e) {
 			throw new Exception("Error removing USA counties layer ("
 					+ e.getLocalizedMessage() + ").");
@@ -254,7 +270,7 @@ public class Mapper {
 		try {
 			if (worldMap == null)
 				worldMap = new MapLines(mapFileDirectory + worldMapFileName);
-
+System.out.println("got new MapLines worldMap = " + worldMap);
 			return worldMap;
 		} catch (Exception e) {
 			throw new Exception("Error reading world layer ("
@@ -266,6 +282,7 @@ public class Mapper {
 		try {
 			if (layers.contains(worldMap))
 				layers.remove(worldMap);
+System.out.println("removed worldMap");
 		} catch (Exception e) {
 			throw new Exception("Error removing world layer ("
 					+ e.getLocalizedMessage() + ").");
@@ -277,7 +294,7 @@ public class Mapper {
 			if (northAmericaMap == null)
 				northAmericaMap = new MapLines(mapFileDirectory
 						+ northAmericaMapFileName);
-
+System.out.println("got new MapLines northAmericaMap = " + northAmericaMap);
 			return northAmericaMap;
 		} catch (Exception e) {
 			throw new Exception("Error reading north America layer ("
@@ -289,6 +306,7 @@ public class Mapper {
 		try {
 			if (layers.contains(northAmericaMap))
 				layers.remove(northAmericaMap);
+System.out.println("removed northAmericaMap");
 		} catch (Exception e) {
 			throw new Exception("Error removing north America layer ("
 					+ e.getLocalizedMessage() + ").");
@@ -298,7 +316,9 @@ public class Mapper {
 	public void addLayer(String path) throws Exception {
 		try {
 			MapLines layer = new MapLines(path);
+System.out.println("added map for path = " + path);
 			layers.add(layer);
+System.out.println("\tlayer = " + layer);
 		} catch (Exception e) {
 			throw new Exception("Error adding a new layer ("
 					+ e.getLocalizedMessage() + ").");
@@ -309,6 +329,7 @@ public class Mapper {
 		try {
 			MapLines layer = new MapLines(path);
 			layers.remove(layer);
+System.out.println("removed layer");
 		} catch (Exception e) {
 			throw new Exception("Error removing the layer ("
 					+ e.getLocalizedMessage() + ").");

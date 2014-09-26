@@ -52,6 +52,7 @@ public class DefaultFormula implements Formula {
 			this.frame = frame;
 			this.var = var;
 			unit = var.getUnit();
+System.out.println("in VarFramePair constructor within class DefaultFormula, unit = " + unit);
 			iter = frame.getArray().getIndexIterator();
 		}
 
@@ -67,22 +68,27 @@ public class DefaultFormula implements Formula {
 	private List<FormulaVariable> variables = new ArrayList<FormulaVariable>();
 
 	public DefaultFormula(FormulaParser parser, DataTransformer transformer, Unit commonUnit) {
-System.out.println("in constructor for DefaultFormula");
+System.out.println("in constructor for DefaultFormula");	// 2014 PM2.5 bug OK to here
 		this.parser = parser;
 		this.transformer = transformer;
 		this.commonUnit = commonUnit;
+System.out.println(" in constructor for DefaultFormula, commonUnit = " + this.commonUnit);
 	}
 
 	private List<VarFramePair> readData(List<AxisRange> ranges, boolean convertUnits)
 					throws IllegalFormulaException {
+System.out.println("in DefaultFormula.readData, convertUnits = " + convertUnits);
 		List<VarFramePair> results = new ArrayList<VarFramePair>();
 		for (FormulaVariable var : variables) {
 			DataFrame frame = var.evaluate(ranges);
+System.out.println("var = " + var);
+System.out.println("units = " + var.getUnit());
 			// do the unit conversion
 			if (convertUnits && !var.getUnit().equals(commonUnit)) {
+System.out.println("performing unit conversion to commonUnit");
 				Array array = frame.getArray();
 				Unit unit = var.getUnit();
-//				for (IndexIterator iter = array.getIndexIteratorFast(); iter.hasNext();) {	// NetCDF library replaced getIndexIteratorFast
+//				for (IndexIterator iter = array.getIndexIteratorFast(); iter.hasNext();) {	// 2014 NetCDF library replaced getIndexIteratorFast
 				for (IndexIterator iter = array.getIndexIterator(); iter.hasNext();) {
 					double val = iter.getDoubleNext();
 					// 2014 I think that the next statement is trying to perform a unit conversion
@@ -116,7 +122,7 @@ System.out.println("in constructor for DefaultFormula");
 		String name = "";
 		try {
 			for (String varName : treeInfo.getVariableNames()) {
-				name = varName;
+				name = varName;		// need copy in case error is thrown and caught below
 				FormulaVariable fVar = FormulaVariable.createVariable(varName, manager);
 				variables.add(fVar);
 			}
@@ -136,7 +142,9 @@ System.out.println("in constructor for DefaultFormula");
 	public ValidationResult validate(DataManager manager, List<AxisRange> ranges) {
 		try {
 			treeInfo = parser.parse();
+//System.out.println("\tstarting DefaultFormula.validate(), commonUnit = " + variables.get(0));
 			createFormulaVars(manager);
+System.out.println("in DefaultFormala.validate, back from createFormulaVars, commonUnit = " + variables.get(0));
 			checkIfObservational(variables);
 			if (commonUnit == null && variables.size() > 0) {
 				FormulaVariable var = variables.get(0);
@@ -147,7 +155,9 @@ System.out.println("in constructor for DefaultFormula");
 				// no variables then the units don't matter.
 				commonUnit = VUnits.createUnit("PPM");
 			}
+System.out.println("\tin DefaultFormula.validate(), commonUnit = " + commonUnit);
 			FormulaValidator validator = new FormulaValidator(variables);
+System.out.println("\tin Defaultformula.validate(), returning commonUnit = " + commonUnit);
 			return validator.validate(commonUnit, ranges);
 		} catch (IllegalFormulaException e) {
 			return ValidationResult.fail(e);

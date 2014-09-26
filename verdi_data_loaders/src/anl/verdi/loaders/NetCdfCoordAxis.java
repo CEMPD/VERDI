@@ -31,6 +31,7 @@ public class NetCdfCoordAxis implements CoordAxis {
 	public NetCdfCoordAxis(CoordinateAxis axis, AxisType type) {
 		this.axis = axis;
 		this.javaxUnit = VUnits.createUnit(axis.getUnitsString());	// calls createUnit in anl.verdi.util.Unit
+System.out.println("in NetCdfCoordAxis constructor, javaxUnit = " + this.javaxUnit);
 		this.type = type;
 		this.range = new Range(0, axis.getSize());
 	}
@@ -57,6 +58,7 @@ public class NetCdfCoordAxis implements CoordAxis {
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
+System.out.println("NetCdfCoordAxis.getUnits = " + javaxUnit);
 		return javaxUnit;
 	}
 

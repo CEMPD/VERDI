@@ -38,6 +38,7 @@ public class ObsEvaluator {
 			lonIndex = lon.getIndexIterator();
 			valuesIndex = values.getIndexIterator();
 			this.unit = unit;
+System.out.print("in ObsEvaluator constructor, unit = " + this.unit);
 		}
 
 		public boolean hasNext() {

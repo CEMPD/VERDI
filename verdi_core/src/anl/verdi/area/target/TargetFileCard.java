@@ -89,7 +89,8 @@ TargetPanel filePanel;
   
   static {
     defaultPath = System.getProperty("verdi.hucData");
-    if(defaultPath==null)defaultPath=FilePanel.getCurrentPath();
+    if(defaultPath==null)
+    	defaultPath=FilePanel.getCurrentPath();
   }
   
   public TargetFileCard(WizardWindow win) {

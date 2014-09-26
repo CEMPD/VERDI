@@ -63,8 +63,8 @@ public class AxisRange implements CoordAxis {
 	 * can be used together in the same formula.
 	 *
 	 * @param axis the axis to check for compatibility
-	 * @return true if this axis is compatibilty with the other axis,
-	 *         otherise false.
+	 * @return true if this axis is compatible with the other axis,
+	 *         otherwise false.
 	 */
 	public boolean isCompatible(CoordAxis axis) {
 		if (this.axis.isCompatible(axis)) {

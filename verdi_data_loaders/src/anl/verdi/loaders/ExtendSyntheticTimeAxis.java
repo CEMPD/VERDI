@@ -35,7 +35,9 @@ public class ExtendSyntheticTimeAxis implements ExtendTimeCoordAxis {
 
 	private void processAxis() {
 		String unit = axis.getUnits().toString().trim();
+System.out.println("in ExtendSyntheticTimeAxis.processAxis, unit = " + unit);
 		String tmp = unit.toLowerCase();
+System.out.println("in ExtendSyntheticTimeAxis.processAxis, lowercase unit = " + tmp);
 		String dateString = null;
 		if (tmp.startsWith(SECONDS_SINCE)) {
 			dateString = unit.substring(SECONDS_SINCE.length(), unit.length()).trim();
@@ -152,6 +154,7 @@ public class ExtendSyntheticTimeAxis implements ExtendTimeCoordAxis {
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
+System.out.println("in ExtendSyntheticTimeAxis.getUnits, unit = " + axis.getUnits());
 		return axis.getUnits();
 	}
 

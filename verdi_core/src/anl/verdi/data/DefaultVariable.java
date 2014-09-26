@@ -25,9 +25,11 @@ public class DefaultVariable implements Variable<CoordAxis> {
     this.name=name;
     this.description=description;
 	  this.unit = unit;
+System.out.println("in DefaultVariable constructor, Unit = " + this.unit);
 	  this.dataset = dataset;
 	  fullName = new StringBuffer(name).append(" (").append(VUnits.getFormattedName(unit)).
 					  append(")").toString();
+System.out.println("in DefaultVariable constructor, fullName = " + fullName);
   }
 
 	/**
@@ -71,6 +73,7 @@ public class DefaultVariable implements Variable<CoordAxis> {
 	 * @return this Variable's standard of measurement.
 	 */
 	public Unit getUnit() {
+System.out.println("in DefaultVariable, returning unit = " + unit);
 		return unit;
 	}
 }

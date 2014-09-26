@@ -44,30 +44,30 @@ public class TargetCalculator extends LongTask {
 	/**
 	 * Called by the progress monitor to start the task
 	 */
-  public void doWork() {
-		
-		if(!Target.allIndexFilesLoaded()){
-			// try to read them in 
-			//readInIntersections();
-			
-			// see if they broke out of it
-			if(canceled)return;
-			
-			// if they did not load all of them in
-			if(!Target.allIndexFilesLoaded()){
-				// calculate where the grid cell intersections are located
-				boolean didCalcs = calculateIntersections(Target.getTargets());
-				if (didCalcs == false)return;
-			
-				// see if they broke out of it
-				if(canceled)return;
-			}
-		}
-		// calc and display the new depositions
-    if(showIt)TargetCalculator.calculateNewDepositions();
-    
-    done=true;
-  }
+//  public void doWork() {		// 2014 does not appear to be used
+//		
+//		if(!Target.allIndexFilesLoaded()){
+//			// try to read them in 
+//			//readInIntersections();
+//			
+//			// see if they broke out of it
+//			if(canceled)return;
+//			
+//			// if they did not load all of them in
+//			if(!Target.allIndexFilesLoaded()){
+//				// calculate where the grid cell intersections are located
+//				boolean didCalcs = calculateIntersections(Target.getTargets());
+//				if (didCalcs == false)return;
+//			
+//				// see if they broke out of it
+//				if(canceled)return;
+//			}
+//		}
+//		// calc and display the new depositions
+//    if(showIt)TargetCalculator.calculateNewDepositions();
+//    
+//    done=true;
+//  }
   /**
    * An estimate of the length of the task
    */
@@ -82,7 +82,7 @@ public class TargetCalculator extends LongTask {
 	 */
   public boolean calculateIntersections(ArrayList targets) {
     statMessage = "Calculating Intersections...";
-    System.out.println(statMessage);
+    System.out.println("WARNING: TargetCalculator.calculateIntersections called for only 1 argument, does nothing but returns TRUE always " + statMessage);
 //    // change to busy cursor
 //    boolean didCalcs = false;
 //    try {
@@ -238,7 +238,7 @@ public class TargetCalculator extends LongTask {
   public boolean calculateIntersections(ArrayList targets,DataFrame dataFrame,AreaTilePlot plot) {
 	  
 	    statMessage = "Calculating Intersections...";
-	    System.out.println(statMessage);
+	    System.out.println("TargetCalculator.calculateIntersections for multiple args " + statMessage);
 	    // change to busy cursor
 	    boolean didCalcs = false;
 	    try {
@@ -253,7 +253,7 @@ public class TargetCalculator extends LongTask {
 	      //units=Units.getAreaFromLength(units);
 	      Units.setCurrentArea("km2"); 
 	      double areaConversion=Units.conversionArea("m2");
-	      
+System.out.println("in TargetCalculator, just calculated areaConversion (conversion factor to m2) = " + areaConversion);	      
 	      // get the conversion from the grid to the standard target area units
 	      //double conversion = Units.convertArea(units, Target.getUnits(), 1.0);
 	      //GridGeometry geometry = ((GridGeometry)grid.getGeometry().getGeometry());
@@ -405,34 +405,34 @@ public class TargetCalculator extends LongTask {
    * Calculate new target depositions for all targets
    *
    */
-  public static void calculateNewDepositions() {
-		// calculate the deposition locations
-//    Target.calculateDepositions();
-//    
-//    //	update the range
-//    ThematicRangeList.updateIfNeeded(OptionsWindow.rebuildThematicMap(), Target.getMinValue(), Target.getMaxValue(), Units.getCurrentTypeString());
-//    JeoViewer jeoViewer = WDTMainWindow.mainWindow.jeoViewer;
-//    JeoViewerApp japp = WDTMainWindow.mainWindow.japp;
+//  public static void calculateNewDepositions() {		// 2014 does not appear to be used
+//		// calculate the deposition locations
+////    Target.calculateDepositions();
+////    
+////    //	update the range
+////    ThematicRangeList.updateIfNeeded(OptionsWindow.rebuildThematicMap(), Target.getMinValue(), Target.getMaxValue(), Units.getCurrentTypeString());
+////    JeoViewer jeoViewer = WDTMainWindow.mainWindow.jeoViewer;
+////    JeoViewerApp japp = WDTMainWindow.mainWindow.japp;
+////
+////    Target.showColors();
+////    japp.getGdbv().createMissingLayerCodes();
+////    japp.getGdbv().updateLayerManager();
+////
+////    japp.getGdbv().getLayerManager().getLayer(Target.targetLayer).setThematicKey(Units.getCurrentTypeString());
+////
+////    // update
+////    ThematicRangeList.update();
+////    WDTMainWindow.mainWindow.updateThematicLegend();
+////
+////    // redo in the options window table
+////    OptionsWindow.redoThematicMapTable();
+////
+////    WDTMainWindow.mainWindow.redisplay();
+////
+////    // enable the thematic map tab
+////    OptionsWindow.updateTabs();
 //
-//    Target.showColors();
-//    japp.getGdbv().createMissingLayerCodes();
-//    japp.getGdbv().updateLayerManager();
-//
-//    japp.getGdbv().getLayerManager().getLayer(Target.targetLayer).setThematicKey(Units.getCurrentTypeString());
-//
-//    // update
-//    ThematicRangeList.update();
-//    WDTMainWindow.mainWindow.updateThematicLegend();
-//
-//    // redo in the options window table
-//    OptionsWindow.redoThematicMapTable();
-//
-//    WDTMainWindow.mainWindow.redisplay();
-//
-//    // enable the thematic map tab
-//    OptionsWindow.updateTabs();
-
-  }
+//  }
   /**
    * Read in any grid files that exist
    * @return if it was successful and not cancelled

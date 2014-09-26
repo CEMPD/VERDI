@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
@@ -42,7 +41,9 @@ public class SyntheticTimeAxis implements TimeCoordAxis {
 
 	private void processAxis() {
 		String unit = axis.getUnits().toString().trim();
+System.out.println("in SyntheticTimeAxis.processAxis, unit = " + unit);
 		String tmp = unit.toLowerCase();
+System.out.println("in SyntheticTimeAxis.processAxis, after toLowerCase, tmp = " + tmp);
 		String dateString = null;
 		if (tmp.startsWith(SECONDS_SINCE)) {
 			dateString = unit.substring(SECONDS_SINCE.length(), unit.length()).trim();
@@ -166,6 +167,7 @@ public class SyntheticTimeAxis implements TimeCoordAxis {
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
+System.out.println("in SyntheticTimeAxis.getUnits, value = " + axis.getUnits());
 		return axis.getUnits();
 	}
 

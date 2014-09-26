@@ -4,7 +4,8 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Vector;
 
-
+import org.eclipse.uomo.units.SI;
+import org.eclipse.uomo.units.impl.ProductUnit;
 //import javax.measure.unit.ProductUnit;
 //import javax.measure.unit.SI;
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
@@ -13,10 +14,7 @@ import java.util.Vector;
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
 
-import com.ibm.icu.util.Measure;
-
-import org.eclipse.uomo.units.SI;
-import org.eclipse.uomo.units.impl.*;
+import anl.verdi.util.VUnits;
 
 
 /**
@@ -357,7 +355,7 @@ public class Units {
 	public static boolean isUnitPerArea(String gridUnit){
 		Unit gridTopUnit=null;
 		Unit gridAreaUnit=null;
-		Unit gridOriginalUnit = anl.verdi.util.VUnits.createUnit(gridUnit);
+		Unit gridOriginalUnit = VUnits.createUnit(gridUnit);
 		// see if it is a mass/area value
 		if(gridOriginalUnit instanceof ProductUnit){
 			// break up the product unit
@@ -392,7 +390,7 @@ public class Units {
 	public static boolean isConcentration(String gridUnit){
 //		Unit gridMassUnit=null;		// not used
 //		Unit gridVolumeUnit=null;	// not used
-		Unit gridOriginalUnit = anl.verdi.util.VUnits.createUnit(gridUnit);
+		Unit gridOriginalUnit = VUnits.createUnit(gridUnit);
 		// see if it is a ppm value
 		if(gridUnit.contains("1/1000000"))return true;
 		if(gridUnit.toLowerCase().contains("ppm"))return true;
@@ -428,7 +426,7 @@ public class Units {
 	}
 	public static String getTotalVariable(String gridUnit){
 		if(isLength(gridUnit)){
-			Unit gridOriginalUnit = anl.verdi.util.VUnits.createUnit(gridUnit);
+			Unit gridOriginalUnit = VUnits.createUnit(gridUnit);
 			// convert to the standard unit
 			//Unit standardOne = gridOriginalUnit.getSystemUnit();
 			// raise to the third power
@@ -440,7 +438,7 @@ public class Units {
 	}
 	public static boolean isLength(String gridUnit){
 
-		Unit gridOriginalUnit = anl.verdi.util.VUnits.createUnit(gridUnit);
+		Unit gridOriginalUnit = VUnits.createUnit(gridUnit);
 //		if(gridOriginalUnit.getSystemUnit().equals(SI.METER))return true;	// JScience changed getSystemUnit to getStandardUnit
 		if(gridOriginalUnit.getSystemUnit().equals(SI.METRE))		// org.unitsofmeasurement uses getSystemUnit
 			return true;
@@ -449,7 +447,7 @@ public class Units {
 	}
 	public static Unit getTopUnit(String gridUnit){
 
-		Unit gridOriginalUnit = anl.verdi.util.VUnits.createUnit(gridUnit);
+		Unit gridOriginalUnit = VUnits.createUnit(gridUnit);
 		// see if it is a mass/area value
 		if(gridOriginalUnit instanceof ProductUnit){
 			// break up the product unit
@@ -470,7 +468,7 @@ public class Units {
 	}
 	public static Unit getAreaUnit(String gridUnit){
 
-		Unit gridOriginalUnit = anl.verdi.util.VUnits.createUnit(gridUnit);
+		Unit gridOriginalUnit = VUnits.createUnit(gridUnit);
 		// see if it is a mass/area value
 		if(gridOriginalUnit instanceof ProductUnit){
 			// break up the product unit

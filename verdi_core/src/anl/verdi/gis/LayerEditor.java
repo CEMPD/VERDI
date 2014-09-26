@@ -42,11 +42,13 @@ public class LayerEditor extends JDialog {
 	public LayerEditor(Frame owner) {
 		super(owner);
 		initComponents();
+System.out.println("in LayerEditor constructor #1");
 	}
 
 	public LayerEditor(Dialog owner) {
 		super(owner);
 		initComponents();
+System.out.println("in LayerEditor constructor #2");
 	}
 
 	public void init(MapAnnotation annotation) {

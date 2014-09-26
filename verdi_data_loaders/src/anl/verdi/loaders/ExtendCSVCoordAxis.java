@@ -26,6 +26,7 @@ public class ExtendCSVCoordAxis implements ExtendCoordAxis {
 		this.type = type;
 		this.range = new Range(0, data.length);
 		this.data = data;
+System.out.println("in ExtendCSVCoordAxis constructor, unit = " + this.unit);
 	}
 
 	/**
@@ -44,6 +45,7 @@ public class ExtendCSVCoordAxis implements ExtendCoordAxis {
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
+System.out.println("in ExtendCSVCoordAxis.getUnits, returning unit = " + unit);
 		return unit;
 	}
 

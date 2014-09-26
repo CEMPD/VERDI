@@ -134,28 +134,6 @@ public class ExportWindow extends FilePanel {
 				file = new File(fileName);
 			}
 		}
-		// check if it exists
-//		if(file.exists()){
-//			// warn them
-//			String[] messages = {"The file "+file.getName()+" already exists.","It will be overwritten."};
-//			//WarningWindow win = new WarningWindow(WDTMainWindow.mainWindow,"Export Warning",messages);
-//			//if(!win.continueFlag)return false;
-//		}
-		/*
-    TargetExportCalculator calculator = new TargetExportCalculator();
-    calculator.showIt = false;
-
-    ArrayList files=new ArrayList();  
-    files.add(fileName);
-    calculator.loadFiles=false;
-    calculator.setFilesAndVariables(null,null,null,null,files);
-    if(extension.equals(".txt"))Target.useFixedWidth=true;
-    else Target.useFixedWidth=false;
-    WDTMainWindow.mainWindow.runTask(calculator, "Calculating results for one grid...");
-		//	export to this file
-		//FileHelper.writeDataLines(fileName,new Vector(results));
-		 * */
-
 		return true;
 	}
 }

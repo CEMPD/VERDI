@@ -19,6 +19,7 @@ public class ObsData {
 		this.lon = lon;
 		this.unit = unit;
 		this.value = value;
+System.out.println("in ObsData constructor, Unit = " + this.unit);
 	}
 
 	public double getX() {
@@ -46,6 +47,7 @@ public class ObsData {
 	}
 
 	public Unit getUnit() {
+System.out.println("in ObsData.getUnit, unit = " + unit);
 		return unit;
 	}
 
