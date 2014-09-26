@@ -59,7 +59,7 @@ public class Boot {
     // load properties
     if (args.length > 1)
     {
-      RUNTIME_DIR_ROOT = args[1];
+    //  RUNTIME_DIR_ROOT = args[1];
     }
     System.setProperty("applicationRoot", RUNTIME_DIR_ROOT);
     center = MessageCenter.getMessageCenter(Boot.class);
