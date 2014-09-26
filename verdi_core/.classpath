@@ -82,7 +82,6 @@
 	<classpathentry kind="lib" path="lib/j3dutils.jar"/>
 	<classpathentry kind="lib" path="lib/jai_core.jar"/>
 	<classpathentry kind="lib" path="lib/jai_imageio.jar"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/thredds"/>
 	<classpathentry exported="true" kind="lib" path="lib/netcdfAll-4.3.jar" sourcepath="/thredds"/>
 	<classpathentry exported="true" kind="lib" path="lib/repast_simphony_gis_2_1_0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsr-275-1.0-beta-2.jar"/>
