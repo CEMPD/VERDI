@@ -1,5 +1,5 @@
 #! /bin/sh
-VERDI_HOME=.
+export VERDI_HOME=.
 DIR=`pwd`
 cd $VERDI_HOME/plugins/bootstrap
 
@@ -9,7 +9,7 @@ JAVAMAXMEM="-Xmx6000M"
 # Limit the number of default spawned threads (eca):
 JAVAOPTS="-XX:+UseParallelGC -XX:ParallelGCThreads=1 -Duser.home=$HOME"
 
-JAVACMD="$JAVA $JAVAOPTS $JAVAMAXMEM -classpath ./bootstrap.jar:./lib/saf.core.runtime.jar:./lib/commons-logging.jar:./lib/jpf-boot.jar:./lib/jpf.jar:./lib/log4j-1.2.13.jar saf.core.runtime.Boot"
+JAVACMD="$JAVA $JAVAOPTS $JAVAMAXMEM -classpath ./bootstrap.jar:./lib/saf.core.runtime.jar:./lib/jpf.jar:./lib/jpf-boot.jar:../core/lib/* saf.core.runtime.Boot
 
 BATCHCMD=$1
 
