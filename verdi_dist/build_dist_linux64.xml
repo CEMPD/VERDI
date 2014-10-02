@@ -187,6 +187,7 @@
 			<exec executable="cp">
 		  		<arg line="-p ./distfiles/verdi_linux64.sh ${dist.dir}/verdi.sh"/>
 			</exec>
+			<chmod file="${dist.dir}/verdi.sh" perm="ug+x"/>
 		
 			<exec executable="cp">
 		  		<arg line="-p -R ${jdk.home}/jre ${dist.dir}/jre"/>

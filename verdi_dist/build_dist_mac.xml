@@ -11,8 +11,9 @@
 	<property name="core.dir" value="${basedir}/../verdi_core"/>
 	<property name="bootstrap.dir" value="${basedir}/../verdi_bootstrap"/>
 	<property name="loaders.dir" value="${basedir}/../verdi_data_loaders"/>
-	<property name="saf.dir" value="${basedir}/../verdi_saf_ui"/>
-	<property name="mac.dir" value="${dist.dir}/mac_dist"/>
+	<property name="saf.core.runtime.dir" value="${basedir}/../verdi_saf_core_runtime"/>
+	<property name="saf.core.ui.dir" value="${basedir}/../verdi_saf_ui"/>
+	
 	<property name="versiondir" value="../verdi_core/src/anl/verdi/util" />
 	<property name="versionbuild.dir" value="../verdi_core/bin/anl/verdi/util" />
 
@@ -54,14 +55,20 @@
 	</target>
 
 	<target name="jars">
-		<jar destfile="${plugins.dist.dir}/core/core.jar"
-		     basedir="${core.dir}/bin"/>
-
 		<jar destfile="${plugins.dist.dir}/bootstrap/bootstrap.jar"
 		     basedir="${bootstrap.dir}/bin"/>
 
+		<jar destfile="${plugins.dist.dir}/bootstrap/lib/saf.core.runtime.jar"
+			 basedir="${saf.core.runtime.dir}/bin"/>
+
+		<jar destfile="${plugins.dist.dir}/core/core.jar"
+		     basedir="${core.dir}/bin"/>
+
 		<jar destfile="${plugins.dist.dir}/verdi.data.loaders/data_loaders.jar"
 		     basedir="${loaders.dir}/bin"/>
+		     
+		<jar destfile="${plugins.dist.dir}/saf.core.ui/saf.core.ui.jar"
+			basedir="${saf.core.ui.dir}/bin/"/>
 	</target>
 
 	<target name="prep.dist" depends="compile-version">
@@ -72,12 +79,19 @@
 		<mkdir dir="${install.home}"/>
 
 		<copy todir="${plugins.dist.dir}/bootstrap">
-			<fileset file="${bootstrap.dir}/boot.properties"/>
+			<fileset file="${bootstrap.dir}/dist_boot.properties"/>
+			<mapper type="glob" from="dist_boot.properties" to="boot.properties"/>
+		</copy>
+
+		<copy todir="${plugins.dist.dir}/bootstrap">
 			<fileset file="${bootstrap.dir}/ui.properties"/>
 		</copy>
 
 		<copy todir="${plugins.dist.dir}/bootstrap/lib">
-			<fileset dir="${bootstrap.dir}/lib"/>
+			<fileset file="${bootstrap.dir}/lib/jpf.jar"/>
+			<fileset file="${bootstrap.dir}/lib/jpf-boot.jar"/>
+			<fileset file="${bootstrap.dir}/lib/jpf-tools.jar"/>
+			<fileset file="${bootstrap.dir}/lib/jaramiko-151.jar"/>
 		</copy>
 
 		<copy todir="${plugins.dist.dir}/bootstrap/data">
@@ -90,6 +104,15 @@
 
 		<jar destfile="${plugins.dist.dir}/bootstrap/bootstrap.jar"
 		     basedir="${bootstrap.dir}/bin"/>
+
+		<!-- saf.core.runtime -->
+		<jar destfile="${plugins.dist.dir}/bootstrap/lib/saf.core.runtime.jar"
+			 basedir="${saf.core.runtime.dir}/bin" />
+		
+		<copy todir="${plugins.dist.dir}/bootstrap/lib">
+			<fileset file="${saf.core.runtime.dir}/dist_plugin.xml" />
+			<mapper type="glob" from="dist_plugin.xml" to="plugin.xml"/>
+		</copy>
 
 		<!-- core -->
 		<copy todir="${plugins.dist.dir}/core">
@@ -129,19 +152,22 @@
 
 		<!-- saf ui -->
 		<copy todir="${plugins.dist.dir}/saf.core.ui">
-			<fileset file="${saf.dir}/plugin.xml"/>
-			<fileset file="${saf.dir}/saf.core.ui.jar"/>
+			<fileset file="${saf.core.ui.dir}/dist_plugin.xml"/>
+			<mapper type="glob" from="dist_plugin.xml" to="plugin.xml" />
 		</copy>
 
 		<copy todir="${plugins.dist.dir}/saf.core.ui/lib">
-			<fileset dir="${saf.dir}/lib">
+			<fileset dir="${saf.core.ui.dir}/lib">
 				<exclude name="**/*.zip"/>
 			</fileset>
 		</copy>
 
 		<copy todir="${plugins.dist.dir}/saf.core.ui/icons">
-			<fileset dir="${saf.dir}/icons"/>
+			<fileset dir="${saf.core.ui.dir}/icons"/>
 		</copy>
+		
+		<jar destfile="${plugins.dist.dir}/saf.core.ui/saf.core.ui.jar"
+			 basedir="${saf.core.ui.dir}/bin"/>
 	</target>
 	
 	<tstamp/>
@@ -162,6 +188,7 @@
 			<exec executable="cp">
 		  		<arg line="-p ./distfiles/verdi.command ${dist.dir}/verdi.command"/>
 			</exec>
+			<chmod file="${dist.dir}/verdi.command" perm="ug+x"/>
 		
 			<exec executable="cp">
 		  		<arg line="-p -R ${jdk.home} ${dist.dir}/jre"/>
@@ -187,6 +214,7 @@
 	        </gzip>
 		--> 
 		
+		<touch file="${dist.dir}/.Trash" />
 		<exec executable="hdiutil" dir="${user.home}">
 		<arg line="create -srcfolder ${mac.dist.name} ${install.home}/${dist.dmg.file}"/>
 		</exec>
