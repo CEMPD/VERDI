@@ -513,13 +513,13 @@
 			<parameter id="tooltip" value="Scatter Plot"/>
 		</parameter>
 
-		<parameter id="actionSpec">
+		<!-- parameter id="actionSpec">
 			<parameter id="actionID" value="anl.verdi.plot.gui.action.VectorPlot"/>
 			<parameter id="label" value="Vector Plot"/>
 			<parameter id="class" value="anl.verdi.plot.gui.action.VectorPlot"/>
 			<parameter id="groupID" value="runGraph"/>
 			<parameter id="tooltip" value="Vector Plot"/>
-		</parameter>
+		</parameter -->
 
 		<parameter id="actionSpec">
 			<parameter id="actionID" value="anl.verdi.plot.gui.action.Contour3DPlot"/>
