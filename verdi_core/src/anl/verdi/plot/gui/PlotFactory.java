@@ -18,7 +18,7 @@ import anl.verdi.plot.types.LinePlot;
 import anl.verdi.plot.types.ScatterPlot;
 import anl.verdi.plot.types.TilePlot;
 import anl.verdi.plot.types.TimeSeriesBarPlot;
-import anl.verdi.plot.types.VectorPlot;
+//import anl.verdi.plot.types.VectorPlot;		// 2014 removed old Vector Plot
 import anl.verdi.plot.types.VerticalCrossSectionPlot;
 import anl.verdi.plot.types.VerticalCrossSectionPlot.CrossSectionType;
 
@@ -51,11 +51,11 @@ public class PlotFactory {
 		return new PlotPanel(plot, xFormula + " x " + yFormula + " Scatter");
 	}
 
-	public PlotPanel getVectorPlot(String xFormula, String yFormula, DataFrame xFrame, DataFrame yFrame,
-	                               DataFrame tileFrame, PlotConfiguration config) {
-		Plot plot = new VectorPlot(xFrame, yFrame, tileFrame, config);
-		return new PlotPanel(plot, xFormula + " x " + yFormula + " Vector");
-	}
+//	public PlotPanel getVectorPlot(String xFormula, String yFormula, DataFrame xFrame, DataFrame yFrame,
+//	                               DataFrame tileFrame, PlotConfiguration config) {
+//		Plot plot = new VectorPlot(xFrame, yFrame, tileFrame, config);
+//		return new PlotPanel(plot, xFormula + " x " + yFormula + " Vector");
+//	}
 
 	private String getTypeName(Type type) {
 		String name = typeNameMap.get(type);

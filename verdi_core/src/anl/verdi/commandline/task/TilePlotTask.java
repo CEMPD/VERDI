@@ -21,7 +21,7 @@ import anl.verdi.gui.FormulaListElement;
 import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
-import anl.verdi.plot.config.VectorPlotConfiguration;
+//import anl.verdi.plot.config.VectorPlotConfiguration;		// 2014 removed old Vector Plot
 import anl.verdi.plot.config.VertCrossPlotConfiguration;
 import anl.verdi.plot.gui.FastTilePlot;
 import anl.verdi.plot.gui.Plot;
@@ -38,7 +38,7 @@ public class TilePlotTask implements AbstractTask {
 	public final static String EPS = "eps";
 	private PlotConfiguration config = new PlotConfiguration();
 	private VertCrossPlotConfiguration vConfig = new VertCrossPlotConfiguration();
-	private VectorPlotConfiguration vectorConfig = new VectorPlotConfiguration();
+//	private VectorPlotConfiguration vectorConfig = new VectorPlotConfiguration();
 	private ColorMap cmap = null;
 	private File[] datafiles;
 	private String[] subDomainArgs;
@@ -118,7 +118,7 @@ public class TilePlotTask implements AbstractTask {
 	private TilePlotConfiguration createConfig() {
 		config = new PlotConfiguration();
 		vConfig = new VertCrossPlotConfiguration();
-		vectorConfig = new VectorPlotConfiguration();
+//		vectorConfig = new VectorPlotConfiguration();
 		
 		String configFileStr = map.get(VerdiConstants.CONFIG_FILE);
 		
@@ -128,7 +128,7 @@ public class TilePlotTask implements AbstractTask {
 			try{
 				config = new PlotConfiguration(configFile);
 				vConfig = new VertCrossPlotConfiguration(new PlotConfiguration(configFile));
-				vectorConfig = new VectorPlotConfiguration(new PlotConfiguration(configFile));
+//				vectorConfig = new VectorPlotConfiguration(new PlotConfiguration(configFile));
 			} catch (Exception e) {
 				//
 			} 
@@ -137,7 +137,7 @@ public class TilePlotTask implements AbstractTask {
 		if(cmap != null) {
 			config.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 			vConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
-			vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
+//			vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 		}
 		
 		String title = map.get(VerdiConstants.TITLE) == null ? "" : map.get(VerdiConstants.TITLE);
@@ -152,31 +152,31 @@ public class TilePlotTask implements AbstractTask {
 		
 		config.setTitle(title);
 		vConfig.setTitle(title);
-		vectorConfig.setTitle(title);
+//		vectorConfig.setTitle(title);
 		
 		config.setSubtitle1(subtitle1);
 		vConfig.setSubtitle1(subtitle1);
-		vectorConfig.setSubtitle1(subtitle1);
+//		vectorConfig.setSubtitle1(subtitle1);
 		
 		config.setSubtitle2(subtitle2);
 		vConfig.setSubtitle2(subtitle2);
-		vectorConfig.setSubtitle2(subtitle2);
+//		vectorConfig.setSubtitle2(subtitle2);
 		
 		config.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 		vConfig.putObject(VertCrossPlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
-		vectorConfig.putObject(VectorPlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+//		vectorConfig.putObject(VectorPlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 	
 		config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 		vConfig.putObject(VertCrossPlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
-		vectorConfig.putObject(VectorPlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+//		vectorConfig.putObject(VectorPlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 		
 		config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 		vConfig.putObject(VertCrossPlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
-		vectorConfig.putObject(VectorPlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
+//		vectorConfig.putObject(VectorPlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 		
 		config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 		vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
-		vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+//		vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 		
 		if (unitStr==null || unitStr.trim().equals(""))
 			unitStr = "none";
@@ -184,7 +184,7 @@ public class TilePlotTask implements AbstractTask {
 		if (unitStr != null && !unitStr.trim().isEmpty() && !unitStr.equals("none")) {
 			config.setUnits(unitStr.trim());
 			vConfig.setUnits(unitStr.trim());
-			vectorConfig.setUnits(unitStr.trim());
+//			vectorConfig.setUnits(unitStr.trim());
 		}
 		
 		TilePlotConfiguration tconfig = new TilePlotConfiguration(config);

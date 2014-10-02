@@ -33,13 +33,13 @@ import anl.verdi.plot.color.Palette;
 import anl.verdi.plot.color.PavePaletteCreator;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
-import anl.verdi.plot.config.VectorPlotConfiguration;
+//import anl.verdi.plot.config.VectorPlotConfiguration;		// 2014 removed old Vector Plot
 import anl.verdi.plot.config.VertCrossPlotConfiguration;
 import anl.verdi.plot.gui.DefaultPlotCreator;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotPanel;
 import anl.verdi.plot.gui.ScatterPlotCreator;
-import anl.verdi.plot.gui.VectorPlotCreator;
+//import anl.verdi.plot.gui.VectorPlotCreator;
 import anl.verdi.plot.gui.VerticalCrossPlotCreator;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.types.VerticalCrossSectionPlot;
@@ -75,7 +75,7 @@ public class ScriptHandler {
 	
 	private static PlotConfiguration config = new PlotConfiguration();
 	private static VertCrossPlotConfiguration vConfig = new VertCrossPlotConfiguration();
-	private static VectorPlotConfiguration vectorConfig = new VectorPlotConfiguration();
+//	private static VectorPlotConfiguration vectorConfig = new VectorPlotConfiguration();
 	
 	private static String subtitle1 = "";
 	private static String subtitle2 = "";
@@ -146,8 +146,8 @@ public class ScriptHandler {
 											+ "[ -unalias <aliasname> ]\n"
 											+ "[ -unitString \"<unit string>\" ]\n"
 //											+ "[ -vectobs <formula> <formula> ]\n"
-											+ "[ -vector \"<U>\" \"<V>\"]\n"
-											+ "[ -vectorTile \"<formula>\" \"<U>\" \"<V>\"]\n"
+//											+ "[ -vector \"<U>\" \"<V>\"]\n"
+//											+ "[ -vectorTile \"<formula>\" \"<U>\" \"<V>\"]\n"
 											+ "[ -version ]\n"
 											+ "[ -verticalCrossPlot X|Y <row/column> (NEW)]\n"
 											+ "[ -windowid ]";
@@ -376,7 +376,7 @@ public class ScriptHandler {
 				try{
 					config = new PlotConfiguration(new File(args.get(1)));
 					vConfig = new VertCrossPlotConfiguration(new PlotConfiguration(new File(args.get(1))));
-					vectorConfig = new VectorPlotConfiguration(new PlotConfiguration(new File(args.get(1))));
+//					vectorConfig = new VectorPlotConfiguration(new PlotConfiguration(new File(args.get(1))));
 //					config.setConfigFileName(args.get(1));
 					configFile = args.get(1);
 				}
@@ -404,7 +404,7 @@ public class ScriptHandler {
 					}
 					config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, show);
 					vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, show);
-					vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, show);
+//					vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, show);
 					
 					showGridLines = show;
 				}
@@ -434,7 +434,7 @@ public class ScriptHandler {
 					
 				vConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, show);
 					
-				vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, show);
+//				vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, show);
 				
 				showDomainTicks = show;
 
@@ -464,7 +464,7 @@ public class ScriptHandler {
 					
 				vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, show);
 					
-				vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, show);
+//				vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, show);
 				
 				showRangeTicks = show;
 				
@@ -493,7 +493,7 @@ public class ScriptHandler {
 					
 				vConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, show);
 					
-				vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, show);
+//				vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, show);
 				
 				 showLegendTicks = show;
 				
@@ -580,13 +580,13 @@ public class ScriptHandler {
 					{	
 						config = new PlotConfiguration();
 						vConfig = new VertCrossPlotConfiguration();
-						vectorConfig = new VectorPlotConfiguration();
+//						vectorConfig = new VectorPlotConfiguration();
 						
 						if(cmap != null)
 						{
 							config.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 							vConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
-							vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
+//							vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 						}
 						titleSize = -1;
 						subtitle1Size = -1;
@@ -598,19 +598,19 @@ public class ScriptHandler {
 						
 						config.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 						vConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
-						vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+//						vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 					
 						config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 						vConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
-						vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+//						vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 						
 						config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
-						vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
+//						vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 						
 						config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 						vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
-						vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+//						vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 					}
 				}catch(NullPointerException e){}
 				
@@ -678,13 +678,13 @@ public class ScriptHandler {
 					{
 						config = new PlotConfiguration();
 						vConfig = new VertCrossPlotConfiguration();
-						vectorConfig = new VectorPlotConfiguration();
+//						vectorConfig = new VectorPlotConfiguration();
 						
 						if(cmap != null)
 						{
 							config.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 							vConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
-							vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
+//							vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 						}
 						
 						
@@ -698,19 +698,19 @@ public class ScriptHandler {
 						
 						config.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 						vConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
-						vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+//						vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 					
 						config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 						vConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
-						vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+//						vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 						
 						config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
-						vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
+//						vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 						
 						config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 						vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
-						vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+//						vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 					}
 				}catch(NullPointerException e){}
 				
@@ -802,7 +802,7 @@ public class ScriptHandler {
 						{
 							config.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 							vConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
-							vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
+//							vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 						}
 						
 					}catch (NullPointerException e){}
@@ -1119,7 +1119,7 @@ public class ScriptHandler {
 					try{
 						config.setSubtitle1(args.get(1));
 						vConfig.setSubtitle1(args.get(1));
-						vectorConfig.setSubtitle1(args.get(1));
+//						vectorConfig.setSubtitle1(args.get(1));
 						subtitle1 = args.get(1);
 												
 					}catch(NullPointerException e) {}
@@ -1130,7 +1130,7 @@ public class ScriptHandler {
 					try{
 						config.setSubtitle2(args.get(1));
 						vConfig.setSubtitle2(args.get(1));
-						vectorConfig.setSubtitle2(args.get(1));
+//						vectorConfig.setSubtitle2(args.get(1));
 						subtitle2 = args.get(1);
 					}catch(NullPointerException e) {}
 				}				
@@ -1148,10 +1148,10 @@ public class ScriptHandler {
 						vConfig.putObject(PlotConfiguration.SUBTITLE_2_FONT, 
 								new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
 						
-						vectorConfig.putObject(PlotConfiguration.SUBTITLE_1_FONT, 
-								new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
-						vectorConfig.putObject(PlotConfiguration.SUBTITLE_2_FONT, 
-								new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
+//						vectorConfig.putObject(PlotConfiguration.SUBTITLE_1_FONT, 
+//								new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
+//						vectorConfig.putObject(PlotConfiguration.SUBTITLE_2_FONT, 
+//								new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
 					}catch(NullPointerException e){}
 				}				
 			});
@@ -1218,7 +1218,7 @@ public class ScriptHandler {
 					try{
 						config.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
 						vConfig.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
-						vectorConfig.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
+//						vectorConfig.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
 					}catch(NullPointerException e){}
 				}				
 			});
@@ -1227,7 +1227,7 @@ public class ScriptHandler {
 					try{
 						config.setTitle(args.get(1));
 						vConfig.setTitle(args.get(1));
-						vectorConfig.setTitle(args.get(1));
+//						vectorConfig.setTitle(args.get(1));
 						title = args.get(1);
 					}catch(NullPointerException e) {}
 				}				
@@ -1266,7 +1266,7 @@ public class ScriptHandler {
 					try{
 						config.setUnits(args.get(1));
 						vConfig.setUnits(args.get(1));
-						vectorConfig.setUnits(args.get(1));
+//						vectorConfig.setUnits(args.get(1));
 						units = args.get(1);
 					}catch(NullPointerException e) {}
 				}				
@@ -1304,12 +1304,12 @@ public class ScriptHandler {
 						verdiApp.getProject().getFormulas().addFormula(v);
 							
 						// create a vector plot with no tile
-						vectorConfig.setVectorsComponents(u, v);
-						Plot plot = new VectorPlotCreator(verdiApp, vectorConfig).createPlot();
+//						vectorConfig.setVectorsComponents(u, v);
+//						Plot plot = new VectorPlotCreator(verdiApp, vectorConfig).createPlot();
 						
 						List<String> viewList = verdiApp.getGui().getViewList();
 						curView = viewList.get(viewList.size() - 1);
-						plotMap.put(curView, plot);
+//						plotMap.put(curView, plot);
 						
 						if(configFile == null)
 						{
@@ -1321,7 +1321,7 @@ public class ScriptHandler {
 							titleSize = -1;
 							subtitle1Size = -1;
 							subtitle2Size = -1;
-							vectorConfig = new VectorPlotConfiguration();
+//							vectorConfig = new VectorPlotConfiguration();
 							vConfig = new VertCrossPlotConfiguration();
 							config = new PlotConfiguration();
 							
@@ -1329,24 +1329,24 @@ public class ScriptHandler {
 							{
 								config.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 								vConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
-								vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
+//								vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 							}
 							
 							config.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 							vConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
-							vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+//							vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 						
 							config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 							vConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
-							vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+//							vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 							
 							config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 							vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
-							vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
+//							vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 							
 							config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 							vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
-							vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+//							vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 						}
 						
 					}catch(NullPointerException e){}
@@ -1389,17 +1389,17 @@ public class ScriptHandler {
 						verdiApp.getProject().getFormulas().addFormula(v);
 												
 						// create a vector plot with no tile
-						vectorConfig.setVectorsComponents(u, v, form);
-						Plot plot = new VectorPlotCreator(verdiApp, vectorConfig).createPlot();
+//						vectorConfig.setVectorsComponents(u, v, form);
+//						Plot plot = new VectorPlotCreator(verdiApp, vectorConfig).createPlot();
 						
 						List<String> viewList = verdiApp.getGui().getViewList();
 						curView = viewList.get(viewList.size() - 1);
-						plotMap.put(curView, plot);
+//						plotMap.put(curView, plot);
 						
 						if(configFile == null)
 						{
 							//reset the subtitles, titles and units
-							vectorConfig = new VectorPlotConfiguration();
+//							vectorConfig = new VectorPlotConfiguration();
 							vConfig = new VertCrossPlotConfiguration();
 							config = new PlotConfiguration();
 							subtitle1 = "";
@@ -1414,24 +1414,24 @@ public class ScriptHandler {
 							{
 								config.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 								vConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
-								vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
+//								vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 							}
 							
 							config.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 							vConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
-							vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+//							vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 						
 							config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 							vConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
-							vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+//							vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 							
 							config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 							vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
-							vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
+//							vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 							
 							config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 							vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
-							vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+//							vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 						}
 												
 					}catch(NullPointerException e){}
@@ -1475,7 +1475,7 @@ public class ScriptHandler {
 					if(configFile == null)
 					{
 						//reset the subtitles, titles and units
-						vectorConfig = new VectorPlotConfiguration();
+//						vectorConfig = new VectorPlotConfiguration();
 						vConfig = new VertCrossPlotConfiguration();
 						config = new PlotConfiguration();
 						subtitle1 = "";
@@ -1490,24 +1490,24 @@ public class ScriptHandler {
 						{
 							config.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 							vConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
-							vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
+//							vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 						}
 						
 						config.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 						vConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
-						vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+//						vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 					
 						config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 						vConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
-						vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+//						vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 						
 						config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
-						vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
+//						vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 						
 						config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 						vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
-						vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+//						vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 					}
 				}catch(NullPointerException e){}
 			}				
@@ -1601,7 +1601,7 @@ public class ScriptHandler {
 		return verdiApp;
 	}
 	
-	/**This will create a new usable string from an alias, making it dataset specific
+	/**This will create a new usable string from an alias, making it dataset-specific
 	 * 
 	 * @param datasetAlias String
 	 * @return String
@@ -1647,71 +1647,71 @@ public class ScriptHandler {
 	{
 		config = new PlotConfiguration();
 		vConfig = new VertCrossPlotConfiguration();
-		vectorConfig = new VectorPlotConfiguration();
+//		vectorConfig = new VectorPlotConfiguration();
 		
 		if(configFile != null)
 		{
 			try{
 				config = new PlotConfiguration(new File(configFile));
 				vConfig = new VertCrossPlotConfiguration(new PlotConfiguration(new File(configFile)));
-				vectorConfig = new VectorPlotConfiguration(new PlotConfiguration(new File(configFile)));
+//				vectorConfig = new VectorPlotConfiguration(new PlotConfiguration(new File(configFile)));
 			}catch(IOException e){}
 		}
 		else{
 			config.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 			vConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
-			vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+//			vectorConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
 		
 			config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 			vConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
-			vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+//			vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 			
 			config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 			vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
-			vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
+//			vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 			
 			config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 			vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
-			vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+//			vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 	
 	
 			if(titleSize != -1)
 			{
 				config.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, titleSize));
 				vConfig.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, titleSize));
-				vectorConfig.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, titleSize));
+//				vectorConfig.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, titleSize));
 			}
 			if(subtitle1Size != -1)
 			{
 				config.putObject(PlotConfiguration.SUBTITLE_1_FONT, 
 						new Font("SansSerif", Font.PLAIN, subtitle1Size));
 				vConfig.putObject(PlotConfiguration.SUBTITLE_1_FONT, new Font("SansSerif", Font.PLAIN, subtitle1Size));
-				vectorConfig.putObject(PlotConfiguration.SUBTITLE_1_FONT, new Font("SansSerif", Font.PLAIN, subtitle1Size));
+//				vectorConfig.putObject(PlotConfiguration.SUBTITLE_1_FONT, new Font("SansSerif", Font.PLAIN, subtitle1Size));
 			}
 			if(subtitle2Size != -1)
 			{
 				config.putObject(PlotConfiguration.SUBTITLE_2_FONT, 
 						new Font("SansSerif", Font.PLAIN, subtitle2Size));
 				vConfig.putObject(PlotConfiguration.SUBTITLE_2_FONT, new Font("SansSerif", Font.PLAIN, subtitle2Size));
-				vectorConfig.putObject(PlotConfiguration.SUBTITLE_2_FONT, new Font("SansSerif", Font.PLAIN, subtitle2Size));
+//				vectorConfig.putObject(PlotConfiguration.SUBTITLE_2_FONT, new Font("SansSerif", Font.PLAIN, subtitle2Size));
 			}
 			
 	
 			config.setUnits(units);
 			vConfig.setUnits(units);
-			vectorConfig.setUnits(units);
+//			vectorConfig.setUnits(units);
 	
 			config.setTitle(title);
 			vConfig.setTitle(title);
-			vectorConfig.setTitle(title);
+//			vectorConfig.setTitle(title);
 	
 			config.setSubtitle2(subtitle2);
 			vConfig.setSubtitle2(subtitle2);
-			vectorConfig.setSubtitle2(subtitle2);
+//			vectorConfig.setSubtitle2(subtitle2);
 	
 			config.setSubtitle1(subtitle1);
 			vConfig.setSubtitle1(subtitle1);
-			vectorConfig.setSubtitle1(subtitle1);
+//			vectorConfig.setSubtitle1(subtitle1);
 		}
 	}
 	

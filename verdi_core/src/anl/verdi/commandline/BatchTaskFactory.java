@@ -8,7 +8,7 @@ import java.util.Map;
 
 import anl.verdi.commandline.task.TilePlotTask;
 import anl.verdi.commandline.task.TimeSeriesPlotTask;
-import anl.verdi.commandline.task.VectorPlotTask;
+//import anl.verdi.commandline.task.VectorPlotTask;		// 2014 removed old Vector Plot
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiConstants;
 import anl.verdi.formula.Formula;
@@ -75,13 +75,14 @@ public class BatchTaskFactory {
 			
 			for (Map<String, String> m : maps)
 				tasks.add(new TimeSeriesPlotTask(m, new File[]{new File(m.get(VerdiConstants.DATA_FILE))}, app, Formula.Type.CONTOUR));
-		} else if (gtype.equalsIgnoreCase(VerdiConstants.VECTOR) || gtype.equalsIgnoreCase(VerdiConstants.VECTOR_TILE)) {
-			if (!usePattern)
-				tasks.add(new VectorPlotTask(map, files, app));
-			
-			for (Map<String, String> m : maps)
-				tasks.add(new VectorPlotTask(m, new File[]{new File(m.get(VerdiConstants.DATA_FILE))}, app));
-		}
+		} 
+//		else if (gtype.equalsIgnoreCase(VerdiConstants.VECTOR) || gtype.equalsIgnoreCase(VerdiConstants.VECTOR_TILE)) {
+//			if (!usePattern)
+//				tasks.add(new VectorPlotTask(map, files, app));
+//			
+//			for (Map<String, String> m : maps)
+//				tasks.add(new VectorPlotTask(m, new File[]{new File(m.get(VerdiConstants.DATA_FILE))}, app));
+//		}	// 2014 removed old Vector Plot
 		
 		return tasks;
 	}

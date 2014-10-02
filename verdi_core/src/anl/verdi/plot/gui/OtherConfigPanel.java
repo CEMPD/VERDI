@@ -7,7 +7,7 @@ import javax.swing.border.TitledBorder;
 
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
-import anl.verdi.plot.config.VectorPlotConfiguration;
+//import anl.verdi.plot.config.VectorPlotConfiguration;		// 2014 removed old Vector Plot
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -26,14 +26,14 @@ public class OtherConfigPanel extends JPanel {
 	private static final long serialVersionUID = 3891337545375068585L;
 	public OtherConfigPanel() {
 		initComponents();
-		vectorPanel.init(Color.BLACK, "Vector Arrow Color");
+//		vectorPanel.init(Color.BLACK, "Vector Arrow Color");
 	}
 
 	public PlotConfiguration fillConfiguration(PlotConfiguration config) {
 		if (gridLinePanel.isEnabled()) config = gridLinePanel.fillConfiguration(config);
-		if (vectorPanel.isEnabled()) {
-			config.putObject(VectorPlotConfiguration.VECTOR_COLOR, vectorPanel.getSelectedColor());
-		}
+//		if (vectorPanel.isEnabled()) {
+//			config.putObject(VectorPlotConfiguration.VECTOR_COLOR, vectorPanel.getSelectedColor());
+//		}
 
 		if (seriesColorPanel.isEnabled()) {
 			config.putObject(TimeSeriesPlotConfiguration.SERIES_COLOR, seriesColorPanel.getSelectedColor());
@@ -46,9 +46,9 @@ public class OtherConfigPanel extends JPanel {
 		gridLinePanel.setEnabled(enabled);
 	}
 
-	public void setVectorPanelEnabled(boolean enabled) {
-		vectorPanel.setEnabled(enabled);
-	}
+//	public void setVectorPanelEnabled(boolean enabled) {
+//		vectorPanel.setEnabled(enabled);
+//	}
 
 	public void setSeriesColorEnabled(boolean enabled) {
 		seriesColorPanel.setEnabled(enabled);
@@ -58,9 +58,9 @@ public class OtherConfigPanel extends JPanel {
 		gridLinePanel.init(color, showLines);
 	}
 
-	public void initVector(Color color) {
-		vectorPanel.init(color, "Vector Arrow Color");
-	}
+//	public void initVector(Color color) {
+//		vectorPanel.init(color, "Vector Arrow Color");
+//	}
 
 	public void initSeries(Color color) {
 		seriesColorPanel.init(color, "Series Color");
@@ -70,7 +70,7 @@ public class OtherConfigPanel extends JPanel {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner non-commercial license
 		gridLinePanel = new GridLinePanel();
-		vectorPanel = new SimpleColorPanel();
+//		vectorPanel = new SimpleColorPanel();
 		seriesColorPanel = new SimpleColorPanel();
 		CellConstraints cc = new CellConstraints();
 
@@ -97,10 +97,10 @@ public class OtherConfigPanel extends JPanel {
 //				}));
 		add(gridLinePanel, cc.xy(1, 1));
 
-		//---- vectorPanel ----
-		vectorPanel.setBorder(new TitledBorder("Vector Arrow Color"));
-		add(vectorPanel, cc.xy(1, 3));
-
+//		//---- vectorPanel ----
+//		vectorPanel.setBorder(new TitledBorder("Vector Arrow Color"));
+//		add(vectorPanel, cc.xy(1, 3));
+//
 		//---- seriesColorPanel ----
 		seriesColorPanel.setBorder(new TitledBorder("Series Color"));
 		add(seriesColorPanel, cc.xy(1, 5));
@@ -110,7 +110,7 @@ public class OtherConfigPanel extends JPanel {
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner non-commercial license
 	private GridLinePanel gridLinePanel;
-	private SimpleColorPanel vectorPanel;
+//	private SimpleColorPanel vectorPanel;
 	private SimpleColorPanel seriesColorPanel;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }

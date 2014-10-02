@@ -373,7 +373,7 @@ System.out.println("back from views.put, ending function addPlot");
 
 	public void setDualElementPlotsEnabled(boolean enabled) {
 		manager.getBarManager().getToolBarComponent(VerdiConstants.SCATTER_BUTTON_ID).setEnabled(enabled);
-		manager.getBarManager().getToolBarComponent(VerdiConstants.VECTOR_BUTTON_ID).setEnabled(enabled);
+//		manager.getBarManager().getToolBarComponent(VerdiConstants.VECTOR_BUTTON_ID).setEnabled(enabled);	// 2014 removed old Vector Plot
 	}
 
 	public void setVertCrossPlotEnabled(boolean enabled) {

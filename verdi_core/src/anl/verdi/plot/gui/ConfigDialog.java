@@ -23,7 +23,7 @@ import anl.verdi.plot.color.PaletteSelectionPanel;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
-import anl.verdi.plot.config.VectorPlotConfiguration;
+//import anl.verdi.plot.config.VectorPlotConfiguration;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
@@ -174,30 +174,29 @@ public class ConfigDialog extends JDialog {
 	}
 
 	private void initOther(PlotConfiguration config) {
-		Boolean showGrid = (Boolean) config
-				.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
+		Boolean showGrid = (Boolean) config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
 		if (showGrid == null) {
 			otherPanel.setGridLinePanelEnabled(false);
 		} else {
-			Color color = config
-					.getColor(TilePlotConfiguration.GRID_LINE_COLOR);
+			Color color = config.getColor(TilePlotConfiguration.GRID_LINE_COLOR);
 			if (color == null)
 				color = Color.BLACK;
 			otherPanel.initGridLines(color, showGrid);
 		}
 
-		Color color = config.getColor(VectorPlotConfiguration.VECTOR_COLOR);
-		if (color == null) {
-			otherPanel.setVectorPanelEnabled(false);
-		} else {
-			otherPanel.initVector(color);
-		}
-
-		color = config.getColor(TimeSeriesPlotConfiguration.SERIES_COLOR);
-		if (color == null)
-			otherPanel.setSeriesColorEnabled(false);
-		else
-			otherPanel.initSeries(color);
+//		2014 removed old Vector Plot
+//		Color color = config.getColor(VectorPlotConfiguration.VECTOR_COLOR);
+//		if (color == null) {
+//			otherPanel.setVectorPanelEnabled(false);
+//		} else {
+//			otherPanel.initVector(color);
+//		}
+//
+//		color = config.getColor(TimeSeriesPlotConfiguration.SERIES_COLOR);
+//		if (color == null)
+//			otherPanel.setSeriesColorEnabled(false);
+//		else
+//			otherPanel.initSeries(color);
 	}
 
 	private void initLabels(PlotConfiguration config) {

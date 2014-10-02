@@ -28,7 +28,7 @@ public interface VerdiConstants {
 	String TIME_SERIES_LINE_BUTTON_ID = "anl.verdi.plot.gui.action.TimeSeriesPlot";
 	String TIME_SERIES_BAR_BUTTON_ID = "anl.verdi.plot.gui.action.TimeSeriesBarPlot";
 	String SCATTER_BUTTON_ID = "anl.verdi.plot.gui.action.ScatterPlot";
-	String VECTOR_BUTTON_ID = "anl.verdi.plot.gui.action.VectorPlot";
+//	String VECTOR_BUTTON_ID = "anl.verdi.plot.gui.action.VectorPlot";	// 2014 removed old Vector Plot
 	String CONTOUR_BUTTON_ID = "anl.verdi.plot.gui.action.Contour3DPlot";
 	String AREAL_INTERPOLATION_BUTTON_ID = "anl.verdi.plot.gui.action.ArealInterpolation";
 
