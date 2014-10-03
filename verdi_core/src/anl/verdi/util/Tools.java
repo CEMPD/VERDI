@@ -14,6 +14,8 @@ import anl.verdi.plot.config.PlotConfiguration;
  * @version $Revision$ $Date$
  */
 public class Tools {
+	public static final String VERDI_BASE = "verdi.install.home";	// 2014 to be used from config.properties
+																	// if VERDI_HOME is not in the user's environment
 	public static final String CONFIG_HOME = "verdi.config.home";
 	public static final String DATASET_HOME = "verdi.dataset.home";
 	public static final String SCRIPT_HOME = "verdi.script.home";
@@ -92,7 +94,12 @@ public class Tools {
 	
 	public static String getVerdiHome() 
 	{	// 2014
-		return System.getenv(VERDI_HOME);
+		String vHome =  System.getenv(VERDI_HOME);
+		if(vHome == null || vHome.isEmpty())
+		{
+			vHome = System.getProperty(VERDI_BASE);
+		}
+		return vHome;
 	}
 
 	
