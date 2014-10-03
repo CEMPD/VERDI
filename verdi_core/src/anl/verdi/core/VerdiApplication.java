@@ -95,7 +95,7 @@ FormulaElementCreator, ListDataListener {
 
 	private File currentScriptFile = null;
 
-	private File currentAreaFile = new File("../..");
+//	private File currentAreaFile = new File("../..");
 
 	private boolean showSplash = false;
 

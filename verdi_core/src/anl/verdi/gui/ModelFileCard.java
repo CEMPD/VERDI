@@ -1,5 +1,5 @@
 /*
- * File Name:ModelFilePanel.java
+ * File Name:ModelFileCard.java
  * Description:
  * 
  * 
@@ -157,7 +157,5 @@ ModelFilePanel filePanel;
     public String getFilterDescription() {
       return "Models-3 I/O Files (*.nc)";
     }
-
-    
   }
 }

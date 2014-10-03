@@ -789,7 +789,8 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 				Properties props = new Properties();
 				props.put("default.maps", defaultMaps);
 				try {
-					File file = new File(System.getProperty(Tools.USER_HOME) + Tools.PROPERTY_FILE);
+//					File file = new File(System.getProperty(Tools.USER_HOME) + Tools.PROPERTY_FILE);
+					File file = new File(Tools.getPropertyFile());	// 2014 changed to use static function directly
 					props.store(new FileOutputStream(file), "");
 				} catch (IOException ex) {
 					center.warn("Error while saving map properties", ex);

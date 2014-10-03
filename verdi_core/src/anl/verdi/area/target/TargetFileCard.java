@@ -1,5 +1,5 @@
 /*
- * File Name:ModelFilePanel.java
+ * File Name:TargetFileCard.java
  * Description:
  * 
  * 
@@ -13,7 +13,6 @@ package anl.verdi.area.target;
 import java.awt.Component;
 import java.io.File;
 
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
@@ -21,7 +20,6 @@ import javax.swing.filechooser.FileFilter;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import anl.gui.button.ExtendedButton;
 import anl.gui.panel.layout.SpringUtilities;
 import anl.gui.window.dialog.FilePanel;
 import anl.gui.window.dialog.WizardWindow;
@@ -44,28 +42,28 @@ TargetPanel filePanel;
 	private static final long serialVersionUID = 4138748099347780811L;
 
 	// constructor to make files and show correct filters
-    TargetPanel(Component win,String title){
-      super(win,title,defaultPath);
-      //setCurrentPath(defaultPath);
-      setMultiSelectionEnabled(true);
-      setControlButtonsAreShown(false);
-      addChoosableFileFilter(new FileFilter(){
-        public boolean accept(File file) {
-          if(file.isDirectory()){
-            return true;
-          }
-          if(!file.isFile())return false;
-          String extension = getExtension(file);
-          if(extension==null)return false;
-          if(extension.equals("shp"))return true;
-          return false; 
-        }
-        public String getDescription() {
-          return "Shape Files (*.shp)";
-        }
-      });
-    }
-    
+	TargetPanel(Component win,String title){
+		super(win,title,defaultPath);
+		//setCurrentPath(defaultPath);
+		setMultiSelectionEnabled(true);
+		setControlButtonsAreShown(false);
+		addChoosableFileFilter(new FileFilter(){
+			public boolean accept(File file) {
+				if(file.isDirectory()){
+					return true;
+				}
+				if(!file.isFile())return false;
+				String extension = getExtension(file);
+				if(extension==null)return false;
+				if(extension.equals("shp"))return true;
+				return false; 
+			}
+			public String getDescription() {
+				return "Shapefiles (*.shp)";
+			}
+		});
+	}
+
     // string for default files
     public String getFilterDescription() {
         return "All Files";
@@ -99,23 +97,24 @@ TargetPanel filePanel;
     window=win;
     filePanel=new TargetPanel(win,"Open "+Target.NAME+"s");
     add(new JLabel(""));
-    add(new JLabel("Select one or more shape files containing areas."));
-    add(new JLabel("(An example file would be a shape file containing HUC regions.)"));
+    add(new JLabel("Select one or more shapefiles containing areas."));
+    add(new JLabel("(An example file would be a shapefile containing HUC regions.)"));
     add(new JLabel(""));
-    JPanel helpPanel = new JPanel();
-    helpPanel.setLayout(new BoxLayout(helpPanel,BoxLayout.X_AXIS));
-    helpPanel.add(new JLabel("To view a map showing HUC boundaries, press this button."));
-    helpPanel.add(new ExtendedButton("View HUCs"){
-      /**
-		 * 
-		 */
-		private static final long serialVersionUID = -8378408983952721555L;
-
-	public void actionPerformed(java.awt.event.ActionEvent event) {
-        // show the help file
-        //WDTMainWindow.mainWindow.doHelpMenu("About...",window);
-      };
-    });
+//    JPanel helpPanel = new JPanel();
+//    helpPanel.setLayout(new BoxLayout(helpPanel,BoxLayout.X_AXIS));
+//    helpPanel.add(new JLabel("To view a map showing HUC boundaries, press this button."));
+//    helpPanel.add(new ExtendedButton("View HUCs")
+//    {
+//      /**
+//		 * 
+//		 */
+//		private static final long serialVersionUID = -8378408983952721555L;
+//
+//	public void actionPerformed(java.awt.event.ActionEvent event) {
+//        // show the help file
+//        //WDTMainWindow.mainWindow.doHelpMenu("About...",window);
+//      };
+//    });
     add(new JLabel(""));
     //add(helpPanel);
     add(filePanel);
