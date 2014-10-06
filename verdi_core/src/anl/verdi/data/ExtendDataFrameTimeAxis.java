@@ -3,6 +3,9 @@ package anl.verdi.data;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 public class ExtendDataFrameTimeAxis extends ExtendDataFrameAxis implements ExtendTimeCoordAxis {
 	/**
 	 * Creates a DataFrameAxis for the specified axis with origin and extent
@@ -11,9 +14,10 @@ public class ExtendDataFrameTimeAxis extends ExtendDataFrameAxis implements Exte
 	 * @param axis  the axis
 	 * @param index the array index of this axis
 	 */
+	static final Logger Logger = LogManager.getLogger(ExtendDataFrameTimeAxis.class.getName());
 	public ExtendDataFrameTimeAxis(ExtendTimeCoordAxis axis, int index) {
 		super(axis, index);
-System.out.println("in constructor for ExtendDataFrameTimeAxes");
+		Logger.debug("in constructor for ExtendDataFrameTimeAxes");
 	}
 
 	/**
@@ -26,7 +30,7 @@ System.out.println("in constructor for ExtendDataFrameTimeAxes");
 	 */
 	public ExtendDataFrameTimeAxis(ExtendTimeCoordAxis axis, int origin, int extent, int index) {
 		super(axis, origin, extent, index);
-		System.out.println("in alternate constructor for ExtendDataFrameTimeAxes");
+		Logger.debug("in alternate constructor for ExtendDataFrameTimeAxes");
 	}
 
 	/**
@@ -49,7 +53,7 @@ System.out.println("in constructor for ExtendDataFrameTimeAxes");
 	 * @return the Date for the specified timestep
 	 */
 	public GregorianCalendar getDate(int timestep) {
-		System.out.println("in ExtendDataFrameTimeAxes GregorianCalendar getDate");
+		Logger.debug("in ExtendDataFrameTimeAxes GregorianCalendar getDate");
 		return ((ExtendTimeCoordAxis)this.axis).getDate(timestep);
 	}
 
@@ -62,7 +66,7 @@ System.out.println("in constructor for ExtendDataFrameTimeAxes");
 	 *         timestep is found then return Axes.TIME_STEP_NOT_FOUND.
 	 */
 	public int getTimeStep(Date date) {
-		System.out.println("in ExtendDataFrameTimeAxes getTimeStep for a Date");
+		Logger.debug("in ExtendDataFrameTimeAxes getTimeStep for a Date");
 		return ((ExtendTimeCoordAxis)this.axis).getTimeStep(date);
 	}
 	
@@ -75,7 +79,7 @@ System.out.println("in constructor for ExtendDataFrameTimeAxes");
 	 *         timestep is found then return Axes.TIME_STEP_NOT_FOUND.
 	 */
 	public int getTimeStep(GregorianCalendar date) {
-		System.out.println("in ExtendDataFrameTimeAxes getTimeStep for a GregorianCalendar");
+		Logger.debug("in ExtendDataFrameTimeAxes getTimeStep for a GregorianCalendar");
 		return ((ExtendTimeCoordAxis)this.axis).getTimeStep(date);
 	}
 }

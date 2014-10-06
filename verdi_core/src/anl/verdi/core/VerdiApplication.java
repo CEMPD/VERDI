@@ -20,6 +20,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Level;
+//import org.geotools.map.DefaultMapContext;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.map.MapContent;
 import org.jdesktop.swingx.JXTable;
 
@@ -72,7 +75,6 @@ import anl.verdi.util.DateRange;
 import anl.verdi.util.ObsTimeChecker;
 import anl.verdi.util.Tools;
 import anl.verdi.util.VectorOverlayTimeChecker;
-//import org.geotools.map.DefaultMapContext;
 
 /**
  * Main verdi application facade.
@@ -82,6 +84,7 @@ import anl.verdi.util.VectorOverlayTimeChecker;
  */
 public class VerdiApplication implements PlotListener, DatasetModelListener, ListSelectionListener,
 FormulaElementCreator, ListDataListener {
+	static final Logger Logger = LogManager.getLogger(VerdiApplication.class.getName());
 
 	private static MessageCenter msg = MessageCenter.getMessageCenter(VerdiApplication.class);
 
@@ -119,11 +122,11 @@ FormulaElementCreator, ListDataListener {
 	public VerdiApplication(DataManager manager) {
 		this.manager = manager;
 		singleton = this;
-		System.out.println("Msg #1: in VerdiApplication DataManager");
+		Logger.debug("Msg #1: in VerdiApplication DataManager");
 	}
 
 	public static VerdiApplication getInstance() {
-		System.out.println("Msg #6: in VerdiApplication.getInstance()");
+		Logger.debug("Msg #6: in VerdiApplication.getInstance()");
 		return singleton;
 	}
 
@@ -132,7 +135,7 @@ FormulaElementCreator, ListDataListener {
 	}
 
 	public void init(VerdiGUI gui, Project project) {
-		System.out.println("Msg #8: in VerdiApplication.init");
+		Logger.debug("Msg #8: in VerdiApplication.init");
 		this.gui = gui;
 		this.project = project;
 		MessageCenter.addMessageListener(new MessageEventListener() {
@@ -140,10 +143,10 @@ FormulaElementCreator, ListDataListener {
 				if (messageEvent != null) {
 //					System.out.print("Msg: " + messageEvent.getMessage());
 					if (messageEvent.getThrowable()!=null) {
-						System.out.println(" : throwable - "
+						Logger.error(" : throwable - "
 								+ messageEvent.getThrowable().getMessage());
 					} else {
-						System.out.println();
+						Logger.debug(" ");
 					}
 				}
 				if (messageEvent != null && messageEvent.getLevel().equals(Level.ERROR) &&
@@ -190,7 +193,7 @@ FormulaElementCreator, ListDataListener {
 	 * @return the currently loaded Project.
 	 */
 	public Project getProject() {
-		System.out.println("Msg #12 & #13: in VerdiApplication.getProject");
+		Logger.debug("Msg #12 & #13: in VerdiApplication.getProject");
 		return project;
 	}
 
@@ -200,7 +203,7 @@ FormulaElementCreator, ListDataListener {
 	 * @return the DataManager.
 	 */
 	public DataManager getDataManager() {
-		System.out.println("in VerdiApplication.getDataManager");
+		Logger.debug("in VerdiApplication.getDataManager");
 		return manager;
 	}
 
@@ -211,7 +214,7 @@ FormulaElementCreator, ListDataListener {
 	 *         terminated, otherwise false.
 	 */
 	public boolean exit() {
-		System.out.println("in VerdiApplication.exit");
+		Logger.debug("in VerdiApplication.exit");
 		if (RemoteFileReader.TEMP_REMOTE_FILE_LIST.size()>0) {
 			int res = JOptionPane.showConfirmDialog(gui.getFrame(), "Do you want to delete the temparory files downloaded remotely?",
 					"Delete Temp Files Warning", JOptionPane.YES_NO_OPTION);
@@ -241,7 +244,7 @@ FormulaElementCreator, ListDataListener {
 	 * file dialog.
 	 */
 	public void openProject() {
-		System.out.println("in VerdiApplication.openProject");
+		Logger.debug("in VerdiApplication.openProject");
 		boolean abort = false;
 		if (manager.getDatasetCount() > 0) {
 			int res = JOptionPane.showConfirmDialog(gui.getFrame(), "All currently loaded datasets will be unloaded. Continue?",
@@ -264,7 +267,7 @@ FormulaElementCreator, ListDataListener {
 	 * @param file the project file
 	 */
 	public void openProject(File file) {
-		System.out.println("in VerdiApplication.openProject for a File");
+		Logger.debug("in VerdiApplication.openProject for a File");
 		if (file != null) {
 			IO io = new IO();
 			try {
@@ -280,7 +283,7 @@ FormulaElementCreator, ListDataListener {
 	 * Saves the current project -- the current set of datasets and formulas.
 	 */
 	public void saveProject() {
-		System.out.println("in VerdiApplication.saveProject");
+		Logger.debug("in VerdiApplication.saveProject");
 		if (currentFile == null || currentFile.isDirectory()) {
 			saveProjectAs();
 		} else if (currentFile.isFile()){
@@ -289,7 +292,7 @@ FormulaElementCreator, ListDataListener {
 	}
 
 	private void doSave(File file) {
-		System.out.println("in VerdiApplication.doSave");
+		Logger.debug("in VerdiApplication.doSave");
 		if (file != null) {
 			IO io = new IO();
 			try {
@@ -305,7 +308,7 @@ FormulaElementCreator, ListDataListener {
 	 * Saves the current project as -- the current set of datasets and formulas .
 	 */
 	public void saveProjectAs() {
-		System.out.println("in VerdiApplication.saveProjectAs");
+		Logger.debug("in VerdiApplication.saveProjectAs");
 		File file = FileChooserUtilities.getSaveFile(currentFile);
 		if (file != null) {
 			doSave(file);
@@ -355,7 +358,7 @@ FormulaElementCreator, ListDataListener {
 	 * @return the result of the evaluation or null if the evaluation fails.
 	 */
 	public DataFrame evaluateFormula(Formula.Type type, DateRange dateRange) {
-		System.out.println("in VerdiApplication.evaluateFormula 1");
+		Logger.debug("in VerdiApplication.evaluateFormula 1");
 		DataFrame frame = null;
 		try {
 			if (project == null) 
@@ -412,7 +415,7 @@ FormulaElementCreator, ListDataListener {
 	 * @return the result of the evaluation or null if the evaluation fails.
 	 */
 	public DataFrame evaluateFormula(String strFormula,Formula.Type type, DateRange dateRange) {
-		System.out.println("in VerdiApplication.evaluateFormula 2");
+		Logger.debug("in VerdiApplication.evaluateFormula 2");
 		DataFrame frame = null;
 		try {
 			if (project == null) 
@@ -457,7 +460,7 @@ FormulaElementCreator, ListDataListener {
 	 * @param event contains the details of the area selection
 	 */
 	public void areaSelected(AreaSelectionEvent event) {
-//		System.out.println("in VerdiApplication.areaSelected");
+		Logger.debug("in VerdiApplication.areaSelected");
 		if (event.isFinished()) {
 			gui.setStatusTwoText("");
 		} else {
@@ -469,7 +472,7 @@ FormulaElementCreator, ListDataListener {
 	 * Notifies this PlotListener when a plot has been probed.
 	 */
 	public void plotProbed(ProbeEvent event) {
-		System.out.println("in VerdiApplication.plotProbed");
+		Logger.debug("in VerdiApplication.plotProbed");
 		DataFrame frame = event.getProbedData();
 		if (frame.getSize() == 1) {
 			probePoint(event.getSource(), frame, event.getIsLog(), event.getLogBase()); // TODO: JIZHEN
@@ -506,7 +509,7 @@ FormulaElementCreator, ListDataListener {
 	}
 
 	private void probePoint(Plot plot, DataFrame frame, boolean isLog, double logBase) {
-		System.out.println("in VerdiApplication.probePoint");
+		Logger.debug("in VerdiApplication.probePoint");
 		// show in status bar
 		Axes<DataFrameAxis> axes = frame.getAxes();
 		DataFrameIndex index = frame.getIndex();
@@ -597,7 +600,7 @@ FormulaElementCreator, ListDataListener {
 	 * @throws IllegalFormulaException 
 	 */
 	public void loadDataset(File[] files) throws Exception {
-System.out.println("in VerdiApplication.loadDataset");
+		Logger.debug("in VerdiApplication.loadDataset");
 		if (project == null) 
 			throw new Exception("Project is not properly initialized.");
 
@@ -639,7 +642,7 @@ System.out.println("in VerdiApplication.loadDataset");
 	 * @param files the area files to load
 	 */
 	public void loadAreaFile(File[] files) {
-		System.out.println("in VerdiApplication.loadAreaFile");
+		Logger.debug("in VerdiApplication.loadAreaFile");
 		Set<URL> urls = new HashSet<URL>();
 		for (AreaFileListElement set : project.getAreaFilesAsList()) {
 			urls.add(set.getAreaFile().getURL());
@@ -669,7 +672,7 @@ System.out.println("in VerdiApplication.loadDataset");
 	 * Opens a dataset.
 	 */
 	public void addDataset() {
-		System.out.println("in VerdiApplication.addDataset");
+		Logger.debug("in VerdiApplication.addDataset");
 		File[] files = FileChooserUtilities.getOpenFiles(currentDatasetFile);
 		if (files.length > 0) {
 			try {
@@ -685,7 +688,7 @@ System.out.println("in VerdiApplication.loadDataset");
 //	 * Opens area files.
 //	 */
 //	public void addAreaFile() {
-//		System.out.println("in VerdiApplication.addAreaFile");
+//		Logger.debug("in VerdiApplication.addAreaFile");
 //		File[] files = FileChooserUtilities.getOpenFiles(currentAreaFile);
 //		if (files.length > 0) {
 //			loadAreaFile(files);
@@ -698,7 +701,7 @@ System.out.println("in VerdiApplication.loadDataset");
 	 * @param e the event that characterizes the change.
 	 */
 	public void valueChanged(ListSelectionEvent e) {
-		System.out.println("in VerdiApplication.valueChanged");
+		Logger.debug("in VerdiApplication.valueChanged");
 		if (!e.getValueIsAdjusting()) {
 			FormulaListElement selectedFormula = (FormulaListElement) ((JList) e.getSource()).getSelectedValue();
 			project.setSelectedFormula(selectedFormula);
@@ -724,7 +727,7 @@ System.out.println("in VerdiApplication.loadDataset");
 	 * @param model
 	 */
 	public void datasetRemoved(Dataset set, DatasetListModel model) {
-		System.out.println("in VerdiApplication.datasetRemoved");
+		Logger.debug("in VerdiApplication.datasetRemoved");
 		gui.setSaveEnabled(model.getSize() > 0);
 		try {
 			manager.closeDataset(set.getAlias());
@@ -740,7 +743,7 @@ System.out.println("in VerdiApplication.loadDataset");
 	 * @param model the DatasetListModel from which the set was removed
 	 */
 	public void datasetAdded(Dataset set, DatasetListModel model) {
-		System.out.println("in VerdiApplication.datasetAdded");
+		Logger.debug("in VerdiApplication.datasetAdded");
 		gui.setSaveEnabled(true);
 	}
 
@@ -752,7 +755,7 @@ System.out.println("in VerdiApplication.loadDataset");
 	 * @return true if the validation was a success otherwise false.
 	 */
 	public FormulaListElement create(String strFormula) {
-		System.out.println("in VerdiApplication create");
+		Logger.debug("in VerdiApplication create");
 		// before do this, should validate the formula
 		// and if it fails then error message.
 		FormulaFactory factory = new FormulaFactory();
@@ -787,7 +790,7 @@ System.out.println("in VerdiApplication.loadDataset");
 	 * @param request the request
 	 */
 	public void plotRequested(PlotRequest request) {
-		System.out.println("in VerdiApplication.plotRequested");
+		Logger.debug("in VerdiApplication.plotRequested");
 		request.init(this);
 		request.createPlot();
 	}
@@ -801,7 +804,7 @@ System.out.println("in VerdiApplication.loadDataset");
 	 * @param request the overlay request
 	 */
 	public void overlayRequested(OverlayRequest request) {
-		System.out.println("in VerdiApplication.overlayRequested");
+		Logger.debug("in VerdiApplication.overlayRequested");
 		if (request.getType() == OverlayRequest.Type.OBS) {
 			List<Variable> vars = new ArrayList<Variable>();
 			for (DatasetListElement element : project.getDatasetsAsList()) {
@@ -881,35 +884,35 @@ System.out.println("in VerdiApplication.loadDataset");
 
 //	public MapContext getDomainPanelContext() {
 	public MapContent getDomainPanelContext() {
-		System.out.println("Msg #5 & #7: in VerdiApplication.getDomainPanelContext");
+		Logger.debug("Msg #5 & #7: in VerdiApplication.getDomainPanelContext");
 		return domainPanelContext;
 	}
 
 //	public void setDomainPanelContext(MapContext domainPanelContext) {
 	public void setDomainPanelContext(MapContent domainPanelContext) {
-		System.out.println("in VerdiApplication setDomainPlanelContext");
+		Logger.debug("in VerdiApplication setDomainPlanelContext");
 		this.domainPanelContext = domainPanelContext;
 	}
 
 	// listeners for the formula model
 	public void contentsChanged(ListDataEvent e) {
-		System.out.println("in VerdiApplication.contentsChanged (empty function)");
+		Logger.debug("in VerdiApplication.contentsChanged (empty function)");
 	}
 
 	public void intervalAdded(ListDataEvent e) {
-		System.out.println("in VerdiApplication intervalAdded");
+		Logger.debug("in VerdiApplication intervalAdded");
 		FormulaListModel model = (FormulaListModel) e.getSource();
 		gui.setDualElementPlotsEnabled(model.getSize() > 0);
 	}
 
 	public void intervalRemoved(ListDataEvent e) {
-		System.out.println("in VerdiApplication IntervalRemoved");
+		Logger.debug("in VerdiApplication IntervalRemoved");
 		FormulaListModel model = (FormulaListModel) e.getSource();
 		gui.setDualElementPlotsEnabled(model.getSize() > 0);
 	}
 
 	public void animateTilePlots() {
-		System.out.println("in VerdiApplication animateTilePlots");
+		Logger.debug("in VerdiApplication animateTilePlots");
 		MultPlotAnimationDialog dialog = new MultPlotAnimationDialog(gui.getFrame());
 		dialog.init(gui.getDisplayedPlots(Formula.Type.TILE));
 		dialog.pack();
@@ -921,9 +924,9 @@ System.out.println("in VerdiApplication.loadDataset");
 	 * Shows help.
 	 */
 	public void showHelp() {
-		System.out.println("in VerdiApplication showHelp");
+		Logger.debug("in VerdiApplication showHelp");
 		String helpDir = System.getProperty("user.dir");
-		System.out.println("helpdir = user.dir == " + helpDir);
+		Logger.debug("helpdir = user.dir == " + helpDir);
 		if (helpDir == null)
 			return;
 		helpDir = helpDir + "/help";

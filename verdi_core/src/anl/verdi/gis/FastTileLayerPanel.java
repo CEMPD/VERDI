@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,18 +16,18 @@ import java.util.Map;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.map.FeatureLayer;
 //import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 
@@ -45,6 +44,7 @@ import com.jgoodies.forms.layout.Sizes;
  */
 public class FastTileLayerPanel extends JPanel {
 	private static final long serialVersionUID = -1216281930499819824L;
+	static final Logger Logger = LogManager.getLogger(FastTileLayerPanel.class.getName());
 	private List<MapLines> removeLayers = new ArrayList<MapLines>();
 	private List<MapLines> addLayers = new ArrayList<MapLines>();
 	private List<MapLines> layers;
@@ -162,30 +162,30 @@ public class FastTileLayerPanel extends JPanel {
 //	}
 	
 //	private void editLayerButtonPerformed(ActionEvent e) {
-//System.out.println("in FastTileLayerPlot.editLayerButtonPerformed");
+//		Logger.debug("in FastTileLayerPlot.editLayerButtonPerformed");
 //		MapLines selected = (MapLines)layerList.getSelectedValue();
 //		int index = layerList.getSelectedIndex();
-//System.out.println("got index = " + index);		
+//		Logger.debug("got index = " + index);		
 //		if (selected == null)
 //			return;
-//System.out.println("selected is not null");		
+//		Logger.debug("selected is not null");		
 //		if (controlLayer != null && selected.getStyle() != null)
 //		{
 //			controlLayer.setStyle(selected.getStyle());
-//System.out.println("just set selected style");
+//\			Logger.debug("just set selected style");
 //		}
 //
-//System.out.println("ready to instantiate mapFile");
+//		Logger.debug("ready to instantiate mapFile");
 //		File mapFile = new File(selected.getMapFile());
-//System.out.println("ready to instantiate FastTileAddLayerWizard");
+//		Logger.debug("ready to instantiate FastTileAddLayerWizard");
 //		FastTileAddLayerWizard wizard = new FastTileAddLayerWizard(mapFile, controlLayer, selected, false);
-//System.out.println("ready to start dialog");
+//		Logger.debug("ready to start dialog");
 //		JDialog dialog = (JDialog)SwingUtilities.getWindowAncestor(this);
-//System.out.println("ready to display wizard");
+//		Logger.debug("ready to display wizard");
 //		MapLines layer = wizard.display((JFrame)dialog.getParent(), true);
-//System.out.println("have a layer - ready to check it out");		
+//		Logger.debug("have a layer - ready to check it out");		
 //		if (layer != null && !selected.equals(layer)) {
-//System.out.println("ready to deal with layers");
+//			Logger.debug("ready to deal with layers");
 //			((DefaultListModel) layerList.getModel()).remove(index);
 //			((DefaultListModel) layerList.getModel()).add(index, layer);
 //			layers.remove(selected);
@@ -195,10 +195,10 @@ public class FastTileLayerPanel extends JPanel {
 //			addLayers.add(layer);
 //			layerList.setSelectedIndex(index);
 //			layerList.scrollRectToVisible(layerList.getCellBounds(index, index));
-//System.out.println("done dealing with layers, ready to return from FastTileLayerPlot.editLayerButtonPerformed");
+//			Logger.debug("done dealing with layers, ready to return from FastTileLayerPlot.editLayerButtonPerformed");
 //			return;
 //		}
-//System.out.println("returning without dealing with layers, from FastTileLayerPlot.editLayerButtonPerformed");
+//		Logger.debug("returning without dealing with layers, from FastTileLayerPlot.editLayerButtonPerformed");
 //	}
 
 	public void setContext(List<MapLines> layers) {

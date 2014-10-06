@@ -6,8 +6,10 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import anl.verdi.area.FileHelper;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
+import anl.verdi.area.FileHelper;
 
 class Region{
   String name;
@@ -32,6 +34,7 @@ public class RegionNames extends HashMap {
 	 * 
 	 */
 	private static final long serialVersionUID = -252102419026607921L;
+	static final Logger Logger = LogManager.getLogger(RegionNames.class.getName());
 
 /**
    * Construct a new list of species
@@ -59,7 +62,7 @@ public class RegionNames extends HashMap {
     String dir = System.getProperty("speciesData");
     if(dir==null)return;
     if (!loadData(FileHelper.readDataLines(dir+"/watershedSegments.txt"))) {
-      System.out.println("Unable to load watershed segments file ");
+      Logger.error("Unable to load watershed segments file ");
     }
   }
   /**
@@ -70,7 +73,7 @@ public class RegionNames extends HashMap {
    */
   public void loadData(String fileName) {
     if (!loadData(FileHelper.readDataLines(fileName))) {
-      System.out.println("Unable to load watershed file " + fileName);
+      Logger.error("Unable to load watershed file " + fileName);
     }
   }
   static String[] keys = {"Region","Subregion","Accounting","Cataloging"};
@@ -109,7 +112,7 @@ public class RegionNames extends HashMap {
     region.id=id;
     region.keyType=keyType;
     region.name=fullName;
-//System.out.println(fullName);  
+//Logger.debug(fullName);  
     put(id,region);
   }
   /**
@@ -196,7 +199,7 @@ public class RegionNames extends HashMap {
     } 
     
     } catch (Exception e) {
-      System.out.println("Format Error in Region file");
+      Logger.error("Format Error in Region file");
       return false;
     }
     return true;

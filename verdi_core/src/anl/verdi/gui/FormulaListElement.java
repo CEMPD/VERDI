@@ -3,6 +3,9 @@ package anl.verdi.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.Dataset;
@@ -15,17 +18,18 @@ import anl.verdi.formula.FormulaVariable;
  * @version $Revision$ $Date$
  */
 public class FormulaListElement extends AbstractListElement {
+	static final Logger Logger = LogManager.getLogger(FormulaListElement.class.getName());
 
 	private String formula;
 	private List<FormulaVariable> variables;
 
 	public FormulaListElement(String formula) {
 		this(formula, new ArrayList<FormulaVariable>());
-		System.out.println("in FormulaListElement constructor String");
+		Logger.debug("in FormulaListElement constructor String");
 	}
 
 	public FormulaListElement(String formula, List<FormulaVariable> variables) {
-		System.out.println("in FormulaListElement constructor String List");
+		Logger.debug("in FormulaListElement constructor String List");
 		this.formula = formula;
 		this.variables = variables;
 
@@ -64,29 +68,29 @@ public class FormulaListElement extends AbstractListElement {
 	 * @return an iterable over the formula variables in this element.
 	 */
 	public Iterable<FormulaVariable> variables() {
-		System.out.println("in FormulaListElement variables");
+		Logger.debug("in FormulaListElement variables");
 		return variables;
 	}
 
 	public Axes<CoordAxis> getAxes() {
-		System.out.println("in FormulaListElement getAxes");
+		Logger.debug("in FormulaListElement getAxes");
 		if (variables.size() > 0) return variables.get(0).getDataset().getCoordAxes();
 		return null;
 	}
 
 	public String getFormula() {
-		System.out.println("in FormulaListElement getFormula");
+		Logger.debug("in FormulaListElement getFormula");
 		return formula;
 	}
 	
 	public Dataset getDataset() {
-		System.out.println("in FormulaListElement getDataset");
+		Logger.debug("in FormulaListElement getDataset");
 		if (variables.size() > 0) return variables.get(0).getDataset();
 		return null;
 	}
 
 	public String toString() {
-		System.out.println("in FormulaListElement toString");
+		Logger.debug("in FormulaListElement toString");
 		Dataset ds = getDataset();
 		
 		return formula + (ds != null && ds.isObs() ? "(OBS)" : "");

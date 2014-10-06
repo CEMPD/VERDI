@@ -2,6 +2,9 @@ package anl.verdi.area;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.area.target.GridInfo;
 import anl.verdi.area.target.Target;
 import anl.verdi.area.target.TargetCalculator;
@@ -24,6 +27,7 @@ public class AreaDataFrameTableModel extends AbstractDataFrameTableModel {
 	 * 
 	 */
 	private static final long serialVersionUID = -6345384193482940803L;
+	static final Logger Logger = LogManager.getLogger(AreaDataFrameTableModel.class.getName());
 	ArrayList areas;
 	ArrayList[] values,valuesAve;
 	Variable[] variables;
@@ -109,7 +113,7 @@ public class AreaDataFrameTableModel extends AbstractDataFrameTableModel {
 		}
 		int variableIndex=(columnIndex-2)/2;
 		if(values[variableIndex].isEmpty()){
-			System.out.println("error in export table");
+			Logger.error("error in export table");
 		}
 		if(columnIndex%2==0)return values[variableIndex].get(rowIndex);
 		else return valuesAve[variableIndex].get(rowIndex);

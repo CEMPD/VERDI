@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.swing.AbstractListModel;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.data.Dataset;
 
 /**
@@ -17,41 +20,42 @@ public class DatasetListModel extends AbstractListModel {
 	 * 
 	 */
 	private static final long serialVersionUID = -6884894135223912769L;
+	static final Logger Logger = LogManager.getLogger(DatasetListModel.class.getName());
 	private List<DatasetListElement> datasets = new ArrayList<DatasetListElement>();
 	private List<DatasetModelListener> listeners = new ArrayList<DatasetModelListener>();
 
 	public DatasetListModel()
 	{
-		System.out.println("in DatasetListModel default constructor");
+		Logger.debug("in DatasetListModel default constructor");
 	}
 	
 	public void addDatasetModelListener(DatasetModelListener listener) {
-		System.out.println("in DatasetListModel addDatasetModelListener");
+		Logger.debug("in DatasetListModel addDatasetModelListener");
 		listeners.add(listener);
 	}
 
 	public void removeDatasetModelListener(DatasetModelListener listener) {
-		System.out.println("in DatasetListModel removeDatasetModelListener");
+		Logger.debug("in DatasetListModel removeDatasetModelListener");
 		listeners.remove(listener);
 	}
 
 	public Object getElementAt(int index) {
-		System.out.println("in DatasetListModel getElementAt");
+		Logger.debug("in DatasetListModel getElementAt");
 		return datasets.get(index);
 	}
 
 	public Dataset getDatasetAt(int index) {
-		System.out.println("in DatasetListModel getDatasetAt");
+		Logger.debug("in DatasetListModel getDatasetAt");
 		return datasets.get(index).getDataset();
 	}
 
 	public int getSize() {
-//		System.out.println("in DatasetListModel getSize");	// NOTE: called VERY frequently
+//		Logger.debug("in DatasetListModel getSize");	// NOTE: called VERY frequently
 		return datasets == null ? 0 : datasets.size();
 	}
 
 	private int indexOf(Dataset dataset) {
-		System.out.println("in DatasetListModel indexOf");
+		Logger.debug("in DatasetListModel indexOf");
 		int index = 0;
 		String name = dataset.getName();
 		for (DatasetListElement dt : datasets) {
@@ -64,12 +68,12 @@ public class DatasetListModel extends AbstractListModel {
 	}
 
 	public Iterable<DatasetListElement> elements() {
-		System.out.println("in DatasetListModel elements");
+		Logger.debug("in DatasetListModel elements");
 		return datasets;
 	}
 
 	public int addDataset(Dataset dataset) {
-		System.out.println("in DatasetListModel addDataset");
+		Logger.debug("in DatasetListModel addDataset");
 		int index = indexOf(dataset);
 		if (index == -1) {
 			index = datasets.size();
@@ -81,7 +85,7 @@ public class DatasetListModel extends AbstractListModel {
 	}
 
 	public void removeDataset(DatasetListElement item) {
-		System.out.println("in DatasetListModel removeDataset (DatasetListElement)");
+		Logger.debug("in DatasetListModel removeDataset (DatasetListElement)");
 		int index = datasets.indexOf(item);
 		datasets.remove(index);
 		fireIntervalRemoved(this, index, index);
@@ -89,7 +93,7 @@ public class DatasetListModel extends AbstractListModel {
 	}
 
 	public void removeDatasetAt(int index) {
-		System.out.println("in DatasetListModel removeDataSetAt (int)");
+		Logger.debug("in DatasetListModel removeDataSetAt (int)");
 		if (index < 0)
 			return;
 		
@@ -99,14 +103,14 @@ public class DatasetListModel extends AbstractListModel {
 	}
 
 	private void fireDatasetRemoved(Dataset dataset) {
-		System.out.println("in DatasetListModel fireDatasetRemoved");
+		Logger.debug("in DatasetListModel fireDatasetRemoved");
 		for (DatasetModelListener listener : listeners) {
 			listener.datasetRemoved(dataset, this);
 		}
 	}
 
 	private void fireDatasetAdded(Dataset dataset) {
-		System.out.println("in DatasetListModel fireDatasetAdded");
+		Logger.debug("in DatasetListModel fireDatasetAdded");
 		for (DatasetModelListener listener : listeners) {
 			listener.datasetAdded(dataset, this);
 		}
@@ -116,7 +120,7 @@ public class DatasetListModel extends AbstractListModel {
 	 * Removes all the elements from this model.
 	 */
 	public void clear() {
-		System.out.println("in DatasetListModel clear");
+		Logger.debug("in DatasetListModel clear");
 		int size = datasets.size();
 		List<DatasetListElement> temp = new ArrayList<DatasetListElement>();
 		temp.addAll(datasets);
@@ -128,7 +132,7 @@ public class DatasetListModel extends AbstractListModel {
 	}
 
 	public void addAll(List<DatasetListElement> elements) {
-		System.out.println("in DatasetListModel addAll");
+		Logger.debug("in DatasetListModel addAll");
 		int index = datasets.size();
 		datasets.addAll(elements);
 		fireIntervalAdded(this, index, datasets.size() - 1);

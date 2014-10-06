@@ -10,6 +10,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiConstants;
 
@@ -20,6 +23,7 @@ import anl.verdi.core.VerdiConstants;
  * @author IE, UNC Chapel Hill
  */
 public class BatchScriptHandler {
+	static final Logger Logger = LogManager.getLogger(BatchScriptHandler.class.getName());
 
 	static HashMap<String, CommandScript> dataMap = new HashMap<String, CommandScript>();
 
@@ -102,17 +106,16 @@ public class BatchScriptHandler {
 			String value = thisCommand.get(1);
 
 			if (!(new File(value).exists()))
-				System.out.println("Cannot find file: " + value + ".");
+				Logger.error("Cannot find file: " + value + ".");
 
 			if (option.equalsIgnoreCase("-b") || option.equalsIgnoreCase("-batch")) {
-				System.out.println("Batch processing file: " + value);
+				Logger.debug("Batch processing file: " + value);
 				List<AbstractTask> tasks = processBatchFile(value);
 				processTasks(tasks);
-				System.out.println("Finished batch processing.");
+				Logger.debug("Finished batch processing.");
 			} else {
-				System.out.println(option + " is not a valid command.");
-				System.out.println();
-				System.out.println("Usage: \n" + HELPTEXT);
+				Logger.error(option + " is not a valid command.");
+				Logger.error("Usage: \n" + HELPTEXT);
 			}
 		}
 	}

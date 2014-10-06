@@ -28,6 +28,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import org.geotools.map.MapContext;			// replaced for GeoTools v10
 import org.geotools.map.MapContent;
 
@@ -57,17 +59,18 @@ public class AreaFilePanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 2092173824541825554L;
+	static final Logger Logger = LogManager.getLogger(AreaFilePanel.class.getName());
 	private Project project;
 	private MapContent context;	// replaced MapContext, DefaultMapContext with MapContent for GeoTools v10
 
 	private VerdiApplication verdiApp;
 	public AreaFilePanel() {
-//		System.out.println("in AreaFilePanel default constructor");
+		Logger.debug("in AreaFilePanel default constructor");
 		initComponents();
 	}
 	public AreaFilePanel(Project project, MapContent context, VerdiApplication app) // replaced MapContext, DefaultMapContext with MapContent for GeoTools v10
 	{
-//		System.out.println("in AreaFilePanel constructor with Project, MapContent, VerdiApplication");
+		Logger.debug("in AreaFilePanel constructor with Project, MapContent, VerdiApplication");
 		this.project = project;
 		this.context = context;
 		this.verdiApp=app;
@@ -81,7 +84,7 @@ public class AreaFilePanel extends JPanel {
 		addOpenAreaFileAction(openAreaFileAction);
 	}
 	private void initializePopups() {
-//		System.out.println("in AreaFilePanel.initializePopups");
+		Logger.debug("in AreaFilePanel.initializePopups");
 		areaFileList.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				if (evt.isPopupTrigger()) {
@@ -150,12 +153,12 @@ public class AreaFilePanel extends JPanel {
 		private static final long serialVersionUID = -2185780103182292124L;
 
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("properties");
+			Logger.debug("properties");
 		}
 	};
 
 	private void showAreaFileListPopup(MouseEvent evt) {
-//		System.out.println("in AreaFilePanel showAreaFileListPopup");
+		Logger.debug("in AreaFilePanel showAreaFileListPopup");
 		boolean enable = areaFileList.getSelectedIndex() != -1;
 		JPopupMenu menu = new JPopupMenu();
 		menu.add(addAreaFileAction);
@@ -165,7 +168,7 @@ public class AreaFilePanel extends JPanel {
 		menu.show(evt.getComponent(), evt.getX(), evt.getY());
 	}
 	private void initListeners() {
-//		System.out.println("in AreaFilePanel initListeners");
+		Logger.debug("in AreaFilePanel initListeners");
 		ListSelectionListener listSelectionListener = new ListSelectionListener() {
 
 			public void valueChanged(ListSelectionEvent arg0) {
@@ -191,7 +194,7 @@ public class AreaFilePanel extends JPanel {
 		areaFileList.addListSelectionListener(listSelectionListener);
 	}
 	public void updateTilePlots(boolean newAreas){
-//		System.out.println("in AreaFilePanel updateTilePlots");
+		Logger.debug("in AreaFilePanel updateTilePlots");
 		// redraw any AreaTilePlots to show selected ones
 		java.util.List<Plot> plots=verdiApp.getGui().getDisplayedPlots();
 		for(Plot plot:plots){
@@ -203,7 +206,7 @@ public class AreaFilePanel extends JPanel {
 		}
 	}
 	private void addPanelListeners() {
-//		System.out.println("in AreaFilePanel addPanelListeners");
+		Logger.debug("in AreaFilePanel addPanelListeners");
 		ListSelectionListener listSelectionListener = new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				// mark the selected targets
@@ -224,7 +227,7 @@ public class AreaFilePanel extends JPanel {
 	}
 
 	private void initializeButtons() {
-//		System.out.println("in AreaFilePanel.initializeButtons");
+		Logger.debug("in AreaFilePanel.initializeButtons");
 		Icon icon = btnAdd.getIcon();
 		btnAdd.setMaximumSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
 		btnAdd.setPreferredSize(btnAdd.getMaximumSize());
@@ -258,7 +261,7 @@ public class AreaFilePanel extends JPanel {
 		btnDelete.addMouseListener(new FocusClickFix());
 	}
 	void removeAreasFor(AreaFile areaFile){
-//		System.out.println("in AreaFilePanel.removeAreasFor");
+		Logger.debug("in AreaFilePanel.removeAreasFor");
 		// remove Targets for that source
 		ArrayList list = Target.getTargetsForSource(areaFile);
 		// remove from the lower panel
@@ -270,7 +273,7 @@ public class AreaFilePanel extends JPanel {
 
 	}
 	private void initComponents() {
-//		System.out.println("in AreaFilePanel.initComponents");
+		Logger.debug("in AreaFilePanel.initComponents");
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner non-commercial license
 		areaFilesPanel = new JPanel();
@@ -418,7 +421,7 @@ public class AreaFilePanel extends JPanel {
 
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 	public void loadAreaFile(AreaFile areaFile) {
-//		System.out.println("in AreaFilePanel.loadAreaFile");
+		Logger.debug("in AreaFilePanel.loadAreaFile");
 		AreaFileListModel model = (AreaFileListModel) areaFileList.getModel();
 		int index = model.addAreaFile(areaFile);
 		areaFileList.setSelectedIndex(index);
@@ -426,7 +429,7 @@ public class AreaFilePanel extends JPanel {
 	}
 
 	public void addOpenAreaFileAction(Action openAreaFileAction) {
-//		System.out.println("in AreaFilePanel addOpenAreaFileAction");
+		Logger.debug("in AreaFilePanel addOpenAreaFileAction");
 		btnAdd.addActionListener(openAreaFileAction);
 	}
 
@@ -438,24 +441,24 @@ public class AreaFilePanel extends JPanel {
 		ArrayList<Area> areas = new ArrayList<Area>();
 
 		public Object getElementAt(int index) {
-//			System.out.println("in AreaFilePanel AreasModel getElementAt");
+			Logger.debug("in AreaFilePanel AreasModel getElementAt");
 			return areas.get(index);
 		}
 
 		public Area getAreaAt(int index) {
-//			System.out.println("in AreaFilePanel AreasModel getAreaAt");
+			Logger.debug("in AreaFilePanel AreasModel getAreaAt");
 			return areas.get(index);
 		}
 
 		public int getSize() {
-//			System.out.println("in AreaFilePanel AreasModel getSize");
+			Logger.debug("in AreaFilePanel AreasModel getSize");
 			if (areas == null)
 				return 0;
 			return areas.size();
 		}
 
 		public void addAreas(ArrayList<Area> list) {
-//			System.out.println("in AreaFilePanel AreasModel addAreas");
+			Logger.debug("in AreaFilePanel AreasModel addAreas");
 			// create the area file and add it to the model
 			int size = areas.size();
 
@@ -478,12 +481,12 @@ public class AreaFilePanel extends JPanel {
 	}
 
 	public void addAreas(ArrayList<Area> list) {
-//		System.out.println("in AreaFilePanel addAreas");
+		Logger.debug("in AreaFilePanel addAreas");
 		((AreasModel)areaList.getModel()).addAreas(list);
 	}
 
 	public void areasSelected(ArrayList selections) {
-//		System.out.println("in AreaFilePanel areasSelected");
+		Logger.debug("in AreaFilePanel areasSelected");
 		//change the set to be empty
 		areaList.clearSelection();
 

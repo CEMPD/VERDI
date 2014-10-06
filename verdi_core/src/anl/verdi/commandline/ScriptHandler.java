@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
@@ -53,7 +56,7 @@ import anl.verdi.util.VersionInfo;
  * @author A. Wagner
  */
 public class ScriptHandler {
-	
+	static final Logger Logger = LogManager.getLogger(ScriptHandler.class.getName());
 	static HashMap<String, CommandScript> dataMap = new HashMap<String, CommandScript> ();
 
 	protected static VerdiApplication verdiApp = null;
@@ -233,9 +236,9 @@ public class ScriptHandler {
 					String line = null;
 					
 					while ((line = reader.readLine()) != null)
-						System.out.println(line);
+						Logger.debug(line);
 				} catch (Exception e) {
-					System.out.println(copyright);
+					Logger.debug(copyright);
 				} finally {
 					System.exit(0);
 				}
@@ -253,7 +256,7 @@ public class ScriptHandler {
 					try{
 						if(aliasMap.containsKey(aliasName))
 						{
-							System.out.println(
+							Logger.warn(
 									"WARNING: Alias '" +
 									aliasName + "' already defined, new definition ignored. ");
 						}
@@ -264,7 +267,7 @@ public class ScriptHandler {
 						}
 					}catch(NullPointerException e){}
 				}else{
-					System.out.println(args.get(1) + " is an invalid alias");
+					Logger.error(args.get(1) + " is an invalid alias");
 				}
 			}				
 		});
@@ -718,19 +721,19 @@ public class ScriptHandler {
 		});
 		dataMap.put("help".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-				System.out.println(HELPTEXT);
+				Logger.debug(HELPTEXT);
 				System.exit(0);
 			}				
 		});
 		dataMap.put("fullhelp".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-				System.out.println(HELPTEXT);
+				Logger.debug(HELPTEXT);
 				System.exit(0);
 			}				
 		});
 		dataMap.put("usage".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-				System.out.println(HELPTEXT);
+				Logger.debug(HELPTEXT);
 				System.exit(0);
 			}				
 		});
@@ -966,13 +969,13 @@ public class ScriptHandler {
 		dataMap.put("printAlias".toUpperCase(), new CommandScript(){
 				public void run(ArrayList<String> args){
 					
-					System.out.println("Aliases Defined:");
+					Logger.debug("Aliases Defined:");
 					Set keys = aliasMap.keySet();         // The set of keys in the map.
 					Iterator keyIter = keys.iterator();
 					while (keyIter.hasNext()) {
 						
 						Object key = keyIter.next();
-						System.out.println(key + "=" + aliasMap.get(key));
+						Logger.debug(key + "=" + aliasMap.get(key));
 					}
 				}				
 			});
@@ -1011,7 +1014,7 @@ public class ScriptHandler {
 							saver.save(new File(args.get(1)));
 						}
 						else{
-							System.out.println("Cannot create ASCII file:  "
+							Logger.error("Cannot create ASCII file:  "
 									+ args.get(1) + " Cannot make ASCII " 
 									+ "version of file for selected plot.");
 						}
@@ -1167,7 +1170,7 @@ public class ScriptHandler {
 			      				process.getInputStream()));
 			      		String curLine = "";
 			      		while ( (curLine = in.readLine()) != null ) {
-			      			System.out.println(curLine);
+			      			Logger.debug(curLine);
 			      		}
 			      		try {
 			      			process.waitFor();
@@ -1439,7 +1442,7 @@ public class ScriptHandler {
 			});
 		dataMap.put("version".toUpperCase(), new CommandScript(){
 				public void run(ArrayList<String> args){
-					System.out.println(version);
+					Logger.debug(version);
 					System.exit(0);
 				}				
 			});
@@ -1517,11 +1520,11 @@ public class ScriptHandler {
 					List<String> viewList = verdiApp.getGui().getViewList();
 					if(viewList.size() > 0)
 					{
-						System.out.println(viewList.get(viewList.size() - 1));
+						Logger.debug(viewList.get(viewList.size() - 1));
 					}
 					else
 					{
-						System.out.println("Error: No window open");
+						Logger.error("Error: No window open");
 					}
 				}				
 		});
@@ -1554,7 +1557,7 @@ public class ScriptHandler {
 				}
 				else
 				{
-					System.out.println(thisCommand.get(0) + " is not a valid command." +
+					Logger.error(thisCommand.get(0) + " is not a valid command." +
 							"  Skipping this command...");
 				}
 			}
@@ -1739,7 +1742,7 @@ public class ScriptHandler {
 //	               	 
 //	        }catch(IOException i){
 //	             //System.exit(-1);
-//	        	System.out.println("File Not Found");
+//	        	Logger.error("File Not Found");
 //	       }
 		
 		 try {
@@ -1769,7 +1772,7 @@ public class ScriptHandler {
 					Iterator it = aliasMap.keySet().iterator();
 					while(it.hasNext())
 					{
-//						System.out.println("Printing file");
+						Logger.debug("Printing file");
 						String key = (String)it.next();
 						String aliasFormula = (String)aliasMap.get(key);
 						
@@ -1780,7 +1783,7 @@ public class ScriptHandler {
 					out.close();
 		               	 
 		        }catch(IOException i){
-		        	System.out.println("File Not Found");
+		        	Logger.error("File Not Found");
 		        }
 		}
 }

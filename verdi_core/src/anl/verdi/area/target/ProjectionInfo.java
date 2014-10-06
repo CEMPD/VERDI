@@ -19,6 +19,8 @@ import java.util.TreeSet;
 
 import javax.swing.DefaultComboBoxModel;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.geotools.referencing.CRS;
@@ -39,6 +41,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 		 * 
 		 */
 		private static final long serialVersionUID = 1156146804881440587L;
+		static final Logger Logger = LogManager.getLogger(ProjectionInfo.class.getName());
 		final static int XYProjection=0;
 		final static int PSProjection=1;
 		final static int LambertCCProjection=2;
@@ -1700,7 +1703,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 	private void handleException(java.lang.Throwable exception) {
 
 		/* Uncomment the following lines to print uncaught exceptions to stdout */
-		System.out.println("--------- UNCAUGHT EXCEPTION ---------");
+		Logger.error("--------- UNCAUGHT EXCEPTION ---------");
 		exception.printStackTrace(System.out);
 	}
 

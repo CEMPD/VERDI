@@ -1,9 +1,6 @@
 package anl.verdi.core;
 
-import static saf.core.ui.dock.DockingManager.MinimizeLocation.LEFT;
-
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -16,9 +13,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 import saf.core.ui.GUIBarManager;
 import saf.core.ui.IAppConfigurator;
@@ -51,6 +50,7 @@ import anl.verdi.gui.FormulasPanel;
  * @version $Revision$ $Date$
  */
 public class VerdiAppConfigurator implements IAppConfigurator {
+	static final Logger Logger = LogManager.getLogger(VerdiAppConfigurator.class.getName());
 
 	private VerdiApplication verdiApp;
 	private DockingManager viewManager;
@@ -76,7 +76,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *            the main verdi application object
 	 */
 	public VerdiAppConfigurator(VerdiApplication verdi) {
-		System.out.println("Msg #2: in VerdiAppConfigurator constructor");
+		Logger.debug("Msg #2: in VerdiAppConfigurator constructor");
 		System.setProperty("org.geotools.referencing.forceXY","true");
 		verdiApp = verdi;
 	}
@@ -91,7 +91,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *            the ViewManager used to create the initial layout
 	 */
 	public void createLayout(DockingManager manager) {
-		System.out.println("Msg #4: in VerdiAppConfigurator.createLayout");
+		Logger.debug("Msg #4: in VerdiAppConfigurator.createLayout");
 //		aTabbedPane = new JTabbedPane();	// 2014 instantiate tabbed pane to try to put 3 panels in 1 tabbed pane
 		
 		try {
@@ -154,7 +154,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *            the GUIBarManager used to configure tool and menu bars.
 	 */
 	public void fillBars(GUIBarManager guiBarManager) {
-		System.out.println("Msg #9: in VerdiAppConfigurator.fillBars");
+		Logger.debug("Msg #9: in VerdiAppConfigurator.fillBars");
 		try {
 			JTextField fld = new JTextField();
 			Font font = fld.getFont().deriveFont(Font.BOLD);
@@ -183,7 +183,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 * closing the main application window.
 	 */
 	public void postWindowClose() {
-		System.out.println("in VerdiAppConfigurator.postWindowClose does nothing");
+		Logger.debug("in VerdiAppConfigurator.postWindowClose does nothing");
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *            the display representing the main application window.
 	 */
 	public void postWindowOpen(ISAFDisplay display) {
-		System.out.println("Msg #10: in VerdiAppConfigurator.postWindowOpen");
+		Logger.debug("Msg #10: in VerdiAppConfigurator.postWindowOpen");
 		closeSplash();
 		List<FormulaListElement> formList = verdiApp.getProject().getFormulasAsList();
 		boolean enabled = formList.size() > 0 && verdiApp.getProject().getSelectedFormula() != null;
@@ -207,7 +207,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	}
 
 	public void closeSplash() {
-		System.out.println("Msg #11: in VerdiAppConfigurator.closeSplash");
+		Logger.debug("Msg #11: in VerdiAppConfigurator.closeSplash");
 		if (splashPanel != null)
 			splashPanel.stop();
 		if (screen != null)
@@ -223,7 +223,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *         window close.
 	 */
 	public boolean preWindowClose() {
-		System.out.println("in VerdiAppConfigurator.preWindowClose");
+		Logger.debug("in VerdiAppConfigurator.preWindowClose");
 		return verdiApp.exit();
 	}
 
@@ -240,7 +240,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *         be a normal condition, such as a login failing.
 	 */
 	public boolean preWindowOpen(IWindowCustomizer customizer) {
-		System.out.println("Msg #3: in VerdiAppConfigurator.preWindowOpen");
+		Logger.debug("Msg #3: in VerdiAppConfigurator.preWindowOpen");
 		try {
 			String lf = UIManager.getSystemLookAndFeelClassName();
 			if (lf.toLowerCase().contains("gtk"))

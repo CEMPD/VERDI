@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.apache.velocity.app.Velocity;
 import org.java.plugin.Plugin;
 import org.java.plugin.PluginLifecycleException;
@@ -38,6 +40,8 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "VERDI");
 	}
 
+	static final Logger logger = LogManager.getLogger(VerdiPlugin.class.getName());	// 2014
+	
 	protected void doStart() throws Exception {
 	}
 
@@ -47,7 +51,10 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 	public void run(String[] args) {
 		IAppConfigurator configurator = null;
 
+		// 2014 from log4j/2.x/manual/configuration.html example
+		logger.trace("Entering application at VerdiPlugin.run");
 		try {
+			logger.trace("in try block of run");
 			// initialize velocity
 			Properties p = new Properties();
 			p.setProperty("resource.loader", "class");
@@ -55,24 +62,25 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 					"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
 
 			Velocity.init(p);
-
+			logger.trace("just called Velocity.init for p");
 			Properties pFRL = new Properties();		// 2014 added all pertaining to pFRL
 			pFRL.setProperty("resource.loader", "file");
 			pFRL.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
 			pFRL.setProperty("runtime.log", System.getProperty("user.home") + '/' + "verdi"
 					+ '/' + "velocity.log");
 			Velocity.init(pFRL);
+			logger.trace("just called Velocity.init for pFRL");
 			try {
 				File file = new File(Tools.getPropertyFile());
-System.out.println("property file = " + Tools.getPropertyFile());
+				logger.trace("property file = " + Tools.getPropertyFile());
 				if (file.exists()) 
 					{
 						System.getProperties().load(new FileInputStream(file));
-						System.out.println("property file exists, found, and loaded");
+						logger.debug("property file exists, found, and loaded");
 					}
 				else
 				{
-					System.out.println("property file does not exist");
+					logger.error("property file does not exist");
 				}
 			} catch (Exception e1) {
 				MessageCenter.getMessageCenter(getClass()).error("Error", e1);

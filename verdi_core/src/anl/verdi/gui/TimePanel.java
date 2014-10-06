@@ -13,6 +13,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.util.FocusClickFix;
@@ -37,6 +40,7 @@ public class TimePanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = -9045127791832834587L;
+	static final Logger Logger = LogManager.getLogger(TimePanel.class.getName());
 	private class SpinnerListener implements ChangeListener {
 
 		private JLabel label;
@@ -60,7 +64,7 @@ public class TimePanel extends JPanel {
 	private boolean slidersOn = false;
 
 	public TimePanel() {
-		System.out.println("in constructor for TimePanel");
+		Logger.debug("in constructor for TimePanel");
 		initComponents();
 		maxSpinner.addChangeListener(new SpinnerListener(maxDate));
 		minSpinner.addChangeListener(new SpinnerListener(minDate));

@@ -8,8 +8,6 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-1.2-api-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/apache-log4j-2.0-rc1-src/apache-log4j-2.0-rc1-src"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-api-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/log4j-api-2.0-rc1-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-core-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/log4j-core-2.0-rc1-sources.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/log4j-jcl-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/log4j-jcl-2.0-rc1-sources.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/log4j-taglib-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/log4j-taglib-2.0-rc1-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/xstream-1.4.7.jar" sourcepath="/verdi_core/lib_src/xstream-distribution-1.4.7-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

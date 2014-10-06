@@ -27,6 +27,8 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 /**
  * @author User #2
@@ -36,19 +38,20 @@ public class LayerEditor extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = -7700757129149944390L;
+	static final Logger Logger = LogManager.getLogger(LayerEditor.class.getName());
 	private MapAnnotation annotation;
 	private boolean canceled = true;
 
 	public LayerEditor(Frame owner) {
 		super(owner);
 		initComponents();
-System.out.println("in LayerEditor constructor #1");
+		Logger.debug("in LayerEditor constructor #1");
 	}
 
 	public LayerEditor(Dialog owner) {
 		super(owner);
 		initComponents();
-System.out.println("in LayerEditor constructor #2");
+		Logger.debug("in LayerEditor constructor #2");
 	}
 
 	public void init(MapAnnotation annotation) {

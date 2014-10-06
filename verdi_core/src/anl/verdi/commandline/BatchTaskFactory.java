@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.commandline.task.TilePlotTask;
 import anl.verdi.commandline.task.TimeSeriesPlotTask;
 //import anl.verdi.commandline.task.VectorPlotTask;		// 2014 removed old Vector Plot
@@ -15,6 +18,7 @@ import anl.verdi.formula.Formula;
 import anl.verdi.util.VerdiFileNameFilter;
 
 public class BatchTaskFactory {
+	static final Logger Logger = LogManager.getLogger(BatchTaskFactory.class.getName());
 
 	public BatchTaskFactory() {
 		//
@@ -182,7 +186,7 @@ public class BatchTaskFactory {
 		
 		if (files != null)
 			for (File file : files)
-				System.out.println(file.getAbsolutePath());
+				Logger.debug(file.getAbsolutePath());
 	}
 	
 }

@@ -5,11 +5,14 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import ucar.unidata.geoloc.Projection;
 
 public class ExtendAxes<T extends ExtendCoordAxis> {
+	static final Logger Logger = LogManager.getLogger(ExtendAxes.class.getName());
 	public static final int TIME_STEP_NOT_FOUND = -1;
 
 	private T xAxis = null, yAxis=null, timeAxis=null, layerAxis=null;
@@ -113,7 +116,7 @@ public class ExtendAxes<T extends ExtendCoordAxis> {
 	public Date getDate(int timestep) {
 		if (timeAxis != null) 
 			{
-	System.out.println("in ExtendAxes.java Date getDate");
+			Logger.debug("in ExtendAxes.java Date getDate");
 			GregorianCalendar aCalendar = ((TimeCoordAxis)timeAxis).getDate(timestep);
 			long aTime = aCalendar.getTimeInMillis();
 			Date aDate = new Date();
@@ -131,7 +134,7 @@ public class ExtendAxes<T extends ExtendCoordAxis> {
 	public Date getStartDate() {
 		if (timeAxis != null) 
 			{
-			System.out.println("in ExtendAces.java Date getStartDate");
+			Logger.debug("in ExtendAces.java Date getStartDate");
 				return getDate(0);	// starting date of an axis is for timestep 0
 //			return getDate(timeAxis.getRange().getOrigin());
 			}
@@ -144,7 +147,7 @@ public class ExtendAxes<T extends ExtendCoordAxis> {
 	 * @return the ending date of the time axis.
 	 */
 	public Date getEndDate() {
-System.out.println("in ExtendAxes.java Date getEndDate");
+		Logger.debug("in ExtendAxes.java Date getEndDate");
 		if (timeAxis != null) {
 			Range range = timeAxis.getRange();
 			return getDate((int)range.getOrigin() + (int)range.getExtent() - 1);
@@ -161,7 +164,7 @@ System.out.println("in ExtendAxes.java Date getEndDate");
 	 * timestep is found then return TIME_STEP_NOT_FOUND.
 	 */
 	public int getTimeStep(Date date) {
-System.out.println("in ExtendAxes.java getTimeStep for a Date");
+		Logger.debug("in ExtendAxes.java getTimeStep for a Date");
 		if (timeAxis != null) return ((TimeCoordAxis)timeAxis).getTimeStep(date);
 		return TIME_STEP_NOT_FOUND;
 	}

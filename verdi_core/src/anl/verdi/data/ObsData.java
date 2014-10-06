@@ -2,13 +2,16 @@ package anl.verdi.data;
 
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
-import org.unitsofmeasurement.unit.*;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.unitsofmeasurement.unit.Unit;
 
 /**
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
 public class ObsData {
+	static final Logger Logger = LogManager.getLogger(ObsData.class.getName());
 
 	private Unit unit;
 	private double value, lat, lon;
@@ -19,7 +22,7 @@ public class ObsData {
 		this.lon = lon;
 		this.unit = unit;
 		this.value = value;
-System.out.println("in ObsData constructor, Unit = " + this.unit);
+		Logger.debug("in ObsData constructor, Unit = " + this.unit);
 	}
 
 	public double getX() {
@@ -47,7 +50,7 @@ System.out.println("in ObsData constructor, Unit = " + this.unit);
 	}
 
 	public Unit getUnit() {
-System.out.println("in ObsData.getUnit, unit = " + unit);
+		Logger.debug("in ObsData.getUnit, unit = " + unit);
 		return unit;
 	}
 

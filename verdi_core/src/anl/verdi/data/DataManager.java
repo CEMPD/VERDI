@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.java.plugin.PluginLifecycleException;
 import org.java.plugin.PluginManager;
 import org.java.plugin.registry.Extension;
@@ -24,6 +26,7 @@ import anl.verdi.util.AliasGenerator;
  * @version $Revision$ $Date$
  */
 public class DataManager {
+	static final Logger Logger = LogManager.getLogger(DataManager.class.getName());
 
 	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(DataManager.class);
 
@@ -100,15 +103,15 @@ public class DataManager {
 			try {
 				if (loader.canHandle(url)) {
 					try {
-						//System.out.println("before creating dataset.");
+						Logger.debug("before creating dataset.");
 						List<Dataset> data = loader.createDatasets(url);
-						//System.out.println("after creating dataset. Dataset list size: " + data.size());
+						Logger.debug("after creating dataset. Dataset list size: " + data.size());
 						for (Dataset dataset : data) {
 							setLoaderMap.put(dataset, loader);
 							String alias = aliasGenerator.getNextAlias();
 							dataset.setAlias(alias);
 							datasets.put(alias, dataset);
-							//System.out.println("alias: " + alias);
+							Logger.debug("alias: " + alias);
 						}
 						return data;
 					} catch (IOException e) {

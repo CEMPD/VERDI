@@ -8,6 +8,9 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.commandline.AbstractTask;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiConstants;
@@ -27,6 +30,7 @@ import anl.verdi.plot.gui.FastTilePlot;
 import anl.verdi.plot.gui.Plot;
 
 public class TilePlotTask implements AbstractTask {
+	static final Logger Logger = LogManager.getLogger(TilePlotTask.class.getName());
 	private Map<String, String> map;
 	private VerdiApplication verdiApp;
 	public final static String JPEG = "jpeg";
@@ -55,7 +59,7 @@ public class TilePlotTask implements AbstractTask {
 		TilePlotConfiguration tconfig = createConfig();
 
 		if (datafiles == null || datafiles.length == 0) {
-			System.out.print("No data files found.");
+			Logger.error("No data files found.");
 			return;
 		}
 		

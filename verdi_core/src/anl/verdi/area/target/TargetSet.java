@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 /**
  * 
  * File Name:TargetSet.java
@@ -20,6 +23,7 @@ public class TargetSet extends ArrayList {
 	 * 
 	 */
 	private static final long serialVersionUID = 5612848337395477817L;
+	static final Logger Logger = LogManager.getLogger(TargetSet.class.getName());
 	// name of the target set
 	String name;
 	// the list of all sets of targets
@@ -158,14 +162,14 @@ public class TargetSet extends ArrayList {
 						// get the matching target
 						Target target=Target.findTarget(targetName);
 						if(target==null){
-							System.out.println("Load Error: Cannot find target "+targetName);
+							Logger.error("Load Error: Cannot find target "+targetName);
 							continue;
 						}
 						set.add(target);
 					}
 				}else{
 					// skip target list
-					System.out.println("Load Error: Duplicate set"+name);
+					Logger.error("Load Error: Duplicate set "+name);
 					Number numTargets = (Number)((Vector)data.get(offset)).get(1);
 					offset=offset+1;
 					for(int j=0;j<numTargets.intValue();j++){

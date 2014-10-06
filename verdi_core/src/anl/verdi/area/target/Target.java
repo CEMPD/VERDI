@@ -11,13 +11,18 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+//import javax.measure.converters.UnitConverter;
+//import javax.measure.converter.UnitConverter;
+//import javax.measure.units.Unit;		// JScience changed its hierarchy
+//import javax.measure.unit.Unit;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.eclipse.uomo.units.AbstractConverter;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
@@ -31,7 +36,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.unitsofmeasurement.unit.Unit;
 import org.unitsofmeasurement.unit.UnitConverter;
 
-import anl.exporters.Exporter;
 import anl.verdi.area.Area;
 import anl.verdi.area.AreaFile;
 import anl.verdi.area.AreaTilePlot;
@@ -41,10 +45,6 @@ import anl.verdi.util.VUnits;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
-//import javax.measure.converters.UnitConverter;
-//import javax.measure.converter.UnitConverter;
-//import javax.measure.units.Unit;		// JScience changed its hierarchy
-//import javax.measure.unit.Unit;
 
 /**
  * 
@@ -59,6 +59,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
  *
  */
 public class Target implements Area{
+	static final Logger Logger = LogManager.getLogger(Target.class.getName());
 
 	Geometry dataObject;
 
@@ -237,7 +238,7 @@ public class Target implements Area{
 			String[] typeNames = dataStore.getTypeNames();
 			String typeName = typeNames[0];
 
-//			System.out.println("Reading content " + typeName);
+//			Logger.debug("Reading content " + typeName);
 
 			FeatureSource featureSource;
 			FeatureCollection collection;
@@ -274,7 +275,7 @@ public class Target implements Area{
 //							int dim=((MultiPolygon)geometry).getNumGeometries();
 //							//if(dim>1)continue;
 //							polygon=(com.vividsolutions.jts.geom.Polygon)((MultiPolygon)geometry).getGeometryN(0);
-//							//System.out.println("polygon found\n");
+//							//Logger.debug("polygon found\n");
 //						}
 						Target data = new Target(geometry, name, sourceData);
 						geometry.setUserData(data);
@@ -292,7 +293,7 @@ public class Target implements Area{
 					iterator.close();
 				}
 			}
-			System.out.println("Total Objects " + totalLength);
+			Logger.debug("Total Objects " + totalLength);
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -560,7 +561,7 @@ public class Target implements Area{
 		int gridIndex=getCurrentGridNum();
 
 		if(rowIndex.size()<=gridIndex){
-			System.out.println("problem here");
+			Logger.error("problem here");
 		}
 		int[]rows=rowIndex.get(gridIndex);
 		return (rows != null);
@@ -646,24 +647,24 @@ public class Target implements Area{
 		float[]areas=overlapArea.get(gridIndex);
 		float dep=0.0f;
 		// skip if there is no overlap with the grid
-//		System.out.println("into Target.calcTotalDeposition");
+		Logger.debug("into Target.calcTotalDeposition");
 		if (rows!=null){
 
 			// sum up contributions from each cell
 			for (int i = 0; i < rows.length; i++) {
 				if(rows[i]<0||cols[i]<0){
-					System.out.println("stop here");
+					Logger.debug("stop here");
 					continue;
 				}
 				if(rows[i]>data.length){
-					System.out.println("stop here");
+					Logger.debug("stop here");
 					continue;		// 2014 nothing was done after previous line saying "stop here"
 				}
 				float dataPoint = data[ rows[i] ][ cols[i] ];
 				
 				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3) 
 				{	// 2014 changed comparison to AMISS3 from == to <=
-					//System.out.println("  === ");
+					//Logger.debug("  === ");
 					continue;
 				}
 				// TODO: NaN
@@ -673,7 +674,7 @@ public class Target implements Area{
 				dep = dep + (float) (converterTargetStandard.convert(areas[i]) * converterGrid.convert(dataPoint));
 			}
 		}
-//System.out.println("returning from calcTotalDeposition, dep = " + dep);
+//Logger.debug("returning from calcTotalDeposition, dep = " + dep);
 		return dep;
 	}
 	
@@ -1028,20 +1029,20 @@ public class Target implements Area{
 			// sum up contributions from each cell
 			for (int i = 0; i < rows.length; i++) {
 				if(rows[i]<0||cols[i]<0){
-					System.out.println("stop here");
+					Logger.debug("stop here");
 					continue;
 				}
 				if(rows[i]>data.length){
-					System.out.println("stop here");
+					Logger.debug("stop here");
 					continue;		// 2014 nothing had been done after previous line saying "stop here"
 				}
 				float dataPoint = data[ rows[i] ][ cols[i] ];
 				
-				// System.out.println(new Float(dataPoint).toString());
+				// Logger.debug(new Float(dataPoint).toString());
 
 				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3) 
 				{	// 2014 changed AMISS3 comparison from == to <=
-					// System.out.println("  === ");
+					// Logger.debug("  === ");
 					continue;
 				}
 				// TODO: NaN
@@ -1055,7 +1056,7 @@ public class Target implements Area{
 	public void computeAverageDeposition(float[][] data, int gridIndex, TargetDeposition deposition) {
 
 		if ( data == null || deposition == null || gridIndex <0) {
-			System.out.println("Target computeAverageDeposition(...): invalid inputs! Check that areas overlay grid cells.");
+			Logger.error("Target computeAverageDeposition(...): invalid inputs! Check that areas overlay grid cells.");
 			return;
 		}
 		float total=computeTotalDeposition(data, gridIndex);

@@ -3,6 +3,9 @@ package anl.verdi.data;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 /**
  * Time axis for a DataFrame.
  * @author Nick Collier
@@ -10,6 +13,7 @@ import java.util.GregorianCalendar;
  */
 public class DataFrameTimeAxis extends DataFrameAxis implements TimeCoordAxis {
 
+	static final Logger Logger = LogManager.getLogger(DataFrameTimeAxis.class.getName());
 	/**
 	 * Creates a DataFrameAxis for the specified axis with origin and extent
 	 * equal to that of the axis.
@@ -19,7 +23,7 @@ public class DataFrameTimeAxis extends DataFrameAxis implements TimeCoordAxis {
 	 */
 	public DataFrameTimeAxis(TimeCoordAxis axis, int index) {
 		super(axis, index);
-System.out.println("in constructor for DataFrameTimeAxis.java");
+			Logger.debug("in constructor for DataFrameTimeAxis.java");
 	}
 
 	/**
@@ -32,7 +36,7 @@ System.out.println("in constructor for DataFrameTimeAxis.java");
 	 */
 	public DataFrameTimeAxis(TimeCoordAxis axis, int origin, int extent, int index) {
 		super(axis, origin, extent, index);
-System.out.println("in alternate constructor for DataFrameTimeAxis");
+		Logger.debug("in alternate constructor for DataFrameTimeAxis");
 	}
 
 	/**
@@ -45,7 +49,7 @@ System.out.println("in alternate constructor for DataFrameTimeAxis");
 	 */
 	public DataFrameTimeAxis(DataFrameTimeAxis axis, int index) {
 		super(axis, index);
-System.out.println("in another alternate constructor for DataFrameTimeAxis");
+		Logger.debug("in another alternate constructor for DataFrameTimeAxis");
 	}
 
 	/**
@@ -56,7 +60,7 @@ System.out.println("in another alternate constructor for DataFrameTimeAxis");
 	 * @return the Date for the specified timestep
 	 */
 	public GregorianCalendar getDate(int timestep) {
-System.out.println("in DataFrameTimeAxis getDate");
+		Logger.debug("in DataFrameTimeAxis getDate");
 		return ((TimeCoordAxis)this.axis).getDate(timestep);
 	}
 
@@ -69,7 +73,7 @@ System.out.println("in DataFrameTimeAxis getDate");
 	 *         timestep is found then return Axes.TIME_STEP_NOT_FOUND.
 	 */
 	public int getTimeStep(Date date) {
-System.out.println("in DataFrameTimeAxis getTimeStep for a Date");
+		Logger.debug("in DataFrameTimeAxis getTimeStep for a Date");
 		return ((TimeCoordAxis)this.axis).getTimeStep(date);
 	}
 	/**
@@ -81,7 +85,7 @@ System.out.println("in DataFrameTimeAxis getTimeStep for a Date");
 	 *         timestep is found then return Axes.TIME_STEP_NOT_FOUND.
 	 */
 	public int getTimeStep(GregorianCalendar aCalendar) {
-System.out.println("in DataFrameTimeAxis getTimeStep for a GregorianCalendar");
+		Logger.debug("in DataFrameTimeAxis getTimeStep for a GregorianCalendar");
 		return ((TimeCoordAxis)this.axis).getTimeStep(aCalendar);
 	}
 }

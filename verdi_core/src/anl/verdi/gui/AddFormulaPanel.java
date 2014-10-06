@@ -19,6 +19,9 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.util.FocusClickFix;
 import anl.verdi.util.Tools;
 
@@ -39,10 +42,11 @@ public class AddFormulaPanel extends JPanel implements FormulaEditor {
 	 * 
 	 */
 	private static final long serialVersionUID = -4713729303896867669L;
+	static final Logger Logger = LogManager.getLogger(AddFormulaPanel.class.getName());
 	private FormulaElementCreator creator;
 
 	public AddFormulaPanel() {
-		System.out.println("in AddFormulaPanel default constructor");
+		Logger.debug("in AddFormulaPanel default constructor");
 		initComponents();
 		initializeButtons();
 		fldFormula.addActionListener(new ActionListener() {

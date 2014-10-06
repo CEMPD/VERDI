@@ -18,8 +18,8 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-
-
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 //NOTE: where FeatureLayer is now used in this code, MapLayer had been used
 import org.geotools.map.FeatureLayer;
@@ -39,19 +39,20 @@ import com.jgoodies.forms.layout.Sizes;
  */
 public class FastTileLayerEditor extends JDialog {
 	private static final long serialVersionUID = 3280560059468223635L;
+	static final Logger Logger = LogManager.getLogger(FastTileLayerEditor.class.getName());
 	private Mapper mapper;
 	private boolean canceled = true;
 
 	public FastTileLayerEditor(Frame owner) {
 		super(owner);
 		initComponents();
-System.out.println("in FastTileLayerEditor constructor #1");
+		Logger.debug("in FastTileLayerEditor constructor #1");
 	}
 
 	public FastTileLayerEditor(Dialog owner) {
 		super(owner);
 		initComponents();
-System.out.println("in FastTileLayerEditor constructor #2");
+		Logger.debug("in FastTileLayerEditor constructor #2");
 	}
 
 	public void init(Mapper mapper) {

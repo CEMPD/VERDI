@@ -23,7 +23,12 @@ import java.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 public class FileHelper{
+	static final Logger Logger = LogManager.getLogger(FileHelper.class.getName());
+	
 	static public String convertMultiLineString(String string){
 		StringBuffer sb=new StringBuffer();
 		for(int i=0;i<string.length();i++){
@@ -108,8 +113,8 @@ public class FileHelper{
 			return readDataStream(fr);
 		}
 		catch(FileNotFoundException e){
-			System.out.println("Read Error: File "+filename+" not found");
-			System.out.println(e.getMessage());
+			Logger.error("Read Error: File "+filename+" not found");
+			Logger.error(e.getMessage());
 			return null;
 		}
 	}
@@ -119,8 +124,8 @@ public class FileHelper{
 			return readDataStream(fr);
 		}
 		catch(FileNotFoundException e){
-			System.out.println("Read Error: File "+filename+" not found");
-			System.out.println(e.getMessage());
+			Logger.error("Read Error: File "+filename+" not found");
+			Logger.error(e.getMessage());
 			return null;
 		}
 	}
@@ -131,8 +136,8 @@ public class FileHelper{
 			return readDataLines(input);
 		}
 		catch(FileNotFoundException e){
-			System.out.println("Read Error: File "+filename+" not found");
-			System.out.println(e.getMessage());
+			Logger.error("Read Error: File "+filename+" not found");
+			Logger.error(e.getMessage());
 			return null;
 		}
 
@@ -144,8 +149,8 @@ public class FileHelper{
 			return readDataLines(input);
 		}
 		catch(FileNotFoundException e){
-			System.out.println("Read Error: File "+filename+" not found");
-			System.out.println(e.getMessage());
+			Logger.error("Read Error: File "+filename+" not found");
+			Logger.error(e.getMessage());
 			return null;
 		}
 
@@ -164,16 +169,16 @@ public class FileHelper{
 			}
 		}
 		catch(IOException e){
-			System.out.println("File error");
-			System.out.println(e.getMessage());
+			Logger.error("File error");
+			Logger.error(e.getMessage());
 		}
 		finally{
 			try{
 				input.close();
 			}
 			catch(IOException e){
-				System.out.println("File could not be closed");
-				System.out.println(e.getMessage());
+				Logger.error("File could not be closed");
+				Logger.error(e.getMessage());
 			}
 		}
 		return stringList;
@@ -199,12 +204,12 @@ public class FileHelper{
 			while(st.nextToken()!=StreamTokenizer.TT_EOF){
 				switch(st.ttype){
 				case(StreamTokenizer.TT_NUMBER):
-					//System.out.println("Number -"+st.nval+"-");
+					//Logger.debug("Number -"+st.nval+"-");
 					currentLine.addElement(new Double(st.nval));
 				break;
 
 				case(StreamTokenizer.TT_WORD):
-					//                    System.out.println("Word -"+st.sval+"-");
+					//                    Logger.debug("Word -"+st.sval+"-");
 					if(lastTokenType==StreamTokenizer.TT_WORD){
 						String lastString=(String)currentLine.lastElement();
 						lastString = lastString + ' '+st.sval;
@@ -216,14 +221,14 @@ public class FileHelper{
 				break;
 
 				case(StreamTokenizer.TT_EOL):
-					//System.out.println("end of line");
+					//Logger.debug("end of line");
 					currentLine=new Vector();
 				lineData.addElement(currentLine);
 				break;
 
 				case('"'):
 					if(lastTokenType=='"'){
-						//System.out.println("string -"+st.sval+"-");
+						//Logger.debug("string -"+st.sval+"-");
 						String lastString=(String)currentLine.lastElement();
 						lastString = lastString + '"'+st.sval;
 						currentLine.setElementAt(lastString,currentLine.size()-1);
@@ -234,7 +239,7 @@ public class FileHelper{
 				break;
 				}
 
-				//System.out.println("token "+st.ttype+" -"+st.sval+"-");
+				//Logger.debug("token "+st.ttype+" -"+st.sval+"-");
 				lastTokenType=st.ttype;
 			}
 			// remove empty last line
@@ -263,16 +268,16 @@ public class FileHelper{
 			 */
 		}
 		catch(IOException e){
-			System.out.println("File error");
-			System.out.println(e.getMessage());
+			Logger.error("File error");
+			Logger.error(e.getMessage());
 		}
 		finally{
 			try{
 				input.close();
 			}
 			catch(IOException e){
-				System.out.println("BufferedReader could not be closed");
-				System.out.println(e.getMessage());
+				Logger.error("BufferedReader could not be closed");
+				Logger.error(e.getMessage());
 			}
 		}
 		return lineData;
@@ -285,8 +290,8 @@ public class FileHelper{
 			output = new BufferedWriter(new FileWriter(filename));
 		}
 		catch(IOException e){
-			System.out.println("IO error");
-			System.out.println(e.getMessage());
+			Logger.error("IO error");
+			Logger.error(e.getMessage());
 		}
 		try{
 			for(Enumeration e=data.elements();e.hasMoreElements();){
@@ -296,16 +301,16 @@ public class FileHelper{
 			}
 		}
 		catch(IOException e){
-			System.out.println("File error");
-			System.out.println(e.getMessage());
+			Logger.error("File error");
+			Logger.error(e.getMessage());
 		}
 		finally{
 			try{
 				output.close();
 			}
 			catch(IOException e){
-				System.out.println("File could not be closed");
-				System.out.println(e.getMessage());
+				Logger.error("File could not be closed");
+				Logger.error(e.getMessage());
 			}
 		}
 	}
@@ -317,8 +322,8 @@ public class FileHelper{
 			output = new BufferedWriter(new FileWriter(filename));
 		}
 		catch(IOException e){
-			System.out.println("IO error");
-			System.out.println(e.getMessage());
+			Logger.error("IO error");
+			Logger.error(e.getMessage());
 		}
 		try{
 			for(Enumeration e=data.elements();e.hasMoreElements();){
@@ -328,16 +333,16 @@ public class FileHelper{
 			}
 		}
 		catch(IOException e){
-			System.out.println("File error");
-			System.out.println(e.getMessage());
+			Logger.error("File error");
+			Logger.error(e.getMessage());
 		}
 		finally{
 			try{
 				output.close();
 			}
 			catch(IOException e){
-				System.out.println("File could not be closed");
-				System.out.println(e.getMessage());
+				Logger.error("File could not be closed");
+				Logger.error(e.getMessage());
 			}
 		}
 	}

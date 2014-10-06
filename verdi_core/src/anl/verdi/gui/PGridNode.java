@@ -10,19 +10,22 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-// NOTE: using old piccolo library because only class using this one is DomainPanel, which uses Repast Simphony
-// and requires the old piccolo library
-import edu.umd.cs.piccolo.PNode;
-//import org.piccolo2d.PNode;
-import edu.umd.cs.piccolox.util.PFixedWidthStroke;
-//import org.piccolo2d.extras.util.PFixedWidthStroke;
-import edu.umd.cs.piccolo.util.PPaintContext;
-//import org.piccolo2d.util.PPaintContext;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 
 import com.vividsolutions.jts.geom.Envelope;
+
+// NOTE: using old piccolo library because only class using this one is DomainPanel, which uses Repast Simphony
+// and requires the old piccolo library
+import edu.umd.cs.piccolo.PNode;
+//import org.piccolo2d.extras.util.PFixedWidthStroke;
+import edu.umd.cs.piccolo.util.PPaintContext;
+//import org.piccolo2d.util.PPaintContext;
+//import org.piccolo2d.PNode;
+import edu.umd.cs.piccolox.util.PFixedWidthStroke;
 
 public class PGridNode extends PNode {
 
@@ -30,6 +33,7 @@ public class PGridNode extends PNode {
 	 * 
 	 */
 	private static final long serialVersionUID = 4604235963288960657L;
+	static final Logger Logger = LogManager.getLogger(PGridNode.class.getName());
 
 	protected Axes<CoordAxis> axes;
 	
@@ -132,7 +136,7 @@ public class PGridNode extends PNode {
 			int maxY = (int) uL.getY();
 			int maxX = (int) lR.getX();
 			int minY = (int) lR.getY();
-			//System.out.println("vals "+minX+" "+minY+" "+maxX+" "+maxY);
+			//Logger.debug("vals "+minX+" "+minY+" "+maxX+" "+maxY);
 
 			range.setRect(minX, minY, maxX - minX, maxY - minY);
 
@@ -149,9 +153,9 @@ public class PGridNode extends PNode {
 			ReferencedEnvelope env = axes.getBoundingBox(new Range(minX,1),new Range(numYCells-maxY-1,1));
 			ReferencedEnvelope env2 = axes.getBoundingBox(new Range(maxX,1),new Range(numYCells-minY-1,1));
 			
-//			System.out.println("env "+env.getMinX()+" "+ env.getMinY()+" "+ env.getMaxX()+" "+ env.getMaxY());
-//			System.out.println("env2 "+env2.getMinX()+" "+ env2.getMinY()+" "+ env2.getMaxX()+" "+ env2.getMaxY());
-//			System.out.println("e "+e.getMinX()+" "+ e.getMinY()+" "+ e.getMaxX()+" "+ e.getMaxY());
+//			Logger.debug("env "+env.getMinX()+" "+ env.getMinY()+" "+ env.getMaxX()+" "+ env.getMaxY());
+//			Logger.debug("env2 "+env2.getMinX()+" "+ env2.getMinY()+" "+ env2.getMaxX()+" "+ env2.getMaxY());
+//			Logger.debug("e "+e.getMinX()+" "+ e.getMinY()+" "+ e.getMaxX()+" "+ e.getMaxY());
 			// see if outside area totally
 			if(e.getMinY()>env.getMaxY()&&e.getMaxY()>env.getMaxY()){
 				range.setRect(0,0,-1,-1);
@@ -172,12 +176,12 @@ public class PGridNode extends PNode {
 			if(e.getMaxY()>env.getMaxY()){
 				minY=minY+1;
 			}}
-			//System.out.println("vals "+minX+" "+minY+" "+maxX+" "+maxY);
+			//Logger.debug("vals "+minX+" "+minY+" "+maxX+" "+maxY);
 			range.setRect(minX, minY, maxX - minX, maxY - minY);
 			}
 			// domainRange.setRect(minX, maxY, Math.abs(maxX - minX),
 			// Math.abs(maxY - minY));
-//			System.out.println(domainRange);
+//			Logger.debug(domainRange);
 			*/
 		} catch (Exception ex) {
 			ex.printStackTrace();

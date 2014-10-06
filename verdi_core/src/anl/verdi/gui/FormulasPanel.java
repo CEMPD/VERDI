@@ -17,7 +17,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.geotools.map.MapContent;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -34,13 +35,14 @@ public class FormulasPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 4063989712599725937L;
+	static final Logger Logger = LogManager.getLogger(FormulasPanel.class.getName());
 
 	public FormulasPanel() {
 		this(new FormulaListModel());
 	}
 
 	public FormulasPanel(FormulaListModel model) {	
-		System.out.println("in formulasPanel constructor FormulaListModel");
+		Logger.debug("in formulasPanel constructor FormulaListModel");
 		initComponents();
 		addFormulaPanel.setFormulaListModel(model);
 		addFormulaSelectionListener(new ListSelectionListener() {
@@ -66,7 +68,7 @@ public class FormulasPanel extends JPanel {
 	}
 
 	private void addPanelListeners() {
-		System.out.println("in FormulasPanel addPanelListener");
+		Logger.debug("in FormulasPanel addPanelListener");
 		timePanel1.addListeners(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				Object obj = addFormulaPanel.getList().getSelectedValue();
@@ -131,7 +133,7 @@ public class FormulasPanel extends JPanel {
 	}
 
 	private void setTimeValues(FormulaListElement element) {
-		System.out.println("in FormulasPanel setTimeValues");
+		Logger.debug("in FormulasPanel setTimeValues");
 		if (element != null && element.getTimeMin() != FormulaListElement.NO_TIME_VALUE) {
 			timePanel1.setEnabled(true);
 			timePanel1.reset(element.getAxes(), element.getTimeMin(), element.getTimeMax(), element.isTimeUsed());
@@ -141,7 +143,7 @@ public class FormulasPanel extends JPanel {
 	}
 
 	public void setLayerValues(FormulaListElement element) {
-		System.out.println("in FormulasPanel setLayerValue");
+		Logger.debug("in FormulasPanel setLayerValue");
 		if (element != null && element.getLayerMin() != FormulaListElement.NO_LAYER_VALUE) {
 			layerPanel1.setEnabled(true);
 			layerPanel1.reset(element.getAxes(),
@@ -152,22 +154,22 @@ public class FormulasPanel extends JPanel {
 	}
 
 	public FormulaEditor getFormulaEditor() {
-		System.out.println("in FormulasPanel getFormulaEditor");
+		Logger.debug("in FormulasPanel getFormulaEditor");
 		return addFormulaPanel;
 	}
 
 	public void addFormulaSelectionListener(ListSelectionListener listener) {
-		System.out.println("in FormulasPanel addFormulaSelectionListener");
+		Logger.debug("in FormulasPanel addFormulaSelectionListener");
 		addFormulaPanel.addFormulaSelectionListener(listener);
 	}
 	
 	public void setFormulaCreator(FormulaElementCreator validator) {
-		System.out.println("in FormulasPanel setFormulaCreator");
+		Logger.debug("in FormulasPanel setFormulaCreator");
 		addFormulaPanel.setCreator(validator);
 	}
 
 	public void setDomainValues(AbstractListElement element) {
-		System.out.println("in FormulasPanel setDomainValues");
+		Logger.debug("in FormulasPanel setDomainValues");
 		if (element == null) domainPanel1.setDomainValues(null);
 		else if (element.getAxes().getXAxis() != null && element.getAxes().getYAxis() != null)
 			domainPanel1.setDomainValues(element);
@@ -175,7 +177,7 @@ public class FormulasPanel extends JPanel {
 	}
 
 	private void initComponents() {
-		System.out.println("in FormulasPanel initComponents");
+		Logger.debug("in FormulasPanel initComponents");
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner non-commercial license
 		addFormulaPanel = new AddFormulaPanel();

@@ -1,14 +1,15 @@
 package anl.verdi.data;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
-import org.unitsofmeasurement.unit.*;
+import org.unitsofmeasurement.unit.Unit;
 
 import ucar.ma2.Array;
 import ucar.ma2.IndexIterator;
@@ -20,6 +21,7 @@ import anl.verdi.util.VUnits;
  */
 public class ObsEvaluator {
 
+	static final Logger Logger = LogManager.getLogger(ObsEvaluator.class.getName());
 	private DataManager manager;
 	private Variable var, lat, lon;
 
@@ -38,7 +40,7 @@ public class ObsEvaluator {
 			lonIndex = lon.getIndexIterator();
 			valuesIndex = values.getIndexIterator();
 			this.unit = unit;
-System.out.print("in ObsEvaluator constructor, unit = " + this.unit);
+			Logger.debug("in ObsEvaluator constructor, unit = " + this.unit);
 		}
 
 		public boolean hasNext() {

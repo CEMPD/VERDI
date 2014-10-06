@@ -56,7 +56,11 @@ other %
  */
 package doppelt;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 public class Quantize {
+	static final Logger Logger = LogManager.getLogger(Quantize.class.getName());
 
 /* %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -384,7 +388,7 @@ other %
 
                     // a hard limit on the number of nodes in the tree
                     if (nodes > MAX_NODES) {
-                        System.out.println("pruning");
+                        Logger.debug("pruning");
                         root.pruneLevel();
                         --depth;
                     }

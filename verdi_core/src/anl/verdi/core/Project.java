@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.area.AreaFileListElement;
 import anl.verdi.area.AreaFileListModel;
 import anl.verdi.data.Axes;
@@ -30,52 +33,53 @@ import anl.verdi.util.DateRange;
  * @version $Revision$ $Date$
  */
 public class Project {
+	static final Logger Logger = LogManager.getLogger(Project.class.getName());
 
 	private DatasetListModel datasets;
 	private FormulaListModel formulas;
 	private AreaFileListModel areaFiles;
 	private FormulaListElement selectedFormula;
 	public Project(DatasetListModel datasets, FormulaListModel formulas, AreaFileListModel areaFiles) {
-		System.out.println("in Project constructor (DatasetListModel, FormulaListModel, AreaFileListModel)");
+		Logger.debug("in Project constructor (DatasetListModel, FormulaListModel, AreaFileListModel)");
 		this.datasets = datasets;
 		this.formulas = formulas;
 		this.areaFiles=areaFiles;
 	}
 	public Project(DatasetListModel datasets, FormulaListModel formulas) {
-		System.out.println("in Project constructor (DatasetListModel, FormulaListModel");
+		Logger.debug("in Project constructor (DatasetListModel, FormulaListModel");
 		this.datasets = datasets;
 		this.formulas = formulas;
 		this.areaFiles=new AreaFileListModel();
 	}
 
 	public FormulaListElement getSelectedFormula() {
-		System.out.println("in Project getSelectedFormula");
+		Logger.debug("in Project getSelectedFormula");
 		return selectedFormula;
 	}
 
 	public void setSelectedFormula(FormulaListElement selectedFormula) {
-		System.out.println("in Project setSelectedFormula");
+		Logger.debug("in Project setSelectedFormula");
 		this.selectedFormula = selectedFormula;
 		formulas.setSelectedItem(selectedFormula);
 	}
 
 	public DatasetListModel getDatasets() {
-		System.out.println("in Project getDatasets");
+		Logger.debug("in Project getDatasets");
 		return datasets;
 	}
 
 	public FormulaListModel getFormulas() {
-		System.out.println("in Project getFormulas");
+		Logger.debug("in Project getFormulas");
 		return formulas;
 	}
 	
 	public AreaFileListModel getAreaFiles() {
-		System.out.println("in Project getAreaFiles");
+		Logger.debug("in Project getAreaFiles");
 		return areaFiles;
 	}
 	
 	public List<DatasetListElement> getDatasetsAsList() {
-		System.out.println("in Project getDatasetAsList");
+		Logger.debug("in Project getDatasetAsList");
 		List<DatasetListElement> list = new ArrayList<DatasetListElement>();
 		for (DatasetListElement item : datasets.elements()) {
 			list.add(item);
@@ -90,7 +94,7 @@ public class Project {
 	 * @return the formula list elements as a list.
 	 */
 	public List<FormulaListElement> getFormulasAsList() {
-		System.out.println("in Project getFormulasAsList");
+		Logger.debug("in Project getFormulasAsList");
 		List<FormulaListElement> list = new ArrayList<FormulaListElement>();
 		for (FormulaListElement item : formulas.elements()) {
 			list.add(item);
@@ -104,7 +108,7 @@ public class Project {
 	 * @return the formula list elements as a list.
 	 */
 	public FormulaListElement getFormulaFor(String formulaString) {
-		System.out.println("in Project getFormulaFor");
+		Logger.debug("in Project getFormulaFor");
 //		List<FormulaListElement> list = new ArrayList<FormulaListElement>();
 		for (FormulaListElement item : formulas.elements()) {
 			if(item.getFormula().equals(formulaString))return item;
@@ -118,7 +122,7 @@ public class Project {
 	 * @return the area file list elements as a list.
 	 */
 	public List<AreaFileListElement> getAreaFilesAsList() {
-		System.out.println("in Project getAreaFilesAsList");
+		Logger.debug("in Project getAreaFilesAsList");
 		List<AreaFileListElement> list = new ArrayList<AreaFileListElement>();
 		for (AreaFileListElement item : areaFiles.elements()) {
 			list.add(item);
@@ -136,7 +140,7 @@ public class Project {
 	 *                                 by dataset or by formula are invalid
 	 */
 	public List<AxisRange> createRanges() throws IllegalFormulaException {
-		System.out.println("in Project createRanges()");
+		Logger.debug("in Project createRanges()");
 		return createRanges(selectedFormula);
 	}
 	/**
@@ -150,7 +154,7 @@ public class Project {
 	 */
 
 	public List<AxisRange> createRanges(FormulaListElement selectedFormula) throws IllegalFormulaException {
-		System.out.println("in Project createRanges (FormulaListElement)");
+		Logger.debug("in Project createRanges (FormulaListElement)");
 		if (selectedFormula == null) return new ArrayList<AxisRange>();
 		List<AxisRange> ranges = checkDatasetRanges(selectedFormula);
 
@@ -207,7 +211,7 @@ public class Project {
 //		return checkDatasetRanges(selectedFormula);
 //	}
 	private List<AxisRange> checkDatasetRanges(FormulaListElement selectedFormula) throws IllegalFormulaException {
-		System.out.println("in Project checkDatasetRanges");
+		Logger.debug("in Project checkDatasetRanges");
 		AxisRange layerRange = null;
 		AxisRange timeRange = null;
 		AxisRange xRange = null;
@@ -269,7 +273,7 @@ public class Project {
 		}
 
 		if (currRange != null) {
-System.out.println("in Project.java, currRange != null so computing GregorianCalendar startDate and endDate");
+			Logger.debug("in Project.java, currRange != null so computing GregorianCalendar startDate and endDate");
 			// convert the current range into a time axis range
 //			Date startDate = new Date(currRange.getStart());
 			GregorianCalendar startDate = new GregorianCalendar();	// 2014 changed Date to GregorianCalendar
@@ -298,7 +302,7 @@ System.out.println("in Project.java, currRange != null so computing GregorianCal
 	}
 
 	private DatasetListElement getDatasetListItemFor(String alias) {
-		System.out.println("in Project getDatasetListItemFor");
+		Logger.debug("in Project getDatasetListItemFor");
 		for (DatasetListElement item : datasets.elements()) {
 			if (item.getDataset().getAlias().equals(alias)) return item;
 		}
@@ -312,7 +316,7 @@ System.out.println("in Project.java, currRange != null so computing GregorianCal
 	 * @return the set of formulas that reference the specified dataset.
 	 */
 	public Set<FormulaListElement> getFormulas(Dataset dataset) {
-		System.out.println("in Project getFormulas");
+		Logger.debug("in Project getFormulas");
 		Set<FormulaListElement> set = new HashSet<FormulaListElement>();
 		for (FormulaListElement item : formulas.elements()) {
 			for (FormulaVariable var : item.variables()) {
@@ -325,7 +329,7 @@ System.out.println("in Project.java, currRange != null so computing GregorianCal
 	}
 
 	public void removeFormulas(Set<FormulaListElement> formulas) {
-		System.out.println("in Project removeFormulas");
+		Logger.debug("in Project removeFormulas");
 		for (FormulaListElement item : formulas) {
 			this.formulas.removeFormula(item);
 		}
@@ -339,7 +343,7 @@ System.out.println("in Project.java, currRange != null so computing GregorianCal
 	 * @param var      the variable to add as a formula.
 	 */
 	public void addAsFormula(FormulaElementCreator fCreator, Variable var) {
-		System.out.println("in Project addAsFormula");
+		Logger.debug("in Project addAsFormula");
 		String formula = var.getName() + var.getDataset().getAlias();
 		FormulaListElement element = fCreator.create(formula);
 		if (element != null) {

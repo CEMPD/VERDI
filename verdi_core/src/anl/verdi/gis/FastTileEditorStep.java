@@ -4,10 +4,11 @@ import gov.epa.emvl.MapLines;
 
 import java.awt.BorderLayout;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.map.FeatureLayer;
 import org.geotools.styling.Style;
-import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
-									// NOTE: where FeatureLayer is now used in this code, MapLayer had been used
+// NOTE: where FeatureLayer is now used in this code, MapLayer had been used
 									// GeoTools 13 - SNAPSHOT User's Guide says that MapLayer is now a shallow wrapper around FeatureLayer, etc. 
 import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.PanelWizardStep;
@@ -15,6 +16,7 @@ import org.pietschy.wizard.WizardModel;
 
 //import repast.gis.styleEditor.StyleEditorPanel;		// 2014 Repast Simphony changed the package name
 import repast.simphony.gis.styleEditor.StyleEditorPanel;
+// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 
 /**
  * @author Nick Collier
@@ -23,6 +25,7 @@ import repast.simphony.gis.styleEditor.StyleEditorPanel;
 public class FastTileEditorStep extends PanelWizardStep {
 
 	private static final long serialVersionUID = -3910162428960110620L;
+	static final Logger Logger = LogManager.getLogger(FastTileEditorStep.class.getName());
 
 	private FastTileAddLayerWizardModel model;
 
@@ -33,12 +36,12 @@ public class FastTileEditorStep extends PanelWizardStep {
 
 	public FastTileEditorStep() {
 		this(null);
-System.out.println("default constructor for FastTileEditorStep");
+		Logger.debug("default constructor for FastTileEditorStep");
 	}
 	
 	public FastTileEditorStep(FeatureLayer control) {
 		super("Edit Style", "Please edit this layer's style");
-System.out.println("in constructor for FastTileEditorStep, control = " + control);
+		Logger.debug("in constructor for FastTileEditorStep, control = " + control);
 		controlLayer = control;
 //		aMapLayer = control.;
 		setLayout(new BorderLayout());
@@ -81,15 +84,15 @@ System.out.println("in constructor for FastTileEditorStep, control = " + control
 
 	@Override
 	public void applyState() throws InvalidStateException {
-System.out.println("in FastTileEditorStep.applyState, ready for model");
+		Logger.debug("in FastTileEditorStep.applyState, ready for model");
 		FastTileAddLayerWizardModel aModel = model;
-System.out.println("got aModel, now ready to get MapLines");
+		Logger.debug("got aModel, now ready to get MapLines");
 		MapLines aMapLines = aModel.getLayer();
-System.out.println("got MapLines, now ready to get the Style");
+		Logger.debug("got MapLines, now ready to get the Style");
 		Style aStyle = panel.getStyle();		// 2014 throws NullPointerException
-System.out.println("get the style = " + aStyle + ", now ready to set the Style");
+		Logger.debug("get the style = " + aStyle + ", now ready to set the Style");
 		aMapLines.setStyle(aStyle);		// 2014 throws NullPointerException
 //		model.getLayer().setStyle(panel.getStyle());
-System.out.println("done in FastTileEditorStep.applyState & returning");
+		Logger.debug("done in FastTileEditorStep.applyState & returning");
 	}
 }

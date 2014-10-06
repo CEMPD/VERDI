@@ -24,6 +24,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import saf.core.ui.GUIBarManager;
 import saf.core.ui.GUIConstants;
 import saf.core.ui.dock.DockableFrame;
@@ -52,6 +55,7 @@ import anl.verdi.plot.gui.TitlePanel;
  * @version $Revision$ $Date$
  */
 public class VerdiGUI implements WindowListener, DockableFrameListener {
+	static final Logger Logger = LogManager.getLogger(VerdiGUI.class.getName());
 
 	private static final MessageCenter ctr = MessageCenter.getMessageCenter(VerdiGUI.class);
 
@@ -165,20 +169,20 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 		} else {
 			DockableFrame view = manager.createDockable(viewId, plotPanel);
 			view.setTitle(name);
-System.out.println("in addPlot: VerdiConstants.PERSPECTIVE_ID = " + VerdiConstants.PERSPECTIVE_ID);
-System.out.println("VerdiConstants.MAIN_GROUP_ID = " + VerdiConstants.MAIN_GROUP_ID);
-System.out.println("view title = " + view.getTitle() + ", ID = " + view.getID());
-System.out.println("ready to call manager.addDockableToGroup");
+			Logger.debug("in addPlot: VerdiConstants.PERSPECTIVE_ID = " + VerdiConstants.PERSPECTIVE_ID);
+			Logger.debug("VerdiConstants.MAIN_GROUP_ID = " + VerdiConstants.MAIN_GROUP_ID);
+			Logger.debug("view title = " + view.getTitle() + ", ID = " + view.getID());
+			Logger.debug("ready to call manager.addDockableToGroup");
 			manager.addDockableToGroup(VerdiConstants.PERSPECTIVE_ID, VerdiConstants.MAIN_GROUP_ID, view);
-System.out.println("back again & now ready to call manager.removeDockableListener");
+			Logger.debug("back again & now ready to call manager.removeDockableListener");
 			manager.removeDockableListener(this); //To make sure 'this' listener won't add itself too many times
-System.out.println("back again & now ready to call manager.addDockableListener");
+			Logger.debug("back again & now ready to call manager.addDockableListener");
 			manager.addDockableListener(this);
-System.out.println("back again & now ready to call view.toFront");
+			Logger.debug("back again & now ready to call view.toFront");
 			view.toFront();
-System.out.println("back & now ready to call views.put");
+			Logger.debug("back & now ready to call views.put");
 			views.put(plotPanel.getPlot(), view);
-System.out.println("back from views.put, ending function addPlot");
+			Logger.debug("back from views.put, ending function addPlot");
 		}
 		viewList.add(viewId); // amw 02May07
 		plotPanels.put(viewId, plotPanel);

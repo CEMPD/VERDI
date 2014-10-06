@@ -1,5 +1,7 @@
 package anl.verdi.area;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 /**
  * 
@@ -17,6 +19,7 @@ package anl.verdi.area;
  *   ProgressMonitorDemo
  */
 public class LongTask {
+	static final Logger Logger = LogManager.getLogger(LongTask.class.getName());
 	protected int lengthOfTask;
 	protected int current = 0;
 	protected volatile boolean done = false;
@@ -101,7 +104,7 @@ public class LongTask {
 					}
 					statMessage = "Completed " + current + " out of " + lengthOfTask + ".";
 				} catch (InterruptedException e) {
-					System.out.println("ActualTask interrupted");
+					Logger.error("ActualTask interrupted");
 				}
 			}
 		}

@@ -41,6 +41,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+//import org.geotools.map.DefaultMapContext;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.map.FeatureLayer;
 //import org.geotools.map.MapContext;
@@ -63,7 +66,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
-//import org.geotools.map.DefaultMapContext;
 
 /**
  * @author User #1
@@ -74,6 +76,7 @@ public class DataSetPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = -5160254644729641676L;
+	static final Logger Logger = LogManager.getLogger(DataSetPanel.class.getName());
 
 	private Project project;
 
@@ -92,7 +95,7 @@ public class DataSetPanel extends JPanel {
 		new RemoteFileReader( remoteHosts );
 
 	private static String readRemoteHosts() {
-		System.out.println("in DataSetPanel [static] readRemoteHosts");
+		Logger.debug("in DataSetPanel [static] readRemoteHosts");
 	 String result = System.getProperty(Tools.REMOTE_HOSTS);;
 		//"amber.nesc.epa.gov,vortex.rtpnc.epa.gov,garnet01.rtpnc.epa.gov,tulip.rtpnc.epa.gov";
 
@@ -116,14 +119,14 @@ public class DataSetPanel extends JPanel {
 //				new DefaultMapContext(DefaultGeographicCRS.WGS84));
 //				new MapContent(DefaultGeographicCRS.WGS84));	// deprecated changed to (ViewPort.set)
 				new MapContent());
-		System.out.println("in DataSetPanel default constructor");
+		Logger.debug("in DataSetPanel default constructor");
 		MapViewport aViewport = new MapViewport();
 		aViewport.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
 		this.context.setViewport(aViewport);
 	}
 
 	public DataSetPanel(Project project, MapContent mapContent) {
-		System.out.println("in DataSetPanel constructor (Project, MapContent)");
+		Logger.debug("in DataSetPanel constructor (Project, MapContent)");
 		this.project = project;
 		this.context = mapContent;
 		initComponents();
@@ -137,13 +140,13 @@ public class DataSetPanel extends JPanel {
 
 	public void addFormulaCallbacks(FormulaElementCreator creator,
 			FormulaEditor fEditor) {
-		System.out.println("in DataSetPanel addFormulaCallbacks");
+		Logger.debug("in DataSetPanel addFormulaCallbacks");
 		this.fCreator = creator;
 		this.fEditor = fEditor;
 	}
 
 	private void initializePopups() {
-		System.out.println("in DataSetPanel.initializePopups");
+		Logger.debug("in DataSetPanel.initializePopups");
 		dataList.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent evt) {
 				if (evt.isPopupTrigger()) {
@@ -218,12 +221,12 @@ public class DataSetPanel extends JPanel {
 		private static final long serialVersionUID = 794792777678207306L;
 
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("properties");
+			Logger.debug("properties");
 		}
 	};
 
 	private void showDataListPopup(MouseEvent evt) {
-		System.out.println("in DataSetPanel showDataListPopup");
+		Logger.debug("in DataSetPanel showDataListPopup");
 		boolean enable = dataList.getSelectedIndex() != -1;
 		JPopupMenu menu = new JPopupMenu();
 		menu.add(addDatasetAction);
@@ -243,7 +246,7 @@ public class DataSetPanel extends JPanel {
 	};
 
 	private void addVariable() {
-		System.out.println("in DataSetPanel addVariable");
+		Logger.debug("in DataSetPanel addVariable");
 //		Object[] objs = variableList.getSelectedValues();	// 2014 changed from returning an array to returning a List
 		List objs = variableList.getSelectedValuesList();
 //		if (objs.length > 0) {
@@ -280,7 +283,7 @@ public class DataSetPanel extends JPanel {
 	};
 
 	private void showVariablesPopup(MouseEvent evt) {
-		System.out.println("in DataSetPanel showVariablesPopup");
+		Logger.debug("in DataSetPanel showVariablesPopup");
 		boolean enable = variableList.getSelectedIndex() != -1;
 		JPopupMenu menu = new JPopupMenu();
 		menu.add(addVariableToEditor).setEnabled(enable);
@@ -290,7 +293,7 @@ public class DataSetPanel extends JPanel {
 	}
 
 	private void initListeners() {
-		System.out.println("in DataSetPanel initListeners");
+		Logger.debug("in DataSetPanel initListeners");
 		ListSelectionListener listSelectionListener = new ListSelectionListener() {
 
 			public void valueChanged(ListSelectionEvent arg0) {
@@ -319,7 +322,7 @@ public class DataSetPanel extends JPanel {
 	}
 
 	private void initializeButtons() {
-		System.out.println("in DataSetPanel initializeButtons");
+		Logger.debug("in DataSetPanel initializeButtons");
 		Icon icon = btnAdd.getIcon();
 		btnAdd.setMaximumSize(new Dimension(icon.getIconWidth(), icon
 				.getIconHeight()));
@@ -391,7 +394,7 @@ public class DataSetPanel extends JPanel {
 	}
 
 	private void initComponents() {
-		System.out.println("in DataSetPanel initComponents");
+		Logger.debug("in DataSetPanel initComponents");
 		// JFormDesigner - Component initialization - DO NOT MODIFY
 		// //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner non-commercial license
@@ -527,7 +530,7 @@ public class DataSetPanel extends JPanel {
 	}
 
 	private void addPanelListeners() {
-		System.out.println("in DataSetPanel addPanelListeners");
+		Logger.debug("in DataSetPanel addPanelListeners");
 		timePanel.addListeners(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				Object obj = dataList.getSelectedValue();
@@ -609,7 +612,7 @@ public class DataSetPanel extends JPanel {
 	// JFormDesigner - End of variables declaration //GEN-END:variables
 
 	public void loadDataset(Dataset dataset) {
-		System.out.println("in DataSetPanel loadDataset");
+		Logger.debug("in DataSetPanel loadDataset");
 		DatasetListModel model = (DatasetListModel) dataList.getModel();
 		int index = model.addDataset(dataset);
 		dataList.setSelectedIndex(index);
@@ -617,7 +620,7 @@ public class DataSetPanel extends JPanel {
 	}
 
 	public void addOpenDatasetAction(Action openDatasetAction) {
-		System.out.println("in DataSetPanel addOpenDatasetAction");
+		Logger.debug("in DataSetPanel addOpenDatasetAction");
 		btnAdd.addActionListener(openDatasetAction);
 	}
 
@@ -667,7 +670,7 @@ public class DataSetPanel extends JPanel {
 	}
 
 	private void setTimeValues(DatasetListElement element) {
-		System.out.println("in DataSetPanel setTimeValues");
+		Logger.debug("in DataSetPanel setTimeValues");
 		if (element != null
 				&& element.getTimeMin() != DatasetListElement.NO_TIME_VALUE) {
 			timePanel.setEnabled(true);
@@ -679,7 +682,7 @@ public class DataSetPanel extends JPanel {
 	}
 
 	public void setLayerValues(DatasetListElement element) {
-		System.out.println("in DataSetPanel setLayerValues");
+		Logger.debug("in DataSetPanel setLayerValues");
 		if (element != null
 				&& element.getLayerMin() != DatasetListElement.NO_LAYER_VALUE) {
 			layerPanel1.setEnabled(true);
@@ -692,7 +695,7 @@ public class DataSetPanel extends JPanel {
 	}
 
 	public void setDomainValues(AbstractListElement element) {
-		System.out.println("in DataSetPanel setDomainValues");
+		Logger.debug("in DataSetPanel setDomainValues");
 		if (element != null && element.getAxes().getXAxis() != null
 				&& element.getAxes().getYAxis() != null)
 			domainPanel1.setDomainValues(element);

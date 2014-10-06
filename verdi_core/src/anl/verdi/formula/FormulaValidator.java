@@ -9,9 +9,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
-import org.unitsofmeasurement.unit.*;
+import org.unitsofmeasurement.unit.Unit;
 
 import anl.verdi.data.Axes;
 import anl.verdi.data.AxisRange;
@@ -29,12 +31,13 @@ import anl.verdi.util.Utilities;
  * @version $Revision$ $Date$
  */
 public class FormulaValidator {
+	static final Logger Logger = LogManager.getLogger(FormulaValidator.class.getName());
 
 	private List<FormulaVariable> variables = new ArrayList<FormulaVariable>();
 	public static final String UNITS_WARN = "UNITS_WARN";
 
 	public FormulaValidator(List<FormulaVariable> variables) {
-System.out.println("in constructor for FormulaValidator");
+		Logger.debug("in constructor for FormulaValidator");
 		this.variables = variables;
 	}
 

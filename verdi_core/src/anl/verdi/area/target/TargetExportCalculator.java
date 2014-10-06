@@ -2,6 +2,9 @@ package anl.verdi.area.target;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 /**
  * 
  * File Name:TargetExportCalculator.java
@@ -14,6 +17,7 @@ import java.util.ArrayList;
  *
  */
 public class TargetExportCalculator extends TargetCalculator {
+	static final Logger Logger = LogManager.getLogger(TargetExportCalculator.class.getName());
   ArrayList baseFiles, projectedFiles, variables, resultants, outFiles;
   public boolean loadFiles=true;
   public void setFilesAndVariables(ArrayList b, ArrayList p, ArrayList v, ArrayList eq, ArrayList f) {
@@ -40,7 +44,7 @@ public class TargetExportCalculator extends TargetCalculator {
 //        ArrayList vars = (ArrayList)variables.get(i);
 //        String eqName = (String)resultants.get(i);
 //        
-//  System.out.println(""+base+" "+projected+" "+vars+" "+outFileName);
+//  Logger.debug(""+base+" "+projected+" "+vars+" "+outFileName);
 //        base.load(ModelData.BASE, vars, eqName, false);
 //        if (projected != null)
 //          projected.load(ModelData.PROJECTED, vars, eqName, false);
@@ -48,7 +52,7 @@ public class TargetExportCalculator extends TargetCalculator {
 //      // calculate the grid intersections
 //      if (!Target.allIndexFilesLoaded()) {
 //        // try to read them in 
-////System.out.println("trying to read intersections");
+////Logger.debug("trying to read intersections");
 //        //readInIntersections();
 //
 //        // see if they broke out of it
@@ -59,7 +63,7 @@ public class TargetExportCalculator extends TargetCalculator {
 //
 //        // if they did not load all of them in
 //        if (!Target.allIndexFilesLoaded()) {
-//System.out.println("calculating intersections");
+//Logger.debug("calculating intersections");
 //          // calculate where the grid cell intersections are located
 //          boolean didCalcs = calculateIntersections(Target.getTargets());
 //          if (didCalcs == false){
@@ -77,7 +81,7 @@ public class TargetExportCalculator extends TargetCalculator {
 //      // calculate the depositions
 //      ArrayList results = Target.calculateAllDepositions();
 //      Target.calculateDepositions();
-//System.out.println("writing out data");
+//Logger.debug("writing out data");
 //      FileHelper.writeDataLines(outFileName, new Vector(results));
 //    }
 //    cleanUp();

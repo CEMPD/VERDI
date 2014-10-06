@@ -5,6 +5,8 @@ import gov.epa.emvl.Projector;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
@@ -39,6 +41,8 @@ import com.vividsolutions.jts.geom.Polygon;
  *
  */
 public class TargetCalculator extends LongTask {
+	static final Logger Logger = LogManager.getLogger(TargetCalculator.class.getName());
+	
 	// whether depositions should be shown
 	public boolean showIt=false;
 	/**
@@ -82,7 +86,7 @@ public class TargetCalculator extends LongTask {
 	 */
   public boolean calculateIntersections(ArrayList targets) {
     statMessage = "Calculating Intersections...";
-    System.out.println("WARNING: TargetCalculator.calculateIntersections called for only 1 argument, does nothing but returns TRUE always " + statMessage);
+    Logger.warn("WARNING: TargetCalculator.calculateIntersections called for only 1 argument, does nothing but returns TRUE always " + statMessage);
 //    // change to busy cursor
 //    boolean didCalcs = false;
 //    try {
@@ -117,7 +121,7 @@ public class TargetCalculator extends LongTask {
 //        Target target = ((Target)targets.get(targetNum));
 //        // update the message
 //        statMessage = "Polygon " + target + " (" + (targetNum + 1) + " of " + targets.size() + ")";
-//        System.out.println(statMessage);
+//        Logger.debug(statMessage);
 //
 //        Geometry obj = target.dataObject;
 //        // if it hasn't been done yet
@@ -129,7 +133,7 @@ public class TargetCalculator extends LongTask {
 //
 //          //calculate the candidate areas
 //          Location[] list = box.pointsArray();
-//          //System.out.println("list " + list);
+//          //Logger.debug("list " + list);
 //          GridGeometry.GridIndex index1=null;
 //          GridGeometry.GridIndex index2=null;
 //          try{
@@ -195,7 +199,7 @@ public class TargetCalculator extends LongTask {
 //        }
 //      }
 //    } catch (Exception e) {
-//      System.out.println("An exception occurred ");
+//      Logger.error("An exception occurred ");
 //      e.printStackTrace();
 //    } finally {
 //      //update();
@@ -238,7 +242,7 @@ public class TargetCalculator extends LongTask {
   public boolean calculateIntersections(ArrayList targets,DataFrame dataFrame,AreaTilePlot plot) {
 	  
 	    statMessage = "Calculating Intersections...";
-	    System.out.println("TargetCalculator.calculateIntersections for multiple args " + statMessage);
+	    Logger.debug("TargetCalculator.calculateIntersections for multiple args " + statMessage);
 	    // change to busy cursor
 	    boolean didCalcs = false;
 	    try {
@@ -253,7 +257,7 @@ public class TargetCalculator extends LongTask {
 	      //units=Units.getAreaFromLength(units);
 	      Units.setCurrentArea("km2"); 
 	      double areaConversion=Units.conversionArea("m2");
-System.out.println("in TargetCalculator, just calculated areaConversion (conversion factor to m2) = " + areaConversion);	      
+	      Logger.debug("in TargetCalculator, just calculated areaConversion (conversion factor to m2) = " + areaConversion);	      
 	      // get the conversion from the grid to the standard target area units
 	      //double conversion = Units.convertArea(units, Target.getUnits(), 1.0);
 	      //GridGeometry geometry = ((GridGeometry)grid.getGeometry().getGeometry());
@@ -285,7 +289,7 @@ System.out.println("in TargetCalculator, just calculated areaConversion (convers
 			}
 
 			final Envelope envelope = coordinateAxes.getBoundingBox(dataset.getNetcdfCovn());
-			// System.out.println( "envelope = " + envelope );
+			Logger.debug( "envelope = " + envelope );
 
 			westEdge = envelope.getMinX(); // E.g., -420000.0.
 			southEdge = envelope.getMinY(); // E.g., -1716000.0.
@@ -307,7 +311,7 @@ System.out.println("in TargetCalculator, just calculated areaConversion (convers
 	        Target target = ((Target)targets.get(targetNum));
 	        // update the message
 	        statMessage = "Polygon " + target + " (" + (targetNum + 1) + " of " + targets.size() + ")";
-	        //System.out.println(statMessage);
+	        Logger.debug(statMessage);
 
 	        Geometry obj = target.dataObject;
 	        
@@ -392,7 +396,7 @@ System.out.println("in TargetCalculator, just calculated areaConversion (convers
 	        }
 	        
 	    } catch (Exception e) {
-	      System.out.println("An exception occurred ");
+	      Logger.error("An exception occurred ");
 	      e.printStackTrace();
 	    } finally {
 	      //update();
@@ -495,7 +499,7 @@ System.out.println("in TargetCalculator, just calculated areaConversion (convers
 //			Target.setIndexLoaded(sourceFile);
 //			
 //    } catch (EOFException e) {} catch (IOException e) {
-//      System.out.println("Error reading index file for shape file " + sourceFile);
+//      Logger.error("Error reading index file for shape file " + sourceFile);
 //      return false;
 //    }
 //
@@ -533,7 +537,7 @@ System.out.println("in TargetCalculator, just calculated areaConversion (convers
 //
 //      // write out the grid id
 //      String gridId = ModelData.getBaseData().toString();
-//      System.out.println("Writing index file for sourceFile " + sourceFile + " for grid " + gridId);
+//      Logger.debug("Writing index file for sourceFile " + sourceFile + " for grid " + gridId);
 //      stream.writeUTF(gridId);
 //
 //      // write out the stream size
@@ -547,7 +551,7 @@ System.out.println("in TargetCalculator, just calculated areaConversion (convers
 //			Target.setIndexLoaded(sourceFile);
 //      
 //    } catch (IOException e) {
-//      System.out.println("Error writing index file for shape file " + sourceFile);
+//      Logger.error("Error writing index file for shape file " + sourceFile);
 //      return false;
 //    }
 //    return true;

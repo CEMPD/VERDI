@@ -19,6 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import anl.gui.panel.layout.SpringUtilities;
@@ -32,6 +34,7 @@ public class ProjectionCard extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 5583749836339606614L;
+	static final Logger Logger = LogManager.getLogger(ProjectionCard.class.getName());
 ProjectionPanel filePanel;
   WizardWindow window;
   JComboBox nameBox,coordBox;
@@ -109,7 +112,7 @@ ProjectionPanel filePanel;
     nameBox.removeAllItems();
     while(it.hasNext()){
       Object obj = it.next();
-      System.out.println(obj);
+      Logger.debug(obj);
       nameBox.addItem(obj.toString());
     }
     
