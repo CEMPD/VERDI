@@ -1,10 +1,10 @@
 package anl.verdi.boot;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.java.plugin.PluginClassLoader;
 import org.java.plugin.registry.PluginDescriptor;
 import org.java.plugin.standard.StandardPluginLifecycleHandler;
-
-import simphony.util.messages.MessageCenter;
 
 /**
  * LifecycleHandler that creates PavePluginClassLoaders.
@@ -15,12 +15,11 @@ import simphony.util.messages.MessageCenter;
  * per Eclipse's suggestion added a 2nd argument as "null"
  */
 public class VerdiPluginLifecycleHandler extends StandardPluginLifecycleHandler {
-
-	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(VerdiPluginLifecycleHandler.class);
+	static final Logger Logger = LogManager.getLogger(VerdiPluginLifecycleHandler.class.getName());
 
 	@Override
 	protected PluginClassLoader createPluginClassLoader(PluginDescriptor descriptor) {
-		msgCenter.debug("Creating class loader", (Object[]) null);
+		Logger.debug("Creating PluginClassloader in VerdiPluginLifecycleHandler");
 		return new VerdiPluginClassLoader(getPluginManager(), descriptor, getClass().getClassLoader());
 	}
 }
