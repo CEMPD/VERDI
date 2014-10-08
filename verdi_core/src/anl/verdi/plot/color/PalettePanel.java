@@ -31,6 +31,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.brewer.color.PaletteType;
 
@@ -54,6 +56,7 @@ import com.jgoodies.forms.layout.Sizes;
  */
 public class PalettePanel extends JPanel {
 	private static final long serialVersionUID = -8109206936055484044L;
+	static final Logger Logger = LogManager.getLogger(PalettePanel.class.getName());
 	private ColorMapTableModel model;
 //	private boolean autoInterval = true;
 	private int intervalInx = 0; // to replace autoInterval: 0: auto, 1: custom, 2: log
@@ -96,7 +99,7 @@ public class PalettePanel extends JPanel {
 	}
 	
 	private void initComponents() {
-System.out.println("in PalettePanel.initComponents");
+		Logger.debug("in PalettePanel.initComponents");
 		// JFormDesigner - Component initialization - DO NOT MODIFY
 		// //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner non-commercial license
@@ -320,7 +323,7 @@ System.out.println("in PalettePanel.initComponents");
 	}	
 
 	public PalettePanel() {
-System.out.println("in default constructor for PalettePanel");
+		Logger.debug("in default constructor for PalettePanel");
 		model = new ColorMapTableModel();
 		initComponents();
 		
@@ -661,7 +664,7 @@ System.out.println("in default constructor for PalettePanel");
 	}
 
 	public void setPalettes(List<Palette> palettes) {
-System.out.println("in PalettePanel.setPalettes");
+		Logger.debug("in PalettePanel.setPalettes");
 		paletteList.setData(palettes);
 		int index = findPaletteIndex(model.getColorMap().getPalette());
 		if (palettes.size() > 0) {
@@ -678,7 +681,7 @@ System.out.println("in PalettePanel.setPalettes");
 	}
 
 	private int findPaletteIndex(Palette palette) {
-System.out.println("in PalettePanel.finePaletteIndex");
+		Logger.debug("in PalettePanel.finePaletteIndex");
 		ListModel model = paletteList.getModel();
 		int index = -1;
 		for (int i = 0; i < model.getSize(); i++) {
@@ -693,7 +696,7 @@ System.out.println("in PalettePanel.finePaletteIndex");
 	}
 
 	public void initMap(ColorMap colorMap, DataUtilities.MinMax minMax) {
-System.out.println("in PalettePanel.initMap");
+		Logger.debug("in PalettePanel.initMap");
 		ColorMap.IntervalType iType = colorMap.getIntervalType();
 		if (iType == ColorMap.IntervalType.AUTOMATIC) {
 			intervalType.setSelectedItem("Automatic");
@@ -779,7 +782,7 @@ System.out.println("in PalettePanel.initMap");
 	// JFormDesigner - End of variables declaration //GEN-END:variables
 
 	public ColorMap getColorMap() throws Exception {
-System.out.println("in PalettePanel.getColorMap");
+		Logger.debug("in PalettePanel.getColorMap");
 		ColorMap map = model.getColorMap();
 		String format = formatFld.getText();
 		
@@ -790,7 +793,7 @@ System.out.println("in PalettePanel.getColorMap");
 	}
 
 	private ColorMap resetNumberFormat(ColorMap map, String format) throws Exception {
-System.out.println("in PalettePanel.resetNumberFormat");
+		Logger.debug("in PalettePanel.resetNumberFormat");
 		if (format == null)
 			return map;
 		
@@ -838,7 +841,7 @@ System.out.println("in PalettePanel.resetNumberFormat");
 	}
 	
 	private String getFormat(NumberFormat numberFormat) {
-System.out.println("in PalettePanel.getFormat");
+		Logger.debug("in PalettePanel.getFormat");
 		if (numberFormat == null)
 			return " %.3f";
 		
@@ -890,7 +893,7 @@ System.out.println("in PalettePanel.getFormat");
 	}
 
 	public ColorMap.PaletteType getPaletteType() {
-System.out.println("in PalettePanel.getPaletteType");
+		Logger.debug("in PalettePanel.getPaletteType");
 		if (paletteType == ColorBrewer.SEQUENTIAL)
 			return ColorMap.PaletteType.SEQUENTIAL;
 		
@@ -901,13 +904,13 @@ System.out.println("in PalettePanel.getPaletteType");
 	}
 
 	public void setPaletteType(PaletteType paletteType) {
-System.out.println("in PalettePanel.setPaletteType");
+		Logger.debug("in PalettePanel.setPaletteType");
 		this.paletteType = paletteType;
 		model.resetPaletteType(getPaletteType());
 	}
 
 	public void setForFastTitle(boolean isForFastTitle) {
-System.out.println("in PalettePanel.setForFastTitle");
+		Logger.debug("in PalettePanel.setForFastTitle");
 		this.isForFastTitle = isForFastTitle;
 		ColorMap.IntervalType iType = ColorMap.IntervalType.AUTOMATIC;
 		ColorMap.ScaleType sType = ColorMap.ScaleType.LINEAR;
@@ -927,7 +930,7 @@ System.out.println("in PalettePanel.setForFastTitle");
 		} else if ( iType == ColorMap.IntervalType.CUSTOM) {
 			intervalType.setSelectedIndex(1);
 		} else {
-			System.out.println("Error: IntervalType should not be Logarithm");
+			Logger.debug("Error: IntervalType should not be Logarithm");
 		}
 		
 		if ( this.isForFastTitle //&& this.model.getColorMap().getStatType() == ColorMap.StatType.NONE 
@@ -946,7 +949,7 @@ System.out.println("in PalettePanel.setForFastTitle");
 	}
 
 	public boolean isForFastTitle() {
-System.out.println("in PalettePanel.isForFastTitle");
+		Logger.debug("in PalettePanel.isForFastTitle");
 		return isForFastTitle;
 	}
 }

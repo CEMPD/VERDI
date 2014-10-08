@@ -2,10 +2,12 @@ package anl.verdi.data;
 
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
-import org.unitsofmeasurement.unit.*;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.unitsofmeasurement.unit.Unit;
 
 public class ExtendAxisRange implements ExtendCoordAxis {
-	
+	static final Logger Logger = LogManager.getLogger(ExtendAxisRange.class.getName());
 	protected ExtendCoordAxis axis;
 	protected Range range;
 
@@ -47,7 +49,7 @@ public class ExtendAxisRange implements ExtendCoordAxis {
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
-System.out.println("in ExtendAxisRange.getUnits, Unit = " + axis.getUnits());
+		Logger.debug("in ExtendAxisRange.getUnits, Unit = " + axis.getUnits());
 		return axis.getUnits();
 	}
 

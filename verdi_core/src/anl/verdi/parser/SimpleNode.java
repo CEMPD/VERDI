@@ -2,12 +2,16 @@
 
 package anl.verdi.parser;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.formula.IllegalFormulaException;
 import anl.verdi.util.FormulaArray;
 
 public class SimpleNode implements Node {
 
 //	private static final int PRECISION = 10;
+	static final Logger Logger = LogManager.getLogger(SimpleNode.class.getName());
 
 	protected static final double DEG_TO_RAD_FACTOR = 180 * Math.PI;
 
@@ -85,7 +89,7 @@ public class SimpleNode implements Node {
 			 out its children. */
 
 	public void dump(String prefix) {
-		System.out.println(toString(prefix));
+		Logger.debug(toString(prefix));
 		if (children != null) {
 			for (int i = 0; i < children.length; ++i) {
 				SimpleNode n = (SimpleNode) children[i];

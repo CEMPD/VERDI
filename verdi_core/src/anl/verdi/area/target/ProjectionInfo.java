@@ -1702,8 +1702,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 	 */
 	private void handleException(java.lang.Throwable exception) {
 
-		/* Uncomment the following lines to print uncaught exceptions to stdout */
-		Logger.error("--------- UNCAUGHT EXCEPTION ---------");
+		Logger.error("--------- EXCEPTION in anl.verdi.area.target.ProjectInfo ---------");
+		exception.printStackTrace(); 				// 2014 sends to stderr (normal)
 		exception.printStackTrace(System.out);
 	}
 

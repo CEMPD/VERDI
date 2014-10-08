@@ -10,6 +10,8 @@ import java.awt.Graphics2D;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.BlockBorder;
@@ -27,17 +29,19 @@ import anl.verdi.plot.color.PavePaletteCreator;
  */
 public class LegendPanel extends JComponent {
 
+	private static final long serialVersionUID = -9100503749455967327L;
+	static final Logger Logger = LogManager.getLogger(LegendPanel.class.getName());
 	private PaintScaleLegend legend;
 
 	public LegendPanel(ColorMap map, double min, double max, String units) {
-System.out.println("in constructor for LegendPanel for a ColorMap, min, max, and units");
+		Logger.debug("in constructor for LegendPanel for a ColorMap, min, max, and units");
 		initLegend(map, min, max, units);
 	}
 
 
 	@Override
 	protected void paintComponent(Graphics g) {
-System.out.println("in LegendPanel.paintComponent");
+		Logger.debug("in LegendPanel.paintComponent");
 		if (isOpaque()) { //paint background
 			g.setColor(getBackground());
 			g.fillRect(0, 0, getWidth(), getHeight());
@@ -56,7 +60,7 @@ System.out.println("in LegendPanel.paintComponent");
 	}
 
 	public void initLegend(ColorMap map, double min, double max, String units) {
-System.out.println("in LegendPanel.initLegend for ColorMap, min, max, units");
+		Logger.debug("in LegendPanel.initLegend for ColorMap, min, max, units");
 		LookupPaintScale scale = createPaintScale(map, min, max);
 		NumberAxis scaleAxis = new NumberAxis(units);
 		scaleAxis.setTickMarkPaint(Color.BLACK);
@@ -67,7 +71,8 @@ System.out.println("in LegendPanel.initLegend for ColorMap, min, max, units");
 			legend.setAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
 			legend.setAxisOffset(5.0);
 			legend.setMargin(new RectangleInsets(5, 5, 5, 5));
-			legend.setBorder(new BlockBorder(Color.red));	// 2014 deprecated, change .setBorder(BlockBorder) to setFrame(BlockFrame)
+//			legend.setBorder(new BlockBorder(Color.red));	// 2014 deprecated, changed .setBorder(BlockBorder) to setFrame(BlockFrame)
+			legend.setFrame(new BlockBorder(Color.red));
 			legend.setPadding(new RectangleInsets(10, 10, 10, 10));
 			legend.setStripWidth(10);
 			legend.setPosition(RectangleEdge.RIGHT);
@@ -79,30 +84,33 @@ System.out.println("in LegendPanel.initLegend for ColorMap, min, max, units");
 	}
 
 	public PaintScaleLegend getLegend() {
-System.out.println("in LegendPanel.getLegend");
+		Logger.debug("in LegendPanel.getLegend");
 		return legend;
 	}
 
 	// creates the legend scale from the color map
 	protected LookupPaintScale createPaintScale(ColorMap map, double min, double max) {
-System.out.println("in LegendPanel.createPaintScale");
+		Logger.debug("in LegendPanel.createPaintScale");
 		int colorCount = map.getColorCount();
 		LookupPaintScale paintScale = new LookupPaintScale(min, max, Color.GRAY);
 		if (map.getIntervalType() == ColorMap.IntervalType.AUTOMATIC) { // TODO: need to add logarithm
 			double interval = (max - min) / colorCount;
 			if (max == min) {
-				paintScale.add(new Double(min), map.getColor(0));
+//				paintScale.add(new Double(min), map.getColor(0));	// 2014 old add deprecated
+				paintScale.add(min, map.getColor(0));
 			} else {
 				for (int i = 0; i < colorCount; i++) {
-					paintScale.add(new Double(min + (i * interval)), map.getColor(i));
+//					paintScale.add(new Double(min + (i * interval)), map.getColor(i));	// 2014 old add deprecated
+					paintScale.add((min + (i * interval)), map.getColor(i));
 				}
 			}
 		} else {
 			// use the values directly from the color map itself
 			for (int i = 0; i < colorCount; i++) {
 				try {
-					paintScale.add(new Double(map.getIntervalStart(i)), map.getColor(i));
-				} catch (Exception e) {
+//					paintScale.add(new Double(map.getIntervalStart(i)), map.getColor(i));	// 2014 old add deprecated
+					paintScale.add(map.getIntervalStart(i), map.getColor(i));
+					} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

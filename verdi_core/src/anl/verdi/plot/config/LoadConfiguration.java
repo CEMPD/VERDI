@@ -6,8 +6,11 @@ import java.io.IOException;
 
 import javax.swing.AbstractAction;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import saf.core.ui.util.FileChooserUtilities;
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.util.Tools;
 
@@ -17,12 +20,10 @@ import anl.verdi.util.Tools;
  */
 public class LoadConfiguration extends AbstractAction {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 28016951641413950L;
+	static final Logger Logger = LogManager.getLogger(LoadConfiguration.class.getName());
 
-	private static final MessageCenter center = MessageCenter.getMessageCenter(LoadConfiguration.class);
+//	private static final MessageCenter center = MessageCenter.getMessageCenter(LoadConfiguration.class);
 
 	private Plot plot;
 
@@ -44,7 +45,7 @@ public class LoadConfiguration extends AbstractAction {
 				config.merge(newConfig);
 				plot.configure(config, Plot.ConfigSoure.FILE);
 			} catch (IOException ex) {
-				center.error("Error loading configuration", ex);
+				Logger.error("Error loading configuration " + ex.getMessage());
 			}
 		}
 	}

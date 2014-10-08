@@ -50,6 +50,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.eclipse.uomo.units.AbstractUnit;
 import org.eclipse.uomo.units.SI;
 import org.eclipse.uomo.units.impl.BaseUnit;
@@ -60,12 +62,12 @@ import org.eclipse.uomo.units.impl.system.USCustomary;
 //import org.unitsofmeasurement.service.*;
 import org.unitsofmeasurement.unit.Unit;
 
-
 /**
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
 public class VUnits {
+	static final Logger Logger = LogManager.getLogger(VUnits.class.getName());
 
 	private static VUnits instance = new VUnits();
 
@@ -75,7 +77,7 @@ public class VUnits {
 //	public static final Unit MISSING_UNIT = new BaseUnit("all", "_MISSING_UNIT_");
 
 	private VUnits() {
-System.out.println("in private constructor for VUnits");
+		Logger.debug("in private constructor for VUnits");
 		// areas
 		unitMap.put("m2", SI.SQUARE_METRE);
 		unitMap.put("km2", (SI.Prefix.KILO(SI.METRE).multiply(SI.Prefix.KILO(SI.METRE))));	//SI.METRE).multiply(1000).multiply(SI.METRE).multiply(1000));
@@ -150,7 +152,7 @@ System.out.println("in private constructor for VUnits");
 		// convert superscripts
 		unitString=unitString.replace('\u00b2','2');
 		unitString=unitString.replace('\u00b3','3');
-System.out.println("in VUnits.makeUnit, unitString = " + unitString);		
+		Logger.debug("in VUnits.makeUnit, unitString = " + unitString);		
 		if (unitString.contains("/")) {
 			return getDividedUnit(unitString);
 		}
@@ -166,40 +168,39 @@ System.out.println("in VUnits.makeUnit, unitString = " + unitString);
 		// convert superscripts
 		unitString=unitString.replace('\u00b2','2');
 		unitString=unitString.replace('\u00b3','3');
-System.out.println("in VUnits.make1Unit, unitString = " + unitString);		
+		Logger.debug("in VUnits.make1Unit, unitString = " + unitString);		
 		return getUnit(unitString);
 	}
 
 	private Unit getDividedUnit(String unitString) {
-System.out.println("in VUnits.getDividedUnit for unitString = " + unitString);
+		Logger.debug("in VUnits.getDividedUnit for unitString = " + unitString);
 		StringTokenizer tok = new StringTokenizer(unitString, "/");
 		if (tok.countTokens() != 2) {
-			//return null;
-System.out.println("in VUnits.getDividedUnit, count of tokens = " + tok.countTokens() + " returning BaseUnit = " + new BaseUnit(unitString));
+			Logger.debug("in VUnits.getDividedUnit, count of tokens = " + tok.countTokens() + " returning BaseUnit = " + new BaseUnit(unitString));
 			return new BaseUnit(unitString);
 		}
 		String strRhs = tok.nextToken().trim();
 		String strLhs = tok.nextToken().trim();
 		if (!(unitMap.containsKey(strRhs) && unitMap.containsKey(strLhs))) {
-System.out.println("in VUnits.getDividedUnit, unitString = " + new BaseUnit(unitString));
+			Logger.debug("in VUnits.getDividedUnit, unitString = " + new BaseUnit(unitString));
 			return new BaseUnit(unitString);
 		}
 		Unit rhs = getUnit(strRhs);
 		Unit lhs = getUnit(strLhs);
 		try {
-System.out.println("in VUnits.getDividedUnit, returning rhs.divide = " + rhs.divide(lhs));
+			Logger.debug("in VUnits.getDividedUnit, returning rhs.divide = " + rhs.divide(lhs));
 			return rhs.divide(lhs);
 		} catch (Exception ex) {
-System.out.println("in VUnits.getDividedUnit, returning BaseUnit(unitString) = " + new BaseUnit(unitString));
+			Logger.debug("in VUnits.getDividedUnit, returning BaseUnit(unitString) = " + new BaseUnit(unitString));
 			return new BaseUnit(unitString);
 		}
 	}
 
 	private Unit getUnit(String unitString) {
 		Unit unit = unitMap.get(unitString);
-System.out.println("in VUnits.getUnit, Unit = " + unit);
+		Logger.debug("in VUnits.getUnit, Unit = " + unit);
 		if (unit == null) {
-System.out.println("unit is null, going into try block to get a unit");
+			Logger.debug("unit is null, going into try block to get a unit");
 			try {
 				// see if we can make an SI type unit out of it
 			// 2014  trying to figure out what the valueOf function does
@@ -209,13 +210,13 @@ System.out.println("unit is null, going into try block to get a unit");
 			// returns UnitFormat.getStandardInstance().parse(csq, new ParsePosition(0))
 			// exception matches; thrown if the specified character sequence cannot be correctly parsed (e.g., symbol unknown)
 				unit = AbstractUnit.valueOf(unitString);	// changed Unit.valueof(  to AbstractUnit.valueOf(
-System.out.println("in VUnits.getUnit, have an AbstractUnit = " + unit);
+				Logger.debug("in VUnits.getUnit, have an AbstractUnit = " + unit);
 			} catch (IllegalArgumentException ex) {
 				unit = new BaseUnit(unitString);
-System.out.println("in VUnits.getUnit, caught a problem so assigning unit = " + unit);
+				Logger.debug("in VUnits.getUnit, caught a problem so assigning unit = " + unit);
 			}
 		}
-System.out.println("returning from VUnits.getUnit unit = " + unit);
+		Logger.debug("returning from VUnits.getUnit unit = " + unit);
 		return unit;
 	}
 
@@ -225,7 +226,7 @@ System.out.println("returning from VUnits.getUnit unit = " + unit);
 	}
 
 	private UnsupportedUnitException getException(String unitString) {
-System.out.println("in UnsupportedUnitException for unitString = " + unitString);
+		Logger.debug("in UnsupportedUnitException for unitString = " + unitString);
 		return new UnsupportedUnitException("Unsupported unit format: '" + unitString + "'");
 	}
 	

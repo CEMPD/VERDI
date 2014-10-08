@@ -7,8 +7,11 @@ import java.io.IOException;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import saf.core.ui.util.FileChooserUtilities;
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.util.Tools;
 
@@ -18,13 +21,10 @@ import anl.verdi.util.Tools;
  */
 public class SaveConfiguration extends AbstractAction {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8610404173487269858L;
+	static final Logger Logger = LogManager.getLogger(SaveConfiguration.class.getName());
 
-	private static final MessageCenter center = MessageCenter
-			.getMessageCenter(SaveConfiguration.class);
+//	private static final MessageCenter center = MessageCenter.getMessageCenter(SaveConfiguration.class);
 
 	private Plot plot;
 
@@ -45,7 +45,7 @@ public class SaveConfiguration extends AbstractAction {
 			try {
 				config.save(file, saveTitle);
 			} catch (IOException ex) {
-				center.error("Error saving configuration", ex);
+				Logger.error("Error saving configuration " + ex.getMessage());
 			}
 		}
 	}

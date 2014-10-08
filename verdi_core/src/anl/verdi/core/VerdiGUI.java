@@ -34,7 +34,7 @@ import saf.core.ui.dock.DockingManager;
 import saf.core.ui.dock.Perspective;
 import saf.core.ui.event.DockableFrameEvent;
 import saf.core.ui.event.DockableFrameListener;
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import visad.java3d.DisplayImplJ3D;
 import anl.verdi.area.AreaFile;
 import anl.verdi.area.AreaFilePanel;
@@ -57,7 +57,7 @@ import anl.verdi.plot.gui.TitlePanel;
 public class VerdiGUI implements WindowListener, DockableFrameListener {
 	static final Logger Logger = LogManager.getLogger(VerdiGUI.class.getName());
 
-	private static final MessageCenter ctr = MessageCenter.getMessageCenter(VerdiGUI.class);
+//	private static final MessageCenter ctr = MessageCenter.getMessageCenter(VerdiGUI.class);
 
 	private DockingManager manager;
 	private static int plotCount = 0;
@@ -314,7 +314,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 			try {
 				exporter.run();
 			} catch (IOException ex) {
-				ctr.error("Error while exporting probed data", ex);
+				Logger.error("Error while exporting probed data " + ex.getMessage());
 			}
 		}
 	}

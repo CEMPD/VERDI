@@ -36,6 +36,14 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.vecmath.Point4i;
 
+//import org.geotools.styling.StyleFactoryFinder;	// replaced for GeoTools v10
+//import org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory;	// 2014 using shapefile-old jar to get this functionality
+//import org.geotools.map.DefaultMapContext;	// replaced for GeoTools v10
+//import org.geotools.map.DefaultMapLayer;		// replaced for GeoTools v10
+//import org.geotools.map.MapContext;			// replaced for GeoTools v10
+//import org.geotools.map.MapLayer;				// replaced for GeoTools v10
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.coverage.CoverageFactoryFinder;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
@@ -62,7 +70,7 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
@@ -94,12 +102,6 @@ import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.plot.util.PlotPrintAction;
 import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;
-//import org.geotools.styling.StyleFactoryFinder;	// replaced for GeoTools v10
-//import org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory;	// 2014 using shapefile-old jar to get this functionality
-//import org.geotools.map.DefaultMapContext;	// replaced for GeoTools v10
-//import org.geotools.map.DefaultMapLayer;		// replaced for GeoTools v10
-//import org.geotools.map.MapContext;			// replaced for GeoTools v10
-//import org.geotools.map.MapLayer;				// replaced for GeoTools v10
 
 /**
  * Abstract base class for Tile style plots.
@@ -108,6 +110,7 @@ import anl.verdi.util.Utilities;
  * @version $Revision$ $Date$
  */
 public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnimatablePlot {
+	static final Logger Logger = LogManager.getLogger(AbstractTilePlot.class.getName());
 
 	public static final int NO_VAL = Integer.MIN_VALUE;
 	private static final String COUNTIES_LAYER = "COUNTIES";
@@ -115,7 +118,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	private static final String NA_LAYER = "NA";
 
 	private NumberFormat format;
-	private static MessageCenter center = MessageCenter.getMessageCenter(AbstractTilePlot.class);
+//	private static MessageCenter center = MessageCenter.getMessageCenter(AbstractTilePlot.class);
 
 	protected DataFrame frame;
 	protected int timeStep;
@@ -140,7 +143,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	protected Map<String, FeatureLayer> mapLayers = new HashMap<String, FeatureLayer>();
 	
 	public void viewClosed() {
-System.out.println("in AbstractTilePlot.viewClosed");		
+		Logger.debug("in AbstractTilePlot.viewClosed");		
 		format = null;
 		frame = null;
 		chart = null;
@@ -152,7 +155,6 @@ System.out.println("in AbstractTilePlot.viewClosed");
 		minMax = null;
 		config = null;
 		mapLayers = null;
-		
 	}
 
 	protected Action timeSeriesSelected = new AbstractAction("Time Series of Probed Cell(s)") {
@@ -204,7 +206,7 @@ System.out.println("in AbstractTilePlot.viewClosed");
 
 
 	public AbstractTilePlot(DataFrame frame) {
-System.out.println("in AbstractTilePlot constructor for a DataFrame");
+		Logger.debug("in AbstractTilePlot constructor for a DataFrame");
 		subTitle2Index = subTitle1Index = bottomTitle1Index = bottomTitle2Index = -1;
 		layer = 0;
 		timeStep = 0;
@@ -233,7 +235,7 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 	 * @param config the configuration data
 	 */
 	public void configure(PlotConfiguration config) {
-		System.out.println("in AbstractTilePlot.configure");
+		Logger.debug("in AbstractTilePlot.configure");
 
 		if (mapAnnotation != null) mapAnnotation.setUpdate(false);
 		String configFile = config.getConfigFileName();
@@ -241,7 +243,7 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)));
 			} catch (IOException ex) {
-				center.error("Error loading configuration", ex);
+				Logger.error("Error loading configuration " + ex.getMessage());
 			}
 		}
 
@@ -320,7 +322,7 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 	}
 
 	protected void updateTextTitle(TextTitle title, String text, Color color, Font font) {
-		System.out.println("in AbstractTilePlot.updateTextTitle");
+		Logger.debug("in AbstractTilePlot.updateTextTitle");
 		if (title != null) {
 			if (text != null && text.length() > 0) {
 				if (text != null) title.setText(text);
@@ -357,7 +359,7 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 		try {
 			return new DataUtilities.MinMax(map.getMin(), map.getMax());
 		} catch ( Exception e) {
-			center.error("AbstractTilePlot's getCurrentMinMax", e);
+			Logger.error("AbstractTilePlot's getCurrentMinMax " + e.getMessage());
 		}
 		return null;
 	}
@@ -389,13 +391,13 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 	 * @return the current color map.
 	 */
 	public ColorMap getColorMap() {
-		System.out.println("in AbstractTilePlot.getColorMap");
+		Logger.debug("in AbstractTilePlot.getColorMap");
 
 		return map;
 	}
 
 	protected GridCoverage2D getCoverage(DataFrame frame) {
-		System.out.println("in AbstractTilePlot.getCoverage");
+		Logger.debug("in AbstractTilePlot.getCoverage");
 
 		Axes<DataFrameAxis> axes = frame.getAxes();
 	//	GridCoverageFactory fac = new GridCoverageFactory();	// replaced for GeoTools v10
@@ -406,7 +408,7 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 	}
 
 	protected FeatureLayer createLayer(File file, File styleFile) throws IOException {		// replaced MapLayer with FeatureLayer for GeoTools v10
-		System.out.println("in AbstractTilePlot.createLayer");
+		Logger.debug("in AbstractTilePlot.createLayer");
 		URL url = file.toURI().toURL();
 		Map<String, Serializable> params = new HashMap<String, Serializable>();
 //		params.put(IndexedShapefileDataStoreFactory.URLP.key, url);
@@ -430,7 +432,7 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 	}
 
 	private void requestTimeSeries(Set<Point> points, String title) {
-		System.out.println("in AbstractTilePlot.requestTimeSeries for points and title");
+		Logger.debug("in AbstractTilePlot.requestTimeSeries for points and title");
 		MultiTimeSeriesPlotRequest request = new MultiTimeSeriesPlotRequest(title);
 		for (Point point : points) {
 			Slice slice = new Slice();
@@ -447,14 +449,14 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 				DataFrame subsection = frame.slice(slice);
 				request.addItem(subsection);
 			} catch (InvalidRangeException e1) {
-				center.error("Error while creating time series from tile", e1);
+				Logger.error("Error while creating time series from tile " + e1.getMessage());
 			}
 		}
 		eventProducer.firePlotRequest(request);
 	}
 
 	private void requestTimeSeries(Formula.Type type) {
-		System.out.println("in AbstractTilePlot.requestTimeSeries for a Formula.Type");
+		Logger.debug("in AbstractTilePlot.requestTimeSeries for a Formula.Type");
 		Slice slice = new Slice();
 		// slice needs to be in terms of the actual array indices
 		// of the frame, but the axes ranges refer to the range
@@ -470,14 +472,14 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 			DataFrame subsection = frame.slice(slice);
 			eventProducer.firePlotRequest(new TimeSeriesPlotRequest(subsection, slice, type));
 		} catch (InvalidRangeException e1) {
-			center.error("Error while creating time series from tile", e1);
+			Logger.error("Error while creating time series from tile " + e1.getMessage());
 		}
 	}
 
 	// creates the TextTitles for the subtitles, but doesn't
 	// give them any content
 	protected void createSubtitles() {
-		System.out.println("in AbstractTilePlot.createSubtitles");
+		Logger.debug("in AbstractTilePlot.createSubtitles");
 		if (bottomTitle1Index == -1) {
 			TextTitle title = new TextTitle();
 			title.setPosition(RectangleEdge.BOTTOM);
@@ -624,7 +626,7 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 			mapLayers.put(NA_LAYER, layer);
 			if (defaultMaps.contains(NA_LAYER) || defaultMaps.length() == 0) context.addLayer(layer);
 		} catch (Exception e) {
-			center.warn("Unable to load map data", e);
+			Logger.warn("Unable to load map data " + e.getMessage());
 		}
 
 		try {
@@ -634,7 +636,7 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 			mapLayers.put(COUNTIES_LAYER, layer);
 			if (defaultMaps.contains(COUNTIES_LAYER)) context.addLayer(layer);
 		} catch (Exception e) {
-			center.warn("Unable to load map data", e);
+			Logger.warn("Unable to load map data " + e.getMessage());
 		}
 
 		try {
@@ -644,7 +646,7 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 			mapLayers.put(WORLD_LAYER, layer);
 			if (defaultMaps.contains(WORLD_LAYER)) context.addLayer(layer);
 		} catch (Exception e) {
-			center.warn("Unable to load map data", e);
+			Logger.warn("Unable to load map data " + e.getMessage());
 		}
 
 
@@ -659,7 +661,7 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 					FeatureLayer layer = createLayer(file, new File("data/world.sld"));
 					context.addLayer(layer);
 				} catch (Exception e) {
-					center.warn("Unable to load map data", e);
+					Logger.warn("Unable to load map data " + e.getMessage());
 				}
 			}
 		}
@@ -793,7 +795,7 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 					File file = new File(Tools.getPropertyFile());	// 2014 changed to use static function directly
 					props.store(new FileOutputStream(file), "");
 				} catch (IOException ex) {
-					center.warn("Error while saving map properties", ex);
+					Logger.warn("Error while saving map properties " + ex.getMessage());
 				}
 			}
 		});
@@ -1008,7 +1010,7 @@ System.out.println("in AbstractTilePlot constructor for a DataFrame");
 
 	// updates the legend scale axis
 	protected void updateScaleAxis(XYPlot plot) {
-System.out.println("in AbstractTilePlot.updateScaleAxis");
+		Logger.debug("in AbstractTilePlot.updateScaleAxis");
 		units = anl.verdi.util.VUnits.getFormattedName(frame.getVariable().getUnit());
 
 		XYBlockRenderer renderer;
@@ -1020,7 +1022,7 @@ System.out.println("in AbstractTilePlot.updateScaleAxis");
 		if (map == null) {
 			min = minMax.getMin();
 			max = minMax.getMax();
-System.out.println("still in updateScaleAxis: ready to call PavePalletCreator");
+			Logger.debug("still in updateScaleAxis: ready to call PavePalletCreator");
 			map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), min, max);
 			map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
 		} else {
@@ -1028,7 +1030,7 @@ System.out.println("still in updateScaleAxis: ready to call PavePalletCreator");
 				min = map.getMin();
 				max = map.getMax();
 			} catch ( Exception e) {
-				center.error("AbstractTilePlot's updateScaleAxis", e);
+				Logger.error("AbstractTilePlot's updateScaleAxis " + e.getMessage());
 			}
 			
 		}
@@ -1038,7 +1040,7 @@ System.out.println("still in updateScaleAxis: ready to call PavePalletCreator");
 			scaleAxis = new LegendAxis(units, min, max, map);
 		} catch (Exception e) {
 			e.printStackTrace();
-			center.error("AbstractFastTile's updateScaleAxis", e);
+			Logger.error("AbstractFastTile's updateScaleAxis " + e.getMessage());
 			return;
 		}
 		scaleAxis.setTickMarkPaint(Color.BLACK);
@@ -1154,7 +1156,7 @@ System.out.println("still in updateScaleAxis: ready to call PavePalletCreator");
 		 * @since 1.0.3
 		 */
 		public void doEditChartProperties() {
-System.out.println("in AbstractTilePlot.doEditChartProperties");
+			Logger.debug("in AbstractTilePlot.doEditChartProperties");
 			Window window = SwingUtilities.getWindowAncestor(panel);
 			ConfigDialog dialog = null;
 			if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
@@ -1166,7 +1168,7 @@ System.out.println("in AbstractTilePlot.doEditChartProperties");
 	}
 
 	public PlotConfiguration getPlotConfiguration() {
-System.out.println("in AbstractTilePlot.getPlotConfiguration");
+		Logger.debug("in AbstractTilePlot.getPlotConfiguration");
 		TilePlotConfiguration config = new TilePlotConfiguration();
 		config.setColorMap(map);
 
@@ -1206,7 +1208,7 @@ System.out.println("in AbstractTilePlot.getPlotConfiguration");
 	}
 
 	protected PlotConfiguration getTitlesLabelsConfig(PlotConfiguration config) {
-System.out.println("in AbstractTilePlot.getTitlesLabelsConfig");
+		Logger.debug("in AbstractTilePlot.getTitlesLabelsConfig");
 		config.setTitle(chart.getTitle().getText());
 		config.putObject(PlotConfiguration.TITLE_FONT, chart.getTitle().getFont());
 		config.putObject(PlotConfiguration.TITLE_COLOR, (Color) chart.getTitle().getPaint());
@@ -1244,12 +1246,12 @@ System.out.println("in AbstractTilePlot.getTitlesLabelsConfig");
 
 
 	public int getLayer() {
-		System.out.println("in AbstractTilePlot.getLayer");
+		Logger.debug("in AbstractTilePlot.getLayer");
 		return layer;
 	}
 
 	public void setLayer(int layer) {
-		System.out.println("in AbstractTilePlot.setLayer");
+		Logger.debug("in AbstractTilePlot.setLayer");
 		this.layer = layer;
 	}
 }

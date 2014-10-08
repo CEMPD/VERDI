@@ -3,8 +3,8 @@ package anl.verdi.parser;
 
 public class ParserTokenManager implements ParserConstants
 {
-  public  java.io.PrintStream debugStream = System.out;
-  public  void setDebugStream(java.io.PrintStream ds) { debugStream = ds; }
+//  public  java.io.PrintStream debugStream = System.out;		// 2014 not used
+//  public  void setDebugStream(java.io.PrintStream ds) { debugStream = ds; }	// 2014 not used
 private final int jjStopStringLiteralDfa_0(int pos, long active0)
 {
    switch (pos)

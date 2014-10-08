@@ -30,6 +30,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
@@ -46,7 +48,7 @@ import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
@@ -75,8 +77,9 @@ import anl.verdi.util.VUnits;
 
 
 public class TimeSeriesBarPlot extends AbstractPlot {
+	static final Logger Logger = LogManager.getLogger(TimeSeriesBarPlot.class.getName());
 
-	private static final MessageCenter center = MessageCenter.getMessageCenter(TimeSeriesBarPlot.class);
+//	private static final MessageCenter center = MessageCenter.getMessageCenter(TimeSeriesBarPlot.class);
 	private static final Range BAD_RANGE = new Range(-1, -1);
 
 	private DataFrame frame;
@@ -293,7 +296,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 			Range range = getTimeRange(screenRect);
 			probe(range);
 		} catch (ParseException e) {
-			center.error("Error while probing", e);
+			Logger.error("Error while probing " + e.getMessage());
 		}
 	}
 
@@ -309,7 +312,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 				eventProducer.fireProbeEvent(new ProbeEvent(this, subsection, slice, Formula.Type.TIME_SERIES_BAR));
 			}
 		} catch (InvalidRangeException e) {
-			center.error("Error while probing", e);
+			Logger.error("Error while probing " + e.getMessage());
 		}
 	}
 
@@ -564,7 +567,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)));
 			} catch (IOException ex) {
-				center.error("Error loading configuration", ex);
+				Logger.error("Error loading configuration " + ex.getMessage());
 			}
 		}
 

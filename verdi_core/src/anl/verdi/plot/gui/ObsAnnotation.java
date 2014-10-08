@@ -15,6 +15,8 @@ import java.util.GregorianCalendar;		// added 2014
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.annotations.AbstractXYAnnotation;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotRenderingInfo;
@@ -33,10 +35,8 @@ import anl.verdi.plot.util.Graphics2DShapesTool;
 
 public class ObsAnnotation extends AbstractXYAnnotation {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3758349487734798674L;
+	static final Logger Logger = LogManager.getLogger(ObsAnnotation.class.getName());
 
 	public enum Symbol {
 		CIRCLE, DIAMOND, SQUARE, STAR, SUN, TRIANGLE
@@ -58,7 +58,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 
 	public ObsAnnotation(ObsEvaluator eval, Axes<DataFrameAxis> axes,
 			int timeStep, int layer) {
-System.out.println("in constructor for ObsAnnotation");
+		Logger.debug("in constructor for ObsAnnotation");
 		this.eval = eval;
 		this.axes = axes;
 		update(timeStep);
@@ -73,7 +73,7 @@ System.out.println("in constructor for ObsAnnotation");
 
 	public ObsAnnotation(ObsEvaluator eval, Axes<DataFrameAxis> axes,
 			GregorianCalendar aCalendar, int layer) {
-System.out.println("in ObsAnnotation constructor using GregorianCalendar");
+		Logger.debug("in ObsAnnotation constructor using GregorianCalendar");
 		this.eval = eval;
 		this.axes = axes;
 		update(aCalendar.getTime());

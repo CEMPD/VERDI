@@ -11,19 +11,16 @@ HISTORY: 2010-08-23 plessel.todd@epa.gov Created.
 package gov.epa.emvl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.data.shapefile.dbf.DbaseFileHeader;
 import org.geotools.data.shapefile.dbf.DbaseFileWriter;
 
-import com.bbn.openmap.io.FormatException;
-
 public final class GridShapefileWriter {
+	static final Logger Logger = LogManager.getLogger(GridShapefileWriter.class.getName());
 
   private GridShapefileWriter() {} // Non-instantiable.
 
@@ -298,7 +295,7 @@ public final class GridShapefileWriter {
 //    // Initialize header:
 //    
 //    GregorianCalendar calendar = new GregorianCalendar();
-//System.out.println("in GridShapefileWriter, writeDBF_old, created GregorianCalendar calendar");
+//Logger.debug("in GridShapefileWriter, writeDBF_old, created GregorianCalendar calendar");
 //	byte year = (byte)( calendar.get( Calendar.YEAR) - 1900);
 //	byte month = (byte)( calendar.get( Calendar.MONTH)+1);
 //	byte day = (byte)( calendar.get( Calendar.DAY_OF_MONTH));

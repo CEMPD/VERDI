@@ -10,6 +10,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrameAxis;
@@ -26,10 +29,8 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TimeConstantAxisPanel extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1747899384194778482L;
+	static final Logger Logger = LogManager.getLogger(TimeConstantAxisPanel.class.getName());
 	private class SpinnerListener implements ChangeListener {
 		public void stateChanged(ChangeEvent e) {
 			JSpinner source = (JSpinner)e.getSource();
@@ -47,7 +48,7 @@ public class TimeConstantAxisPanel extends JPanel {
 	private boolean spinnersOn = false;
 
 	public TimeConstantAxisPanel() {
-System.out.println("in constructor for TimeConstantAxisPanel");
+		Logger.debug("in constructor for TimeConstantAxisPanel");
 		initComponents();
 		timeSpinner.addChangeListener(new SpinnerListener());
 	}
@@ -150,7 +151,7 @@ System.out.println("in constructor for TimeConstantAxisPanel");
 		model.setMaximum(max);
 		model.setValue(new Integer(timeStep + 1));
 		GregorianCalendar date = axes.getDate(timeStep);
-System.out.println("in TimeConstantAxisPanel init function, computed GregorianCalendar date" );
+		Logger.debug("in TimeConstantAxisPanel init function, computed GregorianCalendar date" );
 		timeLabel.setText(Utilities.formatShortDate(date));
 
 		// we want the range to start with 1 rather than 0

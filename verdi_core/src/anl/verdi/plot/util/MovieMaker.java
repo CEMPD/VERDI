@@ -27,15 +27,18 @@ import javax.media.protocol.ContentDescriptor;
 import javax.media.protocol.DataSource;
 import javax.media.util.ImageToBuffer;
 
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 /**
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
 public class MovieMaker implements ControllerListener, DataSinkListener {
+	static final Logger Logger = LogManager.getLogger(MovieMaker.class.getName());
 
-	private static final MessageCenter msg = MessageCenter.getMessageCenter(MovieMaker.class);
+//	private static final MessageCenter msg = MessageCenter.getMessageCenter(MovieMaker.class);
 
 	private Processor p;
 	private BufferDataSource source;
@@ -56,7 +59,7 @@ public class MovieMaker implements ControllerListener, DataSinkListener {
 		String url = "file:/" + file.getAbsolutePath();
 			outML = new MediaLocator(url);
 		//} catch (IOException ex) {
-		//	msg.error("Unable to create file for movie", ex);
+		//	Logger.error("Unable to create file for movie " + ex.getMessage());
 		//}
 
 	}
@@ -66,7 +69,7 @@ public class MovieMaker implements ControllerListener, DataSinkListener {
 		try {
 			p = Manager.createProcessor(source);
 		} catch (Exception ex) {
-			msg.error("Failed to create processor for movie", ex);
+			Logger.error("Failed to create processor for movie " + ex.getMessage());
 			return false;
 		}
 
@@ -87,8 +90,7 @@ public class MovieMaker implements ControllerListener, DataSinkListener {
 		Format f[] = tcs[0].getSupportedFormats();
 
 		if (f == null || f.length <= 0) {
-			msg.warn("The mux does not support the input format: " +
-							tcs[0].getFormat());
+			Logger.warn("The mux does not support the input format: " +	tcs[0].getFormat());
 			return false;
 		}
 
@@ -97,7 +99,7 @@ public class MovieMaker implements ControllerListener, DataSinkListener {
 		// realize the processor
 		p.realize();
 		if (!waitForState(p, Processor.Realized)) {
-			msg.warn("Failed to Realize processor");
+			Logger.warn("Failed to Realize processor");
 			return false;
 		}
 
@@ -113,7 +115,7 @@ public class MovieMaker implements ControllerListener, DataSinkListener {
 			p.start();
 			sink.start();
 		} catch (IOException ex) {
-			msg.error("Movie error", ex);
+			Logger.error("Movie error " + ex.getMessage());
 			return false;
 		}
 		return true;
@@ -185,7 +187,7 @@ public class MovieMaker implements ControllerListener, DataSinkListener {
 
 
 		p.removeControllerListener(this);
-		msg.info("Movie capture has finished");
+		Logger.debug("Movie capture has finished");
 	}
 
 	private void waitForFileDone() {
@@ -230,7 +232,7 @@ public class MovieMaker implements ControllerListener, DataSinkListener {
 				waitSync.notifyAll();
 			}
 		} else if (evt instanceof EndOfMediaEvent) {
-			System.out.println("End of Media Event");
+			Logger.debug("End of Media Event");
 			evt.getSourceController().stop();
 			evt.getSourceController().close();
 		}

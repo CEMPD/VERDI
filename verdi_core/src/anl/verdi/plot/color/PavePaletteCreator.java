@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 /**
  * Creates palettes that match those of the PAVE application.
  *
@@ -11,11 +14,12 @@ import java.util.List;
  * @version $Revision$ $Date$
  */
 public class PavePaletteCreator {
+	static final Logger Logger = LogManager.getLogger(PavePaletteCreator.class.getName());
 	
 	public PavePaletteCreator()
 	{
 		// 2014 added default constructor so can see when this type of object is instantiated
-		System.out.println("in default constructor for PavePaletteCreator");
+		Logger.debug("in default constructor for PavePaletteCreator");
 	}
 
 	// these are the color maps -- each color is represented by an int with
@@ -136,7 +140,7 @@ public class PavePaletteCreator {
 	 * @return the created palettes.
 	 */
 	public List<Palette> createPalettes(int classes) {
-System.out.println("in PavePaletteCreator.createPalettes for classes = " + classes);
+		Logger.debug("in PavePaletteCreator.createPalettes for classes = " + classes);
 		List<Palette> list = new ArrayList<Palette>();
 		list.add(createPalette(newtonmap, classes, "Newton RGB (AVS)"));
 		list.add(createPalette(jetmap, classes, "Newton RGB (InkJet)"));
@@ -145,19 +149,19 @@ System.out.println("in PavePaletteCreator.createPalettes for classes = " + class
 	}
 
 	private Palette createPalette(int[] map, int classes, String description) {
-System.out.println("in PavePaletteCreator.createPalette");
+		Logger.debug("in PavePaletteCreator.createPalette");
 		Color[] colors = new Color[classes];
 		for (int i = 0; i < classes; i++) {
 			int index = 0;
 			if (i == 0) index = 0;
 			else if (i == classes - 1) index = map.length - 1;
 			else index = i * (map.length / (classes - 1));
-//			System.out.println("createPalette i=" + i + " classes=" + classes + " index=" + index);
+//			Logger.debug("createPalette i=" + i + " classes=" + classes + " index=" + index);
 			Color color = new Color(map[index]);
 			colors[i] = color;
 		}
 //		if (map.equals(newtonmap) && classes == 8) {		// 2014 2 colors are identical, trying without this old hack
-//System.out.println("Prior specific setting for colors[3] only");
+//			Logger.debug("Prior specific setting for colors[3] only");
 //			colors[3] = new Color(0, 255, 221);
 //		}
 
@@ -213,12 +217,12 @@ System.out.println("in PavePaletteCreator.createPalette");
 	*/
 	
 	public static void main(String[] args) {
-		System.out.println("<table>");
+		Logger.debug("<table>");
 		for (int i = 0; i < newtonmap.length; i++) {
 			Color color = new Color(newtonmap[i]);
-			System.out.println("<tr><td style=\"background-color:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");\">Map Index " + i + " " + color.toString() + "</td></tr>");
+			Logger.debug("<tr><td style=\"background-color:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");\">Map Index " + i + " " + color.toString() + "</td></tr>");
 		}
-		System.out.println("</table>");
+		Logger.debug("</table>");
 		
 		//look for duplicates
 		for (int i = 0; i < newtonmap.length; i++) {
@@ -226,7 +230,7 @@ System.out.println("in PavePaletteCreator.createPalette");
 			for (int j = 0; j < newtonmap.length; j++) {
 				Color color2 = new Color(newtonmap[j]);
 				if (color1.equals(color2) && i != j)
-					System.out.println("Duplicate " + color1.toString());
+					Logger.debug("Duplicate " + color1.toString());
 			}
 		}
 	}

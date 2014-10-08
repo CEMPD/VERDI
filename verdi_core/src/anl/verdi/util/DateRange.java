@@ -2,16 +2,19 @@ package anl.verdi.util;
 
 import java.util.GregorianCalendar;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 /**
  * @author Nick Collier
 * @version $Revision$ $Date$
 */
 public class DateRange {
-
+	static final Logger Logger = LogManager.getLogger(DateRange.class.getName());
 	private long start, end;
 
 	public DateRange(GregorianCalendar gregorianCalendar, GregorianCalendar gregorianCalendar2) {
-System.out.println("in constructor with 2 GregorianCalendar objects in DateRange");
+		Logger.debug("in constructor with 2 GregorianCalendar objects in DateRange");
 		this.end = gregorianCalendar2.getTimeInMillis();
 		this.start = gregorianCalendar.getTimeInMillis();
 	}
@@ -19,7 +22,7 @@ System.out.println("in constructor with 2 GregorianCalendar objects in DateRange
 	public DateRange(long start, long end) {
 		this.start = start;
 		this.end = end;
-System.out.println("in alternate constructor for DateRange");
+		Logger.debug("in alternate constructor for DateRange");
 	}
 
 

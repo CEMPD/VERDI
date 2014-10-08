@@ -36,6 +36,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.ToolTipManager;
 import javax.swing.event.EventListenerList;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartRenderingInfo;
@@ -75,6 +77,7 @@ public class ChartPanel extends JPanel
 	 * For serialization.
 	 */
 	private static final long serialVersionUID = 6046366297214274674L;
+	static final Logger Logger = LogManager.getLogger(ChartPanel.class.getName());
 
 	/**
 	 * Default setting for buffer usage.
@@ -1163,7 +1166,7 @@ public class ChartPanel extends JPanel
 		this.chartBufferWidth = (int) available.getWidth();
 		this.chartBufferHeight = (int) available.getHeight();
 		this.chartBuffer = createVolatileImage(this.chartBufferWidth, this.chartBufferHeight);
-		//System.out.println("chartBuffer.getCapabilities().isAccelerated() = " + chartBuffer.getCapabilities().isAccelerated());
+		//Logger.debug("chartBuffer.getCapabilities().isAccelerated() = " + chartBuffer.getCapabilities().isAccelerated());
 	}
 
 	/**

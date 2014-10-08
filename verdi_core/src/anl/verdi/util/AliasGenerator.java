@@ -3,6 +3,9 @@ package anl.verdi.util;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 /**
  * Generates unique sequential strings each time getNextAlias is called. The strings
  * are produced in a sequence that runs from [0] to [n].
@@ -11,7 +14,7 @@ import java.util.Set;
  * @version $Revision$ $Date$
  */
 public class AliasGenerator {
-
+	static final Logger Logger = LogManager.getLogger(AliasGenerator.class.getName());
 	private int alias = 1;
 	private Set<Integer> usedAlias = new HashSet<Integer>();
 
@@ -75,7 +78,7 @@ public class AliasGenerator {
 	public static void main(String[] args) {
 		AliasGenerator gen = new AliasGenerator();
 		for (int i = 0; i < 3000; i++) {
-			System.out.println(gen.getNextAlias());
+			Logger.debug(gen.getNextAlias());
 		}
 	}
 }

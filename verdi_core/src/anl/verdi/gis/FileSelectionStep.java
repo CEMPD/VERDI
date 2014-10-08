@@ -14,6 +14,8 @@ import java.util.Map;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.data.DataStore;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.Query;
@@ -35,11 +37,10 @@ import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
-import simphony.util.messages.MessageCenter;
-
+import com.vividsolutions.jts.geom.MultiPoint;
+//import simphony.util.messages.MessageCenter;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
 //import org.geotools.data.DefaultQuery;
 //import org.geotools.filter.Expression;
 //import org.geotools.filter.Filter;
@@ -52,13 +53,10 @@ import com.vividsolutions.jts.geom.MultiPoint;
  */
 public class FileSelectionStep extends PanelWizardStep {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2143961301487078170L;
+	static final Logger Logger = LogManager.getLogger(FileSelectionStep.class.getName());
 
-	private static MessageCenter msg = MessageCenter
-			.getMessageCenter(FileSelectionStep.class);
+//	private static MessageCenter msg = MessageCenter.getMessageCenter(FileSelectionStep.class);
 
 	private JFileChooser chooser;
 
@@ -163,9 +161,9 @@ public class FileSelectionStep extends PanelWizardStep {
 				model.setShpFile(shpFile);
 
 			} catch (MalformedURLException e) {
-				msg.error("Error creating layer from shapefile", e);
+				Logger.error("Error creating layer from shapefile " + e.getMessage());
 			} catch (IOException e) {
-				msg.error("Error creating layer from shapefile", e);
+				Logger.error("Error creating layer from shapefile " + e.getMessage());
 			}
 		}
 	}

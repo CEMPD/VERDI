@@ -5,7 +5,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Date;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 public class WriteVersionInfo {
+	static final Logger Logger = LogManager.getLogger(WriteVersionInfo.class.getName());
 	private static String timestamp = new Date(new java.util.Date().getTime()).toString(); //in the yyyy-mm-dd format
 	private static String ls = System.getProperty("line.separator");
 	
@@ -37,7 +41,7 @@ public class WriteVersionInfo {
 			writer.write(versionInfoClass);
 			writer.close();
 		} catch (IOException e) {
-			System.out.println("Error writting VersionInfo.java file. " + e.getMessage());
+			Logger.error("Error writting VersionInfo.java file. " + e.getMessage());
 		}
 	}
 

@@ -13,6 +13,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.annotations.AbstractXYAnnotation;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotRenderingInfo;
@@ -27,10 +29,8 @@ import anl.verdi.data.VectorEvaluator;
  * @version $Revision$ $Date$
  */
 public class VectorAnnotation extends AbstractXYAnnotation {
+	static final Logger Logger = LogManager.getLogger(VectorAnnotation.class.getName());
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4048473737201936769L;
 	private double baseLength = 0.10;
 	private double headLength = 0.14;
@@ -43,11 +43,11 @@ public class VectorAnnotation extends AbstractXYAnnotation {
 		this.eval = eval;
 		this.tileBoxer = tileBoxer;
 		update(timeStep);
-		System.out.println("VectorAnnotation");			
+		Logger.debug("VectorAnnotation constructor");			
 	}
 
 	public synchronized void update(int timeStep) {
-		System.out.println("VectorAnnotation.update");			
+		Logger.debug("VectorAnnotation.update");			
 		//data = eval.getData(timeStep, layer);
 		list = eval.evaluate(timeStep);
 
@@ -80,7 +80,7 @@ public class VectorAnnotation extends AbstractXYAnnotation {
 				double xx1 = domainAxis.valueToJava2D(x + uVal, rect, plot.getDomainAxisEdge());
 				double yy1 = rangeAxis.valueToJava2D(y + vVal, rect, plot.getRangeAxisEdge());
 				Line2D line = new Line2D.Double(xx0, yy0, xx1, yy1);
-				System.out.println(Math.sqrt(Math.pow(line.getX2() - line.getX1(),2.0) /Math.pow(line.getY2() - line.getY1(), 2.0)));			
+				Logger.debug(Math.sqrt(Math.pow(line.getX2() - line.getX1(),2.0) /Math.pow(line.getY2() - line.getY1(), 2.0)));			
 				g2d.draw(line);
 				g2d.draw(createArrowHead(xx0, xx1, yy0, yy1));
 			}
@@ -147,7 +147,7 @@ public class VectorAnnotation extends AbstractXYAnnotation {
 
 			Line2D line = new Line2D.Double(x0, y0, x1, y1);
 			
-//			System.out.println("rows=" + rows + " columns=" + columns + " xDelta=" + xDelta + " yDelta=" + yDelta + " x0=" + x0 + " y0=" + y0 + " x1=" + x1 + " y1=" + y1 + " x0-x1=" + (x0-x1) + " y0-y1=" + (y0-y1) + /*" maxUVal=" + maxUVal + " maxVVal=" + maxVVal +*/ " xOffset=" + xOffset + " yOffset=" + yOffset + " TileX=" + data.getTileX() + " TileY=" + data.getTileY() + " firstColumn=" + firstColumn + " firstRow=" + firstRow + " uVal=" + data.getUVal() + " vVal=" + data.getVVal() /*+ " uValFrac=" + uVal + " vValFrac=" + vVal*/ + " r=" + Math.sqrt(Math.pow(line.getX2() - line.getX1(),2.0) + Math.pow(line.getY2() - line.getY1(), 2.0)));			
+//			Logger.debug("rows=" + rows + " columns=" + columns + " xDelta=" + xDelta + " yDelta=" + yDelta + " x0=" + x0 + " y0=" + y0 + " x1=" + x1 + " y1=" + y1 + " x0-x1=" + (x0-x1) + " y0-y1=" + (y0-y1) + /*" maxUVal=" + maxUVal + " maxVVal=" + maxVVal +*/ " xOffset=" + xOffset + " yOffset=" + yOffset + " TileX=" + data.getTileX() + " TileY=" + data.getTileY() + " firstColumn=" + firstColumn + " firstRow=" + firstRow + " uVal=" + data.getUVal() + " vVal=" + data.getVVal() /*+ " uValFrac=" + uVal + " vValFrac=" + vVal*/ + " r=" + Math.sqrt(Math.pow(line.getX2() - line.getX1(),2.0) + Math.pow(line.getY2() - line.getY1(), 2.0)));			
 			
 			((Graphics2D) graphics).draw(line);
 			((Graphics2D) graphics).draw(createArrowHead(x0, x1, y0, y1));

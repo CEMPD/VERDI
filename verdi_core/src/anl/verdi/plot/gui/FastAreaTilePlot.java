@@ -23,6 +23,9 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+//import org.jdesktop.swingx.decorator.AlternateRowHighlighter;	// extension of Highlighter
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jdesktop.swingx.JXTable;
 //import org.jdesktop.swingx.decorator.Highlighter;
 
@@ -54,15 +57,12 @@ import anl.verdi.io.TableExporter;
 import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
-//import org.jdesktop.swingx.decorator.AlternateRowHighlighter;	// extension of Highlighter
 
 
 public class FastAreaTilePlot extends FastTilePlot {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7353202024063347257L;
+	static final Logger Logger = LogManager.getLogger(FastAreaTilePlot.class.getName());
 
 	static boolean ADD_SELECT_AREA_TO_CONTROL_MENU = false;
 
@@ -119,7 +119,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 		
 //			final int count = legendLevels.length;
 			
-//			System.out.println("calculateAverageLevels ");
+			Logger.debug("calculateAverageLevels ");
 			calcGlobalDepositionRange();
 			
 			// calc range for this set of numbers
@@ -149,10 +149,10 @@ public class FastAreaTilePlot extends FastTilePlot {
 				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
 
 
-//				System.out.println("minmax: " + minmax[0] + " " + minmax[1]);
+				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
 				setLegendLevels(minMax);
 			}
-			//System.out.println("minMax "+minMax.getMin()+" "+minMax.getMax());
+			Logger.debug("minMax "+minMax.getMin()+" "+minMax.getMax());
 //		}
 //			super.draw();
 			
@@ -163,7 +163,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 		if (((AreaTilePlot) tilePlot).mouseOverOK) {
 //			final int count = legendLevels.length;
 			
-//			System.out.println("calculateAverageLevels ");
+			Logger.debug("calculateAverageLevels ");
 
 			// calc range for this set of numbers
 			double[] minmax = { 0.0, 0.0 };
@@ -192,7 +192,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
 
 
-//				System.out.println("minmax: " + minmax[0] + " " + minmax[1]);
+				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
 				setLegendLevels(minMax);
 			}
 			//System.out.println("minMax "+minMax.getMin()+" "+minMax.getMax());
@@ -204,7 +204,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 		if (((AreaTilePlot) tilePlot).mouseOverOK) {
 //			final int count = legendLevels.length;
 			
-//			System.out.println("calculateGridLevels ");
+			Logger.debug("calculateGridLevels ");
 
 			// calc range for this set of numbers
 			double[] minmax = { 0.0, 0.0 };
@@ -228,10 +228,10 @@ public class FastAreaTilePlot extends FastTilePlot {
 				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
 
 
-//				System.out.println("minmax: " + minmax[0] + " " + minmax[1]);
+				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
 				setLegendLevels(minMax);
 			}
-			//System.out.println("minMax "+minMax.getMin()+" "+minMax.getMax());
+			Logger.debug("minMax "+minMax.getMin()+" "+minMax.getMax());
 		}
 	}
 
@@ -246,7 +246,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 	public void calculateTotalLevels(){
 		if (((AreaTilePlot) tilePlot).mouseOverOK) {
 //			final int count = legendLevels.length;
-//			System.out.println("calculateTotalLevels");
+			Logger.debug("calculateTotalLevels");
 
 			// calc range for this set of numbers
 			double[] minmax = { 0.0, 0.0 };
@@ -257,7 +257,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 			// if never set before or if larger range than last set of numbers
 			// if(minMax==null || minMax.getMin()>minmax[0] || minMax.getMax()<minmax[1])
 			{
-				//System.out.println("computing total data minmax...");
+				Logger.debug("computing total data minmax...");
 
 				// initialize colormap to these min max values
 				minMax=new MinMax(minmax[0],minmax[1]);
@@ -271,7 +271,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
 				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
 
-//				System.out.println("minmax: " + minmax[0] + " " + minmax[1]);
+				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
 				setLegendLevels(minMax);
 			}
 			
@@ -346,7 +346,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 			dialog.pack();
 
 			dialog.setVisible(true);
-//			System.out.println("area info");
+//			Logger.debug("area info");
 
 			String[] formula = dialog.getSelectedFormulas();
 			if(formula==null)return ;
@@ -377,7 +377,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 
 				public void actionPerformed(ActionEvent e) {
 					JRadioButtonMenuItem src = (JRadioButtonMenuItem) e.getSource();
-//					System.out.println("selection action "+src.isSelected());
+					Logger.debug("selection action "+src.isSelected());
 					probe=false;
 					zoom=false;
 					//activateRubberBand();

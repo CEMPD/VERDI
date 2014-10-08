@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.URL;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Style;
 
@@ -24,6 +26,7 @@ import org.geotools.styling.Style;
 
 public class MapLines {
 
+	static final Logger Logger = LogManager.getLogger(MapLines.class.getName());
   // Attributes:
 
   private static final int X = 0;
@@ -225,7 +228,7 @@ public class MapLines {
               graphics.drawLine( screenX1, screenY1, screenX2, screenY2 ); // MERCATOR
               
               if ( 1==2 && (screenX1<=xOffset || screenY1<=yOffset)) {
-            	  System.out.println("("+screenX1+","+screenY1+")"+", ("+screenX2+","+screenY2+")");
+            	  Logger.debug("("+screenX1+","+screenY1+")"+", ("+screenX2+","+screenY2+")");
               }
             }
           }

@@ -15,7 +15,7 @@ import saf.core.ui.GUICreator;
 import saf.core.ui.IAppConfigurator;
 import saf.core.ui.ISAFDisplay;
 import saf.core.ui.Workspace;
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import anl.verdi.commandline.BatchScriptHandler;
 import anl.verdi.commandline.ScriptHandler;
 import anl.verdi.data.DataManager;
@@ -40,7 +40,7 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 		System.setProperty("com.apple.mrj.application.apple.menu.about.name", "VERDI");
 	}
 
-	static final Logger logger = LogManager.getLogger(VerdiPlugin.class.getName());	// 2014
+	static final Logger Logger = LogManager.getLogger(VerdiPlugin.class.getName());	// 2014
 	
 	protected void doStart() throws Exception {
 	}
@@ -52,9 +52,9 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 		IAppConfigurator configurator = null;
 
 		// 2014 from log4j/2.x/manual/configuration.html example
-		logger.trace("Entering application at VerdiPlugin.run");
+		Logger.trace("Entering application at VerdiPlugin.run");
 		try {
-			logger.trace("in try block of run");
+			Logger.trace("in try block of run");
 			// initialize velocity
 			Properties p = new Properties();
 			p.setProperty("resource.loader", "class");
@@ -62,37 +62,36 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 					"org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
 
 			Velocity.init(p);
-			logger.trace("just called Velocity.init for p");
+			Logger.trace("just called Velocity.init for p");
 			Properties pFRL = new Properties();		// 2014 added all pertaining to pFRL
 			pFRL.setProperty("resource.loader", "file");
 			pFRL.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
 			pFRL.setProperty("runtime.log", System.getProperty("user.home") + '/' + "verdi"
 					+ '/' + "velocity.log");
 			Velocity.init(pFRL);
-			logger.trace("just called Velocity.init for pFRL");
+			Logger.trace("just called Velocity.init for pFRL");
 			try {
 				File file = new File(Tools.getPropertyFile());
-				logger.trace("property file = " + Tools.getPropertyFile());
+				Logger.trace("property file = " + Tools.getPropertyFile());
 				if (file.exists()) 
 					{
 						System.getProperties().load(new FileInputStream(file));
-						logger.debug("property file exists, found, and loaded");
+						Logger.debug("property file exists, found, and loaded");
 					}
 				else
 				{
-					logger.error("property file does not exist");
+					Logger.error("property file does not exist");
 				}
 			} catch (Exception e1) {
-				MessageCenter.getMessageCenter(getClass()).error("Error", e1);
+				Logger.error("Error " + e1.getMessage());
 			}
 
 			DataManager manager = new DataManager(getManager());
 
-			//			if ( 1==2 ) {
-			//				System.out.println("===============================================");
-			//				System.out.println("VerdiPlugin.");
-			//				System.out.println("===============================================");
-			//			}
+			//				===============================================
+			//				VerdiPlugin
+			//				===============================================
+			//
 			// for non gui run we would process the args here.
 
 			// assuming gui app for now.
@@ -128,12 +127,9 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 			}
 
 
-			//			if ( 1==2 ) {
-			//				System.out.println("===============================================");
-			//				System.out.println("VerdiPlugin - after batch mode.");
-			//				System.out.println("===============================================");
-			//			}
-
+			//				===============================================
+			//				VerdiPlugin - after batch mode.
+			//				===============================================
 			//			configurator = new VerdiAppConfigurator(verdi);
 			//			Workspace<VerdiApplication> workspace = new Workspace<VerdiApplication>(verdi);
 			//			ISAFDisplay display = GUICreator.createDisplay(configurator, workspace);
@@ -145,10 +141,10 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 			GUICreator.runDisplay(configurator, display);
 
 		} catch (PluginLifecycleException e) {
-			MessageCenter.getMessageCenter(getClass()).error("Error while loading core VERDI plugin", e);
+			Logger.error("Error while loading core VERDI plugin " + e.getMessage());
 		} catch (Exception ex) {
 			if (configurator != null) ((VerdiAppConfigurator)configurator).closeSplash();
-			MessageCenter.getMessageCenter(getClass()).error("Error", ex);
+			Logger.error("Error " + ex.getMessage());
 		}
 	}
 

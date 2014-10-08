@@ -39,10 +39,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.axis.ValueAxis;
 
 import saf.core.ui.util.FileChooserUtilities;
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import visad.AxisScale;
 import visad.ColorControl;
@@ -92,7 +94,8 @@ import anl.verdi.util.VUnits;
 
 public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 
-	private static final MessageCenter msg = MessageCenter.getMessageCenter(Contour3D.class);
+	static final Logger Logger = LogManager.getLogger(Contour3D.class.getName());
+//	private static final MessageCenter msg = MessageCenter.getMessageCenter(Contour3D.class);
 
 	private PlotEventProducer eventProducer = new PlotEventProducer();
 	private DataFrame frame;
@@ -177,7 +180,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 					//super.getCursorStringVector() = [frameY = 6.8298655, frameX = 3.399344, PPM = 0.054499093]
 					cursorVec.clear();
 					Vector v = super.getCursorStringVector();
-					//System.out.println("super.getCursorStringVector() = " + super.getCursorStringVector());
+					Logger.debug("super.getCursorStringVector() = " + super.getCursorStringVector());
 					DataFrame frame = Contour3D.this.frame;
 					Axes<DataFrameAxis> axes = frame.getAxes();
 
@@ -343,11 +346,11 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 				display.removeMap(isoMap);
 			}
 		} catch (RemoteException e) {
-			msg.error("Error enabling iso contours", e);
+			Logger.error("Error enabling iso contours " + e.getMessage());
 		} catch (InvalidRangeException e) {
-			msg.error("Error enabling iso contours", e);
+			Logger.error("Error enabling iso contours " + e.getMessage());
 		} catch (VisADException e) {
-			msg.error("Error enabling iso contours", e);
+			Logger.error("Error enabling iso contours " + e.getMessage());
 		}
 	}
 
@@ -416,7 +419,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 					job.print();
 				}
 				catch (PrinterException e) {
-					msg.error("Error while printing", e);
+					Logger.error("Error while printing " + e.getMessage());
 				}
 			}
 		}
@@ -617,7 +620,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 						defaultConfig.merge(newConfig);
 						configure(defaultConfig);
 					} catch (IOException ex) {
-						msg.error("Error loading configuration", ex);
+						Logger.error("Error loading configuration " + ex.getMessage());
 					}
 				}
 			}
@@ -637,7 +640,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 					try {
 						config.save(file, saveTitle);
 					} catch (IOException ex) {
-						msg.error("Error saving configuration", ex);
+						Logger.error("Error saving configuration " + ex.getMessage());
 					}
 				}
 			}
@@ -683,7 +686,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 			private static final long serialVersionUID = 7533234754863706319L;
 
 			public void actionPerformed(ActionEvent e) {
-System.out.println("in Countour3D.actionPerformed for Animate Plot; calling AnimationPanelContour3D");
+				Logger.debug("in Countour3D.actionPerformed for Animate Plot; calling AnimationPanelContour3D");
 				AnimationPanelContour3D panel = new AnimationPanelContour3D();
 				panel.init(frame.getAxes(), Contour3D.this);
 			}
@@ -772,7 +775,7 @@ System.out.println("in Countour3D.actionPerformed for Animate Plot; calling Anim
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)));
 			} catch (IOException ex) {
-				msg.error("Error loading configuration", ex);
+				Logger.error("Error loading configuration " + ex.getMessage());
 			}
 		}
 		ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
@@ -780,9 +783,9 @@ System.out.println("in Countour3D.actionPerformed for Animate Plot; calling Anim
 		try {
 			initColors(map);
 		} catch (RemoteException e) {
-			msg.error("Error setting color map", e);
+			Logger.error("Error setting color map " + e.getMessage());
 		} catch (VisADException e) {
-			msg.error("Error setting color map", e);
+			Logger.error("Error setting color map " + e.getMessage());
 		}
 
 		configureTitle(canvas.getTitle(), config.getTitle(),

@@ -16,7 +16,7 @@ import org.java.plugin.PluginManager;
 import org.java.plugin.registry.Extension;
 import org.java.plugin.registry.ExtensionPoint;
 
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import anl.verdi.util.AliasGenerator;
 
 /**
@@ -28,7 +28,7 @@ import anl.verdi.util.AliasGenerator;
 public class DataManager {
 	static final Logger Logger = LogManager.getLogger(DataManager.class.getName());
 
-	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(DataManager.class);
+//	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(DataManager.class);
 
 	public static List<Dataset> NULL_DATASETS = new ArrayList<Dataset>();
 
@@ -69,14 +69,14 @@ public class DataManager {
 				if (DataLoader.class.isAssignableFrom(clazz)) {
 					dataLoaders.add((DataLoader) clazz.newInstance());
 				} else {
-					msgCenter.warn("Error during DataLoader creation: data.DataLoader extension point class must implement DataLoader");
+					Logger.warn("Error during DataLoader creation: data.DataLoader extension point class must implement DataLoader");
 				}
 			} catch (IllegalAccessException e) {
-				msgCenter.error("Error during data loader plugin creation", e);
+				Logger.error("Error during data loader plugin creation " + e.getMessage());
 			} catch (InstantiationException e) {
-				msgCenter.error("Error during data loader plugin creation", e);
+				Logger.error("Error during data loader plugin creation " + e.getMessage());
 			} catch (ClassNotFoundException e) {
-				msgCenter.error("Error during data loader plugin creation", e);
+				Logger.error("Error during data loader plugin creation " + e.getMessage());
 			}
 		}
 	}
@@ -116,7 +116,7 @@ public class DataManager {
 						return data;
 					} catch (IOException e) {
 						//e.printStackTrace();
-						msgCenter.warn("Error while creating a Dataset", e);
+						Logger.warn("Error while creating a Dataset " + e.getMessage());
 						exceptionMsgs += loader.getClass().getName() + ":\n " + e.getMessage() + "\n";
 					}
 				} 
@@ -124,7 +124,7 @@ public class DataManager {
 				//e.printStackTrace();
 				exceptionMsgs += loader.getClass().getName() + ":\n " + e.getMessage() + "\n";
 				if ( count >= dataLoaders.size() ){	
-					msgCenter.warn("Error while creating a Dataset", e);
+					Logger.warn("Error while creating a Dataset " + e.getMessage());
 				}
 			}
 		}
@@ -182,7 +182,7 @@ public class DataManager {
 	}
 	return data;
 	} catch (IOException e) {
-	msgCenter.warn("Error while creating a Dataset", e);
+	Logger.warn("Error while creating a Dataset " + e.getMessage());
 	}
 	}
 	}

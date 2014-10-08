@@ -11,7 +11,10 @@ import java.util.List;
 import javax.media.protocol.FileTypeDescriptor;
 import javax.swing.Timer;
 
-import simphony.util.messages.MessageCenter;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
+//import simphony.util.messages.MessageCenter;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.util.AnimationListener;
 import anl.verdi.plot.util.MovieMaker;
@@ -25,6 +28,7 @@ import anl.verdi.plot.util.WriteAnimatedGif;
  * @version $Revision$ $Date$
  */
 public class PlotAnimator {
+	static final Logger Logger = LogManager.getLogger(PlotAnimator.class.getName());
 
 	private TimeAnimatablePlot plot;
 	private MovieMaker maker;
@@ -196,7 +200,7 @@ public class PlotAnimator {
 				} catch (IOException ex) {
 					maker = null;
 					videoMaker = null;
-					MessageCenter.getMessageCenter(PlotAnimator.this.getClass()).error("Error while making movie", ex);
+					Logger.error("Error while making movie " + ex.getMessage());
 				}
 			}
 		}

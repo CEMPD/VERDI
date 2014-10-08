@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import simphony.util.messages.MessageCenter;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
+//import simphony.util.messages.MessageCenter;
 import visad.VisADException;
 import anl.verdi.data.DataFrame;
 import anl.verdi.formula.Formula;
@@ -27,8 +30,9 @@ import anl.verdi.plot.types.VerticalCrossSectionPlot.CrossSectionType;
  * @version $Revision$ $Date$
  */
 public class PlotFactory {
+	static final Logger Logger = LogManager.getLogger(PlotFactory.class.getName());
 
-	private static final MessageCenter msg = MessageCenter.getMessageCenter(PlotFactory.class);
+//	private static final MessageCenter msg = MessageCenter.getMessageCenter(PlotFactory.class);
 
 	public static final String TITLE_PREFIX = PlotFactory.class.getName() + ".TITLE_PREFIX";
 	public static final String SUBTITLE = PlotFactory.class.getName() + ".SUBTITLE";
@@ -90,9 +94,9 @@ public class PlotFactory {
 			try {
 				plot = new Contour3D(frames.get(0), config);
 			} catch (RemoteException e) {
-				msg.error("Error creating contour 3D plot", e);
+				Logger.error("Error creating contour 3D plot " + e.getMessage());
 			} catch (VisADException e) {
-				msg.error("Error creating contour 3D plot", e);
+				Logger.error("Error creating contour 3D plot " + e.getMessage());
 			}
 			return new PlotPanel(plot, name);
 		}

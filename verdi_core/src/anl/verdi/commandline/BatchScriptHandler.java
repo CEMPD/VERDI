@@ -99,7 +99,7 @@ public class BatchScriptHandler {
 			String option = thisCommand.get(0);
 			
 			if (thisCommand.size() < 2) {
-				System.out.print(HELPTEXT);
+				Logger.debug(HELPTEXT);
 				return;
 			}
 			

@@ -15,6 +15,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
 import org.geotools.brewer.color.PaletteType;
@@ -38,11 +40,12 @@ import com.jgoodies.forms.layout.Sizes;
  */
 public class PaletteSelectionPanel extends JPanel {
 	private static final long serialVersionUID = 895188842367162164L;
+	static final Logger Logger = LogManager.getLogger(PaletteSelectionPanel.class.getName());
 	private ColorBrewer brewer = ColorBrewer.instance();
 	private PavePaletteCreator palBrewer = new PavePaletteCreator();
 
 	public PaletteSelectionPanel() {
-System.out.println("in default constructor for PaletteSelectionPanel");
+		Logger.debug("in default constructor for PaletteSelectionPanel");
 		initComponents();
 		createPalettes();
 
@@ -67,7 +70,7 @@ System.out.println("in default constructor for PaletteSelectionPanel");
 	}
 
 	private PaletteType getPaletteType() {
-		System.out.println("in PaletteSelectionPanel.getPaletteType = " + typeCmb.getSelectedItem().toString());
+		Logger.debug("in PaletteSelectionPanel.getPaletteType = " + typeCmb.getSelectedItem().toString());
 		String type = typeCmb.getSelectedItem().toString();
 		if (type.equals("Sequential"))
 			return ColorBrewer.SEQUENTIAL;
@@ -78,7 +81,7 @@ System.out.println("in default constructor for PaletteSelectionPanel");
 	}
 
 //	public static void main(String[] args) {
-//		System.out.println(flipDivergingPaletteDescription(""));
+//		Logger.debug(flipDivergingPaletteDescription(""));
 //	}
 
 //	private static String flipDivergingPaletteDescription(String description) {
@@ -101,12 +104,12 @@ System.out.println("in default constructor for PaletteSelectionPanel");
 //	}
 	
 	private void createPalettes() {
-System.out.println("in PaletteSelectionPanel.createPalettes");
+		Logger.debug("in PaletteSelectionPanel.createPalettes");
 		int tileCount = ((Integer) tileSpinner.getValue()).intValue();
-System.out.println("\ttileCount = " + tileCount);
+		Logger.debug("\ttileCount = " + tileCount);
 		PaletteType paletteType = getPaletteType();
 		BrewerPalette[] pals = brewer.getPalettes(paletteType, tileCount);
-System.out.println("\tjust did brewer.getPalettes");
+		Logger.debug("\tjust did brewer.getPalettes");
 		java.util.List<Palette> palettes = new ArrayList<Palette>();
 		
 //		//if diverging add custom INVERTED versions of the diverging palettes...
@@ -119,11 +122,11 @@ System.out.println("\tjust did brewer.getPalettes");
 		for (BrewerPalette pal : pals) {
 			Color[] colors = pal.getColors(tileCount);
 			palettes.add(new Palette(colors, pal.getDescription(), false));
-System.out.println("for each BrewerPalette, palettes.add " + pal.getDescription());
+			Logger.debug("for each BrewerPalette, palettes.add " + pal.getDescription());
 		}
 
 		if (paletteType.equals(ColorBrewer.SEQUENTIAL)) {
-System.out.println("ColorBrewer is SEQUENTIAL, doing palettes.addAll for tileCount = " + tileCount);
+			Logger.debug("ColorBrewer is SEQUENTIAL, doing palettes.addAll for tileCount = " + tileCount);
 			palettes.addAll(palBrewer.createPalettes(tileCount));
 		}
 
@@ -132,7 +135,7 @@ System.out.println("ColorBrewer is SEQUENTIAL, doing palettes.addAll for tileCou
 	}
 
 	public void init(ColorMap map, DataUtilities.MinMax minMax) {
-System.out.println("in PaletteSelectionPanel.init for ColorMap and MinMax");
+		Logger.debug("in PaletteSelectionPanel.init for ColorMap and MinMax");
 		ColorMap.PaletteType type = map.getPaletteType();
 		if (type != null) {
 			if (type.equals(ColorMap.PaletteType.QUALITATIVE))
@@ -143,12 +146,12 @@ System.out.println("in PaletteSelectionPanel.init for ColorMap and MinMax");
 				typeCmb.setSelectedItem("Sequential");
 		}
 		tileSpinner.setValue(new Integer(map.getColorCount()));
-System.out.println("calling palettePanel.initMap for map and minMax");
+		Logger.debug("calling palettePanel.initMap for map and minMax");
 		palettePanel.initMap(map, minMax);
 	}
 	
 	public void setForFastTitle(boolean isForFastTitle) {
-System.out.println("in PaletteSelectionPanel.setForFastTitle");
+		Logger.debug("in PaletteSelectionPanel.setForFastTitle");
 		if ( palettePanel != null) {
 			palettePanel.setForFastTitle( isForFastTitle );
 		}
@@ -161,7 +164,7 @@ System.out.println("in PaletteSelectionPanel.setForFastTitle");
 //	}
 
 	private void initComponents() {
-System.out.println("in PaletteSelectionPanel.initComponents");
+		Logger.debug("in PaletteSelectionPanel.initComponents");
 		// JFormDesigner - Component initialization - DO NOT MODIFY
 		// //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner non-commercial license
@@ -235,7 +238,7 @@ System.out.println("in PaletteSelectionPanel.initComponents");
 	// JFormDesigner - End of variables declaration //GEN-END:variables
 
 	public ColorMap getColorMap() throws Exception {
-System.out.println("in PaletteSelectionPanel.getColorMap");
+		Logger.debug("in PaletteSelectionPanel.getColorMap");
 		ColorMap map = palettePanel.getColorMap();
 		String type = typeCmb.getSelectedItem().toString();
 		if (type.equals("Qualitative"))
@@ -248,8 +251,7 @@ System.out.println("in PaletteSelectionPanel.getColorMap");
 	}
 	
 	public void enableScale( boolean enable) {
-System.out.println("in PaletteSelectionPanel.enableScale = " + enable);
+		Logger.debug("in PaletteSelectionPanel.enableScale = " + enable);
 		palettePanel.enableScale( enable);
 	}	
-
 }

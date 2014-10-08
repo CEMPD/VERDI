@@ -40,6 +40,8 @@ import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -52,7 +54,7 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
 
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataUtilities;
@@ -76,7 +78,8 @@ import anl.verdi.util.VUnits;
 
 public class ScatterPlot extends AbstractPlot {
 
-	private static final MessageCenter msg = MessageCenter.getMessageCenter(ScatterPlot.class);
+	static final Logger Logger = LogManager.getLogger(ScatterPlot.class.getName());
+//	private static final MessageCenter msg = MessageCenter.getMessageCenter(ScatterPlot.class);
 	private static final String ls = System.getProperty("line.separator");
 
 	private DataFrame xFrame, yFrame;
@@ -112,12 +115,12 @@ public class ScatterPlot extends AbstractPlot {
 
 	public ScatterPlot(DataFrame xFrame, DataFrame yFrame) {
 		this(xFrame, yFrame, new PlotConfiguration());
-System.out.println("in constructor for ScatterPlot");
+		Logger.debug("in constructor for ScatterPlot");
 	}
 
 	public ScatterPlot(DataFrame xFrame, DataFrame yFrame,
 			PlotConfiguration config) {
-System.out.println("in alternate constructor for ScatterPlot");
+		Logger.debug("in alternate constructor for ScatterPlot");
 		hasNoLayer = xFrame.getAxes().getZAxis() == null
 				|| yFrame.getAxes().getZAxis() == null;
 		this.xFrame = xFrame;
@@ -384,7 +387,7 @@ System.out.println("in alternate constructor for ScatterPlot");
 
 	private void createSubtitle() { 		// changed Date to GregorianCalendar
 		GregorianCalendar aCalendar = xFrame.getAxes().getDate(timeStep + (long)xFrame.getAxes().getTimeAxis().getOrigin());
-System.out.println("in ScatterPlot createSubtitle GregorianCalendar aCalendar = " + aCalendar.toString());
+		Logger.debug("in ScatterPlot createSubtitle GregorianCalendar aCalendar = " + aCalendar.toString());
 		TextTitle title = null;
 		if (hasNoLayer) {
 			title = new TextTitle(Utilities.formatDate(aCalendar));
@@ -430,7 +433,7 @@ System.out.println("in ScatterPlot createSubtitle GregorianCalendar aCalendar = 
 				configure(new PlotConfigurationIO().loadConfiguration(new File(
 						configFile)));
 			} catch (IOException ex) {
-				msg.error("Error loading configuration", ex);
+				Logger.error("Error loading configuration " + ex.getMessage());
 			}
 		}
 
@@ -575,7 +578,7 @@ System.out.println("in ScatterPlot createSubtitle GregorianCalendar aCalendar = 
 
 			writer.close();
 		} catch (Exception e) {
-			msg.error("Error opening/writing output file", e);
+			Logger.error("Error opening/writing output file " + e.getMessage());
 		}
 	}
 

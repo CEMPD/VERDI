@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
@@ -13,9 +15,10 @@ import org.apache.velocity.app.Velocity;
  * @version $Revision$ $Date$
  */
 public class ColorMapper {
+	static final Logger Logger = LogManager.getLogger(ColorMapper.class.getName());
 
 	public static void main(String[] args) throws Exception {
-System.out.println("in anl.verdi.plot.color.ColorMapper.main, do not expect to see this message");
+		Logger.debug("in anl.verdi.plot.color.ColorMapper.main, do not expect to see this message");
 		Palette pal = Palette.getDefaultPalette();
 		ColorMap map = new ColorMap(pal, 0, 1);
 

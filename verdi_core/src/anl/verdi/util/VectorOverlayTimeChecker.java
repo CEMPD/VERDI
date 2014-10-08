@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
@@ -21,12 +24,12 @@ import anl.verdi.gui.FormulaListElement;
  * @version $Revision$ $Date$
  */
 public class VectorOverlayTimeChecker {
-
+	static final Logger Logger = LogManager.getLogger(VectorOverlayTimeChecker.class.getName());
 	private Map<Dataset, DatasetListElement> datasetMap = new HashMap<Dataset, DatasetListElement>();
 	private DataFrame tileFrame;
 
 	public VectorOverlayTimeChecker(Collection<DatasetListElement> elements, DataFrame tileFrame) {
-System.out.println("in constructor for VectorOverlayTimeChecker");
+		Logger.debug("in constructor for VectorOverlayTimeChecker");
 		for (DatasetListElement item : elements) {
 			datasetMap.put(item.getDataset(), item);
 		}
@@ -48,7 +51,7 @@ System.out.println("in constructor for VectorOverlayTimeChecker");
 				for (int i = 0; i < timeAxis.getRange().getExtent(); i++) {
 					GregorianCalendar aCalendar1 = elem.getAxes().getDate(i);
 					GregorianCalendar aCalendar2 = axes.getDate(i);
-System.out.println("in VectorOverlayTimeChecker checkTime, 2 GregorianCalendar objects, aCalendar1 = " + aCalendar1
+					Logger.debug("in VectorOverlayTimeChecker checkTime, 2 GregorianCalendar objects, aCalendar1 = " + aCalendar1
 		+ ", aCalendar2 = " + aCalendar2); 
 					if(!aCalendar1.equals(aCalendar2))
 						return false;

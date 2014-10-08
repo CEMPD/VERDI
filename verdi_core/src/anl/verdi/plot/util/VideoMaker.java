@@ -27,7 +27,9 @@ import javax.media.protocol.DataSource;
 import javax.media.protocol.FileTypeDescriptor;
 import javax.media.util.ImageToBuffer;
 
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 /**
  * Adapted from MovieMaker
@@ -36,8 +38,9 @@ import simphony.util.messages.MessageCenter;
  * @version $Revision$ $Date$
  */
 public class VideoMaker implements ControllerListener, DataSinkListener {
+	static final Logger Logger = LogManager.getLogger(VideoMaker.class.getName());
 
-	private static final MessageCenter msg = MessageCenter.getMessageCenter(VideoMaker.class);
+//	private static final MessageCenter msg = MessageCenter.getMessageCenter(VideoMaker.class);
 
 	private Processor p;
 	private BufferDataSource source;
@@ -58,7 +61,7 @@ public class VideoMaker implements ControllerListener, DataSinkListener {
 		String url = "file:/" + file.getAbsolutePath();
 			outML = new MediaLocator(url);
 		//} catch (IOException ex) {
-		//	msg.error("Unable to create file for movie", ex);
+		//	Logger.error("Unable to create file for movie " + ex.getMessage());
 		//}
 
 	}
@@ -68,7 +71,7 @@ public class VideoMaker implements ControllerListener, DataSinkListener {
 		try {
 			p = Manager.createProcessor(source);
 		} catch (Exception ex) {
-			msg.error("Failed to create processor for video", ex);
+			Logger.error("Failed to create processor for video " + ex.getMessage());
 			return false;
 		}
 
@@ -89,7 +92,7 @@ public class VideoMaker implements ControllerListener, DataSinkListener {
 		Format f[] = tcs[0].getSupportedFormats();
 
 		if (f == null || f.length <= 0) {
-			msg.warn("The mux does not support the input format: " +
+			Logger.warn("The mux does not support the input format: " +
 							tcs[0].getFormat());
 			return false;
 		}
@@ -99,7 +102,7 @@ public class VideoMaker implements ControllerListener, DataSinkListener {
 		// realize the processor
 		p.realize();
 		if (!waitForState(p, Processor.Realized)) {
-			msg.warn("Failed to Realize processor");
+			Logger.warn("Failed to Realize processor");
 			return false;
 		}
 
@@ -115,7 +118,7 @@ public class VideoMaker implements ControllerListener, DataSinkListener {
 			p.start();
 			sink.start();
 		} catch (IOException ex) {
-			msg.error("Video error", ex);
+			Logger.error("Video error " + ex.getMessage());
 			return false;
 		}
 		return true;
@@ -187,7 +190,7 @@ public class VideoMaker implements ControllerListener, DataSinkListener {
 
 
 		p.removeControllerListener(this);
-		msg.info("Video capture has finished");
+		Logger.info("Video capture has finished");
 	}
 
 	private void waitForFileDone() {

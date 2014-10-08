@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import com.bbn.openmap.util.DeepCopyUtil;
 
 /**
@@ -17,6 +20,7 @@ import com.bbn.openmap.util.DeepCopyUtil;
  * @version $Revision$ $Date$
  */
 public class PlotConfiguration {
+	static final Logger Logger = LogManager.getLogger(PlotConfiguration.class.getName());
 
 	public static final String TITLE = PlotConfiguration.class.getName()
 			+ ".title";
@@ -114,7 +118,7 @@ public class PlotConfiguration {
 	protected Properties props = new Properties();
 
 	public PlotConfiguration() {
-		System.out.println("in PlotConfiguration, default constructor");
+		Logger.debug("in PlotConfiguration, default constructor");
 	}
 
 	/**
@@ -128,7 +132,7 @@ public class PlotConfiguration {
 	public PlotConfiguration(File file) throws IOException {
 		PlotConfiguration config = new PlotConfigurationIO().loadConfiguration(file);
 		this.merge(config);
-		System.out.println("in PlotConfiguration, constructor from a file");
+		Logger.debug("in PlotConfiguration, constructor from a file");
 	}
 
 	/**
@@ -139,7 +143,7 @@ public class PlotConfiguration {
 	 */
 	public PlotConfiguration(PlotConfiguration config) {
 //		PlotConfiguration config2 = null; 
-		System.out.println("in Plot Configuration, copy constructor");
+		Logger.debug("in Plot Configuration, copy constructor");
 		try {
 //			config2 = (PlotConfiguration)DeepCopyUtil.copy(config);
 			for (Object key : config.props.keySet()) {

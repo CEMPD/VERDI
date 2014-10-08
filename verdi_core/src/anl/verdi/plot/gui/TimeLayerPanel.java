@@ -10,6 +10,9 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrameAxis;
@@ -27,9 +30,7 @@ import com.jgoodies.forms.layout.RowSpec;
  */
 public class TimeLayerPanel extends JPanel {
 
-	/**
-	 * 
-	 */
+	static final Logger Logger = LogManager.getLogger(TimeLayerPanel.class.getName());
 	private static final long serialVersionUID = -7183689501895236846L;
 	private class SpinnerListener implements ChangeListener {
 		public void stateChanged(ChangeEvent e) {
@@ -49,7 +50,7 @@ public class TimeLayerPanel extends JPanel {
 
 
 	public TimeLayerPanel() {
-System.out.println("in constructor for TimeLayerPanel");
+		Logger.debug("in constructor for TimeLayerPanel");
 		initComponents();
 		timeSpinner.addChangeListener(new SpinnerListener());
 	}
@@ -125,7 +126,7 @@ System.out.println("in constructor for TimeLayerPanel");
 		model.setMaximum(max);
 		model.setValue(new Integer(timeStep + 1));
 		GregorianCalendar date = axes.getDate(timeStep);
-System.out.println("in TimeLayerPanel, init function, just computed GregorianCalendar date");
+		Logger.debug("in TimeLayerPanel, init function, just computed GregorianCalendar date");
 		timeLabel.setText(Utilities.formatShortDate(date == null ? new GregorianCalendar() : date));
 
 		timeSpinner.setEnabled(min != max);

@@ -2,6 +2,8 @@ package anl.verdi.data;
 
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.unitsofmeasurement.unit.Unit;
 
 import anl.verdi.util.VUnits;
@@ -15,7 +17,7 @@ import anl.verdi.util.VUnits;
  * 
  */
 public class DefaultVariable implements Variable<CoordAxis> {
-  
+  static final Logger Logger = LogManager.getLogger(DefaultVariable.class.getName());
   protected Unit unit;
   protected String name, fullName;
   protected String description;
@@ -25,11 +27,11 @@ public class DefaultVariable implements Variable<CoordAxis> {
     this.name=name;
     this.description=description;
 	  this.unit = unit;
-System.out.println("in DefaultVariable constructor, Unit = " + this.unit);
+	  Logger.debug("in DefaultVariable constructor, Unit = " + this.unit);
 	  this.dataset = dataset;
 	  fullName = new StringBuffer(name).append(" (").append(VUnits.getFormattedName(unit)).
 					  append(")").toString();
-System.out.println("in DefaultVariable constructor, fullName = " + fullName);
+	  Logger.debug("in DefaultVariable constructor, fullName = " + fullName);
   }
 
 	/**
@@ -73,7 +75,7 @@ System.out.println("in DefaultVariable constructor, fullName = " + fullName);
 	 * @return this Variable's standard of measurement.
 	 */
 	public Unit getUnit() {
-System.out.println("in DefaultVariable, returning unit = " + unit);
+		Logger.debug("in DefaultVariable, returning unit = " + unit);
 		return unit;
 	}
 }

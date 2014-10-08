@@ -23,6 +23,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.vecmath.Point4i;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -36,7 +38,7 @@ import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
@@ -61,6 +63,7 @@ import anl.verdi.util.Utilities;
  * @version $Revision$ $Date$
  */
 public class VerticalCrossSectionPlot extends AbstractTilePlot {
+	static final Logger Logger = LogManager.getLogger(VerticalCrossSectionPlot.class.getName());
 
 	private DataFrameAxis constantAxis, domainAxis;
 	private TimeConstantAxisPanel timePanel;
@@ -70,7 +73,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 		X, Y
 	}
 
-	private static MessageCenter center = MessageCenter.getMessageCenter(VerticalCrossSectionPlot.class);
+//	private static MessageCenter center = MessageCenter.getMessageCenter(VerticalCrossSectionPlot.class);
 
 	private int constant;
 	private CrossSectionXYZDataset dataset;
@@ -86,7 +89,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 	 */
 	public VerticalCrossSectionPlot(DataFrame frame, VertCrossPlotConfiguration config) {
 		this(frame, config.getCrossSectionType(), config.getCrossSectionRowCol());
-System.out.println("in constructor for VerticalCrossSectionPlot");
+		Logger.debug("in constructor for VerticalCrossSectionPlot");
 		if (config.getSubtitle1() == null || config.getSubtitle1().trim().isEmpty())
 			config.setSubtitle1(Tools.getDatasetNames(frame));
 		
@@ -94,11 +97,6 @@ System.out.println("in constructor for VerticalCrossSectionPlot");
 		defaultConfig.merge(config);
 		configure(defaultConfig);
 	}
-
-//	public void configure(PlotConfiguration config) {
-//		System.out.println("debug configure from ");
-//		//
-//	}
 
 	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
 		PlotConfiguration defaultConfig = getPlotConfiguration();
@@ -124,7 +122,7 @@ System.out.println("in constructor for VerticalCrossSectionPlot");
 	 */
 	public VerticalCrossSectionPlot(DataFrame frame, CrossSectionType type, int constant) {
 		super(frame);
-System.out.println("in alternate constructor for VerticalCrossSectionPlot");
+		Logger.debug("in alternate constructor for VerticalCrossSectionPlot");
 		this.type = type;
 		this.constant = constant;
 
@@ -157,8 +155,7 @@ System.out.println("in alternate constructor for VerticalCrossSectionPlot");
 			if (type == CrossSectionType.X) return DataUtilities.minMaxTXPoint(frame, timeStep, constant);
 			else return DataUtilities.minMaxTYPoint(frame, timeStep, constant);
 		} catch (InvalidRangeException e) {
-			center.error("Error getting min max points", e);
-			;
+			Logger.error("Error getting min max points " + e.getMessage());
 		}
 
 		return null;
@@ -230,7 +227,7 @@ System.out.println("in alternate constructor for VerticalCrossSectionPlot");
 			event.setXConstant(Boolean.valueOf(type == CrossSectionType.X));
 			eventProducer.fireProbeEvent(event);
 		} catch (InvalidRangeException e) {
-			center.error("Error while probing", e);
+			Logger.error("Error while probing " + e.getMessage());
 		}
 	}
 
@@ -434,7 +431,7 @@ System.out.println("in alternate constructor for VerticalCrossSectionPlot");
 				else rangedMinMax = DataUtilities.minMaxTY(frame, timeStep, constant);
 			}
 		} catch (InvalidRangeException e) {
-			center.error("Error getting min max", e);
+			Logger.error("Error getting min max " + e.getMessage());
 		}
 		return rangedMinMax;
 	}
@@ -446,7 +443,7 @@ System.out.println("in alternate constructor for VerticalCrossSectionPlot");
 						Utilities.formatNumber(rangedMinMax.getMax()));
 
 		GregorianCalendar aCalendar = frame.getAxes().getDate(timeStep + frame.getAxes().getTimeAxis().getOrigin());
-		System.out.println("in VerticalCrossSectionPlot createSubtitle set GregorianCalendar aCalendar = " + aCalendar.toString());
+		Logger.debug("in VerticalCrossSectionPlot createSubtitle set GregorianCalendar aCalendar = " + aCalendar.toString());
 		title = (TextTitle) chart.getSubtitle(bottomTitle1Index);
 		title.setText(Utilities.formatDate(aCalendar));
 	}

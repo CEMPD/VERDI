@@ -57,7 +57,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -90,6 +89,8 @@ import net.sf.epsgraphics.ColorMode;
 import net.sf.epsgraphics.Drawable;
 import net.sf.epsgraphics.EpsTools;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.data.Query;
 //import org.geotools.data.DefaultQuery;	// deprecated, replacing with Query
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -101,7 +102,7 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 
 import saf.core.ui.event.DockableFrameEvent;
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
 import ucar.unidata.geoloc.Projection;
@@ -123,7 +124,6 @@ import anl.verdi.data.Slice;
 import anl.verdi.data.Variable;
 import anl.verdi.data.VectorEvaluator;
 import anl.verdi.formula.Formula;
-import anl.verdi.gis.FastTileAddLayerWizard;
 import anl.verdi.gis.FastTileLayerEditor;
 import anl.verdi.gis.OverlayObject;
 import anl.verdi.plot.anim.AnimationPanel;
@@ -149,8 +149,9 @@ import com.vividsolutions.jts.geom.Envelope;
 public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		ChangeListener, ComponentListener, MouseListener,
 		TimeAnimatablePlot, Plot {
+	static final Logger Logger = LogManager.getLogger(FastTilePlot.class.getName());
 	private static final long serialVersionUID = 5835232088528761729L;
-	private static MessageCenter center = MessageCenter.getMessageCenter(FastTilePlot.class);
+//	private static MessageCenter center = MessageCenter.getMessageCenter(FastTilePlot.class);
 
 	public static final int NO_VAL = Integer.MIN_VALUE;
 	private static final String STATES_LAYER = "STATES";
@@ -534,16 +535,16 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 						final int stepsLapsed = timestep - firstTimestep;
 						final int statisticsSelection = statisticsMenu.getSelectedIndex();
-System.out.println("statisticsSelection = " + statisticsSelection);
+						Logger.debug("statisticsSelection = " + statisticsSelection);
 						final String statisticsUnits =
 							statisticsSelection == 0 ? null : GridCellStatistics.units( statisticsSelection - 1 );
-System.out.println("statisticsUnits = " + statisticsUnits);
+						Logger.debug("statisticsUnits = " + statisticsUnits);
 						final String plotVariable =
 							statisticsSelection == 0 ? variable
 							: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
 						final String plotUnits =
 							statisticsUnits != null ? statisticsUnits : units;
-System.out.println("units = " + units);
+						Logger.debug("units = " + units);
 						
 						if (get_draw_once_requests() > 0) {
 							draw_once_requests = 0;
@@ -553,27 +554,27 @@ System.out.println("units = " + units);
 						}
 						
 						try {
-System.out.println("ready to call tilePlot.draw(); first resolve any function calls for argument values, thread = " + Thread.currentThread().toString());
-int aRow = firstRow + rowOrigin;
-System.out.println("aRow = " + aRow);
-int bRow = lastRow + rowOrigin;
-System.out.println("bRow = " + bRow);
-int aCol = firstColumn + columnOrigin;
-System.out.println("aCol = " + aCol);
-int bCol = lastColumn + columnOrigin;
-System.out.println("bCol = " + bCol);
-int aLegendLevelsLength = legendLevels.length;
-System.out.println("LegendLevels.length = " + aLegendLevelsLength);
-int aLegendColorsLength = legendColors.length;
-System.out.println("LegendColors.length = " + aLegendColorsLength);
-System.out.println("plotUnits = " + plotUnits);
-String aPlotUnits = (plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits;
-System.out.println("aPlotUnits = " + aPlotUnits);
-NumberFormat aNumberFormat = map.getNumberFormat();
-System.out.println("aNumberFormat = " + aNumberFormat);
-int aSubsetLayerDataLength = subsetLayerData.length;
-System.out.println("subsetLayerData.length = " + aSubsetLayerDataLength);
-System.out.println("ready to make revised function call to tilePlot.draw, thread = " + Thread.currentThread().toString());
+							Logger.debug("ready to call tilePlot.draw(); first resolve any function calls for argument values, thread = " + Thread.currentThread().toString());
+							int aRow = firstRow + rowOrigin;
+							Logger.debug("aRow = " + aRow);
+							int bRow = lastRow + rowOrigin;
+							Logger.debug("bRow = " + bRow);
+							int aCol = firstColumn + columnOrigin;
+							Logger.debug("aCol = " + aCol);
+							int bCol = lastColumn + columnOrigin;
+							Logger.debug("bCol = " + bCol);
+							int aLegendLevelsLength = legendLevels.length;
+							Logger.debug("LegendLevels.length = " + aLegendLevelsLength);
+							int aLegendColorsLength = legendColors.length;
+							Logger.debug("LegendColors.length = " + aLegendColorsLength);
+							Logger.debug("plotUnits = " + plotUnits);
+							String aPlotUnits = (plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits;
+							Logger.debug("aPlotUnits = " + aPlotUnits);
+							NumberFormat aNumberFormat = map.getNumberFormat();
+							Logger.debug("aNumberFormat = " + aNumberFormat);
+							int aSubsetLayerDataLength = subsetLayerData.length;
+							Logger.debug("subsetLayerData.length = " + aSubsetLayerDataLength);
+							Logger.debug("ready to make revised function call to tilePlot.draw, thread = " + Thread.currentThread().toString());
 
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									width, height, stepsLapsed, layer, aRow,
@@ -589,7 +590,7 @@ System.out.println("ready to make revised function call to tilePlot.draw, thread
 //									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
 //									subsetLayerData);
 						} catch (Exception e) {
-							center.error("FastTilePlot's run method", e);
+							Logger.error("FastTilePlot's run method " + e.getMessage());
 						}
 
 						dataArea.setRect(xOffset, yOffset, width, height);
@@ -714,14 +715,13 @@ System.out.println("ready to make revised function call to tilePlot.draw, thread
 				final int statisticsSelection = statisticsMenu.getSelectedIndex();
 				final String statisticsUnits =
 					statisticsSelection == 0 ? null : GridCellStatistics.units( statisticsSelection - 1 );
-System.out.println("statisticsUnit = " + statisticsUnits);
+				Logger.debug("statisticsUnit = " + statisticsUnits);
 				final String plotVariable =
 					statisticsSelection == 0 ? variable
 					: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
-System.out.println("plotVariable = " + plotVariable);
-				final String plotUnits =
-					statisticsUnits != null ? statisticsUnits : units;
-System.out.println("plotUnits = " + plotUnits);
+				Logger.debug("plotVariable = " + plotVariable);
+				final String plotUnits = statisticsUnits != null ? statisticsUnits : units;
+				Logger.debug("plotUnits = " + plotUnits);
 				final int stepsLapsed = timestep - firstTimestep;
 				try {
 					tilePlot.drawBatchImage(offScreenGraphics, xOffset, yOffset,
@@ -731,7 +731,7 @@ System.out.println("plotUnits = " + plotUnits);
 							((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
 							subsetLayerData);
 				} catch (Exception e) {
-					center.error("FastTilePlot's drawBatch method", e);
+					Logger.error("FastTilePlot's drawBatch method" + e.getMessage());
 					e.printStackTrace();
 				}
 				
@@ -899,10 +899,10 @@ System.out.println("plotUnits = " + plotUnits);
 			computeDataRange(minmax, false);
 //			ColorMap.ScaleType sType = map.getScaleType();		// local variable sType not used
 			//computeDataRange function need this.log set correctly...
-if (map.getPalette() == null)
-{
-	System.out.println("no palette so calling new PavePaletteCreator().createPalettes(8).get(0)");
-}
+			if (map.getPalette() == null)
+			{
+				Logger.debug("no palette so calling new PavePaletteCreator().createPalettes(8).get(0)");
+			}
 			defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPalettes(8).get(0);
 			map.setPalette(defaultPalette);
 			
@@ -996,7 +996,7 @@ if (map.getPalette() == null)
 				PlotExporterAction save = new PlotExporterAction(this);
 				save.actionPerformed(event);
 			} catch (Exception e) {
-				center.error("Error exporting image", e);
+				Logger.error("Error exporting image " + e.getMessage());
 			}
 		} else if (command.equals(PRINT_COMMAND)) {
 			FastTilePlotPrintAction print = new FastTilePlotPrintAction(this);
@@ -1266,13 +1266,13 @@ if (map.getPalette() == null)
 
 		final Variable dataFrameVariable = dataFrame.getVariable();
 		variable = dataFrameVariable.getName();
-System.out.println("dataFrameVariable = " + dataFrameVariable);
-System.out.println("dataFrameVariable name = " + variable);
+		Logger.debug("dataFrameVariable = " + dataFrameVariable);
+		Logger.debug("dataFrameVariable name = " + variable);
 		units = dataFrameVariable.getUnit().toString();
-System.out.println("units of dataFrameVariable = " + units);
+		Logger.debug("units of dataFrameVariable = " + units);
 		if ( units==null || units.trim().equals(""))
 			units = "none";
-System.out.println("now units = " + units);
+		Logger.debug("now units = " + units);
 		
 		assert dataFrame.getAxes() != null;
 		final Axes<DataFrameAxis> axes = dataFrame.getAxes();
@@ -1375,17 +1375,17 @@ System.out.println("now units = " + units);
 		computeDataRange(minmax, false);
 		if ( this.map == null) {
 			
-System.out.println("in FastTilePlot, this.map == null so calling new PavePaletteCreator");
+			Logger.debug("in FastTilePlot, this.map == null so calling new PavePaletteCreator");
 			defaultPalette = new PavePaletteCreator().createPalettes(8).get(0);
 			map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
 		} else {
 			ColorMap.ScaleType sType = map.getScaleType();
 			if ( sType != null && sType == ColorMap.ScaleType.LOGARITHM ) 
 				this.log = true;
-if(map.getPalette() == null)
-{
-	System.out.println("map.getPalette is null so calling new PavePaletteCreator");
-}
+		if(map.getPalette() == null)
+		{
+			Logger.debug("map.getPalette is null so calling new PavePaletteCreator");
+		}
 			defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPalettes(8).get(0);
 			map.setPalette(defaultPalette);
 		}
@@ -1524,10 +1524,10 @@ if(map.getPalette() == null)
 		computeDataRange(minmax, false);
 //		ColorMap.ScaleType sType = map.getScaleType();
 		//computeDataRange function need this.log set correctly...
-if(map.getPalette() == null)
-{
-	System.out.println("getPalette is null here also so getting ready to call PavePaletteCreator");
-}
+		if(map.getPalette() == null)
+		{
+			Logger.debug("getPalette is null here also so getting ready to call PavePaletteCreator");
+		}
 		defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPalettes(8).get(0);
 		map.setPalette(defaultPalette);
 		
@@ -2158,7 +2158,7 @@ if(map.getPalette() == null)
 	}
 
 	private FastTileLayerEditor showGISLayersDialog() {
-System.out.println("in FastTilePlot.showGISLayersDialog()");
+		Logger.debug("in FastTilePlot.showGISLayersDialog()");
 		Window frame = SwingUtilities.getWindowAncestor(this);
 		FastTileLayerEditor editor = null;
 		
@@ -2287,16 +2287,16 @@ System.out.println("in FastTilePlot.showGISLayersDialog()");
 			}
 			draw();
 		} catch (Exception e) {
-			center.error("Error adding layer", e);
+			Logger.error("Error adding layer " + e.getMessage());
 		}
 	}
 
 //	private MapLines getEditedMapLayer(MapLines map) {
-//System.out.println("in FastTilePlot.getEditedMapLayer for map: " + map);
+//Logger.debug("in FastTilePlot.getEditedMapLayer for map: " + map);
 //		Window frame = SwingUtilities.getWindowAncestor(this);
-//System.out.println("got window ancestor = " + frame.toString() + "\n\tReady to launch FastTileAddLayerWizard");
+//Logger.debug("got window ancestor = " + frame.toString() + "\n\tReady to launch FastTileAddLayerWizard");
 //		FastTileAddLayerWizard wizard = new FastTileAddLayerWizard(new File(map.getMapFile()), createControlLayer(), map, false);
-//System.out.println("back from FastTileAddLayerWizard, now ready to return the display");
+//Logger.debug("back from FastTileAddLayerWizard, now ready to return the display");
 //		return wizard.display((JFrame)frame, true);
 //	}
 
@@ -2391,7 +2391,7 @@ System.out.println("in FastTilePlot.showGISLayersDialog()");
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)));
 			} catch (IOException ex) {
-				center.error("Error loading configuration", ex);
+				Logger.error("Error loading configuration " + ex.getMessage());
 			}
 		}
 
@@ -2447,7 +2447,7 @@ System.out.println("in FastTilePlot.showGISLayersDialog()");
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)), source);
 			} catch (IOException ex) {
-				center.error("Error loading configuration", ex);
+				Logger.error("Error loading configuration " + ex.getMessage());
 			}
 		}
 		
@@ -2528,7 +2528,7 @@ System.out.println("in FastTilePlot.showGISLayersDialog()");
 			legendLevels[count] = map.getMax();
 		} catch (Exception e) {
 			e.printStackTrace();
-			center.error("FastTilePlot's updateColorMap method", e);
+			Logger.error("FastTilePlot's updateColorMap method "+ e.getMessage());
 			return;
 		}
 	}
@@ -2658,7 +2658,7 @@ System.out.println("in FastTilePlot.showGISLayersDialog()");
 						lastColumn);
 				return YES_OPTION;
 			} catch (NumberFormatException e) {
-				center.error("Set Rows and Columns: ", e);
+				Logger.error("Set Rows and Columns: " + e.getMessage());
 			}
 
 			return ERROR;
@@ -2862,7 +2862,7 @@ System.out.println("in FastTilePlot.showGISLayersDialog()");
 		try {
 			timeLayerPanel.setTime(timestep);
 		} catch (Exception e) {
-			center.error("Error setting time step. Time step = " + timestep + ". Is this 1-based?", e);
+			Logger.error("Error setting time step. Time step = " + timestep + ". Is this 1-based? " + e.getMessage());
 		}
 		
 		drawOverLays();
@@ -2885,7 +2885,7 @@ System.out.println("in FastTilePlot.showGISLayersDialog()");
 			if (hasNoLayer) return DataUtilities.minMaxPoint(getDataFrame(), timestep - firstTimestep);
 			return DataUtilities.minMaxTLPoint(getDataFrame(), timestep - firstTimestep, layer - firstLayer);
 		} catch (InvalidRangeException e) {
-			center.error("Error getting min max points", e);
+			Logger.error("Error getting min max points " + e.getMessage());
 		}
 
 		return null;
@@ -2954,7 +2954,7 @@ System.out.println("in FastTilePlot.showGISLayersDialog()");
 			ent.setLogBase( logBase);
 			eventProducer.fireProbeEvent(ent);//new ProbeEvent(this, subsection, slice, TILE));
 		} catch (InvalidRangeException e) {
-			center.error("Error while probing", e);
+			Logger.error("Error while probing " + e.getMessage());
 		}
 		}
 	}
@@ -2975,7 +2975,7 @@ System.out.println("in FastTilePlot.showGISLayersDialog()");
 			DataFrame subsection = getDataFrame().slice(slice);
 			eventProducer.firePlotRequest(new TimeSeriesPlotRequest(subsection, slice, type));
 		} catch (InvalidRangeException e1) {
-			center.error("Error while creating time series from tile", e1);
+			Logger.error("Error while creating time series from tile " + e1.getMessage());
 		}
 	}
 
@@ -2996,7 +2996,7 @@ System.out.println("in FastTilePlot.showGISLayersDialog()");
 				DataFrame subsection = getDataFrame().slice(slice);
 				request.addItem(subsection);
 			} catch (InvalidRangeException e1) {
-				center.error("Error while creating time series from tile", e1);
+				Logger.error("Error while creating time series from tile " + e1.getMessage());
 			}
 		}
 		eventProducer.firePlotRequest(request);
@@ -3349,7 +3349,7 @@ System.out.println("in FastTilePlot.showGISLayersDialog()");
 							subsetLayerData);
 			} catch (Exception e) {
 				e.printStackTrace();
-				center.error("EpsRenderer's draw method", e);
+				Logger.error("EpsRenderer's draw method " + e.getMessage());
 				return;
 			}
 				
@@ -3467,27 +3467,27 @@ System.out.println("in FastTilePlot.showGISLayersDialog()");
 		this.dataFrameLog = DataUtilities.createDataFrame( this.dataFrame);
  
 		if ( doDebug) {
-			System.out.println( "debug print 1:");
+			Logger.debug( "debug print 1:");
 		}
 		
 		int count = 0;	    	
 		IndexIterator iter2 = this.dataFrameLog.getArray().getIndexIterator();
 		IndexIterator iter1 = this.dataFrame.getArray().getIndexIterator();
 		if ( doDebug) 
-			System.out.println( "debug print 2:");
+			Logger.debug( "debug print 2:");
 		float val1, val2;
 		while (iter2.hasNext()) {
 			val1 = iter1.getFloatNext(); 
 			val2 = iter2.getFloatNext(); 
 			if ( doDebug && count<100) 
-				System.out.print( "" + val1 + " " + val2);
+				Logger.debug( "" + val1 + " " + val2);
 			val2 = (float)(Math.log(val1) / Math.log( this.logBase));
 			iter2.setFloatCurrent( (float)( val2));
 
 			val2 = iter2.getFloatCurrent();
 
 			if ( doDebug && count++<100) 
-				System.out.println( " : " + val1 + " " + val2);
+				Logger.debug( " : " + val1 + " " + val2);
 		}
 	}
 	

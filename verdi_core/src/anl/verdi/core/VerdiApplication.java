@@ -86,7 +86,7 @@ public class VerdiApplication implements PlotListener, DatasetModelListener, Lis
 FormulaElementCreator, ListDataListener {
 	static final Logger Logger = LogManager.getLogger(VerdiApplication.class.getName());
 
-	private static MessageCenter msg = MessageCenter.getMessageCenter(VerdiApplication.class);
+//	private static MessageCenter msg = MessageCenter.getMessageCenter(VerdiApplication.class);
 
 	private DataManager manager;
 
@@ -141,12 +141,10 @@ FormulaElementCreator, ListDataListener {
 		MessageCenter.addMessageListener(new MessageEventListener() {
 			public void messageReceived(MessageEvent messageEvent) {
 				if (messageEvent != null) {
-//					System.out.print("Msg: " + messageEvent.getMessage());
+					Logger.debug("Msg: " + messageEvent.getMessage());
 					if (messageEvent.getThrowable()!=null) {
 						Logger.error(" : throwable - "
 								+ messageEvent.getThrowable().getMessage());
-					} else {
-						Logger.debug(" ");
 					}
 				}
 				if (messageEvent != null && messageEvent.getLevel().equals(Level.ERROR) &&
@@ -183,7 +181,7 @@ FormulaElementCreator, ListDataListener {
 			//}
 
 		} catch (Exception e) {
-			msg.warn("Error while get config properties", e);
+			Logger.warn("Error while get config properties " + e.getMessage());
 		}
 	}
 
@@ -234,7 +232,7 @@ FormulaElementCreator, ListDataListener {
 		try {
 			manager.closeAllDatasets();			
 		} catch (IOException e) {
-			msg.error("Error closing datasets", e);
+			Logger.error("Error closing datasets " + e.getMessage());
 		}
 		return true;
 	}
@@ -274,7 +272,7 @@ FormulaElementCreator, ListDataListener {
 				io.load(file, project, manager, this);
 				currentFile = file;
 			} catch (IOException e) {
-				msg.error("Error while loading project", e);
+				Logger.error("Error while loading project " + e.getMessage());
 			}
 		}
 	}
@@ -299,7 +297,7 @@ FormulaElementCreator, ListDataListener {
 				io.save(file, project);
 				currentFile = file;
 			} catch (IOException e) {
-				msg.error("Error while saving project", e);
+				Logger.error("Error while saving project " + e.getMessage());
 			}
 		}
 	}
@@ -382,10 +380,10 @@ FormulaElementCreator, ListDataListener {
 				Exception ex = result.getException();
 				if (ex == null)
 					ex = new RuntimeException(result.getMessage());
-				msg.error("Formula '" + strFormula + "' is invalid", ex);
+				Logger.error("Formula '" + strFormula + "' is invalid " + ex.getMessage());
 				success = false;
 			} else if (status == ValidationResult.Status.WARN) {
-				msg.warn(result.getMessage());
+				Logger.warn(result.getMessage());
 				success = gui.askMessage("Warning", "Warning: " + result.getMessage());
 			}
 
@@ -396,9 +394,9 @@ FormulaElementCreator, ListDataListener {
 			}
 
 		} catch (IllegalFormulaException e) {
-			msg.error("Error while evaluating formula", e);
+			Logger.error("Error while evaluating formula " + e.getMessage());
 		} catch (Throwable e) {
-			msg.error(e.toString(), new Exception("Error while evaluating formula."));
+			Logger.error(e.toString(), new Exception("Error while evaluating formula."));
 		}
 
 		return frame;
@@ -432,10 +430,10 @@ FormulaElementCreator, ListDataListener {
 				Exception ex = result.getException();
 				if (ex == null)
 					ex = new RuntimeException(result.getMessage());
-				msg.error("Formula '" + strFormula + "' is invalid", ex);
+				Logger.error("Formula '" + strFormula + "' is invalid " + ex.getMessage());
 				success = false;
 			} else if (status == ValidationResult.Status.WARN) {
-				msg.warn(result.getMessage());
+				Logger.warn(result.getMessage());
 				success = gui.askMessage("Warning", "Warning: " + result.getMessage());
 			}
 
@@ -446,9 +444,8 @@ FormulaElementCreator, ListDataListener {
 			}
 
 		} catch (IllegalFormulaException e) {
-			msg.error("Error while evaluating formula", e);
+			Logger.error("Error while evaluating formula " + e.getMessage());
 		}
-
 		return frame;
 	}
 
@@ -732,7 +729,7 @@ FormulaElementCreator, ListDataListener {
 		try {
 			manager.closeDataset(set.getAlias());
 		} catch (IOException e) {
-			msg.error("Error while closing dataset '" + set.getName() + "'", e);
+			Logger.error("Error while closing dataset '" + set.getName() + "'" + e.getMessage());
 		}
 	}
 
@@ -769,10 +766,10 @@ FormulaElementCreator, ListDataListener {
 			Exception ex = result.getException();
 			if (ex == null)
 				ex = new RuntimeException(result.getMessage());
-			msg.error("Formula '" + strFormula + "' is invalid", ex);
+			Logger.error("Formula '" + strFormula + "' is invalid " + ex.getMessage());
 			ok = false;
 		} else if (status == ValidationResult.Status.WARN) {
-			msg.warn(result.getMessage());
+			Logger.warn(result.getMessage());
 			ok = gui.askMessage("Warning", "Warning: " + result.getMessage());
 		}
 
@@ -884,7 +881,7 @@ FormulaElementCreator, ListDataListener {
 
 //	public MapContext getDomainPanelContext() {
 	public MapContent getDomainPanelContext() {
-		Logger.debug("Msg #5 & #7: in VerdiApplication.getDomainPanelContext");
+		Logger.debug("Logger #5 & #7: in VerdiApplication.getDomainPanelContext");
 		return domainPanelContext;
 	}
 
@@ -937,7 +934,7 @@ FormulaElementCreator, ListDataListener {
 		String helpName2 = helpDir + "/verdiUserManual.htm";
 		HelpWindowWithContents.showContents(null, "VERDI Help", helpName1, helpName2);
 
-		msg.warn("help: " + helpName1);
-		msg.warn("help: " + helpName2);
+		Logger.warn("help: " + helpName1);
+		Logger.warn("help: " + helpName2);
 	}
 }

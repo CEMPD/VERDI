@@ -29,6 +29,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
@@ -47,7 +49,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
@@ -75,7 +77,6 @@ import anl.verdi.plot.util.PlotPrintAction;
 import anl.verdi.util.Tools;
 import anl.verdi.util.VUnits;
 
-
 /**
  * Class used to create time series line plot
  *
@@ -84,7 +85,8 @@ import anl.verdi.util.VUnits;
 
 public class LinePlot extends AbstractPlot implements ChartProgressListener {
 
-	private static MessageCenter center = MessageCenter.getMessageCenter(LinePlot.class);
+	static final Logger Logger = LogManager.getLogger(LinePlot.class.getName());
+//	private static MessageCenter center = MessageCenter.getMessageCenter(LinePlot.class);
 	private TimeSeriesCollection dataset;
 
 	private java.util.List<DataFrame> frames;
@@ -107,7 +109,7 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 	}	
 
 	public LinePlot(java.util.List<DataFrame> frames, PlotConfiguration config) {
-System.out.println("in constructor for LinePlot.java");
+		Logger.debug("in constructor for LinePlot.java");
 		this.frames = frames;
 		this.config = config;
 		XYDataset dataset = createDataset();
@@ -256,7 +258,7 @@ System.out.println("in constructor for LinePlot.java");
 				eventProducer.fireProbeEvent(new ProbeEvent(this, subsection, slice, Formula.Type.TIME_SERIES_LINE));
 			}
 		} catch (InvalidRangeException e) {
-			center.error("Error while probing", e);
+			Logger.error("Error while probing " + e.getMessage());
 		}
 	}
 
@@ -299,7 +301,7 @@ System.out.println("in constructor for LinePlot.java");
 		int iOrigin = (int) timeRange.getOrigin();
 		for (int i = iOrigin; i < n; i++) {
 			GregorianCalendar d = frame.getAxes().getDate(i);
-System.out.println("in LinePlot findGETS computed GregorianCalendar d");
+			Logger.debug("in LinePlot findGETS computed GregorianCalendar d");
 			if (d.getTimeInMillis() >= date.getTime()) return i;
 		}
 		return Axes.TIME_STEP_NOT_FOUND;
@@ -316,7 +318,7 @@ System.out.println("in LinePlot findGETS computed GregorianCalendar d");
 		int iOrigin = (int) timeRange.getOrigin();
 		for (int i = n - 1; i >= iOrigin; i--) {
 			GregorianCalendar d = frame.getAxes().getDate(i);
-System.out.println("in LinePlot findLETS computed GregorianCalendar d");
+			Logger.debug("in LinePlot findLETS computed GregorianCalendar d");
 			if (d.getTimeInMillis() <= date.getTime()) return i;
 		}
 
@@ -354,7 +356,7 @@ System.out.println("in LinePlot findLETS computed GregorianCalendar d");
 					// change for GregorianCalendar vs. old Date
 				double aValue = frame.getDouble(index);
 				GregorianCalendar aCalendar = rAxes.getDate(t + timeOrigin);
-System.out.println("in LinePlot, updateLayer, computed GregorianCalendar aCalendar");
+				Logger.debug("in LinePlot, updateLayer, computed GregorianCalendar aCalendar");
 				Date aDate = aCalendar.getTime();
 				series.add(new Millisecond(aDate),aValue);
 			}
@@ -449,7 +451,7 @@ System.out.println("in LinePlot, updateLayer, computed GregorianCalendar aCalend
 							}
 						}
 					} catch (InvalidRangeException e) {
-						center.error("Error while probing", e);
+						Logger.error("Error while probing " + e.getMessage());
 						return;
 					}
 				}
@@ -544,7 +546,7 @@ System.out.println("in LinePlot, updateLayer, computed GregorianCalendar aCalend
 				//series1.add(new Millisecond(rAxes.getDate(t + timeOrigin)), frame.getDouble(index));
 				double aValue = frame.getDouble(index);
 				GregorianCalendar aCalendar = rAxes.getDate(t + timeOrigin);
-System.out.println("in LinePlot, createDataset, created GregorianCalendar aCalendar");
+				Logger.debug("in LinePlot, createDataset, created GregorianCalendar aCalendar");
 				Date aDate = aCalendar.getTime();
 				series1.add(new Millisecond(aDate), aValue);
 			}
@@ -563,7 +565,7 @@ System.out.println("in LinePlot, createDataset, created GregorianCalendar aCalen
 					//series.add(new Millisecond(rAxes.getDate(t + timeOrigin)), frame.getDouble(index));
 					double aValue = frame.getDouble(index);
 					GregorianCalendar aCalendar = rAxes.getDate(t + timeOrigin);
-System.out.println("in LinePlot createDataset part 2, create GregorianCalendar aCalendar");
+					Logger.debug("in LinePlot createDataset part 2, create GregorianCalendar aCalendar");
 					Date aDate = aCalendar.getTime();
 					series.add(new Millisecond(aDate),aValue);
 				}
@@ -595,7 +597,7 @@ System.out.println("in LinePlot createDataset part 2, create GregorianCalendar a
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)));
 			} catch (IOException ex) {
-				center.error("Error loading configuration", ex);
+				Logger.error("Error loading configuration " + ex.getMessage());
 			}
 		}
 

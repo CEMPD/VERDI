@@ -1,12 +1,16 @@
 package anl.verdi.plot.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.media.Buffer;
 import javax.media.Format;
 import javax.media.format.RGBFormat;
 import javax.media.protocol.ContentDescriptor;
 import javax.media.protocol.PullBufferStream;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 /**
  * A DataSourceStream for turning JMF Buffers into movies.
@@ -15,6 +19,7 @@ import java.util.List;
  */
 
 public class BufferSourceStream implements PullBufferStream {
+	static final Logger Logger = LogManager.getLogger(BufferSourceStream.class.getName());
 
   private List<Buffer> buffers = new ArrayList<Buffer>();
 
@@ -70,7 +75,7 @@ public class BufferSourceStream implements PullBufferStream {
         buf.setFormat(vFormat);
         buf.setFlags(Buffer.FLAG_KEY_FRAME | Buffer.FLAG_NO_DROP);
         buffers.remove(0);
-        //System.out.println("Removing buffer: size = " + buffers.size());
+        //Logger.debug("Removing buffer: size = " + buffers.size());
       } else {
         buf.setEOM(true);
         buf.setOffset(0);

@@ -15,12 +15,15 @@ import java.text.AttributedString;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.GregorianCalendar;
 
 import javax.swing.ImageIcon;
+
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 import anl.verdi.data.DataUtilities;
 import anl.verdi.plot.config.PlotConfiguration;
@@ -52,6 +55,7 @@ import anl.verdi.util.Utilities;		// 2014 to handle footer date/time correctly
  */
 
 public class TilePlot {
+	static final Logger Logger = LogManager.getLogger(TilePlot.class.getName());
 
 	// Attributes:
 
@@ -140,7 +144,7 @@ public class TilePlot {
 			PlotConfiguration config, NumberFormat format,
 			final Color gridLineColor, final float[][] data) 
 	{
-System.out.println("in gov.epa.emvl.TilePlot.draw(lots of parameters), thread = " + Thread.currentThread().toString());
+		Logger.debug("in gov.epa.emvl.TilePlot.draw(lots of parameters), thread = " + Thread.currentThread().toString());
 		this.config = config;
 		this.numberFormat = format;
 		this.plotWidth = width;
@@ -152,27 +156,27 @@ System.out.println("in gov.epa.emvl.TilePlot.draw(lots of parameters), thread = 
 		final int yMaximum = yHeightOffset;
 
 		// Draw grid boundary rectangle, labeled row/column axis and legend:
-System.out.println("ready to call graphics.setColor");
+		Logger.debug("ready to call graphics.setColor");
 		graphics.setColor(axisColor);
-System.out.println("ready to call drawGridBoundary");
+		Logger.debug("ready to call drawGridBoundary");
 		drawGridBoundary(graphics, xMinimum, xMaximum, yMinimum, yMaximum);
-System.out.println("ready to call drawAxis");
+		Logger.debug("ready to call drawAxis");
 		drawAxis(graphics, xMinimum, xMaximum, yMinimum, yMaximum, firstRow,
 				lastRow, firstColumn, lastColumn);
-System.out.println("ready to call drawLegend");
+		Logger.debug("ready to call drawLegend");
 		drawLegend(graphics, xMaximum, yMinimum, yMaximum, legendLevels,
 				legendColors, units);
 
 		// Draw text label annotations (date-time, data min/max cells):
-System.out.println("ready to call graphics.setColor");
+		Logger.debug("ready to call graphics.setColor");
 		graphics.setColor(labelColor);
-System.out.println("ready to call drawLabels");
+		Logger.debug("ready to call drawLabels");
 		drawLabels(graphics, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
 				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn,
 				data);
 
 		// Draw legend-colored grid cells:
-System.out.println("ready to call drawGridCells");
+		Logger.debug("ready to call drawGridCells");
 		drawGridCells(graphics, xMinimum, xMaximum, yMinimum, yMaximum,
 				firstRow, lastRow, firstColumn, lastColumn, legendLevels,
 				legendColors, data);
@@ -180,11 +184,11 @@ System.out.println("ready to call drawGridCells");
 		// Draw grid lines:
 
 		if ( gridLineColor != null ) {
-System.out.println("ready to call drawGridLines");
+			Logger.debug("ready to call drawGridLines");
 		  drawGridLines( graphics, xMinimum, xMaximum, yMinimum, yMaximum,
 				         firstRow, lastRow, firstColumn, lastColumn, gridLineColor);
 		}
-	System.out.println("all done with TilePlot.draw");
+		Logger.debug("all done with TilePlot.draw");
 	}
 	
 	public synchronized void drawBatchImage(final Graphics graphics, int xOffset, int yOffset,
@@ -216,7 +220,7 @@ System.out.println("ready to call drawGridLines");
 		final int yMaximum = yMinimum + plotHeight;
 		
 		if (canvasWidth < xMaximum + legendWidth || canvasHeight < yMaximum + footnoteHeight)
-			System.out.println("Your image size (" + canvasWidth + ", " + canvasHeight + ") was not set properly.");
+			Logger.debug("Your image size (" + canvasWidth + ", " + canvasHeight + ") was not set properly.");
 
 		// Draw grid boundary rectangle, labeled row/column axis and legend:
 

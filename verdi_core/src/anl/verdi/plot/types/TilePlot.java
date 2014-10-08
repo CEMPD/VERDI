@@ -18,6 +18,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.vecmath.Point4i;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -28,7 +30,7 @@ import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
@@ -57,8 +59,9 @@ import anl.verdi.util.Utilities;
  * @version $Revision$ $Date$
  */
 public class TilePlot extends AbstractTilePlot {
+	static final Logger Logger = LogManager.getLogger(AbstractTilePlot.class.getName());
 
-	private static MessageCenter center = MessageCenter.getMessageCenter(TilePlot.class);
+//	private static MessageCenter center = MessageCenter.getMessageCenter(TilePlot.class);
 
 	private DataFrameXYZDataset dataset;
 	private boolean hasNoLayer = false;
@@ -67,12 +70,12 @@ public class TilePlot extends AbstractTilePlot {
 
 	public TilePlot(DataFrame frame) {
 		this(frame, new TilePlotConfiguration());
-System.out.println("in constructor for anl.verdi.plot.types.TilePlot");
+		Logger.debug("in constructor for anl.verdi.plot.types.TilePlot");
 	}
 
 	public TilePlot(DataFrame frame, PlotConfiguration config) {
 		super(frame);
-System.out.println("in alternate constructor for anl.verdi.plot.types.TilePlot");
+		Logger.debug("in alternate constructor for anl.verdi.plot.types.TilePlot");
 		hasNoLayer = frame.getAxes().getZAxis() == null;
 		dataset = new DataFrameXYZDataset();
 		dataset.addSeries(frame, timeStep, layer);
@@ -163,7 +166,7 @@ System.out.println("in alternate constructor for anl.verdi.plot.types.TilePlot")
 			if (hasNoLayer) return DataUtilities.minMaxPoint(frame, timeStep);
 			return DataUtilities.minMaxTLPoint(frame, timeStep, layer);
 		} catch (InvalidRangeException e) {
-			center.error("Error getting min max points", e);
+			Logger.error("Error getting min max points " + e.getMessage());
 		}
 
 		return null;
@@ -211,7 +214,7 @@ System.out.println("in alternate constructor for anl.verdi.plot.types.TilePlot")
 			enableProbeItems(true);
 			eventProducer.fireProbeEvent(new ProbeEvent(this, subsection, slice, TILE));
 		} catch (InvalidRangeException e) {
-			center.error("Error while probing", e);
+			Logger.error("Error while probing " + e.getMessage());
 		}
 	}
 
@@ -268,7 +271,7 @@ System.out.println("in alternate constructor for anl.verdi.plot.types.TilePlot")
 	 * @param step the new step index
 	 */
 	public void updateTimeStep(int step) {
-System.out.println("TilePlot updateTimeStep");
+		Logger.debug("TilePlot updateTimeStep");
 		processTimeChange = false;
 		updateTimeStepLayer(step, layer);
 		timeLayerPanel.setTime(step + frame.getAxes().getTimeAxis().getOrigin());
@@ -308,7 +311,7 @@ System.out.println("TilePlot updateTimeStep");
 			if (hasNoLayer) return DataUtilities.minMax(frame, timeStep);
 			else return DataUtilities.minMax(frame, timeStep, layer);
 		} catch (InvalidRangeException ex) {
-			center.error("Error creating scale axis", ex);
+			Logger.error("Error creating scale axis " + ex.getMessage());
 		}
 		return null;
 	}
@@ -400,7 +403,7 @@ System.out.println("TilePlot updateTimeStep");
 		TextTitle title = (TextTitle) chart.getSubtitle(bottomTitle2Index);
 		title.setText(builder.toString());
 		GregorianCalendar aCalendar = frame.getAxes().getDate(timeStep + frame.getAxes().getTimeAxis().getOrigin());
-System.out.println("in verdi TilePlot createSubtitle, compute GregorianCalendar aCalendar = " + aCalendar.toString());
+		Logger.debug("in verdi TilePlot createSubtitle, compute GregorianCalendar aCalendar = " + aCalendar.toString());
 		title = (TextTitle) chart.getSubtitle(bottomTitle1Index);
 		title.setText(Utilities.formatDate(aCalendar));
 

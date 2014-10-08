@@ -7,9 +7,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
-
 
 /**
  * @author Nick Collier
@@ -17,10 +18,8 @@ import org.geotools.brewer.color.ColorBrewer;
  */
 public class Palette implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	static final Logger Logger = LogManager.getLogger(Palette.class.getName());
 	private Color[] colors;
 	private String description = "";
 	private boolean reverseColors;
@@ -63,32 +62,32 @@ public class Palette implements Serializable {
 	}
 
 	public void setColor(int index, Color color) {
-System.out.println("in Palette.setColor for index = " + index);
+		Logger.debug("in Palette.setColor for index = " + index);
 		this.colors[index] = color;
 	}
 
 	public int getColorCount() {
-System.out.println("in Palette.getColorCount() = " + colors.length);
+		Logger.debug("in Palette.getColorCount() = " + colors.length);
 		return colors.length;
 	}
 
 	public Color getColor(int index) {
-System.out.println("in Palette.getColor for index = " + index);
+		Logger.debug("in Palette.getColor for index = " + index);
 		return colors[(!reverseColors ? index : getColorCount() - 1 - index)];
 	}
 
 	public static Palette getDefaultPalette() {
-System.out.println("in Palette.getDefaultPalette");
+		Logger.debug("in Palette.getDefaultPalette");
 		ColorBrewer brewer = new ColorBrewer();	// calls to GeoTools library
-System.out.println("just completed call to GeoTools ColorBrewer default constructor");
+		Logger.debug("just completed call to GeoTools ColorBrewer default constructor");
 		brewer.loadPalettes();
-System.out.println("finished loading palettes");
+		Logger.debug("finished loading palettes");
 		BrewerPalette palette = brewer.getPalettes(ColorBrewer.QUALITATIVE)[0];
-System.out.println("back from call to GeoTools .getPalettes to set BrewerPalette object");
+		Logger.debug("back from call to GeoTools .getPalettes to set BrewerPalette object");
 		// 2014 to get the identifiers of the 8 default colors
 		for(int i=0; i<8; i++)
 		{
-			System.out.println("color[" + i + "] = " + palette.getColors(i).toString());
+			Logger.debug("color[" + i + "] = " + palette.getColors(i).toString());
 		}
 		return new Palette(palette.getColors(8), palette.getDescription(), false);
 	}

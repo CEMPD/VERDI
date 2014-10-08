@@ -12,11 +12,12 @@ import java.net.MalformedURLException;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+//import simphony.util.messages.MessageCenter;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
-
-import simphony.util.messages.MessageCenter;
 
 /**
  * @author User #2
@@ -24,9 +25,9 @@ import simphony.util.messages.MessageCenter;
  */
 public class FastTileFileSelectionStep extends PanelWizardStep {
 	private static final long serialVersionUID = -343980766506758133L;
+	static final Logger Logger = LogManager.getLogger(FastTileFileSelectionStep.class.getName());
 
-	private static MessageCenter msg = MessageCenter
-			.getMessageCenter(FastTileFileSelectionStep.class);
+//	private static MessageCenter msg = MessageCenter.getMessageCenter(FastTileFileSelectionStep.class);
 
 	private JFileChooser chooser;
 
@@ -92,9 +93,9 @@ public class FastTileFileSelectionStep extends PanelWizardStep {
 				model.setLayer(layer);
 				model.setMapFile(mapFile);
 			} catch (MalformedURLException e) {
-				msg.error("Error creating layer from map file", e);
+				Logger.error("Error creating layer from map file " + e.getMessage());
 			} catch (IOException e) {
-				msg.error("Error creating layer from map file", e);
+				Logger.error("Error creating layer from map file " + e.getMessage());
 			}
 		}
 	}

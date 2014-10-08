@@ -11,9 +11,13 @@ STATUS: unreviewed, tested.
 package gov.epa.emvl;
 
 //import anl.verdi.core.VerdiConstants;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.data.DataUtilities;
 
 public final class GridCellStatistics {
+	static final Logger Logger = LogManager.getLogger(GridCellStatistics.class.getName());
   
   private GridCellStatistics() {} // Non-instantiable.
 
@@ -98,7 +102,7 @@ public final class GridCellStatistics {
                                         final int statIndex) throws Exception {
 	  
 	  boolean separate = true;
-	  //System.out.println( "statIndex = " + statIndex);
+	  //Logger.debug( "statIndex = " + statIndex);
 	  
 	  if ( separate) {
 		  if ( statIndex == 13 || statIndex == 14) {
@@ -110,7 +114,7 @@ public final class GridCellStatistics {
 //				  for ( int j = 0; j<statistics[ TIMESTEP_OF_MINIMUM ][0].length; j++) {
 //					  System.out.print(statistics[TIMESTEP_OF_MINIMUM][i][j]+" ");
 //				  }
-//				  System.out.println("\n");
+//				  Logger.debug("\n");
 //			  }	
 			  
 			  return;
@@ -147,7 +151,7 @@ public final class GridCellStatistics {
 //				  for ( int j = 0; j<statistics[ SUM ][0].length; j++) {
 //					  System.out.print(statistics[SUM][i][j]+" ");
 //				  }
-//				  System.out.println("\n");
+//				  Logger.debug("\n");
 //			  }
 			  
 			  return;
@@ -848,7 +852,6 @@ public final class GridCellStatistics {
     if ( numberOfValues > 1 ) {
       s2 = sum / ( numberOfValues - 1 );
     }
-
     return s2;
   }
 
@@ -863,7 +866,6 @@ public final class GridCellStatistics {
 
   private static int exceedance( final float[] data, final int first,
                                  final double threshold ) {
-
     final int count = data.length;
     int result = 0;
 
@@ -876,7 +878,4 @@ public final class GridCellStatistics {
 
     return result;
   }
-
 };
-
-

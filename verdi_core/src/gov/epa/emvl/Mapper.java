@@ -9,12 +9,15 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 // Contains a set of MapLines and draws them clipped to a domain.
 
 public class Mapper {
 
 	// Attributes:
+	static final Logger Logger = LogManager.getLogger(Mapper.class.getName());
 
 	private static final int X = 0;
 	private static final int Y = 1;
@@ -41,7 +44,7 @@ public class Mapper {
 
 	// Construct with URL or directory containing the map files.
 	public Mapper(String directoryName) {
-System.out.println("in constructor for Mapper, directoryName = " + directoryName);
+		Logger.debug("in constructor for Mapper, directoryName = " + directoryName);
 		mapFileDirectory = directoryName + "/";
 		try {
 			getWorldMap();
@@ -51,7 +54,7 @@ System.out.println("in constructor for Mapper, directoryName = " + directoryName
 			getUSHucMap();
 			getUSRiversMap();
 			getUSRoadsMap();
-System.out.println("done with get map functions, leaving Mapper constructor");
+			Logger.debug("done with get map functions, leaving Mapper constructor");
 		} catch (Exception e) {
 			//
 		}
@@ -63,7 +66,7 @@ System.out.println("done with get map functions, leaving Mapper constructor");
 			final Projector projector, final Graphics graphics, int xOffset,
 			int yOffset, int width, int height, boolean withHucs,
 			boolean withRivers, boolean withRoads) {
-System.out.println("in Mapper.draw function");
+		Logger.debug("in Mapper.draw function");
 		final MapLines mapLines = chooseMap(domain); // MERCATOR
 
 		graphics.setColor(mapColor);
@@ -92,7 +95,7 @@ System.out.println("in Mapper.draw function");
 	// Choose a map based on a domain.
 
 	private MapLines chooseMap(final double[][] domain) {
-System.out.println("in Mapper.chooseMap");
+		Logger.debug("in Mapper.chooseMap");
 		final double yMinimum = domain[Y][MINIMUM];
 		final double xMaximum = domain[X][MAXIMUM];
 		MapLines result = null;
@@ -150,7 +153,7 @@ System.out.println("in Mapper.chooseMap");
 			if (worldMap == null) {
 				try {
 					worldMap = new MapLines(mapFileDirectory + worldMapFileName);
-System.out.println("got new MapLines worldMap = " + worldMap);
+					Logger.debug("got new MapLines worldMap = " + worldMap);
 
 				} catch (Exception unused) {
 				}
@@ -159,7 +162,7 @@ System.out.println("got new MapLines worldMap = " + worldMap);
 			result = worldMap;
 		}
 
-		System.out.println("getting ready to return from Mapper.chooseMap, value = " + (layers.contains(result) ? null : result));
+		Logger.debug("getting ready to return from Mapper.chooseMap, value = " + (layers.contains(result) ? null : result));
 		return layers.contains(result) ? null : result;		// 2014 Why is the line this way instead of the way that was commented out (below)?
 		//return layers.contains(result) ? result : null;
 	}
@@ -168,7 +171,7 @@ System.out.println("got new MapLines worldMap = " + worldMap);
 		if (hucsMap == null) {
 			try {
 				hucsMap = new MapLines(mapFileDirectory + hucsMapFileName);
-System.out.println("got new MapLines hucsMap = " + hucsMap);
+				Logger.debug("got new MapLines hucsMap = " + hucsMap);
 			} catch (Exception unused) {
 			}
 		}
@@ -179,14 +182,14 @@ System.out.println("got new MapLines hucsMap = " + hucsMap);
 	public void removeUSHucMap() {
 		if (layers.contains(hucsMap))
 			layers.remove(hucsMap);
-System.out.println("removed hucsMap");
+		Logger.debug("removed hucsMap");
 	}
 
 	public MapLines getUSRoadsMap() {
 		if (roadsMap == null) {
 			try {
 				roadsMap = new MapLines(mapFileDirectory + roadsMapFileName);
-System.out.println("got new MapLines roadsMap = " + roadsMap);
+				Logger.debug("got new MapLines roadsMap = " + roadsMap);
 			} catch (Exception unused) {
 			}
 		}
@@ -197,14 +200,14 @@ System.out.println("got new MapLines roadsMap = " + roadsMap);
 	public void removeUSRoadsMap() {
 		if (layers.contains(roadsMap))
 			layers.remove(roadsMap);
-System.out.println("removed roadsMap");
+		Logger.debug("removed roadsMap");
 	}
 
 	public MapLines getUSRiversMap() {
 		if (riversMap == null) {
 			try {
 				riversMap = new MapLines(mapFileDirectory + riversMapFileName);
-System.out.println("got new MapLines riversMap = " + riversMap);
+				Logger.debug("got new MapLines riversMap = " + riversMap);
 			} catch (Exception unused) {
 			}
 		}
@@ -215,14 +218,14 @@ System.out.println("got new MapLines riversMap = " + riversMap);
 	public void removeUSRiversMap() {
 		if (layers.contains(riversMap))
 			layers.remove(riversMap);
-System.out.println("removed riversMap");
+		Logger.debug("removed riversMap");
 	}
 
 	public MapLines getUsaStatesMap() throws Exception {
 		try {
 			if (stateMap == null)
 				stateMap = new MapLines(mapFileDirectory + stateMapFileName);
-System.out.println("got new MapLines stateMap = " + stateMap);
+			Logger.debug("got new MapLines stateMap = " + stateMap);
 
 			return stateMap;
 		} catch (Exception e) {
@@ -235,7 +238,7 @@ System.out.println("got new MapLines stateMap = " + stateMap);
 		try {
 			if (layers.contains(stateMap))
 				layers.remove(stateMap);
-System.out.println("removed layer stateMap");
+			Logger.debug("removed layer stateMap");
 		} catch (Exception e) {
 			throw new Exception("Error removing USA states layer ("
 					+ e.getLocalizedMessage() + ").");
@@ -246,7 +249,7 @@ System.out.println("removed layer stateMap");
 		try {
 			if (countyMap == null)
 				countyMap = new MapLines(mapFileDirectory + countyMapFileName);
-System.out.println("got new MapLines countyMap = " + countyMap);
+			Logger.debug("got new MapLines countyMap = " + countyMap);
 
 			return countyMap;
 		} catch (Exception e) {
@@ -259,7 +262,7 @@ System.out.println("got new MapLines countyMap = " + countyMap);
 		try {
 			if (layers.contains(countyMap))
 				layers.remove(countyMap);
-System.out.println("removed layer countyMap");
+			Logger.debug("removed layer countyMap");
 		} catch (Exception e) {
 			throw new Exception("Error removing USA counties layer ("
 					+ e.getLocalizedMessage() + ").");
@@ -270,7 +273,7 @@ System.out.println("removed layer countyMap");
 		try {
 			if (worldMap == null)
 				worldMap = new MapLines(mapFileDirectory + worldMapFileName);
-System.out.println("got new MapLines worldMap = " + worldMap);
+			Logger.debug("got new MapLines worldMap = " + worldMap);
 			return worldMap;
 		} catch (Exception e) {
 			throw new Exception("Error reading world layer ("
@@ -282,7 +285,7 @@ System.out.println("got new MapLines worldMap = " + worldMap);
 		try {
 			if (layers.contains(worldMap))
 				layers.remove(worldMap);
-System.out.println("removed worldMap");
+			Logger.debug("removed worldMap");
 		} catch (Exception e) {
 			throw new Exception("Error removing world layer ("
 					+ e.getLocalizedMessage() + ").");
@@ -294,7 +297,7 @@ System.out.println("removed worldMap");
 			if (northAmericaMap == null)
 				northAmericaMap = new MapLines(mapFileDirectory
 						+ northAmericaMapFileName);
-System.out.println("got new MapLines northAmericaMap = " + northAmericaMap);
+			Logger.debug("got new MapLines northAmericaMap = " + northAmericaMap);
 			return northAmericaMap;
 		} catch (Exception e) {
 			throw new Exception("Error reading north America layer ("
@@ -306,7 +309,7 @@ System.out.println("got new MapLines northAmericaMap = " + northAmericaMap);
 		try {
 			if (layers.contains(northAmericaMap))
 				layers.remove(northAmericaMap);
-System.out.println("removed northAmericaMap");
+			Logger.debug("removed northAmericaMap");
 		} catch (Exception e) {
 			throw new Exception("Error removing north America layer ("
 					+ e.getLocalizedMessage() + ").");
@@ -316,9 +319,9 @@ System.out.println("removed northAmericaMap");
 	public void addLayer(String path) throws Exception {
 		try {
 			MapLines layer = new MapLines(path);
-System.out.println("added map for path = " + path);
+			Logger.debug("added map for path = " + path);
 			layers.add(layer);
-System.out.println("\tlayer = " + layer);
+			Logger.debug("\tlayer = " + layer);
 		} catch (Exception e) {
 			throw new Exception("Error adding a new layer ("
 					+ e.getLocalizedMessage() + ").");
@@ -329,7 +332,7 @@ System.out.println("\tlayer = " + layer);
 		try {
 			MapLines layer = new MapLines(path);
 			layers.remove(layer);
-System.out.println("removed layer");
+			Logger.debug("removed layer");
 		} catch (Exception e) {
 			throw new Exception("Error removing the layer ("
 					+ e.getLocalizedMessage() + ").");
@@ -372,5 +375,4 @@ System.out.println("removed layer");
 	public boolean usRoadsMapIncluded() {
 		return layers.contains(roadsMap);
 	}
-
 }

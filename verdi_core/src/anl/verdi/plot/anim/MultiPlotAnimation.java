@@ -33,6 +33,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
@@ -57,10 +60,8 @@ import com.jidesoft.swing.CheckBoxList;
  * @author User #2
  */
 public class MultiPlotAnimation extends JPanel implements AnimationListener {
+	static final Logger Logger = LogManager.getLogger(MultiPlotAnimation.class.getName());
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6833233954013917115L;
 	private DateRange currentRange = null;
 	private int currentSteps = -1;
@@ -131,7 +132,7 @@ public class MultiPlotAnimation extends JPanel implements AnimationListener {
 			int origin = axes.getTimeAxis().getOrigin();
 			GregorianCalendar start = axes.getDate(origin);
 			GregorianCalendar end = axes.getDate(origin + axes.getTimeAxis().getExtent() - 1);
-			System.out.println("in MultiPlotAnimation just computed start and end GregorianCalendar");
+			Logger.debug("in MultiPlotAnimation just computed start and end GregorianCalendar");
 			range = new DateRange(start, end);
 
 			StringBuffer buf = new StringBuffer();
@@ -178,7 +179,7 @@ public class MultiPlotAnimation extends JPanel implements AnimationListener {
 	}
 
 	public MultiPlotAnimation() {
-		System.out.println("in constructor for MultiPlotAnimation.java");
+		Logger.debug("in constructor for MultiPlotAnimation.java");
 		initComponents();
 
 		((SpinnerNumberModel) startSpinner.getModel()).setMinimum(0);

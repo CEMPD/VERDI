@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.Dataset;
@@ -23,6 +26,7 @@ import anl.verdi.gui.FormulaListElement;
  * @version $Revision$ $Date$
  */
 public class CompatibilityChecker {
+	static final Logger Logger = LogManager.getLogger(CompatibilityChecker.class.getName());
 
 	private static class DateData {
 		DateRange range;
@@ -200,7 +204,6 @@ public class CompatibilityChecker {
 					if (r == null) r = new Ranges();
 					r.zRange(ds.getLayerMin(), ds.getLayerMax());
 				}
-
 				fRanges.add(r);
 			}
 
@@ -236,7 +239,6 @@ public class CompatibilityChecker {
 				if (!start.equals(ranges.get(i))) return false;
 			}
 		}
-
 		return true;
 	}
 
@@ -281,7 +283,7 @@ public class CompatibilityChecker {
 		GregorianCalendar start = axes1.getDate(origin);
 		GregorianCalendar end = axes1.getDate((int)
 						(origin + axes1.getTimeAxis().getRange().getExtent() + 1));
-System.out.println("in CompatibilityChecker getDateRange, computed 2 GregorianCalendar objects, start = " + 
+		Logger.debug("in CompatibilityChecker getDateRange, computed 2 GregorianCalendar objects, start = " + 
 						start.toString() + ", end = " + end.toString());
 		return new DateRange(start.getTimeInMillis(), end.getTimeInMillis());
 	}
