@@ -208,7 +208,9 @@ public class ScriptHandler {
 					verdiApp.getProject().getFormulas().addFormula(e);
 					verdiApp.getProject().setSelectedFormula(e);
 				}
-				catch(NullPointerException e){}
+				catch(NullPointerException e){
+					Logger.error("Null pointer exception in ScriptHandler.dataMap.put 'S': " + e.getMessage());
+				}
 			}				
 		});
 		
@@ -219,9 +221,11 @@ public class ScriptHandler {
 					verdiApp.loadDataset(f);
 				}
 				catch(NullPointerException e){
+					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'F': " + e.getMessage());
 					e.printStackTrace();
 				}
 				catch( Exception e) {
+					Logger.error("Exception in ScriptHandler.dataMap.put 'F': " + e.getMessage());
 					e.printStackTrace();
 				}
 			}				
@@ -238,7 +242,7 @@ public class ScriptHandler {
 					while ((line = reader.readLine()) != null)
 						Logger.debug(line);
 				} catch (Exception e) {
-					Logger.debug(copyright);
+					Logger.error(copyright);
 				} finally {
 					System.exit(0);
 				}
@@ -256,8 +260,7 @@ public class ScriptHandler {
 					try{
 						if(aliasMap.containsKey(aliasName))
 						{
-							Logger.warn(
-									"WARNING: Alias '" +
+							Logger.warn("WARNING: Alias '" +
 									aliasName + "' already defined, new definition ignored. ");
 						}
 						else
@@ -265,7 +268,9 @@ public class ScriptHandler {
 							aliasMap.put(aliasName, aliasFormula);
 							writeToAliasFile();
 						}
-					}catch(NullPointerException e){}
+					}catch(NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'ALIAS': " + e.getMessage());
+					}
 				}else{
 					Logger.error(args.get(1) + " is an invalid alias");
 				}
@@ -287,7 +292,9 @@ public class ScriptHandler {
 					animator.start(axes.getTimeAxis().getOrigin(), 
 							axes.getTimeAxis().getExtent()-1, null, new File(args.get(1)), null);
 					
-				}catch (NullPointerException e){}
+				}catch (NullPointerException e){
+					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'ANIMATEDGIF': " + e.getMessage());
+				}
 			}				
 		});
 		
@@ -303,7 +310,9 @@ public class ScriptHandler {
 					animator.start(axes.getTimeAxis().getOrigin(), 
 							axes.getTimeAxis().getExtent()-1, null, null, new File(args.get(1)));
 					
-				}catch (NullPointerException e){}
+				}catch (NullPointerException e){
+					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'AVI': " + e.getMessage());
+				}
 			}				
 		});
 		
@@ -383,8 +392,12 @@ public class ScriptHandler {
 //					config.setConfigFileName(args.get(1));
 					configFile = args.get(1);
 				}
-				catch(IOException e){}
-				catch(NullPointerException e){}
+				catch(IOException e){
+					Logger.error("IOException in ScriptHandler.dataMap.put 'CONFIGFILE': " + e.getMessage());
+				}
+				catch(NullPointerException e){
+					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'CONFIGFILE': " + e.getMessage());
+				}
 			}				
 		});
 		dataMap.put("drawGridLines".toUpperCase(), new CommandScript(){
@@ -411,7 +424,9 @@ public class ScriptHandler {
 					
 					showGridLines = show;
 				}
-				catch(NullPointerException e){}
+				catch(NullPointerException e){
+					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'DRAWGRIDLINES': " + e.getMessage());
+				}
 			}
 		});
 		
@@ -441,8 +456,9 @@ public class ScriptHandler {
 				
 				showDomainTicks = show;
 
-			}catch(NullPointerException e){}
-		
+			}catch(NullPointerException e){
+				Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'DRAWDOMAINTICKS': " + e.getMessage());
+			}
 		}				
 	});
 		dataMap.put("drawRangeTicks".toUpperCase(), new CommandScript(){
@@ -471,7 +487,9 @@ public class ScriptHandler {
 				
 				showRangeTicks = show;
 				
-			}catch(NullPointerException e){}
+			}catch(NullPointerException e){
+				Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'DRAWRANGETICKS': " + e.getMessage());
+			}
 		}				
 	});
 		dataMap.put("drawLegendTicks".toUpperCase(), new CommandScript(){
@@ -500,7 +518,9 @@ public class ScriptHandler {
 				
 				 showLegendTicks = show;
 				
-			}catch(NullPointerException e){}
+			}catch(NullPointerException e){
+				Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'DRAWLEGENDTICKS': " + e.getMessage());
+			}
 		}				
 	});
 		dataMap.put( "fulldomain".toUpperCase(), new CommandScript(){
@@ -615,7 +635,9 @@ public class ScriptHandler {
 						vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 //						vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 					}
-				}catch(NullPointerException e){}
+				}catch(NullPointerException e){
+					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'G': " + e.getMessage());
+				}
 				
 			}				
 		});
@@ -715,7 +737,9 @@ public class ScriptHandler {
 						vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 //						vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 					}
-				}catch(NullPointerException e){}
+				}catch(NullPointerException e){
+					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'GTYPE': " + e.getMessage());
+				}
 				
 			}				
 		});
@@ -768,10 +792,10 @@ public class ScriptHandler {
 									try {
 										cmap.setIntervalStart(i, Double.parseDouble(allItems[i]));
 									} catch (NumberFormatException e) {
-										// TODO Auto-generated catch block
+										Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LEGENDBINS': " + e.getMessage());
 										e.printStackTrace();
 									} catch (Exception e) {
-										// TODO Auto-generated catch block
+										Logger.error("Exception in ScriptHandler.dataMap.put 'LEGENDBINS': " + e.getMessage());
 										e.printStackTrace();
 									}
 								}
@@ -792,10 +816,10 @@ public class ScriptHandler {
 								try {
 									cmap.setIntervalStart(i - 1, Double.parseDouble(args.get(i)));
 								} catch (NumberFormatException e) {
-									// TODO Auto-generated catch block
+									Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LEGENDBINS': " + e.getMessage());
 									e.printStackTrace();
 								} catch (Exception e) {
-									// TODO Auto-generated catch block
+									Logger.error("Exception in ScriptHandler.dataMap.put 'LEGENDBINS': " + e.getMessage());
 									e.printStackTrace();
 								}
 							}
@@ -808,7 +832,9 @@ public class ScriptHandler {
 //							vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
 						}
 						
-					}catch (NullPointerException e){}
+					}catch (NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LEGENDBINS': " + e.getMessage());
+					}
 				}				
 			});
 		dataMap.put("level".toUpperCase(), new CommandScript(){
@@ -816,8 +842,12 @@ public class ScriptHandler {
 					try{
 						levelMin = Integer.parseInt(args.get(1));
 						levelMax = Integer.parseInt(args.get(1));
-					}catch(NumberFormatException e){}
-					catch(NullPointerException e){}
+					}catch(NumberFormatException e){
+						Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LEVEL': " + e.getMessage());
+					}
+					catch(NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LEVEL': " + e.getMessage());
+					}
 					
 					FormulaListModel flm = verdiApp.getProject().getFormulas();
 					for(int i = 0; i < flm.getSize(); i++)
@@ -827,8 +857,12 @@ public class ScriptHandler {
 							obj.setLayerMax(Integer.parseInt(args.get(1)));
 							obj.setLayerMin(Integer.parseInt(args.get(1)));
 							obj.setLayerUsed(true);
-						}catch(NumberFormatException e){}
-						catch(NullPointerException e){}
+						}catch(NumberFormatException e){
+							Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LEVEL': " + e.getMessage());
+						}
+						catch(NullPointerException e){
+							Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LEVEL': " + e.getMessage());
+						}
 					}
 				}				
 			});
@@ -838,8 +872,12 @@ public class ScriptHandler {
 					try{
 						levelMin = Integer.parseInt(args.get(1));
 						levelMax = Integer.parseInt(args.get(2));
-					}catch(NumberFormatException e){}
-					catch(NullPointerException e){}
+					}catch(NumberFormatException e){
+						Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LEVELRANGE': " + e.getMessage());
+					}
+					catch(NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LEVELRANGE': " + e.getMessage());
+					}
 					
 					for(int i = 0; i < flm.getSize(); i++)
 					{
@@ -848,8 +886,12 @@ public class ScriptHandler {
 							obj.setLayerMax(Integer.parseInt(args.get(1)));
 							obj.setLayerMin(Integer.parseInt(args.get(2)));
 							obj.setLayerUsed(true);
-						}catch(NumberFormatException e){}
-						catch(NullPointerException e){}
+						}catch(NumberFormatException e){
+							Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LEVELRANGE': " + e.getMessage());
+						}
+						catch(NullPointerException e){
+							Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LEVELRANGE': " + e.getMessage());
+						}
 					}
 				}				
 			});
@@ -963,7 +1005,9 @@ public class ScriptHandler {
 		public void run(ArrayList<String> args){
 				try{
 					verdiApp.openProject(new File(args.get(1)));
-				}catch(NullPointerException e){}	
+				}catch(NullPointerException e){
+					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'OPENPROJECT': " + e.getMessage());
+				}	
 			}
 		});
 		dataMap.put("printAlias".toUpperCase(), new CommandScript(){
@@ -995,7 +1039,9 @@ public class ScriptHandler {
 
 						verdiApp.getGui().getViewManager().getDockable(args.get(1)).toFront();
 						curView = args.get(1);
-					}catch(NullPointerException e){}
+					}catch(NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'RAISEWINDOW': " + e.getMessage());
+					}
 				}				
 			});
 		dataMap.put("save2ascii".toUpperCase(), new CommandScript(){
@@ -1020,8 +1066,10 @@ public class ScriptHandler {
 						}
 						
 					}catch(NullPointerException e){
-						
-					}catch(IOException e){}
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'SAVE2ASCII': " + e.getMessage());
+					}catch(IOException e){
+						Logger.error("IOException in ScriptHandler.dataMap.put 'LEVEL': " + e.getMessage());
+					}
 					 
 				}				
 			});
@@ -1033,8 +1081,12 @@ public class ScriptHandler {
 				try{
 					plot.exportImage(args.get(1), new File(args.get(2)), 800, 600);
 				}
-				catch(NullPointerException e){}
-				catch(IOException e){}
+				catch(NullPointerException e){
+					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'SAVEIMAGE': " + e.getMessage());
+				}
+				catch(IOException e){
+					Logger.error("IOException in ScriptHandler.dataMap.put 'SAVEIMAGE': " + e.getMessage());
+				}
 			}				
 		});
 		dataMap.put("scatter".toUpperCase(), new CommandScript(){
@@ -1070,7 +1122,9 @@ public class ScriptHandler {
 						curView = viewList.get(viewList.size() - 1);
 						plotMap.put(curView, plot);
 
-					}catch(NullPointerException e){}
+					}catch(NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'SCATTER': " + e.getMessage());
+					}
 				}				
 			});
 //		dataMap.put("showWindow".toUpperCase(), new CommandScript(){
@@ -1113,7 +1167,9 @@ public class ScriptHandler {
 						dle.setXMax(Integer.parseInt(args.get(3)) - 1);
 						dle.setYMax(Integer.parseInt(args.get(4)) - 1);
 						dle.setXYUsed(true);
-					}catch(NullPointerException e){}
+					}catch(NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'SUBDOMAIN': " + e.getMessage());
+					}
 					
 				}				
 			});
@@ -1125,7 +1181,9 @@ public class ScriptHandler {
 //						vectorConfig.setSubtitle1(args.get(1));
 						subtitle1 = args.get(1);
 												
-					}catch(NullPointerException e) {}
+					}catch(NullPointerException e) {
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'SUBTITLE1': " + e.getMessage());
+					}
 				}				
 			});
 		dataMap.put("subTitle2".toUpperCase(), new CommandScript(){
@@ -1135,7 +1193,9 @@ public class ScriptHandler {
 						vConfig.setSubtitle2(args.get(1));
 //						vectorConfig.setSubtitle2(args.get(1));
 						subtitle2 = args.get(1);
-					}catch(NullPointerException e) {}
+					}catch(NullPointerException e) {
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'SUBTITLE2': " + e.getMessage());
+					}
 				}				
 			});
 		dataMap.put("subTitleFont".toUpperCase(), new CommandScript(){
@@ -1155,7 +1215,9 @@ public class ScriptHandler {
 //								new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
 //						vectorConfig.putObject(PlotConfiguration.SUBTITLE_2_FONT, 
 //								new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
-					}catch(NullPointerException e){}
+					}catch(NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'SUBTITLEFONT': " + e.getMessage());
+					}
 				}				
 			});
 		dataMap.put("system".toUpperCase(), new CommandScript(){
@@ -1174,15 +1236,21 @@ public class ScriptHandler {
 			      		}
 			      		try {
 			      			process.waitFor();
-			      		} catch(InterruptedException e) {}
-			      	} catch(IOException e) {}
+			      		} catch(InterruptedException e) {
+							Logger.error("Interrupted Exception in ScriptHandler.dataMap.put 'SYSTEM': " + e.getMessage());
+			      		}
+			      	} catch(IOException e) {
+						Logger.error("IOException in ScriptHandler.dataMap.put 'SYSTEM': " + e.getMessage());
+			      	}
 				}				
 			});
 		dataMap.put("tfinal".toUpperCase(), new CommandScript(){
 				public void run(ArrayList<String> args){
 					try{
 						tfinal = Integer.parseInt(args.get(1));
-					}catch(NumberFormatException e){}
+					}catch(NumberFormatException e){
+						Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'TFINAL': " + e.getMessage());
+					}
 					
 					FormulaListModel flm = verdiApp.getProject().getFormulas();
 					for(int i = 0; i < flm.getSize(); i++)
@@ -1192,8 +1260,12 @@ public class ScriptHandler {
 							FormulaListElement obj = (FormulaListElement)flm.getElementAt(i);
 							obj.setTimeMax(Integer.parseInt(args.get(1)));
 							obj.setTimeUsed(true);
-						}catch(NumberFormatException e){}
-						catch(NullPointerException e){}
+						}catch(NumberFormatException e){
+							Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'TFINAL': " + e.getMessage());
+						}
+						catch(NullPointerException e){
+							Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'TFINAL': " + e.getMessage());
+						}
 					}
 				}				
 			});
@@ -1203,7 +1275,9 @@ public class ScriptHandler {
 					try{
 						tinit = Integer.parseInt(args.get(1));
 						selectedTimeStep = tinit;
-					}catch(NumberFormatException e){}
+					}catch(NumberFormatException e){
+						Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'TINIT': " + e.getMessage());
+					}
 					
 					for(int i = 0; i < flm.getSize(); i++)
 					{
@@ -1211,8 +1285,12 @@ public class ScriptHandler {
 							FormulaListElement obj = (FormulaListElement)flm.getElementAt(i);
 							obj.setTimeMin(Integer.parseInt(args.get(1)));
 							obj.setTimeUsed(true);
-						}catch(NumberFormatException e){}
-						catch(NullPointerException e){}
+						}catch(NumberFormatException e){
+							Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'TINIT': " + e.getMessage());
+						}
+						catch(NullPointerException e){
+							Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'TINIT': " + e.getMessage());
+						}
 					}
 				}				
 			});
@@ -1222,7 +1300,9 @@ public class ScriptHandler {
 						config.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
 						vConfig.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
 //						vectorConfig.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
-					}catch(NullPointerException e){}
+					}catch(NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'TITLEFONT': " + e.getMessage());
+					}
 				}				
 			});
 		dataMap.put("titleString".toUpperCase(), new CommandScript(){
@@ -1232,14 +1312,18 @@ public class ScriptHandler {
 						vConfig.setTitle(args.get(1));
 //						vectorConfig.setTitle(args.get(1));
 						title = args.get(1);
-					}catch(NullPointerException e) {}
+					}catch(NullPointerException e) {
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'TITLESTRING': " + e.getMessage());
+					}
 				}				
 			});
 		dataMap.put("ts".toUpperCase(), new CommandScript(){
 				public void run(ArrayList<String> args){
 					try{
 						selectedTimeStep = Integer.parseInt(args.get(1));
-					}catch(NullPointerException e){}
+					}catch(NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'TS': " + e.getMessage());
+					}
 				}				
 			});
 		dataMap.put("quicktime".toUpperCase(), new CommandScript(){
@@ -1252,7 +1336,9 @@ public class ScriptHandler {
 						Axes<DataFrameAxis> axes = frame.getAxes();
 					
 						animator.start(axes.getTimeAxis().getOrigin(), axes.getTimeAxis().getExtent()-1, new File(args.get(1)), null, null);
-					}catch (NullPointerException e){}
+					}catch (NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'QUICKTIME': " + e.getMessage());
+					}
 				}
 		});
 		dataMap.put("unalias".toUpperCase(), new CommandScript(){
@@ -1260,7 +1346,9 @@ public class ScriptHandler {
 					try{
 						aliasMap.remove(args.get(1));
 						writeToAliasFile();
-					}catch(NullPointerException e){}
+					}catch(NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'UNALIAS': " + e.getMessage());
+					}
 
 				}				
 			});
@@ -1271,7 +1359,9 @@ public class ScriptHandler {
 						vConfig.setUnits(args.get(1));
 //						vectorConfig.setUnits(args.get(1));
 						units = args.get(1);
-					}catch(NullPointerException e) {}
+					}catch(NullPointerException e) {
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'UNITSTRING': " + e.getMessage());
+					}
 				}				
 			});
 //		dataMap.put("vectobs".toUpperCase(), new CommandScript(){
@@ -1352,7 +1442,9 @@ public class ScriptHandler {
 //							vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 						}
 						
-					}catch(NullPointerException e){}
+					}catch(NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'VECTOR': " + e.getMessage());
+					}
 						
 				}				
 			});
@@ -1437,7 +1529,9 @@ public class ScriptHandler {
 //							vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 						}
 												
-					}catch(NullPointerException e){}
+					}catch(NullPointerException e){
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'VECTORTILE': " + e.getMessage());
+					}
 				}				
 			});
 		dataMap.put("version".toUpperCase(), new CommandScript(){
@@ -1512,7 +1606,9 @@ public class ScriptHandler {
 						vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 //						vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 					}
-				}catch(NullPointerException e){}
+				}catch(NullPointerException e){
+					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'VERTICALCROSSPLOT': " + e.getMessage());
+				}
 			}				
 		});
 		dataMap.put("windowid".toUpperCase(), new CommandScript(){
@@ -1581,10 +1677,10 @@ public class ScriptHandler {
 							}
 						//suppress all issues (i.e., wrong file path or wrong format)
 						} catch (FileNotFoundException e) {
-							// TODO Auto-generated catch block
+							Logger.error("File Not Found Exception in ScriptHandler.handleOptions: " + e.getMessage());
 							//e.printStackTrace();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
+							Logger.error("IOException in ScriptHandler.handleOptions: " + e.getMessage());
 							//e.printStackTrace();
 						}
 				}
@@ -1658,7 +1754,9 @@ public class ScriptHandler {
 				config = new PlotConfiguration(new File(configFile));
 				vConfig = new VertCrossPlotConfiguration(new PlotConfiguration(new File(configFile)));
 //				vectorConfig = new VectorPlotConfiguration(new PlotConfiguration(new File(configFile)));
-			}catch(IOException e){}
+			}catch(IOException e){
+				Logger.error("IOException in ScriptHandler.resetConfigurationsWithoutColorMap: " + e.getMessage());
+			}
 		}
 		else{
 			config.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
@@ -1754,8 +1852,8 @@ public class ScriptHandler {
 		        }
 		        in.close();
 		    } catch (IOException e) {
+				Logger.error("IOException in ScriptHandler.loadAliasFile: " + e.getMessage());
 		    }
-
 	}
 		
 		private static void writeToAliasFile()
@@ -1783,7 +1881,7 @@ public class ScriptHandler {
 					out.close();
 		               	 
 		        }catch(IOException i){
-		        	Logger.error("File Not Found");
+					Logger.error("IOException in ScriptHandler.writeToAliasFile: " + i.getMessage());
 		        }
 		}
 }
