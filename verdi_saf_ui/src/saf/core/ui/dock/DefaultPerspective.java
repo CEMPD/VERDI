@@ -17,6 +17,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import saf.core.ui.AppPreferences;
 import simphony.util.messages.MessageCenter;
 import bibliothek.gui.DockStation;
@@ -42,6 +45,7 @@ import bibliothek.util.xml.XIO;
  * @author Nick Collier
  */
 public class DefaultPerspective implements Perspective {
+	static final Logger Logger = LogManager.getLogger(DefaultPerspective.class.getName());
 
   static MessageCenter msg = MessageCenter.getMessageCenter(Perspective.class);
 
@@ -106,11 +110,11 @@ public class DefaultPerspective implements Perspective {
    *          whether or not to display the frame
    */
   public void addDockableFrame(String groupId, DockableFrame dockable, boolean show) {
-System.out.println("in DefaultPerspective.addDockableFrame, groupData.size() = " + groupData.size());
+	  Logger.debug("in DefaultPerspective.addDockableFrame, groupData.size() = " + groupData.size());
     if (groupData.size() == 0)
     {
       initializeGroupData();
-      System.out.println("just called initializeGroupData");
+      Logger.debug("just called initializeGroupData");
     }
 
     Group data = groupData.get(groupId);
@@ -119,19 +123,19 @@ System.out.println("in DefaultPerspective.addDockableFrame, groupData.size() = "
 	  new IllegalArgumentException("Group does not exist"));
       return;
     }
-System.out.println("data was not null, continuing by instantiating DockableActivation");
+    Logger.debug("data was not null, continuing by instantiating DockableActivation");
     DockableActivation activation = new DockableActivation(dockable, data);
     if (workingArea != null) {
-    	System.out.println("workingArea was not null, continuing by calling activation.activate()");
+    	Logger.debug("workingArea was not null, continuing by calling activation.activate()");
       activation.activate();
-      System.out.println("back from activate, ready to call .getDockable().toFront()");
+      Logger.debug("back from activate, ready to call .getDockable().toFront()");
       ((DefaultDockableFrame) dockable).getDockable().toFront();
-      System.out.println("done with that, now ready to return from member function addDockableFrame");
+      Logger.debug("done with that, now ready to return from member function addDockableFrame");
     } else
     {
-    	System.out.println("workingArea was null, so into else: call activations.add(activation)");
+    	Logger.debug("workingArea was null, so into else: call activations.add(activation)");
       activations.add(activation);
-      System.out.println("done with add, returning from member function addDockableFrame");
+      Logger.debug("done with add, returning from member function addDockableFrame");
     }
   }
 

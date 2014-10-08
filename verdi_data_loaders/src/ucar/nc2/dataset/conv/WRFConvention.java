@@ -81,8 +81,8 @@ import ucar.unidata.util.StringUtil2;
 /**
  * WRF netcdf output files.
  * <p/>
- * Note: Apparently WRF netcdf files before version 2 didnt output the projection origin, so
- * we cant properly georeference them.
+ * Note: Apparently WRF netcdf files before version 2 didn't output the projection origin, so
+ * we can't properly georeference them.
  * <p/>
  * This Convention currently only supports ARW output, identified as DYN_OPT=2 or GRIDTYPE=C
  *
