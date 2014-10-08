@@ -33,22 +33,50 @@
 
 package ucar.nc2.dataset.conv;
 
-import ucar.ma2.*;
-import ucar.nc2.*;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
+import ucar.ma2.Array;
+import ucar.ma2.ArrayChar;
+import ucar.ma2.ArrayDouble;
+import ucar.ma2.DataType;
+import ucar.ma2.Index;
+import ucar.ma2.IndexIterator;
+import ucar.ma2.InvalidRangeException;
+import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
+import ucar.nc2.NCdump;				// 2014 deprecated, replaced with NCdumpW but no obvious conversion of arguments
+import ucar.nc2.NetcdfFile;
+import ucar.nc2.Variable;
+import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.CDM;
 import ucar.nc2.constants.CF;
 import ucar.nc2.constants._Coordinate;
-import ucar.nc2.constants.AxisType;
+import ucar.nc2.dataset.CoordSysBuilder;
+import ucar.nc2.dataset.CoordinateAxis;
+import ucar.nc2.dataset.CoordinateAxis1D;
+import ucar.nc2.dataset.CoordinateSystem;
+import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dataset.ProjectionCT;
+import ucar.nc2.dataset.VariableDS;
+import ucar.nc2.dataset.VariableEnhanced;
+import ucar.nc2.dataset.VerticalCT;
+import ucar.nc2.dataset.transform.WRFEtaTransformBuilder;
 import ucar.nc2.units.SimpleUnit;
 import ucar.nc2.util.CancelTask;
-import ucar.nc2.dataset.*;
-import ucar.nc2.dataset.transform.WRFEtaTransformBuilder;
-import ucar.unidata.geoloc.*;
-import ucar.unidata.geoloc.projection.*;
+import ucar.unidata.geoloc.LatLonPointImpl;
+import ucar.unidata.geoloc.ProjectionImpl;
+import ucar.unidata.geoloc.ProjectionPoint;
+import ucar.unidata.geoloc.ProjectionPointImpl;
+import ucar.unidata.geoloc.projection.FlatEarth;
+import ucar.unidata.geoloc.projection.LambertConformal;
+import ucar.unidata.geoloc.projection.Mercator;
+import ucar.unidata.geoloc.projection.Stereographic;
 import ucar.unidata.util.StringUtil2;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * WRF netcdf output files.
@@ -62,6 +90,7 @@ import java.util.*;
  */
 
 public class WRFConvention extends CoordSysBuilder {
+	static final Logger Logger = LogManager.getLogger(WRFConvention.class.getName());
 
   static private java.text.SimpleDateFormat dateFormat;
 
@@ -97,8 +126,7 @@ public class WRFConvention extends CoordSysBuilder {
 
   public WRFConvention() {
     this.conventionName = "WRF";
-    System.out.println("NOW IN WRF CONVENTION");
-    System.out.println("THIS IS IN WRF CONVENTION");
+    Logger.debug("NOW IN WRF CONVENTION");
   }
 
   /* Implementation notes
@@ -242,12 +270,12 @@ map_proj =  1: Lambert Conformal
         case 0: // for diagnostic runs with no georeferencing
           proj = new FlatEarth();
           projCT = new ProjectionCT("flat_earth", "FGDC", proj);
-          // System.out.println(" using LC "+proj.paramsToString());
+           Logger.debug(" using LC "+proj.paramsToString());
           break;
         case 1:
           proj = new LambertConformal(standardLat, standardLon, lat1, lat2);
           projCT = new ProjectionCT("Lambert", "FGDC", proj);
-          // System.out.println(" using LC "+proj.paramsToString());
+          Logger.debug(" using LC "+proj.paramsToString());
           break;
         case 2:
           // Thanks to Heiko Klein for figuring out WRF Stereographic
@@ -308,8 +336,8 @@ map_proj =  1: Lambert Conformal
         centerX = ppt1.getX();
         centerY = ppt1.getY();
         if (debug) {
-          System.out.println("centerX=" + centerX);
-          System.out.println("centerY=" + centerY);
+          Logger.debug("centerX=" + centerX);
+          Logger.debug("centerY=" + centerY);
         }
       }
 
@@ -476,7 +504,6 @@ map_proj =  1: Lambert Conformal
     double dx = findAttributeDouble(ds, "DX") / 1000.0; // km ya just gotta know
     int nx = dim.getLength();
     double startx = centerX - dx * (nx - 1) / 2; // ya just gotta know
-    //System.out.println(" originX= "+originX+" startx= "+startx);
 
     CoordinateAxis v = new CoordinateAxis1D(ds, null, axisName, DataType.DOUBLE, dim.getShortName(), "km", "synthesized GeoX coordinate from DX attribute");
     v.setValues(nx, startx, dx);
@@ -493,7 +520,6 @@ map_proj =  1: Lambert Conformal
     double dy = findAttributeDouble(ds, "DY") / 1000.0;
     int ny = dim.getLength();
     double starty = centerY - dy * (ny - 1) / 2; // - dy/2; // ya just gotta know
-    //System.out.println(" originY= "+originY+" starty= "+starty);
 
     CoordinateAxis v = new CoordinateAxis1D(ds, null, axisName, DataType.DOUBLE, dim.getShortName(), "km", "synthesized GeoY coordinate from DY attribute");
     v.setValues(ny, starty, dy);

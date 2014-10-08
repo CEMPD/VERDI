@@ -9,11 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
 
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import ucar.nc2.Attribute;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateAxis1DTime;
@@ -41,9 +43,9 @@ import anl.verdi.util.VUnits;
  * @version $Revision$ $Date$
  */
 public class GridNetcdfDataset extends AbstractDataset {
+	static final Logger Logger = LogManager.getLogger(GridNetcdfDataset.class.getName());
 
-	private static final MessageCenter msgCenter = MessageCenter
-			.getMessageCenter(GridNetcdfDataset.class);
+//	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(GridNetcdfDataset.class);
 	private static Map<ucar.nc2.constants.AxisType, AxisType> types = new HashMap<ucar.nc2.constants.AxisType, AxisType>();
 
 	static {
@@ -152,18 +154,18 @@ public class GridNetcdfDataset extends AbstractDataset {
 						.size() == 0)) {
 					Unit aUnit;
 					aUnit = VUnits.MISSING_UNIT;
-System.out.println("in GridNetcdfDataset.init, aUnit = " + aUnit);
+					Logger.debug("in GridNetcdfDataset.init, aUnit = " + aUnit);
 					for (Attribute attribute : (Iterable<Attribute>) var.getAttributes()) 
 					{
 						if (attribute.getShortName().equals("units")) {	// 2014 replaced deprecated getName with getShortName
 							aUnit = VUnits.createUnit(attribute.getStringValue());
-System.out.println("in GridNetcdfDataset.init, aUnit now = " + aUnit);
+							Logger.debug("in GridNetcdfDataset.init, aUnit now = " + aUnit);
 						}
 						if ( aUnit == null) {
-							System.out.println( attribute.getStringValue());
+							Logger.debug( attribute.getStringValue());
 						}
 					}
-System.out.println("in GridNetcdfDataset.init, aUnit sent to DefaultVariable as " + aUnit);
+					Logger.debug("in GridNetcdfDataset.init, aUnit sent to DefaultVariable as " + aUnit);
 					vars.add(new DefaultVariable(var.getShortName(), var.getShortName(),	// 2014 replaced deprecated getName with getShortName
 							aUnit, (Dataset)this));	// trying it with a cast to Dataset
 				}

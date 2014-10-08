@@ -2,6 +2,8 @@ package anl.verdi.loaders;
 
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.unitsofmeasurement.unit.Unit;
 
 import anl.verdi.data.AxisType;
@@ -18,6 +20,7 @@ import anl.verdi.util.VUnits;
  */
 public class CSVCoordAxis implements CoordAxis {
 
+	static final Logger Logger = LogManager.getLogger(CSVCoordAxis.class.getName());
 	private Range range;
 	private AxisType type;
 	private Unit unit;
@@ -31,7 +34,7 @@ public class CSVCoordAxis implements CoordAxis {
 		this.type = type;
 		this.range = new Range(0, data.length);
 		this.data = data;
-System.out.println("in CSVCoordAxis constructor, unit = " + this.unit);
+		Logger.debug("in CSVCoordAxis constructor, unit = " + this.unit);
 	}
 
 	/**
@@ -50,7 +53,7 @@ System.out.println("in CSVCoordAxis constructor, unit = " + this.unit);
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
-System.out.println("in CSVCoordAxis.getUnits, unit = " + unit);
+		Logger.debug("in CSVCoordAxis.getUnits, unit = " + unit);
 		return unit;
 	}
 

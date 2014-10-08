@@ -2,6 +2,8 @@ package anl.verdi.loaders;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
@@ -15,6 +17,7 @@ import anl.verdi.data.Range;
 import anl.verdi.util.VUnits;
 
 public class ExtendNetCdfCoordAxis implements ExtendCoordAxis {
+	static final Logger Logger = LogManager.getLogger(ExtendNetCdfCoordAxis.class.getName());
 
 	private Range range;
 	protected CoordinateAxis axis;
@@ -28,7 +31,7 @@ public class ExtendNetCdfCoordAxis implements ExtendCoordAxis {
 		//this.unit = Units.createUnit(axis.getUnitsString());
 		String unitString = axis.getUnitsString();
 		this.unit = VUnits.createUnit(unitString);
-System.out.println("in ExtendNetCdfCoordAxis constructor, unit = " + this.unit);
+		Logger.debug("in ExtendNetCdfCoordAxis constructor, unit = " + this.unit);
 		this.type = type;
 		this.range = new Range(0, axis.getSize());
 	}
@@ -55,7 +58,7 @@ System.out.println("in ExtendNetCdfCoordAxis constructor, unit = " + this.unit);
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
-System.out.println("in ExtendNetCdfCoordAxis.getUnits, unit = " + unit);
+		Logger.debug("in ExtendNetCdfCoordAxis.getUnits, unit = " + unit);
 		return unit;
 	}
 

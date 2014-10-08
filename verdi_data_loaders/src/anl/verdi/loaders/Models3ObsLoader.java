@@ -7,7 +7,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import simphony.util.messages.MessageCenter;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
+//import simphony.util.messages.MessageCenter;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.conv.M3IOConvention;
@@ -22,8 +25,9 @@ import anl.verdi.data.Dataset;
  * @version $Revision$ $Date$
  */
 public class Models3ObsLoader implements DataLoader {
+	static final Logger Logger = LogManager.getLogger(Models3ObsLoader.class.getName());
 
-	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(Models3ObsLoader.class);
+//	private static final MessageCenLoggernter = MessageCenter.getMessageCenter(Models3ObsLoader.class);
 
 	/**
 	 * Returns whether or not this DataLoader can handle the data at the specified
@@ -48,10 +52,10 @@ public class Models3ObsLoader implements DataLoader {
 		} catch (IOException io) {
 			// just warn here because it be correct that
 			// this is not a netcdf file
-			//msgCenter.warn("Error reading netcdf file", io);
+			Logger.warn("Error reading netcdf file " + io.getMessage());
 			throw io;
 		} catch (URISyntaxException e) {
-			//msgCenter.warn("Error reading netcdf file", e);
+			Logger.warn("Error reading netcdf file " + e.getMessage());
 			throw e;
 		}  catch (Exception e) {
 			throw e;

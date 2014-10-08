@@ -1,17 +1,20 @@
 package anl.verdi.loaders;
 
-import anl.verdi.data.DataLoader;
-import anl.verdi.data.DataReader;
-import anl.verdi.data.Dataset;
-import simphony.util.messages.MessageCenter;
-import ucar.nc2.NetcdfFile;
-import ucar.nc2.dataset.conv.WRFConvention;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
+//import simphony.util.messages.MessageCenter;
+import ucar.nc2.NetcdfFile;
+import ucar.nc2.dataset.conv.WRFConvention;
+import anl.verdi.data.DataLoader;
+import anl.verdi.data.DataReader;
+import anl.verdi.data.Dataset;
 
 /**
  * @author Nick Collier
@@ -19,8 +22,9 @@ import java.util.List;
  * @version $Revision$ $Date$
  */
 public class WRFLoader implements DataLoader {
+	static final Logger Logger = LogManager.getLogger(WRFLoader.class.getName());
 
-	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(WRFLoader.class);
+//	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(WRFLoader.class);
 
 	/**
 	 * Returns whether or not this DataLoader can handle the data at the specified
@@ -45,10 +49,10 @@ public class WRFLoader implements DataLoader {
 		} catch (IOException io) {
 			// just warn here because it be correct that
 			// this is not a netcdf file
-			//msgCenter.warn("Error reading netcdf file", io);
+			Logger.warn("Error reading netcdf file " + io.getMessage());
 			throw io;
 		} catch (URISyntaxException e) {
-			//msgCenter.warn("Error reading netcdf file", e);
+			Logger.warn("Error reading netcdf file " + e.getMessage());
 			throw e;
 		}  catch (Exception e) {
 			throw e;

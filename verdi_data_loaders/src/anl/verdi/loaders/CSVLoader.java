@@ -9,10 +9,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import anl.verdi.data.DataLoader;
 import anl.verdi.data.DataReader;
 import anl.verdi.data.Dataset;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 /**
  * @author Nick Collier
@@ -21,8 +23,9 @@ import anl.verdi.data.Dataset;
  * @version $Revision$ $Date$
  */
 public class CSVLoader implements DataLoader {
+	static final Logger Logger = LogManager.getLogger(CSVLoader.class.getName());
 
-	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(CSVLoader.class);
+//	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(CSVLoader.class);
 
 	/**
 	 * Returns whether or not this DataLoader can handle the data at the specified
@@ -52,9 +55,9 @@ public class CSVLoader implements DataLoader {
 		} catch (IOException io) {
 			// just warn here because it be correct that
 			// this is not a netcdf file
-			msgCenter.warn("Error reading csv file", io);
+			Logger.error("Error reading csv file " + io.getMessage());
 		} catch (URISyntaxException e) {
-			msgCenter.warn("Error reading csv file", e);
+			Logger.error("Error reading csv file " + e.getMessage());
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}

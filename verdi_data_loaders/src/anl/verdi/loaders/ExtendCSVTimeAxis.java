@@ -3,15 +3,19 @@ package anl.verdi.loaders;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.data.Axes;
 import anl.verdi.data.AxisType;
 import anl.verdi.data.ExtendTimeCoordAxis;
 
 public class ExtendCSVTimeAxis extends ExtendCSVCoordAxis implements ExtendTimeCoordAxis {
+	static final Logger Logger = LogManager.getLogger(ExtendCSVTimeAxis.class.getName());
 
 	public ExtendCSVTimeAxis(Object data[], String name, String description) {
 		super(data, name, description, AxisType.TIME);
-		System.out.println("in constructor for ExtendCSVTimeAxis");
+		Logger.debug("in constructor for ExtendCSVTimeAxis");
 	}
 
 	/**

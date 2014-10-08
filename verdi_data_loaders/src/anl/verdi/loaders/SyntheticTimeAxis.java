@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
@@ -24,6 +26,7 @@ import anl.verdi.data.TimeCoordAxis;
  * @version $Revision$ $Date$
  */
 public class SyntheticTimeAxis implements TimeCoordAxis {
+	static final Logger Logger = LogManager.getLogger(SyntheticTimeAxis.class.getName());
 
 	private static final String SECONDS_SINCE = "seconds since";
 	public static final int TIME_STEP_NOT_FOUND = -1;
@@ -35,15 +38,15 @@ public class SyntheticTimeAxis implements TimeCoordAxis {
 
 	public SyntheticTimeAxis(CoordinateAxis axis) {
 		this.axis = new NetCdfCoordAxis(axis, AxisType.TIME);
-		System.out.println("in constructor for SyntheticTimeAxis");
+		Logger.debug("in constructor for SyntheticTimeAxis");
 		processAxis();
 	}
 
 	private void processAxis() {
 		String unit = axis.getUnits().toString().trim();
-System.out.println("in SyntheticTimeAxis.processAxis, unit = " + unit);
+		Logger.debug("in SyntheticTimeAxis.processAxis, unit = " + unit);
 		String tmp = unit.toLowerCase();
-System.out.println("in SyntheticTimeAxis.processAxis, after toLowerCase, tmp = " + tmp);
+		Logger.debug("in SyntheticTimeAxis.processAxis, after toLowerCase, tmp = " + tmp);
 		String dateString = null;
 		if (tmp.startsWith(SECONDS_SINCE)) {
 			dateString = unit.substring(SECONDS_SINCE.length(), unit.length()).trim();
@@ -167,7 +170,7 @@ System.out.println("in SyntheticTimeAxis.processAxis, after toLowerCase, tmp = "
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
-System.out.println("in SyntheticTimeAxis.getUnits, value = " + axis.getUnits());
+		Logger.debug("in SyntheticTimeAxis.getUnits, value = " + axis.getUnits());
 		return axis.getUnits();
 	}
 

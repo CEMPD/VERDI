@@ -2,6 +2,8 @@ package anl.verdi.loaders;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 // import javax.measure.units.Unit;
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
@@ -21,6 +23,7 @@ import anl.verdi.util.VUnits;
  * @version $Revision$ $Date$
  */
 public class NetCdfCoordAxis implements CoordAxis {
+	static final Logger Logger = LogManager.getLogger(NetCdfCoordAxis.class.getName());
 
 	private Range range;
 	protected CoordinateAxis axis;
@@ -31,7 +34,7 @@ public class NetCdfCoordAxis implements CoordAxis {
 	public NetCdfCoordAxis(CoordinateAxis axis, AxisType type) {
 		this.axis = axis;
 		this.javaxUnit = VUnits.createUnit(axis.getUnitsString());	// calls createUnit in anl.verdi.util.Unit
-System.out.println("in NetCdfCoordAxis constructor, javaxUnit = " + this.javaxUnit);
+		Logger.debug("in NetCdfCoordAxis constructor, javaxUnit = " + this.javaxUnit);
 		this.type = type;
 		this.range = new Range(0, axis.getSize());
 	}
@@ -58,7 +61,7 @@ System.out.println("in NetCdfCoordAxis constructor, javaxUnit = " + this.javaxUn
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
-System.out.println("NetCdfCoordAxis.getUnits = " + javaxUnit);
+		Logger.debug("NetCdfCoordAxis.getUnits = " + javaxUnit);
 		return javaxUnit;
 	}
 

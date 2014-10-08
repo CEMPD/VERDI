@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.SimpleTimeZone;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
@@ -39,6 +41,7 @@ import anl.verdi.util.VUnits;
  * @version $Revision$ $Date$
  */
 public class Models3ObsDataset extends AbstractDataset {
+	static final Logger Logger = LogManager.getLogger(Models3ObsDataset.class.getName());
 
 	private NetcdfDataset dataset;
 	private List<Variable> variables = new ArrayList<Variable>();
@@ -61,7 +64,7 @@ public class Models3ObsDataset extends AbstractDataset {
 
 	public Models3ObsDataset(URL url, NetcdfDataset dataset) {
 		super(url);
-		System.out.println("in constructor for Models3ObsDataset");
+		Logger.debug("in constructor for Models3ObsDataset");
 		this.dataset = dataset;
 		initVariables();
 		initAxes();
@@ -72,17 +75,17 @@ public class Models3ObsDataset extends AbstractDataset {
 		for (ucar.nc2.Variable var : vars) {
 			String name = var.getShortName();	// getName replaced by either getShortName or getFullName (with escapes)
 			Unit unit = VUnits.MISSING_UNIT;
-System.out.println("in Models3ObsDataset.initVariables, unit = " + unit);
+			Logger.debug("in Models3ObsDataset.initVariables, unit = " + unit);
 			for (Attribute attribute : (Iterable<Attribute>) var.getAttributes()) {
 				if (attribute.getShortName().equals("units")) {
 					unit = VUnits.createUnit(attribute.getStringValue());
-System.out.println("in Models3ObsDatabase.initVariables, unit now = " + unit);
+					Logger.debug("in Models3ObsDatabase.initVariables, unit now = " + unit);
 				}
 			}
 			if (!hiddenVars.contains(name)) 
 				{
 					variables.add(new DefaultVariable(name, name, unit, this));
-System.out.println("in Models3ObsDataset.initVariables, after check for hiddenVars, unit = " + unit);
+					Logger.debug("in Models3ObsDataset.initVariables, after check for hiddenVars, unit = " + unit);
 				}
 		}
 	}

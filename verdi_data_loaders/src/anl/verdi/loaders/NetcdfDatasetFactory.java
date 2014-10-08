@@ -10,7 +10,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import simphony.util.messages.MessageCenter;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
+//import simphony.util.messages.MessageCenter;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
@@ -33,7 +36,8 @@ import anl.verdi.data.Dataset;
  */
 public class NetcdfDatasetFactory {
 
-	protected static final MessageCenter msgCenter = MessageCenter.getMessageCenter(NetcdfDatasetFactory.class);
+	static final Logger Logger = LogManager.getLogger(NetcdfDatasetFactory.class.getName());
+//	protected static final MessageCenter msgCenter = MessageCenter.getMessageCenter(NetcdfDatasetFactory.class);
 
 	/**
 	 * Creates a list of Datasets from the specified URL. The url
@@ -59,7 +63,7 @@ public class NetcdfDatasetFactory {
 			return result;
 		} catch (Exception io) {
 			io.printStackTrace();
-			msgCenter.error("Error reading netcdf file", io);
+			Logger.error("Error reading netcdf file " + io.getMessage());
 			try {
 				if (gridDataset != null)
 					gridDataset.close();
@@ -90,7 +94,7 @@ public class NetcdfDatasetFactory {
 			return createDatasets(gridDataset, url, -1);
 		} catch (Exception io) {
 			io.printStackTrace();
-			msgCenter.error("Error reading netcdf file", io);
+			Logger.error("Error reading netcdf file " + io.getMessage());
 			try {
 				if (gridDataset != null)
 					gridDataset.close();
@@ -125,9 +129,9 @@ public class NetcdfDatasetFactory {
 			dataset = NetcdfDataset.openDataset(urlString, false, null);
 			return new Models3ObsDataset(url, dataset);
 		} catch (URISyntaxException e) {
-			msgCenter.error("Error reading netcdf file", e);
+			Logger.error("Error reading netcdf file " + e.getMessage());
 		} catch (IOException e) {
-			msgCenter.error("Error reading netcdf file", e);
+			Logger.error("Error reading netcdf file " + e.getMessage());
 		}
 
 		return null;
@@ -151,7 +155,7 @@ public class NetcdfDatasetFactory {
 			// if here then ok.
 			return createDatasets(gridDataset, url, VerdiConstants.NETCDF_CONV_ARW_WRF);
 		} catch (Exception io) {
-			msgCenter.error("Error reading netcdf file", io);
+			Logger.error("Error reading netcdf file " + io.getMessage());
 			try {
 				if (gridDataset != null)
 					gridDataset.close();
@@ -180,10 +184,10 @@ public class NetcdfDatasetFactory {
 		}
 //		if ( 1==2 ) {
 //			for ( GridCoordSystem system : map.keySet()) {
-//				System.out.println("Coord system: " + system + ": ");
+//				Logger.debug("Coord system: " + system + ": ");
 //				List<GridDatatype> grids = map.get(system);
 //				for ( GridDatatype grid : grids ) {
-//					System.out.println("\t"+grid);
+//					Logger.debug("\t"+grid);
 //				}
 //			}
 //			
@@ -258,62 +262,62 @@ public class NetcdfDatasetFactory {
 	
 	private void printNetcdfDatasetInfo( NetcdfDataset netcdfDataset) {
 		
-		System.out.println("Detailed information: " + netcdfDataset.getDetailInfo());
-		System.out.println("File type description: " + netcdfDataset.getFileTypeDescription());
-		System.out.println("Coordinate Systems: " + netcdfDataset.getCoordinateSystems().toString());
+		Logger.debug("Detailed information: " + netcdfDataset.getDetailInfo());
+		Logger.debug("File type description: " + netcdfDataset.getFileTypeDescription());
+		Logger.debug("Coordinate Systems: " + netcdfDataset.getCoordinateSystems().toString());
 		List<Variable> variables = netcdfDataset.getVariables();
 
 		List<Dimension> dims = netcdfDataset.getDimensions();
-		System.out.println("# of dimensions: " + dims.size());
+		Logger.debug("# of dimensions: " + dims.size());
 		Iterator<Dimension> dimIt = dims.iterator();
 		while( dimIt.hasNext()) {
 			Dimension dim = dimIt.next();	
-			System.out.println("Dim: " + dim);				
+			Logger.debug("Dim: " + dim);				
 		}
 		dimIt = null;
 		
-		System.out.println("# of vars: " + variables.size());
+		Logger.debug("# of vars: " + variables.size());
 		List<Variable> netcdfVars = netcdfDataset.getVariables();
 		Iterator<Variable> varIt = netcdfVars.iterator();
 		while( varIt.hasNext()) {
 			Variable var = varIt.next();	
-			System.out.println("Netcdf Var: " + var);
+			Logger.debug("Netcdf Var: " + var);
 		}
 		varIt = null;
 	}
 	
 	private void printGridDatasetInfo( GridDataset gridDataset) {
 		
-		System.out.println("Desc: " + gridDataset.getDescription());
-		System.out.println("Info: " + gridDataset.getDetailInfo());
-		System.out.println("Feature type: " + gridDataset.getFeatureType().toString());
+		Logger.debug("Desc: " + gridDataset.getDescription());
+		Logger.debug("Info: " + gridDataset.getDetailInfo());
+		Logger.debug("Feature type: " + gridDataset.getFeatureType().toString());
 		
 		NetcdfDataset netcdfDataset = gridDataset.getNetcdfDataset();
 		List<Dimension> dims = netcdfDataset.getDimensions();
-		System.out.println("# of dimensions: " + dims.size());
+		Logger.debug("# of dimensions: " + dims.size());
 		Iterator<Dimension> dimIt = dims.iterator();
 		while( dimIt.hasNext()) {
 			Dimension dim = dimIt.next();	
-			System.out.println("Dim: " + dim);
+			Logger.debug("Dim: " + dim);
 		}
 		dimIt = null;
 		
 		List<VariableSimpleIF> variables = gridDataset.getDataVariables();
-		System.out.println("Vars got from GridDataset: ");
-		System.out.println("# of vars: " + variables.size());
+		Logger.debug("Vars got from GridDataset: ");
+		Logger.debug("# of vars: " + variables.size());
 		Iterator<VariableSimpleIF> it = variables.iterator();
 		while ( it.hasNext()) {
 			VariableSimpleIF sVar = it.next();	
-			System.out.println("Var: " + sVar);
+			Logger.debug("Var: " + sVar);
 		}
 		it = null;
 
-		System.out.println("Vars got from NetcdfDataset: ");
+		Logger.debug("Vars got from NetcdfDataset: ");
 		List<Variable> netcdfVars = netcdfDataset.getVariables();
 		Iterator<Variable> varIt = netcdfVars.iterator();
 		while( varIt.hasNext()) {
 			Variable var = varIt.next();	
-			System.out.println("Netcdf Var: " + var);
+			Logger.debug("Netcdf Var: " + var);
 		}
 		varIt = null;
 	}

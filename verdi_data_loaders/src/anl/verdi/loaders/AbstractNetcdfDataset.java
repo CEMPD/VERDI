@@ -7,11 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.unitsofmeasurement.unit.Unit;
 
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 import ucar.nc2.Attribute;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -33,8 +35,9 @@ import anl.verdi.util.VUnits;
  * @version $Revision$ $Date$
  */
 public abstract class AbstractNetcdfDataset extends AbstractDataset {
+	static final Logger Logger = LogManager.getLogger(AbstractNetcdfDataset.class.getName());
 
-	protected static final MessageCenter msgCenter = MessageCenter.getMessageCenter(AbstractNetcdfDataset.class);
+//	protected static final MessageCenter msgCenter = MessageCenter.getMessageCenter(AbstractNetcdfDataset.class);
 	protected static Map<ucar.nc2.constants.AxisType, AxisType> types = new HashMap<ucar.nc2.constants.AxisType, AxisType>();
 
 	static {
@@ -144,7 +147,7 @@ public abstract class AbstractNetcdfDataset extends AbstractDataset {
 					for (Attribute attribute : (Iterable<Attribute>) var.getAttributes()) {
 						if (attribute.getShortName().equals("units")) {	// 2014 changed deprecated getName() to getShortName()
 							unit = VUnits.createUnit(attribute.getStringValue());
-System.out.println("in AbstractNetcdfDataset.createAxesVars, unit = " + unit);
+							Logger.debug("in AbstractNetcdfDataset.createAxesVars, unit = " + unit);
 						}
 					}
 					vars.add(new DefaultVariable(var.getShortName(), var.getShortName(), unit, this));	// 2014 changed deprecated getName() to getShortName()

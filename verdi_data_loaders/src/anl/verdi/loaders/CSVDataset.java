@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
@@ -37,6 +39,7 @@ import anl.verdi.util.VUnits;
  * @version $Revision$ $Date$
  */
 public class CSVDataset extends AbstractDataset {
+	static final Logger Logger = LogManager.getLogger(CSVDataset.class.getName());
 
 	private static Map<ucar.nc2.constants.AxisType, AxisType> types = new HashMap<ucar.nc2.constants.AxisType, AxisType>();
 
@@ -273,7 +276,7 @@ public class CSVDataset extends AbstractDataset {
 		vars = new ArrayList<Variable>();
 
 		Unit unit = VUnits.MISSING_UNIT;
-System.out.println("in CSVDataset.init, unit = " + unit);
+		Logger.debug("in CSVDataset.init, unit = " + unit);
 
 		String var = columnNameMap.get(fields[4]);
 		vars.add(new DefaultVariable(var, var, unit, (Dataset)this));

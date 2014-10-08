@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 
-import simphony.util.messages.MessageCenter;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
+//import simphony.util.messages.MessageCenter;
 import ucar.nc2.dataset.conv.WRFConvention;
 import ucar.nc2.dt.grid.GridDataset;
 import anl.verdi.data.DatasetMetadata;
@@ -16,8 +19,9 @@ import anl.verdi.data.DatasetMetadata;
  * @version $Revision$ $Date$
  */
 public class WRFDataset extends AbstractNetcdfDataset {
+	static final Logger Logger = LogManager.getLogger(WRFDataset.class.getName());
 
-	private static MessageCenter msgCenter = MessageCenter.getMessageCenter(WRFDataset.class);
+//	private static MessageCenter msgCenter = MessageCenter.getMessageCenter(WRFDataset.class);
 	private int conv = -1;
 
 	public WRFDataset(URL url) {
@@ -32,7 +36,7 @@ public class WRFDataset extends AbstractNetcdfDataset {
 				throw new IOException("Loading non-wrf file into WRFDataset");
 			}
 		} catch (Exception io) {
-			msgCenter.error("Error reading netcdf file", io);
+			Logger.error("Error reading netcdf file " + io.getMessage());
 			try {
 				if (gridDataset != null)
 					gridDataset.close();

@@ -4,6 +4,9 @@ import java.util.Date;				// added 2014
 import java.util.GregorianCalendar;
 import java.util.List;				// added 2014
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import ucar.nc2.dataset.CoordinateAxis1DTime;
 import ucar.nc2.time.CalendarDate;				// added 2014
 import anl.verdi.data.Axes;
@@ -17,10 +20,11 @@ import anl.verdi.data.TimeCoordAxis;
  * @version $Revision$ $Date$
  */
 public class NetcdfTimeAxis extends NetCdfCoordAxis implements TimeCoordAxis {
+	static final Logger Logger = LogManager.getLogger(NetcdfTimeAxis.class.getName());
 
 	public NetcdfTimeAxis(CoordinateAxis1DTime axis) {
 		super(axis, AxisType.TIME);
-		System.out.println("in constructor for NetcdfTimeAxis");
+		Logger.debug("in constructor for NetcdfTimeAxis");
 	}
 
 //	public Date getDate(int timestep) {		// replaced for GeoTools v10; updated NetCDF library

@@ -3,6 +3,9 @@ package anl.verdi.loaders;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import ucar.ma2.Array;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.AbstractDataReader;
@@ -22,6 +25,7 @@ import anl.verdi.data.Variable;
  * @see Dataset, DataLoader
  */
 public class Models3Reader extends AbstractDataReader<Models3Dataset> {
+	static final Logger Logger = LogManager.getLogger(Models3Reader.class.getName());
 
 	public Models3Reader(Models3Dataset set) {
 		super(set);
@@ -64,10 +68,10 @@ public class Models3Reader extends AbstractDataReader<Models3Dataset> {
 			builder.setArray(array);
 			return builder.createDataFrame();
 		} catch (IOException ie) {
-			System.out.println("IOException " + ie);
+			Logger.error("IOException " + ie.getMessage());
 			ie.printStackTrace();
 		} catch (InvalidRangeException e) {
-			System.out.println("InvalidRangeException " + e);
+			Logger.error("InvalidRangeException " + e.getMessage());
 			e.printStackTrace();
 		}
 		return null;

@@ -31,6 +31,9 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 /**
  * Low level read/write geotiff files.
  *
@@ -41,6 +44,7 @@ import java.util.Collections;
  * @version $Revision:63 $ $Date:2006-07-12 21:50:51Z $
  */
 public class GeoTiff {
+	static final Logger Logger = LogManager.getLogger(GeoTiff.class.getName());
   private String filename;
   private RandomAccessFile file;
   private FileChannel channel;
@@ -48,7 +52,7 @@ public class GeoTiff {
   private ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
   private boolean readonly;
 
-  private boolean showBytes = false, debugRead = false, debugReadGeoKey = false;
+  private boolean showBytes = false;	// debugRead, debugReadGeoKey // 2014 removed when replaced with Logger.debug
   private boolean showHeaderBytes = false;
 
   /** Constructor. Does not open or create the file. */
@@ -231,7 +235,7 @@ public class GeoTiff {
     //now this is not the first image we need to fill the Offset of nextIFD
       channel.position(lastIFD);
       ByteBuffer buffer = ByteBuffer.allocate(4);
-      if (debugRead) System.out.println("position before writing nextIFD= "+channel.position()+ " IFD is " + firstIFD);
+      Logger.debug("position before writing nextIFD= "+channel.position()+ " IFD is " + firstIFD);
       buffer.putInt(firstIFD);
       buffer.flip();
       channel.write( buffer);
@@ -259,7 +263,7 @@ public class GeoTiff {
   private void init() throws IOException {
     file = new RandomAccessFile (filename, "rw");
     channel = file.getChannel();
-    if (debugRead) System.out.println ("Opened file to write: '" + filename+ "', size=" + channel.size());
+    Logger.debug ("Opened file to write: '" + filename+ "', size=" + channel.size());
     readonly = false;
   }
 
@@ -285,7 +289,7 @@ public class GeoTiff {
     // position to where the "next IFD" goes
     channel.position(startOverflowData - 4);
     lastIFD = startOverflowData - 4;
-    if (debugRead) System.out.println("pos before writing nextIFD= "+channel.position());
+    Logger.debug("pos before writing nextIFD= "+channel.position());
     buffer = ByteBuffer.allocate(4);
     buffer.putInt(0);
     buffer.flip();
@@ -314,7 +318,7 @@ public class GeoTiff {
       channel.write( buffer);
             // write data
       channel.position(nextOverflowData);
-      //System.out.println(" write offset = "+ifd.tag.getName());
+      //Logger.debug(" write offset = "+ifd.tag.getName());
       ByteBuffer vbuffer = ByteBuffer.allocate(size);
       writeValues( vbuffer, ifd);
       vbuffer.flip();
@@ -383,7 +387,7 @@ public class GeoTiff {
   public void read() throws IOException {
     file = new RandomAccessFile (filename, "r");
     channel = file.getChannel();
-    if (debugRead) System.out.println ("Opened file to read:'" + filename+ "', size=" + channel.size());
+    Logger.debug ("Opened file to read:'" + filename+ "', size=" + channel.size());
     readonly = true;
 
     int nextOffset = readHeader( channel);
@@ -411,7 +415,7 @@ public class GeoTiff {
       int tileOffset = tileOffsetTag.value[0];
       IFDEntry tileSizeTag = findTag(Tag.TileByteCounts);
       int tileSize = tileSizeTag.value[0];
-      System.out.println ("tileOffset =" + tileOffset+ " tileSize=" + tileSize);
+      Logger.debug ("tileOffset =" + tileOffset+ " tileSize=" + tileSize);
       testReadData( tileOffset, tileSize);
     } else {
 
@@ -420,7 +424,7 @@ public class GeoTiff {
         int stripOffset = stripOffsetTag.value[0];
         IFDEntry stripSizeTag = findTag(Tag.StripByteCounts);
         int stripSize = stripSizeTag.value[0];
-        System.out.println ("stripOffset =" + stripOffset+ " stripSize=" + stripSize);
+        Logger.debug ("stripOffset =" + stripOffset+ " stripSize=" + stripSize);
         testReadData( stripOffset, stripSize);
       }
     }
@@ -438,7 +442,7 @@ public class GeoTiff {
     //buffer.rewind();
 
     for (int i=0; i<size/4; i++) {
-      System.out.println( i+": "+buffer.getFloat());
+      Logger.debug( i+": "+buffer.getFloat());
     }
   }
 
@@ -459,7 +463,7 @@ public class GeoTiff {
     buffer.order(byteOrder);
     buffer.position(4);
     int firstIFD = buffer.getInt();
-    if (debugRead) System.out.println(" firstIFD == "+firstIFD);
+    Logger.debug(" firstIFD == "+firstIFD);
 
     return firstIFD;
   }
@@ -477,30 +481,30 @@ public class GeoTiff {
       buffer.rewind();
     }
     short nentries = buffer.getShort();
-    if (debugRead) System.out.println(" nentries = "+nentries);
+    Logger.debug(" nentries = "+nentries);
 
     start += 2;
     for (int i=0; i<nentries; i++) {
       IFDEntry ifd = readIFDEntry( channel, start);
-      if (debugRead) System.out.println(i+" == "+ifd);
+      Logger.debug(i+" == "+ifd);
 
       tags.add( ifd);
       start += 12;
     }
 
-    if (debugRead) System.out.println(" looking for nextIFD at pos == "+channel.position()+" start = "+start);
+    Logger.debug(" looking for nextIFD at pos == "+channel.position()+" start = "+start);
     channel.position(start);
     buffer = ByteBuffer.allocate(4);
     buffer.order(byteOrder);
     n = channel.read( buffer);
     buffer.flip();
     int nextIFD = buffer.getInt();
-    if (debugRead) System.out.println(" nextIFD == "+nextIFD);
+    Logger.debug(" nextIFD == "+nextIFD);
     return nextIFD;
   }
 
   private IFDEntry readIFDEntry( FileChannel channel, int start) throws IOException {
-    if (debugRead) System.out.println("readIFDEntry starting position to "+start);
+    Logger.debug("readIFDEntry starting position to "+start);
 
     channel.position( start);
     ByteBuffer buffer = ByteBuffer.allocate(12);
@@ -523,7 +527,7 @@ public class GeoTiff {
       readValues( buffer, ifd);
     } else {
       int offset = buffer.getInt();
-      if (debugRead) System.out.println("position to "+offset);
+      Logger.debug("position to "+offset);
       channel.position(offset);
       ByteBuffer vbuffer = ByteBuffer.allocate(ifd.count * ifd.type.size);
       vbuffer.order(byteOrder);
@@ -640,7 +644,7 @@ public class GeoTiff {
     if (null == keyDir) return;
 
     int nkeys = keyDir.value[3];
-    if (debugReadGeoKey) System.out.println("parseGeoInfo nkeys = "+nkeys+" keyDir= "+keyDir);
+    Logger.debug("parseGeoInfo nkeys = "+nkeys+" keyDir= "+keyDir);
     int pos = 4;
 
     for (int i=0; i<nkeys; i++) {
@@ -658,7 +662,7 @@ public class GeoTiff {
       } else { // more than one, or non short value
         IFDEntry data = findTag( Tag.get(location));
         if (data == null)
-          System.out.println("********ERROR parseGeoInfo: cant find Tag code = "+location);
+          Logger.error("********ERROR parseGeoInfo: cant find Tag code = "+location);
 
         else if (data.tag == Tag.GeoDoubleParamsTag) { // double params
           double[] dvalue = new double[vcount];
@@ -681,7 +685,7 @@ public class GeoTiff {
 
       if (key != null) {
         keyDir.addGeoKey(  key);
-        if (debugReadGeoKey) System.out.println(" yyy  add geokey="+key);
+        Logger.debug(" yyy  add geokey="+key);
       }
     }
 

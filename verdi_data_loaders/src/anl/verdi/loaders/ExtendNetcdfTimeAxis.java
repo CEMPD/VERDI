@@ -4,17 +4,21 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import ucar.nc2.dataset.CoordinateAxis1DTime;
 import ucar.nc2.time.CalendarDate;
-import anl.verdi.data.ExtendAxes;
 import anl.verdi.data.AxisType;
+import anl.verdi.data.ExtendAxes;
 import anl.verdi.data.ExtendTimeCoordAxis;
 
 public class ExtendNetcdfTimeAxis extends ExtendNetCdfCoordAxis implements ExtendTimeCoordAxis {
+	static final Logger Logger = LogManager.getLogger(ExtendNetcdfTimeAxis.class.getName());
 
 	public ExtendNetcdfTimeAxis(CoordinateAxis1DTime axis) {
 		super(axis, AxisType.TIME);
-		System.out.println("in constructor for ExtendNetcdfTimeAxis");
+		Logger.debug("in constructor for ExtendNetcdfTimeAxis");
 	}
 
 	/**

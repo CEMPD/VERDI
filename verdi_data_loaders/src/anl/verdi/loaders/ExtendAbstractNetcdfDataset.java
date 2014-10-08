@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import simphony.util.messages.MessageCenter;
+//import simphony.util.messages.MessageCenter;
 //import ucar.nc2.Attribute;
 //import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -27,7 +27,7 @@ import anl.verdi.data.Variable;
 
 public abstract class ExtendAbstractNetcdfDataset extends ExtendAbstractDataset {
 
-	protected static final MessageCenter msgCenter = MessageCenter.getMessageCenter(AbstractNetcdfDataset.class);
+//	protected static final MessageCenter msgCenter = MessageCenter.getMessageCenter(AbstractNetcdfDataset.class);
 	protected static Map<ucar.nc2.constants.AxisType, AxisType> types = new HashMap<ucar.nc2.constants.AxisType, AxisType>();
 
 	// TODO: need to extend this??

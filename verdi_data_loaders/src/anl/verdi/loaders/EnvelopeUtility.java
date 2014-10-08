@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.geometry.jts.ReferencedEnvelope;
 //import org.geotools.referencing.FactoryFinder;
 import org.geotools.referencing.ReferencingFactoryFinder;
@@ -34,9 +36,11 @@ import ucar.unidata.geoloc.Projection;
 import ucar.unidata.geoloc.projection.LambertConformal;
 
 public class EnvelopeUtility {
-//	static MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
+	static final Logger Logger = LogManager.getLogger(EnvelopeUtility.class.getName());
+	
+//	static MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);	// 2014
 	static MathTransformFactory mtFactory = ReferencingFactoryFinder.getMathTransformFactory(null);
-//	static FactoryGroup factories = new FactoryGroup(null);
+//	static FactoryGroup factories = new FactoryGroup(null);									// 2014
 	static ReferencingFactoryContainer factories = new ReferencingFactoryContainer(null);
 
 	public static ReferencedEnvelope getReferencedEnvelope(AbstractNetcdfDataset dataset) {
@@ -96,7 +100,7 @@ public class EnvelopeUtility {
 			Array array = grid.getVariable().read();
 			float[] farray = (float[]) array.get1DJavaArray(Float.TYPE);
 			for (float f : farray) {
-				System.out.println(f);
+				Logger.debug(f);
 			}
 		} catch (Exception e) {
 
@@ -108,14 +112,14 @@ public class EnvelopeUtility {
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("name", "North_American_Datum_1983");
 //			GeodeticDatum datum = FactoryFinder.getDatumFactory(null).createGeodeticDatum(params,
-//					DefaultEllipsoid.GRS80, DefaultPrimeMeridian.GREENWICH);
+//					DefaultEllipsoid.GRS80, DefaultPrimeMeridian.GREENWICH);	// 2014
 			GeodeticDatum datum = ReferencingFactoryFinder.getDatumFactory(null).createGeodeticDatum(params,
 					DefaultEllipsoid.GRS80, DefaultPrimeMeridian.GREENWICH);
 			params = new HashMap<String, Object>();
 			params.put("name", "NAD83");
 
 //			GeographicCRS crs = FactoryFinder.getCRSFactory(null).createGeographicCRS(params, datum,
-//					DefaultEllipsoidalCS.GEODETIC_2D);
+//					DefaultEllipsoidalCS.GEODETIC_2D);							// 2014
 			GeographicCRS crs = ReferencingFactoryFinder.getCRSFactory(null).createGeographicCRS(params, datum,
 					DefaultEllipsoidalCS.GEODETIC_2D);
 			ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_2SP");
@@ -126,10 +130,10 @@ public class EnvelopeUtility {
 			parameters.parameter("central_meridian").setValue(gcs.getOriginLon());
 			parameters.parameter("false_easting").setValue(0);
 			parameters.parameter("false_northing").setValue(0);
-			Map<String, String> properties = Collections.singletonMap("name", "unknown");	// changed Map to Map<String, String>
+			Map<String, String> properties = Collections.singletonMap("name", "unknown");	// changed Map to Map<String, String>	2014
 //			return factories.createProjectedCRS(properties, crs, null, parameters, DefaultCartesianCS.GENERIC_2D);	// deprecated, list of reasons provided in documentation
 						// see www.geoapi.org/2.0/javadoc/org/opengis/referencing/crs/CRSFactory.html
-			CRSFactory crsFactory = factories.getCRSFactory();
+			CRSFactory crsFactory = factories.getCRSFactory();		// 2014
 			DefiningConversion conv = new DefiningConversion("sample", parameters);
 			return crsFactory.createProjectedCRS(properties, crs, conv, DefaultCartesianCS.GENERIC_2D);
 		} catch (Exception e) {

@@ -22,6 +22,9 @@ package ucar.nc2.geotiff;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import ucar.ma2.Array;
 import ucar.ma2.ArrayByte;
 import ucar.ma2.ArrayFloat;
@@ -44,6 +47,7 @@ import ucar.unidata.geoloc.projection.Stereographic;
  * @version $Revision:63 $ $Date:2006-07-12 21:50:51Z $
  */
 public class GeotiffWriterUnc {
+	static final Logger Logger = LogManager.getLogger(GeotiffWriterUnc.class.getName());
 	private String fileOut;
 
 	private GeoTiff geotiff;
@@ -552,7 +556,7 @@ public class GeotiffWriterUnc {
 
 		for (int j = 0; j < shape[0]; j++) {
 			float dd = data.getFloat(ima.set(j, col));
-			System.out.println(j + " value= " + dd);
+			Logger.debug(j + " value= " + dd);
 		}
 	}
 
@@ -703,7 +707,7 @@ public class GeotiffWriterUnc {
 		// read it back in
 		GeoTiff geotiff = new GeoTiff(fileOut);
 		geotiff.read();
-		System.out.println("geotiff read in = " + geotiff.showInfo());
+		Logger.debug("geotiff read in = " + geotiff.showInfo());
 		geotiff.close();
 	}
 

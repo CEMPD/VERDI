@@ -6,7 +6,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
-import simphony.util.messages.MessageCenter;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
+//import simphony.util.messages.MessageCenter;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.dataset.conv.M3IOConvention;
@@ -20,8 +23,9 @@ import anl.verdi.data.Dataset;
  * @version $Revision$ $Date$
  */
 public class Models3Loader implements DataLoader {
+	static final Logger Logger = LogManager.getLogger(Models3Loader.class.getName());
 
-	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(Models3Loader.class);
+//	private static final MessageCenter msgCenter = MessageCenter.getMessageCenter(Models3Loader.class);
 
 	/**
 	 * Returns whether or not this DataLoader can handle the data at the specified
@@ -47,12 +51,12 @@ public class Models3Loader implements DataLoader {
 			//io.printStackTrace();
 			// just warn here because it be correct that
 			// this is not a netcdf file
-			//msgCenter.warn("Error reading netcdf file", io);
+			Logger.warn("Error reading netcdf file " + io.getMessage());
 			throw io;
 		} catch (URISyntaxException e) {
 			//e.printStackTrace();
-			//msgCenter.warn("Error reading netcdf file", e);
-			//throw e;
+			Logger.warn("Error reading netcdf file " + e.getMessage());
+			throw e;
 		} catch (Exception e) {
 			throw e;
 		} catch (Throwable t) {
@@ -63,7 +67,6 @@ public class Models3Loader implements DataLoader {
 				if (file != null) file.close();
 			} catch (IOException e) {}
 		}
-
 		return false;
 	}
 

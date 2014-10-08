@@ -3,6 +3,9 @@ package anl.verdi.loaders;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.data.Axes;
 import anl.verdi.data.AxisType;
 import anl.verdi.data.TimeCoordAxis;
@@ -15,10 +18,11 @@ import anl.verdi.data.TimeCoordAxis;
  * @version $Revision$ $Date$
  */
 public class CSVTimeAxis extends CSVCoordAxis implements TimeCoordAxis {
+	static final Logger Logger = LogManager.getLogger(CSVTimeAxis.class.getName());
 
 	public CSVTimeAxis(Double data[], String name, String description) {
 		super(data, name, description, AxisType.TIME);
-		System.out.println("in constructor for CSVTimeAxis");
+		Logger.debug("in constructor for CSVTimeAxis");
 	}
 //	/**
 //	 * Returns the GregorianCalendar date for the specified timestep, or null if

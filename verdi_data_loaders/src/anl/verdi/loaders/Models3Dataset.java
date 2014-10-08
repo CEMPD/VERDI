@@ -6,6 +6,8 @@ import ucar.nc2.dt.grid.GridDataset;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 import anl.verdi.data.DatasetMetadata;
 
@@ -18,6 +20,7 @@ import anl.verdi.data.DatasetMetadata;
  */
 public class Models3Dataset extends AbstractNetcdfDataset {
 
+	static final Logger Logger = LogManager.getLogger(Models3Dataset.class.getName());
 	private int conv = -1;
 
 
@@ -38,7 +41,7 @@ public class Models3Dataset extends AbstractNetcdfDataset {
 				throw new IOException("Loading non-models3 file into Models3Dataset");
 			}
 		} catch (Exception io) {
-			msgCenter.error("Error reading netcdf file", io);
+			Logger.error("Error reading netcdf file " + io.getMessage());
 			try {
 				if (gridDataset != null)
 					gridDataset.close();

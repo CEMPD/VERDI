@@ -6,7 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
@@ -18,6 +19,7 @@ import anl.verdi.data.ExtendTimeCoordAxis;
 import anl.verdi.data.Range;
 
 public class ExtendSyntheticTimeAxis implements ExtendTimeCoordAxis {
+	static final Logger Logger = LogManager.getLogger(ExtendSyntheticTimeAxis.class.getName());
 
 	private static final String SECONDS_SINCE = "seconds since";
 	public static final int TIME_STEP_NOT_FOUND = -1;
@@ -29,15 +31,15 @@ public class ExtendSyntheticTimeAxis implements ExtendTimeCoordAxis {
 
 	public ExtendSyntheticTimeAxis(CoordinateAxis axis) {
 		this.axis = new ExtendNetCdfCoordAxis(axis, AxisType.TIME);
-		System.out.println("in constructor for ExtendSyntheticTimeAxis");
+		Logger.debug("in constructor for ExtendSyntheticTimeAxis");
 		processAxis();
 	}
 
 	private void processAxis() {
 		String unit = axis.getUnits().toString().trim();
-System.out.println("in ExtendSyntheticTimeAxis.processAxis, unit = " + unit);
+		Logger.debug("in ExtendSyntheticTimeAxis.processAxis, unit = " + unit);
 		String tmp = unit.toLowerCase();
-System.out.println("in ExtendSyntheticTimeAxis.processAxis, lowercase unit = " + tmp);
+		Logger.debug("in ExtendSyntheticTimeAxis.processAxis, lowercase unit = " + tmp);
 		String dateString = null;
 		if (tmp.startsWith(SECONDS_SINCE)) {
 			dateString = unit.substring(SECONDS_SINCE.length(), unit.length()).trim();
@@ -154,7 +156,7 @@ System.out.println("in ExtendSyntheticTimeAxis.processAxis, lowercase unit = " +
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
-System.out.println("in ExtendSyntheticTimeAxis.getUnits, unit = " + axis.getUnits());
+		Logger.debug("in ExtendSyntheticTimeAxis.getUnits, unit = " + axis.getUnits());
 		return axis.getUnits();
 	}
 

@@ -2,6 +2,8 @@ package anl.verdi.loaders;
 
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.unitsofmeasurement.unit.Unit;
 
 import anl.verdi.data.AxisType;
@@ -10,6 +12,7 @@ import anl.verdi.data.Range;
 import anl.verdi.util.VUnits;
 
 public class ExtendCSVCoordAxis implements ExtendCoordAxis {
+	static final Logger Logger = LogManager.getLogger(ExtendCSVCoordAxis.class.getName());
 
 	private Range range;
 	private AxisType type;
@@ -26,7 +29,7 @@ public class ExtendCSVCoordAxis implements ExtendCoordAxis {
 		this.type = type;
 		this.range = new Range(0, data.length);
 		this.data = data;
-System.out.println("in ExtendCSVCoordAxis constructor, unit = " + this.unit);
+		Logger.debug("in ExtendCSVCoordAxis constructor, unit = " + this.unit);
 	}
 
 	/**
@@ -35,7 +38,6 @@ System.out.println("in ExtendCSVCoordAxis constructor, unit = " + this.unit);
 	 * @return the value at the specified index.
 	 */
 	public Object getValue(int index) {
-		
 		return data[index];
 	}
 
@@ -45,10 +47,9 @@ System.out.println("in ExtendCSVCoordAxis constructor, unit = " + this.unit);
 	 * @return the unit of measurement for this coordinate axis.
 	 */
 	public Unit getUnits() {
-System.out.println("in ExtendCSVCoordAxis.getUnits, returning unit = " + unit);
+		Logger.debug("in ExtendCSVCoordAxis.getUnits, returning unit = " + unit);
 		return unit;
 	}
-
 
 	/**
 	 * Gets whether or not the this axis is compatible with

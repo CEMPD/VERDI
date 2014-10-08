@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
@@ -19,9 +21,10 @@ import ucar.unidata.geoloc.projection.Stereographic;
  * @version $Revision$ $Date$
  */
 public class PolarStereographicWKTCreator {
+	static final Logger Logger = LogManager.getLogger(PolarStereographicWKTCreator.class.getName());
 
 	public String createWKT(Stereographic proj) throws IOException {
-System.out.println("in PolarStereographicWKTCreator.createWKT");
+		Logger.debug("in PolarStereographicWKTCreator.createWKT");
 		VelocityContext context = new VelocityContext();
 		String template = getClass().getPackage().getName();
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -29,9 +32,9 @@ System.out.println("in PolarStereographicWKTCreator.createWKT");
 		template = template.replace('.', '/');
 		template = template + "/polar_stereographic_wkt.vt";
 		double projNatOriginLat = proj.getNaturalOriginLat();	// 2014 trying to see what happens when not set to 0.0 in test dataset
-System.out.println("in createWKT: proj.getNaturalOriginLat returns " + projNatOriginLat);
-if (projNatOriginLat < 70.0)
-	projNatOriginLat = 90.0;
+		Logger.debug("in createWKT: proj.getNaturalOriginLat returns " + projNatOriginLat);
+		if (projNatOriginLat < 70.0)
+			projNatOriginLat = 90.0;
 		context.put("lat_origin", projNatOriginLat);	// 2014 NOTE: usually 90.0 but some datasets use 70.0
 		context.put("central_meridian", 0.0);	//proj.getCentralMeridian());	// NOTE: function not in NetCDF-Java v4.3.20
 
@@ -42,9 +45,9 @@ if (projNatOriginLat < 70.0)
 		if(projScale < 0.0)
 			projScale = 1.0;
 		context.put("scale", projScale);		// 2014 had been proj.getScale()
-System.out.println("in createWKT: proj.getScale returns " + proj.getScale());
+		Logger.debug("in createWKT: proj.getScale returns " + proj.getScale());
 		Writer writer = new StringWriter();
-		
+
 		try {
 			Velocity.mergeTemplate(template, "UTF-8", context, writer);
 		} catch (Exception ex) {
@@ -53,7 +56,6 @@ System.out.println("in createWKT: proj.getScale returns " + proj.getScale());
 			if (writer != null) writer.close();
 			Thread.currentThread().setContextClassLoader(loader);
 		}
-
 		return writer.toString();
 	}
 }
