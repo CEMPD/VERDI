@@ -122,6 +122,9 @@
 		<copy todir="${plugins.dist.dir}/core/lib">
 			<fileset dir="${core.dir}/lib"/>
 		</copy>
+		
+		<move file="${plugins.dist.dir}/core/lib/libj3dcore-ogl.so.linux" 
+			tofile="${plugins.dist.dir}/core/lib/libj3dcore-ogl.so"/>
 
 		<copy todir="${plugins.dist.dir}/core/help">
 			<fileset dir="${core.dir}/help"/>
