@@ -8,7 +8,7 @@ package anl.verdi.plot.gui;
 
 import gov.epa.emvl.ASCIIGridWriter;
 import gov.epa.emvl.GridCellStatistics;
-import gov.epa.emvl.GridShapefileWriter;
+//import gov.epa.emvl.GridShapefileWriter;		// 2014 disable write shapefile VERDI 1.5.0
 import gov.epa.emvl.MapLines;
 import gov.epa.emvl.Mapper;
 import gov.epa.emvl.Numerics;
@@ -2016,7 +2016,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			menu.add(sub);
 		}
 		
-		menu = new JMenu("GIS Layers");
+		menu = new JMenu("GIS Layers");	// in VERDI versions through 1.5.0 does not pertain to shapefiles
 		gisLayersMenu(menu);
 		bar.add(menu);
 		
@@ -3240,40 +3240,41 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		
 	}
 
-	public void exportShapefileOld( String baseFileName ) throws IOException {
-		final int subsetLayerRows = 1 + lastRow - firstRow;
-		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
-		// Filter variable name/expression so operators aren't a problem in Excel:
-		final String filteredVariableName =
-			variable.replaceAll( "[\\[\\d\\]]", "" ).replaceAll( "\\W", "" );
-		GridShapefileWriter.write( baseFileName,
-									subsetLayerRows, subsetLayerColumns,
-									westEdge, southEdge,
-									cellWidth, cellHeight,
-									filteredVariableName, subsetLayerData, projector );
-	}
-	
-	public void exportShapefile( String baseFileName ) throws IOException {
-		final int subsetLayerRows = 1 + lastRow - firstRow;
-		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
-		// Filter variable name/expression so operators aren't a problem in Excel:
-		
-		// changed to this in v. 529
-		final int end = variable.indexOf( '[' );
-		final String filteredVariableName = variable.substring( 0, end );
-		
-		// change back now 2012-06-14
+//	public void exportShapefileOld( String baseFileName ) throws IOException {		// 2014 appears to not be used
+//		final int subsetLayerRows = 1 + lastRow - firstRow;
+//		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
+//		// Filter variable name/expression so operators aren't a problem in Excel:
 //		final String filteredVariableName =
 //			variable.replaceAll( "[\\[\\d\\]]", "" ).replaceAll( "\\W", "" );
-		
-		final double subsetWestEdge = westEdge + firstColumn * cellWidth;
-		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
-		GridShapefileWriter.write( baseFileName,
-				subsetLayerRows, subsetLayerColumns,
-				subsetWestEdge, subsetSouthEdge,
-				cellWidth, cellHeight,
-				filteredVariableName, subsetLayerData, projector );
-	}
+//		GridShapefileWriter.write( baseFileName,
+//									subsetLayerRows, subsetLayerColumns,
+//									westEdge, southEdge,
+//									cellWidth, cellHeight,
+//									filteredVariableName, subsetLayerData, projector );
+//	}
+	
+//	2014 called from anl.verdi.plot.utiil.PlotExporter; disabling exporting of Shapefiles for VERDI v1.5.0
+	//	public void exportShapefile( String baseFileName ) throws IOException {
+//		final int subsetLayerRows = 1 + lastRow - firstRow;
+//		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
+//		// Filter variable name/expression so operators aren't a problem in Excel:
+//		
+//		// changed to this in v. 529
+//		final int end = variable.indexOf( '[' );
+//		final String filteredVariableName = variable.substring( 0, end );
+//		
+//		// change back now 2012-06-14
+////		final String filteredVariableName =
+////			variable.replaceAll( "[\\[\\d\\]]", "" ).replaceAll( "\\W", "" );
+//		
+//		final double subsetWestEdge = westEdge + firstColumn * cellWidth;
+//		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
+//		GridShapefileWriter.write( baseFileName,
+//				subsetLayerRows, subsetLayerColumns,
+//				subsetWestEdge, subsetSouthEdge,
+//				cellWidth, cellHeight,
+//				filteredVariableName, subsetLayerData, projector );
+//	}
 	
 	public void exportASCIIGrid( String baseFileName ) {
 		final int subsetLayerRows = 1 + lastRow - firstRow;

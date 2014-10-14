@@ -161,9 +161,9 @@ public class FileSelectionStep extends PanelWizardStep {
 				model.setShpFile(shpFile);
 
 			} catch (MalformedURLException e) {
-				Logger.error("Error creating layer from shapefile " + e.getMessage());
+				Logger.error("Malformed URL Exception creating layer from shapefile " + e.getMessage());
 			} catch (IOException e) {
-				Logger.error("Error creating layer from shapefile " + e.getMessage());
+				Logger.error("IOException creating layer from shapefile " + e.getMessage());
 			}
 		}
 	}

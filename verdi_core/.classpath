@@ -95,5 +95,6 @@
 	<classpathentry kind="lib" path="lib/gt-metadata-10.5.jar" sourcepath="verdi_data_loaders/lib_src/gt-metadata-10.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-api-2.0-rc1.jar" sourcepath="/verdi_bootstrap/lib_src/log4j-api-2.0-rc1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-core-2.0-rc1.jar" sourcepath="/verdi_bootstrap/lib_src/log4j-core-2.0-rc1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/clibwrapper_jiio-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -97,7 +97,7 @@ public class XDRConverter {
 				lines.add(factory.createLineString(coords));
 			}
 
-			writeShapefile(file, lines);
+//			writeShapefile(file, lines);	// 2014 disable export shapefile VERDI 1.5.0
 		} catch (IllegalAttributeException e) {
 			e.printStackTrace();
 		} catch (SchemaException e) {
@@ -107,28 +107,29 @@ public class XDRConverter {
 		}
 	}
 
-	private void writeShapefile(String file, List<LineString> lines) throws SchemaException, IllegalAttributeException, IOException 
-	{
-//		AttributeType geom = AttributeTypeFactory.newAttributeType("the_geom", LineString.class);	// USED
-//		FeatureType ft = FeatureTypeFactory.newFeatureType(new AttributeType[] {geom}, "border");	// USED "border"
-//		ShapefileDataStore datastore = new ShapefileDataStore(new File(file + ".shp").toURI().toURL());	// USED
-		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-		builder.setName("border");
-		builder.setNamespaceURI(new File(file + ".shp").toURI());
-		builder.add("the_geom", LineString.class);
-		
-		SimpleFeatureType FLAG = builder.buildFeatureType();
-		SimpleFeature flag1 = SimpleFeatureBuilder.build(FLAG, new Object[]{geom}, "flag.1");
-		datastore.createSchema(ft);
-		FeatureWriter writer = datastore.getFeatureWriter("border",
-						((FeatureStore)datastore.getFeatureSource("border")).getTransaction());
-		for (LineString line : lines) {
-			writer.next().setAttribute("the_geom", line);
-		}
-
-		writer.write();
-		writer.close();
-	}
+	// 2014 disable export shapefile VERDI 1.5.0
+//	private void writeShapefile(String file, List<LineString> lines) throws SchemaException, IllegalAttributeException, IOException 
+//	{
+////		AttributeType geom = AttributeTypeFactory.newAttributeType("the_geom", LineString.class);	// USED
+////		FeatureType ft = FeatureTypeFactory.newFeatureType(new AttributeType[] {geom}, "border");	// USED "border"
+////		ShapefileDataStore datastore = new ShapefileDataStore(new File(file + ".shp").toURI().toURL());	// USED
+//		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+//		builder.setName("border");
+//		builder.setNamespaceURI(new File(file + ".shp").toURI());
+//		builder.add("the_geom", LineString.class);
+//		
+//		SimpleFeatureType FLAG = builder.buildFeatureType();
+//		SimpleFeature flag1 = SimpleFeatureBuilder.build(FLAG, new Object[]{geom}, "flag.1");
+//		datastore.createSchema(ft);
+//		FeatureWriter writer = datastore.getFeatureWriter("border",
+//						((FeatureStore)datastore.getFeatureSource("border")).getTransaction());
+//		for (LineString line : lines) {
+//			writer.next().setAttribute("the_geom", line);
+//		}
+//
+//		writer.write();
+//		writer.close();
+//	}
 
 	public static void main(String[] args) throws IOException {
 		XDRConverter converter = new XDRConverter();

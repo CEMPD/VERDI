@@ -28,7 +28,7 @@ public class PlotExporterAction extends AbstractAction {
 
 
 	public PlotExporterAction(Plot plot) {
-		super("Export As Image/GIS");
+		super("Export as Image");	// 2014 "Export As Image/GIS"
 		this.plot = plot;
 	}
 
