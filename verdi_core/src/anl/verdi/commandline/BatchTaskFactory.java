@@ -56,11 +56,23 @@ public class BatchTaskFactory {
 			map = resetMap(map, files, gtype);
 		
 		if (gtype.equalsIgnoreCase(VerdiConstants.TILE_PLOT) || gtype.equalsIgnoreCase(VerdiConstants.FAST_TILE_PLOT)) {
+			// here protect from NullPointerException when not using subDomain
+			if(subDomain != null)	// use subDomain
+			{
 			if (!usePattern)
 				tasks.add(new TilePlotTask(map, files, app, subDomain.split(" ")));
 			
 			for (Map<String, String> m : maps)
 				tasks.add(new TilePlotTask(m, new File[]{new File(m.get(VerdiConstants.DATA_FILE))}, app, subDomain.split(" ")));
+			}
+			else
+			{	// 2014 not using subDomain
+				if (!usePattern)
+					tasks.add(new TilePlotTask(map, files, app));
+				
+				for (Map<String, String> m : maps)
+					tasks.add(new TilePlotTask(m, new File[]{new File(m.get(VerdiConstants.DATA_FILE))}, app));
+			}
 		} else if (gtype.equalsIgnoreCase(VerdiConstants.LINE_PLOT)) {
 			if (!usePattern)
 				tasks.add(new TimeSeriesPlotTask(map, files, app, Formula.Type.TIME_SERIES_LINE));

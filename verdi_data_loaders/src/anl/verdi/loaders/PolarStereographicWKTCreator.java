@@ -68,5 +68,4 @@ public class PolarStereographicWKTCreator {
 		}
 		return writer.toString();
 	}
-
 }

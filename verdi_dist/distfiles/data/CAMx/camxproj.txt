@@ -1,0 +1,7 @@
+# Projection parameters are based on IOAPI.  For details, see www.baronsams.com/products/ioapi
+GDTYP=2
+P_ALP=33.0
+P_BET=45.0
+P_GAM=-97.0
+XCENT=-97.0
+YCENT=40.0

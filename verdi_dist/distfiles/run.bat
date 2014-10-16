@@ -2,7 +2,7 @@
 
 SET BATCHFILE=%~f2
 
-SET VERDI_HOME=C:\\VERDI_test\\VERDI_1.5.0_test1014_v74
+SET VERDI_HOME=C:\\VERDI_test\\VERDI_1.5.0_test1016_v75
 CD .\plugins\bootstrap
 set JAVADIR=%VERDI_HOME%\jre1.7.0
 SET JAVA=%JAVADIR%\bin\java

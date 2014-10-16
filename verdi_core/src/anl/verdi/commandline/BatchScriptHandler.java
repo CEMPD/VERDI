@@ -52,12 +52,13 @@ public class BatchScriptHandler {
 		"\t#        f             -- dataset file path/name                                   #\n" +
 		"\t#        dir           -- dataset file folder                                      #\n" +
 		"\t#        pattern       -- dataset file name pattern                                #\n" +
-		"\t#        gtype         -- plot type (tile, line, bar, vector)                      #\n" +
-		"\t#        vector        -- vector plot variables                                    #\n" +
-		"\t#        vectorTile    -- vector plot variables                                    #\n" +
+		"\t#        gtype         -- plot type (tile, line, bar)                              #\n" +	// 2014 removed vector
+//		"\t#        vector        -- vector plot variables                                    #\n" +
+//		"\t#        vectorTile    -- vector plot variables                                    #\n" +
 		"\t#        s             -- variable name                                            #\n" +
 		"\t#        ts            -- time step (1-based)                                      #\n" +
 		"\t#        titleString   -- plot title                                               #\n" +
+		"\t#[       subDomain     -- <xmin> <ymin> <xmax> <ymax>                              #\n" +	// 2014 added subdomain processing 
 		"\t#        subTitle1     -- plot subtitle one                                        #\n" +
 		"\t#        subTitle2     -- plot subtitle two                                        #\n" +
 		"\t#        saveImage     -- image file type (png, jpeg, eps, etc.)                   #\n" +
@@ -93,22 +94,25 @@ public class BatchScriptHandler {
 			processTasks(tasks);
 			return;
 		}
-		
-		if (commands.size() > 0) {
+
+		if(commands.size() > 0)		// if (commands.size() > 0) // 2014 rearranged test to reduce indent level by 1 for legibility
+		{
+
 			ArrayList<String> thisCommand = commands.get(0);
 			String option = thisCommand.get(0);
-			
-			if (thisCommand.size() < 2) {
-				Logger.debug(HELPTEXT);
+
+			if (thisCommand.size() < 2) {			// looks at size of commands.get(0) and based on that assumes user asked for help
+				Logger.debug(HELPTEXT);				// 2014 prints out help to logger
+				System.out.println(HELPTEXT);		// prints out help to stdout
 				return;
 			}
-			
-			String value = thisCommand.get(1);
 
-			if (!(new File(value).exists()))
+			String value = thisCommand.get(1);		// name of existing data file
+
+			if (!(new File(value).exists()))		// checks that file exists before looking for batch designation
 				Logger.error("Cannot find file: " + value + ".");
 
-			if (option.equalsIgnoreCase("-b") || option.equalsIgnoreCase("-batch")) {
+			if (option.equalsIgnoreCase("-b") || option.equalsIgnoreCase("-batch")) {	// if not have existing file name but say batch, program proceeds ???
 				Logger.debug("Batch processing file: " + value);
 				List<AbstractTask> tasks = processBatchFile(value);
 				processTasks(tasks);
@@ -122,13 +126,16 @@ public class BatchScriptHandler {
 
 	private void processTasks(List<AbstractTask> tasks) throws Exception {
 		if (tasks.isEmpty())
+		{
+			Logger.error("Exception in BatchScriptHandler.processTasks: There is no task to run.");
 			throw new Exception("Error: There is no task to run.");
-
+		}
 		for (AbstractTask task : tasks) {
 			try {
 				if (task != null)
 					task.run();
 			} catch (Throwable e) {
+				Logger.error("Error in BatchScriptHandler.processTasks: Task is null. " + e.getMessage());
 				e.printStackTrace();
 				throw new Exception(e == null ? "Error running task: "
 						+ task.toString() : e.getMessage());
@@ -143,7 +150,7 @@ public class BatchScriptHandler {
 
 			String str;
 			while ((str = in.readLine()) != null) {
-				if (isComment(str))
+				if (isComment(str))			// strip out comment lines
 					continue;
 
 				scripts.add(str);
@@ -153,6 +160,7 @@ public class BatchScriptHandler {
 
 			return processBatchScript(scripts.toArray(new String[0]));
 		} catch (IOException e) {
+			Logger.error("IOException in BatchScriptHandler.processBatchFile: " + e.getMessage());
 			throw e;
 		}
 	}
@@ -166,31 +174,32 @@ public class BatchScriptHandler {
 
 			boolean processGlobal = false;
 			for (String str : scripts) {
-				if (isComment(str))
+				if (isComment(str))		// if processBatchScript was called from processBatchFile then should not contain any comment lines
 					continue;
 
-				if (str.trim().equalsIgnoreCase(VerdiConstants.GLOBAL)) {
+				if (str.trim().equalsIgnoreCase(VerdiConstants.GLOBAL)) {	// ELSE start GLOBAL section
 					processGlobal = true;
 					dataFiles = "";
-				} else if (str.trim().equalsIgnoreCase(VerdiConstants.END_GLOBAL)) {
+				} else if (str.trim().equalsIgnoreCase(VerdiConstants.END_GLOBAL)) {	// ELSE end GLOBAL section
 					processGlobal = false;
-					
-					if (dataFiles != null && !dataFiles.trim().isEmpty()) 
-						global.put(VerdiConstants.DATA_FILE, dataFiles);
-				} else if (str.trim().equalsIgnoreCase(VerdiConstants.TASK)) {
-					dataFiles = "";
-					map = new HashMap<String, String>();
-				} else if (str.trim().equalsIgnoreCase(VerdiConstants.END_TASK)) {
-					if (dataFiles != null && !dataFiles.trim().isEmpty())
-						map.put(VerdiConstants.DATA_FILE, dataFiles);
-					
-					maps.add(map);
-				} else
-					dataFiles = populateMaps(global, map, processGlobal, str, dataFiles);
-			}
 
-			return getAllTasks(global, maps);
+					if (dataFiles != null && !dataFiles.trim().isEmpty()) 	// if have dataFiles value 
+						global.put(VerdiConstants.DATA_FILE, dataFiles);			// put into HashMap global
+				} else if (str.trim().equalsIgnoreCase(VerdiConstants.TASK)) {	// ELSE if not starting or ending global section, see if TASK
+					dataFiles = "";												// if starting TASK, clear out String dataFiles
+					map = new HashMap<String, String>();						// and define map as new HashMap
+				} else if (str.trim().equalsIgnoreCase(VerdiConstants.END_TASK)) {	// ELSE if ending TASK section
+					if (dataFiles != null && !dataFiles.trim().isEmpty())			// if have dataFiles value
+						map.put(VerdiConstants.DATA_FILE, dataFiles);				//		store datafile name in map
+
+					maps.add(map);													// last thing in ending task is to add map to maps
+				} else																		// ELSE all other input lines
+					dataFiles = populateMaps(global, map, processGlobal, str, dataFiles);	//	call populateMaps
+			}										// finished processing all lines in script file
+
+			return getAllTasks(global, maps);		// value returned from getAllTasks is return value for processBatchScript
 		} catch (Exception e) {
+			Logger.error("error in BatchScriptHandler.processBatchScript: " + e.getMessage());
 			throw e;
 		}
 	}
