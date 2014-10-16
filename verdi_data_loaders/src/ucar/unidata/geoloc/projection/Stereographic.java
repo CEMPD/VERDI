@@ -58,6 +58,7 @@ public class Stereographic extends ProjectionImpl {
    */
   static public Stereographic factory(double latt, double lont, double latTrue) {
     double scale = (1.0 + Math.sin(Math.toRadians(latTrue))) / 2.0;
+    System.out.println("in Stereographic: factory calculated scale " + scale);
     return new Stereographic(latt, lont, scale);
   }
 
@@ -66,12 +67,12 @@ public class Stereographic extends ProjectionImpl {
   private double falseEasting, falseNorthing;
   private double scale, earthRadius;
   private double latt, lont;
-  private double sinlatt, coslatt, latts;
+  private double sinlatt, coslatt, latts, central_meridian;
   private boolean isNorth = false;
   private boolean isPolar = false;
 
   @Override
-  public ProjectionImpl constructCopy() {
+    public ProjectionImpl constructCopy() {
 	System.out.println("NOW IN Stereographic Projection");
     ProjectionImpl result =  new Stereographic(getTangentLat(), getTangentLon(), getScale(), getFalseEasting(), getFalseNorthing(), getEarthRadius());
     result.setDefaultMapArea(defaultMapArea);
@@ -120,7 +121,7 @@ public class Stereographic extends ProjectionImpl {
    */
   public Stereographic(double latt, double lont, double scale, double false_easting, double false_northing, double radius) {
     super("Stereographic", false);
-
+    System.out.println("in Stereographic: constructor scale from argument " + scale);
     this.latt = Math.toRadians(latt);
     this.lont = Math.toRadians(lont);
     this.earthRadius = radius;
@@ -185,7 +186,7 @@ public class Stereographic extends ProjectionImpl {
    * @param north  Is it north polar?
    * @return scale factor
    */
-  private double getScaleFactor(double lat_ts, boolean north) {
+  public double getScaleFactor(double lat_ts, boolean north) {
     double e = 0.081819191;
     double tf = 1.0, mf = 1.0, k0 = 1.0;
     double root = (1 + e * Math.sin(lat_ts)) / (1 - e * Math.sin(lat_ts));
@@ -227,8 +228,14 @@ public class Stereographic extends ProjectionImpl {
    * @return latitude at natural origin
    */
   public double getNaturalOriginLat() {
+		System.out.println("in Stereographic: getNaturalOriginLat = " );
     return Math.toDegrees(latts);
   }
+  
+  public double getCentralMeridian() {
+		System.out.println("in Stereographic: getCentralMeridian central_meridian= " + central_meridian);
+	    return central_meridian;
+	  }
 
     /**
    * Get the tangent longitude in degrees
@@ -268,6 +275,7 @@ public class Stereographic extends ProjectionImpl {
    */
   public void setScale(double scale) {
     this.scale = earthRadius * scale;
+    System.out.println("in Stereographic: IDV setter this.scale " + this.scale);
   }
 
   /**
@@ -289,11 +297,22 @@ public class Stereographic extends ProjectionImpl {
   // cruft from IDV bundle
 
   /**
-   * @deprecated
+   * Get the central meridian in degrees, if it was set.  depends on the zone
    */
-  public void setCentralMeridian(double lont) {
-    setTangentLon(lont);
+//  public double getCentralMeridian() {
+//	System.out.println("in Stereographic: getCentralMeridian central_meridian= " + central_meridian);
+//    return central_meridian;
+//  }
+  
+  /**
+   * Set the central meridian in degrees
+   */
+  public void setCentralMeridian(double cm) {
+    central_meridian = cm;
+    System.out.println("in Stereographic: setCentralMeridian central_meridian = " + central_meridian);
   }
+
+
 
   /**
    * Set the false_easting, in km.
@@ -758,6 +777,7 @@ public class Stereographic extends ProjectionImpl {
     }
     return to;
   }
+
 
   /*ENDGENERATED*/
 

@@ -16,6 +16,7 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;
 
+
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dt.GridCoordSystem;
@@ -291,6 +292,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 			}
 		} else if (proj instanceof Stereographic) {
 			Logger.debug("projection is of type Stereographic");
+			System.out.println("in NetcdfBoxer: instanceof Stereographic ");
 			if (crs == null) {
 				//Logger.debug("NOTE: crs is null");
 				try {

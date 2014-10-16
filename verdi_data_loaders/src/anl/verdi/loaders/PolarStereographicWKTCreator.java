@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
+import ucar.nc2.Variable;
+import ucar.nc2.dataset.transform.PolarStereographic;
 import ucar.unidata.geoloc.projection.Stereographic;
 
 /**
@@ -24,7 +26,7 @@ public class PolarStereographicWKTCreator {
 	static final Logger Logger = LogManager.getLogger(PolarStereographicWKTCreator.class.getName());
 
 	public String createWKT(Stereographic proj) throws IOException {
-		Logger.debug("in PolarStereographicWKTCreator.createWKT");
+		System.out.println("in PolarStereographicWKTCreator.createWKT");
 		VelocityContext context = new VelocityContext();
 		String template = getClass().getPackage().getName();
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -32,20 +34,28 @@ public class PolarStereographicWKTCreator {
 		template = template.replace('.', '/');
 		template = template + "/polar_stereographic_wkt.vt";
 		double projNatOriginLat = proj.getNaturalOriginLat();	// 2014 trying to see what happens when not set to 0.0 in test dataset
-		Logger.debug("in createWKT: proj.getNaturalOriginLat returns " + projNatOriginLat);
-		if (projNatOriginLat < 70.0)
-			projNatOriginLat = 90.0;
-		context.put("lat_origin", projNatOriginLat);	// 2014 NOTE: usually 90.0 but some datasets use 70.0
-		context.put("central_meridian", 0.0);	//proj.getCentralMeridian());	// NOTE: function not in NetCDF-Java v4.3.20
+		double projCentralMeridian = proj.getCentralMeridian();
+		double projTangentLat = proj.getTangentLat();
+		double projTangentLon = proj.getTangentLon();
+		double projScale = proj.getScale();
+		System.out.println("in createWKT: proj.getCentralMeridian returns " + projCentralMeridian);
+		System.out.println("in createWKT: proj.getNaturalOriginLat returns " + projNatOriginLat);
+		System.out.println("in createWKT: proj.getTangentLat returns " + projTangentLat);
+		System.out.println("in createWKT: proj.getTangentLon returns " + projTangentLon);
 
+
+		context.put("lat_origin", projNatOriginLat);	// 2014 NOTE: usually 90.0 but some datasets use 70.0
+		context.put("central_meridian", projCentralMeridian);	//proj.getCentralMeridian());	// NOTE: function not in NetCDF-Java v4.3.20
+  
+        
 		// 2014 NetCDF-Java v4.3.20 returns -98.0 for scale
 		// per documentation scale is normally 1.0 but could be less
-		// added following logic to trap value returned for scale and if negative set to 1.0
-		double projScale = proj.getScale();
-		if(projScale < 0.0)
-			projScale = 1.0;
+	   // added following logic to trap value returned for scale and if negative set to 1.0
+//		double projScale = proj.getScaleFactor(45., true); // testing for projCentralMeridian
+//		double projScale = 0.8537995936163079;
+//		double projScale = proj.getScale(); // testing for projCentralMeridian
 		context.put("scale", projScale);		// 2014 had been proj.getScale()
-		Logger.debug("in createWKT: proj.getScale returns " + proj.getScale());
+		System.out.println("in createWKT: projScale is " + projScale);
 		Writer writer = new StringWriter();
 
 		try {
@@ -58,4 +68,5 @@ public class PolarStereographicWKTCreator {
 		}
 		return writer.toString();
 	}
+
 }
