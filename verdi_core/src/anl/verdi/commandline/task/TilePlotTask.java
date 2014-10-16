@@ -54,9 +54,17 @@ public class TilePlotTask implements AbstractTask {
 		this.subDomainArgs = subDomainArgs;
 	}
 
+	public TilePlotTask(Map<String, String> map, File[] dataFiles, VerdiApplication vApp) {	// 2014 constructor for not using subDomain
+		this.map = map;
+		this.verdiApp = vApp;
+		this.datafiles = dataFiles;
+		this.subDomainArgs = null;
+	}
+
 	@Override
 	public void run() {
 		TilePlotConfiguration tconfig = createConfig();
+		int timeStep = 0;
 
 		if (datafiles == null || datafiles.length == 0) {
 			Logger.error("No data files found.");
@@ -66,11 +74,10 @@ public class TilePlotTask implements AbstractTask {
 		try {
 			verdiApp.loadDataset(datafiles);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
+			Logger.error("Exception in TilePlotTask when calling loadDataset: " + e1.getMessage());
 			e1.printStackTrace();
 		}
-		
-		if(subDomainArgs.length == 4) {
+		if(subDomainArgs != null && subDomainArgs.length == 4) {	// make sure we have a subdomain (i.e., 4 strings here)
 			try{
 				//since there is no way to change the dataset programmatically, 
 				//we will just use the last added one
@@ -81,8 +88,26 @@ public class TilePlotTask implements AbstractTask {
 	
 				dle.setDomain(Integer.parseInt(subDomainArgs[0]), Integer.parseInt(subDomainArgs[2]), Integer.parseInt(subDomainArgs[1]), Integer.parseInt(subDomainArgs[3]));
 			}catch(Exception e){
+				Logger.error("Exception in TilePlotTask when calling setDomain with a subDomain: " + e.getMessage());
 				e.printStackTrace();
 			}	
+		}
+		else {	// not using subdomain feature
+			try{
+				//since there is no way to change the dataset programmatically, 
+				//we will just use the last added one
+				DatasetListModel dlm = verdiApp.getProject().getDatasets();
+	
+				DatasetListElement dle = 
+					(DatasetListElement)dlm.getElementAt(dlm.getSize() - 1);
+	
+//				dle.setDomain(Integer.parseInt(subDomainArgs[0]), Integer.parseInt(subDomainArgs[2]), Integer.parseInt(subDomainArgs[1]), Integer.parseInt(subDomainArgs[3]));
+				dle.setXYUsed(false); 	// not using subdomain
+			}catch(Exception e){
+				Logger.error("Exception in TilePlotTask when calling setDomain and no subDomain: " + e.getMessage());
+				e.printStackTrace();
+			}	
+			
 		}
 		createFormula();
 		FastTilePlot plot = null;
@@ -91,19 +116,20 @@ public class TilePlotTask implements AbstractTask {
 			final DataFrame dataFrame = verdiApp.evaluateFormula(Formula.Type.TILE);
 
 			if (dataFrame != null) {
-
 	   	
 				plot = new FastTilePlot(verdiApp, dataFrame);
 	        	plot.configure(tconfig, Plot.ConfigSoure.FILE);
-
-						
 			    
 				try {
 					Axes<DataFrameAxis> axes = dataFrame.getAxes();
-					int timeStep = Integer.parseInt(map.get(VerdiConstants.TIME_STEP)) - 1; //assume it is 1-based
+					String aTimeStep = map.get(VerdiConstants.TIME_STEP);
+					if(aTimeStep == null)
+						timeStep = 0;
+					else
+						timeStep = Integer.parseInt(map.get(VerdiConstants.TIME_STEP)) - 1; //assume it is 1-based
 					plot.updateTimeStep(timeStep - axes.getTimeAxis().getOrigin());
 				} catch (NumberFormatException e) {
-					// TODO no-op
+					Logger.error("Number Format Exception in TilePlotTask when calling updateTimeStep: " + e.getMessage());
 				}
 			}
 	    }
@@ -112,6 +138,7 @@ public class TilePlotTask implements AbstractTask {
 			if (plot != null)
 				save(plot);
 		} catch (Exception e) {
+			Logger.error("Error in TilePlotTask with saving plot: " + e.getMessage());
 			e.printStackTrace();
 		} finally {
 			verdiApp.getProject().getFormulas().clear();
@@ -134,7 +161,7 @@ public class TilePlotTask implements AbstractTask {
 				vConfig = new VertCrossPlotConfiguration(new PlotConfiguration(configFile));
 //				vectorConfig = new VectorPlotConfiguration(new PlotConfiguration(configFile));
 			} catch (Exception e) {
-				//
+				Logger.error("Exception in TilePlotTask.createConfig creating plot configuration: " + e.getMessage());
 			} 
 		}
 		

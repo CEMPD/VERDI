@@ -1,7 +1,7 @@
 package anl.verdi.core;
 
 /**
- * Constants used by the Pave2 application
+ * Constants used by the VERDI application
  * 
  * @author Nick Collier
  * @version $Revision$ $Date$

@@ -1012,7 +1012,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		draw();
 	}
 
-	public void resetRowsNColoumns(int fRow, int lRow, int fColumn, int lColumn) {
+	public void resetRowsNColumns(int fRow, int lRow, int fColumn, int lColumn) {
 		if (fRow < 1)
 			fRow = 1;
 
@@ -2622,7 +2622,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	}
 
 	private void setDataRanges() {
-		DataRangeDialog dialog = new DataRangeDialog("Set Rows and Columns",
+		DataRangeDialog dialog = new DataRangeDialog("Set Row and Column Ranges",
 				FastTilePlot.this, firstRow + 1, lastRow + 1, firstColumn + 1,
 				lastColumn + 1);
 		dialog.showDialog();
@@ -2671,7 +2671,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 				lastRow = Integer.valueOf(lRowField.getText());
 				firstColumn = Integer.valueOf(fColumnField.getText());
 				lastColumn = Integer.valueOf(lColumnField.getText());
-				plot.resetRowsNColoumns(firstRow, lastRow, firstColumn,
+				plot.resetRowsNColumns(firstRow, lastRow, firstColumn,
 						lastColumn);
 				return YES_OPTION;
 			} catch (NumberFormatException e) {
