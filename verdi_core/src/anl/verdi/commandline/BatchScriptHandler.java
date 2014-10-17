@@ -95,9 +95,8 @@ public class BatchScriptHandler {
 			return;
 		}
 
-		if(commands.size() > 0)		// if (commands.size() > 0) // 2014 rearranged test to reduce indent level by 1 for legibility
+		if(commands.size() > 0)	
 		{
-
 			ArrayList<String> thisCommand = commands.get(0);
 			String option = thisCommand.get(0);
 
@@ -133,7 +132,7 @@ public class BatchScriptHandler {
 		for (AbstractTask task : tasks) {
 			try {
 				if (task != null)
-					task.run();
+					task.run();		// here is how program gets to TilePlotTask to execute
 			} catch (Throwable e) {
 				Logger.error("Error in BatchScriptHandler.processTasks: Task is null. " + e.getMessage());
 				e.printStackTrace();

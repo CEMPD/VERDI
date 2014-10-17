@@ -409,8 +409,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 					if (drawMode == DRAW_CONTINUOUS && delay != 0) {
 						try {
 							Thread.sleep(delay);
-						} catch (Exception unused) {
-						}
+						} catch (Exception unused) {}
 					}
 
 					final int canvasWidth = getWidth();
@@ -647,8 +646,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 				} else {
 					try {
 						Thread.sleep(100); /* ms. */
-					} catch (Exception unused) {
-					}
+					} catch (Exception unused) {}
 				}
 			} while (drawMode != DRAW_END);
 		}
@@ -952,8 +950,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 				rightStepButton.setEnabled(true);
 				try {
 					Thread.sleep(100);
-				} catch (Exception unused) {
-				}
+				} catch (Exception unused) {}
 				
 				timeLayerPanel.setTime(timestep);
 			}
@@ -1596,7 +1593,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			this.statError = false;
 			this.statErrMsg = "";
 		} catch ( Exception e) {
-			//center.error("Error occurred during computing statistics", e);
+			Logger.error("Error occurred during computing statistics: " + e.getMessage());
 			this.statError = true;
 			this.statErrMsg = "Error occurred during computing statistics: " + e.getMessage();
 			if ( map != null && map.getScaleType() == ColorMap.ScaleType.LOGARITHM) {
@@ -2197,7 +2194,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			controlLayer = new FeatureLayer(ds.getFeatureSource().getFeatures(query), style);
 			controlLayer.setTitle("Control Layer");
 		} catch (Exception e) {
-			//NOTE: no-op
+			Logger.error("Exception in FastTilePlot.createControlLayer: " + e.getMessage());
 		}
 		
 		return controlLayer;
@@ -2391,7 +2388,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)));
 			} catch (IOException ex) {
-				Logger.error("Error loading configuration " + ex.getMessage());
+				Logger.error("IOException in FastTilePlot.configure: loading configuration: " + ex.getMessage());
 			}
 		}
 
@@ -2447,7 +2444,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)), source);
 			} catch (IOException ex) {
-				Logger.error("Error loading configuration " + ex.getMessage());
+				Logger.error("IOException in FastTilePlot.configure: loading configuration: " + ex.getMessage());
 			}
 		}
 		
@@ -2507,6 +2504,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		try {
 			minMax = new DataUtilities.MinMax(map.getMin(), map.getMax());
 		} catch (Exception e) {
+			Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
 			e.printStackTrace();
 			return;
 		}
@@ -2520,13 +2518,14 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			try {
 				legendLevels[i] = map.getIntervalStart(i);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
 				e.printStackTrace();
 			}
 
 		try {
 			legendLevels[count] = map.getMax();
 		} catch (Exception e) {
+			Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
 			e.printStackTrace();
 			Logger.error("FastTilePlot's updateColorMap method "+ e.getMessage());
 			return;
@@ -2675,7 +2674,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 						lastColumn);
 				return YES_OPTION;
 			} catch (NumberFormatException e) {
-				Logger.error("Set Rows and Columns: " + e.getMessage());
+				Logger.error("Number Format Exception in FastTilePlot.showDialog: Set Rows and Columns: " + e.getMessage());
 			}
 
 			return ERROR;
@@ -2879,7 +2878,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		try {
 			timeLayerPanel.setTime(timestep);
 		} catch (Exception e) {
-			Logger.error("Error setting time step. Time step = " + timestep + ". Is this 1-based? " + e.getMessage());
+			Logger.error("Exception setting time step. Time step = " + timestep + ". Is this 1-based? " + e.getMessage());
 		}
 		
 		drawOverLays();
@@ -2888,7 +2887,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		try {
 			Thread.sleep(500); //wait for the drawing thread to finish drawing
 		} catch (InterruptedException e) {
-			//no-op
+			Logger.error("Interrupted Exception in FastTilePlot.updateTimeStep: " + e.getMessage());
 		}
 	}
 	
@@ -2902,77 +2901,75 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			if (hasNoLayer) return DataUtilities.minMaxPoint(getDataFrame(), timestep - firstTimestep);
 			return DataUtilities.minMaxTLPoint(getDataFrame(), timestep - firstTimestep, layer - firstLayer);
 		} catch (InvalidRangeException e) {
-			Logger.error("Error getting min max points " + e.getMessage());
+			Logger.error("Invalid Range Exception in FastTilePlot getMinMaxPoints: " + e.getMessage());
 		}
-
 		return null;
 	}
 
 	private void probe(Rectangle axisRect) {
 		synchronized (lock) {
-		Slice slice = new Slice();
-		slice.setTimeRange(timestep - firstTimestep, 1);
-		if (!hasNoLayer) slice.setLayerRange(layer - firstLayer, 1);
-		Axes<DataFrameAxis> axes = getDataFrame().getAxes();
-		final int probeFirstColumn = axisRect.x - axes.getXAxis().getOrigin(); 
-		final int probeColumns = axisRect.width + 1;
-		final int probeFirstRow = axisRect.y - axisRect.height - axes.getYAxis().getOrigin();
-		final int probeRows = axisRect.height + 1;
+			Slice slice = new Slice();
+			slice.setTimeRange(timestep - firstTimestep, 1);
+			if (!hasNoLayer) slice.setLayerRange(layer - firstLayer, 1);
+			Axes<DataFrameAxis> axes = getDataFrame().getAxes();
+			final int probeFirstColumn = axisRect.x - axes.getXAxis().getOrigin(); 
+			final int probeColumns = axisRect.width + 1;
+			final int probeFirstRow = axisRect.y - axisRect.height - axes.getYAxis().getOrigin();
+			final int probeRows = axisRect.height + 1;
 
-		slice.setXRange( probeFirstColumn, probeColumns );
-		slice.setYRange( probeFirstRow, probeRows );
+			slice.setXRange( probeFirstColumn, probeColumns );
+			slice.setYRange( probeFirstRow, probeRows );
 
-		try {
-			DataFrame subsection = null;
-			
-//			boolean isLog = false;		// isLog is not used
-			double logBase = 10.0;
-			ColorMap map = (ColorMap) config
-				.getObject(TilePlotConfiguration.COLOR_MAP);
-			if (map != null) {
-				// set log related info
-				ColorMap.ScaleType iType = map.getScaleType();
-				if ( iType == ColorMap.ScaleType.LOGARITHM ) {
-//					isLog = true;
-					logBase = map.getLogBase();
-				}
-			}			
+			try {
+				DataFrame subsection = null;
 
-			if ( statisticsMenu.getSelectedIndex() != 0 ) {
-				// HACK: copy and overwrite subsection.array with subsetLayerData:
-				subsection = getDataFrame().sliceCopy( slice );
-				final int probeLastColumn = probeFirstColumn + probeColumns -1 ;
-				final int probeLastRow = probeFirstRow + probeRows - 1 ;
-				final ucar.ma2.Array array = subsection.getArray();
-				final ucar.ma2.Index index = array.getIndex();
-				
-				for ( int row = probeFirstRow; row <= probeLastRow; ++row ) {
-					final int sliceRow = (probeFirstRow - firstRow) + (row - probeFirstRow) - 1;
-					final int sliceRowIndex = (row - probeFirstRow);
-					index.set2( sliceRowIndex );
-
-					for ( int column = probeFirstColumn; column <= probeLastColumn; ++column ) {
-						final int sliceColumn = (probeFirstColumn - firstColumn) +  (column - probeFirstColumn) -1;
-						final int sliceColumnIndex = (column - probeFirstColumn);
-						index.set3( sliceColumnIndex );
-						final float value = subsetLayerData[ sliceRow ][ sliceColumn ];
-						array.setFloat( index, value );
+				//			boolean isLog = false;		// isLog is not used
+				double logBase = 10.0;
+				ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
+				if (map != null) {
+					// set log related info
+					ColorMap.ScaleType iType = map.getScaleType();
+					if ( iType == ColorMap.ScaleType.LOGARITHM ) {
+						//					isLog = true;
+						logBase = map.getLogBase();
 					}
+				}			
+
+				if ( statisticsMenu.getSelectedIndex() != 0 ) {
+					// HACK: copy and overwrite subsection.array with subsetLayerData:
+					subsection = getDataFrame().sliceCopy( slice );
+					final int probeLastColumn = probeFirstColumn + probeColumns -1 ;
+					final int probeLastRow = probeFirstRow + probeRows - 1 ;
+					final ucar.ma2.Array array = subsection.getArray();
+					final ucar.ma2.Index index = array.getIndex();
+
+					for ( int row = probeFirstRow; row <= probeLastRow; ++row ) {
+						final int sliceRow = (probeFirstRow - firstRow) + (row - probeFirstRow) - 1;
+						final int sliceRowIndex = (row - probeFirstRow);
+						index.set2( sliceRowIndex );
+
+						for ( int column = probeFirstColumn; column <= probeLastColumn; ++column ) {
+							final int sliceColumn = (probeFirstColumn - firstColumn) +  (column - probeFirstColumn) -1;
+							final int sliceColumnIndex = (column - probeFirstColumn);
+							index.set3( sliceColumnIndex );
+							final float value = subsetLayerData[ sliceRow ][ sliceColumn ];
+							array.setFloat( index, value );
+						}
+					}
+
+				} else {
+					subsection = getDataFrame().slice(slice);
 				}
 
-			} else {
-				subsection = getDataFrame().slice(slice);
+				probedSlice = slice;
+				enableProbeItems(true);
+				ProbeEvent ent = new ProbeEvent(this, subsection, slice, Formula.Type.TILE);	// 2014 fixed code not knowing what TILE meant
+				ent.setIsLog( false); //isLog); // JIZHEN: always set to false, take log inside this class
+				ent.setLogBase( logBase);
+				eventProducer.fireProbeEvent(ent);//new ProbeEvent(this, subsection, slice, TILE));
+			} catch (InvalidRangeException e) {
+				Logger.error("Invalid Range Exception in FastTilePlot.Probe: " + e.getMessage());
 			}
-
-			probedSlice = slice;
-			enableProbeItems(true);
-			ProbeEvent ent = new ProbeEvent(this, subsection, slice, Formula.Type.TILE);	// 2014 fixed code not knowing what TILE meant
-			ent.setIsLog( false); //isLog); // JIZHEN: always set to false, take log inside this class
-			ent.setLogBase( logBase);
-			eventProducer.fireProbeEvent(ent);//new ProbeEvent(this, subsection, slice, TILE));
-		} catch (InvalidRangeException e) {
-			Logger.error("Error while probing " + e.getMessage());
-		}
 		}
 	}
 
@@ -2992,7 +2989,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			DataFrame subsection = getDataFrame().slice(slice);
 			eventProducer.firePlotRequest(new TimeSeriesPlotRequest(subsection, slice, type));
 		} catch (InvalidRangeException e1) {
-			Logger.error("Error while creating time series from tile " + e1.getMessage());
+			Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries: " + e1.getMessage());
 		}
 	}
 
@@ -3013,7 +3010,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 				DataFrame subsection = getDataFrame().slice(slice);
 				request.addItem(subsection);
 			} catch (InvalidRangeException e1) {
-				Logger.error("Error while creating time series from tile " + e1.getMessage());
+				Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries: " + e1.getMessage());
 			}
 		}
 		eventProducer.firePlotRequest(request);
@@ -3366,8 +3363,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 							((units==null || units.trim().equals("")) ? "none" : units), config, map.getNumberFormat(), gridLineColor,
 							subsetLayerData);
 			} catch (Exception e) {
+				Logger.error("Exception in FastTilePlot.Draw (EpsRenderer's draw method): " + e.getMessage());
 				e.printStackTrace();
-				Logger.error("EpsRenderer's draw method " + e.getMessage());
 				return;
 			}
 				
