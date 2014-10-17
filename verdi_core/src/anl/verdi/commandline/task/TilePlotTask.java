@@ -46,6 +46,11 @@ public class TilePlotTask implements AbstractTask {
 	private ColorMap cmap = null;
 	private File[] datafiles;
 	private String[] subDomainArgs;
+	// 2014: 4 parameters for subdomain
+	private int xmin = 0;	// == first column
+	private int xmax = 0;	// == last column
+	private int ymin = 0;	// == first row
+	private int ymax = 0;	// == last row
 	
 	public TilePlotTask(Map<String, String> map, File[] dataFiles, VerdiApplication vApp, String[] subDomainArgs) {
 		this.map = map;
@@ -86,13 +91,18 @@ public class TilePlotTask implements AbstractTask {
 				DatasetListElement dle = 
 					(DatasetListElement)dlm.getElementAt(dlm.getSize() - 1);
 	
-				dle.setDomain(Integer.parseInt(subDomainArgs[0]), Integer.parseInt(subDomainArgs[2]), Integer.parseInt(subDomainArgs[1]), Integer.parseInt(subDomainArgs[3]));
+				xmin = Integer.parseInt(subDomainArgs[0]);
+				xmax = Integer.parseInt(subDomainArgs[2]);
+				ymin = Integer.parseInt(subDomainArgs[1]);
+				ymax = Integer.parseInt(subDomainArgs[3]);
+				dle.setXYUsed(true); 	// using subdomain
+//				dle.setDomain(xmin, xmax, ymin, ymax);	// no longer need this here - causes a subdomain of the subdomain
 			}catch(Exception e){
 				Logger.error("Exception in TilePlotTask when calling setDomain with a subDomain: " + e.getMessage());
 				e.printStackTrace();
 			}	
 		}
-		else {	// not using subdomain feature
+		else {	// 2014 not using subdomain feature
 			try{
 				//since there is no way to change the dataset programmatically, 
 				//we will just use the last added one
@@ -101,7 +111,6 @@ public class TilePlotTask implements AbstractTask {
 				DatasetListElement dle = 
 					(DatasetListElement)dlm.getElementAt(dlm.getSize() - 1);
 	
-//				dle.setDomain(Integer.parseInt(subDomainArgs[0]), Integer.parseInt(subDomainArgs[2]), Integer.parseInt(subDomainArgs[1]), Integer.parseInt(subDomainArgs[3]));
 				dle.setXYUsed(false); 	// not using subdomain
 			}catch(Exception e){
 				Logger.error("Exception in TilePlotTask when calling setDomain and no subDomain: " + e.getMessage());
@@ -119,6 +128,11 @@ public class TilePlotTask implements AbstractTask {
 	   	
 				plot = new FastTilePlot(verdiApp, dataFrame);
 	        	plot.configure(tconfig, Plot.ConfigSoure.FILE);
+	        	// here handle subdomain
+	        	if(subDomainArgs != null)	// have a subdomain defined
+	        	{
+	        		plot.resetRowsNColumns(ymin, ymax, xmin, xmax);
+	        	}
 			    
 				try {
 					Axes<DataFrameAxis> axes = dataFrame.getAxes();
@@ -231,6 +245,7 @@ public class TilePlotTask implements AbstractTask {
 			verdiApp.getProject().getFormulas().addFormula(e);
 			verdiApp.getProject().setSelectedFormula(e);
 		} catch (NullPointerException e) {
+			Logger.error("Null Pointer Exception in TilePlotTask.createFormula: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -243,7 +258,7 @@ public class TilePlotTask implements AbstractTask {
 			width = Integer.parseInt(map.get(VerdiConstants.IMAGE_WIDTH));
 			height = Integer.parseInt(map.get(VerdiConstants.IMAGE_HEIGHT));
 		} catch (Exception e) {
-			//NOTE: no-op
+			Logger.error("Exception in TilePlotTask.save: " + e.getMessage());
 		}
 		
 		String ext = map.get(VerdiConstants.IMAGE_TYPE);

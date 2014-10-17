@@ -42,7 +42,7 @@
 		s=O3[1]
 		saveImage=png
 		imageDir=../verdi_dist/distfiles/data/plots
-                subdomain=10 10 50 50 
+                subdomain=20 10 75 50 
 		ts=1
 		</Global>
 

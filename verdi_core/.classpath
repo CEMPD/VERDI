@@ -62,8 +62,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/gt-feature-aggregate-10.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-feature-pregeneralized-10.5.jar" sourcepath="lib_src/gt-feature-pregeneralized-10.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2-api-2.0-rc1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-renderer-9.5.jar" sourcepath="lib_src/gt-shapefile-renderer-9.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-old-10.5.jar" sourcepath="lib_src/gt-shapefile-old-10.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/piccolo.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/piccolox.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.4.jar" sourcepath="lib_src/commons-io-2.4-sources.jar"/>
@@ -96,5 +94,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/log4j-api-2.0-rc1.jar" sourcepath="/verdi_bootstrap/lib_src/log4j-api-2.0-rc1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-core-2.0-rc1.jar" sourcepath="/verdi_bootstrap/lib_src/log4j-core-2.0-rc1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/clibwrapper_jiio-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-renderer-9.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-old-10.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -47,8 +47,6 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-referencing-10.5.jar" sourcepath="verdi_core/lib_src/gt-referencing-10.5-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-render-10.5.jar" sourcepath="verdi_core/lib_src/gt-render-10.5-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-10.5.jar" sourcepath="verdi_core/lib_src/gt-shapefile-10.5-sources.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-old-10.5.jar" sourcepath="verdi_core/lib_src/gt-shapefile-old-10.5-sources.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-renderer-9.5.jar" sourcepath="verdi_core/lib_src/gt-shapefile-renderer-9.5-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/hsqldb.jar" sourcepath="/verdi_core/lib_src/hsqldb-2.3.2.zip"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/icu4j-50_1_1.jar" sourcepath="verdi_core/lib_src/icu4j-50_1_1-src.jar">
 		<attributes>
@@ -98,5 +96,6 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/velocity-1.7.jar" sourcepath="verdi_core/lib_src/velocity-1.7.zip"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/visad.jar" sourcepath="verdi_core/lib_src/visad_src.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/xpp3_min-1.1.4c.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-renderer-9.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
