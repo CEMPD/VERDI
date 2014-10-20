@@ -97,5 +97,6 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/visad.jar" sourcepath="verdi_core/lib_src/visad_src.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-renderer-9.5.jar"/>
+	<classpathentry kind="lib" path="lib"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
