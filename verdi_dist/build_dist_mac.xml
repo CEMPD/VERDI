@@ -92,6 +92,7 @@
 			<fileset file="${bootstrap.dir}/lib/jpf-boot.jar"/>
 			<fileset file="${bootstrap.dir}/lib/jpf-tools.jar"/>
 			<fileset file="${bootstrap.dir}/lib/jaramiko-151.jar"/>
+			<fileset file="${bootstrap.dir}/lib/log4j2.xml"/>
 		</copy>
 
 		<copy todir="${plugins.dist.dir}/bootstrap/data">
