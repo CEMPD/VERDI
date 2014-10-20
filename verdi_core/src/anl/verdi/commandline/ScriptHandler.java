@@ -100,7 +100,7 @@ public class ScriptHandler {
 	private static ColorMap cmap = null;
 
 	private static int selectedTimeStep = 1; //Default to 1-based first step
-	private static String aliasFileName = System.getProperty("user.home") + "verdi.alias";
+	private static String aliasFileName = System.getProperty("user.home") + File.separatorChar + "verdi.alias";
 	private static int levelMin = -1;
 	private static int levelMax = -1;
 
@@ -159,8 +159,8 @@ public class ScriptHandler {
 	public ScriptHandler(String[] args, VerdiApplication vApp) 
 	{
 		constructMap();
-
 		verdiApp = vApp;
+
 		loadAliasFile();
 		commands = CommandLineParser.parseCommands(args);
 	}
@@ -746,18 +746,21 @@ public class ScriptHandler {
 		dataMap.put("help".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
 				Logger.debug(HELPTEXT);
+				System.out.println(HELPTEXT);
 				System.exit(0);
 			}				
 		});
 		dataMap.put("fullhelp".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
 				Logger.debug(HELPTEXT);
+				System.out.println(HELPTEXT);
 				System.exit(0);
 			}				
 		});
 		dataMap.put("usage".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
 				Logger.debug(HELPTEXT);
+				System.out.println(HELPTEXT);
 				System.exit(0);
 			}				
 		});
