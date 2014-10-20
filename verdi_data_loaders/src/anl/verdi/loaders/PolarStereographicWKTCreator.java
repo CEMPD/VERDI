@@ -26,7 +26,7 @@ public class PolarStereographicWKTCreator {
 	static final Logger Logger = LogManager.getLogger(PolarStereographicWKTCreator.class.getName());
 
 	public String createWKT(Stereographic proj) throws IOException {
-		System.out.println("in PolarStereographicWKTCreator.createWKT");
+//		System.out.println("in PolarStereographicWKTCreator.createWKT");
 		VelocityContext context = new VelocityContext();
 		String template = getClass().getPackage().getName();
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -38,10 +38,10 @@ public class PolarStereographicWKTCreator {
 		double projTangentLat = proj.getTangentLat();
 		double projTangentLon = proj.getTangentLon();
 		double projScale = proj.getScale();
-		System.out.println("in createWKT: proj.getCentralMeridian returns " + projCentralMeridian);
-		System.out.println("in createWKT: proj.getNaturalOriginLat returns " + projNatOriginLat);
-		System.out.println("in createWKT: proj.getTangentLat returns " + projTangentLat);
-		System.out.println("in createWKT: proj.getTangentLon returns " + projTangentLon);
+//		System.out.println("in createWKT: proj.getCentralMeridian returns " + projCentralMeridian);
+//		System.out.println("in createWKT: proj.getNaturalOriginLat returns " + projNatOriginLat);
+//		System.out.println("in createWKT: proj.getTangentLat returns " + projTangentLat);
+//		System.out.println("in createWKT: proj.getTangentLon returns " + projTangentLon);
 
 
 		context.put("lat_origin", projNatOriginLat);	// 2014 NOTE: usually 90.0 but some datasets use 70.0
@@ -55,7 +55,7 @@ public class PolarStereographicWKTCreator {
 //		double projScale = 0.8537995936163079;
 //		double projScale = proj.getScale(); // testing for projCentralMeridian
 		context.put("scale", projScale);		// 2014 had been proj.getScale()
-		System.out.println("in createWKT: projScale is " + projScale);
+//		System.out.println("in createWKT: projScale is " + projScale);
 		Writer writer = new StringWriter();
 
 		try {

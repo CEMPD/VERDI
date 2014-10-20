@@ -292,7 +292,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 			}
 		} else if (proj instanceof Stereographic) {
 			Logger.debug("projection is of type Stereographic");
-			System.out.println("in NetcdfBoxer: instanceof Stereographic ");
+//			System.out.println("in NetcdfBoxer: instanceof Stereographic ");
 			if (crs == null) {
 				//Logger.debug("NOTE: crs is null");
 				try {
