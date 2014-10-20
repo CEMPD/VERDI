@@ -176,7 +176,10 @@
 	
 	<target name="build.linux.dist" depends="prep.dist">	  	       
 	        <unzip src="./distfiles/licenses.zip" dest="${dist.dir}"/>
-	        <unzip src="./distfiles/data.zip" dest="${dist.dir}"/>
+			<mkdir dir="${dist.dir}/data"/>
+			<copy todir="${dist.dir}/data">
+				<fileset dir="./distfiles/data"/>
+			</copy>
 	    
 	        <copy todir="${dist.dir}">
 	            <fileset file="./distfiles/INSTALL.linux.txt"/>
