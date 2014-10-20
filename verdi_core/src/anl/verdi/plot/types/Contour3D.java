@@ -446,6 +446,19 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		double w = pf.getImageableWidth();
 		double h = pf.getImageableHeight();
 		BufferedImage img = getBufferedImage();
+		
+		// scale image to fit paper while maintaining original aspect ratio
+		double origRatio = (double) img.getWidth() / (double) img.getHeight();
+		double paperRatio = w / h;
+		
+		if (origRatio > paperRatio) {
+			// constrain width
+			h = w / origRatio;
+		} else {
+			// constrain height
+			w = h * origRatio;
+		}
+
 		g2.drawImage(img, (int) x, (int) y, (int) w, (int) h, null);
 		return PAGE_EXISTS;
 	}
