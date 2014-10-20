@@ -2599,24 +2599,21 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		double y = pf.getImageableY();
 		double w = pf.getImageableWidth();
 		double h = pf.getImageableHeight();
+		BufferedImage img = getBufferedImage();
 		
 		// scale image to fit paper while maintaining original aspect ratio
 		double origRatio = (double) getWidth() / (double) getHeight();
 		double paperRatio = w / h;
 		
-		Image scaled = null;
 		if (origRatio > paperRatio) {
 			// constrain width
-			scaled = this.getBufferedImage().getScaledInstance((int) w, -1, Image.SCALE_SMOOTH);
+			h = w / origRatio;
 		} else {
 			// constrain height
-			scaled = this.getBufferedImage().getScaledInstance(-1, (int) h, Image.SCALE_SMOOTH);
+			w = h * origRatio;
 		}
 
-		g2.setBackground(Color.white);
-		g2.drawImage(toBufferedImage(scaled, BufferedImage.TYPE_INT_ARGB, (int) w, (int) h), 
-				null, new Float(x).intValue(), new Float(y).intValue());
-
+		g2.drawImage(img, (int) x, (int) y, (int) w, (int) h, null);
 		return PAGE_EXISTS;
 	}
 
