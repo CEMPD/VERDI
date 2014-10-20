@@ -371,7 +371,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				try {
-					queue.put(display.getImage(true));
+					queue.put(display.getImage());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
