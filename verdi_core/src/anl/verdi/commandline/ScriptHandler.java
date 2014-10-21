@@ -1856,7 +1856,9 @@ public class ScriptHandler {
 			in.close();
 		} catch (IOException e) {
 			Logger.error("IOException in ScriptHandler.loadAliasFile: " + e.getMessage());
-		}
+		} catch (Exception e) {
+			Logger.error("Exception in ScriptHandler.loadAliasFile: " + e.getMessage());
+		} 
 	}
 
 	private static void writeToAliasFile()
@@ -1885,6 +1887,9 @@ public class ScriptHandler {
 
 		}catch(IOException i){
 			Logger.error("IOException in ScriptHandler.writeToAliasFile: " + i.getMessage());
+		} catch (Exception e) {
+			Logger.error("Exception in ScriptHandler.writeToAliasFile: " + e.getMessage());
 		}
+		
 	}
 }
