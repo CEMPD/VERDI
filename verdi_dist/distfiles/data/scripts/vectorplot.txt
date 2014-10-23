@@ -1,38 +1,38 @@
 		####################################################################################
-		# NOTE: Batch Scripting Language                                                   #
-		#                                                                                  #
-		#    * All parameter/value pairs should be inside one of the two blocks --         #
-		#        <Global/> or <Task/>                                                      #
-		#    * Number of blocks is not limited                                             #
-		#    * Only one <Global/> block is recommended. <Global/> blocks should            #
-		#        contains different items if use multiple <Global/> blocks                 #
-		#    * Parameter values in <Task/> blocks will override those in <Global/>         #
-		#    * Currently supported parameters (keys, case insensitive):                    #
-		#        configFile    -- configuration file full path                             #
-		#        f             -- dataset file path/name                                   #
-		#        dir           -- dataset file folder                                      #
-		#        pattern       -- dataset file name pattern                                #
-		#        gtype         -- plot type (tile, line, bar, vector)                      #
-		#        vector        -- vector plot variables                                    #
-		#        vectorTile    -- vector plot variables                                    #
-		#        s             -- variable name                                            #
-		#        ts            -- time step                                                #
-		#        titleString   -- plot title                                               #
-                #        subdomain     -- xmin ymin xmax ymax                                      #
-		#        subTitle1     -- plot subtitle one                                        #
-		#        subTitle2     -- plot subtitle two                                        #
-		#        saveImage     -- image file type (png, jpeg, eps, etc.)                   #
-		#        imageFile     -- image file path/name                                     #
-		#        imageDir      -- image file folder                                        #
-		#        drawGridLines -- draw grid lines on the tile plot if 'yes'                #
-		#        imageWidth    -- image width                                              #
-		#        imageHeight   -- image height                                             #
-		#        unitString    -- units                                                    #
-		#                                                                                  #
-		#                                                                                  #
-		# Author: IE, UNC at Chapel Hill                                                   #
-		# Date: 10/27/2014                                                                 #
-		# Version: 2                                                                       #
+		# NOTE: Batch Scripting Language                                                   
+		#                                                                                  
+		#    * All parameter/value pairs should be inside one of the two blocks --         
+		#        <Global/> or <Task/>                                                      
+		#    * Number of blocks is not limited                                             
+		#    * Only one <Global/> block is recommended. <Global/> blocks should            
+		#        contains different items if use multiple <Global/> blocks                 
+		#    * Parameter values in <Task/> blocks will override those in <Global/>         
+		#    * Currently supported parameters (keys, case insensitive):                    
+		#        configFile    -- configuration file full path                             
+		#        f             -- dataset file path/name                                   
+		#        dir           -- dataset file folder                                      
+		#        pattern       -- dataset file name pattern                                
+		#        gtype         -- plot type (tile, line, bar, vector)                      
+		#        vector        -- vector plot variables                                    
+		#        vectorTile    -- vector plot variables                                    
+		#        s             -- variable name                                            
+		#        ts            -- time step                                                
+		#        titleString   -- plot title                                               
+		#        subdomain     -- xmin ymin xmax ymax                                      
+		#        subTitle1     -- plot subtitle one                                        
+		#        subTitle2     -- plot subtitle two                                        
+		#        saveImage     -- image file type (png, jpeg, eps, etc.)                   
+		#        imageFile     -- image file path/name                                     
+		#        imageDir      -- image file folder                                        
+		#        drawGridLines -- draw grid lines on the tile plot if 'yes'                
+		#        imageWidth    -- image width                                              
+		#        imageHeight   -- image height                                             
+		#        unitString    -- units                                                    
+		#                                                                                  
+		#                                                                                  
+		# Author: IE, UNC at Chapel Hill                                                   
+		# Date: 10/27/2014                                                                 
+		# Version: 2                                                                       
 		####################################################################################
 
 		<Global>
@@ -61,9 +61,9 @@
 		<Task>
 		gtype=vectorTile
 		f=CCTM47_aac_spr06.12k.CONC.2006113.O3.ncf
-                f=metdot3d_12k.uwind.vwind
+                		f=metdot3d_12k.uwind.vwind
 		vectorTile=O3[1],UWIND[2],VWIND[2]
-                titleString="Ozone with wind vector overlay (UWINDxVWIND)
+                		titleString="Ozone with wind vector overlay (UWINDxVWIND)
 		imageFile=vector-tile-test.jpeg
 		imageWidth=1600
 		imageHeight=1600
