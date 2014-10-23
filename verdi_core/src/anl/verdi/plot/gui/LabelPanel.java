@@ -290,7 +290,7 @@ public class LabelPanel extends JPanel {
 		add(textFld, cc.xy(5, 3));
 
 		//---- label2 ----
-		label2.setText("Font");
+		label2.setText("Font:");
 		add(label2, cc.xy(3, 5));
 
 		//---- fontFld ----
@@ -337,7 +337,7 @@ public class LabelPanel extends JPanel {
 		add(tickFontBtn, cc.xy(7, 15));
 
 		//---- tickColorLbl ----
-		tickColorLbl.setText("Color");
+		tickColorLbl.setText("Color:");
 		add(tickColorLbl, cc.xy(3, 17));
 
 		//---- tickColorFld ----
