@@ -18,6 +18,7 @@
 		#        s             -- variable name                                            #
 		#        ts            -- time step                                                #
 		#        titleString   -- plot title                                               #
+                #        subdomain     -- xmin ymin xmax ymax                                      #
 		#        subTitle1     -- plot subtitle one                                        #
 		#        subTitle2     -- plot subtitle two                                        #
 		#        saveImage     -- image file type (png, jpeg, eps, etc.)                   #
@@ -30,8 +31,8 @@
 		#                                                                                  #
 		#                                                                                  #
 		# Author: IE, UNC at Chapel Hill                                                   #
-		# Date: 6/1/2010                                                                   #
-		# Version: 0                                                                       #
+		# Date: 10/27/2014                                                                 #
+		# Version: 2                                                                       #
 		####################################################################################
 
 
