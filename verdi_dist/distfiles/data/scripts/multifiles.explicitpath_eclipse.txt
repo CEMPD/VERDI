@@ -37,12 +37,12 @@
 
 
 		<Global>
-		configFile=../../data/configs/o3_Calif_4km.cfg
-		dir=../../data/model
+		configFile=../verdi_dist/distfiles/data/configs/o3_Calif_4km.cfg
+		dir=../verdi_dist/distfiles/data/model
 		pattern=*combine*
 		s=O3[1]
 		saveImage=jpeg
-		imageDir=../../data/plots
+		imageDir=../verdi_dist/distfiles/data/plots
 		subTitle1="Test SubTitle 1"
 		subTitle2="Test SubTitle 2"
 		</Global>

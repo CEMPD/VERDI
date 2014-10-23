@@ -17,12 +17,12 @@
 		#        vectorTile    -- vector plot variables                                    
 		#        s             -- variable name                                            
 		#        ts            -- time step                                                
-		#        titleString   -- plot title                                              
+		#        titleString   -- plot title                                               
 		#        subdomain     -- xmin ymin xmax ymax                                      
 		#        subTitle1     -- plot subtitle one                                        
 		#        subTitle2     -- plot subtitle two                                        
 		#        saveImage     -- image file type (png, jpeg, eps, etc.)                   
-		#        imageFile     -- image file path/name                                    
+		#        imageFile     -- image file path/name                                     
 		#        imageDir      -- image file folder                                        
 		#        drawGridLines -- draw grid lines on the tile plot if 'yes'                
 		#        imageWidth    -- image width                                              
@@ -31,19 +31,18 @@
 		#                                                                                  
 		#                                                                                  
 		# Author: IE, UNC at Chapel Hill                                                   
-		# Date: 10/27/2014                                                                
-		# Version: 2                                                                       
+		# Date: 6/1/2010                                                                   
+		# Version: 0                                                                       
 		####################################################################################
 
 
 		<Global>
-		configFile=../../data/configs/o3_10bin.cfg
-		dir=../../data/model
+		configFile=../verdi_dist/distfiles/data/configs/o3_10bin.cfg
+		dir=../verdi_dist/distfiles/data/model
 		pattern=*CCTM46*
 		s=O3[1]
 		saveImage=png
-		imageDir=../../data/plots
-		subdomain=20 10 75 50 
+		imageDir=../verdi_dist/distfiles/data/plots
 		ts=1
 		</Global>
 

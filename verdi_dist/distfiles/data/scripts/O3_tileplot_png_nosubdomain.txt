@@ -37,12 +37,12 @@
 
 
 		<Global>
-		configFile=../verdi_dist/distfiles/data/configs/o3_10bin.cfg
-		dir=../verdi_dist/distfiles/data/model
+		configFile=../../data/configs/o3_10bin.cfg
+		dir=../../data/model
 		pattern=*CCTM46*
 		s=O3[1]
 		saveImage=png
-		imageDir=../verdi_dist/distfiles/data/plots
+		imageDir=../../data/plots
 		ts=1
 		</Global>
 
