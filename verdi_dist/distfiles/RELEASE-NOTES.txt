@@ -1,4 +1,45 @@
 ------------------------------
+RELEASE NOTES FOR VERDI V1.5
+------------------------------
+
+These notes describe the differences between current version 1.5 and the previous public releases of
+VERDI (version 1.4.1).  The notes describe:
+
+        New Features
+        Bug Fixes
+        Known Issues
+        Build Environment
+
+NEW FEATURES IN V1.5:
+Java3D binaries are provided with the installation
+Single message logging system to improve customer support
+
+BUG FIXES IN V1.5:
+Replaced Vector Plot with Vector Overlay of the Fast Tile Plot.
+Fixed the calculation for areal interpolation for variables that did not have
+units of deposition (g/ha).
+Fixed the -subdomain option for the batch scripting method.
+Fixed the print output format from the Fast Tile Plot.
+Fixed printing from the contour plot.
+
+KNOWN ISSUES IN V1.5:
+Export to shapefile has been disabled pending a geolocation bug fix. 
+Export shapefile from the Areal interpolation plot provides a shapefile of the
+gridded data instead of the HUC data.
+Using an 8-color bin default, the two middle colors are very close to each
+other.
+Periods in the variable name are not accepted by VERDI, need to use _ or other
+value. (PM2.5 - use PM2_5 as an althernative).
+Formula calculations for mint, maxt, minx, maxx, miny, maxy, minz, maxz do not
+work.
+Need additional support for user configuration of plots including the Vertical Cross Section,
+Time Series, Time Series Bar, Scatter plot.
+
+BUILD ENVIRONMENT FOR V1.5:
+Java 7 - java version "1.7.0_71" Java(TM) SE Runtime Environment (build 1.7.0_71)
+
+
+------------------------------
 RELEASE NOTES FOR VERDI V1.4.1
 ------------------------------
 
@@ -11,7 +52,7 @@ These notes describe the differences between the previous public releases of VER
 NEW FEATURES IN V1.4.1:
 Added configuration capability to the Vertical Cross Section Plot to allow user to set the color palette and minimum and maximum values for the legend.
 Added ASCII observational data supported time zones: EST, EDT, PST, PDT, MST, MDT, CSD, CDT, HAST, HADT, AKST, AKDT, LST, LDT, and GMT/UTC. Previously VERDI had supported only UTC.
-Added option to allow user to specify the base map within the command line script option ñmapName.
+Added option to allow user to specify the base map within the command line script option ‚ÄìmapName.
 Added ability to use an alphanumeric string value for the Site ID in an ASCII observational dataset.
 Modified the netCDF Java library to include the capability to read additional variables from WRF files (e.g., land use fraction).
 Modified the help documentation within the VERDI GUI, linking to the PDF and html versions of the documentation, rather than an ASCII file, to facilitate searches.
@@ -32,7 +73,7 @@ Loading data: Fixed an issue with loading data that had units that contained mul
 Loading data: Fixed an issue with loading data that had units strings that were empty.
 
 KNOWN ISSUES IN V1.4.1
-Contour Plot: If the contour plot doesnít work on Windows 32, install DirectX SDK from http://www.microsoft.com/en-us/download/details.aspx?id=6812
+Contour Plot: If the contour plot doesn‚Äôt work on Windows 32, install DirectX SDK from http://www.microsoft.com/en-us/download/details.aspx?id=6812
 Script options to specify time within a formula using the following notation are not supported: s=VARNAME[1]:time. For example: for s=PM25_TOT[1]:5-PM25_TOT[2]:5 -g tile, VERDI plots the first hour in the dataset [1] not the 5th hour. The notation -ts=5 does work, but this option does not allow the user to create formulas using multiple time steps such as calculating 8-hour average ozone: s=((O3[1]:1+O3[1]:2+O3[1]:3+O3[1]:4+O3[1]:5+O3[1]:6+O3[1]:7+O3[1]:8)/8).
 Areal interpolation plot: When changing between different views, using Options> Show Area Averages, Options> Show Area Totals, and Options> Show Gridded Data, the min/max values are not updated correctly (always shows the min/max for the gridded data, rather than changing to the option selected by the user). 
 
@@ -71,7 +112,7 @@ A splash screen has been added at the start of the program.
 A minor change to the GUI's look and feel happened due to the change of docking frame libraries.
 
 BUG FIXES IN V1.4:
-(The format of the information below is ìBugzilla ID: Descriptionî)
+(The format of the information below is ‚ÄúBugzilla ID: Description‚Äù)
 2574: Problem with Map Projections other than Lambert (other map projections are now recognized; this may have been fixed in version 1.2).
 3166: Not able to specify a limited layer range within a script; this results in a layer mismatch between two files.
 
@@ -119,7 +160,7 @@ Supports additional projections (Mercator, UTM, polar stereographic).
 Fixed the number format for the fast tile plot legend.
 
 BUG FIXES IN V1.3:
-(The format of the information below is ìBugzilla ID: Descriptionî)
+(The format of the information below is ‚ÄúBugzilla ID: Description‚Äù)
 2554: Configure size and color and shape of observational overlay symbols.
 3401: Missing values incorrectly represented on fast tile plot legend display of minimum, maximum range (fixed for fast tile plot, not for regular tile plot).
 2574: Problem with map projections other than Lambert (other map projections are now recognized; this may have been fixed in version 1.2).
@@ -189,7 +230,7 @@ Mac distribution file (.dmg) is available.
 More sample data files are included in the release.
 
 BUG FIXES IN V1.2:
-(The format of the information below is ìBugzilla ID: Descriptionî)
+(The format of the information below is ‚ÄúBugzilla ID: Description‚Äù)
 2900: World map oddities: The world map still has an oddity, but VERDI has been updated to allow the user to turn off the world map and use a regional map. 
 2525: Format data on legend.
 Layer number in the fast tile plot title is consistent with the current layer.
@@ -236,7 +277,7 @@ The format of the values on the legend can be specified.
 Lat-lon data are now supported for tile plot.
 
 BUG FIXES IN V1.1:
-(The format of the information below is ìBugzilla ID: Descriptionî)
+(The format of the information below is ‚ÄúBugzilla ID: Description‚Äù)
 2900: World map oddities: The world map still has an oddity, but VERDI has been updated to allow the user to turn off the world map and use a regional map.
 Bug 2525: Format data on legend.
 The edit domain window is no longer too big for the screen.
@@ -272,3 +313,4 @@ Make the maps configurable on fast tile plot (color, transparency, etc.), and ad
 State and county maps do not match the lines of the North America map.
 Move the metadata button to a better place (perhaps to the popup menu for the dataset).
 Show the map in the edit domain dialog.
+
