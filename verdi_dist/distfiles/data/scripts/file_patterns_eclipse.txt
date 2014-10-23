@@ -13,16 +13,15 @@
 		#        dir           -- dataset file folder                                      
 		#        pattern       -- dataset file name pattern                                
 		#        gtype         -- plot type (tile, line, bar, vector)                      
-		#        vector        -- vector plot variables                                    
 		#        vectorTile    -- vector plot variables                                    
 		#        s             -- variable name                                            
 		#        ts            -- time step                                                
-		#        titleString   -- plot title                                              
-		#        subdomain     -- xmin ymin xmax ymax                                      
+		#        titleString   -- plot title                                               
+		#        subdomain     -- subdomain xmin ymin xmax ymax                            
 		#        subTitle1     -- plot subtitle one                                        
 		#        subTitle2     -- plot subtitle two                                        
 		#        saveImage     -- image file type (png, jpeg, eps, etc.)                   
-		#        imageFile     -- image file path/name                                    
+		#        imageFile     -- image file path/name                                     
 		#        imageDir      -- image file folder                                        
 		#        drawGridLines -- draw grid lines on the tile plot if 'yes'                
 		#        imageWidth    -- image width                                              
@@ -31,28 +30,27 @@
 		#                                                                                  
 		#                                                                                  
 		# Author: IE, UNC at Chapel Hill                                                   
-		# Date: 10/27/2014                                                                
+		# Date: 10/27/2014                                                                 
 		# Version: 2                                                                       
 		####################################################################################
 
 
+
 		<Global>
-		configFile=../../data/configs/o3_10bin.cfg
-		dir=../../data/model
+		dir=../verdi_dist/distfiles/data/model
 		pattern=*CCTM46*
 		s=O3[1]
-		saveImage=png
-		imageDir=../../data/plots
-		subdomain=20 10 75 50 
-		ts=1
+		saveImage=jpeg
+		imageDir=../verdi_dist/distfiles/data/plots
+		subTitle1="Test SubTitle 1"
+		subTitle2="Test SubTitle 2"
 		</Global>
-
-		#######################
-		# Data files picked   #
-		# up from patterns    #
-		# specified for names #
-		#######################
 
 		<Task>
 		gtype=tile
+		imageFile=O3_tile
+		</Task>
+
+		<Task>
+		gtype=line
 		</Task>

@@ -37,11 +37,11 @@
 
 
 		<Global>
-		dir=../verdi_dist/data/model
+		dir=../../data/model
 		pattern=*CCTM46*
 		s=O3[1]
 		saveImage=jpeg
-		imageDir=../verdi_dist/data/plots
+		imageDir=../../data/plots
 		subTitle1="Test SubTitle 1"
 		subTitle2="Test SubTitle 2"
 		</Global>
