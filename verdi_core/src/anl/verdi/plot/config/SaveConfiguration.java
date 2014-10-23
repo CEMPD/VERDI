@@ -52,7 +52,7 @@ public class SaveConfiguration extends AbstractAction {
 
 	private boolean saveTile() {
 		String title = "Save Title?";
-		String msg = "Would you like to save the title/sub-titles also?";
+		String msg = "Would you like to save the title/subtitles also?";
 		int option = JOptionPane.showConfirmDialog(null, msg, title,
 				JOptionPane.YES_OPTION);
 

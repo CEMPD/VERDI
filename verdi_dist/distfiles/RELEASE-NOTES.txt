@@ -1,9 +1,8 @@
-------------------------------
+﻿------------------------------
 RELEASE NOTES FOR VERDI V1.5
 ------------------------------
 
-These notes describe the differences between current version 1.5 and the previous public releases of
-VERDI (version 1.4.1).  The notes describe:
+These notes describe the differences between current version 1.5 and the previous public releases of VERDI (version 1.4.1).  The notes describe:
 
         New Features
         Bug Fixes
@@ -11,29 +10,26 @@ VERDI (version 1.4.1).  The notes describe:
         Build Environment
 
 NEW FEATURES IN V1.5:
-Java3D binaries are provided with the installation
-Single message logging system to improve customer support
+Java3D binaries are provided with the installation.
+All messages are now passed through a single logger.
+Updated underlying libraries to Java 7-compatibility.
+Streamlined installation. Administrator priveleges are no longer required to install VERDI.
+Released on 5 platforms: 32-bit and 64-bit Linux, 32-bit and 64-bit Windows 7, and Mac
 
 BUG FIXES IN V1.5:
 Replaced Vector Plot with Vector Overlay of the Fast Tile Plot.
-Fixed the calculation for areal interpolation for variables that did not have
-units of deposition (g/ha).
+Fixed the calculation for areal interpolation for variables that did not have units of deposition (g/ha).
 Fixed the -subdomain option for the batch scripting method.
 Fixed the print output format from the Fast Tile Plot.
 Fixed printing from the contour plot.
 
 KNOWN ISSUES IN V1.5:
 Export to shapefile has been disabled pending a geolocation bug fix. 
-Export shapefile from the Areal interpolation plot provides a shapefile of the
-gridded data instead of the HUC data.
-Using an 8-color bin default, the two middle colors are very close to each
-other.
-Periods in the variable name are not accepted by VERDI, need to use _ or other
-value. (PM2.5 - use PM2_5 as an althernative).
-Formula calculations for mint, maxt, minx, maxx, miny, maxy, minz, maxz do not
-work.
-Need additional support for user configuration of plots including the Vertical Cross Section,
-Time Series, Time Series Bar, Scatter plot.
+Export shapefile from the Areal Interpolation plot provides a shapefile of the gridded data instead of the geographic polygons.
+Using an 8-color bin default, the two middle colors are very similar.
+Periods in the variable name are not accepted by VERDI, need to use _ or other value. (PM2.5 - use PM2_5 as an alternative).
+Formula calculations for mint, maxt, minx, maxx, miny, maxy, minz, maxz do not work.
+Need additional support for user configuration of plots including the Vertical Cross Section, Time Series, Time Series Bar, and Scatter plot.
 
 BUILD ENVIRONMENT FOR V1.5:
 Java 7 - java version "1.7.0_71" Java(TM) SE Runtime Environment (build 1.7.0_71)
