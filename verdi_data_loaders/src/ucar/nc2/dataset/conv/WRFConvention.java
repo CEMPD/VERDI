@@ -56,26 +56,12 @@ import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants.CDM;
 import ucar.nc2.constants.CF;
 import ucar.nc2.constants._Coordinate;
-import ucar.nc2.dataset.CoordSysBuilder;
-import ucar.nc2.dataset.CoordinateAxis;
-import ucar.nc2.dataset.CoordinateAxis1D;
-import ucar.nc2.dataset.CoordinateSystem;
-import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.dataset.ProjectionCT;
-import ucar.nc2.dataset.VariableDS;
-import ucar.nc2.dataset.VariableEnhanced;
-import ucar.nc2.dataset.VerticalCT;
+import ucar.nc2.dataset.*;
 import ucar.nc2.dataset.transform.WRFEtaTransformBuilder;
 import ucar.nc2.units.SimpleUnit;
 import ucar.nc2.util.CancelTask;
-import ucar.unidata.geoloc.LatLonPointImpl;
-import ucar.unidata.geoloc.ProjectionImpl;
-import ucar.unidata.geoloc.ProjectionPoint;
-import ucar.unidata.geoloc.ProjectionPointImpl;
-import ucar.unidata.geoloc.projection.FlatEarth;
-import ucar.unidata.geoloc.projection.LambertConformal;
-import ucar.unidata.geoloc.projection.Mercator;
-import ucar.unidata.geoloc.projection.Stereographic;
+import ucar.unidata.geoloc.*;
+import ucar.unidata.geoloc.projection.*;
 import ucar.unidata.util.StringUtil2;
 
 /**
@@ -90,7 +76,7 @@ import ucar.unidata.util.StringUtil2;
  */
 
 public class WRFConvention extends CoordSysBuilder {
-	static final Logger Logger = LogManager.getLogger(WRFConvention.class.getName());
+//	static final Logger Logger = LogManager.getLogger(WRFConvention.class.getName());
 
   static private java.text.SimpleDateFormat dateFormat;
 
@@ -126,7 +112,7 @@ public class WRFConvention extends CoordSysBuilder {
 
   public WRFConvention() {
     this.conventionName = "WRF";
-    Logger.debug("NOW IN WRF CONVENTION");
+//    System.out.println("NOW IN WRF CONVENTION");
   }
 
   /* Implementation notes
@@ -270,12 +256,12 @@ map_proj =  1: Lambert Conformal
         case 0: // for diagnostic runs with no georeferencing
           proj = new FlatEarth();
           projCT = new ProjectionCT("flat_earth", "FGDC", proj);
-           Logger.debug(" using LC "+proj.paramsToString());
+ //          Logger.debug(" using LC "+proj.paramsToString());
           break;
         case 1:
           proj = new LambertConformal(standardLat, standardLon, lat1, lat2);
           projCT = new ProjectionCT("Lambert", "FGDC", proj);
-          Logger.debug(" using LC "+proj.paramsToString());
+//          Logger.debug(" using LC "+proj.paramsToString());
           break;
         case 2:
           // Thanks to Heiko Klein for figuring out WRF Stereographic
@@ -336,8 +322,8 @@ map_proj =  1: Lambert Conformal
         centerX = ppt1.getX();
         centerY = ppt1.getY();
         if (debug) {
-          Logger.debug("centerX=" + centerX);
-          Logger.debug("centerY=" + centerY);
+//          Logger.debug("centerX=" + centerX);
+//          Logger.debug("centerY=" + centerY);
         }
       }
 

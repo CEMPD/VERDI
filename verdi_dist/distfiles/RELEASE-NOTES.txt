@@ -13,8 +13,8 @@ NEW FEATURES IN V1.5:
 Java3D binaries are provided with the installation.
 All messages are now passed through a single logger.
 Updated underlying libraries to Java 7-compatibility.
-Streamlined installation. Administrator priveleges are no longer required to install VERDI.
-Released on 5 platforms: 32-bit and 64-bit Linux, 32-bit and 64-bit Windows 7, and Mac
+Streamlined installation. Administrator privileges are no longer required to install VERDI.
+Now Released on 64-bit Windows 7 in addition to 32-bit and 64-bit Linux, 32-bit Windows 7 and Mac
 
 BUG FIXES IN V1.5:
 Replaced Vector Plot with Vector Overlay of the Fast Tile Plot.
