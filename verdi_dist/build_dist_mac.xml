@@ -206,7 +206,7 @@
 	        </delete>
 		
 			
-		<!--   
+		  
 			<exec executable="tar" dir="${user.home}">
 				<arg line="-Pvcpf ${install.home}/${mac.dist.name}_mac.tar ${mac.dist.name}"/>
 			</exec>
@@ -216,18 +216,19 @@
 	        <gzip destfile="${install.home}/${mac.dist.name}_mac_${DSTAMP}.tar.gz">
 	            <fileset file="${install.home}/${mac.dist.name}_mac.tar"/>
 	        </gzip>
-		--> 
 		
+		<!--
 		<touch file="${dist.dir}/.Trash" />
 		<exec executable="hdiutil" dir="${user.home}">
-		<arg line="create -srcfolder ${mac.dist.name} ${install.home}/${dist.dmg.file}"/>
+		<arg line="create -verbose -srcfolder ${mac.dist.name} ${install.home}/${dist.dmg.file}"/>
 		</exec>
 	       
 	        <delete failonerror="false">
 	            <fileset dir="${install.home}">
 	                <include name="**/${mac.dist.name}_mac.tar" />
 	            </fileset>
-	        </delete>	       	        
+	        </delete>	
+	    -->       	        
 	    </target> 
 
 
