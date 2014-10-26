@@ -47,23 +47,11 @@
 		###########################
 
 		<Task>
-		gtype=vector
-		f=metdot3d_12k.uwind.vwind
-		vector=UWIND[1],VWIND[1]
-		imageFile=uwind.vwind.vector-only.jpeg
-		titleString="UWIND[1] X VWIND[1]"
-		subTitle1="Vector SubTitle 1"
-		subTitle2="Vector SubTitle 2"
-		imageWidth=1600
-		imageHeight=1600
-		</Task>
-
-		<Task>
 		gtype=vectorTile
 		f=CCTM47_aac_spr06.12k.CONC.2006113.O3.ncf
-                		f=metdot3d_12k.uwind.vwind
+               	f=metdot3d_12k.uwind.vwind
 		vectorTile=O3[1],UWIND[2],VWIND[2]
-                		titleString="Ozone with wind vector overlay (UWINDxVWIND)
+               	titleString="Ozone with wind vector overlay (UWINDxVWIND)
 		imageFile=vector-tile-test.jpeg
 		imageWidth=1600
 		imageHeight=1600
