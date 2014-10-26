@@ -71,7 +71,7 @@ public class M3IOConvention extends CoordSysBuilder {
    * @return true if we think this is a M3IO file.
    */
   public static boolean isMine(NetcdfFile ncfile) {
-	  System.out.println("in M3IOConvention isMine: earthRadius= " + earthRadius);
+//	  System.out.println("in M3IOConvention isMine: earthRadius= " + earthRadius);
     return (null != ncfile.findGlobalAttribute("XORIG"))
             && (null != ncfile.findGlobalAttribute("YORIG"))
             && (null != ncfile.findGlobalAttribute("XCELL"))
@@ -286,28 +286,43 @@ public class M3IOConvention extends CoordSysBuilder {
 
     return new ProjectionCT("LambertConformalProjection", "FGDC", lc);
   }
+  
+  
 
   @SuppressWarnings("deprecation")
 private CoordinateTransform makePolarStereographicProjection(NetcdfDataset ds) {
 //    boolean n_polar = (findAttributeDouble(ds, "P_ALP") == 1.0);
     double central_meridian = findAttributeDouble(ds, "P_GAM");
-    System.out.println("in M3IOConvention: makePolarStereographicProjection central_meridian= " + central_meridian);
+//    System.out.println("in M3IOConvention: makePolarStereographicProjection central_meridian= " + central_meridian);
     double xcent = findAttributeDouble(ds, "XCENT");
-    System.out.println("in M3IOConvention: makePolarStereographicProjection xcent= " + xcent);
+//   System.out.println("in M3IOConvention: makePolarStereographicProjection xcent= " + xcent);
 //xcent = lat value for the center (0,0) of the Cartesian coordinate system
     double ycent = findAttributeDouble(ds, "YCENT");
-    System.out.println("in M3IOConvention: makePolarStereographicProjection ycent= " + ycent);
+//    System.out.println("in M3IOConvention: makePolarStereographicProjection ycent= " + ycent);
 //ycent = lon value for the center (0,0) of the Cartesian coordinate system
     double par1 = findAttributeDouble(ds, "P_ALP");
-    System.out.println("in M3IOConvention: makePolarStereographicProjection par1= " + par1);
+//    System.out.println("in M3IOConvention: makePolarStereographicProjection par1= " + par1);
 //P_ALP is 1 for North Pole, -1 for South Pole
     double par2 = findAttributeDouble(ds, "P_BET");
-    System.out.println("in M3IOConvention: makePolarStereographicProjection par2= " + par2);  
+//    System.out.println("in M3IOConvention: makePolarStereographicProjection par2= " + par2);  
 //P_BET secant latitude (latitude of true scale)
-    
 
-    Stereographic sg = new Stereographic(ycent, xcent, 1.0, 0, 0, earthRadius);
-//    public Stereographic(double latt, double lont, double scale, double false_easting, double false_northing, double radius) {
+    Stereographic sg_tmp = new Stereographic(ycent, xcent, 1.0, 0, 0, earthRadius);
+//  info about what you are passing in public Stereographic(double latt, double lont, double scale, double false_easting, double false_northing, double radius) {
+   sg_tmp.setCentralMeridian(central_meridian);
+   double calc_scale = sg_tmp.getScale();
+//   double calc_scale = sg_tmp.getScale(); projScale is 1.0
+//  double calc_scale = sg_tmp.getScaleFactor(par2, true); projScale was ~ .7
+//   double calc_scale = sg_tmp.getScaleFactor(xcent, true); projScale was ~ .98
+// using the value of 0.8537995936163079 for projScale worked from VERDI 1.4.1
+//   System.out.println("in M3IOConvention: calc_scale= " + calc_scale);
+   
+   double scale2 = (1.0 + Math.sin(Math.toRadians(par2))) / 2.0;
+//	   System.out.println("in Stereographic: calculated scale2 " + scale2);
+    
+    Stereographic sg = new Stereographic(ycent, xcent, scale2, 0, 0, earthRadius);
+//    Stereographic sg = new Stereographic(ycent, xcent, 0.8537995936163079, 0, 0, earthRadius);
+//   info about what you are passing in public Stereographic(double latt, double lont, double scale, double false_easting, double false_northing, double radius) {
     sg.setCentralMeridian(central_meridian);
     return new ProjectionCT("PolarStereographic", "FGDC", sg);
   }
