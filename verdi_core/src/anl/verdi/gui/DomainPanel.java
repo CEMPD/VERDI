@@ -18,7 +18,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +38,15 @@ import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.border.TitledBorder;
 
+//import org.piccolo2d.event.PInputEvent;
+//import org.piccolo2d.event.PInputEventListener;
+//import org.piccolo2d.event.PDragSequenceEventHandler;
+//import org.piccolo2d.event.PPanEventHandler;
+//import org.piccolo2d.util.PBounds;
+//import org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory;	// deprecated, use ShapefileDataStoreFactory
+//import org.geotools.styling.StyleFactoryFinder;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
@@ -57,8 +65,6 @@ import org.geotools.styling.StyleBuilder;
 //import org.geotools.map.DefaultMapLayer;
 //import org.geotools.map.MapContext;
 //import org.geotools.map.MapLayer;
-
-
 
 import repast.simphony.gis.display.AbstractMarqueeZoomer;
 import repast.simphony.gis.display.PGISCanvas;
@@ -85,13 +91,6 @@ import com.jgoodies.forms.layout.Sizes;
 import edu.umd.cs.piccolo.event.PInputEvent;			// NOTE: required old piccolo by Repast Simphony
 import edu.umd.cs.piccolo.event.PInputEventListener;	// NOTE: required old piccolo by Repast Simphony
 import edu.umd.cs.piccolo.util.PBounds;	// NOTE: required old piccolo by Repast Simphony
-//import org.piccolo2d.event.PInputEvent;
-//import org.piccolo2d.event.PInputEventListener;
-//import org.piccolo2d.event.PDragSequenceEventHandler;
-//import org.piccolo2d.event.PPanEventHandler;
-//import org.piccolo2d.util.PBounds;
-//import org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory;	// deprecated, use ShapefileDataStoreFactory
-//import org.geotools.styling.StyleFactoryFinder;
 
 /**
  * @author User #2
@@ -101,6 +100,7 @@ public class DomainPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = -5720531628640140189L;
+	static final Logger Logger = LogManager.getLogger(DomainPanel.class.getName());
 
 //	MapContext context;
 	MapContent context;
@@ -147,13 +147,14 @@ public class DomainPanel extends JPanel {
 			}
 		};
 
-		edit.putValue(Action.NAME, "Edit");
-		edit.setEnabled(false);
-		JToolBar toolBar = piccoloMapPanel1.getToolBar();
-		toolBar.add(edit);
-		toolBar.setFloatable(false);
-		toolBar.add(Box.createHorizontalGlue());
-		toolBar.add(rangeLbl);
+//		edit.putValue(Action.NAME, "Edit Me");		// Edit button is now throwing error that hangs VERDI completely
+//		Logger.debug("in DomainPanel, putValue 'Edit' Me");
+//		edit.setEnabled(false);
+//		JToolBar toolBar = piccoloMapPanel1.getToolBar();
+//		toolBar.add(edit);
+//		toolBar.setFloatable(false);
+//		toolBar.add(Box.createHorizontalGlue());
+//		toolBar.add(rangeLbl);
 
 		info = new AbstractAction() {
 			/**
@@ -166,12 +167,13 @@ public class DomainPanel extends JPanel {
 					printInfo();
 			}
 		};
-		info.putValue(Action.NAME, "Metadata");
-		info.setEnabled(false);
-		toolBar.add(info);
-		toolBar.setFloatable(false);
-		toolBar.add(Box.createHorizontalGlue());
-		toolBar.add(infoLb1);
+//		info.putValue(Action.NAME, "Metadata Me");		// Metadata button is now throwing error
+//		Logger.debug("in DomainPanel, just putValue Metadata Me");
+//		info.setEnabled(false);
+//		toolBar.add(info);
+//		toolBar.setFloatable(false);
+//		toolBar.add(Box.createHorizontalGlue());
+//		toolBar.add(infoLb1);
 	}
 
 //	public void unsetDomainValues() {	// 2014 appears to not be used
@@ -541,6 +543,7 @@ public class DomainPanel extends JPanel {
 		String winTitle = "Edit Domain: " + currentElement;
 		panel.getToolBar().add(Box.createHorizontalGlue());
 		panel.getToolBar().add(domainLbl);
+		Logger.debug("in DomainPanel, putting title 'Edit Domain:' before new EditDomainWindow");
 		new EditDomainWindow((JFrame) null, grid, currentElement, panel,
 				winTitle, true);
 
@@ -592,6 +595,7 @@ public class DomainPanel extends JPanel {
 
 		new ProjectInfoWindow((JFrame) null, panel,
 				"Dataset Metadata");
+		Logger.debug("in DomainPanel, just did new ProjectInfoWindow and passed in literal Dataset Metadata");
 	}
 
 	class EditDomainWindow extends OKCancelWindow {

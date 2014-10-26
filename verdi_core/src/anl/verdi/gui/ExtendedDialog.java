@@ -30,6 +30,11 @@ import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.HeadlessException;
 
+import org.apache.logging.log4j.LogManager;	// 2014
+import org.apache.logging.log4j.Logger;	// 2014 replacing System.out.println with logger messages
+//import java.awt.Dialog.ModalityType;
+
+
 import javax.swing.JDialog;
 
 /**
@@ -42,6 +47,7 @@ public class ExtendedDialog extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = -6658824518812288993L;
+	static final Logger Logger = LogManager.getLogger(ExtendedDialog.class.getName());
 static Frame defaultParent=null;
   public static void setDefaultParent(Frame win){
     defaultParent=win;
@@ -75,14 +81,17 @@ static Frame defaultParent=null;
   
   public void show(){
     // code added to pop the parent window to the front
-    if(isModal()){
+	  if(isModal()){
       try{
         Container container = getParent();
         if(container!=null){
           ExtendedOptionPane.setWindowAlwaysOnTop(container,true);
           super.setVisible(true);			// 2014 deprecated show();
-        }
-      }finally{
+        } 
+      }catch(Exception e)
+        {
+        	Logger.error("caught exception in ExtendedDialog.show " + e.getMessage());
+        }finally{
         Container container = getParent();
         if(container!=null){
           ExtendedOptionPane.setWindowAlwaysOnTop(container,false);

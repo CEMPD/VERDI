@@ -457,10 +457,12 @@ FormulaElementCreator, ListDataListener {
 	 * @param event contains the details of the area selection
 	 */
 	public void areaSelected(AreaSelectionEvent event) {
-		Logger.debug("in VerdiApplication.areaSelected");
+		Logger.debug("in VerdiApplication.areaSelected; called when an area in a plot is being selected");
 		if (event.isFinished()) {
+			Logger.debug("event.isFinished is true");
 			gui.setStatusTwoText("");
 		} else {
+			Logger.debug("event.isFinished is NOT true");
 			gui.setStatusTwoText(event.areaToString());
 		}
 	}
