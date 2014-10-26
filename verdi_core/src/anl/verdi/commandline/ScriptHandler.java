@@ -100,7 +100,7 @@ public class ScriptHandler {
 	private static ColorMap cmap = null;
 
 	private static int selectedTimeStep = 1; //Default to 1-based first step
-	private static String aliasFileName = System.getProperty("user.home") + File.separatorChar + "verdi.alias";
+	private static String aliasFileName = System.getProperty("user.home") +  '/' + "verdi" + File.separatorChar + "verdi.alias";
 	private static int levelMin = -1;
 	private static int levelMax = -1;
 
