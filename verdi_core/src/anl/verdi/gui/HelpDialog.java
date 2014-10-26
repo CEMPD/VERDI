@@ -120,9 +120,9 @@ public class HelpDialog extends JDialog {
 //					editorScrollPane.setMinimumSize(new Dimension(10, 10));					
 //					editorPanePanel.add(editorScrollPane);
 					
-				    final URI uri = new URI("https://www.cmascenter.org/verdi/documentation/1.4.1/VerdiUserManual1.4.1.htm");
+				    final URI uri = new URI("https://www.cmascenter.org/verdi/documentation/1.5/VerdiUserManual1.5.htm");	// 2014 VERDI 1.5 documentation
 				    // old URI was: "http://www.verdi-tool.org/verdiUserManual_URI_uri.htm"
-				    final URI uri2 = new URI("http://www.cmascenter.org/verdi/documentation/1.4.1/VerdiUserManual1.4.1.pdf");
+				    final URI uri2 = new URI("http://www.cmascenter.org/verdi/documentation/1.5/VerdiUserManual1.5.pdf");	// 2014 VERDI 1.5 documentation
 				    // old URI was: "http://www.cmascenter.org/help/model_docs/verdi/1.4/VerdiUserManual_URI_uri2.pdf"
 				    class OpenUrlAction implements ActionListener {
 				      @Override public void actionPerformed(ActionEvent e) {
