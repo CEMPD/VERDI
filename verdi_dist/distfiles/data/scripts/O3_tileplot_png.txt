@@ -44,7 +44,6 @@
 		saveImage=png
 		imageDir=../../data/plots
 		subdomain=20 10 75 50 
-		ts=1
 		</Global>
 
 		#######################

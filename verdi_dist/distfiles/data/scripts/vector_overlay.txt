@@ -47,7 +47,7 @@
 		###########################
 
 		<Task>
-		gtype=vectorTile
+		gtype=tile
 		f=CCTM47_aac_spr06.12k.CONC.2006113.O3.ncf
                	f=metdot3d_12k.uwind.vwind
 		vectorTile=O3[1],UWIND[2],VWIND[2]
