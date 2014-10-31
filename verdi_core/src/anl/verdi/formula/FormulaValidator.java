@@ -23,6 +23,7 @@ import anl.verdi.data.Range;
 import anl.verdi.data.Variable;
 import anl.verdi.util.DateRange;
 import anl.verdi.util.Utilities;
+import javax.swing.JOptionPane;		// 2014 for displaying exception message to user
 
 /**
  * Validates a formula for unit, layer, domain and timestep coherence.
@@ -271,14 +272,20 @@ public class FormulaValidator {
 
 	private IllegalFormulaException createValidationEx(FormulaVariable var1,
 	                                                   FormulaVariable var2, String axis) {
-		return new IllegalFormulaException("'" + var1.getAliasedName() + "' and '" +
-						var2.getAliasedName() + "' are incompatible along the " + axis + " axis");
+		// 2014 changed concatenation in IllegaLFormulaException call to a String; added in message dialog to show message to user
+		String aMessage = "'" + var1.getAliasedName() + "' and '" +
+				var2.getAliasedName() + "' are incompatible along the " + axis + " axis";
+		JOptionPane.showMessageDialog(null, aMessage, "Formula Validation Failed", JOptionPane.ERROR_MESSAGE);
+		return new IllegalFormulaException(aMessage);
 	}
 
 	private IllegalFormulaException createValidationRangeEx(FormulaVariable var1, Range range, String axis) {
-		return new IllegalFormulaException("'" + var1.getAliasedName() + "' dataset is incompatible with the " +
-						"specified " + axis + " range (" + range.getOrigin() + ", " +
-						(range.getOrigin() + (range.getExtent() - 1)) + ")");
+		// 2014 changed concatenation in IllegaLFormulaException call to a String; added in message dialog to show message to user
+		String aMessage = "'" + var1.getAliasedName() + "' dataset is incompatible with the " +
+				"specified " + axis + " range (" + range.getOrigin() + ", " +
+				(range.getOrigin() + (range.getExtent() - 1)) + ")";
+		JOptionPane.showMessageDialog(null, aMessage, "Range Validation Failed", JOptionPane.ERROR_MESSAGE);
+		return new IllegalFormulaException(aMessage);
 	}
 
 	private AxisRange findAxisByType(AxisType type, List<AxisRange> axes) {
