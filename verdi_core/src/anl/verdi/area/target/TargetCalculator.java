@@ -79,136 +79,139 @@ public class TargetCalculator extends LongTask {
     ArrayList targets = Target.getTargets();
     return targets.size();
   }
-	/**
-	 * Calculate the intersections of the grid cells with each polygon
-	 * @param targets the targets to check
-	 * @return if it was successful and not cancelled
-	 */
-  public boolean calculateIntersections(ArrayList targets) {
-    statMessage = "Calculating Intersections...";
-    Logger.warn("WARNING: TargetCalculator.calculateIntersections called for only 1 argument, does nothing but returns TRUE always " + statMessage);
-//    // change to busy cursor
-//    boolean didCalcs = false;
-//    try {
-//      if (targets == null || targets.isEmpty())return false;
-//      final VerdiApplication application = workspace.getApplicationMediator();
-//
-//      if ( application.getProject().getSelectedFormula() != null ) {
-//        final DataFrame dataFrame =
-//          application.evaluateFormula( Formula.Type.TILE );
-//      final Dataset dataset = dataFrame.getDataset().get(0);
-//		final Axes<CoordAxis> coordinateAxes = dataset.getCoordAxes();
-//		final Projection projection = coordinateAxes.getProjection();
-      
-//      //JeoViewer jeoViewer = WDTMainWindow.mainWindow.jeoViewer;
-//      //JeoViewerApp japp = WDTMainWindow.mainWindow.japp;
-//      //GeoScreenInfo si = jeoViewer.getSi();
+  
+// 2014 this function is commented out everywhere it was called in VERDI
+//	/**
+//	 * Calculate the intersections of the grid cells with each polygon
+//	 * @param targets the targets to check
+//	 * @return if it was successful and not cancelled
+//	 */
+//  public boolean calculateIntersections(ArrayList targets) {
+//    statMessage = "Calculating Intersections...";
+//    Logger.warn("WARNING: TargetCalculator.calculateIntersections called for only 1 argument, does nothing but returns TRUE always " + statMessage);
+////    // change to busy cursor
+////    boolean didCalcs = false;
+////    try {
+////      if (targets == null || targets.isEmpty())return false;
+////      final VerdiApplication application = workspace.getApplicationMediator();
+////
+////      if ( application.getProject().getSelectedFormula() != null ) {
+////        final DataFrame dataFrame =
+////          application.evaluateFormula( Formula.Type.TILE );
+////      final Dataset dataset = dataFrame.getDataset().get(0);
+////		final Axes<CoordAxis> coordinateAxes = dataset.getCoordAxes();
+////		final Projection projection = coordinateAxes.getProjection();
 //      
-//      // get all the polygons in the grid
-//      JeoObjectGrid grid = ModelData.getOverallGrid();
-//      String units = ModelData.getBaseData().getDataUnits();
-//      units=Units.getAreaFromLength(units);
-//      
-//      // get the conversion from the grid to the standard target area units
-//      double conversion = Units.convertArea(units, Target.getUnits(), 1.0);
-//      GridGeometry geometry = ((GridGeometry)grid.getGeometry().getGeometry());
-//
-//      //  get all the selected target polygons
-//      for (int targetNum = 0; targetNum < targets.size(); targetNum++) {
-//        if (canceled)
-//          return false;
-//        current = targetNum;
-//        Target target = ((Target)targets.get(targetNum));
-//        // update the message
-//        statMessage = "Polygon " + target + " (" + (targetNum + 1) + " of " + targets.size() + ")";
-//        Logger.debug(statMessage);
-//
-//        Geometry obj = target.dataObject;
-//        // if it hasn't been done yet
-//        if (target.area == 0) {
-//          Geometry shp = ((JeoObjectSimple)obj).getGeometry().getGeometry();
-//          shp = shp.transform(obj.getCoordSys(), grid.getCoordSys());
-//
-//          PackedPolygon box = (PackedPolygon) ((PackedPolygon)shp).boundingBox();
-//
-//          //calculate the candidate areas
-//          Location[] list = box.pointsArray();
-//          //Logger.debug("list " + list);
-//          GridGeometry.GridIndex index1=null;
-//          GridGeometry.GridIndex index2=null;
-//          try{
-//            index1 = geometry.query(list[0], grid.getDataType());
-//            index2 = geometry.query(list[2], grid.getDataType());
-//          }catch(Exception e){
-//            index1=null;index2=null;
-//          }
-//
-//          // if it intersects with that grid cell
-//          if (index1 != null && index2 != null) {
-//            int col1 = index1.column;
-//            int col2 = index2.column;
-//            int row1 = index1.row;
-//            int row2 = index2.row;
-//            if (col1 > col2) {
-//              int temp = col1;
-//              col1 = col2;
-//              col2 = temp;
-//            }
-//            if (row1 > row2) {
-//              int temp = row1;
-//              row1 = row2;
-//              row2 = temp;
-//            }
-//						// create the arrays to store the grid index data
-//            ArrayList rows = new ArrayList();
-//            ArrayList cols = new ArrayList();
-//            ArrayList areas = new ArrayList();
-//            for (int i = col1; i <= col2; i++) {
-//              for (int j = row1; j <= row2; j++) {
-//                if (canceled)
-//                  return false;
-//                  
-//                // calculate the area of intersection
-//                anl.spatial.geometry.Polygon cellPolygon = geometry.cellPolygon(j, i, grid.getDataType());
-//                anl.spatial.geometry.Polygon intersection = ((PackedPolygon)shp).intersect(cellPolygon);
-//                if (intersection != null) {
-//                  // get the area of the intersection
-//                  rows.add(new Integer(j));
-//                  cols.add(new Integer(i));
-//                  areas.add(new Float((float)intersection.area()));
-//                }
-//
-//              }
-//            }
-//            // if there were some cells, make the arrays
-//            if (!rows.isEmpty()) {
-//              target.rowIndex = new int[rows.size()];
-//              target.colIndex = new int[rows.size()];
-//              target.overlapArea = new float[rows.size()];
-//              for (int i = 0; i < rows.size(); i++) {
-//                target.rowIndex[i] = ((Integer)rows.get(i)).intValue();
-//                target.colIndex[i] = ((Integer)cols.get(i)).intValue();
-//                // convert the area
-//                target.overlapArea[i] = ((Float)areas.get(i)).floatValue() * (float)conversion;
-//              }
-//            }
-//          }
-//          // convert the area
-//          target.area = ((PackedPolygon)shp).area() * conversion;
-//          didCalcs = true;
-//        }
-//      }
-//    } catch (Exception e) {
-//      Logger.error("An exception occurred ");
-//      e.printStackTrace();
-//    } finally {
-//      //update();
-//    }
-//    
-//		//	write out the indices
-//		if (didCalcs)writeOutIntersections();
-    return true;
-  }
+////      //JeoViewer jeoViewer = WDTMainWindow.mainWindow.jeoViewer;
+////      //JeoViewerApp japp = WDTMainWindow.mainWindow.japp;
+////      //GeoScreenInfo si = jeoViewer.getSi();
+////      
+////      // get all the polygons in the grid
+////      JeoObjectGrid grid = ModelData.getOverallGrid();
+////      String units = ModelData.getBaseData().getDataUnits();
+////      units=Units.getAreaFromLength(units);
+////      
+////      // get the conversion from the grid to the standard target area units
+////      double conversion = Units.convertArea(units, Target.getUnits(), 1.0);
+////      GridGeometry geometry = ((GridGeometry)grid.getGeometry().getGeometry());
+////
+////      //  get all the selected target polygons
+////      for (int targetNum = 0; targetNum < targets.size(); targetNum++) {
+////        if (canceled)
+////          return false;
+////        current = targetNum;
+////        Target target = ((Target)targets.get(targetNum));
+////        // update the message
+////        statMessage = "Polygon " + target + " (" + (targetNum + 1) + " of " + targets.size() + ")";
+////        Logger.debug(statMessage);
+////
+////        Geometry obj = target.dataObject;
+////        // if it hasn't been done yet
+////        if (target.area == 0) {
+////          Geometry shp = ((JeoObjectSimple)obj).getGeometry().getGeometry();
+////          shp = shp.transform(obj.getCoordSys(), grid.getCoordSys());
+////
+////          PackedPolygon box = (PackedPolygon) ((PackedPolygon)shp).boundingBox();
+////
+////          //calculate the candidate areas
+////          Location[] list = box.pointsArray();
+////          //Logger.debug("list " + list);
+////          GridGeometry.GridIndex index1=null;
+////          GridGeometry.GridIndex index2=null;
+////          try{
+////            index1 = geometry.query(list[0], grid.getDataType());
+////            index2 = geometry.query(list[2], grid.getDataType());
+////          }catch(Exception e){
+////            index1=null;index2=null;
+////          }
+////
+////          // if it intersects with that grid cell
+////          if (index1 != null && index2 != null) {
+////            int col1 = index1.column;
+////            int col2 = index2.column;
+////            int row1 = index1.row;
+////            int row2 = index2.row;
+////            if (col1 > col2) {
+////              int temp = col1;
+////              col1 = col2;
+////              col2 = temp;
+////            }
+////            if (row1 > row2) {
+////              int temp = row1;
+////              row1 = row2;
+////              row2 = temp;
+////            }
+////						// create the arrays to store the grid index data
+////            ArrayList rows = new ArrayList();
+////            ArrayList cols = new ArrayList();
+////            ArrayList areas = new ArrayList();
+////            for (int i = col1; i <= col2; i++) {
+////              for (int j = row1; j <= row2; j++) {
+////                if (canceled)
+////                  return false;
+////                  
+////                // calculate the area of intersection
+////                anl.spatial.geometry.Polygon cellPolygon = geometry.cellPolygon(j, i, grid.getDataType());
+////                anl.spatial.geometry.Polygon intersection = ((PackedPolygon)shp).intersect(cellPolygon);
+////                if (intersection != null) {
+////                  // get the area of the intersection
+////                  rows.add(new Integer(j));
+////                  cols.add(new Integer(i));
+////                  areas.add(new Float((float)intersection.area()));
+////                }
+////
+////              }
+////            }
+////            // if there were some cells, make the arrays
+////            if (!rows.isEmpty()) {
+////              target.rowIndex = new int[rows.size()];
+////              target.colIndex = new int[rows.size()];
+////              target.overlapArea = new float[rows.size()];
+////              for (int i = 0; i < rows.size(); i++) {
+////                target.rowIndex[i] = ((Integer)rows.get(i)).intValue();
+////                target.colIndex[i] = ((Integer)cols.get(i)).intValue();
+////                // convert the area
+////                target.overlapArea[i] = ((Float)areas.get(i)).floatValue() * (float)conversion;
+////              }
+////            }
+////          }
+////          // convert the area
+////          target.area = ((PackedPolygon)shp).area() * conversion;
+////          didCalcs = true;
+////        }
+////      }
+////    } catch (Exception e) {
+////      Logger.error("An exception occurred ");
+////      e.printStackTrace();
+////    } finally {
+////      //update();
+////    }
+////    
+////		//	write out the indices
+////		if (didCalcs)writeOutIntersections();
+//    return true;
+//  }
+  
   private int rows; // 259.
 	private int columns; // 268.
 	private double westEdge; // -420000.0 meters from projection center
@@ -232,13 +235,8 @@ public class TargetCalculator extends LongTask {
 			arg0.x=t[0];
 			arg0.y=t[1];
 		}
-
 	}
 	
-	
-//	public int getGridIndexXFor(double x, double y){
-//		
-//	}
   public boolean calculateIntersections(ArrayList targets,DataFrame dataFrame,AreaTilePlot plot) {
 	  
 	    statMessage = "Calculating Intersections...";
@@ -331,7 +329,6 @@ public class TargetCalculator extends LongTask {
 	      			// convert the area
 		  	        target.area = poly.getArea() * areaConversion;
 		  	        
-		  	        
 	      			// get the bounding box of the geometry
 	      			Envelope env = poly.getEnvelopeInternal();
 	      			// get the corresponding grid cell 
@@ -339,8 +336,6 @@ public class TargetCalculator extends LongTask {
 	      			int col2=(int)Math.floor((env.getMaxX()-westEdge)/cellWidth);
 	      			int row1=(int)Math.floor((env.getMinY()-southEdge)/cellHeight);
 	      			int row2=(int)Math.floor((env.getMaxY()-southEdge)/cellHeight);
-	      		
-	      
 	        		      			
 				// create the arrays to store the grid index data
 	            ArrayList<Integer> rowArray = new ArrayList<Integer>();
@@ -384,14 +379,13 @@ public class TargetCalculator extends LongTask {
 	                colIndex[i] = ((Integer)colArray.get(i)).intValue();
 	                // convert the area
 	                overlapArea[i] = ((Float)areas.get(i)).floatValue() * (float)areaConversion;
+	                didCalcs = true;
 	              }
 	              // set the areas for that grid
 	              target.setAreaInfo(num, rowIndex, colIndex, overlapArea);
 	            }
 	          }
-	          
-	          didCalcs = true;
-	       
+//	          didCalcs = true;	// 2014 moved to calculate overlapArea[i]
 	        }
 	        }
 	        
@@ -402,13 +396,13 @@ public class TargetCalculator extends LongTask {
 	      //update();
 	    }
 	    
-	    return true;
+	    return didCalcs;	// 2014 had returned true; now calling program can test for success
 	  }
   
-  /**
-   * Calculate new target depositions for all targets
-   *
-   */
+//  /**
+//   * Calculate new target depositions for all targets
+//   *
+//   */
 //  public static void calculateNewDepositions() {		// 2014 does not appear to be used
 //		// calculate the deposition locations
 ////    Target.calculateDepositions();
@@ -437,10 +431,10 @@ public class TargetCalculator extends LongTask {
 ////    OptionsWindow.updateTabs();
 //
 //  }
-  /**
-   * Read in any grid files that exist
-   * @return if it was successful and not cancelled
-   */
+//  /**
+//   * Read in any grid files that exist
+//   * @return if it was successful and not cancelled
+//   */
 //  boolean readInIntersections() {
 //    ArrayList sources = Target.getSourceNames();
 //    for (int i = 0; i < sources.size(); i++) {
@@ -449,11 +443,11 @@ public class TargetCalculator extends LongTask {
 //    }
 //    return true;
 //  }
-  /**
-   * Read in the grid intersections for a particular source file
-   * @param sourceFile the source file to index
-   * @return if the index file was found and successfully read in
-   */
+//  /**
+//   * Read in the grid intersections for a particular source file
+//   * @param sourceFile the source file to index
+//   * @return if the index file was found and successfully read in
+//   */
 //  boolean readInIntersections(String sourceFile) {
 //  	if(Target.hasIndexBeenLoaded(sourceFile))return true;
 //    int numTargets = 0;
@@ -505,10 +499,10 @@ public class TargetCalculator extends LongTask {
 //
 //    return true;
 //  }
-  /**
-   * Write out the grid intersection data for all targets.
-   * @return
-   */
+//  /**
+//   * Write out the grid intersection data for all targets.
+//   * @return
+//   */
 //  boolean writeOutIntersections() {
 //    ArrayList sources = Target.getSourceNames();
 //    for (int i = 0; i < sources.size(); i++) {
@@ -517,11 +511,11 @@ public class TargetCalculator extends LongTask {
 //    }
 //    return true;
 //  }
-  /**
-   * Write out the grid intersection file for a given source file
-   * @param sourceFile the target source file
-   * @return if it was successful
-   */
+//  /**
+//   * Write out the grid intersection file for a given source file
+//   * @param sourceFile the target source file
+//   * @return if it was successful
+//   */
 //  boolean writeOutIntersections(String sourceFile) {
 //		if(Target.hasIndexBeenLoaded(sourceFile))return true;
 //		

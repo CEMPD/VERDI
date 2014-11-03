@@ -8,6 +8,8 @@ package anl.verdi.plot.gui.action;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.JOptionPane;
+
 import saf.core.ui.actions.AbstractSAFAction;
 import anl.verdi.area.AreaTilePlot;
 import anl.verdi.area.target.Target;
@@ -32,11 +34,11 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 
 		final VerdiApplication application = workspace.getApplicationMediator();
 		if ( application.getProject().getAreaFiles() == null || application.getProject().getAreaFiles().getSize()<=0) {
-			application.getGui().showMessage("Fast Area Tile Plot", "No areal files selected! Please select one!");
+			application.getGui().showMessage("Areal Interpolation Plot", "No areal files selected! Please select one!");
 			return;
 		}
 		if ( application.getProject().getSelectedFormula() == null) {
-			application.getGui().showMessage("Fast Area Tile Plot", "No formula selected! Please select one!");
+			application.getGui().showMessage("Areal Interpolation Plot", "No formula selected! Please select one!");
 			return;
 		}
 		
@@ -49,8 +51,7 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 //			e.printStackTrace();
 //		}
 		if ( application.getProject().getSelectedFormula() != null ) {
-			final DataFrame dataFrame =
-				application.evaluateFormula( Formula.Type.TILE );
+			final DataFrame dataFrame = application.evaluateFormula( Formula.Type.TILE );
 
 			if ( dataFrame != null ) {
 
@@ -58,8 +59,13 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 
 				// calculate the areas 
 				TargetCalculator calc = new TargetCalculator();
-				calc.calculateIntersections(Target.getTargets(),dataFrame,(AreaTilePlot)plot.getTilePlot());
-				
+				boolean retValue = calc.calculateIntersections(Target.getTargets(),dataFrame,(AreaTilePlot)plot.getTilePlot());
+				if(!retValue)
+				{
+					// 2014 added in message dialog to show message to user
+					String aMessage = "Problem with areal interpolation calculations. Check if polygons intersect grid cells.";
+					JOptionPane.showMessageDialog(null, aMessage, "Areal Interpolation Issue", JOptionPane.WARNING_MESSAGE);
+				}
 				final PlotPanel panel = new PlotPanel( plot, "ArealInterpolation" );
 				application.getGui().addPlot( panel );
 				panel.addPlotListener( application );
@@ -79,7 +85,7 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 			}
 		}
 		application.getGui().restoreCursor();
-		application.getGui().showMessage("Fast Area Tile Plot", "Loading data finished.");
+//		application.getGui().showMessage("Areal Interpolation Plot", "Loading data finished.");	// 2014 removed message box
 	}
 }
 
