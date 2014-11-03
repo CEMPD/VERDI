@@ -96,21 +96,21 @@ public class DataSetPanel extends JPanel {
 
 	private static String readRemoteHosts() {
 		Logger.debug("in DataSetPanel [static] readRemoteHosts");
-	 String result = System.getProperty(Tools.REMOTE_HOSTS);;
-		//"amber.nesc.epa.gov,vortex.rtpnc.epa.gov,garnet01.rtpnc.epa.gov,tulip.rtpnc.epa.gov";
+	 String result = System.getProperty(Tools.REMOTE_HOSTS);
 
 	 if (result != null && !result.trim().isEmpty()) return result.trim();
 	 
-		final String fileName =
-			System.getProperty( "user.dir" ) + File.separatorChar +
-			"ui.properties";
-		try {
-			final FileInputStream inputStream = new FileInputStream( fileName );
-			final Properties properties = new Properties();
-			properties.load( inputStream );
-			result = properties.getProperty( "remotehosts" );
-		} catch ( Exception unused_ ) {
-		}
+//	2014 removed remotehosts from ui.properties so keep it in 1 place under 1 keyword only
+//		final String fileName =
+//			System.getProperty( "user.dir" ) + File.separatorChar +
+//			"ui.properties";
+//		try {
+//			final FileInputStream inputStream = new FileInputStream( fileName );
+//			final Properties properties = new Properties();
+//			properties.load( inputStream );
+//			result = properties.getProperty( "remotehosts" );
+//		} catch ( Exception unused_ ) {
+//		}
 		return result;
 	}
 	// dummy constructor for testing
