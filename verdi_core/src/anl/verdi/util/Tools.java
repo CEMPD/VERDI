@@ -5,6 +5,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
+//import ucar.util.Logger;
+import anl.verdi.core.VerdiPlugin;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.Dataset;
 import anl.verdi.plot.config.PlotConfiguration;
@@ -29,6 +34,7 @@ public class Tools {
 	public static final String PROPERTY_FILE = "/verdi/config.properties";
 	public static final String PROPERTY_FILE_TEMP = "/verdi/config.properties.TEMPLATE";
 	public static final String VERDI_HOME = "VERDI_HOME";
+	static final Logger Logger = LogManager.getLogger(VerdiPlugin.class.getName());	// 2014
 
 	public static File getConfigFolder(PlotConfiguration config) {
 		File prevFld = (config == null ? null : config.getPreviousFolder());
@@ -46,6 +52,7 @@ public class Tools {
 	}
 	
 	public static String getUserHome() {
+		Logger.debug("in Tools.java, getUserHome: " + System.getProperty(USER_HOME));
 		return System.getProperty(USER_HOME);
 	}
 	

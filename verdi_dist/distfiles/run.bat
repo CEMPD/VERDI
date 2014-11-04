@@ -2,7 +2,18 @@
 
 SET BATCHFILE=%~f2
 
-SET VERDI_HOME=C:\\VERDI_test\\VERDI_1.5.0_test1103_v80
+REM Instructions: If your USER_HOME directory is not already set, 
+REM      you can set it here (set USER_HOME=C:\Users\myUserName). 
+REM      Your VERDI log file will be written in the verdi subdirectory.
+REM      Refer to your VERDI User's Guide for more information.
+SET USER_HOME=%USERPROFILE%
+set VERDI_USER=c:\users\ellenjo
+
+REM Instructions: Set the following path to the location where you installed VERDI.
+SET VERDI_HOME=C:\\VERDI_test\\VERDI_1.5.0_test1104_v81
+
+REM Do not edit below this line
+REM ************************************************************************
 CD .\plugins\bootstrap
 set JAVADIR=%VERDI_HOME%\jre1.7.0
 SET JAVA=%JAVADIR%\bin\java
