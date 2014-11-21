@@ -22,11 +22,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import saf.core.ui.util.FileChooserUtilities;
 import anl.verdi.commandline.BatchScriptHandler;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiConstants;
 import anl.verdi.core.VerdiGUI;
+import anl.verdi.core.VerdiPlugin;
 import anl.verdi.util.Tools;
 
 public class ScriptPanel extends JPanel {
@@ -47,6 +51,7 @@ public class ScriptPanel extends JPanel {
 	private boolean textChanged = false;
 
 	private VerdiApplication vApp;
+	static final Logger Logger = LogManager.getLogger(ScriptPanel.class.getName());	// 2014
 
 	public ScriptPanel(File script) {
 		super(new BorderLayout());
@@ -90,6 +95,7 @@ public class ScriptPanel extends JPanel {
 			while ((line = reader.readLine()) != null)
 				sb.append(line + Tools.LINE_SEPARATOR);
 		} catch (IOException e) {
+			Logger.error("ScriptPanel: Error reading file!");
 			sb.append("Error reading file!" + Tools.LINE_SEPARATOR);
 		} finally {
 			if (reader != null)
@@ -100,7 +106,6 @@ public class ScriptPanel extends JPanel {
 							+ Tools.LINE_SEPARATOR);
 				}
 		}
-
 		return sb.toString();
 	}
 
@@ -163,6 +168,7 @@ public class ScriptPanel extends JPanel {
 			vApp.setCurrentScriptFile(file);
 			vGui.setStatusTwoText("File saved to " + file.getAbsolutePath() + ".");
 		} catch (Exception exc) {
+			Logger.error("ScriptPanel: Error saving file: " + exc.getMessage());
 			if (vGui != null)
 				vGui.showMessage("Save Batch Script", "Error saving file: "
 						+ exc.getMessage() + ".");
@@ -192,7 +198,10 @@ public class ScriptPanel extends JPanel {
 				boolean endsWithTask = tasks.get(tasks.size()-1).toUpperCase().equals(VerdiConstants.END_TASK);
 				
 				if (!startsWithTask || !endsWithTask)
+				{
+					Logger.error("ScriptPanel: Run Batch Script: Selected text doesn't contruct a valid script.");
 					vGui.showMessage("Run Batch Script", "Selected text doesn't contruct a valid script.");
+				}
 				
 				global.addAll(tasks);
 				processScript(global.toArray(new String[0]));
@@ -271,6 +280,7 @@ public class ScriptPanel extends JPanel {
 								+ curFile.getAbsolutePath());
 		} catch (Throwable exc) {
 			exc.printStackTrace();
+			Logger.error("ScriptPanel: Error running batch script file: " + curFile.getAbsolutePath() + ": " + exc.getMessage());
 			if (vGui != null)
 				vGui.showMessage("Batch Script Error",
 								exc == null || exc.getMessage() == null ? "Error running batch script file: "
