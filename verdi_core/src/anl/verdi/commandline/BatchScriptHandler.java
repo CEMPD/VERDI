@@ -109,7 +109,10 @@ public class BatchScriptHandler {
 			String value = thisCommand.get(1);		// name of existing data file
 
 			if (!(new File(value).exists()))		// checks that file exists before looking for batch designation
+			{
 				Logger.error("Cannot find file: " + value + ".");
+				System.out.println("BatchScriptHandler: Cannot find file: " + value);
+			}
 
 			if (option.equalsIgnoreCase("-b") || option.equalsIgnoreCase("-batch")) {	// if not have existing file name but say batch, program proceeds ???
 				Logger.debug("Batch processing file: " + value);
@@ -119,6 +122,8 @@ public class BatchScriptHandler {
 			} else {
 				Logger.error(option + " is not a valid command.");
 				Logger.error("Usage: \n" + HELPTEXT);
+				System.out.println("BatchScriptHandler: " + option + " is not a valid command.");
+				System.out.println("Usage: \n" + HELPTEXT);
 			}
 		}
 	}
@@ -127,6 +132,7 @@ public class BatchScriptHandler {
 		if (tasks.isEmpty())
 		{
 			Logger.error("Exception in BatchScriptHandler.processTasks: There is no task to run.");
+			System.out.println("BatchScriptHandler: Exception in BatchScriptHandler.processTasks: There is no task to run.");
 			throw new Exception("Error: There is no task to run.");
 		}
 		for (AbstractTask task : tasks) {
@@ -135,6 +141,7 @@ public class BatchScriptHandler {
 					task.run();		// here is how program gets to TilePlotTask to execute
 			} catch (Throwable e) {
 				Logger.error("Error in BatchScriptHandler.processTasks: Task is null. " + e.getMessage());
+				System.out.println("BatchScriptHandler: Error in BatchScriptHandler.processTasks: Task is null. " + e.getMessage());
 				e.printStackTrace();
 				throw new Exception(e == null ? "Error running task: "
 						+ task.toString() : e.getMessage());
@@ -160,6 +167,7 @@ public class BatchScriptHandler {
 			return processBatchScript(scripts.toArray(new String[0]));
 		} catch (IOException e) {
 			Logger.error("IOException in BatchScriptHandler.processBatchFile: " + e.getMessage());
+			System.out.println("BatchScriptHandler: IOException in BatchScriptHandler.processBatchFile: " + e.getMessage());
 			throw e;
 		}
 	}
@@ -199,6 +207,7 @@ public class BatchScriptHandler {
 			return getAllTasks(global, maps);		// value returned from getAllTasks is return value for processBatchScript
 		} catch (Exception e) {
 			Logger.error("error in BatchScriptHandler.processBatchScript: " + e.getMessage());
+			System.out.println("BatchScriptHandler: Error in BatchScriptHandler.processBatchScript: " + e.getMessage());
 			throw e;
 		}
 	}
@@ -269,5 +278,4 @@ public class BatchScriptHandler {
 	protected static VerdiApplication getVerdiApp() {
 		return verdiApp;
 	}
-
 }
