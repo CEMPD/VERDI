@@ -10,14 +10,15 @@
 	<property name="core.dir" value="${basedir}/../verdi_core"/>
 	<property name="bootstrap.dir" value="${basedir}/../verdi_bootstrap"/>
 	<property name="loaders.dir" value="${basedir}/../verdi_data_loaders"/>
-	<property name="saf.dir" value="${basedir}/../verdi_saf_ui"/>
-	<property name="linux.dir" value="${dist.dir}/linux_dist"/>
+	<property name="saf.core.runtime.dir" value="${basedir}/../verdi_saf_core_runtime"/>
+	<property name="saf.core.ui.dir" value="${basedir}/../verdi_saf_ui"/>
+	
 	<property name="versiondir" value="../verdi_core/src/anl/verdi/util" />
 	<property name="versionbuild.dir" value="../verdi_core/bin/anl/verdi/util" />
 
-	<taskdef name="nsis" classname="net.sf.nsisant.Task">
+	<!-- taskdef name="nsis" classname="net.sf.nsisant.Task">
 		<classpath location="./distlib/nsisant-1.2.jar"/>
-	</taskdef>
+	</taskdef -->
 	
 	<path id="classpath">
 		<pathelement location="../verdi_core/bin/" />
@@ -53,17 +54,23 @@
 	</target>
 
 	<target name="jars">
-		<jar destfile="${plugins.dist.dir}/core/core.jar"
-		     basedir="${core.dir}/bin"/>
-
 		<jar destfile="${plugins.dist.dir}/bootstrap/bootstrap.jar"
 		     basedir="${bootstrap.dir}/bin"/>
 
+		<jar destfile="${plugins.dist.dir}/bootstrap/lib/saf.core.runtime.jar"
+			 basedir="${saf.core.runtime.dir}/bin"/>
+
+		<jar destfile="${plugins.dist.dir}/core/core.jar"
+		     basedir="${core.dir}/bin"/>
+
 		<jar destfile="${plugins.dist.dir}/verdi.data.loaders/data_loaders.jar"
 		     basedir="${loaders.dir}/bin"/>
+		     
+		<jar destfile="${plugins.dist.dir}/saf.core.ui/saf.core.ui.jar"
+			basedir="${saf.core.ui.dir}/bin/"/>
 	</target>
 
-	<target name="prep.dist" >
+	<target name="prep.dist" depends="compile-version">
 		<delete dir="${dist.dir}" failonerror="true"/>
 		<mkdir dir="${dist.dir}"/>
 		<delete dir="${plugins.dist.dir}" failonerror="false"/>
@@ -71,12 +78,20 @@
 		<mkdir dir="${install.home}"/>
 
 		<copy todir="${plugins.dist.dir}/bootstrap">
-			<fileset file="${bootstrap.dir}/boot.properties"/>
+			<fileset file="${bootstrap.dir}/dist_boot.properties"/>
+			<mapper type="glob" from="dist_boot.properties" to="boot.properties"/>
+		</copy>
+
+		<copy todir="${plugins.dist.dir}/bootstrap">
 			<fileset file="${bootstrap.dir}/ui.properties"/>
 		</copy>
 
 		<copy todir="${plugins.dist.dir}/bootstrap/lib">
-			<fileset dir="${bootstrap.dir}/lib"/>
+			<fileset file="${bootstrap.dir}/lib/jpf.jar"/>
+			<fileset file="${bootstrap.dir}/lib/jpf-boot.jar"/>
+			<fileset file="${bootstrap.dir}/lib/jpf-tools.jar"/>
+			<fileset file="${bootstrap.dir}/lib/jaramiko-151.jar"/>
+			<fileset file="${bootstrap.dir}/lib/log4j2.xml"/>
 		</copy>
 
 		<copy todir="${plugins.dist.dir}/bootstrap/data">
@@ -90,6 +105,15 @@
 		<jar destfile="${plugins.dist.dir}/bootstrap/bootstrap.jar"
 		     basedir="${bootstrap.dir}/bin"/>
 
+		<!-- saf.core.runtime -->
+		<jar destfile="${plugins.dist.dir}/bootstrap/lib/saf.core.runtime.jar"
+			 basedir="${saf.core.runtime.dir}/bin" />
+		
+		<copy todir="${plugins.dist.dir}/bootstrap/lib">
+			<fileset file="${saf.core.runtime.dir}/dist_plugin.xml" />
+			<mapper type="glob" from="dist_plugin.xml" to="plugin.xml"/>
+		</copy>
+
 		<!-- core -->
 		<copy todir="${plugins.dist.dir}/core">
 			<fileset file="${core.dir}/dist_plugin.xml"/>
@@ -99,6 +123,9 @@
 		<copy todir="${plugins.dist.dir}/core/lib">
 			<fileset dir="${core.dir}/lib"/>
 		</copy>
+		
+		<move file="${plugins.dist.dir}/core/lib/libj3dcore-ogl.so.linux" 
+			tofile="${plugins.dist.dir}/core/lib/libj3dcore-ogl.so"/>
 
 		<copy todir="${plugins.dist.dir}/core/help">
 			<fileset dir="${core.dir}/help"/>
@@ -128,26 +155,32 @@
 
 		<!-- saf ui -->
 		<copy todir="${plugins.dist.dir}/saf.core.ui">
-			<fileset file="${saf.dir}/plugin.xml"/>
-			<fileset file="${saf.dir}/saf.core.ui.jar"/>
+			<fileset file="${saf.core.ui.dir}/dist_plugin.xml"/>
+			<mapper type="glob" from="dist_plugin.xml" to="plugin.xml" />
 		</copy>
 
 		<copy todir="${plugins.dist.dir}/saf.core.ui/lib">
-			<fileset dir="${saf.dir}/lib">
+			<fileset dir="${saf.core.ui.dir}/lib">
 				<exclude name="**/*.zip"/>
 			</fileset>
 		</copy>
 
 		<copy todir="${plugins.dist.dir}/saf.core.ui/icons">
-			<fileset dir="${saf.dir}/icons"/>
+			<fileset dir="${saf.core.ui.dir}/icons"/>
 		</copy>
+		
+		<jar destfile="${plugins.dist.dir}/saf.core.ui/saf.core.ui.jar"
+			 basedir="${saf.core.ui.dir}/bin"/>
 	</target>
 	
 	<tstamp/>
 	
 	<target name="build.linux.dist" depends="prep.dist">	  	       
 	        <unzip src="./distfiles/licenses.zip" dest="${dist.dir}"/>
-	        <unzip src="./distfiles/data.zip" dest="${dist.dir}"/>
+			<mkdir dir="${dist.dir}/data"/>
+			<copy todir="${dist.dir}/data">
+				<fileset dir="./distfiles/data"/>
+			</copy>
 	    
 	        <copy todir="${dist.dir}">
 	            <fileset file="./distfiles/INSTALL.linux.txt"/>
@@ -161,6 +194,7 @@
 			<exec executable="cp">
 		  		<arg line="-p ./distfiles/verdi_linux32.sh ${dist.dir}/verdi.sh"/>
 			</exec>
+			<chmod file="${dist.dir}/verdi.sh" perm="ug+x"/>
 		
 			<exec executable="cp">
 		  		<arg line="-p -R ${jdk.home}/jre ${dist.dir}/jre"/>
