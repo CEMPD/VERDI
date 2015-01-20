@@ -606,7 +606,7 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
     case PI:
     case NROWS:
     case NCOLS:
-    case NLEVELS:
+    case NLAYERS:
     case IDENTIFIER:
       Var();
       break;
@@ -673,12 +673,12 @@ public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConsta
                     }
       }
       break;
-    case NLEVELS:
-                    ASTNLevels jjtn005 = new ASTNLevels(JJTNLEVELS);
+    case NLAYERS:
+                    ASTNLayers jjtn005 = new ASTNLayers(JJTNLEVELS);
                     boolean jjtc005 = true;
                     jjtree.openNodeScope(jjtn005);
       try {
-        jj_consume_token(NLEVELS);
+        jj_consume_token(NLAYERS);
       } finally {
                     if (jjtc005) {
                       jjtree.closeNodeScope(jjtn005, true);

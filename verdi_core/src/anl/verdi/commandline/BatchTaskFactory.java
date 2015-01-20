@@ -59,14 +59,16 @@ public class BatchTaskFactory {
 			// here protect from NullPointerException when not using subDomain
 			if(subDomain != null)	// use subDomain
 			{
-			if (!usePattern)
-				tasks.add(new TilePlotTask(map, files, app, subDomain.split(" ")));
-			
-			for (Map<String, String> m : maps)
-				tasks.add(new TilePlotTask(m, new File[]{new File(m.get(VerdiConstants.DATA_FILE))}, app, subDomain.split(" ")));
+				Logger.debug("BatchTaskFactory.constructTasks: using subdomain for " + gtype);
+				if (!usePattern)
+					tasks.add(new TilePlotTask(map, files, app, subDomain.split(" ")));
+				
+				for (Map<String, String> m : maps)
+					tasks.add(new TilePlotTask(m, new File[]{new File(m.get(VerdiConstants.DATA_FILE))}, app, subDomain.split(" ")));
 			}
 			else
 			{	// 2014 not using subDomain
+				Logger.debug("BatchTaskFactory.constructTasks: NOT using subdomain for " + gtype);
 				if (!usePattern)
 					tasks.add(new TilePlotTask(map, files, app));
 				
@@ -99,7 +101,9 @@ public class BatchTaskFactory {
 //			for (Map<String, String> m : maps)
 //				tasks.add(new VectorPlotTask(m, new File[]{new File(m.get(VerdiConstants.DATA_FILE))}, app));
 //		}	// 2014 removed old Vector Plot
-		
+		else {
+			Logger.warn("Invalid plot type: " + gtype);		// 2015 warn user if invalid plot type at this point
+		}
 		return tasks;
 	}
 

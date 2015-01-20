@@ -123,7 +123,7 @@ public class GeotiffWriterUnc {
 		pageNumber++;
 	}
 
-	public void writeGrid(String fileName, String gridName, int time, int level, boolean greyScale, LatLonRect pt)
+	public void writeGrid(String fileName, String gridName, int time, int layer, boolean greyScale, LatLonRect pt)
 			throws IOException {
 		double scaler;
 		GridDataset dataset = ucar.nc2.dt.grid.GridDataset.open(fileName);
@@ -141,7 +141,7 @@ public class GeotiffWriterUnc {
 			throw new IllegalArgumentException("Must be evenly spaced grid = " + grid.getName());
 
 		// read in data
-		Array data = grid.readDataSlice(time, level, -1, -1);
+		Array data = grid.readDataSlice(time, layer, -1, -1);
 		data.getShape();
 		Array lon = xaxis.read();
 		Array lat = yaxis.read();

@@ -13,9 +13,10 @@ import anl.verdi.data.DataFrame;
  * @version $Revision$ $Date$
  */
 public class Frame {
+	// 2015 changed "level" to "layer" for consistency
 
 	private Map<String, DataFrame> varValues = new HashMap<String, DataFrame>();
-	private int timeStep, layer, x, y, nrows, ncols, nlevels;
+	private int timeStep, layer, x, y, nrows, ncols, nlayers;
 
 	/**
 	 * Sets the value of the named variable to the specified value.
@@ -108,21 +109,21 @@ public class Frame {
 	}
 
 	/**
-	 * Gets the number of level in the currently selected domain.
+	 * Gets the number of layers in the currently selected domain.
 	 *
-	 * @return the number of levels in the currently selected domain.
+	 * @return the number of layers in the currently selected domain.
 	 */
-	public int getLevelCount() {
-		return nlevels;
+	public int getLayerCount() {
+		return nlayers;
 	}
 
 	/**
-	 * Sets the number of levels in the currently selected domain.
+	 * Sets the number of layers in the currently selected domain.
 	 *
-	 * @param nlevels the number of levels in the currently selected domain
+	 * @param nlayers the number of layers in the currently selected domain
 	 */
-	public void setLevelCount(int nlevels) {
-		this.nlevels = nlevels;
+	public void setLayerCount(int nlayers) {
+		this.nlayers = nlayers;
 	}
 
 	/**
@@ -158,4 +159,5 @@ public class Frame {
 	public int getLayerOffset() {
 		return 0;
 	}
+
 }

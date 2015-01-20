@@ -172,16 +172,9 @@ public class FastAreaTilePlot extends FastTilePlot {
 			minmax[0] = range.averageMin;
 			minmax[1] = range.averageMax;
 
-			// if(minMax==null || minMax.getMin()>minmax[0] || minMax.getMax()<minmax[1])
 			{
-				//System.out.println("computing average data minmax...");
-				//			double[] minmax = { 0.0, 0.0 };
-				//			computeDataRange(minmax);
-
 				// initialize colormap to these min max values
 				minMax=new MinMax(minmax[0],minmax[1]);
-				// TODO: JIZHEN - need the old map?
-				//ColorMap map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
 				if ( map == null) {
 					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
 				} else {
@@ -195,7 +188,6 @@ public class FastAreaTilePlot extends FastTilePlot {
 				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
 				setLegendLevels(minMax);
 			}
-			//System.out.println("minMax "+minMax.getMin()+" "+minMax.getMax());
 		}
 	}
 
@@ -210,14 +202,9 @@ public class FastAreaTilePlot extends FastTilePlot {
 			double[] minmax = { 0.0, 0.0 };
 			computeDataRange(minmax, this.log); // grid min max
 
-			// if(minMax==null || minMax.getMin()>minmax[0] || minMax.getMax()<minmax[1])
 			{
-				//System.out.println("computing average data minmax...");
-
 				// initialize colormap to these min max values
 				minMax=new MinMax(minmax[0],minmax[1]);
-				// TODO: JIZHEN - need the old map?
-//				ColorMap map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
 				if ( map == null) {
 					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
 				} else {
@@ -245,7 +232,6 @@ public class FastAreaTilePlot extends FastTilePlot {
 	}
 	public void calculateTotalLevels(){
 		if (((AreaTilePlot) tilePlot).mouseOverOK) {
-//			final int count = legendLevels.length;
 			Logger.debug("calculateTotalLevels");
 
 			// calc range for this set of numbers
@@ -255,13 +241,11 @@ public class FastAreaTilePlot extends FastTilePlot {
 			minmax[1] = range.totalMax;
 
 			// if never set before or if larger range than last set of numbers
-			// if(minMax==null || minMax.getMin()>minmax[0] || minMax.getMax()<minmax[1])
 			{
 				Logger.debug("computing total data minmax...");
 
 				// initialize colormap to these min max values
 				minMax=new MinMax(minmax[0],minmax[1]);
-				//ColorMap map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
 				if ( map == null){
 					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
 				} else {
@@ -314,9 +298,6 @@ public class FastAreaTilePlot extends FastTilePlot {
 		JXTable table = new JXTable(new AreaDataFrameTableModel(dataFrames,targets,vars));
 		table.setColumnControlVisible(true);
 		table.setHorizontalScrollEnabled(true);
-//		table.setHighlighters(new org.jdesktop.swingx.decorator.HighlighterPipeline(
-//				new Highlighter[]{AlternateRowHighlighter.classicLinePrinter}));
-//		table.getHighlighters().addHighlighter(new RolloverHighlighter(Color.BLACK, Color.WHITE));
 		table.setRolloverEnabled(true);
 
 		// set the column headers on the table
@@ -346,7 +327,6 @@ public class FastAreaTilePlot extends FastTilePlot {
 			dialog.pack();
 
 			dialog.setVisible(true);
-//			Logger.debug("area info");
 
 			String[] formula = dialog.getSelectedFormulas();
 			if(formula==null)return ;
@@ -380,7 +360,6 @@ public class FastAreaTilePlot extends FastTilePlot {
 					Logger.debug("selection action "+src.isSelected());
 					probe=false;
 					zoom=false;
-					//activateRubberBand();
 					float xScale = (float)columns / (dataArea.width == 0 ? columns : dataArea.width);
 					float yScale = (float)rows / (dataArea.height == 0 ? rows : dataArea.height);
 
@@ -800,8 +779,6 @@ public class FastAreaTilePlot extends FastTilePlot {
 
 				// initialize colormap to these min max values
 				minMax=new MinMax(minmax[0],minmax[1]);
-				// TODO: JIZHEN - need the old map?
-				//ColorMap map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
 				if ( map == null) {
 					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
 				} else {
@@ -811,8 +788,6 @@ public class FastAreaTilePlot extends FastTilePlot {
 				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
 				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
 
-
-//				System.out.println("minmax: " + minmax[0] + " " + minmax[1]);
 				setLegendLevels(minMax);
 			}
 		}

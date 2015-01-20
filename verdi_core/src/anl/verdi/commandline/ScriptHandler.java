@@ -101,8 +101,8 @@ public class ScriptHandler {
 
 	private static int selectedTimeStep = 1; //Default to 1-based first step
 	private static String aliasFileName = System.getProperty("user.home") +  '/' + "verdi" + File.separatorChar + "verdi.alias";
-	private static int levelMin = -1;
-	private static int levelMax = -1;
+	private static int layerMin = -1;
+	private static int layerMax = -1;
 
 
 	private static final String HELPTEXT = "[-alias <aliasname=definition> ]\n"
@@ -121,8 +121,8 @@ public class ScriptHandler {
 			+ "[-gtype <tile|fasttile|line|bar|contour> ]\n"
 			+ "[-help|fullhelp|usage ]\n"
 			+ "[-legendBins \"<bin0,bin1,...,bin_n>\" ]\n"
-			+ "[-level <level> ]\n"
-			+ "[-levelRange <levelMax> <levelMin> ]\n"
+			+ "[-layer <layer> ]\n"
+			+ "[-layerRange <layerMax> <layerMin> ]\n"
 			+ "[-mapName \"<pathname>/<mapFileName>\" ]\n"
 			//											+ "[ -multitime <Nformulas> \"<formula1>\" ... \"<formulaN>\" ]\n"
 			+ "[ -openProject <VERDIProjectName> (NEW)]\n"
@@ -173,7 +173,8 @@ public class ScriptHandler {
 	public static void constructMap()
 	{
 		dataMap.put("s".toUpperCase(), new CommandScript(){
-			public void run(ArrayList<String> args){				
+			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.S");
 				try{
 					String formula = args.get(1);
 					DatasetListModel dlm = verdiApp.getProject().getDatasets();
@@ -198,10 +199,10 @@ public class ScriptHandler {
 						e.setTimeMin(tinit);
 						e.setTimeUsed(true);
 					}
-					if(levelMax != -1 && levelMin != -1)
+					if(layerMax != -1 && layerMin != -1)
 					{
-						e.setLayerMax(levelMax);
-						e.setLayerMin(levelMin);
+						e.setLayerMax(layerMax);
+						e.setLayerMin(layerMin);
 						e.setLayerUsed(true);
 					}
 
@@ -216,6 +217,7 @@ public class ScriptHandler {
 
 		dataMap.put("f".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.F");
 				try{
 					File[] f = {new File(args.get(1))};
 					verdiApp.loadDataset(f);
@@ -233,6 +235,7 @@ public class ScriptHandler {
 
 		dataMap.put("copyright".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.COPYRIGHT");
 				//				try {	// warning resource leak: reader never closed; changing to try-with-resources 2014
 				//					BufferedReader reader = new BufferedReader(new FileReader(new File(copyrightFile)));
 				try (BufferedReader reader = new BufferedReader(new FileReader(new File(copyrightFile))))
@@ -251,7 +254,7 @@ public class ScriptHandler {
 
 		dataMap.put("alias".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-
+				Logger.debug("ScriptHandler.constructMap.ALIAS");
 				if(args.get(1).indexOf('=') != -1)
 				{
 					String aliasName = args.get(1).substring(0, args.get(1).indexOf("="));
@@ -278,6 +281,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("animatedGIF".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.ANIMATEDGIF");
 				//assume that the GIF should be the same dimensions as the plot displayed.
 				try{
 					Plot plot = plotMap.get(curView);
@@ -300,6 +304,7 @@ public class ScriptHandler {
 
 		dataMap.put("avi".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.AVI");
 				//assume that the AVI should be the same dimensions as the plot displayed.
 				try{
 					Plot plot = plotMap.get(curView);
@@ -318,6 +323,7 @@ public class ScriptHandler {
 
 		dataMap.put("closeWindow".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.CLOSEWINDOW");
 				//verdiApp.getGui().getViewManager().setActiveView(args.get(1));
 				curView = args.get(1);
 				verdiApp.getGui().getViewManager().getPerspective().removeDockable(verdiApp.getGui().getViewManager().getDockable(curView));
@@ -385,6 +391,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("configFile".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.CONFIGFILE");
 				try{
 					config = new PlotConfiguration(new File(args.get(1)));
 					vConfig = new VertCrossPlotConfiguration(new PlotConfiguration(new File(args.get(1))));
@@ -402,7 +409,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("drawGridLines".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-
+				Logger.debug("ScriptHandler.constructMap.DRAWGRIDLINES");
 				Boolean show = new Boolean(true);
 				try{
 					if(args.get(1).equalsIgnoreCase("ON"))
@@ -432,7 +439,7 @@ public class ScriptHandler {
 
 		dataMap.put("drawDomainTicks".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-
+				Logger.debug("ScriptHandler.constructMap.DRAWDOMAINTICKS");
 				Boolean show = new Boolean(true);
 				try{
 					if(args.get(1).equalsIgnoreCase("ON"))
@@ -463,7 +470,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("drawRangeTicks".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-
+				Logger.debug("ScriptHandler.constructMap.DRAWRANGETICKS");
 				Boolean show = new Boolean(true);
 				try{
 					if(args.get(1).equalsIgnoreCase("ON"))
@@ -494,7 +501,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("drawLegendTicks".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-
+				Logger.debug("ScriptHandler.constructMap.DRAWLEGENDTICKS");
 				Boolean show = new Boolean(true);
 				try{
 					if(args.get(1).equalsIgnoreCase("ON"))
@@ -525,6 +532,7 @@ public class ScriptHandler {
 		});
 		dataMap.put( "fulldomain".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.FULLDOMAIN");
 				//since there is no way to change the dataset programmatically, 
 				//we will just use the last added one
 				DatasetListModel dlm = verdiApp.getProject().getDatasets();
@@ -536,6 +544,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("g".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.G");
 				//should be tile|line|bar|contour
 
 				Plot plot = null;
@@ -597,8 +606,7 @@ public class ScriptHandler {
 					curView = viewList.get(viewList.size() - 1);
 					plotMap.put(curView, plot);
 
-					//only reset the configuration if we are not using a 
-					//configuration file
+					//only reset the configuration if we are not using a configuration file
 					if(configFile == null)
 					{	
 						config = new PlotConfiguration();
@@ -643,6 +651,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("gtype".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.GTYPE");
 				//should be tile|line|bar|contour
 
 				Plot plot = null;
@@ -650,16 +659,6 @@ public class ScriptHandler {
 					if(args.get(1).equalsIgnoreCase("tile") ||
 							args.get(1).equalsIgnoreCase("fasttile"))
 					{
-						//						plot = new DefaultPlotCreator(verdiApp, Formula.Type.TILE, config).createPlot();
-						//						
-						//						DataFrame frame = plot.getData().get(0);
-						//						Axes<DataFrameAxis> axes = frame.getAxes();
-						//						
-						//						//assume the user is passing in the actual number of the 
-						//						//timestep
-						//						((TilePlot)plot).updateTimeStep(selectedTimeStep - axes.getTimeAxis().getOrigin());
-						//					}
-						//					else if (args.get(1).equalsIgnoreCase("fasttile")) {
 						if ( verdiApp.getProject().getSelectedFormula() != null ) {
 							final DataFrame dataFrame =
 									verdiApp.evaluateFormula( Formula.Type.TILE );
@@ -697,8 +696,7 @@ public class ScriptHandler {
 
 					plotMap.put(curView, plot);
 
-					//only reset the configuration if we are not using a 
-					//configuration file
+					//only reset the configuration if we are not using a configuration file
 					if(configFile == null)
 					{
 						config = new PlotConfiguration();
@@ -745,13 +743,15 @@ public class ScriptHandler {
 		});
 		dataMap.put("help".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.HELP");
 				Logger.debug(HELPTEXT);
 				System.out.println(HELPTEXT);
 				System.exit(0);
 			}				
 		});
-		dataMap.put("fullhelp".toUpperCase(), new CommandScript(){
+		dataMap.put("fullhelp".toUpperCase(), new CommandScript(){	// appears same as "help"
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.FULLHELP");
 				Logger.debug(HELPTEXT);
 				System.out.println(HELPTEXT);
 				System.exit(0);
@@ -759,6 +759,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("usage".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.USAGE");
 				Logger.debug(HELPTEXT);
 				System.out.println(HELPTEXT);
 				System.exit(0);
@@ -766,6 +767,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("legendBins".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.LEGENDBINS");
 				try{
 					String[] allItems = null;
 					int numColors = args.size() - 1;
@@ -840,16 +842,17 @@ public class ScriptHandler {
 				}
 			}				
 		});
-		dataMap.put("level".toUpperCase(), new CommandScript(){
+		dataMap.put("layer".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.LAYER");
 				try{
-					levelMin = Integer.parseInt(args.get(1));
-					levelMax = Integer.parseInt(args.get(1));
+					layerMin = Integer.parseInt(args.get(1));
+					layerMax = Integer.parseInt(args.get(1));
 				}catch(NumberFormatException e){
-					Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LEVEL': " + e.getMessage());
+					Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LAYER': " + e.getMessage());
 				}
 				catch(NullPointerException e){
-					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LEVEL': " + e.getMessage());
+					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LAYER': " + e.getMessage());
 				}
 
 				FormulaListModel flm = verdiApp.getProject().getFormulas();
@@ -861,25 +864,26 @@ public class ScriptHandler {
 						obj.setLayerMin(Integer.parseInt(args.get(1)));
 						obj.setLayerUsed(true);
 					}catch(NumberFormatException e){
-						Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LEVEL': " + e.getMessage());
+						Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LAYER': " + e.getMessage());
 					}
 					catch(NullPointerException e){
-						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LEVEL': " + e.getMessage());
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LAYER': " + e.getMessage());
 					}
 				}
 			}				
 		});
-		dataMap.put("levelRange".toUpperCase(), new CommandScript(){
+		dataMap.put("layerRange".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.LAYERRANGE");
 				FormulaListModel flm = verdiApp.getProject().getFormulas();
 				try{
-					levelMin = Integer.parseInt(args.get(1));
-					levelMax = Integer.parseInt(args.get(2));
+					layerMin = Integer.parseInt(args.get(1));
+					layerMax = Integer.parseInt(args.get(2));
 				}catch(NumberFormatException e){
-					Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LEVELRANGE': " + e.getMessage());
+					Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LAYERRANGE': " + e.getMessage());
 				}
 				catch(NullPointerException e){
-					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LEVELRANGE': " + e.getMessage());
+					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LAYERRANGE': " + e.getMessage());
 				}
 
 				for(int i = 0; i < flm.getSize(); i++)
@@ -890,122 +894,24 @@ public class ScriptHandler {
 						obj.setLayerMin(Integer.parseInt(args.get(2)));
 						obj.setLayerUsed(true);
 					}catch(NumberFormatException e){
-						Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LEVELRANGE': " + e.getMessage());
+						Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LAYERRANGE': " + e.getMessage());
 					}
 					catch(NullPointerException e){
-						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LEVELRANGE': " + e.getMessage());
+						Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'LAYERRANGE': " + e.getMessage());
 					}
 				}
 			}				
 		});
 		dataMap.put("mapName".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.MAPNAME");
 
 				mapNames.add(args.get(1));
-
-
-				////					Plot plot = plotMap.get(curView);
-				////					DataFrame frame = plot.getData().get(0);
-				////					AddLayerWizard wizard = new AddLayerWizard();
-				////					
-				////					MapContext context;
-				////					context = verdiApp.getDomainPanelContext();
-				////					
-				////					MapLayer layer = plot.get//wizard.display((JFrame)dialog.getParent());
-				////
-				////					context.addLayer(layer);
-				////					
-				////					if (layer != null) {
-				////						((DefaultListModel) layerList.getModel()).add(0, layer);
-				////						addLayers.add(layer);
-				////						layerList.setSelectedIndex(0);
-				////						layerList.scrollRectToVisible(layerList.getCellBounds(0, 0));
-				////					}
-				//					File shpFile = new File("C:\\Documents and Settings\\wagner\\workspace\\VERDI\\pave_bootstrap\\data\\lakes.shp");
-				////					if (modelShpFile == null
-				////							|| (modelShpFile != null && !shpFile.equals(modelShpFile))) {
-				//						// create a new default map layer from the shape file.
-				//						try {
-				//							URL url = shpFile.toURL();
-				//							Map<String, Serializable> params = new HashMap<String, Serializable>();
-				//							params.put(IndexedShapefileDataStoreFactory.URLP.key, url);
-				//							params.put(
-				//											IndexedShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.key,
-				//											true);
-				//							params.put(IndexedShapefileDataStoreFactory.URLP.key, url);
-				//							params.put("wkb enabled", "true");
-				//							params.put("loose bbox", "true");
-				//							IndexedShapefileDataStoreFactory dsfac = new IndexedShapefileDataStoreFactory();
-				//							DataStore datastore = dsfac.createDataStore(params);
-				//							datastore.getFeatureReader(new DefaultQuery(datastore
-				//									.getTypeNames()[0], Filter.NONE, new String[0]),
-				//									Transaction.AUTO_COMMIT);
-				//							FeatureSource fc = datastore.getFeatureSource(datastore
-				//									.getTypeNames()[0]);
-				//							Class geomtype = fc.getSchema().getDefaultGeometry().getType();
-				//							StyleBuilder builder = new StyleBuilder();
-				//							Style style = null;
-				//							if (geomtype.equals(com.vividsolutions.jts.geom.Point.class)
-				//									|| geomtype.equals(MultiPoint.class)) {
-				//								style = builder.createStyle(builder
-				//										.createPointSymbolizer(builder.createGraphic(null,
-				//												builder.createMark("square"), null)));
-				//							} else if (geomtype.equals(LineString.class)
-				//									|| geomtype.equals(MultiLineString.class)) {
-				//								style = builder.createStyle(builder.createLineSymbolizer());
-				//							} else {
-				//								style = builder.createStyle(builder
-				//										.createPolygonSymbolizer());
-				//							}
-				//							MapLayer layer = new DefaultMapLayer(fc, style);
-				//							MapContext context;
-				//							context = verdiApp.getDomainPanelContext();
-				//							context.addLayer(layer);
-				////							model.setLayer(layer);
-				////							model.setShpFile(shpFile);
-				//
-				//						} catch (MalformedURLException e) {
-				//							//msg.error("Error creating layer from shapefile", e);
-				//						} catch (IOException e) {
-				////							msg.error("Error creating layer from shapefile", e);
-				//						}
-				//					}
 			}				
 		});
-		//		dataMap.put("multitime".toUpperCase(), new CommandScript(){
-		//				public void run(ArrayList<String> args){
-		//					try{
-		//						int numFormulas = Integer.parseInt(args.get(1));
-		//						MultiTimeSeriesPlotRequest plotRequest = new MultiTimeSeriesPlotRequest("Time Series Line");
-		//
-		//						for(int i = 0; i < numFormulas; i++)
-		//						{
-		//							String formula = args.get(i + 2);
-		//						
-		//							//see if this is an alias, if it is, we need to convert it
-		//							if(aliasMap.containsKey(formula))
-		//							{
-		//								DatasetListModel dlm = verdiApp.getProject().getDatasets();
-		//								DatasetListElement dle = 
-		//									(DatasetListElement)dlm.getElementAt(dlm.getSize() - 1);
-		//								formula = convertFormula(aliasMap.get(formula), dle.getDataset().getAlias());
-		//							}
-		//							
-		//							FormulaListElement e = verdiApp.create(formula);
-		//							
-		//							verdiApp.getProject().getFormulas().addFormula(e);
-		//							verdiApp.getProject().setSelectedFormula(e);
-		//
-		//							DataFrame frame = verdiApp.evaluateFormula(Formula.Type.TIME_SERIES_LINE);
-		//							plotRequest.addItem(frame, false);
-		//						}
-		//						plotRequest.doCreatePlot();
-		//					}catch(NullPointerException e){}
-		//
-		//				}				
-		//			});				
 		dataMap.put("openProject".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.OPENPROJECT");
 				try{
 					verdiApp.openProject(new File(args.get(1)));
 				}catch(NullPointerException e){
@@ -1015,6 +921,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("printAlias".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.PRINTALIAS");
 
 				Logger.debug("Aliases Defined:");
 				Set keys = aliasMap.keySet();         // The set of keys in the map.
@@ -1028,16 +935,19 @@ public class ScriptHandler {
 		});
 		dataMap.put("quit".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.QUIT");
 				System.exit(0);
 			}				
 		});
 		dataMap.put("exit".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.EXIT");	// same as QUIT
 				System.exit(0);
 			}				
 		});
 		dataMap.put("raiseWindow".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.RAISEWINDOW");
 				try{
 
 					verdiApp.getGui().getViewManager().getDockable(args.get(1)).toFront();
@@ -1049,7 +959,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("save2ascii".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-
+				Logger.debug("ScriptHandler.constructMap.SAVE2ASCII");
 				try{
 					Plot plot = plotMap.get(curView);
 					Formula.Type type = plot.getType();
@@ -1071,14 +981,14 @@ public class ScriptHandler {
 				}catch(NullPointerException e){
 					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'SAVE2ASCII': " + e.getMessage());
 				}catch(IOException e){
-					Logger.error("IOException in ScriptHandler.dataMap.put 'LEVEL': " + e.getMessage());
+					Logger.error("IOException in ScriptHandler.dataMap.put 'LAYER': " + e.getMessage());
 				}
 
 			}				
 		});
 		dataMap.put("saveImage".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-
+				Logger.debug("ScriptHandler.constructMap.SAVEIMAGE");
 				Plot plot = plotMap.get(curView);
 
 				try{
@@ -1094,6 +1004,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("scatter".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.SCATTER");
 				try{
 					String formulaX = args.get(1);
 					String formulaY = args.get(2);
@@ -1110,7 +1021,6 @@ public class ScriptHandler {
 					{
 						formulaY = convertFormula(aliasMap.get(formulaY), dle.getDataset().getAlias());
 					}
-
 
 					FormulaListElement x = verdiApp.create(formulaX);
 					verdiApp.getProject().getFormulas().addFormula(x);
@@ -1130,26 +1040,9 @@ public class ScriptHandler {
 				}
 			}				
 		});
-		//		dataMap.put("showWindow".toUpperCase(), new CommandScript(){
-		//				public void run(ArrayList<String> args){
-		//					try{
-		//						verdiApp.getGui().getViewManager().getDockable(args.get(1)).toFront();
-		//						curView = args.get(1);
-		//						Plot plot = plotMap.get(curView);
-		//						
-		//						DataFrame frame = plot.getData().get(0);
-		//						Axes<DataFrameAxis> axes = frame.getAxes();
-		//						
-		//						//assume the user is passing in the actual number of the 
-		//						//timestep
-		//						((TilePlot)plot).updateTimeStep(
-		//								Integer.parseInt(args.get(2)) - axes.getTimeAxis().getOrigin());
-		//					}catch(NullPointerException e){}
-		//				}				
-		//			});
 		dataMap.put("subDomain".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-
+				Logger.debug("ScriptHandler.constructMap.SUBDOMAIN");
 				try{
 					//since there is no way to change the dataset programmatically, 
 					//we will just use the last added one
@@ -1178,6 +1071,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("subTitle1".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.SUBTITLE1");
 				try{
 					config.setSubtitle1(args.get(1));
 					vConfig.setSubtitle1(args.get(1));
@@ -1191,6 +1085,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("subTitle2".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.SUBTITLE2");
 				try{
 					config.setSubtitle2(args.get(1));
 					vConfig.setSubtitle2(args.get(1));
@@ -1203,6 +1098,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("subTitleFont".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.SUBTITLEFONT");
 				try{
 					config.putObject(PlotConfiguration.SUBTITLE_1_FONT, 
 							new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
@@ -1225,10 +1121,10 @@ public class ScriptHandler {
 		});
 		dataMap.put("system".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.SYSTEM");
 				String commandStr = args.get(1);
-				//					boolean successfullyScheduled = true;
 				Process process = null;
-				//  Execute command as a sub-process
+				//  Execute command as a subprocess
 				try {
 					process = Runtime.getRuntime().exec(commandStr);
 					BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -1249,6 +1145,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("tfinal".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.TFINAL");
 				try{
 					tfinal = Integer.parseInt(args.get(1));
 				}catch(NumberFormatException e){
@@ -1259,7 +1156,6 @@ public class ScriptHandler {
 				for(int i = 0; i < flm.getSize(); i++)
 				{
 					try{
-
 						FormulaListElement obj = (FormulaListElement)flm.getElementAt(i);
 						obj.setTimeMax(Integer.parseInt(args.get(1)));
 						obj.setTimeUsed(true);
@@ -1274,6 +1170,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("tinit".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.TINIT");
 				FormulaListModel flm = verdiApp.getProject().getFormulas();
 				try{
 					tinit = Integer.parseInt(args.get(1));
@@ -1299,6 +1196,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("titleFont".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.TITLEFONT");
 				try{
 					config.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
 					vConfig.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, Integer.parseInt(args.get(1))));
@@ -1310,6 +1208,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("titleString".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.TITLESTRING");
 				try{
 					config.setTitle(args.get(1));
 					vConfig.setTitle(args.get(1));
@@ -1322,6 +1221,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("ts".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.TS");
 				try{
 					selectedTimeStep = Integer.parseInt(args.get(1));
 				}catch(NullPointerException e){
@@ -1331,6 +1231,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("quicktime".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.QUICKTIME");
 				//					assume that the movie should be the same dimensions as the plot displayed.
 				try{
 					Plot plot = plotMap.get(curView);
@@ -1346,6 +1247,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("unalias".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.UNALIAS");
 				try{
 					aliasMap.remove(args.get(1));
 					writeToAliasFile();
@@ -1357,6 +1259,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("unitString".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.UNITSTRING");
 				try{
 					config.setUnits(args.get(1));
 					vConfig.setUnits(args.get(1));
@@ -1367,14 +1270,9 @@ public class ScriptHandler {
 				}
 			}				
 		});
-		//		dataMap.put("vectobs".toUpperCase(), new CommandScript(){
-		//				public void run(ArrayList<String> args){
-		//
-		//				}				
-		//			});
 		dataMap.put("vector".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-
+				Logger.debug("ScriptHandler.constructMap.VECTOR");
 				try{
 					String uWind = args.get(1);
 					String vWind = args.get(2);
@@ -1448,12 +1346,11 @@ public class ScriptHandler {
 				}catch(NullPointerException e){
 					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'VECTOR': " + e.getMessage());
 				}
-
 			}				
 		});
 		dataMap.put("vectorTile".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
-
+				Logger.debug("ScriptHandler.constructMap.VECTORTILE");
 				try{
 					String formula = args.get(1);
 					String uWind = args.get(2);
@@ -1539,6 +1436,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("version".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.VERSION");
 				Logger.debug(version);
 				System.exit(0);
 			}				
@@ -1546,6 +1444,7 @@ public class ScriptHandler {
 
 		dataMap.put("verticalCrossPlot".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.VERTICALCROSSPLOT");
 				try{					
 					if(args.get(1).equalsIgnoreCase("X"))
 					{
@@ -1564,8 +1463,7 @@ public class ScriptHandler {
 					DataFrame frame = plot.getData().get(0);
 					Axes<DataFrameAxis> axes = frame.getAxes();
 
-					//assume the user is passing in the actual number of the 
-					//timestep
+					//assume the user is passing in the actual number of the timestep
 					((VerticalCrossSectionPlot)plot).updateTimeStep(selectedTimeStep - axes.getTimeAxis().getOrigin());
 
 					List<String> viewList = verdiApp.getGui().getViewList();
@@ -1616,6 +1514,7 @@ public class ScriptHandler {
 		});
 		dataMap.put("windowid".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
+				Logger.debug("ScriptHandler.constructMap.WINDOWID");
 				List<String> viewList = verdiApp.getGui().getViewList();
 				if(viewList.size() > 0)
 				{
@@ -1627,8 +1526,6 @@ public class ScriptHandler {
 				}
 			}				
 		});
-
-
 	}
 
 
@@ -1662,7 +1559,7 @@ public class ScriptHandler {
 			}
 
 
-			//now that all the work has been done to create plots, lets see if we can apply some map layers to these plots
+			//now that all the work has been done to create plots, let's see if we can apply some map layers to these plots
 			//NOTE:  the map layers are only applicable to the areal interp and fast tile plots!
 
 			for (Map.Entry<String, Plot> entry : plotMap.entrySet())
@@ -1681,22 +1578,17 @@ public class ScriptHandler {
 						//suppress all issues (i.e., wrong file path or wrong format)
 					} catch (FileNotFoundException e) {
 						Logger.error("File Not Found Exception in ScriptHandler.handleOptions: " + e.getMessage());
-						//e.printStackTrace();
 					} catch (IOException e) {
 						Logger.error("IOException in ScriptHandler.handleOptions: " + e.getMessage());
-						//e.printStackTrace();
 					}
 				}
-
 			}
-
 		}
 	}
 
 	public static HashMap getCommands(){
 		return dataMap;
 	}
-
 
 	protected static VerdiApplication getVerdiApp()
 	{
@@ -1710,6 +1602,7 @@ public class ScriptHandler {
 	 */
 	private static String convertFormula(String aliasFormula, String datasetAlias)
 	{
+		Logger.debug("ScriptHandler.convertFormula");
 		String newFormula = "";
 
 		if(aliasFormula != null && !aliasFormula.equalsIgnoreCase(""))
@@ -1740,13 +1633,12 @@ public class ScriptHandler {
 				}
 			}
 		}
-
 		return newFormula;
 	}
 
-
 	private static void resetConfigurationsWithoutColorMap()
 	{
+		Logger.debug("ScriptHandler.resetConfigurationsWithoutColorMap");
 		config = new PlotConfiguration();
 		vConfig = new VertCrossPlotConfiguration();
 		//		vectorConfig = new VectorPlotConfiguration();
@@ -1821,31 +1713,7 @@ public class ScriptHandler {
 
 	private static void loadAliasFile()
 	{
-
-		//		String aliasFile = System.getProperty("user.home") + ".verdi.alias";
-		////		FileOutputStream out;// = new FileOutputStream(aliasFile); // declare a file output object
-		//		
-		//		 BufferedWriter out; 
-		//	        
-		//					
-		//			//Load the file userFile
-		//			try{
-		//				out = new BufferedWriter(new FileWriter("aliasFile"));
-		//				
-		//				Iterator it = aliasMap.keySet().iterator();
-		//				while(it.hasNext())
-		//				{
-		//					String key = (String)it.next();
-		//					String aliasFormula = (String)aliasMap.get(key);
-		//					out.write(key + " " + aliasFormula);
-		//			        out.close();
-		//				}
-		//	               	 
-		//	        }catch(IOException i){
-		//	             //System.exit(-1);
-		//	        	Logger.error("File Not Found");
-		//	       }
-
+		Logger.debug("ScriptHandler.loadAliasFile");
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(aliasFileName));
 			String str;
@@ -1863,15 +1731,11 @@ public class ScriptHandler {
 
 	private static void writeToAliasFile()
 	{
-		//			String aliasFile = System.getProperty("user.home") + "verdi.alias";
-		//			String aliasFile = "C:\\verdi.alias.txt";
-		//BufferedWriter out; 
-
 		//Load the file userFile
+		Logger.debug("ScriptHandler.constructMap.writeToAliasFile");
 		try{
 			FileWriter outFile = new FileWriter(aliasFileName);
 			PrintWriter out = new PrintWriter(outFile);
-			//out = new BufferedWriter(new FileWriter("aliasFile"));
 			Iterator it = aliasMap.keySet().iterator();
 			while(it.hasNext())
 			{
@@ -1880,8 +1744,6 @@ public class ScriptHandler {
 				String aliasFormula = (String)aliasMap.get(key);
 
 				out.println(key + " " + aliasFormula);
-				//						out.write(key + " " + aliasFormula);
-
 			}
 			out.close();
 
@@ -1890,6 +1752,5 @@ public class ScriptHandler {
 		} catch (Exception e) {
 			Logger.error("Exception in ScriptHandler.writeToAliasFile: " + e.getMessage());
 		}
-		
 	}
 }
