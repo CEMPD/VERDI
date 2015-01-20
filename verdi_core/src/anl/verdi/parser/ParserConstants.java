@@ -50,7 +50,7 @@ public interface ParserConstants {
   int PI = 50;
   int NROWS = 51;
   int NCOLS = 52;
-  int NLEVELS = 53;
+  int NLAYERS = 53;
   int IDENTIFIER = 57;
   int LETTER = 58;
   int DIGIT = 59;
@@ -111,7 +111,7 @@ public interface ParserConstants {
     "\"PI\"",
     "\"NROWS\"",
     "\"NCOLS\"",
-    "\"NLEVELS\"",
+    "\"NLAYERS\"",
     "\";\"",
     "\"(\"",
     "\")\"",

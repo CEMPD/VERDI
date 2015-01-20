@@ -118,7 +118,7 @@ public class Models3ObsDataset extends AbstractDataset {
 		return "";
 	}
 
-	private void makeZCoordAxis(String dimName, String levelsName, String unitName) {
+	private void makeZCoordAxis(String dimName, String layersName, String unitName) {
 		Dimension dimz = dataset.findDimension(dimName);
 		int nz = dimz.getLength();
 		ArrayDouble.D1 dataLev = new ArrayDouble.D1(nz);
@@ -134,8 +134,8 @@ public class Models3ObsDataset extends AbstractDataset {
 			dataLev.set(i, midpoint);
 		}
 
-		CoordinateAxis v = new CoordinateAxis1D(dataset, null, "level", DataType.DOUBLE, dimName, unitName,
-						"synthesized coordinate from " + levelsName + " global attributes");
+		CoordinateAxis v = new CoordinateAxis1D(dataset, null, "layer", DataType.DOUBLE, dimName, unitName,
+						"synthesized coordinate from " + layersName + " global attributes");
 		v.setCachedData(dataLev, true);
 		v.addAttribute(new Attribute("positive", "down"));
 		v.addAttribute(new Attribute(ucar.nc2.constants._Coordinate.AxisType, ucar.nc2.constants.AxisType.GeoZ.toString()));
@@ -145,7 +145,7 @@ public class Models3ObsDataset extends AbstractDataset {
 		Dimension lay_edge = new Dimension(edge_name, nz + 1, true);
 		dataset.addDimension(null, lay_edge);
 		CoordinateAxis vedge = new CoordinateAxis1D(dataset, null, edge_name, DataType.DOUBLE, edge_name, unitName,
-						"synthesized coordinate from " + levelsName + " global attributes");
+						"synthesized coordinate from " + layersName + " global attributes");
 		vedge.setCachedData(dataLayers, true);
 		v.setBoundaryRef(edge_name);
 

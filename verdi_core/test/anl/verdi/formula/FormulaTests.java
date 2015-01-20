@@ -433,7 +433,7 @@ public class FormulaTests extends TestCase {
 		Frame frame = new Frame();
 		frame.setColumnCount(3);
 		frame.setRowCount(2);
-		frame.setLevelCount(1);
+		frame.setLayerCount(1);
 
 		DefaultParser parser = new DefaultParser("NROWS", frame);
 		assertEquals(2.0, doubleFromArray(parser.evaluate()));
@@ -441,7 +441,7 @@ public class FormulaTests extends TestCase {
 		parser = new DefaultParser("NCOLS", frame);
 		assertEquals(3.0, doubleFromArray(parser.evaluate()));
 
-		parser = new DefaultParser("NLEVELS", frame);
+		parser = new DefaultParser("NLAYERS", frame);
 		assertEquals(1.0, doubleFromArray(parser.evaluate()));
 	}
 

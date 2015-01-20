@@ -534,7 +534,7 @@ map_proj =  1: Lambert Conformal
     Variable etaVar = ds.findVariable(fromWhere);
     if (etaVar == null) return makeFakeCoordAxis(ds, axisName, dim);
 
-    int n = etaVar.getShape(1); //number of eta levels
+    int n = etaVar.getShape(1); //number of eta layers
     int[] origin = new int[]{0, 0};
     int[] shape = new int[]{1, n};
     try {

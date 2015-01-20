@@ -243,6 +243,13 @@ public class BatchScriptHandler {
 			tasks.addAll(BatchTaskFactory.createTasks(map, verdiApp));
 		}
 		
+		int i = 0;	// 2015 display values stored in list of tasks
+		for (AbstractTask t : tasks)
+		{
+			i++;
+			Logger.debug("AbstractTask #" + i + ": t = " + t.toString());
+		}
+	
 		return tasks;
 	}
 

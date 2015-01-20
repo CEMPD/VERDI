@@ -82,6 +82,7 @@ public class TilePlotTask implements AbstractTask {
 			Logger.error("Exception in TilePlotTask when calling loadDataset: " + e1.getMessage());
 			e1.printStackTrace();
 		}
+		Logger.debug("TilePlotTask: subDomainArgs = " + subDomainArgs);
 		if(subDomainArgs != null && subDomainArgs.length == 4) {	// make sure we have a subdomain (i.e., 4 strings here)
 			try{
 				//since there is no way to change the dataset programmatically, 
@@ -96,6 +97,8 @@ public class TilePlotTask implements AbstractTask {
 				ymin = Integer.parseInt(subDomainArgs[1]);
 				ymax = Integer.parseInt(subDomainArgs[3]);
 				dle.setXYUsed(true); 	// using subdomain
+				Logger.debug("TilePlotTask using subdomain: xmin = " + xmin + ", xmax = " + xmax
+						+ ", ymin = " + ymin + ", ymax = " + ymax);
 //				dle.setDomain(xmin, xmax, ymin, ymax);	// no longer need this here - causes a subdomain of the subdomain
 			}catch(Exception e){
 				Logger.error("Exception in TilePlotTask when calling setDomain with a subDomain: " + e.getMessage());
@@ -112,6 +115,7 @@ public class TilePlotTask implements AbstractTask {
 					(DatasetListElement)dlm.getElementAt(dlm.getSize() - 1);
 	
 				dle.setXYUsed(false); 	// not using subdomain
+				Logger.debug("TilePlotTask is NOT using subdomain");
 			}catch(Exception e){
 				Logger.error("Exception in TilePlotTask when calling setDomain and no subDomain: " + e.getMessage());
 				e.printStackTrace();

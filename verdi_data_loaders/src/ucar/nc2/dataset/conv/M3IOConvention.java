@@ -178,7 +178,7 @@ public class M3IOConvention extends CoordSysBuilder {
     return v;
   }
 
-  private void makeZCoordAxis(NetcdfDataset ds, String dimName, String levelsName, String unitName) {
+  private void makeZCoordAxis(NetcdfDataset ds, String dimName, String layersName, String unitName) {
     Dimension dimz = ds.findDimension(dimName);
     int nz = dimz.getLength();
     ArrayDouble.D1 dataLev = new ArrayDouble.D1(nz);
@@ -194,8 +194,8 @@ public class M3IOConvention extends CoordSysBuilder {
       dataLev.set(i, midpoint);
     }
 
-    CoordinateAxis v = new CoordinateAxis1D(ds, null, "level", DataType.DOUBLE, dimName, unitName,
-            "synthesized coordinate from " + levelsName + " global attributes");
+    CoordinateAxis v = new CoordinateAxis1D(ds, null, "layer", DataType.DOUBLE, dimName, unitName,
+            "synthesized coordinate from " + layersName + " global attributes");
     v.setCachedData(dataLev, true);
     v.addAttribute(new Attribute("positive", "down"));
     v.addAttribute(new Attribute(_Coordinate.AxisType, AxisType.GeoZ.toString()));
@@ -206,7 +206,7 @@ public class M3IOConvention extends CoordSysBuilder {
 
     ds.addDimension(null, lay_edge);
     CoordinateAxis vedge = new CoordinateAxis1D(ds, null, edge_name, DataType.DOUBLE, edge_name, unitName,
-            "synthesized coordinate from " + levelsName + " global attributes");
+            "synthesized coordinate from " + layersName + " global attributes");
     vedge.setCachedData(dataLayers, true);
     v.setBoundaryRef(edge_name);
 
@@ -452,7 +452,7 @@ private CoordinateTransform makePolarStereographicProjection(NetcdfDataset ds) {
     if (vname.equalsIgnoreCase("time"))
       return AxisType.Time;
 
-    if (vname.equalsIgnoreCase("level"))
+    if (vname.equalsIgnoreCase("layer"))
       return AxisType.GeoZ;
 
     return null;
