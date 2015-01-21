@@ -101,8 +101,8 @@ public class ScriptHandler {
 
 	private static int selectedTimeStep = 1; //Default to 1-based first step
 	private static String aliasFileName = System.getProperty("user.home") +  '/' + "verdi" + File.separatorChar + "verdi.alias";
-	private static int layerMin = -1;
-	private static int layerMax = -1;
+	private static int layerMin = -1;	// minimum layer not set
+	private static int layerMax = -1;	// maximum layer not set
 
 
 	private static final String HELPTEXT = "[-alias <aliasname=definition> ]\n"
@@ -122,7 +122,7 @@ public class ScriptHandler {
 			+ "[-help|fullhelp|usage ]\n"
 			+ "[-legendBins \"<bin0,bin1,...,bin_n>\" ]\n"
 			+ "[-layer <layer> ]\n"
-			+ "[-layerRange <layerMax> <layerMin> ]\n"
+			+ "[-layerRange <layerMin> <layerMax> ]\n"		// 2015 changed from <layerMax> <layerMin>
 			+ "[-mapName \"<pathname>/<mapFileName>\" ]\n"
 			//											+ "[ -multitime <Nformulas> \"<formula1>\" ... \"<formulaN>\" ]\n"
 			+ "[ -openProject <VERDIProjectName> (NEW)]\n"
@@ -846,8 +846,10 @@ public class ScriptHandler {
 			public void run(ArrayList<String> args){
 				Logger.debug("ScriptHandler.constructMap.LAYER");
 				try{
-					layerMin = Integer.parseInt(args.get(1));
-					layerMax = Integer.parseInt(args.get(1));
+					layerMin = Integer.parseInt(args.get(1)) - 1;
+					if(layerMin < 0)
+						layerMin = 0;
+					layerMax = layerMin;		// Integer.parseInt(args.get(1));
 				}catch(NumberFormatException e){
 					Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LAYER': " + e.getMessage());
 				}
@@ -860,8 +862,8 @@ public class ScriptHandler {
 				{
 					try{
 						FormulaListElement obj = (FormulaListElement)flm.getElementAt(i);
-						obj.setLayerMax(Integer.parseInt(args.get(1)));
-						obj.setLayerMin(Integer.parseInt(args.get(1)));
+						obj.setLayerMax(layerMax);		// obj.setLayerMax(Integer.parseInt(args.get(1)));
+						obj.setLayerMin(layerMin);		// obj.setLayerMin(Integer.parseInt(args.get(1)));
 						obj.setLayerUsed(true);
 					}catch(NumberFormatException e){
 						Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LAYER': " + e.getMessage());
@@ -877,8 +879,14 @@ public class ScriptHandler {
 				Logger.debug("ScriptHandler.constructMap.LAYERRANGE");
 				FormulaListModel flm = verdiApp.getProject().getFormulas();
 				try{
-					layerMin = Integer.parseInt(args.get(1));
-					layerMax = Integer.parseInt(args.get(2));
+					layerMin = Integer.parseInt(args.get(1)) - 1;
+					if(layerMin < 0)
+						layerMin = 0;
+					layerMax = Integer.parseInt(args.get(2)) - 1;
+					if(layerMax < 0)
+						layerMax = 0;
+					Logger.debug("layerMin = " + layerMin);
+					Logger.debug("layerMax = " + layerMax);
 				}catch(NumberFormatException e){
 					Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LAYERRANGE': " + e.getMessage());
 				}
@@ -890,8 +898,9 @@ public class ScriptHandler {
 				{
 					try{
 						FormulaListElement obj = (FormulaListElement)flm.getElementAt(i);
-						obj.setLayerMax(Integer.parseInt(args.get(1)));
-						obj.setLayerMin(Integer.parseInt(args.get(2)));
+						// 2015 NOTE: switched order of assignment to min then max
+						obj.setLayerMin(layerMin);
+						obj.setLayerMax(layerMax);
 						obj.setLayerUsed(true);
 					}catch(NumberFormatException e){
 						Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LAYERRANGE': " + e.getMessage());
