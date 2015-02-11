@@ -129,7 +129,7 @@ public class ScriptHandler {
 			+ "[ -printAlias ]\n"
 			+ "[ -project \"<VERDIProjectName>\"]\n"
 			+ "[ -quit|exit ]\n"
-			+ "[ -quicktime (NEW)]\n"
+			+ "[ -quicktime ]\n"
 			+ "[ -raiseWindow <windowid> ]\n"
 			+ "[ -s \"<formula>\" ]\n"
 			+ "[ -save2ascii \"<filename>\" ]\n"
@@ -151,6 +151,7 @@ public class ScriptHandler {
 			//											+ "[ -vectobs <formula> <formula> ]\n"
 			//											+ "[ -vector \"<U>\" \"<V>\"]\n"
 			//											+ "[ -vectorTile \"<formula>\" \"<U>\" \"<V>\"]\n"
+			+ "[ -VectorIncr ]\n"
 			+ "[ -version ]\n"
 			+ "[ -verticalCrossPlot X|Y <row/column> (NEW)]\n"
 			+ "[ -windowid ]";

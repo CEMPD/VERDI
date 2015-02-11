@@ -79,7 +79,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 	 * @return the lat / lon coordinate.
 	 */
 	public Point2D axisPointToLatLonPoint(int x, int y) {
-		Logger.debug("in NetcdfBoxer.axisPointToLatLonPoint for x = " + x + ", y = " + y);
+		Logger.info("in NetcdfBoxer.axisPointToLatLonPoint for x = " + x + ", y = " + y);
 		CoordinateAxis1D xaxis = getXAxis();
 		CoordinateAxis1D yaxis = getYAxis();
 		// coordVal is the sw corner, so coordEdge + 1 should be the center
@@ -106,7 +106,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 	 *         otherwise (-1, -1).
 	 */
 	public Point2D latLonToAxisPoint(double lat, double lon) {
-		Logger.debug("in NetcdfBoxer.latLonToAxisPoint for lat = " + lat + ", lon = " + lon);
+		Logger.info("in NetcdfBoxer.latLonToAxisPoint for lat = " + lat + ", lon = " + lon);
 		Projection proj = grid.getCoordinateSystem().getProjection();
 		ProjectionPointImpl point = new ProjectionPointImpl();
 		proj.latLonToProj(new LatLonPointImpl(lat, lon), point);
@@ -137,7 +137,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 	}
 
 	public Point2D CRSPointToAxis(double x, double y) {
-		Logger.debug("in NetcdfBoxer.CRSPointToAxis for x = " + x + ", y =" + y);
+		Logger.info("in NetcdfBoxer.CRSPointToAxis for x = " + x + ", y =" + y);
 		CoordinateAxis1D xaxis = getXAxis();
 		CoordinateAxis1D yaxis = getYAxis();
 		x = x / 1000;
@@ -179,76 +179,58 @@ public class NetcdfBoxer implements BoundingBoxer {
 	 */
 	public ReferencedEnvelope createBoundingBox(double xMin, double xMax,
 			double yMin, double yMax, int netcdfConv) {
-		//Logger.debug("in ReferencedEnvelope; printing parameter values");
-		//Logger.debug("xMin = " + xMin);
-		//Logger.debug("xMax = " + xMax);
-		//Logger.debug("yMin = " + yMin);
-		//Logger.debug("yMax = " + yMax);
-		//Logger.debug("netcdfConv = " + netcdfConv);
 		CoordinateAxis1D xaxis = getXAxis();
-		//Logger.debug("xaxis = " + xaxis.toString());
 		CoordinateAxis1D yaxis = getYAxis();
-		//Logger.debug("yaxis = " + yaxis.toString());
-		//Logger.debug("Axis limits:");
-		//Logger.debug("xaxis.getStart = " + xaxis.getStart());
-		//Logger.debug("xaxis.getIncrement = " + xaxis.getIncrement());
-		//Logger.debug("xaxis.getMinValue = " + xaxis.getMinValue());
-		//Logger.debug("xaxis.getMaxValue = " + xaxis.getMaxValue());
-		//Logger.debug("yaxis.getStart = " + yaxis.getStart());
-		//Logger.debug("yaxis.getIncrement = " + yaxis.getIncrement());
-		//Logger.debug("yaxis.getMinValue = " + yaxis.getMinValue());
-		//Logger.debug("yaxis.getMaxValue = " + yaxis.getMaxValue());
 		
-		// 
 		double xStart, xEnd, yStart, yEnd; //
 
 		// latlon coord does not need to be scaled
 		double scaler = isLatLon ? 1.0 : 1000.0;
-		//Logger.debug("scaler = " + scaler);
+		Logger.info("scaler = " + scaler);
 		double xInc = xaxis.getIncrement() * scaler;
-		//Logger.debug("xInc = " + xInc);
+		Logger.info("xInc = " + xInc);
 		double yInc = yaxis.getIncrement() * scaler;
-		//Logger.debug("yInc = " + yInc);
+		Logger.info("yInc = " + yInc);
 		
 		int limit = xaxis.getCoordValues().length - 1;
-		//Logger.debug("limit = " + limit);
+		Logger.info("limit = " + limit);
 		double start = xaxis.getStart() * scaler;
-		//Logger.debug("start = " + start);
+		Logger.info("start = " + start);
 		double end = (xaxis.getCoordValue(limit) + xaxis.getIncrement()) * scaler;
-		//Logger.debug("end = " + end);
+		Logger.info("end = " + end);
 		
 		xStart = start + xMin * xInc;
-		//Logger.debug("xStart = start + xMin * xInc = " + xStart );
+		Logger.info("xStart = start + xMin * xInc = " + xStart );
 		xEnd = end - ((limit - xMax) * xInc);
-		//Logger.debug("xEnd = end - ((limit - xMax) * xInc) = " + xEnd);
+		Logger.info("xEnd = end - ((limit - xMax) * xInc) = " + xEnd);
 
 		if ( netcdfConv == VerdiConstants.NETCDF_CONV_ARW_WRF) { // JIZHEN-SHIFT
-			//Logger.debug("in recompute code section");
+			Logger.info("in recompute code section");
 			xStart = xStart - xaxis.getIncrement() * scaler * 0.5;
-			//Logger.debug("xStart now set to:xStart - xaxis.getIncrement() * scaler * 0.5 = " + xStart );
+			Logger.info("xStart now set to:xStart - xaxis.getIncrement() * scaler * 0.5 = " + xStart );
 			//xEnd = xEnd - xaxis.getIncrement() * scaler * ( 0.5 + 1);
 			xEnd = xEnd - xaxis.getIncrement() * scaler * 0.5;
-			//Logger.debug("xEnd now set to:  xEnd - xaxis.getIncrement() * scaler * 0.5 = " + xEnd);
+			Logger.info("xEnd now set to:  xEnd - xaxis.getIncrement() * scaler * 0.5 = " + xEnd);
 		}
 
 		limit = yaxis.getCoordValues().length - 1;
-		//Logger.debug("limit = yaxis.getCoordValues().length - 1 = " + limit);
+		Logger.info("limit = yaxis.getCoordValues().length - 1 = " + limit);
 		start = yaxis.getStart() * scaler;
-		//Logger.debug("start = yaxis.getStart() * scaler = " + start );
+		Logger.info("start = yaxis.getStart() * scaler = " + start );
 		end = (yaxis.getCoordValue(limit) + yaxis.getIncrement()) * scaler;
-		//Logger.debug("end = (yaxis.getCoordValue(limit) + yaxis.getIncrement()) * scaler = " + end);
+		Logger.info("end = (yaxis.getCoordValue(limit) + yaxis.getIncrement()) * scaler = " + end);
 
 		yStart = start + yMin * yInc;
-		//Logger.debug("yStart =start + yMin * yInc = " + yStart );
+		Logger.info("yStart =start + yMin * yInc = " + yStart );
 		yEnd = end - ((limit - yMax) * yInc);
-		//Logger.debug("yEnd = end - ((limit - yMax) * yInc) = " + yEnd);
+		Logger.info("yEnd = end - ((limit - yMax) * yInc) = " + yEnd);
 		if ( netcdfConv == VerdiConstants.NETCDF_CONV_ARW_WRF) { // JIZHEN-SHIFT
-			//Logger.debug("within if block:");
+			Logger.info("within if block:");
 			yStart = yStart - yaxis.getIncrement() * scaler * 0.5; // bottom_left
-			//Logger.debug("yStart = yStart - yaxis.getIncrement() * scaler * 0.5 = " + yStart);
+			Logger.info("yStart = yStart - yaxis.getIncrement() * scaler * 0.5 = " + yStart);
 			//yEnd = yEnd - yaxis.getIncrement() * scaler * ( 0.5 + 1);
 			yEnd = yEnd - yaxis.getIncrement() * scaler * 0.5; // top_right
-			//Logger.debug("yEnd = yEnd - yaxis.getIncrement() * scaler * 0.5 = " + yEnd);
+			Logger.info("yEnd = yEnd - yaxis.getIncrement() * scaler * 0.5 = " + yEnd);
 		}
 //		Hints hints = new Hints(Hints.COMPARISON_TOLERANCE, 1E-9);	// TODO: 2014  probably need to do in beginning of VERDI
 		Hints.putSystemDefault(Hints.COMPARISON_TOLERANCE, 10e-9);
@@ -258,17 +240,17 @@ public class NetcdfBoxer implements BoundingBoxer {
 		if (proj instanceof LambertConformal) {
 			Logger.debug("proj = " + proj.toString() + '\n' + "  projection is of type LambertConformal");
 			if (crs == null) {
-				//Logger.debug("NOTE: crs is null");
+				Logger.info("NOTE: crs is null");
 				try {
-					//Logger.debug("within try/catch block");
+					Logger.info("within try/catch block");
 					String strCRS = new LambertWKTCreator().createWKT((LambertConformal) proj);
-					//Logger.debug("created strCRS = " + strCRS);
-					//Logger.debug("Ready to call CRS.parseWKT for LambertConformal");
+					Logger.info("created strCRS = " + strCRS);
+					Logger.info("Ready to call CRS.parseWKT for LambertConformal");
 					crs = CRS.parseWKT(strCRS);	// NOTE: preferred method (docs.geotools.org/stable/userguide/library/referencing/crs.html)
-					//Logger.debug("parsed CRS: " + crs.toString());
-					//Logger.debug("done printing crs");
+					Logger.info("parsed CRS: " + crs.toString());
+					Logger.info("done printing crs");
 				} catch (IOException ex) {
-					//Logger.debug("into exception handling");
+					Logger.info("into exception handling");
 					Logger.error("Error while creating CRS for LambertConformal");
 					ex.printStackTrace();
 				} catch (FactoryException e) {
@@ -279,12 +261,12 @@ public class NetcdfBoxer implements BoundingBoxer {
 		} else if (proj instanceof UtmProjection) {
 			Logger.debug("projection is of type UtmProjection");
 			if (crs == null) {
-				//Logger.debug("NOTE: crs is null");
+				Logger.info("NOTE: crs is null");
 				try {
-					//Logger.debug("within try/catch block");
+					Logger.info("within try/catch block");
 					String strCRS = new UtmWKTCreator().createWKT((UtmProjection) proj);
-					//Logger.debug("created strCRS = " + strCRS.toString());
-					//Logger.debug("Ready to call CRS.parseWKT for UTM Projection");
+					Logger.info("created strCRS = " + strCRS.toString());
+					Logger.info("Ready to call CRS.parseWKT for UTM Projection");
 					crs = CRS.parseWKT(strCRS);
 				} catch (Exception ex) {
 					Logger.error("Error while creating CRS for UTM " + ex.getMessage());
@@ -292,16 +274,15 @@ public class NetcdfBoxer implements BoundingBoxer {
 			}
 		} else if (proj instanceof Stereographic) {
 			Logger.debug("projection is of type Stereographic");
-//			System.out.println("in NetcdfBoxer: instanceof Stereographic ");
 			if (crs == null) {
-				//Logger.debug("NOTE: crs is null");
+				Logger.info("NOTE: crs is null");
 				try {
-					//Logger.debug("within try/catch block");
+					Logger.info("within try/catch block");
 					String strCRS = new PolarStereographicWKTCreator().createWKT((Stereographic) proj);
-					//Logger.debug("created strCRS = " + strCRS.toString());	// FAILURE CAUSE: PARAMETER["scale_factor", -98.0],
-					//Logger.debug("Ready to call CRS.parseWKT for Stereographic Projection");
+					Logger.info("created strCRS = " + strCRS.toString());	// FAILURE CAUSE: PARAMETER["scale_factor", -98.0],
+					Logger.info("Ready to call CRS.parseWKT for Stereographic Projection");
 					crs = CRS.parseWKT(strCRS);		// FAILURE POINT
-					//Logger.debug("parsed CRS: " + crs.toString());
+					Logger.info("parsed CRS: " + crs.toString());
 				} catch (Exception ex) {
 					Logger.error("Error while creating CRS for Stereographic " + ex.getMessage());
 				}

@@ -65,13 +65,16 @@ public class Mapper {
 	public void draw(final double[][] domain, final double[][] gridBounds,
 			final Projector projector, final Graphics graphics, int xOffset,
 			int yOffset, int width, int height, boolean withHucs,
-			boolean withRivers, boolean withRoads) {
+			boolean withRivers, boolean withRoads) {	// 2015 get to this upon completion of gov.epa.emvl.TilePlot - all done with TilePlot.draw
 		Logger.debug("in Mapper.draw function");
 		final MapLines mapLines = chooseMap(domain); // MERCATOR
+		Logger.debug("have mapLines = " + mapLines);
 
 		graphics.setColor(mapColor);
+		Logger.debug("did graphics.setColor for mapColor = " + mapColor);
 
 		if (initialDraw && mapLines != null && !layers.contains(mapLines)) {
+			Logger.debug("have to add to layers");
 			layers.add(mapLines);
 			initialDraw = false;
 		}
@@ -86,16 +89,19 @@ public class Mapper {
 			layers.remove(roadsMap);
 
 		for (MapLines layer : layers) {
+			Logger.debug("drawing for a layer");
 			layer.draw(domain, gridBounds, projector, graphics, xOffset,
 					yOffset, width, height);
+			Logger.debug("back from drawing for a layer");
 			graphics.setColor(mapColor); // to reset graphics color
+			Logger.debug("just reset graphics color to: " + mapColor);
 		}
 	}
 
 	// Choose a map based on a domain.
 
 	private MapLines chooseMap(final double[][] domain) {
-		Logger.debug("in Mapper.chooseMap");
+		Logger.debug("in Mapper.chooseMap");	// 2015 after Mapper.draw function
 		final double yMinimum = domain[Y][MINIMUM];
 		final double xMaximum = domain[X][MAXIMUM];
 		MapLines result = null;
@@ -114,8 +120,8 @@ public class Mapper {
 
 					if (countyMap == null) {
 						try {
-							countyMap = new MapLines(mapFileDirectory
-									+ countyMapFileName);
+							countyMap = new MapLines(mapFileDirectory + countyMapFileName);
+							Logger.debug("got county map");
 						} catch (Exception unused) {
 						}
 					}
@@ -125,12 +131,11 @@ public class Mapper {
 
 					if (stateMap == null) {
 						try {
-							stateMap = new MapLines(mapFileDirectory
-									+ stateMapFileName);
+							stateMap = new MapLines(mapFileDirectory + stateMapFileName);
+							Logger.debug("got state map");
 						} catch (Exception unused) {
 						}
 					}
-
 					result = stateMap;
 				}
 
@@ -138,14 +143,12 @@ public class Mapper {
 
 				if (northAmericaMap == null) {
 					try {
-						northAmericaMap = new MapLines(mapFileDirectory
-								+ northAmericaMapFileName);
+						northAmericaMap = new MapLines(mapFileDirectory + northAmericaMapFileName);
+						Logger.debug("got North America map");
 					} catch (Exception unused) {
 					}
 				}
-
 				result = northAmericaMap;
-
 			}
 
 		} else { // Domain is not entirely in North America:
@@ -158,13 +161,13 @@ public class Mapper {
 				} catch (Exception unused) {
 				}
 			}
-
 			result = worldMap;
 		}
 
 		Logger.debug("getting ready to return from Mapper.chooseMap, value = " + (layers.contains(result) ? null : result));
+		Logger.debug("layers.contains(result) == " + layers.contains(result));	// says false
 		return layers.contains(result) ? null : result;		// 2014 Why is the line this way instead of the way that was commented out (below)?
-		//return layers.contains(result) ? result : null;
+//		return layers.contains(result) ? result : null;		// switched back to other method because above resulting in NullPointerException in VectorAnnotation.java:117
 	}
 
 	public MapLines getUSHucMap() {
@@ -175,7 +178,6 @@ public class Mapper {
 			} catch (Exception unused) {
 			}
 		}
-
 		return hucsMap;
 	}
 
@@ -193,7 +195,6 @@ public class Mapper {
 			} catch (Exception unused) {
 			}
 		}
-
 		return roadsMap;
 	}
 
@@ -211,7 +212,6 @@ public class Mapper {
 			} catch (Exception unused) {
 			}
 		}
-
 		return riversMap;
 	}
 

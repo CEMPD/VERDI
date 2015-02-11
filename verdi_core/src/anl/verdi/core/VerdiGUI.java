@@ -387,16 +387,11 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	public void setOtherPlotsEnabled(boolean enabled) {
 		GUIBarManager barManager = manager.getBarManager();
 		barManager.getToolBarComponent(VerdiConstants.AREAL_INTERPOLATION_BUTTON_ID).setEnabled(enabled);
-//		barManager.getToolBarComponent(VerdiConstants.TILE_BUTTON_ID).setEnabled(
-//				enabled);
-		barManager.getToolBarComponent(VerdiConstants.FAST_TILE_BUTTON_ID)
-				.setEnabled(enabled);
-		barManager.getToolBarComponent(VerdiConstants.TIME_SERIES_LINE_BUTTON_ID)
-				.setEnabled(enabled);
-		barManager.getToolBarComponent(VerdiConstants.TIME_SERIES_BAR_BUTTON_ID)
-				.setEnabled(enabled);
-		barManager.getToolBarComponent(VerdiConstants.CONTOUR_BUTTON_ID)
-				.setEnabled(enabled);
+//		barManager.getToolBarComponent(VerdiConstants.TILE_BUTTON_ID).setEnabled(enabled);
+		barManager.getToolBarComponent(VerdiConstants.FAST_TILE_BUTTON_ID).setEnabled(enabled);
+		barManager.getToolBarComponent(VerdiConstants.TIME_SERIES_LINE_BUTTON_ID).setEnabled(enabled);
+		barManager.getToolBarComponent(VerdiConstants.TIME_SERIES_BAR_BUTTON_ID).setEnabled(enabled);
+		barManager.getToolBarComponent(VerdiConstants.CONTOUR_BUTTON_ID).setEnabled(enabled);
 	}
 
 	/**

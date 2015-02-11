@@ -181,7 +181,7 @@ FormulaElementCreator, ListDataListener {
 			//}
 
 		} catch (Exception e) {
-			Logger.warn("Error while get config properties " + e.getMessage());
+			Logger.warn("Error while getting configuration properties " + e.getMessage());
 		}
 	}
 
@@ -238,8 +238,7 @@ FormulaElementCreator, ListDataListener {
 	}
 
 	/**
-	 * Opens a saved project -- a set of datasets and formulas. This opens a
-	 * file dialog.
+	 * Opens a saved project -- a set of datasets and formulas. This opens a file dialog.
 	 */
 	public void openProject() {
 		Logger.debug("in VerdiApplication.openProject");
@@ -333,7 +332,7 @@ FormulaElementCreator, ListDataListener {
 
 	/**
 	 * Evaluates the current formula and returns the result. If there is no
-	 * current formula then returns null. The will evaluate the formula against
+	 * current formula then returns null. Then will evaluate the formula against
 	 * the date range calculated by resolving the various date constraints
 	 * and trying to find the largest legal overlapping segment.
 	 *
@@ -349,11 +348,11 @@ FormulaElementCreator, ListDataListener {
 	 * current formula then returns null. The evaluation will ignore the
 	 * the date range calculated by resolving the various date constraints
 	 * and trying to find the largest legal overlapping segment and use
-	 * the passed in parameter instead.
+	 * the passed-in parameter instead.
 	 *
 	 * @param type      the type of formula (e.g. Tile, TimeSeries etc.) to evaluate
 	 * @param dateRange the dateRange to evaluate the formula against
-	 * @return the result of the evaluation or null if the evaluation fails.
+	 * @return the result of the evaluation or null if the evaluation fails
 	 */
 	public DataFrame evaluateFormula(Formula.Type type, DateRange dateRange) {
 		Logger.debug("in VerdiApplication.evaluateFormula 1");
@@ -457,12 +456,9 @@ FormulaElementCreator, ListDataListener {
 	 * @param event contains the details of the area selection
 	 */
 	public void areaSelected(AreaSelectionEvent event) {
-		Logger.debug("in VerdiApplication.areaSelected; called when an area in a plot is being selected");
 		if (event.isFinished()) {
-			Logger.debug("event.isFinished is true");
 			gui.setStatusTwoText("");
 		} else {
-			Logger.debug("event.isFinished is NOT true");
 			gui.setStatusTwoText(event.areaToString());
 		}
 	}
@@ -747,7 +743,7 @@ FormulaElementCreator, ListDataListener {
 	}
 
 	/**
-	 * Validates the specified formula and display the appropriate error
+	 * Validates the specified formula and displays the appropriate error
 	 * messages if necessary.
 	 *
 	 * @param strFormula the formula to evaluate
@@ -795,16 +791,16 @@ FormulaElementCreator, ListDataListener {
 	}
 
 	/**
-	 * Notifies the PlotListener of a request to
-	 * create an overlay for the sending plot.
-	 * The listener shoudl add the appropriate
-	 * overlay evaluator to the request
+	 * Notifies the PlotListener of a request to create an overlay for the sending plot.
+	 * The listener should add the appropriate overlay evaluator to the request
 	 *
 	 * @param request the overlay request
 	 */
 	public void overlayRequested(OverlayRequest request) {
 		Logger.debug("in VerdiApplication.overlayRequested");
+			// 2015 called from FastTilePlot drop-down menu to select obs/vectors
 		if (request.getType() == OverlayRequest.Type.OBS) {
+			Logger.debug("in VerdiApplication. OverlayRequest.Type.OBS");
 			List<Variable> vars = new ArrayList<Variable>();
 			for (DatasetListElement element : project.getDatasetsAsList()) {
 				if (element.getDataset().isObs()) {
@@ -847,34 +843,62 @@ FormulaElementCreator, ListDataListener {
 				JOptionPane.showMessageDialog(gui.getFrame(), "Please check if the overlay time steps match the underlying data.", "Overlay Error", JOptionPane.ERROR_MESSAGE, null);
 			}
 		} else if (request.getType() == OverlayRequest.Type.VECTOR) {
+			Logger.debug("in VerdiApplication. OverlayRequest.Type.VECTOR");
 			FastTilePlot fastPlot = request.getFastTilePlot();
 			VectorOverlayDialog dialog = new VectorOverlayDialog(gui.getFrame());
+			Logger.debug("instantiated VectorOverlayDialog");
 
 			if (fastPlot != null) {
 				dialog.init(project.getFormulasAsList(), new VectorOverlayTimeChecker(project.getDatasetsAsList(),
 						fastPlot.getData().get(0)));
-			} else
+				// 2015 FastTilePlot vector overlay; before next debug message printed messages from:
+				//		anl.verdi.core.Project - in Project getFormulasAsList
+				//		anl.verdi.gui.FormulaListModel - in FormulaListModel elements
+				//		anl.verdi.core.Project - in Project getDatasetAsList
+				//		anl.verdi.gui.DatasetListModel - in DatasetListModel elements
+				//		anl.verdi.util.VectorOverlayTimeChecker - in constructor for VectorOverlayTimeChecker
+				
+				Logger.debug("did dialog.init for fastPlot != null");
+			} else {
 				dialog.init(project.getFormulasAsList(), new VectorOverlayTimeChecker(project.getDatasetsAsList(),
 						request.getPlot().getData().get(0)));
+				Logger.debug("did dialog.init for fastPlot == null");
+			}
 			dialog.pack();
 			dialog.setVisible(true);
+			// 2015 anl.verdi.gui.FormulaListElement - in FormulaListElement toString
+			//		anl.verdi.gui.FormulaListElement - in FormulaListElement getDataset
+			//			above 2 messages many times, followed by next message multiple times
+			//		anl.verdi.gui.FormulaListElement - in FormulaListElement getFormula
+			//			then toString/getDataset pairs 3 times followed by multiple getFormula
+			Logger.debug("dialog is now visible");
 
 			FormulaListElement xElement = dialog.getUElement();
 			if (xElement != null) {
+				Logger.debug("xElement != null");	// 2015 got here
 				FormulaListElement oldElement = project.getSelectedFormula();
 				project.setSelectedFormula(xElement);
 				DataFrame xFrame = evaluateFormula(Formula.Type.VECTOR); //, range);
 				project.setSelectedFormula(dialog.getVElement());
 				DataFrame yFrame = evaluateFormula(Formula.Type.VECTOR); //, range);
-				DataFrame[] frames = DataUtilities.unitVectorTransform(xFrame, yFrame);
+				int vectorSamplingInc = dialog.getVectorSamplingInc();	// 2015 get input Vector Sampling Increment
+				Logger.debug("got vectorSamplingIncrement = " + vectorSamplingInc);
+				
+				DataFrame[] frames = DataUtilities.unitVectorTransform(xFrame, yFrame, vectorSamplingInc);
+				Logger.debug("back from DataUtilities.unitVectorTransform");
 				xFrame = frames[0];
 				yFrame = frames[1];
 				project.setSelectedFormula(dialog.getVElement());
+				Logger.debug("back from project.setSelectedFormula");
 
 				if (fastPlot != null) {
+					// 2015 here need to add in vectorSamplingInc; pass it to appropriate function and implement it there
 					fastPlot.addVectorAnnotation(new VectorEvaluator(xFrame, yFrame));
-				} else
+					Logger.debug("did addVectorAnnotation for new VectorEvaluator (fastPlot)");
+				} else{
 					request.getPlot().addVectorAnnotation(new VectorEvaluator(xFrame, yFrame));
+					Logger.debug("did addVectorAnnotation for new VectorEvaluator (NOT fastPlot)");
+				}
 
 				project.setSelectedFormula(oldElement);
 			}

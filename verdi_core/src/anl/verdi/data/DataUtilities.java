@@ -5,7 +5,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;		// 2015
+import org.apache.logging.log4j.Logger;			// 2015 replacing System.out.println with logger messages
+
 import ucar.ma2.Array;
+import ucar.ma2.ArrayFloat;
+import ucar.ma2.Index4D;
 import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.core.VerdiConstants;
@@ -20,6 +25,7 @@ public class DataUtilities {
 	public static final int NO_LAYER = -1;
 	public static double BADVAL3 = VerdiConstants.BADVAL3; 
 	public static double AMISS3 = VerdiConstants.AMISS3; 
+	static final Logger Logger = LogManager.getLogger(DataUtilities.class.getName());
 
 
 	public static class MinMax {
@@ -403,6 +409,83 @@ public class DataUtilities {
 			newYIter.setDoubleNext(yVal / maxVVal * .5);
 		}
 
+		Logger.debug("done with DataUtilities.unitVectorTransform");	// done with this function
+		return new DataFrame[]{newX, newY};
+	}
+	
+	public static DataFrame[] unitVectorTransform(DataFrame xFrame, DataFrame yFrame, int vectorSamplingInc) {
+		Logger.debug("in unitVectorTransform, vectorSamplingInc = " + vectorSamplingInc);
+		DataFrame newX = createDataFrame(xFrame);
+		DataFrame newY = createDataFrame(yFrame);
+//		IndexIterator newXIter = newX.getArray().getIndexIteratorFast();	// deprecated in NetCDF library
+//		IndexIterator newYIter = newY.getArray().getIndexIteratorFast();	// deprecated in NetCDF library
+		IndexIterator newXIter = newX.getArray().getIndexIterator();
+		IndexIterator newYIter = newY.getArray().getIndexIterator();
+
+		Array xArray = xFrame.getArray();
+		Array yArray = yFrame.getArray();
+		ArrayFloat.D4 mArray = (ArrayFloat.D4) xArray;	// make copy of X array for maskArray (0 to skip, 1 to put value)
+		IndexIterator xIterMax = xArray.getIndexIterator();
+		IndexIterator yIterMax = yArray.getIndexIterator();
+		IndexIterator mIter = mArray.getIndexIterator();	// to iterate through maskArray
+		IndexIterator mZeroIter = mArray.getIndexIterator();	// to iterate and set array to 0's
+		int numDims = mArray.getRank();		// get rank of array (number of dimensions)
+		Logger.debug("in DataUtilities.unitVectorTransform for masking array: numDims = " + numDims);
+		int[] lenDims = xArray.getShape();	// get length (number of elements) in each dimension
+		Index4D idx = new Index4D(lenDims);	// need a 4-dimensional index for this shape
+//		for(int i=0; i<numDims; i++)
+//		{
+//			Logger.debug("lenDims[" + i + "] = " + lenDims[i]);
+//		}
+//		Class eleType = mArray.getElementType();	// get type of array elements (int, double, etc.)
+//		Logger.debug("eleType = " + eleType);
+		
+		// 2015 fill masking array
+		while(mZeroIter.hasNext())
+		{
+			mZeroIter.setFloatNext((float) 0.0); 		// initialize to 0 (mask all out)
+		}
+		
+		for(int i0=0; i0<lenDims[0]; i0++)			// initialize values to keep (set = 1.0)
+		{
+			for(int i1=0; i1<lenDims[1]; i1++)
+			{
+				for(int i2=0; i2<lenDims[2]; i2+=vectorSamplingInc)
+				{
+					for(int i3=0; i3<lenDims[3]; i3+=vectorSamplingInc)
+					{
+						mArray.set(i0, i1, i2, i3, (float) 1.0);
+//						mArray.setDouble(idx.set(i0, i1, i2, i3), 1.0);	// mark as one to keep
+//						Logger.debug("[" + i0 + "], [" + i1 + "], [" + i2 + "],[" + i3 + "]");
+					}
+				}
+			}
+		}
+		
+		double maxUVal = 0;
+		double maxVVal = 0;
+		while (xIterMax.hasNext()) {
+			float mIterFloat = mIter.getFloatNext();
+			double xVal = xIterMax.getDoubleNext() * mIterFloat;		// 2015 Why does this loop use Next() instead of Current()?
+			double yVal = yIterMax.getDoubleNext() * mIterFloat;
+			maxUVal = Math.max(maxUVal, Math.abs(xVal));
+			maxVVal = Math.max(maxVVal, Math.abs(yVal));
+		}
+		
+		IndexIterator xIter = xArray.getIndexIterator();
+		IndexIterator yIter = yArray.getIndexIterator();
+		mIter = mArray.getIndexIterator();
+		while (xIter.hasNext()) {
+			double xVal = xIter.getDoubleNext();
+			double yVal = yIter.getDoubleNext();
+			double mVal = mIter.getFloatNext();		// 2015 can go straight through arrays because increment used when creating masks (above)
+//			double mag = Math.sqrt(xVal * xVal + yVal * yVal);
+			newXIter.setDoubleNext(xVal * mVal / maxUVal * .5);		// 2015 use masking array
+			newYIter.setDoubleNext(yVal * mVal / maxVVal * .5);		// 2015 use masking array
+		}
+
+		Logger.debug("done with DataUtilities.unitVectorTransform with vectorSamplingInc = " + vectorSamplingInc);
 		return new DataFrame[]{newX, newY};
 	}
 }
+

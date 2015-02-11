@@ -7,12 +7,16 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -21,7 +25,12 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.NumberFormatter;
 
+import org.apache.logging.log4j.LogManager;		// 2015
+import org.apache.logging.log4j.Logger;			// 2015 replacing System.out.println with logger messages
+
+import anl.verdi.core.VerdiApplication;
 import anl.verdi.gui.FormulaListElement;
 import anl.verdi.util.VectorOverlayTimeChecker;
 
@@ -37,23 +46,26 @@ import com.jgoodies.forms.layout.RowSpec;
 /**
  * @author User #2
  */
-public class VectorOverlayDialog extends JDialog {
+public class VectorOverlayDialog extends JDialog implements PropertyChangeListener {
 
 	/**
 	 * 
 	 */
+	static final Logger Logger = LogManager.getLogger(VerdiApplication.class.getName());
 	private static final long serialVersionUID = 3023231401696996595L;
 	private FormulaListElement xElement, yElement;
 	private VectorOverlayTimeChecker checker;
 
 	public VectorOverlayDialog(Frame owner) {
 		super(owner);
+		Logger.debug("in VectorOverlayDialog for Frame owner");	// 2015 called as part of vector overlay on fast tile plot
 		initComponents();
 		addListeners();
 	}
 
 	public VectorOverlayDialog(Dialog owner) {
 		super(owner);
+		Logger.debug("in VectorOverlayDialog for Dialog owner");	// 2015 NOT called as part of vector overlay on fast tile plot
 		initComponents();
 		addListeners();
 	}
@@ -72,16 +84,20 @@ public class VectorOverlayDialog extends JDialog {
 		btnX.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				FormulaListElement item = (FormulaListElement) formulaList.getSelectedValue();
-				String val = item.toString();
-				fldX.setText(val);
-				if (fldY.getText().length() > 0) {
-					if (checkCompatibility()) {
-						okButton.setEnabled(true);
-						statusLbl.setText("");
+				if(item != null)	// 2015 next line caused NullPointerException
+				{
+					String val = item.toString();
+					fldX.setText(val);
+					if (fldY.getText().length() > 0) {
+						if (checkCompatibility()) {
+							okButton.setEnabled(true);
+							statusLbl.setText(" ");
+						}
+						else {
+							statusLbl.setText("Components time and layer range must be compatible with the tile plot.");
+						}
 					}
-					else {
-						statusLbl.setText("Components time and layer range must be compatible with the tile plot.");
-					}
+					
 				}
 			}
 		});
@@ -145,8 +161,6 @@ public class VectorOverlayDialog extends JDialog {
 				yElement = element;
 			}
 		}
-		//if (xElement != null) items.add(xElement);
-		//if (yElement != null) items.add(yElement);
 	}
 
 	public FormulaListElement getUElement() {
@@ -155,6 +169,42 @@ public class VectorOverlayDialog extends JDialog {
 
 	public FormulaListElement getVElement() {
 		return yElement;
+	}
+	
+	public int getVectorSamplingInc()
+	{
+		// 2015 return value of Vector Sampling Increment
+		// verify value is 1 - 100
+		NumberFormatter formatter = (NumberFormatter) fldV.getFormatter();
+		if(formatter != null)
+		{
+			Number value = (Number)fldV.getValue();
+			try {
+				int inputInt = value.intValue();
+				if(inputInt < 1)
+				{
+					fldV.setValue(new Integer(1));
+					return 1;
+				}
+				else if(inputInt > 100)
+				{
+					fldV.setValue(new Integer(100));
+					return 100;
+				}
+				else
+					return inputInt;
+			} catch (Exception e) {
+				Logger.error("Invalid entry for Vector Sampling Increment; resetting value to 1.");
+				fldV.setValue(new Integer(1));
+				return 1;
+			}
+		}
+		else
+		{
+			// formatter == null so reset value to 1
+			fldV.setValue(new Integer(1));
+			return 1;
+		}
 	}
 
 	public void init(java.util.List<FormulaListElement> elements, VectorOverlayTimeChecker checker) {
@@ -179,13 +229,17 @@ public class VectorOverlayDialog extends JDialog {
 		scrollPane1 = new JScrollPane();
 		formulaList = new JList();
 		label1 = new JLabel();
+		labelV = new JLabel();	// 2015 text "Vector Sampling Increment" 
+		fldV = new JFormattedTextField(NumberFormat.getIntegerInstance());	// 2015 field for user-entered input
+		fldV.setColumns(3);
 		fldX = new JTextField();
 		label2 = new JLabel();
 		fldY = new JTextField();
-		panel1 = new JPanel();
+//		panel1 = new JPanel();
 		btnX = new JButton();
 		btnY = new JButton();
 		separator1 = compFactory.createSeparator("");
+		separatorV = compFactory.createSeparator("");
 		buttonBar = new JPanel();
 		okButton = new JButton();
 		cancelButton = new JButton();
@@ -206,69 +260,62 @@ public class VectorOverlayDialog extends JDialog {
 			{
 				// 2014
 				ColumnSpec[] aColumnSpec = ColumnSpec.decodeSpecs("min(min;5dlu):grow");
-				ColumnSpec[] bColumnSpec = ColumnSpec.decodeSpecs("max(min;75dlu)");
+				ColumnSpec[] bColumnSpec = ColumnSpec.decodeSpecs("max(min;100dlu)");	// CHANGED 75 TO 100
 				contentPanel.setLayout(new FormLayout(
-								new ColumnSpec[]{
-												FormFactory.PREF_COLSPEC,
-												FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-												FormFactory.PREF_COLSPEC,
-												FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-												aColumnSpec[0],
-												FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-												FormFactory.RELATED_GAP_COLSPEC,
-												FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-												bColumnSpec[0],
-												FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-												FormFactory.DEFAULT_COLSPEC
-								},
-								new RowSpec[]{
-												FormFactory.PREF_ROWSPEC,
-												FormFactory.LINE_GAP_ROWSPEC,
-												FormFactory.DEFAULT_ROWSPEC,
-												FormFactory.LINE_GAP_ROWSPEC,
-												FormFactory.DEFAULT_ROWSPEC,
-												FormFactory.LINE_GAP_ROWSPEC,
-												FormFactory.DEFAULT_ROWSPEC,
-												FormFactory.LINE_GAP_ROWSPEC,
-												FormFactory.DEFAULT_ROWSPEC,
-												FormFactory.LINE_GAP_ROWSPEC,
-												FormFactory.DEFAULT_ROWSPEC,
-												FormFactory.LINE_GAP_ROWSPEC,
-												FormFactory.DEFAULT_ROWSPEC,
-												FormFactory.LINE_GAP_ROWSPEC,
-												FormFactory.DEFAULT_ROWSPEC
-								}));
-//				contentPanel.setLayout(new FormLayout(
-//						new ColumnSpec[]{
-//										FormFactory.PREF_COLSPEC,
-//										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-//										FormFactory.PREF_COLSPEC,
-//										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-//										new ColumnSpec("min(min;5dlu):grow"),
-//										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-//										FormFactory.RELATED_GAP_COLSPEC,
-//										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-//										new ColumnSpec("max(min;75dlu)"),
-//										FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-//										FormFactory.DEFAULT_COLSPEC
-//						},
-//						new RowSpec[]{
-//										FormFactory.PREF_ROWSPEC,
-//										FormFactory.LINE_GAP_ROWSPEC,
-//										FormFactory.DEFAULT_ROWSPEC,
-//										FormFactory.LINE_GAP_ROWSPEC,
-//										FormFactory.DEFAULT_ROWSPEC,
-//										FormFactory.LINE_GAP_ROWSPEC,
-//										FormFactory.DEFAULT_ROWSPEC,
-//										FormFactory.LINE_GAP_ROWSPEC,
-//										FormFactory.DEFAULT_ROWSPEC,
-//										FormFactory.LINE_GAP_ROWSPEC,
-//										FormFactory.DEFAULT_ROWSPEC,
-//										FormFactory.LINE_GAP_ROWSPEC,
-//										FormFactory.DEFAULT_ROWSPEC,
-//										FormFactory.LINE_GAP_ROWSPEC,
-//										FormFactory.DEFAULT_ROWSPEC
-//						}));
+						new ColumnSpec[]{
+								FormFactory.PREF_COLSPEC,
+								FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+								FormFactory.PREF_COLSPEC,
+								FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+								aColumnSpec[0],
+								FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+								FormFactory.RELATED_GAP_COLSPEC,
+								FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+								bColumnSpec[0],
+								FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+								FormFactory.DEFAULT_COLSPEC
+						},
+						new RowSpec[]{
+								FormFactory.PREF_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC,
+								FormFactory.LINE_GAP_ROWSPEC,
+								FormFactory.DEFAULT_ROWSPEC
+						}));
 
 				//---- statusLbl ----
 				statusLbl.setForeground(Color.red);
@@ -283,7 +330,7 @@ public class VectorOverlayDialog extends JDialog {
 				contentPanel.add(scrollPane1, cc.xywh(1, 5, 5, 8));
 
 				//---- label1 ----
-				label1.setText("Horizontal Component:");
+				label1.setText("Horizontal (X) Component:");
 				contentPanel.add(label1, cc.xywh(8, 5, 2, 1));
 
 				//---- fldX ----
@@ -291,87 +338,89 @@ public class VectorOverlayDialog extends JDialog {
 				contentPanel.add(fldX, cc.xywh(9, 7, 3, 1));
 
 				//---- label2 ----
-				label2.setText("Vertical Component:");
+				label2.setText("Vertical (Y) Component:");
 				contentPanel.add(label2, cc.xywh(8, 9, 2, 1));
 
 				//---- fldY ----
 				fldY.setEditable(false);
 				contentPanel.add(fldY, cc.xywh(9, 11, 3, 1));
 
-				//======== panel1 ========
-				{
-					// 2014
-					RowSpec[] aRowSpec = RowSpec.decodeSpecs("default");
-					panel1.setLayout(new FormLayout(
-									new ColumnSpec[]{
-													FormFactory.DEFAULT_COLSPEC,
-													FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-													FormFactory.DEFAULT_COLSPEC,
-													FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-													FormFactory.DEFAULT_COLSPEC
-									},
-									aRowSpec));
+//				//======== panel1 ========
+//				{
+//					// 2014
+//					RowSpec[] aRowSpec = RowSpec.decodeSpecs("default");
 //					panel1.setLayout(new FormLayout(
 //							new ColumnSpec[]{
-//											FormFactory.DEFAULT_COLSPEC,
-//											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-//											FormFactory.DEFAULT_COLSPEC,
-//											FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-//											FormFactory.DEFAULT_COLSPEC
+//									FormFactory.DEFAULT_COLSPEC,
+//									FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+//									FormFactory.DEFAULT_COLSPEC,
+//									FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+//									FormFactory.DEFAULT_COLSPEC
 //							},
-//							RowSpec.decodeSpecs("default")));
+//							new RowSpec[]{
+//							FormFactory.PREF_ROWSPEC,
+//							FormFactory.LINE_GAP_ROWSPEC,
+//							FormFactory.DEFAULT_ROWSPEC,
+//							FormFactory.LINE_GAP_ROWSPEC,
+//							FormFactory.DEFAULT_ROWSPEC,
+//							FormFactory.LINE_GAP_ROWSPEC}
+//							));
 
 					//---- btnX ----
-					btnX.setText("Horiz.");
-					panel1.add(btnX, cc.xy(1, 1));
+					btnX.setText("Horizontal");
+					contentPanel.add(btnX, cc.xywh(1, 13, 1, 1));
 
 					//---- btnY ----
-					btnY.setText("Vert.");
-					panel1.add(btnY, cc.xy(3, 1));
+					btnY.setText("Vertical");
+					contentPanel.add(btnY,cc.xywh(3, 13, 1, 1));
+//				}
+
+//				contentPanel.add(panel1, cc.xywh(1, 15, 5, 1));
+				contentPanel.add(separator1, cc.xywh(1, 19, 11, 1));
+				labelV.setText("Vector Sampling Increment: ");
+				contentPanel.add(labelV, cc.xy(1, 21));
+				fldV.setEditable(true);
+				fldV.setToolTipText("Enter 1 to show all vectors, 5 for every 5th vector, etc.");
+				fldV.setSize(20,10);	// trying to make the box larger
+				int anInt = 1;
+				fldV.setValue(new Integer(anInt)); 	// default value is 1 (show all vectors)
+				fldV.addPropertyChangeListener("value", this);
+				contentPanel.add(fldV, cc.xywh(3, 21,1,1));	// 2 columns, 1 row
+				contentPanel.add(separatorV, cc.xywh(1, 23,11,1));
+				pack();
+				dialogPane.add(contentPanel, BorderLayout.CENTER);
+
+				//======== buttonBar ========
+				{
+					buttonBar.setBorder(Borders.BUTTON_BAR_GAP_BORDER);
+					// 2014
+					RowSpec[] bRowSpec = RowSpec.decodeSpecs("pref");
+					buttonBar.setLayout(new FormLayout(
+							new ColumnSpec[]{
+									FormFactory.GLUE_COLSPEC,
+									FormFactory.BUTTON_COLSPEC,
+									FormFactory.RELATED_GAP_COLSPEC,
+									FormFactory.BUTTON_COLSPEC
+							},
+							bRowSpec));
+
+					//---- okButton ----
+					okButton.setText("OK");
+					buttonBar.add(okButton, cc.xy(2, 1));
+
+					//---- cancelButton ----
+					cancelButton.setText("Cancel");
+					buttonBar.add(cancelButton, cc.xy(4, 1));
 				}
-				contentPanel.add(panel1, cc.xywh(1, 13, 5, 1));
-				contentPanel.add(separator1, cc.xywh(1, 15, 11, 1));
+				dialogPane.add(buttonBar, BorderLayout.SOUTH);
+				pack();
 			}
-			dialogPane.add(contentPanel, BorderLayout.CENTER);
-
-			//======== buttonBar ========
-			{
-				buttonBar.setBorder(Borders.BUTTON_BAR_GAP_BORDER);
-				// 2014
-				RowSpec[] bRowSpec = RowSpec.decodeSpecs("pref");
-				buttonBar.setLayout(new FormLayout(
-								new ColumnSpec[]{
-												FormFactory.GLUE_COLSPEC,
-												FormFactory.BUTTON_COLSPEC,
-												FormFactory.RELATED_GAP_COLSPEC,
-												FormFactory.BUTTON_COLSPEC
-								},
-								bRowSpec));
-//				buttonBar.setLayout(new FormLayout(
-//						new ColumnSpec[]{
-//										FormFactory.GLUE_COLSPEC,
-//										FormFactory.BUTTON_COLSPEC,
-//										FormFactory.RELATED_GAP_COLSPEC,
-//										FormFactory.BUTTON_COLSPEC
-//						},
-//						RowSpec.decodeSpecs("pref")));
-
-				//---- okButton ----
-				okButton.setText("OK");
-				buttonBar.add(okButton, cc.xy(2, 1));
-
-				//---- cancelButton ----
-				cancelButton.setText("Cancel");
-				buttonBar.add(cancelButton, cc.xy(4, 1));
-			}
-			dialogPane.add(buttonBar, BorderLayout.SOUTH);
+			contentPane.add(dialogPane, BorderLayout.CENTER);
+			pack();
+			setLocationRelativeTo(getOwner());
+			// JFormDesigner - End of component initialization  //GEN-END:initComponents
 		}
-		contentPane.add(dialogPane, BorderLayout.CENTER);
-		pack();
-		setLocationRelativeTo(getOwner());
-		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
-
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner non-commercial license
 	private JPanel dialogPane;
@@ -381,10 +430,13 @@ public class VectorOverlayDialog extends JDialog {
 	private JScrollPane scrollPane1;
 	private JList formulaList;
 	private JLabel label1;
+	private JLabel labelV;		// 2015 "Vector Sampling Increment"
+	private JFormattedTextField fldV;	// 2015 integer value for vector sampling increment
+	private JComponent separatorV;
 	private JTextField fldX;
 	private JLabel label2;
 	private JTextField fldY;
-	private JPanel panel1;
+//	private JPanel panel1;
 	private JButton btnX;
 	private JButton btnY;
 	private JComponent separator1;
@@ -392,4 +444,17 @@ public class VectorOverlayDialog extends JDialog {
 	private JButton okButton;
 	private JButton cancelButton;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
+
+	/* (non-Javadoc)
+	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 */
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		Object source = evt.getSource();
+		if(source == fldV)
+			{
+			getVectorSamplingInc();	// check for integer and appropriate values only
+			}
+		// nothing for other fields
+	}
 }

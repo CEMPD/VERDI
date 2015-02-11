@@ -118,7 +118,7 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="jfree" path="../core/lib/jfreechart-1.0.17.jar" type="code">
+		<library id="jfree" path="../core/lib/jfreechart-1.0.19.jar" type="code">
 			<export prefix="*"/>
 		</library>
 

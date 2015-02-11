@@ -7,6 +7,10 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.apache.logging.log4j.LogManager;		// 2015
+import org.apache.logging.log4j.Logger;			// 2015 replacing System.out.println with logger messages
+
+// import ucar.util.Logger;						// 2015 ucar logger replaced by apache logger
 import anl.verdi.commandline.AbstractTask;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiConstants;
@@ -22,6 +26,7 @@ import anl.verdi.plot.gui.PlotFactory;
 import anl.verdi.plot.gui.PlotPanel;
 
 public class TimeSeriesPlotTask implements AbstractTask {
+	static final Logger Logger = LogManager.getLogger(TimeSeriesPlotTask.class.getName());
 	private Map<String, String> map;
 	private VerdiApplication verdiApp;
 	public final static String JPEG = "jpeg";
@@ -42,39 +47,56 @@ public class TimeSeriesPlotTask implements AbstractTask {
 		this.verdiApp = vApp;
 		this.type = type;
 		this.datafiles = dataFiles;
+		Logger.debug("in TimeSeriesPlotTask constructor");
 	}
 
 	@Override
 	public void run() {
+		Logger.debug("in TimeSeriesPlotTask.run()");
 		createConfig();
+		Logger.debug("in TimeSeriesPlotTask.run(), back from createConfig()");
 		try {
 			verdiApp.loadDataset(datafiles);
+			Logger.debug("in TimeSeriesPlotTask.run(), back from loadDataset(datafiles)");
+
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		createFormula();
+		Logger.debug("in TimeSeriesPlotTask.run(), back from createFormula()");
+
 		Plot plot = null;
 
 		if (verdiApp.getProject().getSelectedFormula() != null) {
 			final DataFrame dataFrame = verdiApp.evaluateFormula(type);
+			Logger.debug("in TimeSeriesPlotTask.run(), back from evaluateFormula(type)");
 
 			if (dataFrame != null) {
 				PlotFactory factory = new PlotFactory();
+				Logger.debug("in TimeSeriesPlotTask.run(),back from new PlotFactory()");
+
 				PlotPanel panel = factory.getPlot(type, verdiApp.getProject().getSelectedFormula().getFormula(),
 						dataFrame, config);
+				Logger.debug("in TimeSeriesPlotTask.run(), back from factory.getPlot(...)");
+
 				plot = panel.getPlot();
+				Logger.debug("in TimeSeriesPlotTask.run(), back from panel.getPlot()");
 			}
 		}
 
 		try {
-			if (plot != null)
+			if (plot != null){
+				Logger.debug("in TimeSeriesPlotTask.run(), plot is not null");
 				save(plot);
+				Logger.debug("in TimeSeriesPlotTask.run(), back from save(plot)");
+				}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			verdiApp.getProject().getFormulas().clear();
 			verdiApp.getProject().getDatasets().clear();
+			Logger.debug("in TimeSeriesPlotTask.run(), in finally cleared formulas");
 		}
 	}
 	
@@ -84,6 +106,7 @@ public class TimeSeriesPlotTask implements AbstractTask {
 //		vectorConfig = new VectorPlotConfiguration();
 		
 		String configFileStr = map.get(VerdiConstants.CONFIG_FILE);
+		Logger.debug("in TimeSeriesPlotTask.createConfig(), configFileStr = " + configFileStr);
 		File configFile = (configFileStr == null || configFileStr.trim().isEmpty()) ? null : new File(configFileStr);
 		
 		if (configFile != null && configFile.isFile() && configFile.exists()) {

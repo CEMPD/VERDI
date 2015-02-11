@@ -3,6 +3,8 @@ package anl.verdi.plot.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.general.AbstractDataset;
 import org.jfree.data.general.DatasetChangeEvent;
@@ -11,6 +13,8 @@ import org.jfree.data.xy.VectorXYDataset;
 
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameIndex;
+// 2014
+// 2014 replacing System.out.println with logger messages
 
 /**
  * Adapts data frame data to VectorXYDataset
@@ -23,6 +27,7 @@ public class DFVectorXYDataset extends AbstractDataset implements VectorXYDatase
 	 * 
 	 */
 	private static final long serialVersionUID = -489641757180084647L;
+	static final Logger Logger = LogManager.getLogger(DFVectorXYDataset.class.getName());
 
 	private static class FrameData {
 		DataFrame frame;
@@ -31,6 +36,7 @@ public class DFVectorXYDataset extends AbstractDataset implements VectorXYDatase
 
 
 		public FrameData(DataFrame frame, int timeStep, int layer) {
+			Logger.debug("in constructor for private static class FrameData within DFVectorXYDataset");
 			this.frame = frame;
 			index = frame.getIndex();
 			if (frame.getAxes().getZAxis() == null) {
@@ -66,6 +72,7 @@ public class DFVectorXYDataset extends AbstractDataset implements VectorXYDatase
 		private String name;
 
 		public SeriesData(DataFrame xFrame, DataFrame yFrame, int timeStep, int layer) {
+			Logger.debug("in constructor for private static class SeriesData within DFVectorXYDataset");
 			this.xFrame = new FrameData(xFrame, timeStep, layer);
 			this.yFrame = new FrameData(yFrame, timeStep, layer);
 			name = xFrame.getVariable().getName() + "x" + yFrame.getVariable().getName();

@@ -27,37 +27,37 @@ public class FormulaListModel extends AbstractListModel {
 
 	public FormulaListModel()
 	{
-		Logger.debug("in FormulaListModel default constructor");
+		Logger.info("in FormulaListModel default constructor");
 	}
 	
 
 	public ListSelectionModel getSelectionModel() {
-		Logger.debug("in FormulaListModel getSelectionModel");
+		Logger.info("in FormulaListModel getSelectionModel");
 		return selectionModel;
 	}
 
 	public void setSelectionModel(ListSelectionModel selectionModel) {
-		Logger.debug("in FormulaListModel setSelectionModel");
+		Logger.info("in FormulaListModel setSelectionModel");
 		this.selectionModel = selectionModel;
 	}
 
 	public Object getElementAt(int index) {
-		Logger.debug("in formulaListModel getElementAt, returns Object");
+		Logger.info("in formulaListModel getElementAt, returns Object");
 		return formulas.get(index);
 	}
 
 	public String getFormulaAt(int index) {
-		Logger.debug("in formulaListModel getElementAt, returns String");
+		Logger.info("in formulaListModel getElementAt, returns String");
 		return formulas.get(index).getFormula();
 	}
 
 	public int getSize() {
-//		Logger.debug("in formulaListModel getSize");		// NOTE called VERY frequently
+//		Logger.info("in formulaListModel getSize");		// NOTE called VERY frequently
 		return formulas == null ? 0 : formulas.size();
 	}
 
 	private int indexOf(String formula) {
-		Logger.debug("in FormulaListModel indexOf");
+		Logger.info("in FormulaListModel indexOf");
 		int index = 0;
 		for (FormulaListElement dt : formulas) {
 
@@ -68,12 +68,12 @@ public class FormulaListModel extends AbstractListModel {
 	}
 
 	public int addFormula(String formula) {
-		Logger.debug("in FormulaListModel addFormula String");
+		Logger.info("in FormulaListModel addFormula String");
 		return addFormula(new FormulaListElement(formula));
 	}
 
 	public int addFormula(FormulaListElement element) {
-		Logger.debug("in FormulaListModel addFormula as FormulaListElement");
+		Logger.info("in FormulaListModel addFormula as FormulaListElement");
 		int index = indexOf(element.getFormula());
 		if (index == -1) {
 			index = formulas.size();
@@ -84,19 +84,19 @@ public class FormulaListModel extends AbstractListModel {
 	}
 
 	public Iterable<FormulaListElement> elements() {
-		Logger.debug("in FormulaListModel elements");
+		Logger.info("in FormulaListModel elements");
 		return formulas;
 	}
 
 	public void removeFormulaAt(int index) {
-		Logger.debug("in FormulaListModel removeFormulaAt");
+		Logger.info("in FormulaListModel removeFormulaAt");
 		//FormulaListElement element = formulas.remove(index);
 		formulas.remove(index);
 		fireIntervalRemoved(this, index, index);
 	}
 
 	public void removeFormula(FormulaListElement element) {
-		Logger.debug("in FormulaListModel removeFormula");
+		Logger.info("in FormulaListModel removeFormula");
 		int index = formulas.indexOf(element);
 		formulas.remove(index);
 		fireIntervalRemoved(this, index, index);
@@ -106,14 +106,14 @@ public class FormulaListModel extends AbstractListModel {
 	 * Removes all the elements from this model.
 	 */
 	public void clear() {
-		Logger.debug("in FormulaListModel clear");
+		Logger.info("in FormulaListModel clear");
 		int size = formulas.size();
 		formulas.clear();
 		fireIntervalRemoved(this, 0, size);
 	}
 
 	public void addAll(List<FormulaListElement> elements) {
-		Logger.debug("in formulaListModel addAll");
+		Logger.info("in formulaListModel addAll");
 		if (elements.size() > 0) {
 			int index = formulas.size();
 			formulas.addAll(elements);
@@ -122,12 +122,12 @@ public class FormulaListModel extends AbstractListModel {
 	}
 
 	public void setSelectedItem(int index) {
-		Logger.debug("in FormulaListModel setSelectedItem  index");
+		Logger.info("in FormulaListModel setSelectedItem  index");
 		if (selectionModel != null) selectionModel.setSelectionInterval(index, index);
 	}
 
 	public void setSelectedItem(FormulaListElement element) {
-		Logger.debug("in FormulaListModel setSelectedItem  element");
+		Logger.info("in FormulaListModel setSelectedItem  element");
 		if (element != null && selectionModel != null) {
 			int i = indexOf(element.getFormula());
 			if (i != -1) setSelectedItem(i);

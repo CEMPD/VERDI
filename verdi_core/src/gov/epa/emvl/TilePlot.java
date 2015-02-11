@@ -173,7 +173,7 @@ public class TilePlot {
 		Logger.debug("ready to call drawLabels");
 		drawLabels(graphics, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
 				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn,
-				data);
+				data);	// anl.verdi.gui.DatasetListModel - in DatasetListModel getElementAt
 
 		// Draw legend-colored grid cells:
 		Logger.debug("ready to call drawGridCells");
@@ -184,7 +184,7 @@ public class TilePlot {
 		// Draw grid lines:
 
 		if ( gridLineColor != null ) {
-			Logger.debug("ready to call drawGridLines");
+			Logger.debug("ready to call drawGridLines");	// 2015 not printed in log file for fast tile plot
 		  drawGridLines( graphics, xMinimum, xMaximum, yMinimum, yMaximum,
 				         firstRow, lastRow, firstColumn, lastColumn, gridLineColor);
 		}
