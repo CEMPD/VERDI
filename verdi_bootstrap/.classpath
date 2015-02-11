@@ -60,7 +60,6 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/jcommon-1.0.16.jar" sourcepath="/verdi_core/lib_src/jcommon-1.0.16-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/jdom-2.0.5.jar" sourcepath="/verdi_core/lib_src/jdom-2.0.5-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/jeo.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/jfreechart-1.0.17.jar" sourcepath="/verdi_core/lib_src/jfreechart-1.0.17-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/jide-oss-3.5.14.jar" sourcepath="/verdi_core/lib_src/jide-oss-3.5.14-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/jmf.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/jscience.jar" sourcepath="/verdi_core/lib_src/jscience-4.3.1-src.zip"/>
@@ -98,5 +97,6 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-renderer-9.5.jar"/>
 	<classpathentry kind="lib" path="lib"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/jfreechart-1.0.19.jar" sourcepath="/verdi_core/lib_src/jfreechart-1.0.19-sources.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -36,7 +36,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jts-1.13.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jai_codec.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdom-2.0.5.jar" sourcepath="lib_src/jdom-2.0.5-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.17.jar" sourcepath="lib_src/jfreechart-1.0.17-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jide-oss-3.5.14.jar" sourcepath="lib_src/jide-oss-3.5.14-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/junit-4.11.jar" sourcepath="lib_src/junit-4.11-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swingx-all-1.6.5.jar" sourcepath="lib_src/swingx-all-1.6.5-sources.jar"/>
@@ -97,5 +96,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-renderer-9.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-old-10.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-all-1.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.19.jar" sourcepath="lib_src/jfreechart-1.0.19-sources.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

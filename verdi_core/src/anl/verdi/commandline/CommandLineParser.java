@@ -15,7 +15,7 @@ public class CommandLineParser {
 		ArrayList<ArrayList<String>> allCommands = new ArrayList<ArrayList<String>>();
 		ArrayList<String> thisCommand = new ArrayList<String>();
 		
-		//Currently I am checking to see if this is the last item in the command or or a '\'
+		//Currently I am checking to see if this is the last item in the command or a '\'
 		for(int i = 0; i < args.length; i++)
 		{
 			String thisArgItem = args[i];

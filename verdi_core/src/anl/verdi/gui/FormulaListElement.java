@@ -25,11 +25,11 @@ public class FormulaListElement extends AbstractListElement {
 
 	public FormulaListElement(String formula) {
 		this(formula, new ArrayList<FormulaVariable>());
-		Logger.debug("in FormulaListElement constructor String");
+		Logger.info("in FormulaListElement constructor String");
 	}
 
 	public FormulaListElement(String formula, List<FormulaVariable> variables) {
-		Logger.debug("in FormulaListElement constructor String List");
+		Logger.info("in FormulaListElement constructor String List");
 		this.formula = formula;
 		this.variables = variables;
 
@@ -68,29 +68,29 @@ public class FormulaListElement extends AbstractListElement {
 	 * @return an iterable over the formula variables in this element.
 	 */
 	public Iterable<FormulaVariable> variables() {
-		Logger.debug("in FormulaListElement variables");
+		Logger.info("in FormulaListElement variables");
 		return variables;
 	}
 
 	public Axes<CoordAxis> getAxes() {
-		Logger.debug("in FormulaListElement getAxes");
+		Logger.info("in FormulaListElement getAxes");
 		if (variables.size() > 0) return variables.get(0).getDataset().getCoordAxes();
 		return null;
 	}
 
 	public String getFormula() {
-		Logger.debug("in FormulaListElement getFormula");
+		Logger.info("in FormulaListElement getFormula");
 		return formula;
 	}
 	
 	public Dataset getDataset() {
-		Logger.debug("in FormulaListElement getDataset");
+		Logger.info("in FormulaListElement getDataset");
 		if (variables.size() > 0) return variables.get(0).getDataset();
 		return null;
 	}
 
 	public String toString() {
-		Logger.debug("in FormulaListElement toString");
+		Logger.info("in FormulaListElement toString");
 		Dataset ds = getDataset();
 		
 		return formula + (ds != null && ds.isObs() ? "(OBS)" : "");

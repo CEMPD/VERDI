@@ -179,7 +179,7 @@ public class PlotExporter {
 //			ext = s.substring(i + 1).toLowerCase();
 //		}
 		String fileName = f.toString();
-		String ext = new String(FilenameUtils.getExtension(fileName)).toLowerCase();
+		String ext = new String(FilenameUtils.getExtension(fileName)).toLowerCase(); // 2015  NullPointerException thrown when first going to specify file name for exporting graphics
 		return ext;
 	}
 	

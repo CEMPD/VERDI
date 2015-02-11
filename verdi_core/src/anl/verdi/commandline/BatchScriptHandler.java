@@ -68,6 +68,7 @@ public class BatchScriptHandler {
 		"\t#        imageWidth    -- image width                                              #\n" +
 		"\t#        imageHeight   -- image height                                             #\n" +
 		"\t#        unitString    -- units                                                    #\n" +
+		"\t#        VectorIncr    -- Vector Sampling Increment (Fast Tile Plot only)          #\n" +
 		"\t#    * Currently supported formula functions:                                      #\n" +
 		"\t#      max(), min(), mean(), sum() -- functions will calculate relevant max,       #\n" +
 		"\t#      min, mean, sum values over the time steps (within the same layer)           #\n" +

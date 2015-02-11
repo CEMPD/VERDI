@@ -136,8 +136,7 @@ public class Project {
 	 *
 	 * @return the ranges for the currently selected formula given
 	 *         the current project information.
-	 * @throws IllegalFormulaException if the ranges specified
-	 *                                 by dataset or by formula are invalid
+	 * @throws IllegalFormulaException if the ranges specified by dataset or by formula are invalid
 	 */
 	public List<AxisRange> createRanges() throws IllegalFormulaException {
 		Logger.debug("in Project createRanges()");
@@ -149,14 +148,14 @@ public class Project {
 	 *
 	 * @return the ranges for the currently selected formula given
 	 *         the current project information.
-	 * @throws IllegalFormulaException if the ranges specified
-	 *                                 by dataset or by formula are invalid
+	 * @throws IllegalFormulaException if the ranges specified by dataset or by formula are invalid
 	 */
 
 	public List<AxisRange> createRanges(FormulaListElement selectedFormula) throws IllegalFormulaException {
 		Logger.debug("in Project createRanges (FormulaListElement)");
 		if (selectedFormula == null) return new ArrayList<AxisRange>();
 		List<AxisRange> ranges = checkDatasetRanges(selectedFormula);
+		Logger.debug("in Project createRanges(FormulaListElement): number of ranges: " + ranges.size());
 
 		// 4 is correct here because
 		// we always set x and y if have to set either of them
@@ -176,10 +175,15 @@ public class Project {
 		}
 
 		// no dataset ranges specified for use, so use the formula ones
+		Logger.debug("in Project createRanges(FormulaListElement): setLayerRange = " + setLayerRange +
+				" selectedFormula.isLayerUsed = " + selectedFormula.isLayerUsed());
+
 		if (setLayerRange && selectedFormula.isLayerUsed()) {
 			Axes<CoordAxis> axes = selectedFormula.getAxes();
 			int max = Math.max(selectedFormula.getLayerMin(), selectedFormula.getLayerMax());
 			int min = Math.min(selectedFormula.getLayerMin(), selectedFormula.getLayerMax());
+			Logger.debug("in Project createRanges(FormulaListElement): min = " + min + ", max = " + max);
+
 			ranges.add(new AxisRange(axes.getZAxis(), min, max - min + 1));
 		}
 
