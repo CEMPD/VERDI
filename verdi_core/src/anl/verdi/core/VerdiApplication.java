@@ -875,16 +875,19 @@ FormulaElementCreator, ListDataListener {
 
 			FormulaListElement xElement = dialog.getUElement();
 			if (xElement != null) {
-				Logger.debug("xElement != null");	// 2015 got here
+				Logger.debug("xElement != null");
 				FormulaListElement oldElement = project.getSelectedFormula();
 				project.setSelectedFormula(xElement);
-				DataFrame xFrame = evaluateFormula(Formula.Type.VECTOR); //, range);
+				DataFrame xFrame = evaluateFormula(Formula.Type.VECTOR); //, range);	// domain
 				project.setSelectedFormula(dialog.getVElement());
-				DataFrame yFrame = evaluateFormula(Formula.Type.VECTOR); //, range);
+				DataFrame yFrame = evaluateFormula(Formula.Type.VECTOR); //, range);	// range
 				int vectorSamplingInc = dialog.getVectorSamplingInc();	// 2015 get input Vector Sampling Increment
 				Logger.debug("got vectorSamplingIncrement = " + vectorSamplingInc);
 				
-				DataFrame[] frames = DataUtilities.unitVectorTransform(xFrame, yFrame, vectorSamplingInc);
+// for testing old code w/o vectorSamplingInc
+//				DataFrame[] frames = DataUtilities.unitVectorTransform(xFrame, yFrame);	// 2015 do not pass in vector sampling increment
+				
+				DataFrame[] frames = DataUtilities.unitVectorTransform(xFrame, yFrame, vectorSamplingInc);	// 2015 pass in vector sampling increment
 				Logger.debug("back from DataUtilities.unitVectorTransform");
 				xFrame = frames[0];
 				yFrame = frames[1];
@@ -892,7 +895,6 @@ FormulaElementCreator, ListDataListener {
 				Logger.debug("back from project.setSelectedFormula");
 
 				if (fastPlot != null) {
-					// 2015 here need to add in vectorSamplingInc; pass it to appropriate function and implement it there
 					fastPlot.addVectorAnnotation(new VectorEvaluator(xFrame, yFrame));
 					Logger.debug("did addVectorAnnotation for new VectorEvaluator (fastPlot)");
 				} else{
