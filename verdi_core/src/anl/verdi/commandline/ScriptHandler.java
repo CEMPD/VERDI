@@ -1448,6 +1448,7 @@ public class ScriptHandler {
 			public void run(ArrayList<String> args){
 				Logger.debug("ScriptHandler.constructMap.VERSION");
 				Logger.debug(version);
+				System.out.println(version);
 				System.exit(0);
 			}				
 		});
