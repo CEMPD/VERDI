@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;		// 2015
 import org.apache.logging.log4j.Logger;			// 2015 replacing System.out.println with logger messages
 
 import ucar.ma2.Array;
+import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayFloat;
 import ucar.ma2.Index4D;
 import ucar.ma2.IndexIterator;
@@ -414,36 +415,25 @@ public class DataUtilities {
 	}
 	
 	public static DataFrame[] unitVectorTransform(DataFrame xFrame, DataFrame yFrame, int vectorSamplingInc) {
+			// overloaded function where this one is also passed the vector sampling increment
 		Logger.debug("in unitVectorTransform, vectorSamplingInc = " + vectorSamplingInc);
-		DataFrame newX = createDataFrame(xFrame);
+		DataFrame newX = createDataFrame(xFrame);	// NOTE: incoming are Float but created (outgoing) are Double
 		DataFrame newY = createDataFrame(yFrame);
-//		IndexIterator newXIter = newX.getArray().getIndexIteratorFast();	// deprecated in NetCDF library
-//		IndexIterator newYIter = newY.getArray().getIndexIteratorFast();	// deprecated in NetCDF library
-		IndexIterator newXIter = newX.getArray().getIndexIterator();
-		IndexIterator newYIter = newY.getArray().getIndexIterator();
+		DataFrame mFrame = createDataFrame(xFrame);
 
-		Array xArray = xFrame.getArray();
-		Array yArray = yFrame.getArray();
-		ArrayFloat.D4 mArray = (ArrayFloat.D4) xArray;	// make copy of X array for maskArray (0 to skip, 1 to put value)
-		IndexIterator xIterMax = xArray.getIndexIterator();
-		IndexIterator yIterMax = yArray.getIndexIterator();
-		IndexIterator mIter = mArray.getIndexIterator();	// to iterate through maskArray
+		ArrayFloat.D4 xArray = (ArrayFloat.D4) xFrame.getArray();	// arrays from incoming DataFrames
+		ArrayFloat.D4 yArray = (ArrayFloat.D4) yFrame.getArray();
+		ArrayDouble.D4 mArray = (ArrayDouble.D4) mFrame.getArray();	// make copy of X array for maskArray (0 to skip, 1 to put value)
+		ArrayDouble.D4 newXArray = (ArrayDouble.D4)newX.getArray(); // arrays from outgoing DataFrames
+		ArrayDouble.D4 newYArray = (ArrayDouble.D4)newY.getArray();
 		IndexIterator mZeroIter = mArray.getIndexIterator();	// to iterate and set array to 0's
-		int numDims = mArray.getRank();		// get rank of array (number of dimensions)
-		Logger.debug("in DataUtilities.unitVectorTransform for masking array: numDims = " + numDims);
 		int[] lenDims = xArray.getShape();	// get length (number of elements) in each dimension
 		Index4D idx = new Index4D(lenDims);	// need a 4-dimensional index for this shape
-//		for(int i=0; i<numDims; i++)
-//		{
-//			Logger.debug("lenDims[" + i + "] = " + lenDims[i]);
-//		}
-//		Class eleType = mArray.getElementType();	// get type of array elements (int, double, etc.)
-//		Logger.debug("eleType = " + eleType);
 		
-		// 2015 fill masking array
+		// fill masking array
 		while(mZeroIter.hasNext())
 		{
-			mZeroIter.setFloatNext((float) 0.0); 		// initialize to 0 (mask all out)
+			mZeroIter.setDoubleNext((float) 0.0); 		// initialize to 0 (mask all out)
 		}
 		
 		for(int i0=0; i0<lenDims[0]; i0++)			// initialize values to keep (set = 1.0)
@@ -454,36 +444,53 @@ public class DataUtilities {
 				{
 					for(int i3=0; i3<lenDims[3]; i3+=vectorSamplingInc)
 					{
-						mArray.set(i0, i1, i2, i3, (float) 1.0);
-//						mArray.setDouble(idx.set(i0, i1, i2, i3), 1.0);	// mark as one to keep
-//						Logger.debug("[" + i0 + "], [" + i1 + "], [" + i2 + "],[" + i3 + "]");
+						mArray.setDouble(idx.set(i0,i1,i2,i3), (float) 1.0);
+					}
+				}
+			}
+		}		// masking array now complete
+		
+		float maxUVal = 0;		// now get maxU (x) and maxV (y) for masked values
+		float maxVVal = 0;
+		for(int i0=0; i0<lenDims[0]; i0++)
+		{
+			for(int i1=0; i1<lenDims[1]; i1++)
+			{
+				for(int i2=0; i2<lenDims[2]; i2++)
+				{
+					for(int i3=0; i3<lenDims[3]; i3++)
+					{
+						float xValue = xArray.getFloat(idx.set(i0,i1,i2,i3));
+						float yValue = yArray.getFloat(idx.set(i0,i1,i2,i3));
+						float mValue = (float) mArray.getDouble(idx.set(i0,i1,i2,i3));
+						maxUVal = Math.max(maxUVal, mValue * Math.abs(xValue));
+						maxVVal = Math.max(maxVVal, mValue * Math.abs(yValue));
+					}
+				}
+			}
+		}		// now have maxUVal and maxVVal for only unmasked values
+		
+		Logger.debug("final maxUVal = " + maxUVal + ", maxVVal = " + maxVVal);
+		
+		for(int i0=0; i0<lenDims[0]; i0++)		// now loop through and compute scaled values, save to outgoing data structures
+		{
+			for(int i1=0; i1<lenDims[1]; i1++)
+			{
+				for(int i2=0; i2<lenDims[2]; i2++)
+				{
+					for(int i3=0; i3<lenDims[3]; i3++)
+					{
+						float xValue = xArray.getFloat(idx.set(i0,i1,i2,i3));
+						float yValue = yArray.getFloat(idx.set(i0,i1,i2,i3));
+						float mValue = (float) mArray.getDouble(idx.set(i0,i1,i2,i3));
+						double newXValue = xValue * mValue / maxUVal * (double)0.5;
+						double newYValue = yValue * mValue / maxVVal * (double)0.5;
+						newXArray.setDouble(idx.set(i0,i1,i2,i3), newXValue);
+						newYArray.setDouble(idx.set(i0,i1,i2,i3), newYValue);
 					}
 				}
 			}
 		}
-		
-		double maxUVal = 0;
-		double maxVVal = 0;
-		while (xIterMax.hasNext()) {
-			float mIterFloat = mIter.getFloatNext();
-			double xVal = xIterMax.getDoubleNext() * mIterFloat;		// 2015 Why does this loop use Next() instead of Current()?
-			double yVal = yIterMax.getDoubleNext() * mIterFloat;
-			maxUVal = Math.max(maxUVal, Math.abs(xVal));
-			maxVVal = Math.max(maxVVal, Math.abs(yVal));
-		}
-		
-		IndexIterator xIter = xArray.getIndexIterator();
-		IndexIterator yIter = yArray.getIndexIterator();
-		mIter = mArray.getIndexIterator();
-		while (xIter.hasNext()) {
-			double xVal = xIter.getDoubleNext();
-			double yVal = yIter.getDoubleNext();
-			double mVal = mIter.getFloatNext();		// 2015 can go straight through arrays because increment used when creating masks (above)
-//			double mag = Math.sqrt(xVal * xVal + yVal * yVal);
-			newXIter.setDoubleNext(xVal * mVal / maxUVal * .5);		// 2015 use masking array
-			newYIter.setDoubleNext(yVal * mVal / maxVVal * .5);		// 2015 use masking array
-		}
-
 		Logger.debug("done with DataUtilities.unitVectorTransform with vectorSamplingInc = " + vectorSamplingInc);
 		return new DataFrame[]{newX, newY};
 	}

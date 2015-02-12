@@ -151,7 +151,7 @@ public class ScriptHandler {
 			//											+ "[ -vectobs <formula> <formula> ]\n"
 			//											+ "[ -vector \"<U>\" \"<V>\"]\n"
 			//											+ "[ -vectorTile \"<formula>\" \"<U>\" \"<V>\"]\n"
-			+ "[ -VectorIncr ]\n"
+//			+ "[ -VectorIncr ]\n"
 			+ "[ -version ]\n"
 			+ "[ -verticalCrossPlot X|Y <row/column> (NEW)]\n"
 			+ "[ -windowid ]";

@@ -51,6 +51,8 @@ public class TilePlotTask implements AbstractTask {
 	private int xmax = 0;	// == last column
 	private int ymin = 0;	// == first row
 	private int ymax = 0;	// == last row
+	private int vectorSamplingIncr = 0;	// vector sampling increment for overlaying vectors
+			// NOTE: vector sampling increment cannot be implemented for commandline or batch VERDI until vector overlay is implemented as well
 	
 	public TilePlotTask(Map<String, String> map, File[] dataFiles, VerdiApplication vApp, String[] subDomainArgs) {
 		this.map = map;
@@ -292,6 +294,20 @@ public class TilePlotTask implements AbstractTask {
 
 		BufferedImage image = plot.getBufferedImage(width, height);
 		ImageIO.write(image, ext, file);
+	}
+
+	/**
+	 * @return the vectorSamplingIncr
+	 */
+	public int getVectorSamplingIncr() {
+		return vectorSamplingIncr;
+	}
+
+	/**
+	 * @param vectorSamplingIncr the vectorSamplingIncr to set
+	 */
+	public void setVectorSamplingIncr(int vectorSamplingIncr) {
+		this.vectorSamplingIncr = vectorSamplingIncr;
 	}
 
 }
