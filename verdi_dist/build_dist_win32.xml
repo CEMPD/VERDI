@@ -17,9 +17,9 @@
 	<property name="versiondir" value="../verdi_core/src/anl/verdi/util" />
 	<property name="versionbuild.dir" value="../verdi_core/bin/anl/verdi/util" />
 
-	<taskdef name="nsis" classname="net.sf.nsisant.Task">
+	<!--taskdef name="nsis" classname="net.sf.nsisant.Task">
 		<classpath location="./distlib/nsisant-1.2.jar"/>
-	</taskdef>
+	</taskdef-->
 	
 	<path id="classpath">
 		<pathelement location="../verdi_core/bin/" />

@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import com.bbn.openmap.omGraphics.OMGeometry;
+//import com.bbn.openmap.omGraphics.OMGeometry;		// 2015 trying to eliminate all bbn openmap except what VERDI uses
 
 /**
  * A set of convenience functions for deep copying data structures.
@@ -91,34 +91,34 @@ public class DeepCopyUtil {
         return bytes;
     }
 
-    public static <T extends OMGeometry> T deepCopy(T source) {
-        T list = (T) ComponentFactory.create(source.getClass().getName());
-        list.restore(source);
-        return list;
-    }
-
-    public static <T extends OMGeometry> T[] deepCopy(T[] source) {
-        if (source == null) {
-            return null;
-        }
-
-        // This is a shallow copy, clone objects are same as source objects
-        T[] clone = source.clone();
-        
-        // JDK 1.6 required
-        //T[] clone = Arrays.copyOfRange(source, 0, source.length);
-
-        for (int i = 0; i < source.length; i++) {
-            T subclone = null;
-            subclone = (T) ComponentFactory.create(source[i].getClass().getName());
-            if (subclone != null) {
-                subclone.restore(source[i]);
-            }
-            clone[i] = subclone;
-        }
-
-        return clone;
-    }
+//    public static <T extends OMGeometry> T deepCopy(T source) {
+//        T list = (T) ComponentFactory.create(source.getClass().getName());
+//        list.restore(source);
+//        return list;
+//    }
+//
+//    public static <T extends OMGeometry> T[] deepCopy(T[] source) {
+//        if (source == null) {
+//            return null;
+//        }
+//
+//        // This is a shallow copy, clone objects are same as source objects
+//        T[] clone = source.clone();
+//        
+//        // JDK 1.6 required
+//        //T[] clone = Arrays.copyOfRange(source, 0, source.length);
+//
+//        for (int i = 0; i < source.length; i++) {
+//            T subclone = null;
+//            subclone = (T) ComponentFactory.create(source[i].getClass().getName());
+//            if (subclone != null) {
+//                subclone.restore(source[i]);
+//            }
+//            clone[i] = subclone;
+//        }
+//
+//        return clone;
+//    }
 
     public static double[][] deepCopy(double[][] source) {
         if (source == null) {
