@@ -43,6 +43,8 @@ import ucar.unidata.geoloc.projection.*;
 import ucar.unidata.geoloc.ProjectionRect;
 
 import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  * Models-3/EDSS Input/Output netcf format.
@@ -235,8 +237,8 @@ public class M3IOConvention extends CoordSysBuilder {
     cal.set(Calendar.SECOND, sec);
     //cal.setTimeZone( new SimpleTimeZone(0, "GMT"));
 
-    java.text.SimpleDateFormat dateFormatOut = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    dateFormatOut.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
+    SimpleDateFormat dateFormatOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    dateFormatOut.setTimeZone(TimeZone.getTimeZone("GMT"));
 
     String units = "seconds since " + dateFormatOut.format(cal.getTime()) + " UTC";
 
@@ -287,9 +289,6 @@ public class M3IOConvention extends CoordSysBuilder {
     return new ProjectionCT("LambertConformalProjection", "FGDC", lc);
   }
   
-  
-
-  @SuppressWarnings("deprecation")
 private CoordinateTransform makePolarStereographicProjection(NetcdfDataset ds) {
 //    boolean n_polar = (findAttributeDouble(ds, "P_ALP") == 1.0);
     double central_meridian = findAttributeDouble(ds, "P_GAM");
@@ -460,7 +459,7 @@ private CoordinateTransform makePolarStereographicProjection(NetcdfDataset ds) {
 
   protected void makeCoordinateTransforms(NetcdfDataset ds) {
     if (ct != null) {
-      VarProcess vp = findVarProcess(ct.getName());
+      VarProcess vp = findVarProcess(ct.getName(), null);	// 2016 added 2nd argument; changed for new NetCDF-Java library
       if (vp != null)
         vp.ct = ct;
     }
