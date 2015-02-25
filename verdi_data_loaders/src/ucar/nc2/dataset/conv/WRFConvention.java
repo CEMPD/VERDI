@@ -1,39 +1,41 @@
 /*
- * Copyright 1998-2009 University Corporation for Atmospheric Research/Unidata
+ * Copyright 1998-2014 University Corporation for Atmospheric Research/Unidata
  *
- * Portions of this software were developed by the Unidata Program at the
- * University Corporation for Atmospheric Research.
+ *   Portions of this software were developed by the Unidata Program at the
+ *   University Corporation for Atmospheric Research.
  *
- * Access and use of this software shall impose the following obligations
- * and understandings on the user. The user is granted the right, without
- * any fee or cost, to use, copy, modify, alter, enhance and distribute
- * this software, and any derivative works thereof, and its supporting
- * documentation for any purpose whatsoever, provided that this entire
- * notice appears in all copies of the software, derivative works and
- * supporting documentation.  Further, UCAR requests that the user credit
- * UCAR/Unidata in any publications that result from the use of this
- * software or in any product that includes this software. The names UCAR
- * and/or Unidata, however, may not be used in any advertising or publicity
- * to endorse or promote any products or commercial entity unless specific
- * written permission is obtained from UCAR/Unidata. The user also
- * understands that UCAR/Unidata is not obligated to provide the user with
- * any support, consulting, training or assistance of any kind with regard
- * to the use, operation and performance of this software nor to provide
- * the user with any updates, revisions, new versions or "bug fixes."
+ *   Access and use of this software shall impose the following obligations
+ *   and understandings on the user. The user is granted the right, without
+ *   any fee or cost, to use, copy, modify, alter, enhance and distribute
+ *   this software, and any derivative works thereof, and its supporting
+ *   documentation for any purpose whatsoever, provided that this entire
+ *   notice appears in all copies of the software, derivative works and
+ *   supporting documentation.  Further, UCAR requests that the user credit
+ *   UCAR/Unidata in any publications that result from the use of this
+ *   software or in any product that includes this software. The names UCAR
+ *   and/or Unidata, however, may not be used in any advertising or publicity
+ *   to endorse or promote any products or commercial entity unless specific
+ *   written permission is obtained from UCAR/Unidata. The user also
+ *   understands that UCAR/Unidata is not obligated to provide the user with
+ *   any support, consulting, training or assistance of any kind with regard
+ *   to the use, operation and performance of this software nor to provide
+ *   the user with any updates, revisions, new versions or "bug fixes."
  *
- * THIS SOFTWARE IS PROVIDED BY UCAR/UNIDATA "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL UCAR/UNIDATA BE LIABLE FOR ANY SPECIAL,
- * INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
- * FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
- * NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
- * WITH THE ACCESS, USE OR PERFORMANCE OF THIS SOFTWARE.
+ *   THIS SOFTWARE IS PROVIDED BY UCAR/UNIDATA "AS IS" AND ANY EXPRESS OR
+ *   IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ *   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *   DISCLAIMED. IN NO EVENT SHALL UCAR/UNIDATA BE LIABLE FOR ANY SPECIAL,
+ *   INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING
+ *   FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+ *   NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
+ *   WITH THE ACCESS, USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 package ucar.nc2.dataset.conv;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 
@@ -49,7 +51,7 @@ import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
-import ucar.nc2.NCdump;				// 2014 deprecated, replaced with NCdumpW but no obvious conversion of arguments
+import ucar.nc2.NCdumpW;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.nc2.constants.AxisType;
@@ -58,6 +60,8 @@ import ucar.nc2.constants.CF;
 import ucar.nc2.constants._Coordinate;
 import ucar.nc2.dataset.*;
 import ucar.nc2.dataset.transform.WRFEtaTransformBuilder;
+import ucar.nc2.time.CalendarDate;
+import ucar.nc2.time.CalendarDateFormatter;
 import ucar.nc2.units.SimpleUnit;
 import ucar.nc2.util.CancelTask;
 import ucar.unidata.geoloc.*;
@@ -78,12 +82,12 @@ import ucar.unidata.util.StringUtil2;
 public class WRFConvention extends CoordSysBuilder {
 //	static final Logger Logger = LogManager.getLogger(WRFConvention.class.getName());
 
-  static private java.text.SimpleDateFormat dateFormat;
-
-  static {
-    dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-    dateFormat.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
-  }
+//  static private java.text.SimpleDateFormat dateFormat;
+//
+//  static {
+//    dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+//    dateFormat.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
+//  }
 
   public static boolean isMine(NetcdfFile ncfile) {
     if (null == ncfile.findDimension("south_north")) return false;
@@ -127,7 +131,7 @@ public class WRFConvention extends CoordSysBuilder {
     2) ARW ("Advanced Research WRF", developed at MMM)
       GRIDTYPE="C"
       DYN_OPT = 2
-      DX, DY grid spaceing in meters (must be equal)
+      DX, DY grid spacing in meters (must be equal)
 
       the Arakawa C staggered grid (see ARW 2.2 p 3-17)
       the + are the "non-staggered" grid:
@@ -287,7 +291,7 @@ map_proj =  1: Lambert Conformal
             if (v.getShortName().startsWith("XLAT")) {
               v.addAttribute(new Attribute(_Coordinate.AxisType, AxisType.Lat.toString()));
               int[] shape = v.getShape();
-              if (v.getRank() == 3 && shape[0] == 1) { // remove time dependcies - MAJOR KLUDGE
+              if (v.getRank() == 3 && shape[0] == 1) { // remove time dependencies - MAJOR KLUDGE
                 List<Dimension> dims = v.getDimensions();
                 dims.remove(0);
                 v.setDimensions(dims);
@@ -295,7 +299,7 @@ map_proj =  1: Lambert Conformal
             } else if (v.getShortName().startsWith("XLONG")) {
               v.addAttribute(new Attribute(_Coordinate.AxisType, AxisType.Lon.toString()));
               int[] shape = v.getShape();
-              if (v.getRank() == 3 && shape[0] == 1) { // remove time dependcies - MAJOR KLUDGE
+              if (v.getRank() == 3 && shape[0] == 1) { // remove time dependencies - MAJOR KLUDGE
                 List<Dimension> dims = v.getDimensions();
                 dims.remove(0);
                 v.setDimensions(dims);
@@ -321,10 +325,10 @@ map_proj =  1: Lambert Conformal
         ProjectionPoint ppt1 = proj.latLonToProj(lpt1, new ProjectionPointImpl());
         centerX = ppt1.getX();
         centerY = ppt1.getY();
-        if (debug) {
+//      if (debug) {
 //          Logger.debug("centerX=" + centerX);
 //          Logger.debug("centerY=" + centerY);
-        }
+//      }
       }
 
       // make axes
@@ -382,14 +386,32 @@ map_proj =  1: Lambert Conformal
 
   // pretty much WRF specific
   private String normalize(String units) {
-    if (units.equals("fraction")) units = "";
-    else if (units.equals("dimensionless")) units = "";
-    else if (units.equals("NA")) units = "";
-    else if (units.equals("-")) units = "";
-    else {
-      units = StringUtil2.substitute(units, "**", "^");
-      units = StringUtil2.remove(units, '}');
-      units = StringUtil2.remove(units, '{');
+//    if (units.equals("fraction")) units = "";		// 2015 changed to using case/switch code in latest version library
+//    else if (units.equals("dimensionless")) units = "";
+//    else if (units.equals("NA")) units = "";
+//    else if (units.equals("-")) units = "";
+//    else {
+//      units = StringUtil2.substitute(units, "**", "^");
+//      units = StringUtil2.remove(units, '}');
+//      units = StringUtil2.remove(units, '{');
+	    switch (units) {
+	      case "fraction":
+	        units = "";
+	        break;
+	      case "dimensionless":
+	        units = "";
+	        break;
+	      case "NA":
+	        units = "";
+	        break;
+	      case "-":
+	        units = "";
+	        break;
+	      default:
+	        units = StringUtil2.substitute(units, "**", "^");
+	        units = StringUtil2.remove(units, '}');
+	        units = StringUtil2.remove(units, '{');
+	        break;
     }
     return units;
   }
@@ -397,7 +419,7 @@ map_proj =  1: Lambert Conformal
 
   protected void makeCoordinateTransforms(NetcdfDataset ds) {
     if (projCT != null) {
-      VarProcess vp = findVarProcess(projCT.getName());
+      VarProcess vp = findVarProcess(projCT.getName(), null);	// 2015 library added 2nd parameter
       vp.isCoordinateTransform = true;
       vp.ct = projCT;
     }
@@ -443,13 +465,13 @@ map_proj =  1: Lambert Conformal
   }
 
   /**
-   * Does increasing values of Z go vertical  up?
+   * Do increasing values of Z go vertical  up?
    *
-   * @param v for thsi axis
+   * @param v for this axis
    * @return "up" if this is a Vertical (z) coordinate axis which goes up as coords get bigger,
    *         else return "down"
    */
-  public String getZisPositive(CoordinateAxis v) {
+  public String getZisPositive(CoordinateAxis v) {	// 2015 NOTE: function does not actually do what documentation (above) says
     return "down"; //eta coords decrease upward
   }
 
@@ -462,7 +484,7 @@ map_proj =  1: Lambert Conformal
     double startx = centerX - dx * (nx - 1) / 2;
 
     CoordinateAxis v = new CoordinateAxis1D(ds, null, axisName, DataType.DOUBLE, dim.getShortName(), "degrees_east", "synthesized longitude coordinate");
-    ds.setValues(v, nx, startx, dx);
+    v.setValues(nx, startx, dx);	// 2015 NOTE: changed from ds.setValues (v, nx, startx, dx)
     v.addAttribute(new Attribute(_Coordinate.AxisType, "Lon"));
     if (!axisName.equals(dim.getShortName()))
       v.addAttribute(new Attribute(_Coordinate.AliasForDimension, dim.getShortName()));
@@ -477,7 +499,7 @@ map_proj =  1: Lambert Conformal
     double starty = centerY - dy * (ny - 1) / 2;
 
     CoordinateAxis v = new CoordinateAxis1D(ds, null, axisName, DataType.DOUBLE, dim.getShortName(), "degrees_north", "synthesized latitude coordinate");
-    ds.setValues(v, ny, starty, dy);
+    v.setValues(ny, starty, dy);		// 2015 NOTE: changed from ds.setValues (v, ny, starty, dy)
     v.addAttribute(new Attribute(_Coordinate.AxisType, "Lat"));
     if (!axisName.equals(dim.getShortName()))
       v.addAttribute(new Attribute(_Coordinate.AliasForDimension, dim.getShortName()));
@@ -561,7 +583,7 @@ map_proj =  1: Lambert Conformal
     if (!axisName.equals(dim.getShortName()))
       v.addAttribute(new Attribute(_Coordinate.AliasForDimension, dim.getShortName()));
 
-    ds.setValues(v, dim.getLength(), 0, 1);
+    v.setValues(dim.getLength(), 0, 1);		// 2015: changed ds.setValues to v.setValues (see comments above)
     return v;
   }
 
@@ -586,19 +608,19 @@ map_proj =  1: Lambert Conformal
       while (iter.hasNext()) {
         String dateS = iter.next();
         try {
-          Date d = dateFormat.parse(dateS);
-          values.set(count++, (double) d.getTime() / 1000);
-        } catch (java.text.ParseException e) {
+        	CalendarDate cd = CalendarDateFormatter.isoStringToCalendarDate(null, dateS);
+            values.set(count++, (double) cd.getMillis() / 1000);
+        } catch (IllegalArgumentException  e) {
           parseInfo.format("ERROR: cant parse Time string = <%s> err= %s\n", dateS, e.getMessage());
 
           // one more try
           String startAtt = ds.findAttValueIgnoreCase(null, "START_DATE", null);
           if ((nt == 1) && (null != startAtt)) {
             try {
-              Date d = dateFormat.parse(startAtt);
-              values.set(0, (double) d.getTime() / 1000);
-            } catch (java.text.ParseException e2) {
-              parseInfo.format("ERROR: cant parse global attribute START_DATE = <%s> err=%s\n", startAtt, e2.getMessage());
+            	CalendarDate cd = CalendarDateFormatter.isoStringToCalendarDate(null, startAtt);
+                values.set(0, (double) cd.getMillis() / 1000);
+            } catch (IllegalArgumentException e2) {
+              parseInfo.format("ERROR: can't parse global attribute START_DATE = <%s> err=%s\n", startAtt, e2.getMessage());
             }
           }
         }
@@ -608,13 +630,12 @@ map_proj =  1: Lambert Conformal
       while (iter.hasNext()) {
         String dateS = (String) iter.next();
         try {
-          Date d = dateFormat.parse(dateS);
-          values.set(count++, (double) d.getTime() / 1000);
-        } catch (java.text.ParseException e) {
-          parseInfo.format("ERROR: cant parse Time string = %s\n", dateS);
+        	CalendarDate cd = CalendarDateFormatter.isoStringToCalendarDate(null, dateS);
+            values.set(count++, (double) cd.getMillis() / 1000);
+        } catch (IllegalArgumentException e) {
+          parseInfo.format("ERROR: can't parse Time string = %s\n", dateS);
         }
       }
-
     }
 
     CoordinateAxis v = new CoordinateAxis1D(ds, null, axisName, DataType.DOUBLE, dim.getShortName(),
@@ -691,7 +712,7 @@ map_proj =  1: Lambert Conformal
   protected void assignCoordinateTransforms(NetcdfDataset ncDataset) {
     super.assignCoordinateTransforms(ncDataset);
 
-    // any cs whose got a vertical coordinate with no units
+    // any cs that has a vertical coordinate with no units
     List<CoordinateSystem> csys = ncDataset.getCoordinateSystems();
     for (CoordinateSystem cs : csys) {
       if (cs.getZaxis() != null) {
@@ -716,7 +737,7 @@ map_proj =  1: Lambert Conformal
   }
 
   public static void main(String args[]) throws IOException, InvalidRangeException {
-    NetcdfFile ncd = NetcdfDataset.openFile("R:/testdata/wrf/WRFOU~C@", null);
+    NetcdfFile ncd = NetcdfDataset.openFile("R:/testdata/wrf/WRFOU~C@", null);		// 2015 NOTE hard-coded absolute path!
 
     Variable glat = ncd.findVariable("GLAT");
     Array glatData = glat.read();
@@ -724,7 +745,8 @@ map_proj =  1: Lambert Conformal
     while (ii.hasNext()) {
       ii.setDoubleCurrent(Math.toDegrees(ii.getDoubleNext()));
     }
-    NCdump.printArray(glatData, "GLAT", System.out, null);
+    PrintWriter pw = new PrintWriter( new OutputStreamWriter(System.out, CDM.utf8Charset));
+    NCdumpW.printArray(glatData, "GLAT", pw, null);
 
     Variable glon = ncd.findVariable("GLON");
     Array glonData = glon.read();
@@ -732,7 +754,7 @@ map_proj =  1: Lambert Conformal
     while (ii.hasNext()) {
       ii.setDoubleCurrent(Math.toDegrees(ii.getDoubleNext()));
     }
-    NCdump.printArray(glonData, "GLON", System.out, null);
+    NCdumpW.printArray(glonData, "GLON", pw, null);
 
 
     Index index = glatData.getIndex();
@@ -755,13 +777,11 @@ map_proj =  1: Lambert Conformal
       diff_x.set(x, val);
     }
 
-    NCdump.printArray(diff_y, "diff_y", System.out, null);
-    NCdump.printArray(diff_x, "diff_x", System.out, null);
+    NCdumpW.printArray(diff_y, "diff_y", pw, null);
+    NCdumpW.printArray(diff_x, "diff_x", pw, null);
     ncd.close();
 
   }
-
-
 }
 
 /*
