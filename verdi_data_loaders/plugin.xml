@@ -26,7 +26,7 @@
 			<export prefix="*"/>
 		</library>
 		
-		<library id="netcdf" path="../verdi_core/lib/netcdfAll-4.3.jar" type="code">
+		<library id="netcdf" path="../verdi_core/lib/netcdfAll-4.5.3.jar" type="code">
 			<export prefix="*"/>
 		</library>
 		

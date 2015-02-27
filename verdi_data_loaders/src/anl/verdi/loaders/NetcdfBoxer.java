@@ -113,11 +113,11 @@ public class NetcdfBoxer implements BoundingBoxer {
 
 		CoordinateAxis1D xaxis = getXAxis();
 		CoordinateAxis1D yaxis = getYAxis();
-		double x = xaxis.findCoordElement(point.x);
-		double y = yaxis.findCoordElement(point.y);
+		double x = xaxis.findCoordElement(point.getX());		//.x);
+		double y = yaxis.findCoordElement(point.getY());		//	.y);
 		if (x != -1 && y != -1) {
 			double leftEdge = xaxis.getCoordValue((int) x);
-			double temp = (float) point.x; //NOTE: leftEdge is actually a float value
+			double temp = (float) point.getX();		//.x; //NOTE: leftEdge is actually a float value
 			if (leftEdge == 0.0) temp = (float) Math.round(temp); //NOTE: rounding gets pretty silly here
 			
 			if (leftEdge > temp) {
@@ -125,7 +125,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 			}
 
 			double bottomEdge = yaxis.getCoordValue((int) y);
-			temp = (float) point.y; //NOTE: bottomEdge is actually a float value
+			temp = (float) point.getY();		//.y; //NOTE: bottomEdge is actually a float value
 			if (bottomEdge == 0.0) temp = (float) Math.round(temp);
 			
 			if (bottomEdge > temp) {
