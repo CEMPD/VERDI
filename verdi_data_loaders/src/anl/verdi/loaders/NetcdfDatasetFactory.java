@@ -48,12 +48,18 @@ public class NetcdfDatasetFactory {
 	 * @return a list of Datasets from the specified URL
 	 */
 	public List<Dataset> createCFDatasets(URL url) {
+		Logger.debug("in NetcdfDatasetFactory.createCFDatasets, url = " + url);
 		GridDataset gridDataset = null;
 		try {
+			Logger.debug("ready to call openNetcdfGridDataset");
 			gridDataset = openNetcdfGridDataset(url);
+			Logger.debug("in NetcdfDatasetFactory.createCFDatasets, back from openNetcdfGridDataset");
 			final NetcdfFile file = gridDataset.getNetcdfFile();
+			Logger.debug("in NetcdfDatasetFactory.createCFDatasets, now have file = " + file);
 			final Attribute attribute = file.findGlobalAttribute("Conventions");
+			Logger.debug("in NetcdfDatasetFactory.createCFDatasets, now have attribute = " + attribute);
 			final boolean isMine = attribute != null && attribute.getStringValue().startsWith( "CF-" );
+			Logger.debug("isMine = " + isMine);
 
 			if ( ! isMine ) {
 				throw new IOException("Loading non-CF file into CFDataset");
@@ -84,13 +90,18 @@ public class NetcdfDatasetFactory {
 	 * @return a list of Datasets from the specified URL
 	 */
 	public List<Dataset> createModels3Datasets(URL url) {
+		Logger.debug("in NetcdfDatasetFactory.createModels3Datasets, url = " + url);
 		GridDataset gridDataset = null;
 		try {
+			Logger.debug("ready to call openNetcdfGridDataset");
 			gridDataset = openNetcdfGridDataset(url);
+			Logger.debug("in NetcdfDatasetFactory.createModels3Datasets, back from openNetcdfGridDataset");
 			if (!M3IOConvention.isMine(gridDataset.getNetcdfDataset())) {
+				Logger.debug("M3IOConvention.isMine == false");
 				throw new IOException("Loading non-models3 file into Models3Dataset");
 			}
 			// if here then ok.
+			Logger.debug("isMine == true, returning createDatasets for url = " + url);
 			return createDatasets(gridDataset, url, -1);
 		} catch (Exception io) {
 			io.printStackTrace();
@@ -146,13 +157,18 @@ public class NetcdfDatasetFactory {
 	 * @return a list of Datasets from the specified URL
 	 */
 	public List<Dataset> createWRFDatasets(URL url) {
+		Logger.debug("in NetcdfDatasetFactory.createWRFDatasets for url = " + url);
 		GridDataset gridDataset = null;
 		try {
+			Logger.debug("ready to call openNetcdfGridDataset");
 			gridDataset = openNetcdfGridDataset(url); // JIZHEN-SHIFT
+			Logger.debug("in NetcdfDatasetFactory.craeteWRFDatasets, back from openNetcdfGridDataset");
 			if (!WRFConvention.isMine(gridDataset.getNetcdfDataset())) {
+				Logger.debug("isMine == false");
 				throw new IOException("Loading non-models3 file into Models3Dataset");
 			}
 			// if here then ok.
+			Logger.debug("isMine == true, returning createDatasets for url = " + url);
 			return createDatasets(gridDataset, url, VerdiConstants.NETCDF_CONV_ARW_WRF);
 		} catch (Exception io) {
 			Logger.error("Error reading netcdf file " + io.getMessage());
@@ -207,16 +223,21 @@ public class NetcdfDatasetFactory {
 	}
 
 	private GridDataset openNetcdfGridDataset(URL url) throws URISyntaxException, IOException {
+		Logger.debug("in NetcdfDatasetFactory.openNetcdfGridDataset, url = " + url);
 		String urlString = url.toExternalForm();
+		Logger.debug("when converted .toExternalForm(), urlString = " + urlString);
 		
 		if (url.getProtocol().equals("file")) {
+			Logger.debug("url.getProtocol().equals('file') so ready to get updated urlString");
 			urlString = new URI(urlString).getPath();
+			Logger.debug("updated urlString = " + urlString);
 		}
 		
 		validNetcdfFile( urlString);
+		Logger.debug("back from validNetcdfFile");
 
 		// return GridDataset.open(urlString); // NetCDF ENHANCE
-		
+		Logger.debug("ready to call GridDataset.open for urlString = " + urlString);
 		GridDataset gridDataset = GridDataset.open(urlString);
 		
 //		if ( 1 == 2 )
