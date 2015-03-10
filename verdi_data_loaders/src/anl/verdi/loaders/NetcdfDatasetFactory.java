@@ -226,12 +226,15 @@ public class NetcdfDatasetFactory {
 		Logger.debug("in NetcdfDatasetFactory.openNetcdfGridDataset, url = " + url);
 		String urlString = url.toExternalForm();
 		Logger.debug("when converted .toExternalForm(), urlString = " + urlString);
-		
-		if (url.getProtocol().equals("file")) {
-			Logger.debug("url.getProtocol().equals('file') so ready to get updated urlString");
-			urlString = new URI(urlString).getPath();
-			Logger.debug("updated urlString = " + urlString);
-		}
+
+//	2015 next block commented out because removes leading "file:" in URL & causing problems in
+//	NetCDF Java library v 4.5
+//	commented out per e-mail from support-netcdf-java@unidata.ucar.edu, 3/10/2015
+//		if (url.getProtocol().equals("file")) {
+//			Logger.debug("url.getProtocol().equals('file') so ready to get updated urlString");
+//			urlString = new URI(urlString).getPath();
+//			Logger.debug("updated urlString = " + urlString);
+//		}
 		
 		validNetcdfFile( urlString);
 		Logger.debug("back from validNetcdfFile");
@@ -246,24 +249,24 @@ public class NetcdfDatasetFactory {
 		return gridDataset;
 	}   
 	
-	private NetcdfDataset openNetcdfDataset(URL url) throws URISyntaxException, IOException {
-		String urlString = url.toExternalForm();
-		
-		if (url.getProtocol().equals("file")) {
-			urlString = new URI(urlString).getPath();
-		}
-		
-		validNetcdfFile( urlString);
-
-		// return GridDataset.open(urlString); // NetCDF ENHANCE
-		
-		NetcdfDataset netcdfDataset = NetcdfDataset.openDataset(urlString);
-		
-//		if ( 1 == 2 )
-//			printNetcdfDatasetInfo( netcdfDataset);
-
-		return netcdfDataset;
-	} 
+//	private NetcdfDataset openNetcdfDataset(URL url) throws URISyntaxException, IOException {
+//		String urlString = url.toExternalForm();
+//		
+//		if (url.getProtocol().equals("file")) {
+//			urlString = new URI(urlString).getPath();
+//		}
+//		
+//		validNetcdfFile( urlString);
+//
+//		// return GridDataset.open(urlString); // NetCDF ENHANCE
+//		
+//		NetcdfDataset netcdfDataset = NetcdfDataset.openDataset(urlString);
+//		
+////		if ( 1 == 2 )
+////			printNetcdfDatasetInfo( netcdfDataset);
+//
+//		return netcdfDataset;
+//	} 
 	
 	private void validNetcdfFile(String urlString) throws IOException {
 		if ( urlString == null) {
@@ -281,65 +284,65 @@ public class NetcdfDatasetFactory {
 		}
 	}
 	
-	private void printNetcdfDatasetInfo( NetcdfDataset netcdfDataset) {
-		
-		Logger.debug("Detailed information: " + netcdfDataset.getDetailInfo());
-		Logger.debug("File type description: " + netcdfDataset.getFileTypeDescription());
-		Logger.debug("Coordinate Systems: " + netcdfDataset.getCoordinateSystems().toString());
-		List<Variable> variables = netcdfDataset.getVariables();
-
-		List<Dimension> dims = netcdfDataset.getDimensions();
-		Logger.debug("# of dimensions: " + dims.size());
-		Iterator<Dimension> dimIt = dims.iterator();
-		while( dimIt.hasNext()) {
-			Dimension dim = dimIt.next();	
-			Logger.debug("Dim: " + dim);				
-		}
-		dimIt = null;
-		
-		Logger.debug("# of vars: " + variables.size());
-		List<Variable> netcdfVars = netcdfDataset.getVariables();
-		Iterator<Variable> varIt = netcdfVars.iterator();
-		while( varIt.hasNext()) {
-			Variable var = varIt.next();	
-			Logger.debug("Netcdf Var: " + var);
-		}
-		varIt = null;
-	}
+//	private void printNetcdfDatasetInfo( NetcdfDataset netcdfDataset) {
+//		
+//		Logger.debug("Detailed information: " + netcdfDataset.getDetailInfo());
+//		Logger.debug("File type description: " + netcdfDataset.getFileTypeDescription());
+//		Logger.debug("Coordinate Systems: " + netcdfDataset.getCoordinateSystems().toString());
+//		List<Variable> variables = netcdfDataset.getVariables();
+//
+//		List<Dimension> dims = netcdfDataset.getDimensions();
+//		Logger.debug("# of dimensions: " + dims.size());
+//		Iterator<Dimension> dimIt = dims.iterator();
+//		while( dimIt.hasNext()) {
+//			Dimension dim = dimIt.next();	
+//			Logger.debug("Dim: " + dim);				
+//		}
+//		dimIt = null;
+//		
+//		Logger.debug("# of vars: " + variables.size());
+//		List<Variable> netcdfVars = netcdfDataset.getVariables();
+//		Iterator<Variable> varIt = netcdfVars.iterator();
+//		while( varIt.hasNext()) {
+//			Variable var = varIt.next();	
+//			Logger.debug("Netcdf Var: " + var);
+//		}
+//		varIt = null;
+//	}
 	
-	private void printGridDatasetInfo( GridDataset gridDataset) {
-		
-		Logger.debug("Desc: " + gridDataset.getDescription());
-		Logger.debug("Info: " + gridDataset.getDetailInfo());
-		Logger.debug("Feature type: " + gridDataset.getFeatureType().toString());
-		
-		NetcdfDataset netcdfDataset = gridDataset.getNetcdfDataset();
-		List<Dimension> dims = netcdfDataset.getDimensions();
-		Logger.debug("# of dimensions: " + dims.size());
-		Iterator<Dimension> dimIt = dims.iterator();
-		while( dimIt.hasNext()) {
-			Dimension dim = dimIt.next();	
-			Logger.debug("Dim: " + dim);
-		}
-		dimIt = null;
-		
-		List<VariableSimpleIF> variables = gridDataset.getDataVariables();
-		Logger.debug("Vars got from GridDataset: ");
-		Logger.debug("# of vars: " + variables.size());
-		Iterator<VariableSimpleIF> it = variables.iterator();
-		while ( it.hasNext()) {
-			VariableSimpleIF sVar = it.next();	
-			Logger.debug("Var: " + sVar);
-		}
-		it = null;
-
-		Logger.debug("Vars got from NetcdfDataset: ");
-		List<Variable> netcdfVars = netcdfDataset.getVariables();
-		Iterator<Variable> varIt = netcdfVars.iterator();
-		while( varIt.hasNext()) {
-			Variable var = varIt.next();	
-			Logger.debug("Netcdf Var: " + var);
-		}
-		varIt = null;
-	}
+//	private void printGridDatasetInfo( GridDataset gridDataset) {
+//		
+//		Logger.debug("Desc: " + gridDataset.getDescription());
+//		Logger.debug("Info: " + gridDataset.getDetailInfo());
+//		Logger.debug("Feature type: " + gridDataset.getFeatureType().toString());
+//		
+//		NetcdfDataset netcdfDataset = gridDataset.getNetcdfDataset();
+//		List<Dimension> dims = netcdfDataset.getDimensions();
+//		Logger.debug("# of dimensions: " + dims.size());
+//		Iterator<Dimension> dimIt = dims.iterator();
+//		while( dimIt.hasNext()) {
+//			Dimension dim = dimIt.next();	
+//			Logger.debug("Dim: " + dim);
+//		}
+//		dimIt = null;
+//		
+//		List<VariableSimpleIF> variables = gridDataset.getDataVariables();
+//		Logger.debug("Vars got from GridDataset: ");
+//		Logger.debug("# of vars: " + variables.size());
+//		Iterator<VariableSimpleIF> it = variables.iterator();
+//		while ( it.hasNext()) {
+//			VariableSimpleIF sVar = it.next();	
+//			Logger.debug("Var: " + sVar);
+//		}
+//		it = null;
+//
+//		Logger.debug("Vars got from NetcdfDataset: ");
+//		List<Variable> netcdfVars = netcdfDataset.getVariables();
+//		Iterator<Variable> varIt = netcdfVars.iterator();
+//		while( varIt.hasNext()) {
+//			Variable var = varIt.next();	
+//			Logger.debug("Netcdf Var: " + var);
+//		}
+//		varIt = null;
+//	}
 }

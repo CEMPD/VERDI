@@ -97,6 +97,6 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-renderer-9.5.jar"/>
 	<classpathentry kind="lib" path="lib"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/jfreechart-1.0.19.jar" sourcepath="/verdi_core/lib_src/jfreechart-1.0.19-sources.zip"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-4.5.3.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-4.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

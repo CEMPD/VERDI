@@ -88,14 +88,14 @@
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.osgi-3.9.1.v20130814-1242.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-referencing-10.5.jar" sourcepath="lib_src/gt-referencing-10.5-sources.jar"/>
-	<classpathentry kind="lib" path="lib/gt-metadata-10.5.jar" sourcepath="verdi_data_loaders/lib_src/gt-metadata-10.5-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-metadata-10.5.jar" sourcepath="verdi_data_loaders/lib_src/gt-metadata-10.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-api-2.0-rc1.jar" sourcepath="/verdi_bootstrap/lib_src/log4j-api-2.0-rc1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-core-2.0-rc1.jar" sourcepath="/verdi_bootstrap/lib_src/log4j-core-2.0-rc1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/clibwrapper_jiio-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-renderer-9.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gt-shapefile-old-10.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-all-1.3.1.jar"/>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.19.jar" sourcepath="lib_src/jfreechart-1.0.19-sources.zip"/>
-	<classpathentry kind="lib" path="lib/netcdfAll-4.5.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.19.jar" sourcepath="lib_src/jfreechart-1.0.19-sources.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/netcdfAll-4.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
