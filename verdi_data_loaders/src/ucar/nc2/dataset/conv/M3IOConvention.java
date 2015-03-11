@@ -43,8 +43,6 @@ import ucar.unidata.geoloc.projection.*;
 import ucar.unidata.geoloc.ProjectionRect;
 
 import java.util.*;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
 
 /**
  * Models-3/EDSS Input/Output netcf format.
@@ -196,7 +194,7 @@ public class M3IOConvention extends CoordSysBuilder {
       dataLev.set(i, midpoint);
     }
 
-    CoordinateAxis v = new CoordinateAxis1D(ds, null, "layer", DataType.DOUBLE, dimName, unitName,
+    CoordinateAxis v = new CoordinateAxis1D(ds, null, "level", DataType.DOUBLE, dimName, unitName,
             "synthesized coordinate from " + layersName + " global attributes");
     v.setCachedData(dataLev, true);
     v.addAttribute(new Attribute("positive", "down"));
@@ -211,7 +209,6 @@ public class M3IOConvention extends CoordSysBuilder {
             "synthesized coordinate from " + layersName + " global attributes");
     vedge.setCachedData(dataLayers, true);
     v.setBoundaryRef(edge_name);
-
     ds.addCoordinateAxis(v);
     ds.addCoordinateAxis(vedge);
   }
@@ -237,8 +234,8 @@ public class M3IOConvention extends CoordSysBuilder {
     cal.set(Calendar.SECOND, sec);
     //cal.setTimeZone( new SimpleTimeZone(0, "GMT"));
 
-    SimpleDateFormat dateFormatOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    dateFormatOut.setTimeZone(TimeZone.getTimeZone("GMT"));
+    java.text.SimpleDateFormat dateFormatOut = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    dateFormatOut.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
 
     String units = "seconds since " + dateFormatOut.format(cal.getTime()) + " UTC";
 
@@ -289,39 +286,24 @@ public class M3IOConvention extends CoordSysBuilder {
     return new ProjectionCT("LambertConformalProjection", "FGDC", lc);
   }
   
+  
+
+  @SuppressWarnings("deprecation")
 private CoordinateTransform makePolarStereographicProjection(NetcdfDataset ds) {
-//    boolean n_polar = (findAttributeDouble(ds, "P_ALP") == 1.0);
     double central_meridian = findAttributeDouble(ds, "P_GAM");
-//    System.out.println("in M3IOConvention: makePolarStereographicProjection central_meridian= " + central_meridian);
     double xcent = findAttributeDouble(ds, "XCENT");
-//   System.out.println("in M3IOConvention: makePolarStereographicProjection xcent= " + xcent);
-//xcent = lat value for the center (0,0) of the Cartesian coordinate system
     double ycent = findAttributeDouble(ds, "YCENT");
-//    System.out.println("in M3IOConvention: makePolarStereographicProjection ycent= " + ycent);
-//ycent = lon value for the center (0,0) of the Cartesian coordinate system
     double par1 = findAttributeDouble(ds, "P_ALP");
-//    System.out.println("in M3IOConvention: makePolarStereographicProjection par1= " + par1);
-//P_ALP is 1 for North Pole, -1 for South Pole
     double par2 = findAttributeDouble(ds, "P_BET");
-//    System.out.println("in M3IOConvention: makePolarStereographicProjection par2= " + par2);  
-//P_BET secant latitude (latitude of true scale)
 
     Stereographic sg_tmp = new Stereographic(ycent, xcent, 1.0, 0, 0, earthRadius);
-//  info about what you are passing in public Stereographic(double latt, double lont, double scale, double false_easting, double false_northing, double radius) {
    sg_tmp.setCentralMeridian(central_meridian);
    double calc_scale = sg_tmp.getScale();
-//   double calc_scale = sg_tmp.getScale(); projScale is 1.0
-//  double calc_scale = sg_tmp.getScaleFactor(par2, true); projScale was ~ .7
-//   double calc_scale = sg_tmp.getScaleFactor(xcent, true); projScale was ~ .98
-// using the value of 0.8537995936163079 for projScale worked from VERDI 1.4.1
-//   System.out.println("in M3IOConvention: calc_scale= " + calc_scale);
    
    double scale2 = (1.0 + Math.sin(Math.toRadians(par2))) / 2.0;
-//	   System.out.println("in Stereographic: calculated scale2 " + scale2);
+//   System.out.println("in Stereographic: calculated scale2 " + scale2);
     
     Stereographic sg = new Stereographic(ycent, xcent, scale2, 0, 0, earthRadius);
-//    Stereographic sg = new Stereographic(ycent, xcent, 0.8537995936163079, 0, 0, earthRadius);
-//   info about what you are passing in public Stereographic(double latt, double lont, double scale, double false_easting, double false_northing, double radius) {
     sg.setCentralMeridian(central_meridian);
     return new ProjectionCT("PolarStereographic", "FGDC", sg);
   }
@@ -451,7 +433,7 @@ private CoordinateTransform makePolarStereographicProjection(NetcdfDataset ds) {
     if (vname.equalsIgnoreCase("time"))
       return AxisType.Time;
 
-    if (vname.equalsIgnoreCase("layer"))
+    if (vname.equalsIgnoreCase("level"))
       return AxisType.GeoZ;
 
     return null;
@@ -459,7 +441,7 @@ private CoordinateTransform makePolarStereographicProjection(NetcdfDataset ds) {
 
   protected void makeCoordinateTransforms(NetcdfDataset ds) {
     if (ct != null) {
-      VarProcess vp = findVarProcess(ct.getName(), null);	// 2016 added 2nd argument; changed for new NetCDF-Java library
+      VarProcess vp = findVarProcess(ct.getName(), null);
       if (vp != null)
         vp.ct = ct;
     }
