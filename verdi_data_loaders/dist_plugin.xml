@@ -30,7 +30,7 @@
 			<export prefix="*"/>
 		</library>
 		
-		<library id="netcdf" path="../core/lib/netcdfAll-4.5.jar" type="code">
+		<library id="netcdf" path="../core/lib/netcdfAll-4.5.5-SNAPSHOT.jar" type="code">
 			<export prefix="*"/>
 		</library>
 		
