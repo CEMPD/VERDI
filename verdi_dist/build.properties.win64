@@ -13,6 +13,6 @@ app.version=1.5.1
   
 # basic settings - use '/' as a separator
 
-dist.dir=C:\\VERDI_test\\VERDI_1.5.1_test03102015
+dist.dir=C:\\VERDI_test\\VERDI_1.5.1_test03122015
 
 
