@@ -79,15 +79,17 @@ public class PlotAnimator {
 
 	/**
 	 * Starts the animation beginning at the start timestep
-	 * and ending at the end timestep.
+	 * and ending at the end timestep with the specified delay
+	 * between frames.
 	 *
 	 * @param start the starting timestep
 	 * @param end   the ending timestep
+	 * @param delay delay between frames in milliseconds
 	 */
-	public void start(int start, int end) {
+	public void start(int start, int end, int delay) {
 		action = new UpdatePlotAction(start, end);
 		timer = new Timer(0, action);
-		timer.setDelay(1);
+		timer.setDelay(delay);
 		timer.start();
 	}
 
@@ -105,6 +107,10 @@ public class PlotAnimator {
 	 *                        and saved to this file
 	 */
 	public void start(int start, int end, File movieFile, File animatedGifFile, File aviFile) {
+		start(start, end, 1, movieFile, animatedGifFile, aviFile);
+	}
+	
+	public void start(int start, int end, int delay, File movieFile, File animatedGifFile, File aviFile) {
 		if (movieFile != null) maker = new MovieMaker(1, movieFile, FileTypeDescriptor.QUICKTIME);
 		
 		if (animatedGifFile != null) {
@@ -124,7 +130,7 @@ public class PlotAnimator {
 			videoMaker = new VideoMaker(1, aviFile, FileTypeDescriptor.MSVIDEO);
 		}
 		
-		start(start, end);
+		start(start, end, delay);
 	}
 
 	private void fireStopped() {
