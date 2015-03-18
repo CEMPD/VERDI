@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
@@ -57,6 +58,10 @@ public class AnimationPanelContour3D extends JPanel {
 	private PlotAnimator animator;
 	
 	private static File lastChosenFolder;
+	
+	private static final int DEFAULT_DELAY = 200;
+	private static final int MINIMUM_DELAY = 50;
+	private static final int MAXIMUM_DELAY = 3000;
 
 
 	private class SpinnerListener implements ChangeListener {
@@ -263,6 +268,17 @@ public class AnimationPanelContour3D extends JPanel {
 		int max = ((Integer) maxSpinner.getValue()).intValue() - 1;
 		int end = Math.max(min, max) - axes.getTimeAxis().getOrigin();
 		int start = Math.min(min, max) - axes.getTimeAxis().getOrigin();
+		
+		int delay = DEFAULT_DELAY;
+		try {
+			delay = Integer.parseInt(delayFld.getText());
+		} catch (NumberFormatException e) {
+			// badly formatted values will use previously set default delay
+		}
+		if (delay < MINIMUM_DELAY) delay = MINIMUM_DELAY;
+		if (delay > MAXIMUM_DELAY) delay = MAXIMUM_DELAY;
+		// update text field in case value was changed
+		delayFld.setText(String.valueOf(delay));
 
 		animator = new PlotAnimator(plot);
 		File mFile = movieFile;
@@ -278,7 +294,7 @@ public class AnimationPanelContour3D extends JPanel {
 				startBtn.setText("Start");
 			}
 		});
-		animator.start(start, end, mFile, gFile, avFile);
+		animator.start(start, end, delay, mFile, gFile, avFile);
 	}
 
 	public void init(Axes<DataFrameAxis> axes, TimeAnimatablePlot plot) {
@@ -324,6 +340,9 @@ public class AnimationPanelContour3D extends JPanel {
 		minSpinner = new JSpinner();
 		label2 = compFactory.createLabel("Ending Time Step:");
 		maxSpinner = new JSpinner();
+		delayLbl = compFactory.createLabel("Frame Delay (ms):");
+		delayFld = new JTextField();
+		delayFld.setText(String.valueOf(DEFAULT_DELAY));
 		minDate = compFactory.createLabel("");
 		movieChk = new JCheckBox();
 		movieChk.setEnabled(false); 	// 2014
@@ -359,6 +378,8 @@ public class AnimationPanelContour3D extends JPanel {
 										FormFactory.PREF_COLSPEC
 						},
 						new RowSpec[]{
+										FormFactory.DEFAULT_ROWSPEC,
+										FormFactory.LINE_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC,
 										FormFactory.LINE_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC,
@@ -406,10 +427,14 @@ public class AnimationPanelContour3D extends JPanel {
 		//---- minDate ----
 		minDate.setFont(new Font("Tahoma", Font.BOLD, 11));
 		add(minDate, cc.xywh(5, 1, 3, 1));
+		
+		//---- frame delay ----
+		add(delayLbl, cc.xy(1, 5));
+		add(delayFld, cc.xy(3, 5));
 
 		//---- movieChk ----
 		movieChk.setText("Make Movie");
-		add(movieChk, cc.xy(1, 9));
+		add(movieChk, cc.xy(1, 11));
 
 		//---- maxDate ----
 		maxDate.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -417,13 +442,13 @@ public class AnimationPanelContour3D extends JPanel {
 
 		//---- gifChk ----
 		gifChk.setText("Make Animated GIF");
-		add(gifChk, cc.xy(1, 5));
-		add(gifFileLbl, cc.xywh(3, 5, 3, 1));
+		add(gifChk, cc.xy(1, 7));
+		add(gifFileLbl, cc.xywh(3, 7, 3, 1));
 		
 		//---- aviChk ----
 		aviChk.setText("Make AVI");
-		add(aviChk, cc.xy(1, 7));
-		add(aviFileLbl, cc.xywh(3, 7, 3, 1));
+		add(aviChk, cc.xy(1, 9));
+		add(aviFileLbl, cc.xywh(3, 9, 3, 1));
 
 		//---- gifFileBtn ----
 		gifFileBtn.setText("...");
@@ -431,7 +456,7 @@ public class AnimationPanelContour3D extends JPanel {
 		gifFileBtn.setMinimumSize(new Dimension(23, 23));
 		gifFileBtn.setPreferredSize(new Dimension(23, 23));
 		gifFileBtn.setEnabled(false);
-		add(gifFileBtn, cc.xy(7, 5));
+		add(gifFileBtn, cc.xy(7, 7));
 		
 		//---- aviFileBtn ----
 		aviFileBtn.setText("...");
@@ -439,7 +464,7 @@ public class AnimationPanelContour3D extends JPanel {
 		aviFileBtn.setMinimumSize(new Dimension(23, 23));
 		aviFileBtn.setPreferredSize(new Dimension(23, 23));
 		aviFileBtn.setEnabled(false);
-		add(aviFileBtn, cc.xy(7, 7));
+		add(aviFileBtn, cc.xy(7, 9));
 
 		//---- fileLbl ----
 		fileLbl.setEnabled(false);
@@ -451,8 +476,8 @@ public class AnimationPanelContour3D extends JPanel {
 		fileBtn.setMaximumSize(new Dimension(23, 23));
 		fileBtn.setMinimumSize(new Dimension(23, 23));
 		fileBtn.setPreferredSize(new Dimension(23, 23));
-		add(fileBtn, cc.xy(7, 9));
-		add(separator1, cc.xywh(1, 11, 7, 1));
+		add(fileBtn, cc.xy(7, 11));
+		add(separator1, cc.xywh(1, 13, 7, 1));
 
 		//======== panel1 ========
 		{
@@ -482,7 +507,7 @@ public class AnimationPanelContour3D extends JPanel {
 			startBtn.setText("Start");
 			panel1.add(startBtn, cc.xy(5, 1));
 		}
-		add(panel1, cc.xywh(1, 13, 7, 1));
+		add(panel1, cc.xywh(1, 15, 7, 1));
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
 
@@ -506,5 +531,7 @@ public class AnimationPanelContour3D extends JPanel {
 	private JComponent separator1;
 	private JPanel panel1;
 	private JButton startBtn;
+	private JLabel delayLbl;
+	private JTextField delayFld;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }
