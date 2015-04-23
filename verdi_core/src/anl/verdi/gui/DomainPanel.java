@@ -35,7 +35,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JToolBar;
 import javax.swing.border.TitledBorder;
 
 //import org.piccolo2d.event.PInputEvent;
@@ -49,7 +48,7 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
-import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
+//import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
@@ -681,7 +680,8 @@ public class DomainPanel extends JPanel {
 	}
 
 	public void loadData(URL url) throws Exception {
-		IndexedShapefileDataStore ds = new IndexedShapefileDataStore(url);
+//		IndexedShapefileDataStore ds = new IndexedShapefileDataStore(url);
+		ShapefileDataStore ds = new ShapefileDataStore(url);	// 2015 replaced IndexedShapefileDataStore (no longer in GeoTools)
 //		context.setAreaOfInterest(ds.getFeatureSource().getBounds(), 
 //				ds.getFeatureSource().getSchema().getDefaultGeometry().getCoordinateSystem());
 		context.getViewport().setBounds(ds.getFeatureSource().getBounds()); 

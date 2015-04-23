@@ -34,7 +34,7 @@
 			<export prefix="*"/>
 		</library>
 		
-		<library id="bufr" path="../verdi_core/lib/bufr-3.0.jar" type="code">
+		<library id="bufr" path="../verdi_core/lib/bufr-4.3.16.jar" type="code">
 			<export prefix="*"/>
 		</library>
 		
