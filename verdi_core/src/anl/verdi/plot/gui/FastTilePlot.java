@@ -102,7 +102,6 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 
 import saf.core.ui.event.DockableFrameEvent;
-//import simphony.util.messages.MessageCenter;
 import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
 import ucar.unidata.geoloc.Projection;
@@ -149,9 +148,9 @@ import com.vividsolutions.jts.geom.Envelope;
 public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		ChangeListener, ComponentListener, MouseListener,
 		TimeAnimatablePlot, Plot {
+	
 	static final Logger Logger = LogManager.getLogger(FastTilePlot.class.getName());
 	private static final long serialVersionUID = 5835232088528761729L;
-//	private static MessageCenter center = MessageCenter.getMessageCenter(FastTilePlot.class);
 
 	public static final int NO_VAL = Integer.MIN_VALUE;
 	private static final String STATES_LAYER = "STATES";
@@ -3231,24 +3230,10 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			}
 			return builder.toString();
 		}
-		
 	}
 
-//	public void exportShapefileOld( String baseFileName ) throws IOException {		// 2014 appears to not be used
-//		final int subsetLayerRows = 1 + lastRow - firstRow;
-//		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
-//		// Filter variable name/expression so operators aren't a problem in Excel:
-//		final String filteredVariableName =
-//			variable.replaceAll( "[\\[\\d\\]]", "" ).replaceAll( "\\W", "" );
-//		GridShapefileWriter.write( baseFileName,
-//									subsetLayerRows, subsetLayerColumns,
-//									westEdge, southEdge,
-//									cellWidth, cellHeight,
-//									filteredVariableName, subsetLayerData, projector );
-//	}
-	
-//	2014 called from anl.verdi.plot.utiil.PlotExporter; disabling exporting of Shapefiles for VERDI v1.5.0
-	//	public void exportShapefile( String baseFileName ) throws IOException {
+//	2014 called from anl.verdi.plot.util.PlotExporter; disabling exporting of Shapefiles for VERDI v1.5.0
+//		public void exportShapefile( String baseFileName ) throws IOException {
 //		final int subsetLayerRows = 1 + lastRow - firstRow;
 //		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
 //		// Filter variable name/expression so operators aren't a problem in Excel:
