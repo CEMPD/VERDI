@@ -10,12 +10,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import anl.verdi.plot.config.PlotConfiguration;
+import anl.verdi.plot.util.PlotExporterAction;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 
 /**
@@ -26,8 +30,12 @@ public class ChartTitlesPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = -3469212269628821152L;
+	static final Logger Logger = LogManager.getLogger(ChartTitlesPanel.class.getName());
+
 	public ChartTitlesPanel() {
+		Logger.debug("in constructor for ChartTitlesPanel, ready to call initComponents");
 		initComponents();
+		Logger.debug("back from initComponents; ready to go to subtitle1Panel.setBorder");
 		subtitle1Panel.setBorder(BorderFactory.createTitledBorder("Subtitle 1"));
 		subtitle2Panel.setBorder(BorderFactory.createTitledBorder("Subtitle 2"));
 	}
@@ -45,12 +53,16 @@ public class ChartTitlesPanel extends JPanel {
 	}
 
 	public PlotConfiguration fillConfiguration(PlotConfiguration config) {
+		Logger.debug("in fillConfiguration");
 		if (titlePanel.useTitle()) {
+			Logger.debug("titlePanel.useTitle == true");
 			config.setTitle(titlePanel.getTitle());
+			Logger.debug("just set title to: " + titlePanel.getTitle());
 			config.putObject(PlotConfiguration.TITLE_FONT, titlePanel.getSelectedFont());
 			config.putObject(PlotConfiguration.TITLE_COLOR, titlePanel.getSelectedColor());
 		} else {
 			config.setTitle("");
+			Logger.debug("just setTitle to empty string");
 		}
 
 		if (subtitle1Panel.useTitle()) {
