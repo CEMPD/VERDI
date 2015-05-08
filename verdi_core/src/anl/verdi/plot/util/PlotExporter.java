@@ -195,7 +195,9 @@ public class PlotExporter {
 //			ext = s.substring(i + 1).toLowerCase();
 //		}
 		String fileName = f.toString();
+		Logger.debug("File name extension for " + fileName + " = ");
 		String ext = new String(FilenameUtils.getExtension(fileName)).toLowerCase(); // 2015  NullPointerException thrown when first going to specify file name for exporting graphics
+		Logger.debug("     " + ext);
 		return ext;
 	}
 	
@@ -211,7 +213,7 @@ public class PlotExporter {
 			  ext.equalsIgnoreCase(PNG) ||
 			  ext.equalsIgnoreCase(BMP) ||
 			  ext.equalsIgnoreCase(EPS) ||
-//			  ext.equalsIgnoreCase(SHP) ||
+			  ext.equalsIgnoreCase(SHP) ||
 			  ext.equalsIgnoreCase(ASC) )
 		{
 			currentExt = ext;
@@ -221,6 +223,6 @@ public class PlotExporter {
 			save(file);
 		}catch(IOException e){}
 		
-		currentExt = "png";
+		currentExt = "png";	// 2015 Why change the name of the extension after the file was saved?
 	}
 }

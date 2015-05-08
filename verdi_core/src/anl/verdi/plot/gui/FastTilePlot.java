@@ -265,8 +265,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	protected VectorAnnotation vectAnnotation;
 
 	// It remains a mystery why eventProducer is needed.
-	private //final 
-	PlotEventProducer eventProducer = new PlotEventProducer();
+	private PlotEventProducer eventProducer = new PlotEventProducer();
 
 	// GUI attributes:
 	private final JButton playStopButton;

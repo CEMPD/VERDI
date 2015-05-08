@@ -6,7 +6,7 @@ package anl.verdi.util;
  */
 public class VersionInfo {
 	public static final String version = "1.5.1";
-	public static final String date = "2015-04-23";
+	public static final String date = "2015-05-06";
 
 	public static String getVersion() {
 		return version;
