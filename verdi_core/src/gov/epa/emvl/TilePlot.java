@@ -529,6 +529,9 @@ public class TilePlot {
 		String TITLE = config.getProperty(PlotConfiguration.TITLE);
 		final String titleStr = "Layer " + (layer + 1) + " " + variable;
 
+		String theTitle = config.getTitle();
+		Logger.debug("in gov.epa.emvl.TilePlot.java: TITLE = " + TITLE + ", titleStr = " + titleStr + 
+				", theTitle = " + theTitle);
 		Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
 		Color tColor = config.getColor(PlotConfiguration.TITLE_COLOR);
 		tColor = (tColor == null) ? labelColor : tColor;
@@ -545,7 +548,9 @@ public class TilePlot {
 		//Evaluate Title Naming Structure, if Layer # (where # is the layer number) then update to current layer
 		//Keep with the pattern of Layer Number, i.e., Layer 1 then Layer 2 ....
 		//look for Layer 1, if present keep with the same trend but update with current the Layer Number
-		final String title = (TITLE == null || TITLE.isEmpty() ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
+//		final String title = (TITLE == null || TITLE.isEmpty() ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
+		// need to allow blank, but null is only the first time through this function; when user deletes title it is blank
+		final String title = (TITLE == null  ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
 		
 		
 		Font currentFont = new Font(gFont.getFontName(), Font.BOLD, gFont.getSize() * 2);
