@@ -49,6 +49,7 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
+
 //import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
@@ -68,6 +69,7 @@ import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 import anl.verdi.plot.config.UnitsConfigurator;
 import anl.verdi.plot.gui.AreaSelectionEvent;
 import anl.verdi.plot.gui.LayerChartPanel;
+import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotFactory;
 import anl.verdi.plot.gui.PlotListener;
 import anl.verdi.plot.probe.PlotEventProducer;
@@ -590,6 +592,11 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 	 *
 	 * @param config the new plot configuration
 	 */
+	@Override
+	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
+	configure(config);
+	}
+
 	@Override
 	public void configure(PlotConfiguration config) {
 		String configFile = config.getConfigFileName();
