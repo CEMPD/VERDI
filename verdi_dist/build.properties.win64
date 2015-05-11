@@ -9,10 +9,10 @@ jdk.home=C:\\Program Files\\Java\\jdk1.7.0_71
 
 # app
 app.name=VERDI
-app.version=1.5.1
+app.version=1.5.2
   
 # basic settings - use '/' as a separator
 
-dist.dir=C:\\VERDI_test\\VERDI_1.5.2_test04222015
+dist.dir=C:\\VERDI_test\\VERDI_1.5.2_test05112015
 
 
