@@ -190,7 +190,7 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-geometry" path="../verdi_core/lib/gt-geometry-12.25.jar" type="code">
+		<library id="gt-geometry" path="../verdi_core/lib/gt-geometry-12.2.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
