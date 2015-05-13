@@ -627,7 +627,7 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 
 		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) ((XYPlot)chart.getPlot()).getRenderer();
 		Color color = config.getColor(TimeSeriesPlotConfiguration.SERIES_COLOR);
-		if (color != null) renderer.setSeriesPaint(0, color);
+//		if (color != null) renderer.setSeriesPaint(0, color);
 	}
 
 	/**
