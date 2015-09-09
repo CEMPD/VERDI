@@ -55,8 +55,10 @@ public class ColorMapper {
 		}
 		PaletteSelectionPanel panel = new PaletteSelectionPanel();
 
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		JFrame frame = new JFrame();
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		JMapFrame frame = new JMapFrame();
+		frame.setDefaultCloseOperation(JMapFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		frame.add(panel, BorderLayout.CENTER);
 		frame.pack();

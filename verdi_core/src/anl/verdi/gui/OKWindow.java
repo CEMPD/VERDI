@@ -61,7 +61,6 @@ import anl.gui.panel.layout.GridBagPanel;
  * @version 1.0  May 1997
  * @author  Mary Ann Bitz, ANL
  */
-//public class OKWindow extends JFrame implements ActionListener,WindowListener{
 public class OKWindow extends ExtendedDialog implements ActionListener,WindowListener{
 	/**
 	 * 

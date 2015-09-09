@@ -80,29 +80,6 @@ public class PaletteSelectionPanel extends JPanel {
 			return ColorBrewer.DIVERGING;
 	}
 
-//	public static void main(String[] args) {
-//		Logger.debug(flipDivergingPaletteDescription(""));
-//	}
-
-//	private static String flipDivergingPaletteDescription(String description) {
-//		
-//		//first look for first "to", then parse at that.
-//		
-//		int toPosIdx = description.indexOf(" to ");
-//		
-//		if (toPosIdx > 0) {
-//			return description.substring(0, toPosIdx) + " to " + description.substring(toPosIdx + 4);
-//		} else {
-//			String[] colors = description.split(", ");
-//			String tmp = "";
-//			for (int i = colors.length - 1; i > 0; i--) {
-//				tmp += (i < colors.length - 1 ? ", " : "") + colors[i];
-//			}
-//		}
-//		
-//		return description;
-//	}
-	
 	private void createPalettes() {
 		Logger.debug("in PaletteSelectionPanel.createPalettes");
 		int tileCount = ((Integer) tileSpinner.getValue()).intValue();
@@ -157,12 +134,6 @@ public class PaletteSelectionPanel extends JPanel {
 		}
 	}	
 	
-//	public void setStateType( ColorMap.StatType statType) {
-//		if ( palettePanel != null) {
-//			palettePanel.setStatType( statType );
-//		}		
-//	}
-
 	private void initComponents() {
 		Logger.debug("in PaletteSelectionPanel.initComponents");
 		// JFormDesigner - Component initialization - DO NOT MODIFY

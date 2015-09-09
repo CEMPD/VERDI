@@ -1,13 +1,9 @@
 package anl.verdi.gis;
 
-import gov.epa.emvl.MapLines;
-
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -18,6 +14,9 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
+
+import anl.verdi.plot.gui.VerdiBoundaries;
+//import gov.epa.emvl.MapLines;
 
 /**
  * @author User #2
@@ -44,12 +43,12 @@ public class FastTileFileSelectionStep extends PanelWizardStep {
 		chooser = new JFileChooser(".");
 		chooser.setFileFilter(new FileFilter() {
 			public boolean accept(File pathname) {
-				return pathname.getName().endsWith(".bin")
+				return pathname.getName().endsWith(".shp")
 						|| pathname.isDirectory();
 			}
 
 			public String getDescription() {
-				return "Map files (.bin)";
+				return "Shapefiles (.shp)";
 			}
 		});
 
@@ -83,19 +82,19 @@ public class FastTileFileSelectionStep extends PanelWizardStep {
 
 	@Override
 	public void applyState() throws InvalidStateException {
+		VerdiBoundaries layer = new VerdiBoundaries();
 		File mapFile = chooser.getSelectedFile();
 		File modelMapFile = model.getMapFile();
 		if (modelMapFile == null
 				|| (modelMapFile != null && !mapFile.equals(modelMapFile))) {
-			// create a new default map layer from the shape file.
+			// create a new default map layer from the shapefile.
 			try {
-				MapLines layer = new MapLines(mapFile.getAbsolutePath());
+				layer.setFileName(mapFile.getAbsolutePath());
+				// MapLines layer = new MapLines(mapFile.getAbsolutePath());
 				model.setLayer(layer);
 				model.setMapFile(mapFile);
-			} catch (MalformedURLException e) {
-				Logger.error("Error creating layer from map file " + e.getMessage());
-			} catch (IOException e) {
-				Logger.error("Error creating layer from map file " + e.getMessage());
+			} catch(Exception ex) {
+				Logger.error("Error creating layer from map file " + ex.getMessage());
 			}
 		}
 	}

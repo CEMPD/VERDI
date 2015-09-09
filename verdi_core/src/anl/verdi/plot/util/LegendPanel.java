@@ -8,10 +8,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+//import javax.swing.JFrame;
+import org.geotools.swing.JMapFrame;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.block.BlockBorder;
@@ -121,10 +122,13 @@ public class LegendPanel extends JComponent {
 	}
 
 	public static void main(String[] args) {
-		ColorMap map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), 0, 10);
+//		ColorMap map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), 0, 10);
+		ColorMap map = new ColorMap(new PavePaletteCreator().createPavePalette(), 0, 10);
 		LegendPanel panel = new LegendPanel(map, 0, 10, "Units");
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//		JFrame frame = new JFrame();
+//		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		JMapFrame frame = new JMapFrame();
+		frame.setDefaultCloseOperation(JMapFrame.DISPOSE_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		frame.add(panel, BorderLayout.CENTER);
 		frame.pack();

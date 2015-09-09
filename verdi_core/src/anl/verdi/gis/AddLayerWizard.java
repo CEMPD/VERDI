@@ -1,9 +1,9 @@
 package anl.verdi.gis;
 
-import javax.swing.JFrame;
-
+//import javax.swing.JFrame;
 //import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 import org.geotools.map.FeatureLayer;
+import org.geotools.swing.JMapFrame;
 import org.pietschy.wizard.Wizard;
 import org.pietschy.wizard.models.SimplePath;
 
@@ -33,7 +33,8 @@ public class AddLayerWizard {
 	}
 
 //	public MapLayer display(JFrame frame) {
-	public FeatureLayer display(JFrame frame) {
+//	public FeatureLayer display(JFrame frame) {
+	public FeatureLayer display(JMapFrame frame) {
 		wizard.showInDialog("Add Layer", frame, true);
 		if (!wizard.wasCanceled()) {
 //			MapLayer layer = model.getLayer();

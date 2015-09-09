@@ -16,6 +16,9 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.plot.gui.MapAnnotation;
 
 import com.jgoodies.forms.factories.Borders;
@@ -27,8 +30,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 /**
  * @author User #2

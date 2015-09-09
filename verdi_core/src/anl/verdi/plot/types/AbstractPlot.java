@@ -10,6 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import org.geotools.swing.JMapFrame;
 import org.jfree.chart.JFreeChart;
 
 import anl.verdi.plot.config.PlotConfiguration;
@@ -143,7 +144,8 @@ public abstract class AbstractPlot implements Plot {
 		public void doEditChartProperties() {
 			Window window = SwingUtilities.getWindowAncestor(panel);
 			ConfigDialog dialog = null;
-			if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
+//			if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
+			if (window instanceof JFrame) dialog = new ConfigDialog((JMapFrame) window);
 			else dialog = new ConfigDialog((JDialog)window);
 			dialog.init(AbstractPlot.this, null);
 			dialog.setSize(500, 600);

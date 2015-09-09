@@ -1,19 +1,20 @@
 package anl.verdi.gis;
 
-import gov.epa.emvl.MapLines;
-
 import java.awt.Dimension;
 import java.io.File;
-
-import javax.swing.JFrame;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 // NOTE: where FeatureLayer is now used in this code, MapLayer had been used
 import org.geotools.map.FeatureLayer;
+// import javax.swing.JFrame;
+import org.geotools.swing.JMapFrame;
 import org.pietschy.wizard.Wizard;
 import org.pietschy.wizard.models.SimplePath;
+
+import anl.verdi.plot.gui.VerdiBoundaries;
+//import gov.epa.emvl.MapLines;					// 2015 replaced by VerdiBoundaries
 
 /**
  * @author IE, UNC at Chapel Hill
@@ -33,7 +34,7 @@ public class FastTileAddLayerWizard {
 	}
 		
 //	public FastTileAddLayerWizard(File mapFile, MapLayer control, MapLines layer, boolean fileStep) {
-	public FastTileAddLayerWizard(File mapFile, FeatureLayer control, MapLines layer, boolean fileStep) {
+	public FastTileAddLayerWizard(File mapFile, FeatureLayer control, VerdiBoundaries layer, boolean fileStep) {
 //System.out.println("in constructor for FastTileAddLayerWizard, mapFile = " + mapFile + ", FeatureLayer control = "
 //		+ control + ", MapLines layer = " + layer + ", fileStep = " + fileStep);
 //		SimplePath path = new SimplePath();
@@ -51,7 +52,7 @@ public class FastTileAddLayerWizard {
 //		wizard.setPreferredSize(new Dimension(500, 600));
 //		model.setLastVisible(false);
 		Logger.debug("in constructor for FastTileAddLayerWizard, mapFile = " + mapFile + ", FeatureLayer control = "
-				+ control + ", MapLines layer = " + layer + ", fileStep = " + fileStep);
+				+ control + ", VerdiBoundaries layer = " + layer + ", fileStep = " + fileStep);
 		SimplePath path = new SimplePath();
 		Logger.debug("just instantiated SimplePath: " + path + ", ready to path.addStep");				
 		path.addStep(new FastTileEditorStep(control));
@@ -60,7 +61,8 @@ public class FastTileAddLayerWizard {
 		Logger.debug("done with FastTileAddLayerWizardModel, ready to setControlLayer");
 		model.setControlLayer(control);
 		Logger.debug("done with setControlLayer, ready to setMapFile, mapfile = " + mapFile);
-		model.setMapFile(layer != null ? new File(layer.getMapFile()) : mapFile);
+//		model.setMapFile(layer != null ? new File(layer.getMapFile()) : mapFile);
+		model.setMapFile(layer != null ? layer.getFile() : mapFile);
 		Logger.debug("now ready to model.setLayer");
 		model.setLayer(layer);
 		Logger.debug("done with setting up model, now instantiate new wizard for that model");
@@ -74,17 +76,29 @@ public class FastTileAddLayerWizard {
 		Logger.debug("done with FastTileAddLayerWizard constructor");
 	}
 
-	public MapLines display(JFrame frame, boolean isEditing) {
+	public VerdiBoundaries display(JMapFrame frame, boolean isEditing) {
 		Logger.debug("in FastTileAddLayerWizard.display");
+		if(frame == null)
+			Logger.debug("in display, frame == null");
+		else
+			Logger.debug("in display, frame != null");
 		if (isEditing)
+		{
+			Logger.debug("heading into showInDialog for Edit Layer");
 			wizard.showInDialog("Edit Layer", frame, true);
+			Logger.debug("done with showInDialog for Edit Layer");
+		}
 		else 
+		{
+			Logger.debug("heading into showInDialog for Add Layer");
 			wizard.showInDialog("Add Layer", frame, true);
+			Logger.debug("done with showInDialog for Add Layer");
+		}
 		
 		if (!wizard.wasCanceled()) {
-			Logger.debug("wizard was not canceled, get maplines, title, and return layer");
-			MapLines layer = model.getLayer();
-			layer.setTitle(model.getMapFile().getAbsolutePath());
+			Logger.debug("wizard was not canceled, get VerdiBoundaries and title; return layer");
+			VerdiBoundaries layer = model.getLayer();
+			layer.setPath(model.getMapFile().getAbsolutePath());
 			return layer;
 		}
 		Logger.debug("returning null from display");		

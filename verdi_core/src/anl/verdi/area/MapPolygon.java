@@ -1,6 +1,6 @@
-/** MapLines.java - Read and draw projected grid-clipped map lines.
+/** MapPolygon.java - Read and draw projected grid-clipped map polygons.
  * 2008-09-01 plessel.todd@epa.gov
- * javac Map*.java ; appletviewer Mapplet.html
+ * javac Map*.java
  */
 
 package anl.verdi.area;
@@ -20,14 +20,13 @@ import java.util.ArrayList;
 import anl.gui.color.MoreColor;
 import anl.verdi.area.target.Target;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Polygon;
 //import visad.Unit;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
-
+import com.vividsolutions.jts.geom.Polygon;
 
 // Sequence of unprojected cartographic border polylines.
 

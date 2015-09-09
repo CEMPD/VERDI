@@ -25,12 +25,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
+import org.geotools.swing.JMapFrame;
+
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.util.AnimationListener;
 import anl.verdi.util.Utilities;
-import anl.verdi.plot.anim.PlotAnimator;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.factories.FormFactory;
@@ -302,7 +303,9 @@ public class AnimationPanel extends JPanel {
 
 		Window window = SwingUtilities.getWindowAncestor(plot.getPanel());
 
-		if (window instanceof JFrame) dialog = new JDialog((JFrame) window, "Animate Plot", false);
+		// NOTE: a JMapFrame should be an instance of a JFrame because JMapFrame extends JFrame
+//		if (window instanceof JFrame) dialog = new JDialog((JFrame) window, "Animate Plot", false);
+		if (window instanceof JFrame) dialog = new JDialog((JMapFrame) window, "Animate Plot", false);
 		else dialog = new JDialog((JDialog) window, "Animate Plot", false);
 
 		dialog.setLayout(new BorderLayout());

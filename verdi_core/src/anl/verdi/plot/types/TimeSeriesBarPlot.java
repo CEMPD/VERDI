@@ -48,7 +48,6 @@ import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-
 //import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
@@ -67,7 +66,6 @@ import anl.verdi.plot.config.SaveConfiguration;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 import anl.verdi.plot.config.UnitsConfigurator;
 import anl.verdi.plot.gui.LayerChartPanel;
-import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotFactory;
 import anl.verdi.plot.gui.PlotListener;
 import anl.verdi.plot.probe.PlotEventProducer;
@@ -563,10 +561,6 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 	 * @param config the new plot configuration
 	 */
 	@Override
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
-	configure(config);
-	}
-	@Override
 	public void configure(PlotConfiguration config) {
 		String configFile = config.getConfigFileName();
 		if (configFile != null) {
@@ -598,7 +592,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 
 		CategoryItemRenderer renderer = (CategoryItemRenderer) ((CategoryPlot) chart.getPlot()).getRenderer(0);
 		Color color = config.getColor(TimeSeriesPlotConfiguration.SERIES_COLOR);
-//		if (color != null) renderer.setSeriesPaint(0, color);
+		if (color != null) renderer.setSeriesPaint(0, color);
 	}
 
 	/**

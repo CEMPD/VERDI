@@ -10,6 +10,9 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JOptionPane;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import saf.core.ui.actions.AbstractSAFAction;
 import anl.verdi.area.AreaTilePlot;
 import anl.verdi.area.target.Target;
@@ -20,7 +23,6 @@ import anl.verdi.formula.Formula;
 import anl.verdi.plot.gui.FastAreaTilePlot;
 import anl.verdi.plot.gui.PlotPanel;
 
-
 public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 
 	// FastTilePlot button callback:
@@ -29,6 +31,7 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 	 * 
 	 */
 	private static final long serialVersionUID = 5898580138071998181L;
+	static final Logger Logger = LogManager.getLogger(ArealInterpolation.class.getName());
 
 	public void actionPerformed( ActionEvent unused ) {
 
@@ -41,7 +44,7 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 			application.getGui().showMessage("Areal Interpolation Plot", "No formula selected! Please select one!");
 			return;
 		}
-		
+		Logger.debug("in ArealInterpolation, ready to check for a formula");
 		application.getGui().showBusyCursor();	// 2014 displays message at bottom of VERDI screen
 // 2014 process typically fast enough to not need this message; NOTE: message blocks program from continuing until user presses OK button
 //		try {
@@ -59,7 +62,9 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 
 				// calculate the areas 
 				TargetCalculator calc = new TargetCalculator();
+				Logger.debug("ready to call TargetCalculator.calculateIntersections");
 				boolean retValue = calc.calculateIntersections(Target.getTargets(),dataFrame,(AreaTilePlot)plot.getTilePlot());
+				Logger.debug("back from calculateIntersections, retValue = " + retValue);
 				if(!retValue)
 				{
 					// 2014 added in message dialog to show message to user
