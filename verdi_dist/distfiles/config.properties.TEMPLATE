@@ -4,9 +4,9 @@
 
 
 # Windows example format for absolute path
-# verdi.project.home=C:\\Users\\yourusername\\VERDI_1.5\\project
+# verdi.project.home=C:\\Users\\yourusername\\VERDI_1.6.0\\project
 # Linux example settings format; also used for Windows relative path
-# verdi.project.home=/user/local/bin/verdi/verdi1_5/project
+# verdi.project.home=/user/local/bin/verdi/verdi1_6/project
 
 
 #	VerdiApplication.java, used as project location
@@ -18,7 +18,7 @@ verdi.dataset.home=../../data/model
 #	VerdiApplication.java, used as initial location of VERDI batch scripts
 verdi.script.home=../../data/scripts
 #	Tools.java, used as VERDI_HOME if environment variable is not set
-verdi.install.home=C:\\Users\\yourusername\\VERDI_1.5
+verdi.install.home=C:\\Users\\yourusername\\VERDI_1.6.0
 # WDT default area file folder
 #	TargetFileCard.java, used as default location of HUC (area) datasets
 verdi.hucData=../../data/hucRegion/

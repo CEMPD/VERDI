@@ -4,7 +4,7 @@
 	<property name="env" environment="env" value="env" />
 	<property name="JAVA_HOME" value="${jdk.home}" />
 	<property name="JRE_HOME" value="${JAVA_HOME}/jre" />
-	<!--property name="dist.dir" value="."/-->
+	<property name="dist.dir" value="."/>
 	<property name="plugins.dir" value="plugins"/>
 	<property name="plugins.dist.dir" value="${dist.dir}/${plugins.dir}"/>
 	<property name="plugins.home" value="${basedir}/.."/>
