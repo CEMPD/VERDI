@@ -33,8 +33,8 @@ public class MapAnnotation extends AbstractXYAnnotation {
 
 //	MapContext context;
 	MapContent context;
-	private long domainOrigin, domainMax, rangeOrigin, rangeMax;
-	private ReferencedEnvelope origEnv;
+//	private long domainOrigin, domainMax, rangeOrigin, rangeMax;
+//	private ReferencedEnvelope origEnv;
 	private BufferedImage image;
 	private BoundingBoxer boxer;
 	private boolean update = true;
@@ -69,13 +69,13 @@ public class MapAnnotation extends AbstractXYAnnotation {
 		renderer.setMapContent(context);
 		this.context = context;
 		this.boxer = axes.getBoundingBoxer();
-		domainOrigin = axes.getXAxis().getOrigin();
-		domainMax = axes.getXAxis().getRange().getUpperBound();
-		rangeOrigin = axes.getYAxis().getOrigin();
-		rangeMax = axes.getYAxis().getRange().getUpperBound();
+//		domainOrigin = axes.getXAxis().getOrigin();
+//		domainMax = axes.getXAxis().getRange().getUpperBound();
+//		rangeOrigin = axes.getYAxis().getOrigin();
+//		rangeMax = axes.getYAxis().getRange().getUpperBound();
 		//transform = (MathTransform2D) coverage.getGridGeometry().getGridToCRS();
 //		origEnv = context.getAreaOfInterest();
-		origEnv = context.getMaxBounds();
+//		origEnv = context.getMaxBounds();
 		xRange = new Range(0, 0);
 		yRange = new Range(0, 0);
 	}

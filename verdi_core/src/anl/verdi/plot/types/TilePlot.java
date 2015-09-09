@@ -30,7 +30,6 @@ import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-//import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
@@ -59,9 +58,7 @@ import anl.verdi.util.Utilities;
  * @version $Revision$ $Date$
  */
 public class TilePlot extends AbstractTilePlot {
-	static final Logger Logger = LogManager.getLogger(AbstractTilePlot.class.getName());
-
-//	private static MessageCenter center = MessageCenter.getMessageCenter(TilePlot.class);
+	static final Logger Logger = LogManager.getLogger(TilePlot.class.getName());
 
 	private DataFrameXYZDataset dataset;
 	private boolean hasNoLayer = false;

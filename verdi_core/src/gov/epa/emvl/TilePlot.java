@@ -70,7 +70,7 @@ public class TilePlot {
 
 	protected PlotConfiguration config;
 	protected NumberFormat numberFormat;
-	private int preLayer = 0;
+//	private int preLayer = 0;
 	private List<ObsAnnotation> obsAnnotations;
 	private boolean showObsLegend = false;
 	private String plotTitle;
@@ -185,10 +185,11 @@ public class TilePlot {
 
 		if ( gridLineColor != null ) {
 			Logger.debug("ready to call drawGridLines");	// 2015 not printed in log file for fast tile plot
+															// apparently gridLineColor == null
 		  drawGridLines( graphics, xMinimum, xMaximum, yMinimum, yMaximum,
 				         firstRow, lastRow, firstColumn, lastColumn, gridLineColor);
 		}
-		Logger.debug("all done with TilePlot.draw");
+		Logger.debug("all done with TilePlot.draw");	// 2015 OK to here
 	}
 	
 	public synchronized void drawBatchImage(final Graphics graphics, int xOffset, int yOffset,
@@ -529,9 +530,6 @@ public class TilePlot {
 		String TITLE = config.getProperty(PlotConfiguration.TITLE);
 		final String titleStr = "Layer " + (layer + 1) + " " + variable;
 
-		String theTitle = config.getTitle();
-		Logger.debug("in gov.epa.emvl.TilePlot.java: TITLE = " + TITLE + ", titleStr = " + titleStr + 
-				", theTitle = " + theTitle);
 		Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
 		Color tColor = config.getColor(PlotConfiguration.TITLE_COLOR);
 		tColor = (tColor == null) ? labelColor : tColor;
@@ -548,9 +546,7 @@ public class TilePlot {
 		//Evaluate Title Naming Structure, if Layer # (where # is the layer number) then update to current layer
 		//Keep with the pattern of Layer Number, i.e., Layer 1 then Layer 2 ....
 		//look for Layer 1, if present keep with the same trend but update with current the Layer Number
-//		final String title = (TITLE == null || TITLE.isEmpty() ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
-		// need to allow blank, but null is only the first time through this function; when user deletes title it is blank
-		final String title = (TITLE == null  ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
+		final String title = (TITLE == null || TITLE.isEmpty() ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
 		
 		
 		Font currentFont = new Font(gFont.getFontName(), Font.BOLD, gFont.getSize() * 2);
@@ -692,7 +688,7 @@ public class TilePlot {
 		config.putObject(PlotConfiguration.OBS_LEGEND_COLOR, (obsColor == null) ? labelColor : obsColor);
 		config.putObject(PlotConfiguration.OBS_LEGEND_FONT, (obsFont == null) ? gFont : obsFont);
 		
-		this.preLayer = layer;
+//		this.preLayer = layer;
 	}
 
 	private void drawObsLegend(Graphics g, int xmin, int xmax, int ymin, int ymax, int top) {

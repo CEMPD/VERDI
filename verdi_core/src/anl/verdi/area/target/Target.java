@@ -318,7 +318,8 @@ public class Target implements Area{
 			connectParameters.put("url", file.toURI().toURL());
 			connectParameters.put("create spatial index", true );
 			DataStore dataStore = DataStoreFinder.getDataStore(connectParameters);
-			if(dataStore==null)return null;
+			if(dataStore==null)
+				return null;
 
 			// we are now connected
 			String[] typeNames = dataStore.getTypeNames();
@@ -329,10 +330,9 @@ public class Target implements Area{
 
 			featureSource = dataStore.getFeatureSource(typeName);
 
-			CoordinateReferenceSystem crs = featureSource.getSchema().getCoordinateReferenceSystem();	//.getDefaultGeometry().getCoordinateSystem();
+			CoordinateReferenceSystem crs = featureSource.getSchema().getCoordinateReferenceSystem();
 //			CoordinateReferenceSystem crs = featureSource.getSchema().getCRS();
 			return crs;
-
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

@@ -514,6 +514,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 	}
 	public void recalculateAreas(){
 		// redo the area calculations because something changed with the areas 
+		Logger.debug("recalculating areas in FastAreaTilePlot.recalculateAreas");
 		TargetCalculator calc = new TargetCalculator();
 		if(tilePlot==null||getDataFrame()==null)return;
 		calc.calculateIntersections(Target.getTargets(),getDataFrame(),(AreaTilePlot)tilePlot);

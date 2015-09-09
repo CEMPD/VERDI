@@ -31,6 +31,7 @@ public class AreaDataFrameTableModel extends AbstractDataFrameTableModel {
 	ArrayList areas;
 	ArrayList[] values,valuesAve;
 	Variable[] variables;
+	
 	public AreaDataFrameTableModel(DataFrame[] frames,ArrayList areas,Variable[] vars) {
 		super(frames[0]);
 		// copy the values

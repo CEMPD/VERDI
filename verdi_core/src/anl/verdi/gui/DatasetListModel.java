@@ -40,7 +40,8 @@ public class DatasetListModel extends AbstractListModel {
 	}
 
 	public Object getElementAt(int index) {
-		Logger.debug("in DatasetListModel getElementAt");
+		Logger.debug("in DatasetListModel getElementAt");	// JEB after FastTilePlot drawMode is == DRAW_ONCE
+															// and before FastTilePlot statisticsSelection = 0
 		return datasets.get(index);
 	}
 

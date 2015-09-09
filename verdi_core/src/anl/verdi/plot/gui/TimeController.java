@@ -22,7 +22,7 @@ import anl.gui.panel.layout.SpringUtilities;
 import anl.verdi.plot.types.AbstractTilePlot;
 import anl.verdi.plot.types.TilePlot;
 /**
- * Class for controling time inputs to animate plots
+ * Class for controlling time inputs to animate plots
  * @author Mark Altaweel
  *
  */

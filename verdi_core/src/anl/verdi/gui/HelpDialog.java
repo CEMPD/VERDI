@@ -96,30 +96,6 @@ public class HelpDialog extends JDialog {
 				//======== scrollPane1 ========
 				{
 
-					//---- xHeader1 ----
-//					 HTML.Tag anchor = HTML.Tag.A;
-					 
-//					JLabel label = new JLabel("<html>Visual Environment For Rich Data Interpretation (VERDI)<br/><br/><a href=\"http://www.verdi-tool.org/verdiUserManual.htm\">HTML Version</a><br/><br/><a href=\"http://www.cmascenter.org/help/model_docs/verdi/1.4/VerdiUserManual.pdf\">PDF Version</a></html>");
-
-//					javax.swing.text.html.HTMLEditorKit
-//					JPanel editorPanePanel = new JPanel();
-//					JEditorPane editorPane = new JEditorPane();
-//					HTMLEditorKit htmlEditorKit = new HTMLEditorKit();
-//					htmlEditorKit.
-//					editorPane.setEditorKit() 
-//					editorPane.setEditable(false);
-//					java.net.URL helpURL = TextSamplerDemo.class.getResource(
-//					                                "TextSamplerDemoHelp.html");
-//			        editorPane.setText("<html>Visual Environment For Rich Data Interpretation (VERDI)<br/><br/><a href=\"http://www.verdi-tool.org/verdiUserManual.htm\">HTML Version</a><br/><br/><a href=\"http://www.cmascenter.org/help/model_docs/verdi/1.4/VerdiUserManual.pdf\">PDF Version</a></html>");
-
-					//Put the editor pane in a scroll pane.
-//					JScrollPane editorScrollPane = new JScrollPane(editorPane);
-//					editorScrollPane.setVerticalScrollBarPolicy(
-//					                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-//					editorScrollPane.setPreferredSize(new Dimension(250, 145));
-//					editorScrollPane.setMinimumSize(new Dimension(10, 10));					
-//					editorPanePanel.add(editorScrollPane);
-					
 				    final URI uri = new URI("https://www.cmascenter.org/verdi/documentation/1.5/VerdiUserManual1.5.htm");	// 2014 VERDI 1.5 documentation
 				    // old URI was: "http://www.verdi-tool.org/verdiUserManual_URI_uri.htm"
 				    final URI uri2 = new URI("http://www.cmascenter.org/verdi/documentation/1.5/VerdiUserManual1.5.pdf");	// 2014 VERDI 1.5 documentation
@@ -157,8 +133,6 @@ public class HelpDialog extends JDialog {
 					JPanel panel = new JPanel(new BorderLayout());
 					panel.add(htmlLinkButton, BorderLayout.NORTH);
 					panel.add(pdfLinkButton, BorderLayout.SOUTH);
-//					xHeader1.setTitle("<html>Visual Environment For Rich Data Interpretation (VERDI)<br/><br/><a href=\"http:// xHeader1 setTitle www.verdi-tool.org/verdiUserManual.htm\">HTML Version</a><br/><br/><a href=\"http://XHeader1 setTitle www.cmascenter.org/help/model_docs/verdi/1.4/VerdiUserManual.pdf\">PDF Version</a></html>"); // 2014 does not appear to be used
-//					xHeader1.setDescription("Version 1.0 06062007\n");
 					scrollPane1.setViewportView(panel);
 				}
 				contentPanel.add(scrollPane1, cc.xy(1, 1));
@@ -209,34 +183,6 @@ public class HelpDialog extends JDialog {
 	private JPanel buttonBar;
 	private JButton okButton;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
-
-
-
-
-//	public static void main(String[] args) throws URISyntaxException {
-//	    final URI uri = new URI("http://java.sun.com");
-//	    class OpenUrlAction implements ActionListener {
-//	      @Override public void actionPerformed(ActionEvent e) {
-//	        open(uri);
-//	      }
-//	    }
-//	    JFrame frame = new JFrame("Links");
-//	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//	    frame.setSize(100, 400);
-//	    Container container = frame.getContentPane();
-//	    container.setLayout(new GridBagLayout());
-//	    JButton button = new JButton();
-//	    button.setText("<HTML>Click the <FONT color=\"#000099\"><U>link</U></FONT>"
-//	        + " to go to the Java website.</HTML>");
-//	    button.setHorizontalAlignment(SwingConstants.LEFT);
-//	    button.setBorderPainted(false);
-//	    button.setOpaque(false);
-//	    button.setBackground(Color.WHITE);
-//	    button.setToolTipText(uri.toString());
-//	    button.addActionListener(new OpenUrlAction());
-//	    container.add(button);
-//	    frame.setVisible(true);
-//	  }
 
 	  private static void open(URI uri) {
 	    if (Desktop.isDesktopSupported()) {

@@ -41,6 +41,7 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.swing.JMapFrame;
 import org.jfree.chart.axis.ValueAxis;
 
 import saf.core.ui.util.FileChooserUtilities;
@@ -302,8 +303,10 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 
 	private void initColors(ColorMap map) throws RemoteException, VisADException {
 		if (map == null) {
-			this.map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), minMax.getMin(),
-							minMax.getMax());
+//			this.map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), minMax.getMin(),
+//							minMax.getMax());
+			this.map = new ColorMap(new PavePaletteCreator().createPavePalette(), minMax.getMin(),
+					minMax.getMax());
 			this.map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
 
 			legend = new LegendPanel(this.map, minMax.getMin(), minMax.getMax(), zMap.getAxisScale().getTitle());	// 2014 get scalar name of the scalar map ???
@@ -722,7 +725,9 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 	private void editChartProps() {
 		Window window = SwingUtilities.getWindowAncestor(panel);
 		ConfigDialog dialog = null;
-		if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
+//		if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
+		if (window instanceof JFrame) 
+			dialog = new ConfigDialog((JMapFrame) window);
 		else dialog = new ConfigDialog((JDialog) window);
 
 		dialog.init(this, minMax);

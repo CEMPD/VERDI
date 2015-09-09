@@ -330,6 +330,13 @@
 			<export prefix="*"/>
 		</library>
 		
+		<library id="miglayout-core" path="../verdi_core/lib/miglayout-core-5.1-20150404.220010-96.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="miglayout-swing" path="../verdi_core/lib/miglayout-swing-5.1-20150404.220019-96.jar" type="code">
+			<export prefix="*"/>
+		</library>
 		
 		
 		<!-- End Gis Imports -->

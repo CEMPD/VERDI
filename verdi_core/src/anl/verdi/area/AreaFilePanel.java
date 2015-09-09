@@ -98,21 +98,8 @@ public class AreaFilePanel extends JPanel {
 				}
 			}
 		});
-
-		//		variableList.addMouseListener(new MouseAdapter() {
-		//			public void mousePressed(MouseEvent evt) {
-		//				if (evt.isPopupTrigger()) {
-		//					showVariablesPopup(evt);
-		//				}
-		//			}
-		//
-		//			public void mouseReleased(MouseEvent evt) {
-		//				if (evt.isPopupTrigger()) {
-		//					showVariablesPopup(evt);
-		//				}
-		//			}
-		//		});
 	}
+
 	private Action openAreaFileAction = new AbstractAction() {
 		/**
 		 * 
@@ -441,17 +428,17 @@ public class AreaFilePanel extends JPanel {
 		ArrayList<Area> areas = new ArrayList<Area>();
 
 		public Object getElementAt(int index) {
-			Logger.debug("in AreaFilePanel AreasModel getElementAt");
+			Logger.info("in AreaFilePanel AreasModel getElementAt");
 			return areas.get(index);
 		}
 
 		public Area getAreaAt(int index) {
-			Logger.debug("in AreaFilePanel AreasModel getAreaAt");
+			Logger.info("in AreaFilePanel AreasModel getAreaAt");
 			return areas.get(index);
 		}
 
 		public int getSize() {
-			Logger.debug("in AreaFilePanel AreasModel getSize");
+			Logger.info("in AreaFilePanel AreasModel getSize");
 			if (areas == null)
 				return 0;
 			return areas.size();

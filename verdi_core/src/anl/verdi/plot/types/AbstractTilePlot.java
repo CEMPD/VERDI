@@ -58,6 +58,7 @@ import org.geotools.map.MapViewport;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
+import org.geotools.swing.JMapFrame;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.ValueAxis;
@@ -718,7 +719,8 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			public void actionPerformed(ActionEvent e) {
 				Window frame = SwingUtilities.getWindowAncestor(panel);
 				LayerEditor editor = null;
-				if (frame instanceof JFrame) editor = new LayerEditor((JFrame) frame);
+//				if (frame instanceof JFrame) editor = new LayerEditor((JFrame) frame);
+				if (frame instanceof JFrame) editor = new LayerEditor((JMapFrame) frame);
 				else editor = new LayerEditor((JDialog) frame);
 				editor.init(mapAnnotation);
 				editor.setLocationRelativeTo(frame);
@@ -791,7 +793,6 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 				Properties props = new Properties();
 				props.put("default.maps", defaultMaps);
 				try {
-//					File file = new File(System.getProperty(Tools.USER_HOME) + Tools.PROPERTY_FILE);
 					File file = new File(Tools.getPropertyFile());	// 2014 changed to use static function directly
 					props.store(new FileOutputStream(file), "");
 				} catch (IOException ex) {
@@ -1023,7 +1024,8 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			min = minMax.getMin();
 			max = minMax.getMax();
 			Logger.debug("still in updateScaleAxis: ready to call PavePalletCreator");
-			map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), min, max);
+//			map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), min, max);
+			map = new ColorMap(new PavePaletteCreator().createPavePalette(), min, max);
 			map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
 		} else {
 			try {
@@ -1159,7 +1161,8 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			Logger.debug("in AbstractTilePlot.doEditChartProperties");
 			Window window = SwingUtilities.getWindowAncestor(panel);
 			ConfigDialog dialog = null;
-			if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
+//			if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
+			if (window instanceof JFrame) dialog = new ConfigDialog((JMapFrame) window);
 			else dialog = new ConfigDialog((JDialog) window);
 			dialog.init(AbstractTilePlot.this, getCurrentMinMax());
 			dialog.setSize(500, 600);

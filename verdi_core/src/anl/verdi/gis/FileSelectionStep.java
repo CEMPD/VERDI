@@ -38,7 +38,6 @@ import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import com.vividsolutions.jts.geom.MultiPoint;
-//import simphony.util.messages.MessageCenter;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 //import org.geotools.data.DefaultQuery;
@@ -55,8 +54,6 @@ public class FileSelectionStep extends PanelWizardStep {
 
 	private static final long serialVersionUID = -2143961301487078170L;
 	static final Logger Logger = LogManager.getLogger(FileSelectionStep.class.getName());
-
-//	private static MessageCenter msg = MessageCenter.getMessageCenter(FileSelectionStep.class);
 
 	private JFileChooser chooser;
 
