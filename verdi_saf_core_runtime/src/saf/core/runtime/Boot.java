@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+//import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -124,6 +124,7 @@ public class Boot {
 //      corePlugin.getClass().getMethod("run", String[].class).invoke(corePlugin, (Object) args);
    	// 2014 breaking up above statement; 1st get name of class at run-time for predetermined instantiated object
       Class<? extends Plugin> pClass = corePlugin.getClass();
+      System.out.println("just did corePlugin.getClass: " + corePlugin.getClass().toString());
 //      Method[] someMethods = pClass.getDeclaredMethods();
 //      System.out.println("Now try to list the methods");
 //      for (Method aMethod : someMethods)
@@ -139,13 +140,20 @@ public class Boot {
 //      }
       // 2nd get name of method at run-time that belongs to class
       Method aMethod = pClass.getMethod((String) "run", String[].class);
+      System.out.println("just did Method aMethod for " + String[].class);
+      System.out.println("aMethod: " + aMethod);
+      System.out.println("aMethod = " + aMethod.toGenericString());
       // 3rd invoke actual method of that class on an object
+      System.out.println("ready to aMethod.invoke, args = " + args);
+      System.out.println("args = " + args.toString());
       aMethod.invoke(corePlugin, new java.lang.Object[] {args});
 
     } catch (InvocationTargetException itEx)
     {
     	System.out.println("caught an InvocationTargetException in Boot.run; printing .getCause()");
-    	center.error(itEx.getCause(), itEx);
+    	System.out.println(itEx.getCause().toString() + ", " + itEx.toString());
+    	System.out.println(itEx.getTargetException().getMessage());
+//    	center.error(itEx.getCause(), itEx);
     }
     catch (Exception ex) {
     	System.out.println("Caught an Exception in Boot.java");

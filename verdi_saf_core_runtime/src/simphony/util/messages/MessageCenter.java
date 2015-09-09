@@ -1,9 +1,13 @@
 /*CopyrightHere*/
 package simphony.util.messages;
 
-import org.apache.log4j.Level;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
+import org.apache.log4j.Level;
 
 /**
  * A class for handling all sorts of messages. This class receives messages of different levels

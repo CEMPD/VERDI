@@ -1,11 +1,11 @@
 package simphony.util;
 
-import simphony.util.messages.MessageCenter;
-
-import java.awt.*;
+import java.awt.EventQueue;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import simphony.util.messages.MessageCenter;
 
 /**
  * Thread related utility methods.
