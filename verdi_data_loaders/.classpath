@@ -25,11 +25,11 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-api-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/log4j-api-2.0-rc1-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-core-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/log4j-core-2.0-rc1-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/bufr-4.3.16.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-opengis-12.2.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-data-12.2.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-geometry-12.2.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-metadata-12.2.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-opengis-12.2.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-referencing-12.2.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/bufr-4.3.16.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

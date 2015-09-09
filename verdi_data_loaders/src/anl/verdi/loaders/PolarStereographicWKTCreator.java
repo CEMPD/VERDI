@@ -9,8 +9,6 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
-import ucar.nc2.Variable;
-import ucar.nc2.dataset.transform.PolarStereographic;
 import ucar.unidata.geoloc.projection.Stereographic;
 
 /**
@@ -26,7 +24,7 @@ public class PolarStereographicWKTCreator {
 	static final Logger Logger = LogManager.getLogger(PolarStereographicWKTCreator.class.getName());
 
 	public String createWKT(Stereographic proj) throws IOException {
-//		System.out.println("in PolarStereographicWKTCreator.createWKT");
+		Logger.debug("in PolarStereographicWKTCreator.createWKT");
 		VelocityContext context = new VelocityContext();
 		String template = getClass().getPackage().getName();
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -38,10 +36,10 @@ public class PolarStereographicWKTCreator {
 		double projTangentLat = proj.getTangentLat();
 		double projTangentLon = proj.getTangentLon();
 		double projScale = proj.getScale();
-//		System.out.println("in createWKT: proj.getCentralMeridian returns " + projCentralMeridian);
-//		System.out.println("in createWKT: proj.getNaturalOriginLat returns " + projNatOriginLat);
-//		System.out.println("in createWKT: proj.getTangentLat returns " + projTangentLat);
-//		System.out.println("in createWKT: proj.getTangentLon returns " + projTangentLon);
+		Logger.debug("in createWKT: proj.getCentralMeridian returns " + projCentralMeridian);
+		Logger.debug("in createWKT: proj.getNaturalOriginLat returns " + projNatOriginLat);
+		Logger.debug("in createWKT: proj.getTangentLat returns " + projTangentLat);
+		Logger.debug("in createWKT: proj.getTangentLon returns " + projTangentLon);
 
 
 		context.put("lat_origin", projNatOriginLat);	// 2014 NOTE: usually 90.0 but some datasets use 70.0

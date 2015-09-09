@@ -89,8 +89,10 @@ public class M3IOConvention extends CoordSysBuilder {
   }
 
   public void augmentDataset(NetcdfDataset ncd, CancelTask cancelTask) {
-    if (null != ncd.findVariable("x")) return; // check if its already been done - aggregating enhanced datasets.
-    if (null != ncd.findVariable("lon")) return; // check if its already been done - aggregating enhanced datasets.
+    if (null != ncd.findVariable("x")) 
+    	return; // check if its already been done - aggregating enhanced datasets.
+    if (null != ncd.findVariable("lon")) 
+    	return; // check if its already been done - aggregating enhanced datasets.
 
     constructCoordAxes(ncd);
     ncd.finish();
@@ -293,12 +295,12 @@ private CoordinateTransform makePolarStereographicProjection(NetcdfDataset ds) {
     double central_meridian = findAttributeDouble(ds, "P_GAM");
     double xcent = findAttributeDouble(ds, "XCENT");
     double ycent = findAttributeDouble(ds, "YCENT");
-    double par1 = findAttributeDouble(ds, "P_ALP");
+//    double par1 = findAttributeDouble(ds, "P_ALP");
     double par2 = findAttributeDouble(ds, "P_BET");
 
-    Stereographic sg_tmp = new Stereographic(ycent, xcent, 1.0, 0, 0, earthRadius);
-   sg_tmp.setCentralMeridian(central_meridian);
-   double calc_scale = sg_tmp.getScale();
+//    Stereographic sg_tmp = new Stereographic(ycent, xcent, 1.0, 0, 0, earthRadius);
+//   sg_tmp.setCentralMeridian(central_meridian);
+//   double calc_scale = sg_tmp.getScale();
    
    double scale2 = (1.0 + Math.sin(Math.toRadians(par2))) / 2.0;
 //   System.out.println("in Stereographic: calculated scale2 " + scale2);
@@ -358,8 +360,8 @@ private CoordinateTransform makePolarStereographicProjection(NetcdfDataset ds) {
 
     /**
      * Construct a Stereographic Projection.
-     * @param latt tangent point of projection, also origin of projecion coord system
-     * @param lont tangent point of projection, also origin of projecion coord system
+     * @param latt tangent point of projection, also origin of projection coord system
+     * @param lont tangent point of projection, also origin of projection coord system
      * @param scale scale factor at tangent point, "normally 1.0 but may be reduced"
      */
     Stereographic st = new Stereographic(latt, lont, 1.0, 0.0, 0.0, earthRadius);
