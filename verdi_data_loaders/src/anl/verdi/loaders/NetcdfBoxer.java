@@ -1,10 +1,12 @@
+// NOTE: This class uses Geotools and OpenGis for geometry, Coordinate Reference System (crs), and Reference Envelope
+// BUT uses ucar for projections.
 package anl.verdi.loaders;
 
 import java.awt.geom.Point2D;
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
@@ -16,8 +18,6 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-
-//import simphony.util.messages.MessageCenter;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
@@ -40,8 +40,6 @@ import anl.verdi.data.BoundingBoxer;
  */
 public class NetcdfBoxer implements BoundingBoxer {
 	static final Logger Logger = LogManager.getLogger(NetcdfBoxer.class.getName());
-
-//	private static MessageCenter msg = MessageCenter.getMessageCenter(BoundingBoxer.class);
 
 //	MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
 	MathTransformFactory mtFactory = ReferencingFactoryFinder.getMathTransformFactory(null);
@@ -312,6 +310,11 @@ public class NetcdfBoxer implements BoundingBoxer {
 			Logger.error("Projection is not recognized!!");
 		} 
 		return new ReferencedEnvelope(xStart, xEnd, yStart, yEnd, crs);
+	}
+	
+	public CoordinateReferenceSystem getCRS() {
+		Logger.debug("in getCRS(): returning crs = " + crs);
+		return crs;
 	}
 
 	private CoordinateAxis1D getXAxis() {

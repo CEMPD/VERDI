@@ -197,9 +197,9 @@ public class GridNetcdfDataset extends AbstractDataset {
 	}
 
 	/**
-	 * Gets the coordindate Axes for this Dataset.
+	 * Gets the coordinate Axes for this Dataset.
 	 * 
-	 * @return the coordindate Axes for this Dataset.
+	 * @return the coordinate Axes for this Dataset.
 	 */
 	@Override
 	public Axes<CoordAxis> getCoordAxes() {
