@@ -30,9 +30,13 @@ public class CorePlugin extends Plugin {
 
 	public void run(String[] args) {
 		try {
+			System.out.println("in saf.core.runtime.CorePlugin.run");
 			loadAppPlugin();
+			System.out.println("back from loadAppPlugin");
 			loadUIPlugin(args);		// added args
+			System.out.println("back from loadUIPlug");
 			runApplicationRunnable(args);
+			System.out.println("back from runApplicationRunnable");
 		} catch (Exception ex) {
 			MessageCenter.getMessageCenter(getClass()).error("Error instantiating plugins", ex);
 		}
@@ -79,7 +83,9 @@ public class CorePlugin extends Plugin {
 	}
 
 	private void runApplicationRunnable(String[] args) {
+		System.out.println("into runApplicationRunnable");
 		appRunner.run(args);
+		System.out.println("did appRunner.run, returning");
 	}
 }
 

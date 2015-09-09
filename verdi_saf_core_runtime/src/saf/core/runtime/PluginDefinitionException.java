@@ -6,6 +6,11 @@ package saf.core.runtime;
  */
 public class PluginDefinitionException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3876422663992063798L;
+
 	public PluginDefinitionException() {
 		super();
 	}
