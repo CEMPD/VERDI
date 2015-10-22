@@ -38,7 +38,7 @@ public void actionPerformed( ActionEvent unused ) {
         								// moved the 2 arguments to separate set function calls
         panel.setPlot(plot);
         panel.setName("Tile " + variableName);
-        application.getGui().addPlot( panel );
+        application.getGui().addPlot_ERROR( panel );
         panel.addPlotListener( application );
       }
     }
