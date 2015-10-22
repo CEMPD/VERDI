@@ -12,23 +12,27 @@ import javax.swing.JToolBar;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.geotools.map.MapContent;
+import org.geotools.renderer.GTRenderer;
+import org.geotools.swing.JMapPane;
+import org.geotools.swing.RenderingExecutor;
 
 import saf.core.ui.event.DockableFrameEvent;
 import anl.verdi.formula.Formula;
 
 public class PlotPanel extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2937963505375601326L;
 	private Plot plot;
 	private String name;
 	static final Logger Logger = LogManager.getLogger(PlotPanel.class.getName());
+//	private JPanel topPanel;
+	private boolean isAMap = false;
 
 	public PlotPanel(Plot plot, String name) {
 		super(new BorderLayout());
 		Logger.debug("in PlotPanel constructor");
+		isAMap = false;				// defaults to false but want to show it explicitly here in code
 		JMenuBar bar = plot.getMenuBar();
 		JToolBar toolBar = plot.getToolBar();
 		JPanel topPanel = new JPanel();
@@ -52,8 +56,48 @@ public class PlotPanel extends JPanel {
 		this.name = name;
 	}
 
+	// use this constructor for a JMapPane instead of a JPanel object as topPanel
+	// version is used for FastTilePlot and ArealInterpolationPlot
+	public PlotPanel(Plot plot, String name, MapContent content, RenderingExecutor executor,
+			GTRenderer renderer) {
+		super(new BorderLayout());
+		Logger.debug("in PlotPanel constructor");
+		isAMap = true;
+		JMenuBar bar = plot.getMenuBar();
+		JToolBar toolBar = plot.getToolBar();
+		JMapPane topPanel = new JMapPane(content, executor, renderer);
+		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+		if (bar != null) {
+			bar.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+			bar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+			topPanel.add(bar);
+		}
+		if (toolBar != null) {
+			toolBar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+			if (topPanel.getComponentCount() == 1) {
+				topPanel.add(Box.createRigidArea(new Dimension(0, 4)));
+			}
+			topPanel.add(toolBar);
+			topPanel.add(Box.createRigidArea(new Dimension(0, 4)));
+		}
+		if (topPanel.getComponentCount() > 0) add(topPanel, BorderLayout.NORTH);
+		add(plot.getPanel(), BorderLayout.CENTER);
+		this.plot = plot;
+		this.name = name;
+	}
+	
 	public String getName() {
 		return name;
+	}
+	/**
+	 * Sets the name this PlotPanel contains.
+	 * Use this method instead of as an argument to the constructor.
+	 * 
+	 * @param aName
+	 */
+	public void setName(String aName)
+	{
+		this.name = aName;
 	}
 
 	public void addPlotListener(PlotListener listener) {
@@ -83,9 +127,18 @@ public class PlotPanel extends JPanel {
 	}
 
 	/**
+	 * Sets the plot this PlotPanel contains.
+	 * Can use this method instead of as an argument to the constructor
+	 * @param aPlot
+	 */
+	public void setPlot(Plot aPlot)
+	{
+		this.plot = aPlot;
+	}
+	
+	/**
 	 * Notifies Plot when its View has been closed. HACK!
 	 */
-
 	public void viewClosed() {
 
 		if ( plot instanceof anl.verdi.plot.gui.FastTilePlot ) {
@@ -100,16 +153,33 @@ public class PlotPanel extends JPanel {
 			plot.viewClosed();
 			plot = null;
 		}
-
 	}
+	
+	/**
+	 * Change the view of this window to floating
+	 * @param evt
+	 */
 	public void viewFloated(DockableFrameEvent evt){
 		if ( plot instanceof anl.verdi.plot.gui.FastTilePlot ) {
 			( (anl.verdi.plot.gui.FastTilePlot) plot).viewFloated(evt);
 		}
 	}
+	
+	/**
+	 * Change the view of this window to docked
+	 * @param evt
+	 */
 	public void viewRestored(DockableFrameEvent evt){		
 		if ( plot instanceof anl.verdi.plot.gui.FastTilePlot ) {
 			( (anl.verdi.plot.gui.FastTilePlot) plot).viewRestored(evt);
 		}
 	}
+	
+//	public JMapPane getMapPane()
+//	{
+//	if(isAMap)
+//	{
+//		return this.topPanel;
+//	}
+//	}
 }
