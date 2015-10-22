@@ -95,5 +95,6 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/jfreechart-1.0.19.jar" sourcepath="/verdi_core/lib_src/jfreechart-1.0.19-sources.zip"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/jcommon-1.0.23.jar" sourcepath="/verdi_core/lib_src/jcommon-1.0.23-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-swing-12.2.jar" sourcepath="/verdi_core/lib_src/gt-swing-12.2-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
