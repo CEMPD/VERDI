@@ -13,7 +13,6 @@ import anl.verdi.core.VerdiApplication;
 import anl.verdi.data.DataFrame;
 import anl.verdi.formula.Formula;
 import anl.verdi.plot.gui.Plot;
-import anl.verdi.plot.gui.MapPlotPanel;		// Sept 2015 changed from PlotPanel
 import anl.verdi.plot.gui.PlotPanel;
 
 public class FastTilePlot extends AbstractSAFAction<VerdiApplication> {
