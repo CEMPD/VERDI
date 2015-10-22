@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="XDRConverter.java" kind="src" path="test">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="verdi_data_loaders"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/verdi_bootstrap"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/verdi_core"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/junit-4.11.jar" sourcepath="/verdi_core/lib_src/junit-4.11-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-1.2-api-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/apache-log4j-2.0-rc1-src/apache-log4j-2.0-rc1-src"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/velocity-1.7.jar" sourcepath="/verdi_core/lib_src/velocity-1.7.zip"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/unit-api-0.6.1.jar" sourcepath="/verdi_core/lib_src/unitsofmeasurement.zip"/>
@@ -25,11 +19,12 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-api-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/log4j-api-2.0-rc1-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-core-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/log4j-core-2.0-rc1-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-opengis-12.2.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-data-12.2.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-geometry-12.2.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-metadata-12.2.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-referencing-12.2.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-opengis-12.2.jar" sourcepath="/verdi_core/lib_src/gt-opengis-12.2-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-data-12.2.jar" sourcepath="/verdi_core/lib_src/gt-data-12.2-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-geometry-12.2.jar" sourcepath="/verdi_core/lib_src/gt-geometry-12.2-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-metadata-12.2.jar" sourcepath="/verdi_core/lib_src/gt-metadata-12.2-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-referencing-12.2.jar" sourcepath="/verdi_core/lib_src/gt-referencing-12.2-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/bufr-4.3.16.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-swing-12.2.jar" sourcepath="/verdi_core/lib_src/gt-swing-12.2-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

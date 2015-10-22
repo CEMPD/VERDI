@@ -13,7 +13,7 @@ import anl.verdi.core.VerdiApplication;
 import anl.verdi.data.DataFrame;
 import anl.verdi.formula.Formula;
 import anl.verdi.plot.gui.Plot;
-import anl.verdi.plot.gui.PlotPanel;
+import anl.verdi.plot.gui.MapPlotPanel;		// Sept 2015 changed from PlotPanel
 
 public class FastTilePlot extends AbstractSAFAction<VerdiApplication> {
 
@@ -34,7 +34,10 @@ public void actionPerformed( ActionEvent unused ) {
       if ( dataFrame != null ) {
         final Plot plot = new anl.verdi.plot.gui.FastTilePlot(application, dataFrame );
 		final String variableName = dataFrame.getVariable().getName();
-        final PlotPanel panel = new PlotPanel( plot, "Tile " + variableName);
+        final MapPlotPanel panel = new MapPlotPanel();	// Sept 2015 changed from PlotPanel and
+        								// moved the 2 arguments to separate set function calls
+        panel.setPlot(plot);
+        panel.setName("Tile " + variableName);
         application.getGui().addPlot( panel );
         panel.addPlotListener( application );
       }
@@ -42,7 +45,3 @@ public void actionPerformed( ActionEvent unused ) {
   }
 
 }
-
-
-
-

@@ -126,12 +126,4 @@ public interface Plot {
 	String getTitle();
 	
 	void viewClosed();
-	
-//	public void setLog(boolean log);
-//
-//	public boolean isLog();
-//
-//	public void setLogBase(double logBase);
-//
-//	public double getLogBase();
-}
+	}

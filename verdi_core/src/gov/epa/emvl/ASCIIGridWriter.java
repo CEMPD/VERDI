@@ -17,8 +17,8 @@ public final class ASCIIGridWriter {
 
   /**
    * write - Write a single layer of grid cells and a
-   * single timestep of scalar data as lon-lat Shapefile Polygon files
-   * (shp, shx, dbf).
+   * single timestep of scalar data as lon-lat Shapefile Polygon files	// JEB does not pertain to Shapefile
+   * (shp, shx, dbf).													// irrelevant
    * INPUTS:
    * final String fileName  Base name of file to create. "example.asc".
    * final int rows              Number of grid rows.
@@ -40,10 +40,10 @@ public final class ASCIIGridWriter {
    * @pre data != null
    */
 
-  public static void write( final String fileName,
-                            final int rows,
-                            final int columns,
-                            final double westEdge,
+  public static void write( final String fileName,		// fully-qualified name of file to output
+                            final int rows,				// number of rows (y)
+                            final int columns,			// number of columns (x)
+                            final double westEdge,		
                             final double southEdge,
                             final double cellSize,
                             final float[][] data ) {
@@ -58,16 +58,16 @@ public final class ASCIIGridWriter {
                        columns, rows, westEdge, southEdge, cellSize );
       file.write( header.getBytes( "US-ASCII" ) );
 
-      for ( int row = rows - 1; row >= 0; --row ) {
+      for ( int row = rows - 1; row >= 0; --row ) {	// starts in upper-left cell & moves downward
 
-        for ( int column = 0; column < columns; ++column ) {
+        for ( int column = 0; column < columns; ++column ) {	// for a row moves left-to-right
           final float dataValue = data[ row ][ column ];
           final float clampedValue = dataValue > -9999.0f ? dataValue : -9999.0f;
           final String formattedValue = String.format( "%g ", clampedValue );
           file.write( formattedValue.getBytes( "US-ASCII" ) );
         }
 
-        file.write( '\n' );
+        file.write( '\n' );		// newline at end of each row
       }
     } catch ( Exception unused_ ) {
     } finally {

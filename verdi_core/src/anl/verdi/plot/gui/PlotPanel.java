@@ -10,6 +10,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import saf.core.ui.event.DockableFrameEvent;
 import anl.verdi.formula.Formula;
 
@@ -21,9 +24,11 @@ public class PlotPanel extends JPanel {
 	private static final long serialVersionUID = 2937963505375601326L;
 	private Plot plot;
 	private String name;
+	static final Logger Logger = LogManager.getLogger(PlotPanel.class.getName());
 
 	public PlotPanel(Plot plot, String name) {
 		super(new BorderLayout());
+		Logger.debug("in PlotPanel constructor");
 		JMenuBar bar = plot.getMenuBar();
 		JToolBar toolBar = plot.getToolBar();
 		JPanel topPanel = new JPanel();

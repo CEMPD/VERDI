@@ -21,7 +21,7 @@ import anl.verdi.core.VerdiApplication;
 import anl.verdi.data.DataFrame;
 import anl.verdi.formula.Formula;
 import anl.verdi.plot.gui.FastAreaTilePlot;
-import anl.verdi.plot.gui.PlotPanel;
+import anl.verdi.plot.gui.PlotPanel;			// 2015 replacing PlotPanel with MapPlotPanel
 
 public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 
@@ -45,20 +45,13 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 			return;
 		}
 		Logger.debug("in ArealInterpolation, ready to check for a formula");
-		application.getGui().showBusyCursor();	// 2014 displays message at bottom of VERDI screen
-// 2014 process typically fast enough to not need this message; NOTE: message blocks program from continuing until user presses OK button
-//		try {
-//			application.getGui().showMessage("Fast Area Tile Plot", "Loading data. This may take a while please be patient and click OK to continue...");
-//			Thread.sleep(100);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
+		application.getGui().showBusyCursor();	
 		if ( application.getProject().getSelectedFormula() != null ) {
 			final DataFrame dataFrame = application.evaluateFormula( Formula.Type.TILE );
 
 			if ( dataFrame != null ) {
 
-				final FastAreaTilePlot plot = new anl.verdi.plot.gui.FastAreaTilePlot(application, dataFrame);
+				final FastAreaTilePlot plot = new FastAreaTilePlot(application, dataFrame);
 
 				// calculate the areas 
 				TargetCalculator calc = new TargetCalculator();
@@ -71,6 +64,10 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 					String aMessage = "Problem with areal interpolation calculations. Check if polygons intersect grid cells.";
 					JOptionPane.showMessageDialog(null, aMessage, "Areal Interpolation Issue", JOptionPane.WARNING_MESSAGE);
 				}
+				
+// WIP			// 2015 changing PlotPanel to MapPlotPanel
+				// need different constructor in MapPlotPanel
+				// need to set up types of objects for drawing with Shapefiles included
 				final PlotPanel panel = new PlotPanel( plot, "ArealInterpolation" );
 				application.getGui().addPlot( panel );
 				panel.addPlotListener( application );
@@ -90,7 +87,6 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 			}
 		}
 		application.getGui().restoreCursor();
-//		application.getGui().showMessage("Areal Interpolation Plot", "Loading data finished.");	// 2014 removed message box
 	}
 }
 
