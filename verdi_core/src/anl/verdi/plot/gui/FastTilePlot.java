@@ -102,7 +102,8 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
-import org.geotools.swing.JMapFrame;
+import org.geotools.swing.JMapFrame;		// JEB Sept 2015
+import org.geotools.swing.JMapPane;			// JEB Sept 2015
 import org.geotools.swing.data.JFileDataStoreChooser;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -150,7 +151,8 @@ import anl.verdi.util.Utilities;
 
 //import com.vividsolutions.jts.geom.Envelope;
 
-public class FastTilePlot extends JPanel implements ActionListener, Printable,
+//public class FastTilePlot extends JPanel implements ActionListener, Printable,
+public class FastTilePlot extends JMapPane implements ActionListener, Printable,	// JEB Sept 2015
 		ChangeListener, ComponentListener, MouseListener,
 		TimeAnimatablePlot, Plot {
 	static final Logger Logger = LogManager.getLogger(FastTilePlot.class.getName());
@@ -183,7 +185,6 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	// Log related
 	
 	protected boolean log = false;
-	@SuppressWarnings("unused")
 	private boolean preLog = false;
 	private double logBase = 10.0; //Math.E;	
 
@@ -326,8 +327,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	final JMenu mapLayersMenu = new JMenu("Add Map Layers");
 	
 	private ConfigDialog dialog = null;
-	@SuppressWarnings("unused")
-	private Plot.ConfigSoure configSource = Plot.ConfigSoure.GUI;
+//	@SuppressWarnings("unused")
+//	private Plot.ConfigSoure = Plot.ConfigSoure.GUI;
 
 	VerdiApplication app;
 	
@@ -636,13 +637,14 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 							offScreenGraphics.dispose();
 						}
 
-						Logger.debug("ready for Toolkit.getDefaultToolkit 2nd time");
+						Logger.debug("ready for Toolkit.getDefaultToolkit 2nd time");	// 2015 debug HIT THIS REPEATEDLY
 						Toolkit.getDefaultToolkit().sync();
 					
 					} // End of synchronized block.
-					Logger.debug("ended synchronized block. Now check drawMode.");
+					Logger.debug("ended synchronized block. Now check drawMode.");	// 2015 debug HIT THIS REPEATEDLY
 					if (drawMode == DRAW_ONCE ) {
-						Logger.debug("drawMode is == DRAW_ONCE");		// JEB this message is followed by DatasetListModel getElementAt
+						Logger.debug("drawMode is == DRAW_ONCE");		// 2015 debug HIT THIS REPEATEDLY
+																		// JEB this message is followed by DatasetListModel getElementAt
 																		// and then statisticsSelection = 0
 						decrease_draw_once_requests();
 						if (get_draw_once_requests() < 0) {
@@ -658,7 +660,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 						Thread.sleep(100); /* ms. */
 					} catch (Exception unused) {}
 				}
-			} while (drawMode != DRAW_END);
+			} while (drawMode != DRAW_END);		// drawMode set to DRAW_END in stopThread()
 		}
 	};
 	
@@ -767,7 +769,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 	// Plot frame closed:
 
-	public void stopThread() {
+	public void stopThread() {	// called by anl.verdi.plot.gui.PlotPanel
 		drawMode = DRAW_END;
 		draw();
 	}
@@ -1257,9 +1259,9 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	// Construct but do not draw yet.
 
 	public FastTilePlot(VerdiApplication app, DataFrame dataFrame) {
-		super(true);
+//		super(true);		// JEB Sept 2015
 		this.app=app;
-		setDoubleBuffered(true);
+		setDoubleBuffered(false);	// JEB Sept 2015  had been set to true
 		assert dataFrame != null;
 		this.dataFrame = dataFrame;
 		this.calculateDataFrameLog();
@@ -1274,6 +1276,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 		final Variable dataFrameVariable = dataFrame.getVariable();
 		variable = dataFrameVariable.getName();
+		Logger.debug("mapFileDirectory = " + mapFileDirectory);
 		Logger.debug("dataFrameVariable = " + dataFrameVariable);
 		Logger.debug("dataFrameVariable name = " + variable);
 		units = dataFrameVariable.getUnit().toString();
@@ -2145,7 +2148,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		
 		if (frame instanceof JFrame)
 //			editor = new FastTileLayerEditor((JFrame) frame);
-			editor = new FastTileLayerEditor((JMapFrame) frame);
+			editor = new FastTileLayerEditor((JMapFrame) frame);		// JEB Sept 2015
 		else
 			editor = new FastTileLayerEditor((JDialog) frame);
 		
@@ -2157,7 +2160,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	}
 
 //	protected MapLayer createControlLayer() {	// had been hard-coded to map of North America only
-	protected FeatureLayer createControlLayer(String shapefile) {
+	protected FeatureLayer createControlLayer(String shapefile) {	// JEB not currently being called
 		Logger.debug("in FastTilePlot.createControlLayer");
 		
 		Logger.debug("ready to get map");
@@ -2306,7 +2309,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		dialog = null;
 		if (window instanceof JFrame)
 //			dialog = new ConfigDialog((JFrame) window);
-			dialog = new ConfigDialog((JMapFrame) window);
+			dialog = new ConfigDialog((JMapFrame) window);		// JEB Sept 2015
 		else
 			dialog = new ConfigDialog((JDialog) window);
 		dialog.init(FastTilePlot.this, minMax);
@@ -2445,7 +2448,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			}
 		}
 		
-		this.configSource = source;
+//		this.configSource = source;		// not used
 
 		ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
 
@@ -2918,7 +2921,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 				DataFrame subsection = null;
 
 				//			boolean isLog = false;		// isLog is not used
-				double logBase = 10.0;
+//				double logBase = 10.0;					// JEB 2015 already have logBase as class data member
 				ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
 				if (map != null) {
 					// set log related info
@@ -3244,7 +3247,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 //									filteredVariableName, subsetLayerData, projector );
 //	}
 	
-//	2014 called from anl.verdi.plot.utiil.PlotExporter; disabling exporting of Shapefiles for VERDI v1.5.0
+//	2014 called from anl.verdi.plot.util.PlotExporter; disabling exporting of Shapefiles for VERDI v1.5.0
 	//	public void exportShapefile( String baseFileName ) throws IOException {
 //		final int subsetLayerRows = 1 + lastRow - firstRow;
 //		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
@@ -3268,6 +3271,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 //	}
 	
 	public void exportASCIIGrid( String baseFileName ) {
+		Logger.debug("in FastTilePlot.exportASCIIGrid");
 		final int subsetLayerRows = 1 + lastRow - firstRow;
 		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
 		final double subsetWestEdge = westEdge + firstColumn * cellWidth;

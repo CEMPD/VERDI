@@ -118,13 +118,13 @@ public class Mapper {
 		for (VerdiBoundaries layer : layers) {
 			Logger.debug("drawing for a layer");	// OK to here
 			Logger.debug("layer = " + layer.toString());
-			if(layer == null)
-			{
-				Logger.debug("layer tests as == null!");
-				continue;
-			}
-			else
-				Logger.debug("layer does NOT test as == null");	// OK
+//			if(layer == null)
+//			{
+//				Logger.debug("layer tests as == null!");
+//				continue;
+//			}
+//			else
+//				Logger.debug("layer does NOT test as == null");	// OK
 			Logger.debug("Instead of passing Projector object to VerdiBoundaries.draw get the CRS and pass it. Calling layer.draw");
 			// NEED TO COMPLETE LAYER.DRAW TO ACTUALLY DRAW THE MAP!!! 
 // JEB  layers NEEDS TO BE LIST WITHIN MAPCONTENT
