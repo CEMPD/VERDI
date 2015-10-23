@@ -1,0 +1,5 @@
+10/22/2015
+Fixed problems running Verdi directly from Eclipse
+ - Changed SplashPanel to load splash.jpg directly from the workspace if it can't find it in the plugin directory (which only exists in a packaged build).
+ - Set VERDI_USER and VERDI_HOME environment variables to start with wokspace location instead of hardcoded directory in the verdi_script (1) run configuration.  This makes setting them optional instead of mandatory, and logs to the workspasce directory if they're not set.  This must be repeated for every run configuration.
+ - Fixed an error message saying saxon8-dom.jar couldn't be loaded.  This happened because (log4j?) loads the first implementation it can find of TransformerFactory.  It finds a non-functional one in netcdf that fails with the saxon8-dom.jar error.  Resolved by adding apache xalan (and xml.serializer dependency) which provide a working TransformerFactory in the classpath ahead of netcdf.

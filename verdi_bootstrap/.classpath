@@ -67,7 +67,6 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/milStd2525_png.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/mlib_jai-1.1.2_01.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/mlibwrapper_jai-1.1.3.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/omcorba.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/omj3d.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/omsvg.jar"/>
@@ -96,5 +95,8 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/xstream-1.4.7.jar" sourcepath="lib_src/xstream-distribution-1.4.7-src.zip"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/org.apache.xalan_2.7.1.v201005080400.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/org.apache.xml.serializer_2.7.1.v201005080400.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
