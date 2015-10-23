@@ -10,7 +10,7 @@ SET USER_HOME=%USERPROFILE%
 set VERDI_USER=c:\users\ellenjo
 
 REM Instructions: Set the following path to the location where you installed VERDI.
-SET VERDI_HOME=C:\\VERDI_test\\VERDI_1.6.0_test10082015
+SET VERDI_HOME=C:\\VERDI_test\\VERDI_1.6.0_test10222015
 
 REM Do not edit below this line
 REM ************************************************************************

@@ -179,6 +179,10 @@
 			<export prefix="*"/>
 		</library>
 
+		<library id="gt-swing" path="../core/lib/gt-swing-12.2.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
 		<library id="gt-epsg-hsql" path="../core/lib/gt-epsg-hsql-12.2.jar" type="code">
 			<export prefix="*"/>
 		</library>
