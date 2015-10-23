@@ -97,5 +97,6 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/jcommon-1.0.23.jar" sourcepath="/verdi_core/lib_src/jcommon-1.0.23-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/miglayout-core-5.1-20150404.220010-96.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/miglayout-swing-5.1-20150404.220019-96.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-swing-12.2.jar" sourcepath="/verdi_core/lib_src/gt-swing-12.2-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
