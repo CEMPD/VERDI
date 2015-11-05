@@ -269,9 +269,7 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 	protected List<ObsAnnotation> obsAnnotations;
 	protected VectorAnnotation vectAnnotation;
 
-	// It remains a mystery why eventProducer is needed.
-	private //final 
-	PlotEventProducer eventProducer = new PlotEventProducer();
+	private PlotEventProducer eventProducer = new PlotEventProducer();
 
 	// GUI attributes:
 	private final JButton playStopButton;
