@@ -178,9 +178,9 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-epsg-hsql" path="../verdi_core/lib/gt-epsg-hsql-12.2.jar" type="code">
+		<!--library id="gt-epsg-hsql" path="../verdi_core/lib/gt-epsg-hsql-12.2.jar" type="code">
 			<export prefix="*"/>
-		</library>
+		</library-->
 
 		<library id="gt-epsg-ext" path="../verdi_core/lib/gt-epsg-extension-12.2.jar" type="code">
 			<export prefix="*"/>
@@ -222,9 +222,9 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="hsqldb" path="../verdi_core/lib/hsqldb-2.2.8.jar" type="code">
+		<!--library id="hsqldb" path="../verdi_core/lib/hsqldb-2.2.8.jar" type="code">
 			<export prefix="*"/>
-		</library>
+		</library-->
 
 		<library id="jaramiko" path="../verdi_core/lib/jaramiko-151.jar" type="code">
 			<export prefix="*"/>
