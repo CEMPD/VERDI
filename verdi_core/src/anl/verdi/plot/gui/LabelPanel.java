@@ -6,12 +6,14 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
@@ -24,6 +26,8 @@ import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 import com.l2fprod.common.swing.JFontChooser;
+
+import anl.verdi.formula.Formula;
 
 
 /**
@@ -116,6 +120,17 @@ public class LabelPanel extends JPanel {
 		tickColorLbl.setEnabled(false);
 	}
 
+	public void initTicks(Boolean show, Font font, Color color, Integer numOfTickLabels, Formula.Type plottype) {
+		initTicks(show, font, color, numOfTickLabels);
+		
+		if (!plottype.equals(Formula.Type.TIME_SERIES_LINE) && !plottype.equals(Formula.Type.TIME_SERIES_BAR)) {
+			formatFld.setEnabled(false);
+			vRadio.setEnabled(false);
+			lsRadio.setEnabled(false);
+			rsRadio.setEnabled(false);
+		}
+	}
+	
 	public void initTicks(Boolean show, Font font, Color color, Integer numOfTickLabels) {
 		if (show == null) {
 			disableTicks();
@@ -134,7 +149,6 @@ public class LabelPanel extends JPanel {
 		if (color != null) tickColorFld.setBackground(color);
 		if (font != null) initTickFont(font);
 		if (numOfTickLabels != null) numberFld.setText(numOfTickLabels.toString());
-
 	}
 
 	private void initFont(Font font) {
@@ -218,6 +232,25 @@ public class LabelPanel extends JPanel {
 		tickColorLbl = new JLabel();
 		tickColorFld = new JTextField();
 		tickColorBtn = new JButton();
+		
+		//====Added to configure domain axis labels
+		format = new JLabel();
+		formatFld = new JTextField();
+		orientation = new JLabel();
+		orientationOption = new JPanel();
+		vRadio = new JRadioButton("Vertical");
+		lsRadio = new JRadioButton("Left Slant");
+		rsRadio = new JRadioButton("Right Slant");
+		radioGroup = new ButtonGroup();
+		radioGroup.add(vRadio);
+		radioGroup.add(lsRadio);
+		radioGroup.add(rsRadio);
+		orientationOption.add(vRadio);
+		orientationOption.add(lsRadio);
+		orientationOption.add(rsRadio);
+		vRadio.setSelected(true);
+		formatFld.setToolTipText("Use date and time patterns such as: MM/dd/yyyy HH:mm:ss");
+		
 		CellConstraints cc = new CellConstraints();
 
 		//======== this ========
@@ -235,6 +268,10 @@ public class LabelPanel extends JPanel {
 										FormFactory.DEFAULT_COLSPEC
 						},
 						new RowSpec[]{
+										FormFactory.DEFAULT_ROWSPEC,
+										FormFactory.LINE_GAP_ROWSPEC,
+										FormFactory.DEFAULT_ROWSPEC,
+										FormFactory.LINE_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC,
 										FormFactory.LINE_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC,
@@ -348,6 +385,16 @@ public class LabelPanel extends JPanel {
 		//---- tickColorBtn ----
 		tickColorBtn.setText("Select");
 		add(tickColorBtn, cc.xy(7, 17));
+		
+		//---- Format ----
+		format.setText("Format:");
+		add(format, cc.xy(3, 19));
+		add(formatFld, cc.xy(5, 19));
+		
+		//---- Orientation ----
+		orientation.setText("Orientation:");
+		add(orientation, cc.xy(3, 21));
+		add(orientationOption, cc.xy(5, 21));
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
 
@@ -372,5 +419,13 @@ public class LabelPanel extends JPanel {
 	private JLabel tickColorLbl;
 	private JTextField tickColorFld;
 	private JButton tickColorBtn;
+	private JLabel format;
+	private JTextField formatFld;
+	private JLabel orientation;
+	private JPanel orientationOption;
+	private JRadioButton vRadio;
+	private JRadioButton lsRadio;
+	private JRadioButton rsRadio;
+	private ButtonGroup radioGroup;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }

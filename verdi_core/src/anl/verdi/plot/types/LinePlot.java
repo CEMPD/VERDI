@@ -115,7 +115,7 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		this.frames = frames;
 		this.config = config;
 		XYDataset dataset = createDataset();
-		chart = createChart(dataset);
+		chart = createChart(dataset, config);
 		panel = new VerdiChartPanel(chart, true);
 		AreaFinder finder = new AreaFinder();
 		panel.addMouseListener(finder);
@@ -378,7 +378,7 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		return new DataUtilities.MinMax(min, max);
 	}
 
-	private JFreeChart createChart(XYDataset dataset) {
+	private JFreeChart createChart(XYDataset dataset, PlotConfiguration config) {
 		JFreeChart chart = ChartFactory.createTimeSeriesChart(
 						createTitle(),  // title
 						"Time Step",             // x-axis label
@@ -418,7 +418,8 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		DateAxis axis = (DateAxis) plot.getDomainAxis();
 		axis.setTimeZone(TimeZone.getTimeZone("UTC"));
 		// new SimpleDateFormat("MMMMM dd, yyyy HH:mm:ss z");
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+//		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd HH");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		axis.setDateFormatOverride(dateFormat);
 		axis.setVerticalTickLabels(true);

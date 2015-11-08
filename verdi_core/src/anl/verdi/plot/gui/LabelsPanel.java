@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 
+import anl.verdi.formula.Formula;
 import anl.verdi.plot.config.PlotConfiguration;
 
 import com.jgoodies.forms.factories.Borders;
@@ -72,8 +73,8 @@ public class LabelsPanel extends JPanel {
 		domainPanel.initLabel(title, font, color);
 	}
 
-	public void initDomainTick(Boolean show, Font font, Color color, Integer num) {
-		domainPanel.initTicks(show, font, color, num);
+	public void initDomainTick(Boolean show, Font font, Color color, Integer num, Formula.Type plottype) {
+		domainPanel.initTicks(show, font, color, num, plottype);
 	}
 
 	public void initRange(String title, Font font, Color color) {
