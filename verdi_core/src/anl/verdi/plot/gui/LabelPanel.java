@@ -121,17 +121,24 @@ public class LabelPanel extends JPanel {
 	}
 
 	public void initTicks(Boolean show, Font font, Color color, Integer numOfTickLabels, Formula.Type plottype) {
-		initTicks(show, font, color, numOfTickLabels);
+		initNormalTickOptions(show, font, color, numOfTickLabels);
 		
 		if (!plottype.equals(Formula.Type.TIME_SERIES_LINE) && !plottype.equals(Formula.Type.TIME_SERIES_BAR)) {
-			formatFld.setEnabled(false);
-			vRadio.setEnabled(false);
+			disableAllXTickLabelOptions();
+		}
+		
+		if (plottype.equals(Formula.Type.TIME_SERIES_LINE)) {
 			lsRadio.setEnabled(false);
 			rsRadio.setEnabled(false);
 		}
 	}
 	
 	public void initTicks(Boolean show, Font font, Color color, Integer numOfTickLabels) {
+		initNormalTickOptions(show, font, color, numOfTickLabels);
+		disableAllXTickLabelOptions();
+	}
+	
+	private void initNormalTickOptions(Boolean show, Font font, Color color, Integer numOfTickLabels) {
 		if (show == null) {
 			disableTicks();
 			return;
@@ -149,6 +156,14 @@ public class LabelPanel extends JPanel {
 		if (color != null) tickColorFld.setBackground(color);
 		if (font != null) initTickFont(font);
 		if (numOfTickLabels != null) numberFld.setText(numOfTickLabels.toString());
+	}
+	
+	private void disableAllXTickLabelOptions() {
+		formatFld.setEnabled(false);
+		hRadio.setEnabled(false);
+		vRadio.setEnabled(false);
+		lsRadio.setEnabled(false);
+		rsRadio.setEnabled(false);
 	}
 
 	private void initFont(Font font) {
@@ -239,16 +254,19 @@ public class LabelPanel extends JPanel {
 		orientation = new JLabel();
 		orientationOption = new JPanel();
 		vRadio = new JRadioButton("Vertical");
+		hRadio = new JRadioButton("Horizontal");
 		lsRadio = new JRadioButton("Left Slant");
 		rsRadio = new JRadioButton("Right Slant");
 		radioGroup = new ButtonGroup();
 		radioGroup.add(vRadio);
+		radioGroup.add(hRadio);
 		radioGroup.add(lsRadio);
 		radioGroup.add(rsRadio);
+		orientationOption.add(hRadio);
 		orientationOption.add(vRadio);
 		orientationOption.add(lsRadio);
 		orientationOption.add(rsRadio);
-		vRadio.setSelected(true);
+		hRadio.setSelected(true);
 		formatFld.setToolTipText("Use date and time patterns such as: MM/dd/yyyy HH:mm:ss");
 		
 		CellConstraints cc = new CellConstraints();
@@ -424,6 +442,7 @@ public class LabelPanel extends JPanel {
 	private JLabel orientation;
 	private JPanel orientationOption;
 	private JRadioButton vRadio;
+	private JRadioButton hRadio;
 	private JRadioButton lsRadio;
 	private JRadioButton rsRadio;
 	private ButtonGroup radioGroup;

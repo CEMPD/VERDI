@@ -394,9 +394,12 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 		plot.setDomainGridlinesVisible(true);
 
 		CategoryAxis axis = plot.getDomainAxis();
-		axis.setCategoryLabelPositions(CategoryLabelPositions.DOWN_90);
+		axis.setCategoryLabelPositions(CategoryLabelPositions.STANDARD);
 		axis.setLabel("Time Step");
-
+//		axis.setCategoryLabelPositions(
+//                CategoryLabelPositions.createUpRotationLabelPositions(
+//                        Math.PI / 8.0));
+		
 		NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setAutoRangeIncludesZero(false);
 		rangeAxis.setAutoRange(false);
