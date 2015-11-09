@@ -211,6 +211,19 @@ public class LabelPanel extends JPanel {
 			return null;
 		}
 	}
+	
+	public String getTickLabelFormat() {
+		return formatFld.getText();
+	}
+	
+	public String getTickLabelOrientation() {
+		if (vRadio.isSelected()) return "VERTICAL";
+		if (hRadio.isSelected()) return "HORIZONTAL";
+		if (lsRadio.isSelected()) return "LEFTSLANT";
+		if (rsRadio.isSelected()) return "RIGHTSLANT";
+		
+		return null;
+	}
 
 	public Font getSelectedTickFont() {
 		return selectedTickFont;

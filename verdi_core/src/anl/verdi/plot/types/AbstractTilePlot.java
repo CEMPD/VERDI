@@ -60,9 +60,13 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.event.PlotChangeEvent;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.chart.title.PaintScaleLegend;
@@ -1231,7 +1235,26 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, axis.isTickLabelsVisible());
 		config.putObject(PlotConfiguration.DOMAIN_TICK_COLOR, (Color) axis.getTickLabelPaint());
 		config.putObject(PlotConfiguration.DOMAIN_TICK_FONT, axis.getTickLabelFont());
+		
+		if (axis instanceof DateAxis) {
+			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT, ((DateAxis) axis).getDateFormatOverride().toString());
+			boolean vertical = ((DateAxis)axis).isVerticalTickLabels();
+			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION, (vertical) ? "VERTICAL" : "HORIZONTAL");
+		}
 
+		CategoryPlot catplot = chart.getCategoryPlot();
+		
+		if (catplot != null) {
+			CategoryAxis cataxis = catplot.getDomainAxis();
+			CategoryLabelPositions pos = cataxis.getCategoryLabelPositions();
+			String orient = "RIGHTSLANT";
+			if (pos.equals(CategoryLabelPositions.UP_90)) orient = "VERTICAL";
+			if (pos.equals(CategoryLabelPositions.UP_45)) orient = "LEFTSLANT";
+			if (pos.equals(CategoryLabelPositions.createUpRotationLabelPositions(0))) orient = "HORIZONTAL";
+			if (pos.equals(CategoryLabelPositions.createDownRotationLabelPositions(Math.PI / 4.0))) orient = "RIGHTSLANT";
+			
+			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION, orient);
+		}
 
 		axis = plot.getRangeAxis();
 		config.putObject(PlotConfiguration.RANGE_LABEL, axis.getLabel());

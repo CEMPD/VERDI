@@ -67,6 +67,8 @@ public class PlotConfiguration {
 	public static final String DOMAIN_TICK_FONT = PlotConfiguration.class.getName()
 			+ ".domain_tick_font";
 	public static final String DOMAIN_TICK_NUMBER = PlotConfiguration.class.getName() + ".domain_tick_number";
+	public static final String DOMAIN_TICK_LABEL_FORMAT = PlotConfiguration.class.getName() + ".domain_tick_label_format";
+	public static final String DOMAIN_TICK_LABEL_ORIENTATION = PlotConfiguration.class.getName() + ".domain_tick_label_orientation";
 	
 	public static final String RANGE_LABEL = PlotConfiguration.class.getName()
 			+ ".range";

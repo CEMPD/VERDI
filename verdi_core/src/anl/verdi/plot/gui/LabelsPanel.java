@@ -34,6 +34,8 @@ public class LabelsPanel extends JPanel {
 		config.putObject(PlotConfiguration.DOMAIN_TICK_FONT, domainPanel.getSelectedTickFont());
 		config.putObject(PlotConfiguration.DOMAIN_TICK_COLOR, domainPanel.getSelectedTickColor());
 		config.putObject(PlotConfiguration.DOMAIN_TICK_NUMBER, domainPanel.getNumberOfLabels());
+		config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT, domainPanel.getTickLabelFormat());
+		config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION, domainPanel.getTickLabelOrientation());
 
 
 		config.putObject(PlotConfiguration.RANGE_LABEL, rangePanel.getText());

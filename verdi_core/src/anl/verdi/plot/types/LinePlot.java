@@ -34,14 +34,11 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.ChartProgressEvent;
 import org.jfree.chart.event.ChartProgressListener;
-import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.title.LegendTitle;
@@ -52,9 +49,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-
-//import simphony.util.messages.MessageCenter;
-import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
@@ -81,6 +75,8 @@ import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.plot.util.PlotPrintAction;
 import anl.verdi.util.Tools;
 import anl.verdi.util.VUnits;
+//import simphony.util.messages.MessageCenter;
+import ucar.ma2.InvalidRangeException;
 
 /**
  * Class used to create time series line plot
@@ -422,7 +418,7 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		axis.setTimeZone(TimeZone.getTimeZone("UTC"));
 		// new SimpleDateFormat("MMMMM dd, yyyy HH:mm:ss z");
 //		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd HH");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, h a");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		axis.setDateFormatOverride(dateFormat);
 		axis.setVerticalTickLabels(false);
