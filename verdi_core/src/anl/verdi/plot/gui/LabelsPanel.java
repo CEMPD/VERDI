@@ -75,8 +75,8 @@ public class LabelsPanel extends JPanel {
 		domainPanel.initLabel(title, font, color);
 	}
 
-	public void initDomainTick(Boolean show, Font font, Color color, Integer num, Formula.Type plottype) {
-		domainPanel.initTicks(show, font, color, num, plottype);
+	public void initDomainTick(Boolean show, Font font, Color color, Integer num, String labelFormat, String labelOrientation, Formula.Type plottype) {
+		domainPanel.initTicks(show, font, color, num, labelFormat, labelOrientation, plottype);
 	}
 
 	public void initRange(String title, Font font, Color color) {

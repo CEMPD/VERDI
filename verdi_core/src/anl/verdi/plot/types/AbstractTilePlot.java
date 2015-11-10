@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1237,15 +1238,13 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		config.putObject(PlotConfiguration.DOMAIN_TICK_FONT, axis.getTickLabelFont());
 		
 		if (axis instanceof DateAxis) {
-			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT, ((DateAxis) axis).getDateFormatOverride().toString());
+			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT, ((SimpleDateFormat)((DateAxis)axis).getDateFormatOverride()).toPattern());
 			boolean vertical = ((DateAxis)axis).isVerticalTickLabels();
 			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION, (vertical) ? "VERTICAL" : "HORIZONTAL");
 		}
 
-		CategoryPlot catplot = chart.getCategoryPlot();
-		
-		if (catplot != null) {
-			CategoryAxis cataxis = catplot.getDomainAxis();
+		if (chart.getPlot() instanceof CategoryPlot) {
+			CategoryAxis cataxis = ((CategoryPlot)chart.getPlot()).getDomainAxis();
 			CategoryLabelPositions pos = cataxis.getCategoryLabelPositions();
 			String orient = "RIGHTSLANT";
 			if (pos.equals(CategoryLabelPositions.UP_90)) orient = "VERTICAL";

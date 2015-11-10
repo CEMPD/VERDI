@@ -216,7 +216,9 @@ public class ConfigDialog extends JDialog {
 				.getObject(PlotConfiguration.DOMAIN_SHOW_TICK), config
 				.getFont(PlotConfiguration.DOMAIN_TICK_FONT), config
 				.getColor(PlotConfiguration.DOMAIN_TICK_COLOR), (Integer)config
-				.getObject(PlotConfiguration.DOMAIN_TICK_NUMBER), plot.getType());
+				.getObject(PlotConfiguration.DOMAIN_TICK_NUMBER), config
+				.getString(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT), config
+				.getString(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION), plot.getType());
 
 		labelsPanel.initRange(config.getString(PlotConfiguration.RANGE_LABEL),
 				config.getFont(PlotConfiguration.RANGE_FONT), config
