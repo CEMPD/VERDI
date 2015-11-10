@@ -120,8 +120,8 @@ public class LabelPanel extends JPanel {
 		tickColorLbl.setEnabled(false);
 	}
 
-	public void initTicks(Boolean show, Font font, Color color, Integer numOfTickLabels, Formula.Type plottype) {
-		initNormalTickOptions(show, font, color, numOfTickLabels);
+	public void initTicks(Boolean show, Font font, Color color, Integer numOfTickLabels, String labelFormat, String labelOrientation, Formula.Type plottype) {
+		initNormalTickOptions(show, font, color, numOfTickLabels, labelFormat, labelOrientation);
 		
 		if (!plottype.equals(Formula.Type.TIME_SERIES_LINE) && !plottype.equals(Formula.Type.TIME_SERIES_BAR)) {
 			disableAllXTickLabelOptions();
@@ -134,11 +134,11 @@ public class LabelPanel extends JPanel {
 	}
 	
 	public void initTicks(Boolean show, Font font, Color color, Integer numOfTickLabels) {
-		initNormalTickOptions(show, font, color, numOfTickLabels);
+		initNormalTickOptions(show, font, color, numOfTickLabels, null, null);
 		disableAllXTickLabelOptions();
 	}
 	
-	private void initNormalTickOptions(Boolean show, Font font, Color color, Integer numOfTickLabels) {
+	private void initNormalTickOptions(Boolean show, Font font, Color color, Integer numOfTickLabels, String labelFormat, String labelOrientation) {
 		if (show == null) {
 			disableTicks();
 			return;
@@ -156,6 +156,13 @@ public class LabelPanel extends JPanel {
 		if (color != null) tickColorFld.setBackground(color);
 		if (font != null) initTickFont(font);
 		if (numOfTickLabels != null) numberFld.setText(numOfTickLabels.toString());
+		if (labelFormat != null) formatFld.setText(labelFormat);
+		if (labelOrientation != null && labelOrientation.trim().length() != 0) {
+			if (labelOrientation.equals("VERTICAL")) {vRadio.setSelected(true);}
+			if (labelOrientation.equals("HORIZONTAL")) {hRadio.setSelected(true);}
+			if (labelOrientation.equals("LEFTSLANT")) {lsRadio.setSelected(true);}
+			if (labelOrientation.equals("RIGHTSLANT")) {rsRadio.setSelected(true);}
+		}
 	}
 	
 	private void disableAllXTickLabelOptions() {
