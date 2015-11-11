@@ -5,7 +5,7 @@ cd $VERDI_HOME/plugins/bootstrap
 
 if [ "`uname -m`" = "ia64" ]; then
   JAVA=/usr/java/jdk/bin/java
-  JAVAMAXMEM="-Xmx6000M"
+  JAVAMAXMEM="-Xmx6144M"
 else
   JAVA=../../jre/bin/java
   JAVAMAXMEM="-Xmx1024M"
