@@ -72,6 +72,7 @@ import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataFrameIndex;
 import anl.verdi.data.DataUtilities;
 import anl.verdi.formula.Formula;
+import anl.verdi.formula.Formula.Type;
 import anl.verdi.plot.anim.AnimationPanelContour3D;	// 2014 copy of AnimationPanel specifically for Contour3D
 import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.color.PavePaletteCreator;
@@ -884,7 +885,8 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		config.setColorMap(map);
 
 		config = (TilePlotConfiguration) getTitlesLabelsConfig(config);
-
+		config.putObject(PlotConfiguration.PLOT_TYPE, Type.CONTOUR); //NOTE: to differentiate plot types
+		
 		ValueAxis axis = legend.getLegend().getAxis();
 		config.putObject(PlotConfiguration.UNITS, axis.getLabel());
 		Font font = axis.getLabelFont();

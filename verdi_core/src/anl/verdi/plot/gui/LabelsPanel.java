@@ -34,7 +34,17 @@ public class LabelsPanel extends JPanel {
 		config.putObject(PlotConfiguration.DOMAIN_TICK_FONT, domainPanel.getSelectedTickFont());
 		config.putObject(PlotConfiguration.DOMAIN_TICK_COLOR, domainPanel.getSelectedTickColor());
 		config.putObject(PlotConfiguration.DOMAIN_TICK_NUMBER, domainPanel.getNumberOfLabels());
-		config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT, domainPanel.getTickLabelFormat());
+		
+		Formula.Type plottype = (Formula.Type)config.getObject(PlotConfiguration.PLOT_TYPE); //NOTE: to differentiate time series plots
+		
+		if (Formula.Type.TIME_SERIES_LINE.equals(plottype)) {
+			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT, domainPanel.getTickLabelFormat());
+		}
+		
+		if (Formula.Type.TIME_SERIES_BAR.equals(plottype)) {
+			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT_4CAT, domainPanel.getTickLabelFormat());
+		}
+		
 		config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION, domainPanel.getTickLabelOrientation());
 
 

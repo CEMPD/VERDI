@@ -41,6 +41,7 @@ import anl.verdi.data.Range;
 import anl.verdi.data.Slice;
 import anl.verdi.data.VectorEvaluator;
 import anl.verdi.formula.Formula;
+import anl.verdi.formula.Formula.Type;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.data.DataFrameXYZDataset;
@@ -89,6 +90,7 @@ public class TilePlot extends AbstractTilePlot {
 			config.setSubtitle1(Tools.getDatasetNames(frame));
 		
 		PlotConfiguration defaultConfig = getPlotConfiguration();
+		defaultConfig.putObject(PlotConfiguration.PLOT_TYPE, Type.TILE); //NOTE: to differentiate plot types
 		defaultConfig.merge(config);
 		configure(defaultConfig);
 	}
