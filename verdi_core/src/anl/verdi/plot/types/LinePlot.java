@@ -57,6 +57,7 @@ import anl.verdi.data.DataUtilities;
 import anl.verdi.data.Range;
 import anl.verdi.data.Slice;
 import anl.verdi.formula.Formula;
+import anl.verdi.formula.Formula.Type;
 import anl.verdi.plot.config.JFreeChartConfigurator;
 import anl.verdi.plot.config.LoadConfiguration;
 import anl.verdi.plot.config.PlotConfiguration;
@@ -640,6 +641,7 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		PlotConfiguration config = new PlotConfiguration();
 		config = titlesLabels.getConfiguration(config);
 
+		config.putObject(PlotConfiguration.PLOT_TYPE, Type.TIME_SERIES_LINE); //NOTE: to differentiate plot types
 		config.putObject(PlotConfiguration.UNITS, dataset.getSeries(0).getKey());
 		config.putObject(PlotConfiguration.UNITS_FONT, chart.getLegend().getItemFont());
 		config.putObject(PlotConfiguration.UNITS_COLOR, chart.getLegend().getItemPaint());

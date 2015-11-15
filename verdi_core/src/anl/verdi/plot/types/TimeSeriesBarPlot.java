@@ -59,6 +59,7 @@ import anl.verdi.data.DataUtilities;
 import anl.verdi.data.Range;
 import anl.verdi.data.Slice;
 import anl.verdi.formula.Formula;
+import anl.verdi.formula.Formula.Type;
 import anl.verdi.plot.config.JFreeChartConfigurator;
 import anl.verdi.plot.config.LoadConfiguration;
 import anl.verdi.plot.config.PlotConfiguration;
@@ -113,7 +114,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 	public TimeSeriesBarPlot(DataFrame frame, PlotConfiguration config) {
 		this.frame = frame;
 		this.config = config;
-		dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		dateFormat = new SimpleDateFormat("MMM d, h a");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		dataset = createDataset();
 		chart = createChart(dataset);
@@ -564,8 +565,9 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 	 */
 	@Override
 	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
-	configure(config);
+		configure(config);
 	}
+	
 	@Override
 	public void configure(PlotConfiguration config) {
 		String configFile = config.getConfigFileName();
@@ -591,6 +593,14 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 			public void configureUnitsTick(Boolean show, Font font, Color color) {}
 		};
 
+		//NOTE: do the category label update here since there is no handle in the domain axis object for the label format
+		try {
+			dateFormat.applyPattern(config.getString(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT_4CAT));
+			refreshCategoryLabelFormat();
+		} catch (Exception e) {
+			// NOTE: if new date format doesn't format, there is no action is needed.
+		}
+		
 		// do the titles and the labels
 		JFreeChartConfigurator configurator = new JFreeChartConfigurator(chart,
 						titlesLabels.getTitleConfigurator(), unitsConfig);
@@ -601,6 +611,23 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 //		if (color != null) renderer.setSeriesPaint(0, color);
 	}
 
+	/***
+	 * Refresh the domain axis label so to take the new date format
+	 */
+	private void refreshCategoryLabelFormat() {
+		dataset.clear();
+		Axes<DataFrameAxis> axes = frame.getAxes();
+		DataFrameAxis time = axes.getTimeAxis();
+		int origin = time.getOrigin();
+		DataFrameIndex index = frame.getIndex();
+		index.setLayer(layer);
+		for (int t = 0; t < time.getExtent(); t++) {
+			index.setTime(t);
+			GregorianCalendar date = axes.getDate(t + origin);		// 2014 changed Date to GregorianCalendar
+			dataset.addValue(frame.getDouble(index), "Series 1", dateFormat.format(date.getTimeInMillis()));
+		}
+	}
+	
 	/**
 	 * Gets this Plot's configuration data.
 	 *
@@ -610,12 +637,14 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 	public PlotConfiguration getPlotConfiguration() {
 		PlotConfiguration config = new PlotConfiguration();
 		config = titlesLabels.getConfiguration(config);
+		config.putObject(PlotConfiguration.PLOT_TYPE, Type.TIME_SERIES_BAR); //NOTE: to differentiate plot types
 		config.putObject(PlotConfiguration.UNITS, dataset.getRowKey(0).toString());
 		config.putObject(PlotConfiguration.UNITS_FONT, chart.getLegend().getItemFont());
 		config.putObject(PlotConfiguration.UNITS_COLOR, chart.getLegend().getItemPaint());
 		config.putObject(PlotConfiguration.FOOTER1_SHOW_LINE, true);
 		config.putObject(PlotConfiguration.FOOTER2_SHOW_LINE, true);
 		config.putObject(PlotConfiguration.OBS_SHOW_LEGEND, false);
+		config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT_4CAT, dateFormat.toPattern());
 
 		CategoryItemRenderer renderer = (CategoryItemRenderer) ((CategoryPlot) chart.getPlot()).getRenderer(0);
 		config.putObject(TimeSeriesPlotConfiguration.SERIES_COLOR, (Color) renderer.getSeriesPaint(0));
