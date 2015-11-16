@@ -33,7 +33,9 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
+import org.jfree.chart.ChartTheme;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -60,9 +62,11 @@ import anl.verdi.formula.Formula;
 import anl.verdi.formula.Formula.Type;
 import anl.verdi.plot.config.JFreeChartConfigurator;
 import anl.verdi.plot.config.LoadConfiguration;
+import anl.verdi.plot.config.LoadTheme;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
 import anl.verdi.plot.config.SaveConfiguration;
+import anl.verdi.plot.config.SaveTheme;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 import anl.verdi.plot.config.UnitsConfigurator;
 import anl.verdi.plot.gui.AreaSelectionEvent;
@@ -196,6 +200,17 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		});
 		menu.add(new LoadConfiguration(this));
 		menu.add(new SaveConfiguration(this));
+		menu.add(new LoadTheme(this, chart));
+		
+		menu.add(new AbstractAction("Edit Chart Theme") {
+			private static final long serialVersionUID = 5016577781516485377L;
+
+			public void actionPerformed(ActionEvent e) {
+				panel.doEditChartProperties();
+			}
+		});
+		
+		menu.add(new SaveTheme(this));
 		bar.add(menu);
 
 		menu = new JMenu("Controls");
@@ -389,7 +404,7 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 						false               // generate URLs?
 		);
 
-		chart.setBackgroundPaint(Color.white);
+		chart.setBackgroundPaint(Color.WHITE);
 		chart.addProgressListener(this);
 
 		XYPlot plot = (XYPlot) chart.getPlot();
