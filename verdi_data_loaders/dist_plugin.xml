@@ -61,6 +61,11 @@
 		<parameter id="description" value="Models-3 data loader"/>
 	</extension>
 	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
+	           id="mpas">
+		<parameter id="class" value="anl.verdi.loaders.MPASLoader"/>
+		<parameter id="description" value="MPAS data loader"/>
+	</extension>
+	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
 	           id="wrf">
 		<parameter id="class" value="anl.verdi.loaders.WRFLoader"/>
 		<parameter id="description" value="WRF data loader"/>

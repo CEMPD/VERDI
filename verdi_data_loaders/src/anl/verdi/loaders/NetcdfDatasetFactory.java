@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
+
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
@@ -21,6 +22,7 @@ import ucar.nc2.Variable;
 import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.conv.M3IOConvention;
+import ucar.nc2.dataset.conv.MPASConvention;
 import ucar.nc2.dataset.conv.WRFConvention;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
@@ -79,6 +81,43 @@ public class NetcdfDatasetFactory {
 			}
 		}
 		return new ArrayList<Dataset>();
+	}
+
+	/**
+	 * Creates a list of Datasets from the specified URL. The url
+	 * should point to a netcdf file conforming to the MPAS convention.
+	 *
+	 * @param url a url that points to a netcdf file conforming to the
+	 *            Models-3 convention.
+	 * @return a list of Datasets from the specified URL
+	 */
+	public List<Dataset> createMPASDatasets(URL url) {
+		Logger.debug("in NetcdfDatasetFactory.createModels3Datasets, url = " + url);
+		NetcdfDataset netcdfDataset = null;
+		List<Dataset> setList = new ArrayList<Dataset>();
+		try {
+			Logger.debug("ready to call openNetcdfGridDataset");
+			String urlString = url.toExternalForm();
+			netcdfDataset = NetcdfDataset.openDataset(urlString);
+			Logger.debug("in NetcdfDatasetFactory.createModels3Datasets, back from openNetcdfGridDataset");
+			if (!MPASConvention.isMine(netcdfDataset)) {
+				Logger.debug("M3IOConvention.isMine == false");
+				throw new IOException("Loading non-models3 file into Models3Dataset");
+			}
+			// if here then ok.
+			Logger.debug("isMine == true, returning createDatasets for url = " + url);
+			setList.add(new MPASDataset(url, netcdfDataset));
+		} catch (Exception io) {
+			io.printStackTrace();
+			Logger.error("Error reading netcdf file " + io.getMessage());
+			try {
+				if (netcdfDataset != null)
+					netcdfDataset.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return setList;
 	}
 
 	/**

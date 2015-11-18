@@ -17,8 +17,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 
+
+
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.dataset.CoordinateAxis1D;
+import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
 import ucar.unidata.geoloc.LatLonPointImpl;
@@ -51,13 +54,17 @@ public class NetcdfBoxer implements BoundingBoxer {
 
 	private GridDatatype grid;
 	private CoordinateReferenceSystem crs;
-	private boolean isLatLon;
+	protected boolean isLatLon;
+	
+	protected NetcdfBoxer() {	
+	}
 
 	public NetcdfBoxer(GridDatatype grid) {
 		Logger.debug("in constructor for NetcdfBoxer for a GridDatatype");
 		this.grid = grid;
 		this.isLatLon = grid.getCoordinateSystem().isLatLon();
 	}
+	
 	
 	/**
 	 * Gets the Projection associated with this BoundingBoxer.
@@ -89,7 +96,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 		if (isLatLon) {
 			return new Point2D.Double(xVal, yVal);
 		} else {
-			Projection proj = grid.getCoordinateSystem().getProjection();
+			Projection proj = getProjection();
 			LatLonPointImpl latLon = new LatLonPointImpl();
 			proj.projToLatLon(new ProjectionPointImpl(xVal, yVal), latLon);
 			return new Point2D.Double(latLon.getLongitude(), latLon
@@ -107,7 +114,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 	 */
 	public Point2D latLonToAxisPoint(double lat, double lon) {
 		Logger.info("in NetcdfBoxer.latLonToAxisPoint for lat = " + lat + ", lon = " + lon);
-		Projection proj = grid.getCoordinateSystem().getProjection();
+		Projection proj = getProjection();
 		ProjectionPointImpl point = new ProjectionPointImpl();
 		proj.latLonToProj(new LatLonPointImpl(lat, lon), point);
 
@@ -235,7 +242,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 //		Hints hints = new Hints(Hints.COMPARISON_TOLERANCE, 1E-9);	// TODO: 2014  probably need to do in beginning of VERDI
 		Hints.putSystemDefault(Hints.COMPARISON_TOLERANCE, 10e-9);
 
-		Projection proj = grid.getCoordinateSystem().getProjection();
+		Projection proj = getProjection();
 
 		if (proj instanceof LambertConformal) {
 			Logger.debug("proj = " + proj.toString() + '\n' + "  projection is of type LambertConformal");
@@ -314,12 +321,12 @@ public class NetcdfBoxer implements BoundingBoxer {
 		return new ReferencedEnvelope(xStart, xEnd, yStart, yEnd, crs);
 	}
 
-	private CoordinateAxis1D getXAxis() {
+	protected CoordinateAxis1D getXAxis() {
 		GridCoordSystem gcs = grid.getCoordinateSystem();
 		return (CoordinateAxis1D) gcs.getXHorizAxis();
 	}
 
-	private CoordinateAxis1D getYAxis() {
+	protected CoordinateAxis1D getYAxis() {
 		GridCoordSystem gcs = grid.getCoordinateSystem();
 		return (CoordinateAxis1D) gcs.getYHorizAxis();
 	}
