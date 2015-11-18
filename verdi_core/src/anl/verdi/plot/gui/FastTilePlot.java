@@ -100,10 +100,10 @@ import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 //import org.geotools.map.DefaultMapLayer;	// deprecated, replacing with FeatureLayer
 import org.geotools.map.FeatureLayer;
+import org.geotools.map.MapContent;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
-import org.geotools.swing.JMapFrame;		// JEB Sept 2015
-import org.geotools.swing.JMapPane;			// JEB Sept 2015
+import org.geotools.swing.JMapPane;			// JEB Sept 2015; for mapping support in GeoTools
 import org.geotools.swing.data.JFileDataStoreChooser;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -155,6 +155,7 @@ import anl.verdi.util.Utilities;
 public class FastTilePlot extends JMapPane implements ActionListener, Printable,	// JEB Sept 2015
 		ChangeListener, ComponentListener, MouseListener,
 		TimeAnimatablePlot, Plot {
+	private MapContent myMapContent = new MapContent();	// JEB Nov 2015
 	static final Logger Logger = LogManager.getLogger(FastTilePlot.class.getName());
 	private static final long serialVersionUID = 5835232088528761729L;
 	public static final int NO_VAL = Integer.MIN_VALUE;
@@ -244,8 +245,7 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 
 	// For clipped/projected/clipped map lines:
 
-	private static final String mapFileDirectory = System.getProperty("user.dir")
-			+ "/data"; // Contains map_*.bin files
+	private static final String mapFileDirectory = System.getProperty("user.dir") + "/data"; // Contains map files
 
 	private //final 
 	Mapper mapper = new Mapper(mapFileDirectory);
@@ -392,25 +392,28 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 			do {
 				if ( drawMode != DRAW_NONE &&
 					 ! VerdiGUI.isHidden( (Plot) threadParent ) ) {
-					
+Logger.debug("within drawMode != DRAW_NONE && !VerdiGUI.isHidden((Plot) threadParent)");
 					if (drawMode == DRAW_ONCE) {
 //						synchronized (lock) {
 							if (get_draw_once_requests() > 0) {
 								draw_once_requests = 0;
+								Logger.debug("set draw_once_requests = 0");
 							}
 							if ( get_draw_once_requests() >=0 ) {
 								showBusyCursor();
+								Logger.debug("get_draw_once_requests >= 0 so showBusyCursor()");
 							}
 					}
 					
 					// When animating, pause based on user-set delay rate:
 
 					if (drawMode == DRAW_CONTINUOUS && delay != 0) {
+						Logger.debug("within DRAW_CONTINUOUS with a delay");	// DO NOT SEE THIS LOGGER MSG
 						try {
 							Thread.sleep(delay);
 						} catch (Exception unused) {}
 					}
-
+Logger.debug("set up drawing space, titles, fonts, etc.");
 					final int canvasWidth = getWidth();
 					final int canvasHeight = getHeight();
 					float marginScale = 0.95f; // Controls whitespace margin around plot window.
@@ -463,11 +466,11 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 
 					// Use off-screen graphics for double-buffering:
 					// don't start processing until graphics system is ready!
-
+Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
 					final Image offScreenImage =
 						repaintManager.getOffscreenBuffer(threadParent, canvasWidth, canvasHeight);
 
-					// offScreenImage = (Image) (offScreenImage.clone());
+					// offScreenImage = (Image) (offScreenImage.clone());	// commented out in 2/2014 version
 
 					if (offScreenImage == null) {
 						if ( get_draw_once_requests() < 0) 
@@ -498,33 +501,35 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 
 					if (drawMode == DRAW_CONTINUOUS) {
 						timestep = nextValue(1, timestep, firstTimestep, lastTimestep);
+						Logger.debug("in DRAW_CONTINUOUS for timestep = " + timestep);
 						timeLayerPanel.setTime(timestep);
 						drawOverLays();
+						Logger.debug("back from drawOverLays() & done with DRAW_CONTINUOUS block");
 					}
 					
-//					synchronized (lock) {
+//					synchronized (lock) {	// commented out in 2/2014 version
 						if (get_draw_once_requests() > 0) {
 							draw_once_requests = 0;
 							if ( get_draw_once_requests() < 0) 
 								restoreCursor();
 							continue;
 						}
-//					}
-
+//					}						// commented out in 2/2014 version
+Logger.debug("calling copySubsetLayerData from FastTilePlot.Runnable.run");
 					copySubsetLayerData(log); // Based on current timestep and layer.
 
 					
 					synchronized (lock) {
 						
 						// Erase canvas:
-
+Logger.debug("working with offScreenGraphics; first reset to blank");
 						offScreenGraphics.setColor(Color.white);
 						offScreenGraphics.fillRect(0, 0, canvasWidth,
 								canvasHeight);
 
 						// Draw legend-colored grid cells, axis, text labels and
 						// legend:
-
+Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						final Boolean showGridLines = (Boolean)
 							config.getObject( TilePlotConfiguration.SHOW_GRID_LINES );
 						final Color gridLineColor = (Color)
@@ -628,11 +633,16 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 						Toolkit.getDefaultToolkit().sync();
 
 						try {
+							Logger.debug("ready to call toBufferedImage");
 							bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
+							Logger.debug("back from toBufferedImage, ready to call graphics.drawImage");
 							graphics.drawImage(offScreenImage, 0, 0,threadParent);
+							Logger.debug("back from graphics.drawImage");
 						} finally {
 							graphics.dispose();
+							Logger.debug("just did graphics.dispose in finally block");
 							offScreenGraphics.dispose();
+							Logger.debug("just did offScreenGraphics.dispose in finally block");
 						}
 
 						Logger.debug("ready for Toolkit.getDefaultToolkit 2nd time");	// 2015 debug HIT THIS REPEATEDLY
@@ -650,7 +660,7 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 							restoreCursor();
 						}
 					} else {
-						//drawMode = DRAW_NONE;
+						//drawMode = DRAW_NONE;			// commented out in 2/2014 version
 					}
 					
 				} else {
@@ -708,6 +718,7 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 			assert offScreenImage != null;
 			assert offScreenGraphics != null;
 
+			Logger.debug("ready to call copySubsetLayerData from drawBatchImage");
 			copySubsetLayerData(this.log); // Based on current timestep and layer.
 
 				offScreenGraphics.setColor(Color.white);
@@ -754,8 +765,10 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 
 				try {
 					bImage = (BufferedImage) offScreenImage;
+					Logger.debug("just did bImage = (BufferedImage) offScreenImage");
 				} finally {
 					offScreenGraphics.dispose();
+					Logger.debug("just did offScreenGraphics.dispose in finally block");
 				}
 	}
 	
@@ -893,6 +906,7 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 					recomputeStatistics = true;
 				} else {
 					//reset to no statistics...
+					Logger.debug("ready to call copySubsetLayerData from reset to no statistics");
 					copySubsetLayerData(this.log);
 				}
 				this.preStatIndex = statisticsMenu.getSelectedIndex();
@@ -1234,6 +1248,7 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 	public void setTimestep(int timestep) {
 		if (timestep >= firstTimestep && timestep <= lastTimestep && timestep != this.timestep) {
 			this.timestep = timestep;
+			Logger.debug("ready to call copySubsetLayerData from setTimestep");
 			copySubsetLayerData(this.log);
 			draw();
 			drawOverLays();
@@ -1249,6 +1264,7 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 				recomputeStatistics = true;
 			}
 
+			Logger.debug("ready to call copySubsetLayerData from setLayer");
 			copySubsetLayerData(this.log);
 			draw();
 		}
@@ -1707,6 +1723,8 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 		final int subsetLayerRows = 1 + lastRow - firstRow;
 		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
 
+		Logger.debug("into function copySubsetLayerData");	// NOT IN LOG FILE
+		
 		if (subsetLayerData == null
 				|| subsetLayerData.length != subsetLayerRows * subsetLayerColumns
 				|| subsetLayerData[0].length != subsetLayerColumns) {
@@ -2034,6 +2052,7 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 		firstColumn = 0;
 		lastColumn = columns - 1;
 		computeDerivedAttributes();
+		Logger.debug("ready to call copySubsetLayerData from resetZooming()");
 		copySubsetLayerData(this.log);
 	}
 
@@ -2145,8 +2164,8 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 		FastTileLayerEditor editor = null;
 		
 		if (frame instanceof JFrame)
-//			editor = new FastTileLayerEditor((JFrame) frame);
-			editor = new FastTileLayerEditor((JMapFrame) frame);		// JEB Sept 2015
+			editor = new FastTileLayerEditor((JFrame) frame);
+//			editor = new FastTileLayerEditor((JMapFrame) frame);		// JEB Sept 2015
 		else
 			editor = new FastTileLayerEditor((JDialog) frame);
 		
@@ -2306,8 +2325,8 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 		Window window = SwingUtilities.getWindowAncestor(FastTilePlot.this);
 		dialog = null;
 		if (window instanceof JFrame)
-//			dialog = new ConfigDialog((JFrame) window);
-			dialog = new ConfigDialog((JMapFrame) window);		// JEB Sept 2015
+			dialog = new ConfigDialog((JFrame) window);
+//			dialog = new ConfigDialog((JMapFrame) window);		// JEB Sept 2015
 		else
 			dialog = new ConfigDialog((JDialog) window);
 		dialog.init(FastTilePlot.this, minMax);
@@ -2561,6 +2580,7 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 	 */
 
 	public BufferedImage getBufferedImage(int width, int height) {
+		Logger.debug("sending bImage in getBufferedImage member function");
 		return bImage;
 	}
 

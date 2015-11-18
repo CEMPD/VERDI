@@ -13,6 +13,8 @@ import java.util.List;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+//import org.geotools.swing.JMapFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -21,9 +23,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-//import javax.swing.JFrame;
-import org.geotools.swing.JMapFrame;
 
 import anl.verdi.core.VerdiConstants;
 
@@ -395,10 +394,8 @@ public class VerdiListPanel extends JPanel {
 		test.setList(vars);
 		test.setAddItem("New Variable");
 		
-//		JFrame frame = new JFrame();
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JMapFrame frame = new JMapFrame();
-		frame.setDefaultCloseOperation(JMapFrame.EXIT_ON_CLOSE);
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		frame.setSize(500, 500);
 		frame.add(test, BorderLayout.CENTER);

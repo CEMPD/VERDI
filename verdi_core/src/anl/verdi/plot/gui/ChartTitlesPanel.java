@@ -8,8 +8,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-//import javax.swing.JFrame;
-import org.geotools.swing.JMapFrame;
+import javax.swing.JFrame;
 
 import anl.verdi.plot.config.PlotConfiguration;
 
@@ -75,10 +74,8 @@ public class ChartTitlesPanel extends JPanel {
 	}
 
 	public static void main(String[] args) {
-//		JFrame frame = new JFrame();
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JMapFrame frame = new JMapFrame();
-		frame.setDefaultCloseOperation(JMapFrame.EXIT_ON_CLOSE);
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		ChartTitlesPanel titles = new ChartTitlesPanel();
 		titles.initTitle(true, "Title", new JLabel().getFont(), Color.RED);
 		titles.initSubTitle1(false, "Subtitle 1", new JLabel().getFont(), Color.GREEN);

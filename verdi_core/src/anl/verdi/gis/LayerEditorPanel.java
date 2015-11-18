@@ -4,7 +4,7 @@
 
 package anl.verdi.gis;
 
-import java.awt.BorderLayout;
+//import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +19,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -34,8 +35,6 @@ import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
 //import org.geotools.map.MapContext;	// GeoTools replaced MapContext with MapContent
 import org.geotools.map.MapContent;
-// import javax.swing.JFrame;
-import org.geotools.swing.JMapFrame;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -44,6 +43,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
+//import org.geotools.swing.JMapFrame;
 
 /**
  * @author User #2
@@ -291,8 +291,8 @@ public class LayerEditorPanel extends JPanel {
 
 		AddLayerWizard wizard = new AddLayerWizard();
 		JDialog dialog = (JDialog)SwingUtilities.getWindowAncestor(this);
-//		FeatureLayer layer = wizard.display((JFrame)dialog.getParent());
-		FeatureLayer layer = wizard.display((JMapFrame)dialog.getParent());
+		FeatureLayer layer = wizard.display((JFrame)dialog.getParent());
+//		FeatureLayer layer = wizard.display((JMapFrame)dialog.getParent());
 
 		if (layer != null) {
 			((DefaultListModel) layerList.getModel()).add(0, layer);
@@ -420,15 +420,15 @@ public class LayerEditorPanel extends JPanel {
 	private JButton removeLayerButton;
 	// JFormDesigner - End of variables declaration //GEN-END:variables
 
-	public static void main(String[] args) {
-//		JFrame frame = new JFrame();
-//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JMapFrame frame = new JMapFrame();
-		frame.setDefaultCloseOperation(JMapFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new BorderLayout());
-		frame.setSize(500, 500);
-		frame.add(new LayerEditorPanel(), BorderLayout.CENTER);
-		frame.setVisible(true);
-	}
+//	public static void main(String[] args) {
+////		JFrame frame = new JFrame();
+////		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		JMapFrame frame = new JMapFrame();
+//		frame.setDefaultCloseOperation(JMapFrame.EXIT_ON_CLOSE);
+//		frame.setLayout(new BorderLayout());
+//		frame.setSize(500, 500);
+//		frame.add(new LayerEditorPanel(), BorderLayout.CENTER);
+//		frame.setVisible(true);
+//	}
 
 }

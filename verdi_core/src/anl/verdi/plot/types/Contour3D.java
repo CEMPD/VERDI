@@ -41,7 +41,6 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-import org.geotools.swing.JMapFrame;
 import org.jfree.chart.axis.ValueAxis;
 
 import saf.core.ui.util.FileChooserUtilities;
@@ -725,10 +724,10 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 	private void editChartProps() {
 		Window window = SwingUtilities.getWindowAncestor(panel);
 		ConfigDialog dialog = null;
-//		if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
 		if (window instanceof JFrame) 
-			dialog = new ConfigDialog((JMapFrame) window);
-		else dialog = new ConfigDialog((JDialog) window);
+			dialog = new ConfigDialog((JFrame) window);
+		else 
+			dialog = new ConfigDialog((JDialog) window);
 
 		dialog.init(this, minMax);
 		dialog.setSize(500, 600);

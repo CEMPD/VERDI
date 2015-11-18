@@ -21,7 +21,7 @@ import anl.verdi.core.VerdiApplication;
 import anl.verdi.data.DataFrame;
 import anl.verdi.formula.Formula;
 import anl.verdi.plot.gui.FastAreaTilePlot;
-import anl.verdi.plot.gui.PlotPanel;			// 2015 replacing PlotPanel with MapPlotPanel
+import anl.verdi.plot.gui.PlotPanel;
 
 public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 
@@ -68,7 +68,7 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 // WIP			// 2015 changing PlotPanel to MapPlotPanel
 				// need different constructor in MapPlotPanel
 				// need to set up types of objects for drawing with Shapefiles included
-				final PlotPanel panel = new PlotPanel( plot, "ArealInterpolation" );
+				final PlotPanel panel = new PlotPanel( plot, "ArealInterpolation", null, null, null);
 				application.getGui().addPlot( panel );
 				panel.addPlotListener( application );
 		        new Thread(

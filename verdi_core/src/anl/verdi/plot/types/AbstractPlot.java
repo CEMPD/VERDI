@@ -12,7 +12,6 @@ import javax.swing.SwingUtilities;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-// import org.geotools.swing.JMapFrame;
 import org.jfree.chart.JFreeChart;
 
 import anl.verdi.plot.config.PlotConfiguration;
@@ -168,7 +167,6 @@ public abstract class AbstractPlot implements Plot {
 				dialog = new ConfigDialog((JFrame) window);
 				Logger.debug("just initialized dialog to new ConfigDialog((JFrame) window");
 			}
-//			if (window instanceof JFrame) dialog = new ConfigDialog((JMapFrame) window);	// why have dialog be a JMapFrame?
 			else
 			{
 				dialog = new ConfigDialog((JDialog)window);

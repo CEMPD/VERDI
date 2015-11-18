@@ -29,8 +29,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
-import org.geotools.swing.JMapFrame;
-
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.plot.types.TimeAnimatablePlot;
@@ -322,9 +320,10 @@ public class AnimationPanelContour3D extends JPanel {
 
 		Window window = SwingUtilities.getWindowAncestor(plot.getPanel());
 
-//		if (window instanceof JFrame) dialog = new JDialog((JFrame) window, "Animate Plot", false);
-		if (window instanceof JFrame) dialog = new JDialog((JMapFrame) window, "Animate Plot", false);
-		else dialog = new JDialog((JDialog) window, "Animate Plot", false);
+		if (window instanceof JFrame) 
+			dialog = new JDialog((JFrame) window, "Animate Plot", false);
+		else 
+			dialog = new JDialog((JDialog) window, "Animate Plot", false);
 
 		dialog.setLayout(new BorderLayout());
 		dialog.add(this, BorderLayout.CENTER);
