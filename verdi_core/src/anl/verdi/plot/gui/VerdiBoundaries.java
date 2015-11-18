@@ -45,7 +45,7 @@ public class VerdiBoundaries {
 	private FileDataStore vStore = null;	// vStore is the FileDataStore associated with the vFile
 	private FeatureSource vFeatureSource = null;
 	private MapContent vMap = null;			// 
-	private MathTransform vTransform = null;	// math transform from Shapefile to grid CRS
+//	private MathTransform vTransform = null;	// math transform from Shapefile to grid CRS
 	
 	public VerdiBoundaries()		// default constructor
 	{
@@ -81,9 +81,9 @@ public class VerdiBoundaries {
 		vFile = new File(vFileName);			// get File object for this file name
 		if(!vFile.exists() || !vFile.canRead() || vFile.isDirectory())
 		{
-			reset();
 			Logger.error("File " + vFileName + " does not exist, cannot be read, or is a directory");
 			System.err.println("File " + vFileName + " does not exist, cannot be read, or is a directory");
+			reset();
 			return false;
 		}
 		vPath = vFile.getAbsolutePath();		// definition taken from FastTileAddLayerWizard
@@ -110,22 +110,6 @@ public class VerdiBoundaries {
 		Logger.debug("in VerdiBoundaries.draw; aVerdiStyle.getStyle() = " + theStyle.toString());
 		Logger.debug("in VerdiBoundaries.draw, CRS for tile plot (gridCRS) = " + gridCRS);
 		Logger.debug("   and name of file = " + vFileName);
-		// here write out stored values for checking
-//		for (double aDbl[] : domain)
-//		{
-//			for (double bDbl : aDbl)
-//			{
-//				Logger.debug("domain = " + bDbl); // in degrees: lonMin, lonMax, latMin, latMax
-//			}
-//		}
-//
-//		for (double cDbl[] : gridBounds)
-//		{
-//			for (double dDbl : cDbl)
-//			{
-//				Logger.debug("gridBounds = " + dDbl); // in meters -2628000, 2592000, -1728000, 1944000
-//			}
-//		}
 		try {
 			vStore = FileDataStoreFinder.getDataStore(vFile);
 			vFeatureSource = vStore.getFeatureSource();
@@ -146,8 +130,9 @@ public class VerdiBoundaries {
 		Logger.debug("Style = " + aVerdiStyle.getStyle().toString());
 		Logger.debug("now set the CRS to gridCRS");	// NOTE: do NOT use Projector method (old UCAR operates point-by-point
 		vMap.getViewport().setCoordinateReferenceSystem(gridCRS);
-		Logger.debug("set CRS of Viewport to gridCRS");
+		Logger.debug("set CRS of Viewport to gridCRS: " + gridCRS.toString());
 		aVerdiStyle.getLayer().setVisible(true);
+		Logger.debug("stopping VerdiBoundaries.draw function at this point (after aVerdiStyle.getLayer().setVisible(true) )");
 		// show(); perhaps try show instead of setVisible ??? JEB
 		
 		// set of math transform

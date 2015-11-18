@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.vecmath.Point4i;
 
+
 //import org.geotools.styling.StyleFactoryFinder;	// replaced for GeoTools v10
 //import org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory;	// 2014 using shapefile-old jar to get this functionality
 //import org.geotools.map.DefaultMapContext;	// replaced for GeoTools v10
@@ -58,7 +59,7 @@ import org.geotools.map.MapViewport;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
-import org.geotools.swing.JMapFrame;
+import org.geotools.swing.JMapPane;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.ValueAxis;
@@ -71,7 +72,6 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-//import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
@@ -119,7 +119,6 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	private static final String NA_LAYER = "NA";
 
 	private NumberFormat format;
-//	private static MessageCenter center = MessageCenter.getMessageCenter(AbstractTilePlot.class);
 
 	protected DataFrame frame;
 	protected int timeStep;
@@ -129,7 +128,6 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	protected PlotEventProducer eventProducer = new PlotEventProducer();
 	protected ColorMap map;
 	protected Slice probedSlice;
-//	protected java.util.List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
 	protected List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
 	protected MapAnnotation mapAnnotation;
 	protected ControlAction controlAction = ControlAction.ZOOM;
@@ -144,7 +142,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	protected Map<String, FeatureLayer> mapLayers = new HashMap<String, FeatureLayer>();
 	
 	public void viewClosed() {
-		Logger.debug("in AbstractTilePlot.viewClosed");		
+		Logger.debug("in AbstractTilePlot.viewClosed");		// not output in log
 		format = null;
 		frame = null;
 		chart = null;
@@ -222,16 +220,14 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	 *
 	 * @return the data that this Plot plots.
 	 */
-//	public java.util.List<DataFrame> getData() {
 	public List<DataFrame> getData() {
-//		java.util.List<DataFrame> list = new ArrayList<DataFrame>();
 		List<DataFrame> list = new ArrayList<DataFrame>();
 		list.add(frame);
 		return list;
 	}
 
 	/**
-	 * Configure this plot according to the specifed configure info.
+	 * Configure this plot according to the specified configure info.
 	 *
 	 * @param config the configuration data
 	 */
@@ -371,6 +367,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	 * @return a BufferedImage of the plot.
 	 */
 	public BufferedImage getBufferedImage() {
+		Logger.debug("in AbstractTilePlot.getBufferedImage()");
 		return getBufferedImage(panel.getWidth(), panel.getHeight());
 	}
 
@@ -382,6 +379,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	 * @return a BufferedImage of the plot.
 	 */
 	public BufferedImage getBufferedImage(int width, int height) {
+		Logger.debug("in AbstractTilePlot.getBufferedImage(width, height)");
 		return chart.createBufferedImage(width, height);
 	}
 
@@ -398,7 +396,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	}
 
 	protected GridCoverage2D getCoverage(DataFrame frame) {
-		Logger.debug("in AbstractTilePlot.getCoverage");
+		Logger.debug("in AbstractTilePlot.getCoverage(DataFrame)");
 
 		Axes<DataFrameAxis> axes = frame.getAxes();
 	//	GridCoverageFactory fac = new GridCoverageFactory();	// replaced for GeoTools v10
@@ -409,7 +407,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	}
 
 	protected FeatureLayer createLayer(File file, File styleFile) throws IOException {		// replaced MapLayer with FeatureLayer for GeoTools v10
-		Logger.debug("in AbstractTilePlot.createLayer");
+		Logger.debug("in AbstractTilePlot.createLayer(File, File)");
 		URL url = file.toURI().toURL();
 		Map<String, Serializable> params = new HashMap<String, Serializable>();
 //		params.put(IndexedShapefileDataStoreFactory.URLP.key, url);
@@ -604,6 +602,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	}
 
 	public JPanel getPanel() {
+		Logger.debug("in AbstractTilePlot.getPanel(); returning a VerdiChartPanel as JPanel");
 		return panel;
 	}
 
@@ -650,7 +649,6 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			Logger.warn("Unable to load map data " + e.getMessage());
 		}
 
-
 		StringTokenizer tok = new StringTokenizer(defaultMaps, ",");
 		while (tok.hasMoreTokens()) {
 			String shpFile = tok.nextToken().trim();
@@ -672,8 +670,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	}
 
 	/**
-	 * Enables / disables the menu items that work with
-	 * the currently probed point.
+	 * Enables / disables the menu items that work with the currently probed point.
 	 *
 	 * @param val true to enable
 	 */
@@ -717,11 +714,16 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			private static final long serialVersionUID = -7478330674957172004L;
 
 			public void actionPerformed(ActionEvent e) {
+				Logger.debug("in AbstractTilePlot.actionPerformed; ready to get frame from SwingUtilities.getWindowAncestor(panel)");
 				Window frame = SwingUtilities.getWindowAncestor(panel);
 				LayerEditor editor = null;
-//				if (frame instanceof JFrame) editor = new LayerEditor((JFrame) frame);
-				if (frame instanceof JFrame) editor = new LayerEditor((JMapFrame) frame);
-				else editor = new LayerEditor((JDialog) frame);
+				if (frame instanceof JFrame) 
+					editor = new LayerEditor((JFrame) frame);
+				else 
+					{
+					Logger.debug("casting frame to JDialog");
+					editor = new LayerEditor((JDialog) frame);
+					}
 				editor.init(mapAnnotation);
 				editor.setLocationRelativeTo(frame);
 				editor.pack();
@@ -1161,9 +1163,10 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			Logger.debug("in AbstractTilePlot.doEditChartProperties");
 			Window window = SwingUtilities.getWindowAncestor(panel);
 			ConfigDialog dialog = null;
-//			if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
-			if (window instanceof JFrame) dialog = new ConfigDialog((JMapFrame) window);
-			else dialog = new ConfigDialog((JDialog) window);
+			if (window instanceof JFrame) 
+				dialog = new ConfigDialog((JFrame) window);
+			else 
+				dialog = new ConfigDialog((JDialog) window);
 			dialog.init(AbstractTilePlot.this, getCurrentMinMax());
 			dialog.setSize(500, 600);
 			dialog.setVisible(true);

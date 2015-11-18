@@ -78,7 +78,7 @@ public class Mapper {
 			boolean withRivers, boolean withRoads) {	// 2015 get to this upon completion of gov.epa.emvl.TilePlot - all done with TilePlot.draw
 		// gov.epa.emvl.Projector projector: projection of the overall map to be drawn
 		// java.awt.Graphics graphics
-		// in xOffset
+		// int xOffset
 		// int yOffset
 		// int width
 		// int height
@@ -118,13 +118,6 @@ public class Mapper {
 		for (VerdiBoundaries layer : layers) {
 			Logger.debug("drawing for a layer");	// OK to here
 			Logger.debug("layer = " + layer.toString());
-//			if(layer == null)
-//			{
-//				Logger.debug("layer tests as == null!");
-//				continue;
-//			}
-//			else
-//				Logger.debug("layer does NOT test as == null");	// OK
 			Logger.debug("Instead of passing Projector object to VerdiBoundaries.draw get the CRS and pass it. Calling layer.draw");
 			// NEED TO COMPLETE LAYER.DRAW TO ACTUALLY DRAW THE MAP!!! 
 // JEB  layers NEEDS TO BE LIST WITHIN MAPCONTENT

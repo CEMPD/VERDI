@@ -3,13 +3,14 @@ package anl.verdi.gis;
 import java.awt.Dimension;
 import java.io.File;
 
+import javax.swing.JFrame;
+
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 // NOTE: where FeatureLayer is now used in this code, MapLayer had been used
 import org.geotools.map.FeatureLayer;
-// import javax.swing.JFrame;
-import org.geotools.swing.JMapFrame;
+//import org.geotools.swing.JMapFrame;
 import org.pietschy.wizard.Wizard;
 import org.pietschy.wizard.models.SimplePath;
 
@@ -76,8 +77,9 @@ public class FastTileAddLayerWizard {
 		Logger.debug("done with FastTileAddLayerWizard constructor");
 	}
 
-	public VerdiBoundaries display(JMapFrame frame, boolean isEditing) {
-		Logger.debug("in FastTileAddLayerWizard.display");
+//	public VerdiBoundaries display(JMapFrame frame, boolean isEditing) {
+	public VerdiBoundaries display(JFrame frame, boolean isEditing) {
+			Logger.debug("in FastTileAddLayerWizard.display");
 		if(frame == null)
 			Logger.debug("in display, frame == null");
 		else

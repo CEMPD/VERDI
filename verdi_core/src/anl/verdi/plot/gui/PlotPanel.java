@@ -26,69 +26,76 @@ public class PlotPanel extends JPanel {
 	private Plot plot;
 	private String name;
 	static final Logger Logger = LogManager.getLogger(PlotPanel.class.getName());
-//	private JPanel topPanel;
-	private boolean isAMap = false;
+	private JPanel topJPanel;		// had been JPanel topPanel
+	private JMapPane topMapPanel;	// need the topMapPanel for mapping
+	private boolean isAMap = false;	// true == PlotPanel will contain a map; false == no map (JFreeChart)
 
 	public PlotPanel(Plot plot, String name) {
 		super(new BorderLayout());
-		Logger.debug("in PlotPanel constructor");
+		Logger.debug("in PlotPanel constructor for passed Plot plot, String name");
 		isAMap = false;				// defaults to false but want to show it explicitly here in code
 		JMenuBar bar = plot.getMenuBar();
 		JToolBar toolBar = plot.getToolBar();
-		JPanel topPanel = new JPanel();
-		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+		topJPanel = new JPanel();
+		topJPanel.setLayout(new BoxLayout(topJPanel, BoxLayout.Y_AXIS));
 		if (bar != null) {
 			bar.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 			bar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-			topPanel.add(bar);
+			topJPanel.add(bar);
 		}
 		if (toolBar != null) {
 			toolBar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-			if (topPanel.getComponentCount() == 1) {
-				topPanel.add(Box.createRigidArea(new Dimension(0, 4)));
+			if (topJPanel.getComponentCount() == 1) {
+				topJPanel.add(Box.createRigidArea(new Dimension(0, 4)));
 			}
-			topPanel.add(toolBar);
-			topPanel.add(Box.createRigidArea(new Dimension(0, 4)));
+			topJPanel.add(toolBar);
+			topJPanel.add(Box.createRigidArea(new Dimension(0, 4)));
 		}
-		if (topPanel.getComponentCount() > 0) add(topPanel, BorderLayout.NORTH);
+		if (topJPanel.getComponentCount() > 0) add(topJPanel, BorderLayout.NORTH);
 		add(plot.getPanel(), BorderLayout.CENTER);
 		this.plot = plot;
 		this.name = name;
 	}
 
-	// use this constructor for a JMapPane instead of a JPanel object as topPanel
-	// version is used for FastTilePlot and ArealInterpolationPlot
+	// use this constructor for a JMapPane (topMapPanel) instead of a JPanel (topJPanel) object
+	// used for FastTilePlot and ArealInterpolationPlot
 	public PlotPanel(Plot plot, String name, MapContent content, RenderingExecutor executor,
 			GTRenderer renderer) {
 		super(new BorderLayout());
-		Logger.debug("in PlotPanel constructor");
+		Logger.debug("in PlotPanel constructor for passed Plot plot, String name, MapContent content, RenderingExecutor executor, GTRenderer renderer");
 		isAMap = true;
 		JMenuBar bar = plot.getMenuBar();
 		JToolBar toolBar = plot.getToolBar();
-		JMapPane topPanel = new JMapPane(content, executor, renderer);
-		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+		topMapPanel = new JMapPane(content, executor, renderer);
+		topMapPanel.setLayout(new BoxLayout(topMapPanel, BoxLayout.Y_AXIS));
 		if (bar != null) {
 			bar.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 			bar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-			topPanel.add(bar);
+			topMapPanel.add(bar);
+			Logger.debug("added bar components to topMapPanel");
 		}
 		if (toolBar != null) {
 			toolBar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-			if (topPanel.getComponentCount() == 1) {
-				topPanel.add(Box.createRigidArea(new Dimension(0, 4)));
+			if (topMapPanel.getComponentCount() == 1) {
+				topMapPanel.add(Box.createRigidArea(new Dimension(0, 4)));
 			}
-			topPanel.add(toolBar);
-			topPanel.add(Box.createRigidArea(new Dimension(0, 4)));
+			topMapPanel.add(toolBar);
+			topMapPanel.add(Box.createRigidArea(new Dimension(0, 4)));
+			Logger.debug("added toolBar components to topMapPanel");
 		}
-		if (topPanel.getComponentCount() > 0) add(topPanel, BorderLayout.NORTH);
+		if (topMapPanel.getComponentCount() > 0) 
+			add(topMapPanel, BorderLayout.NORTH);
 		add(plot.getPanel(), BorderLayout.CENTER);
 		this.plot = plot;
 		this.name = name;
+		Logger.debug("done with PlotPanel constructor");
 	}
-	
+
 	public String getName() {
+		Logger.debug("returning " + name);
 		return name;
 	}
+
 	/**
 	 * Sets the name this PlotPanel contains.
 	 * Use this method instead of as an argument to the constructor.
@@ -97,14 +104,17 @@ public class PlotPanel extends JPanel {
 	 */
 	public void setName(String aName)
 	{
+		Logger.debug("setting name to " + aName);
 		this.name = aName;
 	}
 
 	public void addPlotListener(PlotListener listener) {
+		Logger.debug("adding PlotListener");
 		plot.addPlotListener(listener);
 	}
 
 	public void removePlotListener(PlotListener listener) {
+		Logger.debug("removing PlotListener");
 		plot.removePlotListener(listener);
 	}
 
@@ -114,6 +124,7 @@ public class PlotPanel extends JPanel {
 	 * @return the type of the plot that this panel shows.
 	 */
 	public Formula.Type getPlotType() {
+		Logger.debug("getting plot type " + plot.getType().toString());
 		return plot.getType();
 	}
 
@@ -123,6 +134,7 @@ public class PlotPanel extends JPanel {
 	 * @return  the plot this PlotPanel contains.
 	 */
 	public Plot getPlot() {
+		Logger.debug("getting Plot");
 		return plot;
 	}
 
@@ -133,14 +145,15 @@ public class PlotPanel extends JPanel {
 	 */
 	public void setPlot(Plot aPlot)
 	{
+		Logger.debug("setting Plot");
 		this.plot = aPlot;
 	}
-	
+
 	/**
 	 * Notifies Plot when its View has been closed. HACK!
 	 */
 	public void viewClosed() {
-
+		Logger.debug("in viewClosed()");
 		if ( plot instanceof anl.verdi.plot.gui.FastTilePlot ) {
 			( (anl.verdi.plot.gui.FastTilePlot) plot).stopThread();
 			try {
@@ -154,32 +167,145 @@ public class PlotPanel extends JPanel {
 			plot = null;
 		}
 	}
-	
+
 	/**
 	 * Change the view of this window to floating
 	 * @param evt
 	 */
 	public void viewFloated(DockableFrameEvent evt){
 		if ( plot instanceof anl.verdi.plot.gui.FastTilePlot ) {
+			Logger.debug("Changing a FastTilePlot to viewFloated");
 			( (anl.verdi.plot.gui.FastTilePlot) plot).viewFloated(evt);
 		}
 	}
-	
+
 	/**
 	 * Change the view of this window to docked
 	 * @param evt
 	 */
 	public void viewRestored(DockableFrameEvent evt){		
 		if ( plot instanceof anl.verdi.plot.gui.FastTilePlot ) {
+			Logger.debug("Changing a FastTilePlot to viewRestored");
 			( (anl.verdi.plot.gui.FastTilePlot) plot).viewRestored(evt);
 		}
 	}
-	
-//	public JMapPane getMapPane()
-//	{
-//	if(isAMap)
-//	{
-//		return this.topPanel;
-//	}
-//	}
+
+	public JMapPane getMapPane()
+	{
+		if(isAMap)
+		{
+			Logger.debug("getting ready to return the topMapPanel");
+			return topMapPanel;
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	/**
+	 * access to JMapPane function getRenderer()
+	 * gets the renderer, creating a default one if required
+	 */
+	public GTRenderer getRenderer()
+	{
+		if(isAMap)
+		{
+			return topMapPanel.getRenderer();
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	/**
+	 * access to JMapPane function setRenderer
+	 * sets the renderer to be used by this map pane
+	 * 
+	 * @param aRenderer
+	 */
+	public void setRenderer(GTRenderer aRenderer)
+	{
+		if(isAMap)
+			topMapPanel.setRenderer(aRenderer);
+	}
+
+	/**
+	 * access to JMapPane function getRenderingExecutor
+	 * gets the RenderingExecutor being used by this map pane
+	 */
+	public RenderingExecutor getRenderingExecutor()
+	{
+		if(isAMap)
+		{
+			return topMapPanel.getRenderingExecutor();
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	/**
+	 * access to JMapPane function setRenderingExecutor (method inherited from class AbstractMapPane)
+	 * sets the RenderingExecutor to be used by this map pane
+	 */
+	public void setRenderingExecutor(RenderingExecutor aRenderingExecutor)
+	{
+		if(isAMap)
+			topMapPanel.setRenderingExecutor(aRenderingExecutor);
+	}
+
+	/**
+	 * gets the MapContent instance being displayed by this map pane
+	 */
+	public MapContent getMapContent()
+	{
+		if(isAMap)
+		{
+			return topMapPanel.getMapContent();
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	/**
+	 * access to JMapPane function setMapContent
+	 * sets the MapContent instance containing the layers to display
+	 */
+	public void setMapContent(MapContent aMapContent)
+	{
+		if(isAMap)
+			topMapPanel.setMapContent(aMapContent);
+	}
+
+	//	/**
+	//	 * access to JMapPane function drawLayers
+	//	 * Draws layers into 1 or more images which will then be displayed by the map pane
+	//	 */
+	//	public void drawLayers(boolean createNewImage)
+	//	{
+	//		if(isAMap)
+	////			topMapPanel.drawLayers(createNewImage);
+	//			getMapPane()
+	//	}
+
+	/**
+	 * access to JMapPane function getBaseImage
+	 */
+	public java.awt.image.RenderedImage getBaseImage()
+	{
+		if(isAMap)
+		{
+			return topMapPanel.getBaseImage();
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 }
