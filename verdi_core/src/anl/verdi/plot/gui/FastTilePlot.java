@@ -388,6 +388,8 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 
 		public void run() {
 			Logger.debug("within FastTilePlot.run()");
+			Logger.debug("mapFileDirectory = " + mapFileDirectory);
+			Logger.debug("System.getProperty('user.dir') = " + System.getProperty("user.dir")); 
 
 			do {
 				if ( drawMode != DRAW_NONE &&
