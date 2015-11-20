@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.map.MapContent;
 import org.geotools.renderer.GTRenderer;
+import org.geotools.swing.AbstractMapPane;
 import org.geotools.swing.JMapPane;
 import org.geotools.swing.RenderingExecutor;
 
@@ -66,6 +67,8 @@ public class PlotPanel extends JPanel {
 		isAMap = true;
 		JMenuBar bar = plot.getMenuBar();
 		JToolBar toolBar = plot.getToolBar();
+		if(content == null)		// if a MapContent was not passed in arg list, get the one from the plot
+			content = ((AbstractMapPane)plot).getMapContent();
 		topMapPanel = new JMapPane(content, executor, renderer);
 		topMapPanel.setLayout(new BoxLayout(topMapPanel, BoxLayout.Y_AXIS));
 		if (bar != null) {

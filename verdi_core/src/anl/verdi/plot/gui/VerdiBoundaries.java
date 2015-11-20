@@ -41,16 +41,16 @@ public class VerdiBoundaries {
 	private VerdiStyle aVerdiStyle = null;
 	private String vFileName = null;		// name of shapefile
 	private File vFile = null;				// shapefile represented as a File
-	private String vPath = null;			// vPath is absolute path to Shapefile
+	private String vPath = null;			// vPath is absolute path to shapefile
 	private FileDataStore vStore = null;	// vStore is the FileDataStore associated with the vFile
 	private FeatureSource vFeatureSource = null;
 	private MapContent vMap = null;			// 
-//	private MathTransform vTransform = null;	// math transform from Shapefile to grid CRS
+	private MathTransform vTransform = null;	// math transform from shapefile to grid CRS
 	
 	public VerdiBoundaries()		// default constructor
 	{
 		reset();
-		Logger.debug("done with default constructor for VerdiBoundaries");	// JEB done MANY MANY times - part of infinite loop ???
+		Logger.debug("done with default constructor for VerdiBoundaries");	// JEB done 9 times - each of supplied shapefiles + selected shapefile
 	}
 	
 	public boolean setFileName(String aFileName)	// set values from a file name belonging to a shapefile
@@ -137,40 +137,40 @@ public class VerdiBoundaries {
 		
 		// set of math transform
 		// NOTE: next commented-out section is possibly the beginnings of writing out a shapefile in a given projection
-//		boolean lenient = true;		// allow for some error due to different datums
-//		try {
-//			vTransform = CRS.findMathTransform(aVerdiStyle.getCoordinateReferenceSystem(), gridCRS, lenient);
-//		} catch (FactoryException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		Logger.debug("vTransform computed as = " + vTransform.toString());
+		boolean lenient = true;		// allow for some error due to different datums
+		try {
+			vTransform = CRS.findMathTransform(aVerdiStyle.getCoordinateReferenceSystem(), gridCRS, lenient);
+		} catch (FactoryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Logger.debug("vTransform computed as = " + vTransform.toString());
 //		// TODO - perform the transform
-//		SimpleFeatureCollection featureCollection = null;
-//		SimpleFeatureCollection newFeatureCollection = null;
-//		try {
-//			featureCollection = (SimpleFeatureCollection) vFeatureSource.getFeatures();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		SimpleFeatureIterator iterator = featureCollection.features();
-//		try {
-//			while (iterator.hasNext())
-//			{
-//				SimpleFeature feature = iterator.next();
-//				Geometry geom1 = (Geometry) feature.getDefaultGeometry();
-//				Geometry geometry2 = JTS.transform(geom1, vTransform);
+		SimpleFeatureCollection featureCollection = null;
+		SimpleFeatureCollection newFeatureCollection = null;
+		try {
+			featureCollection = (SimpleFeatureCollection) vFeatureSource.getFeatures();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		SimpleFeatureIterator iterator = featureCollection.features();
+		try {
+			while (iterator.hasNext())
+			{
+				SimpleFeature feature = iterator.next();
+				Geometry geom1 = (Geometry) feature.getDefaultGeometry();
+				Geometry geometry2 = JTS.transform(geom1, vTransform);
 //				newFeatureCollection.
 //				// What do I do with the geometry2 object?
-//			}
-//		} catch (Exception ex) {
-//			Logger.error("caught an exception while converting map to new Coordinate Reference System");
-//		} finally {
-//			iterator.close();
-//		}
+			}
+		} catch (Exception ex) {
+			Logger.error("caught an exception while converting map to new Coordinate Reference System");
+		} finally {
+			iterator.close();
+		}
 		// TODO - create a map layer and add it to the vMap object
-		//vMap.layers().add(aVerdiStyle.getLayer());	// FIGURE THIS ONE OUT BECAUSE TRANSFORM IS HERE
+		vMap.layers().add(aVerdiStyle.getLayer());	// FIGURE THIS ONE OUT BECAUSE TRANSFORM IS HERE
 	}	// end of draw function
 	
 	public MapContent getMap()	// send vMap back to calling program

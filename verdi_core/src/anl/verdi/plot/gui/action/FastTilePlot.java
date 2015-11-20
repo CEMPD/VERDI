@@ -43,9 +43,6 @@ public class FastTilePlot extends AbstractSAFAction<VerdiApplication> {
 				Logger.debug("have variableName = " + variableName);
 				Logger.debug("ready to generate PlotPanel for a plot, variableName, and 3 null values");
 				final PlotPanel panel = new PlotPanel(plot, variableName, null, null, null);	// Sept 2015 changed from PlotPanel and
-				// moved the 2 arguments to separate set function calls
-				//        panel.setPlot(plot);
-				//        panel.setName("Tile " + variableName);
 				Logger.debug("ready to call addPlot to add the new panel to application GUI");
 				application.getGui().addPlot( panel );
 				Logger.debug("ready to add plot listener");
