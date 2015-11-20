@@ -605,7 +605,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							draw_once_requests = 0;
 							if ( get_draw_once_requests() < 0) 
 								restoreCursor();
-							continue;
+							continue;		// goes to while drawMode != DRAW_END
 						}
 						
 						// NOTE: mapper.draw calls VerdiBoundaries.draw
@@ -2238,6 +2238,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		try {
 			if (show && layerKey.equals(STATES_LAYER)) {
 				VerdiBoundaries map2Add = mapper.getUsaStatesMap();
+				myMapContent.addLayers(map2Add.getMap().layers());
 				mapper.getLayers().add(map2Add);
 			}
 
@@ -2247,6 +2248,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			
 			if (show && layerKey.equals(COUNTIES_LAYER)) {
 				VerdiBoundaries map2Add = mapper.getUsaCountiesMap();
+				myMapContent.addLayers(map2Add.getMap().layers());
 				mapper.getLayers().add(map2Add);
 			}
 
@@ -2256,6 +2258,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 			if (show && layerKey.equals(WORLD_LAYER)) {
 				VerdiBoundaries map2Add = mapper.getWorldMap();
+				myMapContent.addLayers(map2Add.getMap().layers());
 				mapper.getLayers().add(map2Add);
 			}
 
@@ -2265,6 +2268,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 			if (show && layerKey.equals(NA_LAYER)) {
 				VerdiBoundaries map2Add = mapper.getNorthAmericaMap();
+				myMapContent.addLayers(map2Add.getMap().layers());
 				mapper.getLayers().add(map2Add);
 			}
 
@@ -2274,6 +2278,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 			if (show && layerKey.equals(HUCS)) {
 				withHucs = show;
+				myMapContent.addLayers(mapper.getUSHucMap().getMap().layers());
 				mapper.getLayers().add(mapper.getUSHucMap());
 			}
 			
@@ -2284,6 +2289,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 			if (show && layerKey.equals(RIVERS)) {
 				withRivers = show;
+				myMapContent.addLayers(mapper.getUSRiversMap().getMap().layers());
 				mapper.getLayers().add(mapper.getUSRiversMap());
 			}
 			
@@ -2294,6 +2300,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 			if (show && layerKey.equals(ROADS)) {
 				withRoads = show;
+				myMapContent.addLayers(mapper.getUSRoadsMap().getMap().layers());
 				mapper.getLayers().add(mapper.getUSRoadsMap());
 			}
 			
@@ -2308,6 +2315,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				VerdiBoundaries aVerdiBoundaries = new VerdiBoundaries();
 				aVerdiBoundaries.setFileName(selectFile.getAbsolutePath());
 				mapper.getLayers().add(aVerdiBoundaries);
+				myMapContent.addLayers(aVerdiBoundaries.getMap().layers());
 			}
 			draw();
 		} catch (Exception e) {
@@ -3571,5 +3579,4 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	private int get_draw_once_requests() {
 		return draw_once_requests;
 	}
-
 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-import org.geotools.swing.JMapFrame;
+//import org.geotools.swing.JMapFrame;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import anl.verdi.plot.gui.VerdiBoundaries;
@@ -138,7 +138,7 @@ public class Mapper {
 //			mapFrame.setVisible(true);						// TEST: FAILED ON THIS LINE!!!
 //			Logger.debug("set mapFrame to visible");
 			
-			JMapFrame.showMap(layer.getMap());
+//			JMapFrame.showMap(layer.getMap());
 			Logger.debug("just did the showMap");			// OK here
 			graphics.setColor(mapColor); // to reset graphics color
 			Logger.debug("just reset graphics color to: " + mapColor);	// OK here
