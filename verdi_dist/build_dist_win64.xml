@@ -182,7 +182,6 @@
 			<fileset file="./distfiles/verdi.ini"/>
 			<fileset file="./distfiles/Functions.nsh"/>
 			<fileset file="./distfiles/config.properties.TEMPLATE"/>
-			<fileset file="./distfiles/win_shape2bin.zip"/>
 			<fileset file="./distfiles/RELEASE-NOTES.txt"/>
 			<fileset file="./distfiles/RemoteFileReader.tgz"/>
 		</copy>

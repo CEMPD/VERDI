@@ -77,7 +77,7 @@ public class VUnits {
 //	public static final Unit MISSING_UNIT = new BaseUnit("all", "_MISSING_UNIT_");
 
 	private VUnits() {
-		Logger.debug("in private constructor for VUnits");
+//		Logger.debug("in private constructor for VUnits");
 		// areas
 		unitMap.put("m2", SI.SQUARE_METRE);
 		unitMap.put("km2", (SI.Prefix.KILO(SI.METRE).multiply(SI.Prefix.KILO(SI.METRE))));	//SI.METRE).multiply(1000).multiply(SI.METRE).multiply(1000));
@@ -152,7 +152,7 @@ public class VUnits {
 		// convert superscripts
 		unitString=unitString.replace('\u00b2','2');
 		unitString=unitString.replace('\u00b3','3');
-		Logger.debug("in VUnits.makeUnit, unitString = " + unitString);		
+//		Logger.debug("in VUnits.makeUnit, unitString = " + unitString);		
 		if (unitString.contains("/")) {
 			return getDividedUnit(unitString);
 		}
@@ -168,39 +168,39 @@ public class VUnits {
 		// convert superscripts
 		unitString=unitString.replace('\u00b2','2');
 		unitString=unitString.replace('\u00b3','3');
-		Logger.debug("in VUnits.make1Unit, unitString = " + unitString);		
+//		Logger.debug("in VUnits.make1Unit, unitString = " + unitString);		
 		return getUnit(unitString);
 	}
 
 	private Unit getDividedUnit(String unitString) {
-		Logger.debug("in VUnits.getDividedUnit for unitString = " + unitString);
+//		Logger.debug("in VUnits.getDividedUnit for unitString = " + unitString);
 		StringTokenizer tok = new StringTokenizer(unitString, "/");
 		if (tok.countTokens() != 2) {
-			Logger.debug("in VUnits.getDividedUnit, count of tokens = " + tok.countTokens() + " returning BaseUnit = " + new BaseUnit(unitString));
+//			Logger.debug("in VUnits.getDividedUnit, count of tokens = " + tok.countTokens() + " returning BaseUnit = " + new BaseUnit(unitString));
 			return new BaseUnit(unitString);
 		}
 		String strRhs = tok.nextToken().trim();
 		String strLhs = tok.nextToken().trim();
 		if (!(unitMap.containsKey(strRhs) && unitMap.containsKey(strLhs))) {
-			Logger.debug("in VUnits.getDividedUnit, unitString = " + new BaseUnit(unitString));
+//			Logger.debug("in VUnits.getDividedUnit, unitString = " + new BaseUnit(unitString));
 			return new BaseUnit(unitString);
 		}
 		Unit rhs = getUnit(strRhs);
 		Unit lhs = getUnit(strLhs);
 		try {
-			Logger.debug("in VUnits.getDividedUnit, returning rhs.divide = " + rhs.divide(lhs));
+//			Logger.debug("in VUnits.getDividedUnit, returning rhs.divide = " + rhs.divide(lhs));
 			return rhs.divide(lhs);
 		} catch (Exception ex) {
-			Logger.debug("in VUnits.getDividedUnit, returning BaseUnit(unitString) = " + new BaseUnit(unitString));
+//			Logger.debug("in VUnits.getDividedUnit, returning BaseUnit(unitString) = " + new BaseUnit(unitString));
 			return new BaseUnit(unitString);
 		}
 	}
 
 	private Unit getUnit(String unitString) {
 		Unit unit = unitMap.get(unitString);
-		Logger.debug("in VUnits.getUnit, Unit = " + unit);
+//		Logger.debug("in VUnits.getUnit, Unit = " + unit);
 		if (unit == null) {
-			Logger.debug("unit is null, going into try block to get a unit");
+//			Logger.debug("unit is null, going into try block to get a unit");
 			try {
 				// see if we can make an SI type unit out of it
 			// 2014  trying to figure out what the valueOf function does
@@ -210,13 +210,13 @@ public class VUnits {
 			// returns UnitFormat.getStandardInstance().parse(csq, new ParsePosition(0))
 			// exception matches; thrown if the specified character sequence cannot be correctly parsed (e.g., symbol unknown)
 				unit = AbstractUnit.valueOf(unitString);	// changed Unit.valueof(  to AbstractUnit.valueOf(
-				Logger.debug("in VUnits.getUnit, have an AbstractUnit = " + unit);
+//				Logger.debug("in VUnits.getUnit, have an AbstractUnit = " + unit);
 			} catch (IllegalArgumentException ex) {
 				unit = new BaseUnit(unitString);
-				Logger.debug("in VUnits.getUnit, caught a problem so assigning unit = " + unit);
+//				Logger.debug("in VUnits.getUnit, caught a problem so assigning unit = " + unit);
 			}
 		}
-		Logger.debug("returning from VUnits.getUnit unit = " + unit);
+//		Logger.debug("returning from VUnits.getUnit unit = " + unit);
 		return unit;
 	}
 
@@ -226,7 +226,7 @@ public class VUnits {
 	}
 
 	private UnsupportedUnitException getException(String unitString) {
-		Logger.debug("in UnsupportedUnitException for unitString = " + unitString);
+//		Logger.debug("in UnsupportedUnitException for unitString = " + unitString);
 		return new UnsupportedUnitException("Unsupported unit format: '" + unitString + "'");
 	}
 	
