@@ -43,6 +43,7 @@ import javax.swing.event.ChangeListener;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartTheme;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
@@ -73,6 +74,7 @@ import anl.verdi.plot.gui.TimeLayerPanel;
 import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.plot.util.PlotPrintAction;
+import anl.verdi.plot.util.PlotProperties;
 import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;
 import anl.verdi.util.VUnits;
@@ -139,6 +141,10 @@ public class ScatterPlot extends AbstractPlot {
 		PlotConfiguration defaultConfig = getPlotConfiguration();
 		defaultConfig.merge(config);
 		configure(defaultConfig);
+		
+		/** Check if a chart theme has been loaded. */
+		ChartTheme theme = PlotProperties.getInstance().getCurrentTheme();
+		if (theme != null) theme.apply(chart);
 	}
 
 	/**

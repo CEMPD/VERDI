@@ -17,6 +17,7 @@ import org.jfree.chart.StandardChartTheme;
 import saf.core.ui.util.FileChooserUtilities;
 //import simphony.util.messages.MessageCenter;
 import anl.verdi.plot.gui.Plot;
+import anl.verdi.plot.util.PlotProperties;
 import anl.verdi.util.Tools;
 
 /**
@@ -49,8 +50,9 @@ public class LoadTheme extends AbstractAction {
 		if (file != null) {
 			try {
 				ChartTheme darkness = StandardChartTheme.createDarknessTheme(); 
-				ChartFactory.setChartTheme(darkness);
-				ChartUtilities.applyCurrentTheme(this.chart);
+				PlotProperties plotProperties = PlotProperties.getInstance();
+				plotProperties.setCurrentTheme(darkness);
+				darkness.apply(chart);
 			} catch (Exception ex) {
 				Logger.error("Error loading configuration " + ex.getMessage());
 			}
