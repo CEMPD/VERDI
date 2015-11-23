@@ -75,7 +75,8 @@ public class Mapper {
 	public void draw(final double[][] domain, final double[][] gridBounds,
 			final CoordinateReferenceSystem gridCRS, final Graphics graphics, int xOffset,
 			int yOffset, int width, int height, boolean withHucs,
-			boolean withRivers, boolean withRoads) {	// 2015 get to this upon completion of gov.epa.emvl.TilePlot - all done with TilePlot.draw
+			boolean withRivers, boolean withRoads) {
+		// 2015 get to this upon completion of gov.epa.emvl.TilePlot - all done with TilePlot.draw
 		// gov.epa.emvl.Projector projector: projection of the overall map to be drawn
 		// java.awt.Graphics graphics
 		// int xOffset
