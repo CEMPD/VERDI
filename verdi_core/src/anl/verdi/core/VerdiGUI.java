@@ -26,6 +26,7 @@ import javax.swing.JTable;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.swing.JMapFrame;
 
 import saf.core.ui.GUIBarManager;
 import saf.core.ui.GUIConstants;
@@ -66,7 +67,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	private AreaFilePanel areaPanel;
 	private java.util.List<String> viewList = new ArrayList<String>(); // amw
 																		// 02May07
-	private java.util.List<JFrame> framesToDisplay = new ArrayList<JFrame>(); // amw
+	private java.util.List<JMapFrame> framesToDisplay = new ArrayList<JMapFrame>(); // amw	// try JFrame => JMapFrame
 																				// 02May07
 	private HashMap<String, PlotPanel> plotPanels = new HashMap<String, PlotPanel>();
 	private HashMap<String, JPanel> scriptPanels = new HashMap<String, JPanel>();
@@ -250,7 +251,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 			dialog.setLocationRelativeTo(frame);
 		dialog.addWindowListener(new ContourDialogListener(dialog, id, name));
 		if (frame == null) {
-			framesToDisplay.add(dialog);
+			framesToDisplay.add((JMapFrame) dialog);	// changed by making cast to JMapFrame
 		}
 		dialog.setVisible(true);
 	}
