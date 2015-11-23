@@ -34,6 +34,7 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
+import org.jfree.chart.ChartTheme;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
@@ -75,6 +76,7 @@ import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.probe.ProbeEvent;
 import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.plot.util.PlotPrintAction;
+import anl.verdi.plot.util.PlotProperties;
 import anl.verdi.util.Tools;
 import anl.verdi.util.VUnits;
 
@@ -132,6 +134,10 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 		PlotConfiguration defaultConfig = getPlotConfiguration();
 		defaultConfig.merge(config);
 		configure(defaultConfig);
+		
+		/** Check if a chart theme has been loaded. */
+		ChartTheme theme = PlotProperties.getInstance().getCurrentTheme();
+		if (theme != null) theme.apply(chart);
 	}
 
 
@@ -408,7 +414,6 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 			rangeAxis.setRangeAboutValue(minMax.getMin(), .01);
 		} else rangeAxis.setRange(minMax.getMin() - interval, minMax.getMax() + interval);
 
-		
 		return chart;
 	}
 

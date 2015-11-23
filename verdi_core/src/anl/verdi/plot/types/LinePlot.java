@@ -78,6 +78,7 @@ import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.probe.ProbeEvent;
 import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.plot.util.PlotPrintAction;
+import anl.verdi.plot.util.PlotProperties;
 import anl.verdi.util.Tools;
 import anl.verdi.util.VUnits;
 //import simphony.util.messages.MessageCenter;
@@ -132,6 +133,10 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		PlotConfiguration defaultConfig = getPlotConfiguration();
 		defaultConfig.merge(config);
 		configure(defaultConfig);
+		
+		/** Check if a chart theme has been loaded. */
+		ChartTheme theme = PlotProperties.getInstance().getCurrentTheme();
+		if (theme != null) theme.apply(chart);
 	}
 
 
