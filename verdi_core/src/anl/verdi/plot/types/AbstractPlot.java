@@ -15,6 +15,7 @@ import org.jfree.chart.JFreeChart;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.gui.ConfigDialog;
 import anl.verdi.plot.gui.Plot;
+import anl.verdi.plot.gui.ThemeDialog;
 import anl.verdi.plot.jfree.ChartPanel;
 import anl.verdi.plot.util.PlotExporter;
 
@@ -145,6 +146,22 @@ public abstract class AbstractPlot implements Plot {
 			ConfigDialog dialog = null;
 			if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
 			else dialog = new ConfigDialog((JDialog)window);
+			dialog.init(AbstractPlot.this, null);
+			dialog.setSize(500, 600);
+			dialog.setVisible(true);
+		}
+		
+		/**
+		 * Displays a dialog that allows the user to edit the theme for the
+		 * current chart.
+		 *
+		 * @since 1.6
+		 */
+		public void doEditChartTheme() {
+			Window window = SwingUtilities.getWindowAncestor(panel);
+			ThemeDialog dialog = null;
+			if (window instanceof JFrame) dialog = new ThemeDialog((JFrame) window);
+			else dialog = new ThemeDialog((JDialog)window);
 			dialog.init(AbstractPlot.this, null);
 			dialog.setSize(500, 600);
 			dialog.setVisible(true);

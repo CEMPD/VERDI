@@ -63,9 +63,11 @@ import anl.verdi.formula.Formula;
 import anl.verdi.formula.Formula.Type;
 import anl.verdi.plot.config.JFreeChartConfigurator;
 import anl.verdi.plot.config.LoadConfiguration;
+import anl.verdi.plot.config.LoadTheme;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
 import anl.verdi.plot.config.SaveConfiguration;
+import anl.verdi.plot.config.SaveTheme;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 import anl.verdi.plot.config.UnitsConfigurator;
 import anl.verdi.plot.gui.LayerChartPanel;
@@ -248,6 +250,20 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 		});
 		menu.add(new LoadConfiguration(this));
 		menu.add(new SaveConfiguration(this));
+		menu.add(new LoadTheme(this, chart));
+		
+		menu.add(new AbstractAction("Edit Chart Theme") {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -6307695766431600549L;
+
+			public void actionPerformed(ActionEvent e) {
+				panel.doEditChartTheme();
+			}
+		});
+		
+		menu.add(new SaveTheme(this));
 		bar.add(menu);
 
 		menu = new JMenu("Controls");

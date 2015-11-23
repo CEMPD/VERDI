@@ -89,9 +89,11 @@ import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.color.PavePaletteCreator;
 import anl.verdi.plot.config.JFreeChartConfigurator;
 import anl.verdi.plot.config.LoadConfiguration;
+import anl.verdi.plot.config.LoadTheme;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
 import anl.verdi.plot.config.SaveConfiguration;
+import anl.verdi.plot.config.SaveTheme;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.config.TitleConfigurator;
 import anl.verdi.plot.config.UnitsConfigurator;
@@ -835,6 +837,21 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		menu.add(new LoadConfiguration(this));
 		menu.add(new SaveConfiguration(this));
 
+		menu.add(new LoadTheme(this, chart));
+		
+		menu.add(new AbstractAction("Edit Chart Theme") {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 6259164410161552407L;
+
+			public void actionPerformed(ActionEvent e) {
+				panel.doEditChartTheme();
+			}
+		});
+		
+		menu.add(new SaveTheme(this));
+		
 		if (mapAnnotation != null) {
 			configureMapMenu(menu);
 		}
