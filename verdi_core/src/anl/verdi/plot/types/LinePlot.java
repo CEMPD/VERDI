@@ -211,7 +211,7 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 			private static final long serialVersionUID = 5016577781516485377L;
 
 			public void actionPerformed(ActionEvent e) {
-				panel.doEditChartProperties();
+				panel.doEditChartTheme();
 			}
 		});
 		
