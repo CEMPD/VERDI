@@ -49,10 +49,11 @@ public class LoadTheme extends AbstractAction {
 		
 		if (file != null) {
 			try {
-				ChartTheme darkness = StandardChartTheme.createDarknessTheme(); 
+				//ChartTheme darkness = StandardChartTheme.createDarknessTheme(); 
+				ChartTheme std = new StandardChartTheme("Std", true);
 				PlotProperties plotProperties = PlotProperties.getInstance();
-				plotProperties.setCurrentTheme(darkness);
-				darkness.apply(chart);
+				plotProperties.setCurrentTheme(std);
+				std.apply(chart);
 			} catch (Exception ex) {
 				Logger.error("Error loading configuration " + ex.getMessage());
 			}

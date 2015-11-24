@@ -1,10 +1,8 @@
 package anl.verdi.plot.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.Font;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,20 +11,10 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-import anl.verdi.data.DataUtilities;
-import anl.verdi.data.DataUtilities.MinMax;
-import anl.verdi.formula.Formula;
-import anl.verdi.formula.Formula.Type;
-import anl.verdi.plot.color.ColorMap;
-import anl.verdi.plot.color.PaletteSelectionPanel;
-import anl.verdi.plot.config.PlotConfiguration;
-import anl.verdi.plot.config.TilePlotConfiguration;
-import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
-//import anl.verdi.plot.config.VectorPlotConfiguration;
-
+import org.apache.logging.log4j.LogManager;		
+import org.apache.logging.log4j.Logger;		
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
@@ -35,18 +23,18 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-
-/*
- * Created by JFormDesigner on Wed May 09 09:52:58 EDT 2007
- */
+import anl.verdi.data.DataUtilities;
+import anl.verdi.plot.color.ColorMap;
+import anl.verdi.plot.color.PaletteSelectionPanel;
+import anl.verdi.plot.config.PlotConfiguration;
 
 /**
- * @author User #2
+ * 
+ * @author qun
+ *
  */
 public class ThemeDialog extends JDialog {
-	private static final long serialVersionUID = -2221845028677788465L;
+	private static final long serialVersionUID = 1117048665491590187L;
 	static final Logger Logger = LogManager.getLogger(ThemeDialog.class.getName());
 	private Plot plot;
 
@@ -177,91 +165,6 @@ public class ThemeDialog extends JDialog {
 //		}
 	}
 
-	private void initOverlays(PlotConfiguration config) {
-//		Integer stroke = (Integer) config
-//				.getObject(TilePlotConfiguration.OBS_STROKE_SIZE);
-//		Integer size = (Integer) config
-//				.getObject(TilePlotConfiguration.OBS_SHAPE_SIZE);
-//		overlays.init(stroke, size);
-	}
-
-	private void initOther(PlotConfiguration config) {
-//		Boolean showGrid = (Boolean) config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
-//		if (showGrid == null) {
-//			otherPanel.setGridLinePanelEnabled(false);
-//		} else {
-//			Color color = config.getColor(TilePlotConfiguration.GRID_LINE_COLOR);
-//			if (color == null)
-//				color = Color.BLACK;
-//			otherPanel.initGridLines(color, showGrid);
-//		}
-
-	}
-
-	private void initLabels(PlotConfiguration config) {
-//		labelsPanel.initDomain(
-//				config.getString(PlotConfiguration.DOMAIN_LABEL), config
-//						.getFont(PlotConfiguration.DOMAIN_FONT), config
-//						.getColor(PlotConfiguration.DOMAIN_COLOR));
-//		
-//		Formula.Type plottype = (Formula.Type)config.getObject(PlotConfiguration.PLOT_TYPE); //NOTE: to differentiate time series plots
-//		String domainLabelFormat = config.getString(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT);
-//		
-//		if (plottype != null && plottype == Formula.Type.TIME_SERIES_BAR) {
-//			domainLabelFormat = config.getString(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT_4CAT);
-//		}
-//		
-//		labelsPanel.initDomainTick((Boolean) config
-//				.getObject(PlotConfiguration.DOMAIN_SHOW_TICK), config
-//				.getFont(PlotConfiguration.DOMAIN_TICK_FONT), config
-//				.getColor(PlotConfiguration.DOMAIN_TICK_COLOR), (Integer)config
-//				.getObject(PlotConfiguration.DOMAIN_TICK_NUMBER), domainLabelFormat, config
-//				.getString(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION), plot.getType());
-//
-//		labelsPanel.initRange(config.getString(PlotConfiguration.RANGE_LABEL),
-//				config.getFont(PlotConfiguration.RANGE_FONT), config
-//						.getColor(PlotConfiguration.RANGE_COLOR));
-//		labelsPanel.initRangeTick((Boolean) config
-//				.getObject(PlotConfiguration.RANGE_SHOW_TICK), config
-//				.getFont(PlotConfiguration.RANGE_TICK_FONT), config
-//				.getColor(PlotConfiguration.RANGE_TICK_COLOR), (Integer)config
-//				.getObject(PlotConfiguration.RANGE_TICK_NUMBER));
-//
-//		labelsPanel.initUnits(config.getString(PlotConfiguration.UNITS), config
-//				.getFont(PlotConfiguration.UNITS_FONT), config
-//				.getColor(PlotConfiguration.UNITS_COLOR));
-//		labelsPanel.initUnitsTick((Boolean) config
-//				.getObject(PlotConfiguration.UNITS_SHOW_TICK), config
-//				.getFont(PlotConfiguration.UNITS_TICK_FONT), config
-//				.getColor(PlotConfiguration.UNITS_TICK_COLOR), (Integer)config
-//				.getObject(PlotConfiguration.UNITS_TICK_NUMBER));
-//		
-//		labelsPanel.initFooter1((Boolean)config.getObject(PlotConfiguration.FOOTER1_SHOW_LINE), config
-//				.getString(PlotConfiguration.FOOTER1), config
-//				.getFont(PlotConfiguration.FOOTER1_FONT), config
-//				.getColor(PlotConfiguration.FOOTER1_COLOR));
-//		labelsPanel.initFooter2((Boolean)config.getObject(PlotConfiguration.FOOTER2_SHOW_LINE), config
-//				.getString(PlotConfiguration.FOOTER2), config
-//				.getFont(PlotConfiguration.FOOTER2_FONT), config
-//				.getColor(PlotConfiguration.FOOTER2_COLOR));
-//		labelsPanel.initObsLegend((Boolean)config.getObject(PlotConfiguration.OBS_SHOW_LEGEND), "", config
-//				.getFont(PlotConfiguration.OBS_LEGEND_FONT), config
-//				.getColor(PlotConfiguration.OBS_LEGEND_COLOR));
-//
-//		if (config.getObject(PlotConfiguration.Z_LABEL) != null) {
-//			labelsPanel.initZ(config.getString(PlotConfiguration.Z_LABEL),
-//					config.getFont(PlotConfiguration.Z_FONT), config
-//							.getColor(PlotConfiguration.Z_COLOR));
-//			labelsPanel.initZTick((Boolean) config
-//					.getObject(PlotConfiguration.Z_SHOW_TICK), config
-//					.getFont(PlotConfiguration.Z_TICK_FONT), config
-//					.getColor(PlotConfiguration.Z_TICK_COLOR), (Integer)config
-//					.getObject(PlotConfiguration.Z_TICK_NUMBER));
-//		} else {
-//			labelsPanel.removeZ();
-//		}
-	}
-
 	private void initTitles(PlotConfiguration config) {
 //		Logger.debug("in initTitles; ready to set title");
 //		String title = plot.getTitle();
@@ -286,17 +189,10 @@ public class ThemeDialog extends JDialog {
 	}
 
 	private void initComponents() {
-		// JFormDesigner - Component initialization - DO NOT MODIFY
-		// //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner non-commercial license
 		dialogPane = new JPanel();
 		contentPanel = new JPanel();
-		tabbedPanel = new JTabbedPane();
-		titlesPanel = new ChartTitlesPanel();
+		themePanel = new ChartThemePanel();
 		colorMapPanel = new PaletteSelectionPanel();
-		labelsPanel = new LabelsPanel();
-		otherPanel = new OtherConfigPanel();
-		overlays = new OverlaysPanel();
 		buttonBar = new JPanel();
 		applButton = new JButton();
 		okButton = new JButton();
@@ -318,7 +214,7 @@ public class ThemeDialog extends JDialog {
 			// ======== contentPanel ========
 			{
 				contentPanel.setLayout(new BorderLayout());
-				contentPanel.add(titlesPanel, BorderLayout.CENTER);
+				contentPanel.add(themePanel, BorderLayout.CENTER);
 			}
 			dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -349,26 +245,16 @@ public class ThemeDialog extends JDialog {
 		contentPane.add(dialogPane, BorderLayout.CENTER);
 		pack();
 		setLocationRelativeTo(getOwner());
-		// JFormDesigner - End of component initialization
-		// //GEN-END:initComponents
 	}
 
-	// JFormDesigner - Variables declaration - DO NOT MODIFY
-	// //GEN-BEGIN:variables
-	// Generated using JFormDesigner non-commercial license
 	private JPanel dialogPane;
 	private JPanel contentPanel;
-	private JTabbedPane tabbedPanel;
-	private ChartTitlesPanel titlesPanel;
+	private ChartThemePanel themePanel;
 	private PaletteSelectionPanel colorMapPanel;
-	private LabelsPanel labelsPanel;
-	private OtherConfigPanel otherPanel;
-	private OverlaysPanel overlays;
 	private JPanel buttonBar;
 	private JButton applButton;
 	private JButton okButton;
 	private JButton cancelButton;
-	// JFormDesigner - End of variables declaration //GEN-END:variables
 	
 	public void enableScale( boolean enable) {
 		colorMapPanel.enableScale( enable);
