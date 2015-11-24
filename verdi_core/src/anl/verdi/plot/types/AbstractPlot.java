@@ -163,7 +163,7 @@ public abstract class AbstractPlot implements Plot {
 			if (window instanceof JFrame) dialog = new ThemeDialog((JFrame) window);
 			else dialog = new ThemeDialog((JDialog)window);
 			dialog.init(AbstractPlot.this, null);
-			dialog.setSize(500, 600);
+			dialog.setSize(500, 820);
 			dialog.setVisible(true);
 		}
 	}
