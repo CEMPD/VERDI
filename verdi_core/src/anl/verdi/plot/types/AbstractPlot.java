@@ -147,7 +147,7 @@ public abstract class AbstractPlot implements Plot {
 			if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
 			else dialog = new ConfigDialog((JDialog)window);
 			dialog.init(AbstractPlot.this, null);
-			dialog.setSize(500, 600);
+			dialog.setSize(500, 506);
 			dialog.setVisible(true);
 		}
 		
@@ -160,10 +160,9 @@ public abstract class AbstractPlot implements Plot {
 		public void doEditChartTheme() {
 			Window window = SwingUtilities.getWindowAncestor(panel);
 			ThemeDialog dialog = null;
-			if (window instanceof JFrame) dialog = new ThemeDialog((JFrame) window);
-			else dialog = new ThemeDialog((JDialog)window);
-			dialog.init(AbstractPlot.this, null);
-			dialog.setSize(500, 820);
+			if (window instanceof JFrame) dialog = new ThemeDialog((JFrame) window, panel.getChart());
+			else dialog = new ThemeDialog((JDialog)window, panel.getChart());
+			dialog.setSize(500, 506);
 			dialog.setVisible(true);
 		}
 	}
