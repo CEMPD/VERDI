@@ -1183,7 +1183,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
 			else dialog = new ConfigDialog((JDialog) window);
 			dialog.init(AbstractTilePlot.this, getCurrentMinMax());
-			dialog.setSize(500, 600);
+			dialog.setSize(500, 506);
 			dialog.setVisible(true);
 		}
 	}

@@ -11,10 +11,13 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
-import org.apache.logging.log4j.LogManager;		
-import org.apache.logging.log4j.Logger;		
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jfree.chart.ChartTheme;
+import org.jfree.chart.JFreeChart;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
@@ -23,10 +26,8 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-import anl.verdi.data.DataUtilities;
-import anl.verdi.plot.color.ColorMap;
-import anl.verdi.plot.color.PaletteSelectionPanel;
-import anl.verdi.plot.config.PlotConfiguration;
+import anl.verdi.plot.config.ThemeConfig;
+import anl.verdi.plot.util.PlotProperties;
 
 /**
  * 
@@ -35,19 +36,21 @@ import anl.verdi.plot.config.PlotConfiguration;
  */
 public class ThemeDialog extends JDialog {
 	private static final long serialVersionUID = 1117048665491590187L;
-	static final Logger Logger = LogManager.getLogger(ThemeDialog.class.getName());
-	private Plot plot;
+	private static final Logger Logger = LogManager.getLogger(ThemeDialog.class.getName());
+	private JFreeChart chart;
 
-	public ThemeDialog(Frame owner) {
+	public ThemeDialog(Frame owner, JFreeChart chart) {
 		super(owner);
 		initComponents();
 		addListeners();
+		this.chart = chart;
 	}
 
-	public ThemeDialog(Dialog owner) {
+	public ThemeDialog(Dialog owner, JFreeChart chart) {
 		super(owner);
 		initComponents();
 		addListeners();
+		this.chart = chart;
 	}
 
 	private void addListeners() {
@@ -87,112 +90,19 @@ public class ThemeDialog extends JDialog {
 		this.dispose();
 	}
 
-	// commit the plot configuration
+	// commit the theme configuration
 	private void commit() throws Exception {
-		PlotConfiguration config = new PlotConfiguration();
-		config.putObject(PlotConfiguration.PLOT_TYPE, plot.getType()); //NOTE: to differentiate plot types
-		
-//		if (tabbedPanel.indexOfTab("Color Map") != -1) {
-//			config.putObject(TilePlotConfiguration.COLOR_MAP, colorMapPanel.getColorMap());
-//		}
-//
-//		int index = tabbedPanel.indexOfTab("Titles");
-//
-//		if (index >= 0)
-//			config = titlesPanel.fillConfiguration(config);
-//
-//		index = tabbedPanel.indexOfTab("Labels");
-//
-//		if (index >= 0)
-//			config = labelsPanel.fillConfiguration(config);
-//
-//		index = tabbedPanel.indexOfTab("Other");
-//
-//		if (index >= 0)
-//			config = otherPanel.fillConfiguration(config);
-//
-//		index = tabbedPanel.indexOfTab("Overlays");
-//
-//		if (index >= 0)
-//			config = overlays.fillConfiguration(config);
-//
-//		plot.configure(config, Plot.ConfigSoure.GUI);
-	}
-
-	public void init(Plot plot) {
-		init(plot, null);
-
-	}
-
-	public void init(Plot plot, DataUtilities.MinMax globalMinMax) {
-		Logger.debug("just called init for ConfigDialog");
-		this.plot = plot;
-//		PlotConfiguration config = new PlotConfiguration(plot.getPlotConfiguration());
-//		ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
-//		if (map == null || globalMinMax == null) {
-//			tabbedPanel.remove(tabbedPanel.indexOfTab("Color Map"));
-//		} else {
-//			// changed by Mary Ann Bitz 09/01/09
-//			// globalMinMax did not seem to be used before
-//			if(globalMinMax!=null){
-//				colorMapPanel.init(map, new MinMax(globalMinMax.getMin(), globalMinMax.getMax()));
-//			}else{
-//				try {
-//					colorMapPanel.init(map, new MinMax(map.getMin(), map.getMax()));
-//				} catch (Exception e) {
-//					JOptionPane.showMessageDialog(ThemeDialog.this, e.getMessage(), 
-//							"Configuration Error", JOptionPane.ERROR_MESSAGE);
-//				}
-//			}
-//		}
-//
-//		Logger.debug("ready to call initTitles(config)");
-//		initTitles(config);
-//		Logger.debug("just called initTitles(config)");
-//		initLabels(config);
-//		initOther(config);
-//
-//		if (config.getObject(TilePlotConfiguration.OBS_SHAPE_SIZE) == null) {
-//			tabbedPanel.remove(tabbedPanel.indexOfTab("Overlays"));
-//		} else {
-//			initOverlays(config);
-//		}
-//
-//		if ( plot instanceof FastTilePlot && colorMapPanel != null ){
-//			colorMapPanel.setForFastTitle( true);
-//		} else {
-//			colorMapPanel.setForFastTitle( false);
-//		}
-	}
-
-	private void initTitles(PlotConfiguration config) {
-//		Logger.debug("in initTitles; ready to set title");
-//		String title = plot.getTitle();
-//		Logger.debug("title now set to: " + title);
-//		titlesPanel.initTitle(title != null && !title.trim().isEmpty(), title, (Font) config
-//				.getObject(PlotConfiguration.TITLE_FONT), (Color) config
-//				.getObject(PlotConfiguration.TITLE_COLOR));
-//
-//		titlesPanel.initSubTitle1(config.getSubtitle1().trim().length() > 0,
-//				config.getSubtitle1(), (Font) config
-//						.getObject(PlotConfiguration.SUBTITLE_1_FONT),
-//				(Color) config.getObject(PlotConfiguration.SUBTITLE_1_COLOR));
-//
-//		titlesPanel.initSubTitle2(config.getSubtitle2().trim().length() > 0,
-//				config.getSubtitle2(), (Font) config
-//						.getObject(PlotConfiguration.SUBTITLE_2_FONT),
-//				(Color) config.getObject(PlotConfiguration.SUBTITLE_2_COLOR));
-	}
-
-	public void initColorMap(ColorMap map, DataUtilities.MinMax minMax) {
-//		colorMapPanel.init(map, minMax);
+		ThemeConfig theme = new ThemeConfig();
+		themePanel.setThemeProperties(theme);
+		ChartTheme chartTheme = theme.getTheme();
+		PlotProperties.getInstance().setCurrentTheme(chartTheme);
+		chartTheme.apply(chart);
 	}
 
 	private void initComponents() {
 		dialogPane = new JPanel();
 		contentPanel = new JPanel();
 		themePanel = new ChartThemePanel();
-		colorMapPanel = new PaletteSelectionPanel();
 		buttonBar = new JPanel();
 		applButton = new JButton();
 		okButton = new JButton();
@@ -213,8 +123,9 @@ public class ThemeDialog extends JDialog {
 
 			// ======== contentPanel ========
 			{
+				JScrollPane scrollPane = new JScrollPane(themePanel);
 				contentPanel.setLayout(new BorderLayout());
-				contentPanel.add(themePanel, BorderLayout.CENTER);
+				contentPanel.add(scrollPane, BorderLayout.CENTER);
 			}
 			dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -250,13 +161,8 @@ public class ThemeDialog extends JDialog {
 	private JPanel dialogPane;
 	private JPanel contentPanel;
 	private ChartThemePanel themePanel;
-	private PaletteSelectionPanel colorMapPanel;
 	private JPanel buttonBar;
 	private JButton applButton;
 	private JButton okButton;
 	private JButton cancelButton;
-	
-	public void enableScale( boolean enable) {
-		colorMapPanel.enableScale( enable);
-	}	
 }

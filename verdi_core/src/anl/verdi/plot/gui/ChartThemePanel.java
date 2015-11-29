@@ -7,7 +7,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -17,8 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
-import anl.verdi.plot.config.PlotConfiguration;
-import anl.verdi.plot.util.PlotExporterAction;
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -29,17 +28,13 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 import com.l2fprod.common.swing.JFontChooser;
 
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import anl.verdi.plot.config.ThemeConfig;
 
 
 /**
- * @author User #2
+ * @author qun
  */
 public class ChartThemePanel extends JPanel {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3469212269628821152L;
 	static final Logger Logger = LogManager.getLogger(ChartThemePanel.class.getName());
 
@@ -49,10 +44,10 @@ public class ChartThemePanel extends JPanel {
 		Logger.debug("back from initComponents; ready to go to subtitle1Panel.setBorder");
 	}
 
-	private void selectFont(JTextField fontFld) {
-		Font font = JFontChooser.showDialog(this, "Select Font", selectedFont);
+	private Font selectFont(JTextField fontFld) {
+		Font font = JFontChooser.showDialog(this, "Select Font", null);
 		if (font != null) {
-			selectedFont = font;
+			fontFld.setEnabled(true);
 			float size = fontFld.getFont().getSize();
 			fontFld.setFont(font.deriveFont(size));
 			String strStyle;
@@ -63,13 +58,26 @@ public class ChartThemePanel extends JPanel {
 			}
 			fontFld.setText(font.getName() + ", " + strStyle + ", " + font.getSize());
 		}
+		
+		if (font == null) {
+			fontFld.setEnabled(false);
+		}
+		
+		return font;
 	}
 
-	private void selectColor(JTextField colorFld) {
+	private Color selectColor(JTextField colorFld) {
 		Color color = JColorChooser.showDialog(this, "Select Color", colorFld.getBackground());
 		if (color != null) {
+			colorFld.setEnabled(true);
 			colorFld.setBackground(color);
 		}
+		
+		if (color == null) {
+			colorFld.setEnabled(false);
+		}
+		
+		return color;
 	}
 
 	public static void main(String[] args) {
@@ -139,10 +147,11 @@ public class ChartThemePanel extends JPanel {
 		xlargeFontLbl.setText("X-Large Font:");
 		contentPanel.add(xlargeFontLbl, cc.xy(1, 3));
 		contentPanel.add(xlargeFontFld, cc.xy(3, 3));
+		xlargeFontFld.setEnabled(false);
 		xlargeFontBtn.setText("Select");
 		xlargeFontBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectFont(xlargeFontFld);
+				xlargeFont = selectFont(xlargeFontFld);
 			}
 		});
 		contentPanel.add(xlargeFontBtn, cc.xy(5, 3));
@@ -151,10 +160,11 @@ public class ChartThemePanel extends JPanel {
 		largeFontLbl.setText("Large Font:");
 		contentPanel.add(largeFontLbl, cc.xy(1, 5));
 		contentPanel.add(largeFontFld, cc.xy(3, 5));
+		largeFontFld.setEnabled(false);
 		largeFontBtn.setText("Select");
 		largeFontBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectFont(largeFontFld);
+				largeFont = selectFont(largeFontFld);
 			}
 		});
 		contentPanel.add(largeFontBtn, cc.xy(5, 5));
@@ -163,10 +173,11 @@ public class ChartThemePanel extends JPanel {
 		regFontLbl.setText("Regular Font:");
 		contentPanel.add(regFontLbl, cc.xy(1, 7));
 		contentPanel.add(regFontFld, cc.xy(3, 7));
+		regFontFld.setEnabled(false);
 		regFontBtn.setText("Select");
 		regFontBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectFont(regFontFld);
+				regularFont = selectFont(regFontFld);
 			}
 		});
 		contentPanel.add(regFontBtn, cc.xy(5, 7));
@@ -175,10 +186,11 @@ public class ChartThemePanel extends JPanel {
 		smallFontLbl.setText("Small Font:");
 		contentPanel.add(smallFontLbl, cc.xy(1, 9));
 		contentPanel.add(smallFontFld, cc.xy(3, 9));
+		smallFontFld.setEnabled(false);
 		samllFontBtn.setText("Select");
 		samllFontBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectFont(smallFontFld);
+				smallFont = selectFont(smallFontFld);
 			}
 		});
 		contentPanel.add(samllFontBtn, cc.xy(5, 9));
@@ -201,13 +213,13 @@ public class ChartThemePanel extends JPanel {
 		//---- title theme ----
 		titleColorLbl.setText("Title Paint:");
 		contentPanel.add(titleColorLbl, cc.xy(1, 1));
-		titleColorFld.setBackground(Color.black);
+		titleColorFld.setEnabled(false);
 		titleColorFld.setEditable(false);
 		contentPanel.add(titleColorFld, new CellConstraints(3, 1, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		titleColorBtn.setText("Select");
 		titleColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(titleColorFld);
+				titleColor = selectColor(titleColorFld);
 			}
 		});
 		contentPanel.add(titleColorBtn, cc.xy(5, 1));
@@ -215,13 +227,13 @@ public class ChartThemePanel extends JPanel {
 		//---- subtitle theme ----
 		subTitleColorLbl.setText("Subtitle Paint:");
 		contentPanel.add(subTitleColorLbl, cc.xy(1, 3));
-		subTitleColorFld.setBackground(Color.black);
+		subTitleColorFld.setEnabled(false);
 		subTitleColorFld.setEditable(false);
 		contentPanel.add(subTitleColorFld, new CellConstraints(3, 3, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		subTitleColorBtn.setText("Select");
 		subTitleColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(subTitleColorFld);
+				subTitleColor = selectColor(subTitleColorFld);
 			}
 		});
 		contentPanel.add(subTitleColorBtn, cc.xy(5, 3));
@@ -254,13 +266,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Legend theme ----
 		legendColorLbl.setText("Legend Paint:");
 		contentPanel.add(legendColorLbl, cc.xy(1, 1));
-		legendColorFld.setBackground(Color.black);
+		legendColorFld.setEnabled(false);
 		legendColorFld.setEditable(false);
 		contentPanel.add(legendColorFld, new CellConstraints(3, 1, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		legendColorBtn.setText("Select");
 		legendColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(legendColorFld);
+				legendColor = selectColor(legendColorFld);
 			}
 		});
 		contentPanel.add(legendColorBtn, cc.xy(5, 1));
@@ -268,13 +280,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Legend background theme ----
 		legendBgColorLbl.setText("Legend Bg Paint:");
 		contentPanel.add(legendBgColorLbl, cc.xy(1, 3));
-		legendBgColorFld.setBackground(Color.black);
+		legendBgColorFld.setEnabled(false);
 		legendBgColorFld.setEditable(false);
 		contentPanel.add(legendBgColorFld, new CellConstraints(3, 3, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		legendBgColorBtn.setText("Select");
 		legendBgColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(legendBgColorFld);
+				legendBgColor = selectColor(legendBgColorFld);
 			}
 		});
 		contentPanel.add(legendBgColorBtn, cc.xy(5, 3));
@@ -282,13 +294,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Axis Label theme ----
 		axisLableColorLbl.setText("Axis Label Paint:");
 		contentPanel.add(axisLableColorLbl, cc.xy(1, 5));
-		axisLableColorFld.setBackground(Color.black);
+		axisLableColorFld.setEnabled(false);
 		axisLableColorFld.setEditable(false);
 		contentPanel.add(axisLableColorFld, new CellConstraints(3, 5, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		axisLableColorBtn.setText("Select");
 		axisLableColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(axisLableColorFld);
+				axisLableColor = selectColor(axisLableColorFld);
 			}
 		});
 		contentPanel.add(axisLableColorBtn, cc.xy(5, 5));
@@ -296,13 +308,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Tick Label theme ----
 		tickLabelColorLbl.setText("Tick Label Paint:");
 		contentPanel.add(tickLabelColorLbl, cc.xy(1, 7));
-		tickLabelColorFld.setBackground(Color.black);
+		tickLabelColorFld.setEnabled(false);
 		tickLabelColorFld.setEditable(false);
 		contentPanel.add(tickLabelColorFld, new CellConstraints(3, 7, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		tickLabelColorBtn.setText("Select");
 		tickLabelColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(tickLabelColorFld);
+				tickLabelColor = selectColor(tickLabelColorFld);
 			}
 		});
 		contentPanel.add(tickLabelColorBtn, cc.xy(5, 7));
@@ -355,13 +367,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Legend theme ----
 		chartBgColorLbl.setText("Chart Bg Paint:");
 		contentPanel.add(chartBgColorLbl, cc.xy(1, 1));
-		chartBgColorFld.setBackground(Color.black);
+		chartBgColorFld.setEnabled(false);
 		chartBgColorFld.setEditable(false);
 		contentPanel.add(chartBgColorFld, new CellConstraints(3, 1, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		chartBgColorBtn.setText("Select");
 		chartBgColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(chartBgColorFld);
+				chartBgColor = selectColor(chartBgColorFld);
 			}
 		});
 		contentPanel.add(chartBgColorBtn, cc.xy(5, 1));
@@ -369,13 +381,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Legend background theme ----
 		plotBgColorLbl.setText("Plot Bg Paint:");
 		contentPanel.add(plotBgColorLbl, cc.xy(1, 3));
-		plotBgColorFld.setBackground(Color.black);
+		plotBgColorFld.setEnabled(false);
 		plotBgColorFld.setEditable(false);
 		contentPanel.add(plotBgColorFld, new CellConstraints(3, 3, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		plotBgColorBtn.setText("Select");
 		plotBgColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(plotBgColorFld);
+				plotBgColor = selectColor(plotBgColorFld);
 			}
 		});
 		contentPanel.add(plotBgColorBtn, cc.xy(5, 3));
@@ -383,13 +395,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Plot outline theme ----
 		plotOlColorLbl.setText("Plot Outline Paint:");
 		contentPanel.add(plotOlColorLbl, cc.xy(1, 5));
-		plotOlColorFld.setBackground(Color.black);
+		plotOlColorFld.setEnabled(false);
 		plotOlColorFld.setEditable(false);
 		contentPanel.add(plotOlColorFld, new CellConstraints(3, 5, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		plotOlColorBtn.setText("Select");
 		plotOlColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(plotOlColorFld);
+				plotOlColor = selectColor(plotOlColorFld);
 			}
 		});
 		contentPanel.add(plotOlColorBtn, cc.xy(5, 5));
@@ -397,13 +409,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Domain Gridline theme ----
 		domainGlColorLbl.setText("Domain Grdln Paint:");
 		contentPanel.add(domainGlColorLbl, cc.xy(1, 7));
-		domainGlColorFld.setBackground(Color.black);
+		domainGlColorFld.setEnabled(false);
 		domainGlColorFld.setEditable(false);
 		contentPanel.add(domainGlColorFld, new CellConstraints(3, 7, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		domainGlColorBtn.setText("Select");
 		domainGlColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(domainGlColorFld);
+				domainGlColor = selectColor(domainGlColorFld);
 			}
 		});
 		contentPanel.add(domainGlColorBtn, cc.xy(5, 7));
@@ -411,13 +423,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Range Gridline theme ----
 		rangeGlColorLbl.setText("Range Grdln Paint:");
 		contentPanel.add(rangeGlColorLbl, cc.xy(1, 9));
-		rangeGlColorFld.setBackground(Color.black);
+		rangeGlColorFld.setEnabled(false);
 		rangeGlColorFld.setEditable(false);
 		contentPanel.add(rangeGlColorFld, new CellConstraints(3, 9, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		rangeGlColorBtn.setText("Select");
 		rangeGlColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(rangeGlColorFld);
+				rangeGlColor = selectColor(rangeGlColorFld);
 			}
 		});
 		contentPanel.add(rangeGlColorBtn, cc.xy(5, 9));
@@ -425,13 +437,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Baseline theme ----
 		baselineColorLbl.setText("Baseline Paint:");
 		contentPanel.add(baselineColorLbl, cc.xy(1, 11));
-		baselineColorFld.setBackground(Color.black);
+		baselineColorFld.setEnabled(false);
 		baselineColorFld.setEditable(false);
 		contentPanel.add(baselineColorFld, new CellConstraints(3, 11, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		baselineColorBtn.setText("Select");
 		baselineColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(baselineColorFld);
+				baselineColor = selectColor(baselineColorFld);
 			}
 		});
 		contentPanel.add(baselineColorBtn, cc.xy(5, 11));
@@ -439,13 +451,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Cross Hair theme ----
 		crosshairColorLbl.setText("Crosshair Paint:");
 		contentPanel.add(crosshairColorLbl, cc.xy(1, 13));
-		crosshairColorFld.setBackground(Color.black);
+		crosshairColorFld.setEnabled(false);
 		crosshairColorFld.setEditable(false);
 		contentPanel.add(crosshairColorFld, new CellConstraints(3, 13, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		crosshairColorBtn.setText("Select");
 		crosshairColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(crosshairColorFld);
+				crosshairColor = selectColor(crosshairColorFld);
 			}
 		});
 		contentPanel.add(crosshairColorBtn, cc.xy(5, 13));
@@ -453,13 +465,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Item Label theme ----
 		itemLabelColorLbl.setText("Item Label Paint:");
 		contentPanel.add(itemLabelColorLbl, cc.xy(1, 15));
-		itemLabelColorFld.setBackground(Color.black);
+		itemLabelColorFld.setEnabled(false);
 		itemLabelColorFld.setEditable(false);
 		contentPanel.add(itemLabelColorFld, new CellConstraints(3, 15, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		itemLabelColorBtn.setText("Select");
 		itemLabelColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(itemLabelColorFld);
+				itemLabelColor = selectColor(itemLabelColorFld);
 			}
 		});
 		contentPanel.add(itemLabelColorBtn, cc.xy(5, 15));
@@ -467,13 +479,13 @@ public class ChartThemePanel extends JPanel {
 		//---- Shadow theme ----
 		shadowColorLbl.setText("Shadow Paint:");
 		contentPanel.add(shadowColorLbl, cc.xy(1, 17));
-		shadowColorFld.setBackground(Color.black);
+		shadowColorFld.setEnabled(false);
 		shadowColorFld.setEditable(false);
 		contentPanel.add(shadowColorFld, new CellConstraints(3, 17, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		shadowColorBtn.setText("Select");
 		shadowColorBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				selectColor(shadowColorFld);
+				shadowColor = selectColor(shadowColorFld);
 			}
 		});
 		contentPanel.add(shadowColorBtn, cc.xy(5, 17));
@@ -513,6 +525,29 @@ public class ChartThemePanel extends JPanel {
 		});
 	}
     
+	public void setThemeProperties(ThemeConfig theme) {
+		theme.putObject(ThemeConfig.SHOW_SHADOW, useShadowBox.isSelected());
+		if (xlargeFont != null) theme.putObject(ThemeConfig.X_LARGE_FONT, xlargeFont);
+		if (largeFont != null) theme.putObject(ThemeConfig.LARGE_FONT, largeFont);
+		if (regularFont != null) theme.putObject(ThemeConfig.REGULAR_FONT, regularFont);
+		if (smallFont != null) theme.putObject(ThemeConfig.SMALL_FONT, smallFont);
+		if (titleColor != null) theme.putObject(ThemeConfig.TITLE_PAINT, titleColor);
+		if (subTitleColor != null) theme.putObject(ThemeConfig.SUBTITLE_PAINT, subTitleColor);
+		if (legendColor != null) theme.putObject(ThemeConfig.LEGENT_PAINT, legendColor);
+		if (legendBgColor != null) theme.putObject(ThemeConfig.LEGENT_BG_PAINT, legendBgColor);
+		if (axisLableColor != null) theme.putObject(ThemeConfig.AXIS_LABEL_PAINT, axisLableColor);
+		if (tickLabelColor != null) theme.putObject(ThemeConfig.TICK_LABEL_PAINT, tickLabelColor);
+		if (chartBgColor != null) theme.putObject(ThemeConfig.CHART_BG_PAINT, chartBgColor);
+		if (plotBgColor != null) theme.putObject(ThemeConfig.PLOT_BG_PAINT, plotBgColor);
+		if (plotOlColor != null) theme.putObject(ThemeConfig.PLOT_OUTLINE_PAINT, plotOlColor);
+		if (domainGlColor != null) theme.putObject(ThemeConfig.DOMAIN_GRDLN_PAINT, domainGlColor);
+		if (rangeGlColor != null) theme.putObject(ThemeConfig.RANGE_GRDLN_PAINT, rangeGlColor);
+		if (baselineColor != null) theme.putObject(ThemeConfig.BASELINE_PAINT, baselineColor);
+		if (crosshairColor != null) theme.putObject(ThemeConfig.CROSSHAIR_PAINT, crosshairColor);
+		if (itemLabelColor != null) theme.putObject(ThemeConfig.ITEM_LABEL_PAINT, itemLabelColor);
+		if (shadowColor != null) theme.putObject(ThemeConfig.SHADOW_PAINT, shadowColor);
+	}
+	
     private JLabel useShadowLbl;
     private JCheckBox useShadowBox;
 	private JLabel xlargeFontLbl;
@@ -588,5 +623,10 @@ public class ChartThemePanel extends JPanel {
 	private JPanel titlePanel;
 	private JPanel legendNLabelsPanel;
 	private JPanel miscPanel;
-	private Font selectedFont;
+
+	protected Font xlargeFont, largeFont, regularFont, smallFont; 
+	protected Color titleColor, subTitleColor, legendColor, legendBgColor,
+	          axisLableColor, tickLabelColor, chartBgColor, plotBgColor,
+	          plotOlColor, domainGlColor, rangeGlColor, baselineColor,
+	          crosshairColor, itemLabelColor, shadowColor;
 }

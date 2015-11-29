@@ -727,7 +727,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		else dialog = new ConfigDialog((JDialog) window);
 
 		dialog.init(this, minMax);
-		dialog.setSize(500, 600);
+		dialog.setSize(500, 506);
 		dialog.setVisible(true);
 	}
 
