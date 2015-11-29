@@ -14,7 +14,10 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-//import org.geotools.swing.JMapFrame;
+import org.geotools.map.MapContent;
+// import org.geotools.map.MapContent;
+import org.geotools.swing.JMapFrame;
+import org.geotools.swing.JMapPane;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import anl.verdi.plot.gui.VerdiBoundaries;
@@ -75,7 +78,8 @@ public class Mapper {
 	public void draw(final double[][] domain, final double[][] gridBounds,
 			final CoordinateReferenceSystem gridCRS, final Graphics graphics, int xOffset,
 			int yOffset, int width, int height, boolean withHucs,
-			boolean withRivers, boolean withRoads) {
+			boolean withRivers, boolean withRoads,
+			JMapPane myMapPane, MapContent myMapContent) {
 		// 2015 get to this upon completion of gov.epa.emvl.TilePlot - all done with TilePlot.draw
 		// gov.epa.emvl.Projector projector: projection of the overall map to be drawn
 		// java.awt.Graphics graphics
@@ -86,6 +90,8 @@ public class Mapper {
 		// boolean withHucs: include HUCs map layer or not
 		// boolean withRivers: include Rivers map layer or not
 		// boolean withRoads: include Roads map layer or not
+		// myMapPane: trying for reference to the JMapPane of the calling FastTilePlot
+		// myMapContent: current MapContent for all of the shapefiles to be drawn on the FastTilePlot
 		Logger.debug("in Mapper.draw function; number of layers = " + layers.size());
 		VerdiBoundaries aVerdiBoundaries = new VerdiBoundaries();
 		aVerdiBoundaries = chooseMap(domain); // based on map range assigns base map as
@@ -102,27 +108,39 @@ public class Mapper {
 			// List<VerdiBoundaries> does not yet include this shapefile
 			Logger.debug("have to add base map to layers");	// OK to here
 			layers.add(aVerdiBoundaries);	// do not need call to addLayer - already has a VerdiBoundaries object for List
+			myMapContent.addLayers(aVerdiBoundaries.getMap().layers());
 			Logger.debug("number of layers now = " + layers.size());	// now = 1
 			initialDraw = false;
 		}
 
 		if (layers.contains(hucsMap) && !withHucs)	// if have HUCs layer and don't want it
+		{
 			layers.remove(hucsMap);
+			myMapContent.removeLayer(hucsMap.getMap().layers().get(0));
+		}
 
 		if (layers.contains(riversMap) && !withRivers)	// if have Rivers layer and don't want it
+		{
 			layers.remove(riversMap);
+			myMapContent.removeLayer(riversMap.getMap().layers().get(0));
+		}
 
 		if (layers.contains(roadsMap) && !withRoads)	// if have Roads layer and don't want it
+		{
 			layers.remove(roadsMap);
-// JEB NEED JMAPFRAME UP HERE?
+			myMapContent.removeLayer(roadsMap.getMap().layers().get(0));
+		}
 		Logger.debug("number of layers now = " + layers.size());	// now = 1
+		
+		myMapPane.setMapContent(myMapContent); 		// update JMapPane to new MapContent
+//		myMapPane.drawLayers(true);					// can't get drawLayers to be visible
+		// start looping through the VerdiBoundaries
 		for (VerdiBoundaries layer : layers) {
 			Logger.debug("drawing for a layer");	// OK to here
 			Logger.debug("layer = " + layer.toString());
 			Logger.debug("Instead of passing Projector object to VerdiBoundaries.draw get the CRS and pass it. Calling layer.draw");
 			// NEED TO COMPLETE LAYER.DRAW TO ACTUALLY DRAW THE MAP!!! 
-// JEB  layers NEEDS TO BE LIST WITHIN MAPCONTENT
-// JEB  PROBABLY NEEDS TO PASS JMAPFRAME TO layer.draw 
+// JEB  layers Each VerdiBoundaries has a MapContent
 			layer.draw(domain, gridBounds, gridCRS, graphics, xOffset,
 					yOffset, width, height);	// execute the draw function for this VerdiBoundaries layer
 
@@ -131,16 +149,19 @@ public class Mapper {
 //			MapContent aThing = layer.getMap();				// TEST
 //			Logger.debug("instantiated aThing");
 //			JMapFrame mapFrame = new JMapFrame(aThing);	
-//			Logger.debug("instantiated the JMapFrame");		// TEST: got to this line
+//			Logger.debug("instantiated the JMapFrame");		
 //			mapFrame.enableToolBar(false);
 //			mapFrame.enableStatusBar(false);
 //			mapFrame.setSize(800, 600);						
-//			Logger.debug("set the size");					// TEST: got to this line
-//			mapFrame.setVisible(true);						// TEST: FAILED ON THIS LINE!!!
+//			Logger.debug("set the size");					
+//			mapFrame.setVisible(true);						
 //			Logger.debug("set mapFrame to visible");
 			
-//			JMapFrame.showMap(layer.getMap());
-			Logger.debug("just did the showMap");			// OK here
+//			JMapFrame.showMap(layer.getMap());	// THIS SINGLE LINE: spawns a JMapFrame with no map
+												// and a JMapFrame with the one layer map
+												// in appropriate projection (that of tile plot)
+												// and with its own JMapFrame widget bars
+//			Logger.debug("just did the showMap");			// OK here
 			graphics.setColor(mapColor); // to reset graphics color
 			Logger.debug("just reset graphics color to: " + mapColor);	// OK here
 		}
@@ -226,9 +247,8 @@ public class Mapper {
 		Logger.debug("result = " + result.getFileName());
 		boolean containsResult = layers.contains(result);
 		Logger.debug("getting ready to return from Mapper.chooseMap");
-		Logger.debug("layers.contains(result) == " + containsResult);	// says false
-		return containsResult ? null : result;		// 2014 Why is the line this way instead of the way that was commented out (below)?
-//		return layers.contains(result) ? result : null;		// switched back to other method because above resulting in NullPointerException in VectorAnnotation.java:117
+		Logger.debug("layers.contains(result) == " + containsResult);	// says false: selected map is not already in layers
+		return containsResult ? null : result;		// if already contained map, return null; if not already contained map return the map as a VerdiBoundaries object
 	}
 
 	public VerdiBoundaries getUSHucMap() {

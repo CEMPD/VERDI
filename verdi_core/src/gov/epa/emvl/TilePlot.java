@@ -24,6 +24,8 @@ import javax.swing.ImageIcon;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.map.MapContent;
+import org.geotools.swing.JMapPane;
 
 import anl.verdi.data.DataUtilities;
 import anl.verdi.plot.config.PlotConfiguration;
@@ -157,9 +159,9 @@ public class TilePlot {
 
 		// Draw grid boundary rectangle, labeled row/column axis and legend:
 		Logger.debug("ready to call graphics.setColor");
-		graphics.setColor(axisColor);
+		graphics.setColor(axisColor);		// graphics object is SunGraphics2D
 		Logger.debug("ready to call drawGridBoundary");
-		drawGridBoundary(graphics, xMinimum, xMaximum, yMinimum, yMaximum);
+		drawGridBoundary(graphics, xMinimum, xMaximum, yMinimum, yMaximum);		// draw 4 lines
 		Logger.debug("ready to call drawAxis");
 		drawAxis(graphics, xMinimum, xMaximum, yMinimum, yMaximum, firstRow,
 				lastRow, firstColumn, lastColumn);
@@ -199,7 +201,11 @@ public class TilePlot {
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data) {
+			final Color gridLineColor, final float[][] data
+//			,JMapPane existingJMapPane, 
+//			MapContent myMapContent) // JEB 2015 added these last 2
+			)
+	{
 
 		this.config = config;
 		this.numberFormat = format;

@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 //import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 // NOTE: where FeatureLayer is now used in this code, MapLayer had been used
 import org.geotools.map.FeatureLayer;
-//import org.geotools.swing.JMapFrame;
 import org.pietschy.wizard.Wizard;
 import org.pietschy.wizard.models.SimplePath;
 
@@ -77,7 +76,6 @@ public class FastTileAddLayerWizard {
 		Logger.debug("done with FastTileAddLayerWizard constructor");
 	}
 
-//	public VerdiBoundaries display(JMapFrame frame, boolean isEditing) {
 	public VerdiBoundaries display(JFrame frame, boolean isEditing) {
 			Logger.debug("in FastTileAddLayerWizard.display");
 		if(frame == null)

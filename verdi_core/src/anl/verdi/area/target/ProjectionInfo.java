@@ -25,8 +25,7 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.geotools.referencing.CRS;
-//import javax.swing.JFrame;
-//import org.geotools.swing.JMapFrame;
+import javax.swing.JFrame;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 	/**
 	 * Generic GUI widget that allows user to enter parameters for the selected projection.<br>
@@ -1924,30 +1923,29 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 	 * main entrypoint - starts the part when it is run as an application
 	 * @param args java.lang.String[]
 	 */
-//	public static void main(java.lang.String[] args) {
-//		try {
-////			JFrame frame = new JFrame();
-//			JMapFrame frame = new JMapFrame();
-//			ProjectionInfo aJeoProjectionParameterDialog;
-//			aJeoProjectionParameterDialog = new ProjectionInfo();
-//			frame.setContentPane(aJeoProjectionParameterDialog);
-//			frame.setSize(aJeoProjectionParameterDialog.getSize());
-//			frame.addWindowListener(new java.awt.event.WindowAdapter() {
-//				public void windowClosing(java.awt.event.WindowEvent e) {
-//					System.exit(0);
-//				};
-//			});
-////			frame.show();	// show is deprecated
-//			frame.setVisible(true);
-//			java.awt.Insets insets = frame.getInsets();
-//			frame.setSize(frame.getWidth() + insets.left + insets.right, frame.getHeight() + insets.top + insets.bottom);
-//			frame.setVisible(true);
-//		} catch (Throwable exception) {
-//			System.err.println("Exception occurred in main() of javax.swing.JPanel");
-//			Logger.error("Exception occurred in main() of javax.swing.JPanel.");
-//			exception.printStackTrace(System.out);
-//		}
-//	}
+	public static void main(java.lang.String[] args) {
+		try {
+			JFrame frame = new JFrame();
+			ProjectionInfo aJeoProjectionParameterDialog;
+			aJeoProjectionParameterDialog = new ProjectionInfo();
+			frame.setContentPane(aJeoProjectionParameterDialog);
+			frame.setSize(aJeoProjectionParameterDialog.getSize());
+			frame.addWindowListener(new java.awt.event.WindowAdapter() {
+				public void windowClosing(java.awt.event.WindowEvent e) {
+					System.exit(0);
+				};
+			});
+//			frame.show();	// show is deprecated
+			frame.setVisible(true);
+			java.awt.Insets insets = frame.getInsets();
+			frame.setSize(frame.getWidth() + insets.left + insets.right, frame.getHeight() + insets.top + insets.bottom);
+			frame.setVisible(true);
+		} catch (Throwable exception) {
+			System.err.println("Exception occurred in main() of javax.swing.JPanel");
+			Logger.error("Exception occurred in main() of javax.swing.JPanel.");
+			exception.printStackTrace(System.out);
+		}
+	}
 
 
 	/**
