@@ -87,9 +87,7 @@ import edu.umd.cs.piccolo.util.PBounds;	// NOTE: required old piccolo by Repast 
 //import org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory;
 //import org.geotools.map.DefaultMapContext;
 //import org.geotools.map.DefaultMapLayer;
-//import org.geotools.map.MapContext;
 //import org.geotools.map.MapLayer;
-//import org.geotools.swing.JMapFrame;
 //import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
 
 /**
@@ -545,7 +543,6 @@ public class DomainPanel extends JPanel {
 		panel.getToolBar().add(domainLbl);
 		Logger.debug("in DomainPanel, putting title 'Edit Domain:' before new EditDomainWindow");
 		new EditDomainWindow((JFrame) null, grid, currentElement, panel, winTitle, true);
-//		new EditDomainWindow((JMapFrame) null, grid, currentElement, panel,	winTitle, true);
 
 	}
 
@@ -592,7 +589,6 @@ public class DomainPanel extends JPanel {
 		panel.add(scrollPane);
 
 		new ProjectInfoWindow((JFrame) null, panel, "Dataset Metadata");
-//		new ProjectInfoWindow((JMapFrame) null, panel, "Dataset Metadata");
 		Logger.debug("in DomainPanel, just did new ProjectInfoWindow and passed in literal Dataset Metadata");
 	}
 
@@ -737,10 +733,8 @@ public class DomainPanel extends JPanel {
 
 	public static void main(String[] args) throws Exception {
 		JFrame frame = new JFrame();
-//		JMapFrame frame = new JMapFrame();
 		frame.setSize(300, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		frame.setDefaultCloseOperation(JMapFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		DomainPanel panel = new DomainPanel();
 		frame.add(panel, BorderLayout.CENTER);

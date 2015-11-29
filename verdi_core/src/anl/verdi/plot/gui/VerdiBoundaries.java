@@ -9,6 +9,7 @@
 
 package anl.verdi.plot.gui;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +22,8 @@ import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.geometry.jts.JTS;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.referencing.CRS;
 import org.geotools.styling.Style;
@@ -39,6 +42,7 @@ public class VerdiBoundaries {
 
 	static final Logger Logger = LogManager.getLogger(VerdiBoundaries.class.getName());
 	private VerdiStyle aVerdiStyle = null;
+	private Color vColor = Color.BLACK;		// set default boundaries color as BLACK
 	private String vFileName = null;		// name of shapefile
 	private File vFile = null;				// shapefile represented as a File
 	private String vPath = null;			// vPath is absolute path to shapefile
@@ -89,6 +93,11 @@ public class VerdiBoundaries {
 		vPath = vFile.getAbsolutePath();		// definition taken from FastTileAddLayerWizard
 		vMap = new MapContent();	// THINK THROUGH THIS SOME MORE - JEB
 		aVerdiStyle = new VerdiStyle(vFile);	// read/compute everything to make a VerdiStyle for this File
+		if(aVerdiStyle == null)
+		{
+			Logger.debug("VerdiBoundaries.setFileName failed; unable to create the aVerdiStyle.");
+			return false;
+		}
 		Logger.debug("Successfully completed VerdiBoundaries.setFileName for: " + vPath +
 				" and back from instantiating VerdiStyle.");	// JEB BACK FROM CREATING new VerdiStyle
 		return true;	// successfully set data members		// JEB YES returning to calling pgm (Mapper)
@@ -100,13 +109,19 @@ public class VerdiBoundaries {
 		vFileName = null;
 		vFile = null;
 		vPath = null;
+		vStore = null;
+		vFeatureSource = null;
 		vMap = null;
+		vTransform = null;
 	}
 	
 	public void draw(double[][] domain, double[][] gridBounds, CoordinateReferenceSystem gridCRS, Graphics graphics,
 			int xOffset, int yOffset, int width, int height)	// execute the draw function for this VerdiBoundaries layer
 	{	
+		Logger.debug("in VerdiBoundaries.draw; ready to getStyle() and return theStyle");
 		Style theStyle = aVerdiStyle.getStyle();
+		graphics.setColor(vColor);		// set color for this graphics drawing to color stored for this VerdiBoundaries object
+		Logger.debug("just back from getting style");
 		Logger.debug("in VerdiBoundaries.draw; aVerdiStyle.getStyle() = " + theStyle.toString());
 		Logger.debug("in VerdiBoundaries.draw, CRS for tile plot (gridCRS) = " + gridCRS);
 		Logger.debug("   and name of file = " + vFileName);
@@ -129,11 +144,11 @@ public class VerdiBoundaries {
 		Logger.debug("Shapefile Path = " + aVerdiStyle.getShapePath());
 		Logger.debug("Style = " + aVerdiStyle.getStyle().toString());
 		Logger.debug("now set the CRS to gridCRS");	// NOTE: do NOT use Projector method (old UCAR operates point-by-point
+		Layer aLayer = new FeatureLayer(aVerdiStyle.getFeatureSource(), theStyle);
+		vMap.addLayer(aLayer);
 		vMap.getViewport().setCoordinateReferenceSystem(gridCRS);
 		Logger.debug("set CRS of Viewport to gridCRS: " + gridCRS.toString());
 		aVerdiStyle.getLayer().setVisible(true);
-		Logger.debug("stopping VerdiBoundaries.draw function at this point (after aVerdiStyle.getLayer().setVisible(true) )");
-		// show(); perhaps try show instead of setVisible ??? JEB
 		
 		// set of math transform
 		// NOTE: next commented-out section is possibly the beginnings of writing out a shapefile in a given projection
@@ -144,31 +159,31 @@ public class VerdiBoundaries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Logger.debug("vTransform computed as = " + vTransform.toString());
-//		// TODO - perform the transform
-		SimpleFeatureCollection featureCollection = null;
-		SimpleFeatureCollection newFeatureCollection = null;
-		try {
-			featureCollection = (SimpleFeatureCollection) vFeatureSource.getFeatures();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		SimpleFeatureIterator iterator = featureCollection.features();
-		try {
-			while (iterator.hasNext())
-			{
-				SimpleFeature feature = iterator.next();
-				Geometry geom1 = (Geometry) feature.getDefaultGeometry();
-				Geometry geometry2 = JTS.transform(geom1, vTransform);
+		Logger.debug("vTransform computed as = " + vTransform.toString());	// nothing yet drawn on map
+////		// TODO - perform the transform
+//		SimpleFeatureCollection featureCollection = null;
+//		SimpleFeatureCollection newFeatureCollection = null;
+//		try {
+//			featureCollection = (SimpleFeatureCollection) vFeatureSource.getFeatures();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		SimpleFeatureIterator iterator = featureCollection.features();
+//		try {
+//			while (iterator.hasNext())
+//			{
+//				SimpleFeature feature = iterator.next();
+//				Geometry geom1 = (Geometry) feature.getDefaultGeometry();
+//				Geometry geometry2 = JTS.transform(geom1, vTransform);
 //				newFeatureCollection.
-//				// What do I do with the geometry2 object?
-			}
-		} catch (Exception ex) {
-			Logger.error("caught an exception while converting map to new Coordinate Reference System");
-		} finally {
-			iterator.close();
-		}
+////				// What do I do with the geometry2 object?
+//			}
+//		} catch (Exception ex) {
+//			Logger.error("caught an exception while converting map to new Coordinate Reference System");
+//		} finally {
+//			iterator.close();
+//		}
 		// TODO - create a map layer and add it to the vMap object
 		vMap.layers().add(aVerdiStyle.getLayer());	// FIGURE THIS ONE OUT BECAUSE TRANSFORM IS HERE
 	}	// end of draw function
@@ -216,5 +231,15 @@ public class VerdiBoundaries {
 		if(aVerdiStyle == null)
 			return null;
 		return aVerdiStyle.getCoordinateReferenceSystem();	// get the Coordinate Reference System for this File
+	}
+	
+	public Color getColor()
+	{
+		return vColor;
+	}
+	
+	public void setColor(Color aColor)
+	{
+		vColor = aColor;
 	}
 }

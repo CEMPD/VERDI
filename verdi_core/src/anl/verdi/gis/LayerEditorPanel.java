@@ -43,7 +43,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
-//import org.geotools.swing.JMapFrame;
 
 /**
  * @author User #2
@@ -292,7 +291,6 @@ public class LayerEditorPanel extends JPanel {
 		AddLayerWizard wizard = new AddLayerWizard();
 		JDialog dialog = (JDialog)SwingUtilities.getWindowAncestor(this);
 		FeatureLayer layer = wizard.display((JFrame)dialog.getParent());
-//		FeatureLayer layer = wizard.display((JMapFrame)dialog.getParent());
 
 		if (layer != null) {
 			((DefaultListModel) layerList.getModel()).add(0, layer);
@@ -421,10 +419,8 @@ public class LayerEditorPanel extends JPanel {
 	// JFormDesigner - End of variables declaration //GEN-END:variables
 
 //	public static void main(String[] args) {
-////		JFrame frame = new JFrame();
-////		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		JMapFrame frame = new JMapFrame();
-//		frame.setDefaultCloseOperation(JMapFrame.EXIT_ON_CLOSE);
+//		JFrame frame = new JFrame();
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		frame.setLayout(new BorderLayout());
 //		frame.setSize(500, 500);
 //		frame.add(new LayerEditorPanel(), BorderLayout.CENTER);

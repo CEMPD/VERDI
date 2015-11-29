@@ -88,25 +88,28 @@ public class VerdiStyle {
 			reset();
 			return false;
 		}
+		if(shpFile == vFile)
+			return true;
 		vFile = shpFile;
 		shpPath = vFile.getAbsolutePath();
+		calcVerdiStyle();
 		return true;
 	}
 	
-	public void calcVerdiStyle()		// get Style and CRS for a shapefile
+	private void calcVerdiStyle()		// get Style and CRS for a shapefile
 	{
 		Logger.debug("starting calcVerdiStyle");		// JEB YES
-		vFeatureSource = findFeatureSource();	// gets the FeatureSource for the shapefile
+		findFeatureSource();	// gets the FeatureSource for the shapefile
 		Logger.debug("vFeatureSource = " + vFeatureSource.toString());		// JEB YES (back from findFeatureSource()
 		if (vFeatureSource == null)
-			Logger.debug("vFeatureSource is null");
-		else
 		{
-			vStyle = createStyle();			// JEB YES
-			Logger.debug("vStyle = " + vStyle.toString());		// JEB YES StyleImpl[ name=Default Styler]
-			vCRS = vFeatureSource.getSchema().getCoordinateReferenceSystem();
-			Logger.debug("vCRS = " + vCRS.toString());			// JEB YES GEOGCS["SPHERE",
+			Logger.debug("vFeatureSource is null");
+			return;
 		}
+		createVerdiStyle();			// JEB YES
+		Logger.debug("vStyle = " + vStyle.toString());		// JEB YES StyleImpl[ name=Default Styler]
+		vCRS = vFeatureSource.getSchema().getCoordinateReferenceSystem();
+		Logger.debug("vCRS = " + vCRS.toString());			// JEB YES GEOGCS["SPHERE",
 	}
 
 	private void reset()	// reset member variables to null
@@ -120,11 +123,11 @@ public class VerdiStyle {
 		vStore = null;
 	}
 
-	private FeatureSource findFeatureSource()	// find the FeatureSource for the shapefile
+	private void findFeatureSource()	// find the FeatureSource for the shapefile
 	{
 		vFeatureSource = null;
 		try{
-			FileDataStore vStore = FileDataStoreFinder.getDataStore(vFile);
+			vStore = FileDataStoreFinder.getDataStore(vFile);
 			Logger.debug("got FileDataStore = " + vStore.toString());		// JEB YES
 			vFeatureSource = vStore.getFeatureSource();
 			Logger.debug("got vFeatureSource = " + vFeatureSource.toString());	// JEB YES
@@ -132,10 +135,9 @@ public class VerdiStyle {
 			Logger.error("Data store or feature source for file " + vFile + " could not be found.");
 			Logger.error(ioEx.getMessage());
 		}
-		return vFeatureSource;
 	}
 
-	private Style createStyle()	// create the style from the SLD file, type of geometry, or dialog box
+	private void createVerdiStyle()	// create the style from the SLD file, type of geometry, or dialog box
 	{
 		Logger.debug("in createStyle; ready to create Style vStyle as null");		// JEB YES
 		vStyle = null;
@@ -143,37 +145,37 @@ public class VerdiStyle {
 		if(sld != null)
 		{
 			Logger.debug("sld != null: " + sld.getAbsolutePath());
-			vStyle = createFromSLD(sld);
+			createFromSLD(sld);
 			Logger.debug("back from createFromSLD");
 			if(vStyle != null)
-				return vStyle;
+				return;
 		}
-		// sld == null: style could not be generated from .SLD file
+		// sld == null || vStyle == null: style could not be generated from .SLD file
 		Logger.debug("sld could not be generated from .SLD file, trying from pgm");		// JEB YES
-		vStyle = getStyleFromPgm(vFeatureSource);
+		getStyleFromPgm();
 		if(vStyle != null)
 		{
 			Logger.debug("got vStyle, returning: " + vStyle.toString());		// JEB YES StyleImp[ name=Default Styler]
-			return vStyle;
+			return;
 		}
 		// sld == null: style could not be programmatically generated
 		// last resort: create style via dialog box for user
 		Logger.debug("still no sld, trying getStyleFromDialog for vFeatureSource = " + vFeatureSource.toString());
-		vStyle = getStyleFromDialog(vFeatureSource);
+		getStyleFromDialog();
 		Logger.debug("returning vStyle = " + vStyle.toString());
-		return vStyle;
+		return;
 	}
 
-	public Style getStyleFromDialog(FeatureSource aFeatureSource)
+	private void getStyleFromDialog()
 	{		// display dialog box for user to interactively specify style attributes (not available in script mode)
-		SimpleFeatureType schema = (SimpleFeatureType)aFeatureSource.getSchema();
+		SimpleFeatureType schema = (SimpleFeatureType)vFeatureSource.getSchema();
 		Logger.debug("in getStyleFromDialog; SimpleFeatureType schema = " + schema.toString());
-		return JSimpleStyleDialog.showDialog(null, schema);
+		vStyle = JSimpleStyleDialog.showDialog(null, schema);
 	}
 
-	public Style getStyleFromPgm(FeatureSource aFeatureSource)
+	private void getStyleFromPgm()
 	{		// get style based on type of geometry in the File
-		SimpleFeatureType schema = (SimpleFeatureType)aFeatureSource.getSchema();
+		SimpleFeatureType schema = (SimpleFeatureType)vFeatureSource.getSchema();
 		Logger.debug("in getStyleFromPgm; SimpleFeatureType schema = " + schema.toString());		// JEB YES knows map_world and MultiLineString
 		Class geomType = schema.getGeometryDescriptor().getType().getBinding();
 		Logger.debug("geomType = " + geomType.toString());		// JEB YES class com.vividsolutions.jts.geom.MultiLineString
@@ -181,23 +183,26 @@ public class VerdiStyle {
 		if(Polygon.class.isAssignableFrom(geomType) || MultiPolygon.class.isAssignableFrom(geomType))
 		{
 			Logger.debug("returning PolygonStyle");
-			return createPolygonStyle();
+			createPolygonStyle();
+			return;
 		}
 		else if (LineString.class.isAssignableFrom(geomType) || MultiLineString.class.isAssignableFrom(geomType))
 		{
 			Logger.debug("returning LineStyle");		// JEB YES for map_world
-			return createLineStyle();			// JEB YES
+			createLineStyle();			// JEB YES
+			return;
 		}
 		else
 		{
 			Logger.debug("returning PointStyle");
-			return createPointStyle();
+			createPointStyle();
+			return;
 		}
 	}
 
 	private File toSLDFile()		// get existing SLD file
 	{
-		Logger.debug("looking for existing SLD file");			// JEB YES from createStyle
+		Logger.debug("looking for existing .sld/.SLD file");			// JEB YES from createStyle
 		String base = shpPath.substring(0, shpPath.length()-4);
 		String sldPath = base + ".sld";		// look for file with lower-case extension
 		File sldFile = new File(sldPath);
@@ -208,25 +213,24 @@ public class VerdiStyle {
 		sldFile = new File(sldPath);
 		if(sldFile.exists())
 			return sldFile;
-		Logger.debug("Did not find existing SLD file; returning null");		// JEB YES
+		Logger.debug("Did not find existing .sld/.SLD file; returning null");		// JEB YES
 		return null;						// did not find the .sld file
 	}
 
-	private Style createFromSLD(File sld)		// create a Style from the definition in an SLD file
+	private void createFromSLD(File sld)		// create a Style from the definition in an SLD file
 	{
 		Logger.debug("Trying to create a style from the SLD file " + sld.toString());
 		try{
 			SLDParser styleReader = new SLDParser(styleFactory, sld.toURI().toURL());
 			Style[] aStyle = styleReader.readXML();
-			Logger.debug("sending back " + aStyle[0].toString());
-			return aStyle[0];
+			Logger.debug("setting vStyle = " + aStyle[0].toString());
+			vStyle = aStyle[0];
 		} catch(Exception e) {
 			Logger.error("Unable to create a Style from the SLD file associated with :" + vFile);
-			return null;
 		}
 	}
 	
-	private Style createPolygonStyle()	// create a style to draw polygons
+	private void createPolygonStyle()	// create a style to draw polygons
 	{
 		// create an opaque outline stroke
 		Stroke stroke = styleFactory.createStroke(
@@ -239,14 +243,15 @@ public class VerdiStyle {
 				filterFactory.literal(0));
 		PolygonSymbolizer sym = styleFactory.createPolygonSymbolizer(stroke, fill, null); // null means default geometry
 		Rule rule = styleFactory.createRule();
+		rule.symbolizers().add(sym);
 		FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
 		Style style = styleFactory.createStyle();
 		style.featureTypeStyles().add(fts);
 		Logger.debug("created polygon style: " + style.toString());
-		return style;
+		vStyle = style;
 	}
 	
-	private Style createLineStyle()		// create a style to draw lines
+	private void createLineStyle()		// create a style to draw lines
 	{
 		Stroke stroke = styleFactory.createStroke(
 				filterFactory.literal(Color.BLACK), 
@@ -258,10 +263,10 @@ public class VerdiStyle {
 		Style style = styleFactory.createStyle();
 		style.featureTypeStyles().add(fts);
 		Logger.debug("created line style: " + style.toString());		// JEB YES StyleImp[ name=Default Styler]
-		return style;
+		vStyle = style;
 	}
 	
-	private Style createPointStyle()	// create a style to draw points as circles
+	private void createPointStyle()	// create a style to draw points as circles
 	{
 		Graphic gr = styleFactory.createDefaultGraphic();
 		Mark mark = styleFactory.getCircleMark();
@@ -279,7 +284,7 @@ public class VerdiStyle {
 		Style style = styleFactory.createStyle();
 		style.featureTypeStyles().add(fts);
 		Logger.debug("created point style: " + style.toString());
-		return style;
+		vStyle = style;
 	}
 	
 	public File getShapeFile()	// get shapefile (vFile)
@@ -299,6 +304,7 @@ public class VerdiStyle {
 	
 	public Style getStyle()			// get Style
 	{
+		Logger.debug("in VerdiStyle.getStyle()");
 		return vStyle;
 	}
 	

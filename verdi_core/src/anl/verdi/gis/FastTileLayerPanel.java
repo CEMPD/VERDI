@@ -34,7 +34,6 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import org.geotools.map.FeatureLayer;
 //import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 import javax.swing.JFrame;
-//import org.geotools.swing.JMapFrame;
 
 import anl.verdi.plot.gui.VerdiBoundaries;
 
@@ -160,7 +159,6 @@ public class FastTileLayerPanel extends JPanel {
 		wizard.setControlLayer(controlLayer);
 		JDialog dialog = (JDialog)SwingUtilities.getWindowAncestor(this);
 		VerdiBoundaries layer = wizard.display((JFrame)dialog.getParent(), false);
-//		VerdiBoundaries layer = wizard.display((JMapFrame)dialog.getParent(), false);
 
 		if (layer != null) {
 			Logger.debug("adding layer to layerList");
@@ -193,7 +191,6 @@ public class FastTileLayerPanel extends JPanel {
 		JDialog dialog = (JDialog)SwingUtilities.getWindowAncestor(this);
 		Logger.debug("ready to display wizard");
 		VerdiBoundaries layer = wizard.display((JFrame)dialog.getParent(), true);
-//		VerdiBoundaries layer = wizard.display((JMapFrame)dialog.getParent(), true);
 		Logger.debug("have a layer - ready to check it out");		
 		if (layer != null && !selected.equals(layer)) {
 			Logger.debug("ready to deal with layers");
@@ -461,8 +458,6 @@ public class FastTileLayerPanel extends JPanel {
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		JMapFrame frame = new JMapFrame();
-//		frame.setDefaultCloseOperation(JMapFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		frame.setSize(500, 500);
 		frame.add(new FastTileLayerPanel(), BorderLayout.CENTER);
