@@ -94,8 +94,8 @@ public class ThemeDialog extends JDialog {
 	private void commit() throws Exception {
 		ThemeConfig theme = new ThemeConfig();
 		themePanel.setThemeProperties(theme);
+		PlotProperties.getInstance().setThemeConfig(theme);
 		ChartTheme chartTheme = theme.getTheme();
-		PlotProperties.getInstance().setCurrentTheme(chartTheme);
 		chartTheme.apply(chart);
 	}
 

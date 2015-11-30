@@ -2,6 +2,8 @@ package anl.verdi.plot.util;
 
 import org.jfree.chart.ChartTheme;
 
+import anl.verdi.plot.config.ThemeConfig;
+
 /***
  * Make it a singleton class to gather cross plot properties
  * 
@@ -11,8 +13,8 @@ import org.jfree.chart.ChartTheme;
 public class PlotProperties {
 
 	private static PlotProperties instance;
-	
-	private static ChartTheme currentTheme;
+	private ChartTheme currentTheme;
+	private ThemeConfig themeConfig;
 	
 	/***
 	 *  A private Constructor prevents any other 
@@ -24,7 +26,7 @@ public class PlotProperties {
 	
 	public static PlotProperties getInstance() {
 		if (instance == null)
-			return new PlotProperties();
+			instance = new PlotProperties();
 		
 		return instance;
 	}
@@ -33,12 +35,16 @@ public class PlotProperties {
 		return currentTheme;
 	}
 	
+	public ThemeConfig getThemeConfig() {
+		return themeConfig;
+	}
+
 	/***
-	 * Set a theme as cross-plot theme
-	 * 
-	 * @param theme
+	 * Set a theme configuration object
+	 * @param themeConfig
 	 */
-	public void setCurrentTheme(ChartTheme theme) {
-		currentTheme = theme;
+	public void setThemeConfig(ThemeConfig themeConfig) {
+		this.themeConfig = themeConfig;
+		this.currentTheme = themeConfig.getTheme();
 	}
 }

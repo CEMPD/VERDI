@@ -29,6 +29,7 @@ import com.jgoodies.forms.layout.Sizes;
 import com.l2fprod.common.swing.JFontChooser;
 
 import anl.verdi.plot.config.ThemeConfig;
+import anl.verdi.plot.util.PlotProperties;
 
 
 /**
@@ -39,9 +40,10 @@ public class ChartThemePanel extends JPanel {
 	static final Logger Logger = LogManager.getLogger(ChartThemePanel.class.getName());
 
 	public ChartThemePanel() {
-		Logger.debug("in constructor for ChartTitlesPanel, ready to call initComponents");
+		Logger.debug("in constructor for ChartThemePanel, ready to call initComponents");
+		config = PlotProperties.getInstance().getThemeConfig();
 		initComponents();
-		Logger.debug("back from initComponents; ready to go to subtitle1Panel.setBorder");
+		Logger.debug("back from initComponents");
 	}
 
 	private Font selectFont(JTextField fontFld) {
@@ -59,11 +61,27 @@ public class ChartThemePanel extends JPanel {
 			fontFld.setText(font.getName() + ", " + strStyle + ", " + font.getSize());
 		}
 		
-		if (font == null) {
-			fontFld.setEnabled(false);
+		return font;
+	}
+	
+	private Font setFontField(JTextField fontFld, String key) {
+		if (config != null && config.getObject(key) != null) {
+			Font font = (Font)config.getObject(key);
+			fontFld.setEnabled(true);
+			float size = fontFld.getFont().getSize();
+			fontFld.setFont(font.deriveFont(size));
+			String strStyle;
+			if (font.isBold()) {
+				strStyle = font.isItalic() ? "bolditalic" : "bold";
+			} else {
+				strStyle = font.isItalic() ? "italic" : "plain";
+			}
+			fontFld.setText(font.getName() + ", " + strStyle + ", " + font.getSize());
+			return font;
 		}
 		
-		return font;
+		fontFld.setEnabled(false);
+		return null;
 	}
 
 	private Color selectColor(JTextField colorFld) {
@@ -73,11 +91,19 @@ public class ChartThemePanel extends JPanel {
 			colorFld.setBackground(color);
 		}
 		
-		if (color == null) {
-			colorFld.setEnabled(false);
+		return color;
+	}
+	
+	private Color setColorField(JTextField colorFld, String key) {
+		if (config != null && config.getObject(key) != null) {
+			Color color = (Color)config.getObject(key);
+			colorFld.setEnabled(true);
+			colorFld.setBackground(color);
+			return color;
 		}
 		
-		return color;
+		colorFld.setEnabled(false);
+		return null;
 	}
 
 	public static void main(String[] args) {
@@ -142,12 +168,17 @@ public class ChartThemePanel extends JPanel {
 		useShadowLbl.setText("Show Shadow:");
 		contentPanel.add(useShadowLbl, cc.xy(1, 1));
 		contentPanel.add(useShadowBox, cc.xy(3, 1));
+		
+		if (config != null && config.getObject(ThemeConfig.SHOW_SHADOW) != null) {
+			boolean show = (Boolean)config.getObject(ThemeConfig.SHOW_SHADOW);
+			useShadowBox.setSelected(show);
+		}
 
 		//---- X-large font theme ----
 		xlargeFontLbl.setText("X-Large Font:");
 		contentPanel.add(xlargeFontLbl, cc.xy(1, 3));
 		contentPanel.add(xlargeFontFld, cc.xy(3, 3));
-		xlargeFontFld.setEnabled(false);
+		xlargeFont = setFontField(xlargeFontFld, ThemeConfig.X_LARGE_FONT);
 		xlargeFontBtn.setText("Select");
 		xlargeFontBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -160,7 +191,7 @@ public class ChartThemePanel extends JPanel {
 		largeFontLbl.setText("Large Font:");
 		contentPanel.add(largeFontLbl, cc.xy(1, 5));
 		contentPanel.add(largeFontFld, cc.xy(3, 5));
-		largeFontFld.setEnabled(false);
+		largeFont = setFontField(largeFontFld, ThemeConfig.LARGE_FONT);
 		largeFontBtn.setText("Select");
 		largeFontBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -173,7 +204,7 @@ public class ChartThemePanel extends JPanel {
 		regFontLbl.setText("Regular Font:");
 		contentPanel.add(regFontLbl, cc.xy(1, 7));
 		contentPanel.add(regFontFld, cc.xy(3, 7));
-		regFontFld.setEnabled(false);
+		regularFont = setFontField(regFontFld, ThemeConfig.REGULAR_FONT);
 		regFontBtn.setText("Select");
 		regFontBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -186,7 +217,7 @@ public class ChartThemePanel extends JPanel {
 		smallFontLbl.setText("Small Font:");
 		contentPanel.add(smallFontLbl, cc.xy(1, 9));
 		contentPanel.add(smallFontFld, cc.xy(3, 9));
-		smallFontFld.setEnabled(false);
+		smallFont = setFontField(smallFontFld, ThemeConfig.SMALL_FONT);
 		samllFontBtn.setText("Select");
 		samllFontBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -213,7 +244,7 @@ public class ChartThemePanel extends JPanel {
 		//---- title theme ----
 		titleColorLbl.setText("Title Paint:");
 		contentPanel.add(titleColorLbl, cc.xy(1, 1));
-		titleColorFld.setEnabled(false);
+		titleColor = setColorField(titleColorFld, ThemeConfig.TITLE_PAINT);
 		titleColorFld.setEditable(false);
 		contentPanel.add(titleColorFld, new CellConstraints(3, 1, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		titleColorBtn.setText("Select");
@@ -227,7 +258,7 @@ public class ChartThemePanel extends JPanel {
 		//---- subtitle theme ----
 		subTitleColorLbl.setText("Subtitle Paint:");
 		contentPanel.add(subTitleColorLbl, cc.xy(1, 3));
-		subTitleColorFld.setEnabled(false);
+		subTitleColor = setColorField(subTitleColorFld, ThemeConfig.SUBTITLE_PAINT);
 		subTitleColorFld.setEditable(false);
 		contentPanel.add(subTitleColorFld, new CellConstraints(3, 3, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		subTitleColorBtn.setText("Select");
@@ -266,7 +297,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Legend theme ----
 		legendColorLbl.setText("Legend Paint:");
 		contentPanel.add(legendColorLbl, cc.xy(1, 1));
-		legendColorFld.setEnabled(false);
+		legendColor = setColorField(legendColorFld, ThemeConfig.LEGENT_PAINT);
 		legendColorFld.setEditable(false);
 		contentPanel.add(legendColorFld, new CellConstraints(3, 1, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		legendColorBtn.setText("Select");
@@ -280,7 +311,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Legend background theme ----
 		legendBgColorLbl.setText("Legend Bg Paint:");
 		contentPanel.add(legendBgColorLbl, cc.xy(1, 3));
-		legendBgColorFld.setEnabled(false);
+		legendBgColor = setColorField(legendBgColorFld, ThemeConfig.LEGENT_BG_PAINT);
 		legendBgColorFld.setEditable(false);
 		contentPanel.add(legendBgColorFld, new CellConstraints(3, 3, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		legendBgColorBtn.setText("Select");
@@ -294,7 +325,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Axis Label theme ----
 		axisLableColorLbl.setText("Axis Label Paint:");
 		contentPanel.add(axisLableColorLbl, cc.xy(1, 5));
-		axisLableColorFld.setEnabled(false);
+		axisLableColor = setColorField(axisLableColorFld, ThemeConfig.AXIS_LABEL_PAINT);
 		axisLableColorFld.setEditable(false);
 		contentPanel.add(axisLableColorFld, new CellConstraints(3, 5, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		axisLableColorBtn.setText("Select");
@@ -308,7 +339,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Tick Label theme ----
 		tickLabelColorLbl.setText("Tick Label Paint:");
 		contentPanel.add(tickLabelColorLbl, cc.xy(1, 7));
-		tickLabelColorFld.setEnabled(false);
+		tickLabelColor = setColorField(tickLabelColorFld, ThemeConfig.TICK_LABEL_PAINT);
 		tickLabelColorFld.setEditable(false);
 		contentPanel.add(tickLabelColorFld, new CellConstraints(3, 7, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		tickLabelColorBtn.setText("Select");
@@ -367,7 +398,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Legend theme ----
 		chartBgColorLbl.setText("Chart Bg Paint:");
 		contentPanel.add(chartBgColorLbl, cc.xy(1, 1));
-		chartBgColorFld.setEnabled(false);
+		chartBgColor = setColorField(chartBgColorFld, ThemeConfig.CHART_BG_PAINT);
 		chartBgColorFld.setEditable(false);
 		contentPanel.add(chartBgColorFld, new CellConstraints(3, 1, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		chartBgColorBtn.setText("Select");
@@ -381,7 +412,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Legend background theme ----
 		plotBgColorLbl.setText("Plot Bg Paint:");
 		contentPanel.add(plotBgColorLbl, cc.xy(1, 3));
-		plotBgColorFld.setEnabled(false);
+		plotBgColor = setColorField(plotBgColorFld, ThemeConfig.PLOT_BG_PAINT);
 		plotBgColorFld.setEditable(false);
 		contentPanel.add(plotBgColorFld, new CellConstraints(3, 3, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		plotBgColorBtn.setText("Select");
@@ -395,7 +426,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Plot outline theme ----
 		plotOlColorLbl.setText("Plot Outline Paint:");
 		contentPanel.add(plotOlColorLbl, cc.xy(1, 5));
-		plotOlColorFld.setEnabled(false);
+		plotOlColor = setColorField(plotOlColorFld, ThemeConfig.PLOT_OUTLINE_PAINT);
 		plotOlColorFld.setEditable(false);
 		contentPanel.add(plotOlColorFld, new CellConstraints(3, 5, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		plotOlColorBtn.setText("Select");
@@ -409,7 +440,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Domain Gridline theme ----
 		domainGlColorLbl.setText("Domain Grdln Paint:");
 		contentPanel.add(domainGlColorLbl, cc.xy(1, 7));
-		domainGlColorFld.setEnabled(false);
+		domainGlColor = setColorField(domainGlColorFld, ThemeConfig.DOMAIN_GRDLN_PAINT);
 		domainGlColorFld.setEditable(false);
 		contentPanel.add(domainGlColorFld, new CellConstraints(3, 7, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		domainGlColorBtn.setText("Select");
@@ -423,7 +454,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Range Gridline theme ----
 		rangeGlColorLbl.setText("Range Grdln Paint:");
 		contentPanel.add(rangeGlColorLbl, cc.xy(1, 9));
-		rangeGlColorFld.setEnabled(false);
+		rangeGlColor = setColorField(rangeGlColorFld, ThemeConfig.RANGE_GRDLN_PAINT);
 		rangeGlColorFld.setEditable(false);
 		contentPanel.add(rangeGlColorFld, new CellConstraints(3, 9, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		rangeGlColorBtn.setText("Select");
@@ -437,7 +468,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Baseline theme ----
 		baselineColorLbl.setText("Baseline Paint:");
 		contentPanel.add(baselineColorLbl, cc.xy(1, 11));
-		baselineColorFld.setEnabled(false);
+		baselineColor = setColorField(baselineColorFld, ThemeConfig.BASELINE_PAINT);
 		baselineColorFld.setEditable(false);
 		contentPanel.add(baselineColorFld, new CellConstraints(3, 11, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		baselineColorBtn.setText("Select");
@@ -451,7 +482,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Cross Hair theme ----
 		crosshairColorLbl.setText("Crosshair Paint:");
 		contentPanel.add(crosshairColorLbl, cc.xy(1, 13));
-		crosshairColorFld.setEnabled(false);
+		crosshairColor = setColorField(crosshairColorFld, ThemeConfig.CROSSHAIR_PAINT);
 		crosshairColorFld.setEditable(false);
 		contentPanel.add(crosshairColorFld, new CellConstraints(3, 13, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		crosshairColorBtn.setText("Select");
@@ -465,7 +496,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Item Label theme ----
 		itemLabelColorLbl.setText("Item Label Paint:");
 		contentPanel.add(itemLabelColorLbl, cc.xy(1, 15));
-		itemLabelColorFld.setEnabled(false);
+		itemLabelColor = setColorField(itemLabelColorFld, ThemeConfig.ITEM_LABEL_PAINT);
 		itemLabelColorFld.setEditable(false);
 		contentPanel.add(itemLabelColorFld, new CellConstraints(3, 15, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		itemLabelColorBtn.setText("Select");
@@ -479,7 +510,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Shadow theme ----
 		shadowColorLbl.setText("Shadow Paint:");
 		contentPanel.add(shadowColorLbl, cc.xy(1, 17));
-		shadowColorFld.setEnabled(false);
+		shadowColor = setColorField(shadowColorFld, ThemeConfig.SHADOW_PAINT);
 		shadowColorFld.setEditable(false);
 		contentPanel.add(shadowColorFld, new CellConstraints(3, 17, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		shadowColorBtn.setText("Select");
@@ -629,4 +660,6 @@ public class ChartThemePanel extends JPanel {
 	          axisLableColor, tickLabelColor, chartBgColor, plotBgColor,
 	          plotOlColor, domainGlColor, rangeGlColor, baselineColor,
 	          crosshairColor, itemLabelColor, shadowColor;
+	
+	private ThemeConfig config;
 }
