@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.MapContent;
 // import org.geotools.map.MapContent;
 import org.geotools.swing.JMapFrame;
@@ -93,6 +94,19 @@ public class Mapper {
 		// myMapPane: trying for reference to the JMapPane of the calling FastTilePlot
 		// myMapContent: current MapContent for all of the shapefiles to be drawn on the FastTilePlot
 		Logger.debug("in Mapper.draw function; number of layers = " + layers.size());
+
+		// BEGIN SECTION FOR TESTING
+		// HERE USE myMapPane
+		Logger.debug("in Mapper.draw; existing JMapPane = " + myMapPane.toString());
+		ReferencedEnvelope bMPReferencedEnvelope = myMapPane.getDisplayArea();
+		double bminX = bMPReferencedEnvelope.getMinX();
+		double bminY = bMPReferencedEnvelope.getMinY();
+		double bmaxX = bMPReferencedEnvelope.getMaxX();
+		double bmaxY = bMPReferencedEnvelope.getMaxY();
+		Logger.debug("and its ReferencedEnvelope = (" + bminX + ", " + bmaxX + ", " + bminY + ", " + bmaxY + ")");
+		Logger.debug("and its current CRS = " + bMPReferencedEnvelope.getCoordinateReferenceSystem());
+		// END SECTION FOR TESTING
+
 		VerdiBoundaries aVerdiBoundaries = new VerdiBoundaries();
 		aVerdiBoundaries = chooseMap(domain); // based on map range assigns base map as
 		// US counties, US states, North America, or world
@@ -131,9 +145,34 @@ public class Mapper {
 			myMapContent.removeLayer(roadsMap.getMap().layers().get(0));
 		}
 		Logger.debug("number of layers now = " + layers.size());	// now = 1
+
+		// BEGIN SECTION FOR TESTING
+		// HERE USE myMapPane
+		Logger.debug("in Mapper.draw; existing JMapPane = " + myMapPane.toString());
+		ReferencedEnvelope bMPReferencedEnvelope1 = myMapPane.getDisplayArea();
+		bminX = bMPReferencedEnvelope1.getMinX();
+		bminY = bMPReferencedEnvelope1.getMinY();
+		bmaxX = bMPReferencedEnvelope1.getMaxX();
+		bmaxY = bMPReferencedEnvelope1.getMaxY();
+		Logger.debug("and its ReferencedEnvelope = (" + bminX + ", " + bmaxX + ", " + bminY + ", " + bmaxY + ")");
+		Logger.debug("and its current CRS = " + bMPReferencedEnvelope1.getCoordinateReferenceSystem());
+		// END SECTION FOR TESTING
 		
 		myMapPane.setMapContent(myMapContent); 		// update JMapPane to new MapContent
 //		myMapPane.drawLayers(true);					// can't get drawLayers to be visible
+
+		// BEGIN SECTION FOR TESTING
+		// HERE USE myMapPane
+		Logger.debug("in Mapper.draw prior to looping through VerdiBoundaries; existing JMapPane = " + myMapPane.toString());
+		ReferencedEnvelope bMPReferencedEnvelope11 = myMapPane.getDisplayArea();
+		bminX = bMPReferencedEnvelope11.getMinX();
+		bminY = bMPReferencedEnvelope11.getMinY();
+		bmaxX = bMPReferencedEnvelope11.getMaxX();
+		bmaxY = bMPReferencedEnvelope11.getMaxY();
+		Logger.debug("and its ReferencedEnvelope = (" + bminX + ", " + bmaxX + ", " + bminY + ", " + bmaxY + ")");
+		Logger.debug("and its current CRS = " + bMPReferencedEnvelope11.getCoordinateReferenceSystem());
+		// END SECTION FOR TESTING
+
 		// start looping through the VerdiBoundaries
 		for (VerdiBoundaries layer : layers) {
 			Logger.debug("drawing for a layer");	// OK to here
@@ -165,6 +204,17 @@ public class Mapper {
 			graphics.setColor(mapColor); // to reset graphics color
 			Logger.debug("just reset graphics color to: " + mapColor);	// OK here
 		}
+		// BEGIN SECTION FOR TESTING
+		// HERE USE myMapPane
+		Logger.debug("in Mapper.draw after finished with VerdiBoundaries loop; existing JMapPane = " + myMapPane.toString());
+		ReferencedEnvelope bMPReferencedEnvelope111 = myMapPane.getDisplayArea();
+		bminX = bMPReferencedEnvelope111.getMinX();
+		bminY = bMPReferencedEnvelope111.getMinY();
+		bmaxX = bMPReferencedEnvelope111.getMaxX();
+		bmaxY = bMPReferencedEnvelope111.getMaxY();
+		Logger.debug("and its ReferencedEnvelope = (" + bminX + ", " + bmaxX + ", " + bminY + ", " + bmaxY + ")");
+		Logger.debug("and its current CRS = " + bMPReferencedEnvelope111.getCoordinateReferenceSystem());
+		// END SECTION FOR TESTING
 	}
 
 	// Choose a map based on a domain.

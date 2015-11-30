@@ -612,6 +612,20 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							continue;		// goes to while drawMode != DRAW_END
 						}
 						
+						
+						// BEGIN SECTION FOR TESTING
+						JMapPane aMapPane = getMapPane();
+						Logger.debug("in FastTilePlot; preparing to call mapper.draw; existing JMapPane = " + aMapPane.toString());
+						ReferencedEnvelope aMPReferencedEnvelope = aMapPane.getDisplayArea();
+						double minX = aMPReferencedEnvelope.getMinX();
+						double minY = aMPReferencedEnvelope.getMinY();
+						double maxX = aMPReferencedEnvelope.getMaxX();
+						double maxY = aMPReferencedEnvelope.getMaxY();
+						Logger.debug("and its ReferencedEnvelope = (" + minX + ", " + maxX + ", " + minY + ", " + maxY + ")");
+						Logger.debug("and its current CRS = " + aMPReferencedEnvelope.getCoordinateReferenceSystem());
+						// END SECTION FOR TESTING
+
+						
 						// NOTE: mapper.draw calls VerdiBoundaries.draw
 						mapper.draw(domain, gridBounds, gridCRS,	// NOTE: JEB 
 																	// 1st time here gridCRS is baseCRS: DefaultGeographicCRS
@@ -647,6 +661,19 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							Logger.debug("back from toBufferedImage, ready to call graphics.drawImage");
 							graphics.drawImage(offScreenImage, 0, 0,threadParent);
 							Logger.debug("back from graphics.drawImage");
+				
+							// BEGIN SECTION FOR TESTING
+							JMapPane bMapPane = getMapPane();
+							Logger.debug("in FastTilePlot; existing JMapPane = " + bMapPane.toString());
+							ReferencedEnvelope bMPReferencedEnvelope = bMapPane.getDisplayArea();
+							double bminX = bMPReferencedEnvelope.getMinX();
+							double bminY = bMPReferencedEnvelope.getMinY();
+							double bmaxX = bMPReferencedEnvelope.getMaxX();
+							double bmaxY = bMPReferencedEnvelope.getMaxY();
+							Logger.debug("and its ReferencedEnvelope = (" + bminX + ", " + bmaxX + ", " + bminY + ", " + bmaxY + ")");
+							Logger.debug("and its current CRS = " + bMPReferencedEnvelope.getCoordinateReferenceSystem());
+							// END SECTION FOR TESTING
+
 						} finally {
 							graphics.dispose();
 							Logger.debug("just did graphics.dispose in finally block");
