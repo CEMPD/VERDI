@@ -39,8 +39,8 @@ public class LoadTheme extends AbstractAction {
 		if (file != null) {
 			try {
 				ThemeConfig config = new ThemeConfig(file);
+				PlotProperties.getInstance().setThemeConfig(config);
 				ChartTheme theme = config.getTheme();
-				PlotProperties.getInstance().setCurrentTheme(theme);
 				theme.apply(chart);
 			} catch (Exception ex) {
 				Logger.error("Error loading configuration " + ex.getMessage());

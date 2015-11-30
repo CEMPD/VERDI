@@ -7,25 +7,22 @@ import java.io.IOException;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.apache.logging.log4j.LogManager;		 
+import org.apache.logging.log4j.Logger;			 
 
-import saf.core.ui.util.FileChooserUtilities;
-//import simphony.util.messages.MessageCenter;
 import anl.verdi.plot.gui.Plot;
+import anl.verdi.plot.util.PlotProperties;
 import anl.verdi.util.Tools;
+import saf.core.ui.util.FileChooserUtilities;
 
 /**
- * @author Nick Collier
+ * @author qun
  * @version $Revision$ $Date$
  */
 public class SaveTheme extends AbstractAction {
 
 	private static final long serialVersionUID = -8610404173487269858L;
 	static final Logger Logger = LogManager.getLogger(SaveTheme.class.getName());
-
-//	private static final MessageCenter center = MessageCenter.getMessageCenter(SaveConfiguration.class);
-
 	private Plot plot;
 
 	public SaveTheme(Plot plot) {
@@ -37,29 +34,23 @@ public class SaveTheme extends AbstractAction {
 	 * Invoked when an action occurs.
 	 */
 	public void actionPerformed(ActionEvent e) {
-		boolean saveTitle = saveTile();
-		PlotConfiguration config = plot.getPlotConfiguration();
-		File file = FileChooserUtilities.getSaveFile(Tools.getConfigFolder(config));
+		ThemeConfig theme = PlotProperties.getInstance().getThemeConfig();
+		
+		if (theme == null) {
+			String msg = "You haven't specified a valid theme.";
+			JOptionPane.showMessageDialog(plot.getPanel(), msg);
+			return;
+		}
+			
+		File file = FileChooserUtilities.getSaveFile(Tools.getConfigFolder(null));
 
 		if (file != null) {
 			try {
-				config.save(file, saveTitle);
+				theme.save(file);
 			} catch (IOException ex) {
-				Logger.error("Error saving configuration " + ex.getMessage());
+				Logger.error("Error saving chart theme " + ex.getMessage());
 			}
 		}
-	}
-
-	private boolean saveTile() {
-		String title = "Save Title?";
-		String msg = "Would you like to save the title/subtitles also?";
-		int option = JOptionPane.showConfirmDialog(null, msg, title,
-				JOptionPane.YES_OPTION);
-
-		if (option == JOptionPane.YES_OPTION)
-			return true;
-
-		return false;
 	}
 
 }
