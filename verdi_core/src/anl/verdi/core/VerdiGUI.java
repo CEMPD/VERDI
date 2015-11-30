@@ -26,7 +26,9 @@ import javax.swing.JTable;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.swing.JMapFrame;
+import org.geotools.swing.JMapPane;
 
 import saf.core.ui.GUIBarManager;
 import saf.core.ui.GUIConstants;
@@ -163,6 +165,19 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	public void addPlot(PlotPanel plotPanel) {
 		setStatusTwoText("");
 		String name = plotPanel.getName();
+		
+		// BEGIN SECTION FOR TESTING
+		JMapPane aMapPane = plotPanel.getMapPane();
+		Logger.debug("in VerdiGUI.addPlot; existing JMapPane in plotPanel = " + aMapPane.toString());
+		ReferencedEnvelope aMPReferencedEnvelope = aMapPane.getDisplayArea();
+		double minX = aMPReferencedEnvelope.getMinX();
+		double minY = aMPReferencedEnvelope.getMinY();
+		double maxX = aMPReferencedEnvelope.getMaxX();
+		double maxY = aMPReferencedEnvelope.getMaxY();
+		Logger.debug("and its ReferencedEnvelope = (" + minX + ", " + maxX + ", " + minY + ", " + maxY + ")");
+		Logger.debug("and its current CRS = " + aMPReferencedEnvelope.getCoordinateReferenceSystem());
+		// END SECTION FOR TESTING
+		
 		String viewId = replaceInvalidChars(name) + plotCount++;
 
 		if (plotPanel.getPlotType() == Formula.Type.CONTOUR) {
