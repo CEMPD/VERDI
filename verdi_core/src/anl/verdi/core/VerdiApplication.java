@@ -214,7 +214,7 @@ FormulaElementCreator, ListDataListener {
 	public boolean exit() {
 		Logger.debug("in VerdiApplication.exit");
 		if (RemoteFileReader.TEMP_REMOTE_FILE_LIST.size()>0) {
-			int res = JOptionPane.showConfirmDialog(gui.getFrame(), "Do you want to delete the temparory files downloaded remotely?",
+			int res = JOptionPane.showConfirmDialog(gui.getFrame(), "Do you want to delete the temporary files downloaded remotely?",
 					"Delete Temp Files Warning", JOptionPane.YES_NO_OPTION);
 			if (res == JOptionPane.YES_OPTION) {
 				for (String filePath : RemoteFileReader.TEMP_REMOTE_FILE_LIST) {

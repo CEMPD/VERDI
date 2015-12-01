@@ -99,12 +99,19 @@ public class Mapper {
 		// HERE USE myMapPane
 		Logger.debug("in Mapper.draw; existing JMapPane = " + myMapPane.toString());
 		ReferencedEnvelope bMPReferencedEnvelope = myMapPane.getDisplayArea();
+		ReferencedEnvelope aMCRefEnv = myMapContent.getMaxBounds();
 		double bminX = bMPReferencedEnvelope.getMinX();
 		double bminY = bMPReferencedEnvelope.getMinY();
 		double bmaxX = bMPReferencedEnvelope.getMaxX();
 		double bmaxY = bMPReferencedEnvelope.getMaxY();
 		Logger.debug("and its ReferencedEnvelope = (" + bminX + ", " + bmaxX + ", " + bminY + ", " + bmaxY + ")");
 		Logger.debug("and its current CRS = " + bMPReferencedEnvelope.getCoordinateReferenceSystem());
+		double cminX = aMCRefEnv.getMinX();
+		double cminY = aMCRefEnv.getMinY();
+		double cmaxX = aMCRefEnv.getMaxX();
+		double cmaxY = aMCRefEnv.getMaxY();
+		Logger.debug("myMapContent has current ReferencedEnvelope = (" + cminX + ", " + cmaxX + ", " + cminY + ", " + cmaxY + ")");
+		Logger.debug("and its current CRS = " + aMCRefEnv.getCoordinateReferenceSystem());
 		// END SECTION FOR TESTING
 
 		VerdiBoundaries aVerdiBoundaries = new VerdiBoundaries();
@@ -156,9 +163,10 @@ public class Mapper {
 		bmaxY = bMPReferencedEnvelope1.getMaxY();
 		Logger.debug("and its ReferencedEnvelope = (" + bminX + ", " + bmaxX + ", " + bminY + ", " + bmaxY + ")");
 		Logger.debug("and its current CRS = " + bMPReferencedEnvelope1.getCoordinateReferenceSystem());
+		Logger.debug("prior to setting myMapPane to myMapContent, myMapContent = " + myMapContent);
 		// END SECTION FOR TESTING
 		
-		myMapPane.setMapContent(myMapContent); 		// update JMapPane to new MapContent
+		myMapPane.setMapContent(myMapContent); 		// update JMapPane to new MapContent // LOSE VALUES OF DISPLAY AREA HERE !!!
 //		myMapPane.drawLayers(true);					// can't get drawLayers to be visible
 
 		// BEGIN SECTION FOR TESTING

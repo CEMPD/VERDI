@@ -68,7 +68,7 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 // WIP			// 2015 changing PlotPanel to MapPlotPanel
 				// need different constructor in MapPlotPanel
 				// need to set up types of objects for drawing with Shapefiles included
-				final PlotPanel panel = new PlotPanel( plot, "ArealInterpolation", null, null, null);
+				final PlotPanel panel = new PlotPanel( plot, "ArealInterpolation", null, null, null, null);
 				application.getGui().addPlot( panel );
 				panel.addPlotListener( application );
 		        new Thread(

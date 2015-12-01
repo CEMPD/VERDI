@@ -10,6 +10,10 @@ import java.awt.event.ActionEvent;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.map.MapContent;
+import org.geotools.renderer.GTRenderer;
+import org.geotools.swing.JMapPane;
+import org.geotools.swing.RenderingExecutor;
 
 import saf.core.ui.actions.AbstractSAFAction;
 import anl.verdi.core.VerdiApplication;
@@ -38,11 +42,20 @@ public class FastTilePlot extends AbstractSAFAction<VerdiApplication> {
 			Logger.debug("look at dataFrame, check if null");
 			if ( dataFrame != null ) {
 				Logger.debug("dataFrame is not null; ready to generate Plot for FastTilePlot");
-				final Plot plot = new anl.verdi.plot.gui.FastTilePlot(application, dataFrame );
+				final Plot plot = new anl.verdi.plot.gui.FastTilePlot(application, dataFrame);
 				final String variableName = dataFrame.getVariable().getName();
 				Logger.debug("have variableName = " + variableName);
-				Logger.debug("ready to generate PlotPanel for a plot, variableName, and 3 null values");
-				final PlotPanel panel = new PlotPanel(plot, variableName, null, null, null);	// Sept 2015 changed from PlotPanel and
+				JMapPane aJMapPane = ((anl.verdi.plot.gui.FastTilePlot)plot).getMapPane();
+				Logger.debug("plot.getMapPane = " + ((anl.verdi.plot.gui.FastTilePlot)plot).getMapPane());
+				Logger.debug("aJMapPane = " + aJMapPane);
+				MapContent aMapContent = ((anl.verdi.plot.gui.FastTilePlot)plot).getMapContent();
+				Logger.debug("aMapContent = " + aMapContent);
+				RenderingExecutor aRenderingExecutor = ((anl.verdi.plot.gui.FastTilePlot)plot).getRenderingExecutor();
+				Logger.debug("aRenderingExecutor = " + aRenderingExecutor);
+				GTRenderer aRenderer = ((anl.verdi.plot.gui.FastTilePlot)plot).getRenderer();
+				Logger.debug("aRenderer = " + aRenderer);
+				Logger.debug("ready to generate PlotPanel for a plot, variableName, and additional values");
+				final PlotPanel panel = new PlotPanel(plot, variableName, aJMapPane, aMapContent, aRenderingExecutor, aRenderer);	// Sept 2015 changed from PlotPanel and
 				Logger.debug("ready to call addPlot to add the new panel to application GUI");
 				application.getGui().addPlot( panel );
 				Logger.debug("ready to add plot listener");

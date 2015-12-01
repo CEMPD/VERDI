@@ -25,6 +25,7 @@ import javax.vecmath.Point4i;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.swing.JMapPane;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -37,6 +38,7 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
+
 
 //import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
@@ -721,5 +723,10 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 	@Override
 	public String getTitle() {
 		return chart.getTitle().getText();
+	}
+	
+	public JMapPane getMapPane()		// required by interface
+	{
+		return null;
 	}
 }

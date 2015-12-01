@@ -41,6 +41,7 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.swing.JMapPane;
 import org.jfree.chart.axis.ValueAxis;
 
 import saf.core.ui.util.FileChooserUtilities;
@@ -976,4 +977,9 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		timeLayerPanel = null;		
 		
 	}	
+	
+	public JMapPane getMapPane()		// required by interface
+	{
+		return null;
+	}
 }
