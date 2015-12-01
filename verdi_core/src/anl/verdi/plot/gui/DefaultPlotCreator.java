@@ -42,7 +42,7 @@ public class DefaultPlotCreator extends AbstractPlotCreator {
 	 */
 	public Plot doCreatePlot() {
 		if (app.getProject().getSelectedFormula() != null) {
-			DataFrame frame = app.evaluateFormula(type);
+			DataFrame frame = app.evaluateFormula(type);			
 			if (frame != null) {
 				PlotFactory factory = new PlotFactory();
 				PlotPanel panel = factory.getPlot(type, app.getProject().getSelectedFormula().getFormula(),

@@ -50,7 +50,7 @@ public class DataFrameBuilder {
 
 	// used to build the axes object and sort out
 	// the different axes
-	private static class AxesBuilder {
+	protected static class AxesBuilder {
 
 		List<DataFrameAxis> others = new ArrayList<DataFrameAxis>();
 
@@ -108,9 +108,13 @@ public class DataFrameBuilder {
 		}
 	}
 
-	private BuilderDataFrame frame = new BuilderDataFrame();
+	protected BuilderDataFrame frame = new BuilderDataFrame();
 
 	private AxesBuilder axesBuilder = new AxesBuilder();
+	
+	protected AxesBuilder getAxesBuilder() {
+		return axesBuilder;
+	}
 
 	private Set<Dataset> sets = new HashSet<Dataset>();
 
@@ -171,7 +175,7 @@ public class DataFrameBuilder {
 	 * @return this DataFrameBuilder
 	 */
 	public DataFrameBuilder addAxis(DataFrameAxis axis) {
-		axesBuilder.addAxis(axis);
+		getAxesBuilder().addAxis(axis);
 		return this;
 	}
 
@@ -193,7 +197,7 @@ public class DataFrameBuilder {
 			// they all must have the same bounding box.
 			env = sets.iterator().next().getCoordAxes().getBoundingBoxer();
 		}
-		frame.setAxes(axesBuilder.buildAxes(env));
+		frame.setAxes(getAxesBuilder().buildAxes(env));
 		return frame;
 	}
 

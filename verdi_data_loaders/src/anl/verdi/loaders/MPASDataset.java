@@ -37,6 +37,7 @@ import org.unitsofmeasurement.unit.Unit;
 
 
 
+
 import javax.swing.*;
 
 import java.awt.image.*;
@@ -102,6 +103,7 @@ public class MPASDataset extends AbstractDataset {
 	private NetcdfDataset dataset;
 	private Axes<CoordAxis> coordAxes;
 	private List<Variable> vars;
+	private List<Variable> verdiRenderVars;
 	private Map<String, ucar.nc2.Variable> renderVars;
 	private String name = "";
 	private int conv = -1;
@@ -151,8 +153,9 @@ public class MPASDataset extends AbstractDataset {
 	
 	private CellInfo[] cellsToRender = null;
 	private ArrayList<CellInfo> splitCells = null;
-	int scaledWidth = 0;
-	int scaledHeight = 0;
+	int previousWindowWidth = 0;
+	int sscaledWidth = 0;
+	int sscaledHeight = 0;
 	
 	static {
 		renderVarList.add("verticesOnCell");
@@ -184,8 +187,8 @@ public class MPASDataset extends AbstractDataset {
 	double latMax;
 	double lonMax;
 
-	double width = 0;
-	double height = 0;
+	double dataWidth = 0;
+	double dataHeight = 0;
 
 	/**
 	 * Creates a GridNetcdfDataset from the specified url, grids and grid
@@ -216,14 +219,16 @@ public class MPASDataset extends AbstractDataset {
 	protected MPASDataset(URL url, 
 			NetcdfDataset netcdfDataset) {
 		super(url);
+		long start = System.currentTimeMillis();
 		this.dataset = netcdfDataset;
 		initVariables();
-		initVar();
+		initLegend();
 		try {
 			initAxes();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Dataset loaded in " + (System.currentTimeMillis() - start) + "ms");
 	}
 
 	/**
@@ -255,6 +260,10 @@ public class MPASDataset extends AbstractDataset {
 			if (var.getName().equals(name))
 				return var;
 		}
+		for (Variable var : verdiRenderVars) {
+			if (var.getName().equals(name))
+				return var;
+		}
 		return null;
 	}
 	
@@ -265,10 +274,11 @@ public class MPASDataset extends AbstractDataset {
 	private void initVariables() {
 		List<ucar.nc2.Variable> vars = dataset.getVariables();
 		this.vars = new ArrayList<Variable>();
+		this.verdiRenderVars = new ArrayList<Variable>();
 		this.renderVars = new HashMap<String, ucar.nc2.Variable>();
 		for (ucar.nc2.Variable var : vars) {
 			String name = var.getShortName();	// getName replaced by either getShortName or getFullName (with escapes)
-			System.out.println("Got variable " + name + " dim " + var.getDimensionsString());
+			//System.out.println("Got variable " + name + " dim " + var.getDimensionsString());
 			Unit unit = VUnits.MISSING_UNIT;
 			Logger.debug("in Models3ObsDataset.initVariables, unit = " + unit);
 			for (Attribute attribute : (Iterable<Attribute>) var.getAttributes()) {
@@ -286,8 +296,11 @@ public class MPASDataset extends AbstractDataset {
 					this.vars.add(new DefaultVariable(name, name, unit, this));
 					Logger.debug("in Models3ObsDataset.initVariables, after check for hiddenVars, unit = " + unit);
 				}
-			else if (renderVarList.contains(name))
+			else if (renderVarList.contains(name)) {
 				this.renderVars.put(name, var);
+				//TODO - what should units be?
+				this.verdiRenderVars.add(new DefaultVariable(name, name, VUnits.MISSING_UNIT, this));
+			}
 				
 		}
 		numCells = dataset.findDimension("nCells").getLength();
@@ -382,7 +395,7 @@ public class MPASDataset extends AbstractDataset {
 	double varMin = Double.MAX_VALUE;
 	double varMax = 0;
 
-	private void initVar() {
+	private void initLegend() {
 		//String renderVarName = "surface_pressure";
 		String renderVarName = "snowh"; // 0 to 0.01452, little picture
 		renderVarName = "xice"; //0 to 1, only red
@@ -418,7 +431,7 @@ public class MPASDataset extends AbstractDataset {
 		for (int level = 0; level < count; ++level) {
 			legendLevels[level] = varMin + level * delta;
 		}
-		scaledWidth = 0;
+		previousWindowWidth = 0;
 		
 	}
 	
@@ -444,7 +457,7 @@ public class MPASDataset extends AbstractDataset {
 
 	public void renderCells(Graphics gr, int windowWidth, int windowHeight) {
 		
-		if (scaledWidth != windowWidth)
+		if (previousWindowWidth != windowWidth)
 			transformCells(gr, windowWidth, windowHeight);
 		
 		long renderStart = System.currentTimeMillis();
@@ -469,7 +482,7 @@ public class MPASDataset extends AbstractDataset {
 			gr.fillPolygon(splitCells.get(i).lonTransformed, splitCells.get(i).latTransformed, splitCells.get(i).lonTransformed.length);
 		}
 		long renderTime = System.currentTimeMillis() - renderStart;
-		System.out.println("Finished drawing image " + new Date() + " image in " + renderTime + "ms " + scaledWidth + "x" + scaledHeight + " window " + windowWidth + "x" + windowHeight);
+		System.out.println("Finished drawing image " + new Date() + " image in " + renderTime + "ms  window " + windowWidth + "x" + windowHeight);
 		System.out.println("Var min " + varMin + " max " + varMax);
 		/*
 		java.io.File outputFile = new java.io.File("/tmp/mpasout.png");
@@ -572,7 +585,7 @@ public class MPASDataset extends AbstractDataset {
 		List<CoordAxis> list = new ArrayList<CoordAxis>();
 		
 		list.add(makeTimeCoordAxis("Time"));
-		
+				
 		MPASBoxer boxer = new MPASBoxer();
 		
 		try {
@@ -622,8 +635,6 @@ public class MPASDataset extends AbstractDataset {
 
 				}
 				
-				boolean leftCell = false;
-				boolean markFound = false;
 				boolean splitCell = false;
 				CellInfo cell = cellsToRender[i];
 				CellInfo cellHalf = null;
@@ -658,13 +669,17 @@ public class MPASDataset extends AbstractDataset {
 				}
 			}
 			
-			//width = maxX - minX;
-			//height = maxY - minY;
-			
-			width = lonMax - lonMin;
-			height = latMax - latMin;
+			dataWidth = lonMax - lonMin;
+			dataHeight = latMax - latMin;
 			System.out.println("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
 			
+			String vertLevels = "nVertLevels";
+			int numLevels = dataset.findDimension("nVertLevels").getLength();
+			Double[] vertList = new Double[numLevels];
+			for (int i = 0; i < vertList.length; ++i)
+				vertList[i] = (double)i;
+			list.add(new CSVCoordAxis(vertList, vertLevels, vertLevels, AxisType.LAYER));
+
 			Double[] dArr = new Double[0];
 			
 			Double[] lonList = lonCoords.toArray(dArr);
@@ -692,14 +707,13 @@ public class MPASDataset extends AbstractDataset {
 	
 	private void transformCells(Graphics gr, int windowWidth, int windowHeight) {
 		long start = System.currentTimeMillis();
-		double factor = windowWidth / width;
-		scaledWidth = windowWidth;
-		scaledHeight = (int)Math.round(windowWidth * height / width);
+		double factor = windowWidth / dataWidth;
+		previousWindowWidth = windowWidth;
 
 		gr.setColor(Color.BLACK);
 		gr.fillRect(0,  0,  windowWidth, windowHeight);
 		int imageWidth = windowWidth;
-		int imageHeight = (int)Math.round(imageWidth * height / width);
+		int imageHeight = (int)Math.round(imageWidth * dataHeight / dataWidth);
 		for (int i = 0; i < cellsToRender.length; ++i) {
 			cellsToRender[i].transformCell(factor, imageWidth, imageHeight);		
 		}

@@ -9,11 +9,13 @@ import ucar.ma2.Index;
  * @version $Revision$ $Date$
  */
 public class DataFrameIndex {
+	
+	public Exception e = new Exception();
 
-	private final int xIndex, yIndex, tIndex, kIndex;
-	private final int[] indices;
-	/* private */ final Index index;
-
+	protected int xIndex, yIndex, tIndex, kIndex;
+	protected int[] indices;
+	/* private */ Index index;
+	
 	/**
 	 * Creates a DataFrameIndex for the specified DataFrame.
 	 *
@@ -69,7 +71,14 @@ public class DataFrameIndex {
 			}
 		} else {
 			indices[tIndex] = timeStep;
+			try {
 			index.set(indices);
+			}
+			catch (Throwable t) {
+				e.printStackTrace();
+				t.printStackTrace();
+				throw t;
+			}
 		}
 	}
 
@@ -86,6 +95,8 @@ public class DataFrameIndex {
 				throw new IllegalArgumentException( "Invalid call to DataFrameIndex.setLayer( layer = " + layer + ")" );
 			}
 		} else {
+			if (kIndex > indices.length)
+				System.out.println("Array error");
 			indices[kIndex] = layer;
 			index.set(indices);
 		}

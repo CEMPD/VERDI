@@ -24,6 +24,7 @@ public interface VerdiConstants {
 
 	String TILE_BUTTON_ID = "anl.verdi.plot.gui.action.TilePlot";
 	String FAST_TILE_BUTTON_ID = "anl.verdi.plot.gui.action.FastTilePlot";
+	String MESH_BUTTON_ID = "anl.verdi.plot.gui.action.MeshPlot";
 	String VERT_CROSS_BUTTON_ID = "anl.verdi.plot.gui.action.VerticalCrossSection";
 	String TIME_SERIES_LINE_BUTTON_ID = "anl.verdi.plot.gui.action.TimeSeriesPlot";
 	String TIME_SERIES_BAR_BUTTON_ID = "anl.verdi.plot.gui.action.TimeSeriesBarPlot";

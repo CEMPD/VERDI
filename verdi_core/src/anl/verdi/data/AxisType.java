@@ -7,5 +7,5 @@ package anl.verdi.data;
  * @version $Revision$ $Date$
  */
 public enum AxisType {
-	X_AXIS, Y_AXIS, TIME, LAYER, OTHER; //category, etc.
+	X_AXIS, Y_AXIS, TIME, LAYER, OTHER, CELL_AXIS; //category, etc.
 }

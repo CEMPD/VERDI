@@ -369,6 +369,8 @@ public class DataUtilities {
 			builder.addAxis(DataFrameAxis.createDataFrameAxis(axes.getXAxis(), axes.getXAxis().getArrayIndex()));
 		if (axes.getYAxis() != null)
 			builder.addAxis(DataFrameAxis.createDataFrameAxis(axes.getYAxis(), axes.getYAxis().getArrayIndex()));
+		if (axes.getCellAxis() != null)
+			builder.addAxis(DataFrameAxis.createDataFrameAxis(axes.getCellAxis(), axes.getCellAxis().getArrayIndex()));
 		return builder.createDataFrame();
 	}
 

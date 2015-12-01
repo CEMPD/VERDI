@@ -395,7 +395,7 @@ FormulaElementCreator, ListDataListener {
 		} catch (IllegalFormulaException e) {
 			Logger.error("Error while evaluating formula " + e.getMessage());
 		} catch (Throwable e) {
-			Logger.error(e.toString(), new Exception("Error while evaluating formula."));
+			Logger.error(e.toString(), e);
 		}
 
 		return frame;
