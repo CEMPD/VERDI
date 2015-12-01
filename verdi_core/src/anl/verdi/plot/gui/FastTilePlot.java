@@ -101,6 +101,8 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 //import org.geotools.map.DefaultMapLayer;	// deprecated, replacing with FeatureLayer
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
+import org.geotools.map.MapViewport;
+import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.swing.JMapPane;			// JEB Sept 2015; for mapping support in GeoTools
@@ -155,7 +157,7 @@ import anl.verdi.util.Utilities;
 public class FastTilePlot extends JMapPane implements ActionListener, Printable,	// JEB Sept 2015
 		ChangeListener, ComponentListener, MouseListener,
 		TimeAnimatablePlot, Plot {
-	public MapContent myMapContent = new MapContent();	// JEB Nov 2015
+	private final MapContent myMapContent = new MapContent();	// JEB Nov 2015
 	static final Logger Logger = LogManager.getLogger(FastTilePlot.class.getName());
 	private static final long serialVersionUID = 5835232088528761729L;
 	public static final int NO_VAL = Integer.MIN_VALUE;
@@ -265,7 +267,6 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 
 	protected //final 
 	DataFrame dataFrame;
-//	protected JMapPane myJMapPane;
 	protected DataFrame dataFrameLog;
 	protected List<OverlayObject> obsData = new ArrayList<OverlayObject>();
 	protected List<ObsAnnotation> obsAnnotations;
@@ -614,9 +615,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						
 						
 						// BEGIN SECTION FOR TESTING
-						JMapPane aMapPane = getMapPane();
-						Logger.debug("in FastTilePlot; preparing to call mapper.draw; existing JMapPane = " + aMapPane.toString());
-						ReferencedEnvelope aMPReferencedEnvelope = aMapPane.getDisplayArea();
+						Logger.debug("in FastTilePlot (617); preparing to call mapper.draw; existing JMapPane = " + getMapPane().toString());
+						ReferencedEnvelope aMPReferencedEnvelope = getMapPane().getDisplayArea();
 						double minX = aMPReferencedEnvelope.getMinX();
 						double minY = aMPReferencedEnvelope.getMinY();
 						double maxX = aMPReferencedEnvelope.getMaxX();
@@ -663,9 +663,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							Logger.debug("back from graphics.drawImage");
 				
 							// BEGIN SECTION FOR TESTING
-							JMapPane bMapPane = getMapPane();
-							Logger.debug("in FastTilePlot; existing JMapPane = " + bMapPane.toString());
-							ReferencedEnvelope bMPReferencedEnvelope = bMapPane.getDisplayArea();
+							Logger.debug("in FastTilePlot; existing JMapPane = " + getMapPane().toString());
+							ReferencedEnvelope bMPReferencedEnvelope = getMapPane().getDisplayArea();
 							double bminX = bMPReferencedEnvelope.getMinX();
 							double bminY = bMPReferencedEnvelope.getMinY();
 							double bmaxX = bMPReferencedEnvelope.getMaxX();
@@ -796,6 +795,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		// Draw projected/clipped map border lines over grid cells:
 		// NOTE: mapper.draw calls VerdiBoundaries.draw
+		Logger.debug("in FastTilePlot (797); getting ready to call mapper.draw");
 		mapper.draw(domain, gridBounds, gridCRS,
 				offScreenGraphics, xOffset, yOffset, tilePlot.getPlotWidth(),
 				tilePlot.getPlotHeight(), withHucs, withRivers, withRoads,
@@ -1311,7 +1311,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	// Construct but do not draw yet.
 
 	public FastTilePlot(VerdiApplication app, DataFrame dataFrame) {
-//		myJMapPane = (JMapPane) super;
+		this.setRenderer(new StreamingRenderer());
 		this.app=app;
 		setDoubleBuffered(false);	// JEB Sept 2015  had been set to true
 		assert dataFrame != null;
@@ -1395,7 +1395,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		firstColumn = 0;
 		lastColumn = firstColumn + columns - 1;
 		final ReferencedEnvelope envelope = axes.getBoundingBox(dataFrame.getDataset().get(0).getNetcdfCovn());
+		getMapPane().setDisplayArea(envelope);	// 2015 sets Referenced Envelope and CRS in the JMapPane
 		gridCRS = envelope.getCoordinateReferenceSystem();
+		MapViewport myMapViewport = new MapViewport(envelope);	// not actually setting the bounds this way
+		myMapViewport.setBounds(envelope);	// so try it this way
+		myMapViewport.setCoordinateReferenceSystem(gridCRS);
+		myMapContent.setViewport(myMapViewport); 	// sets the MapContent with the MapViewport based on the axes
+		
 		westEdge = envelope.getMinX(); // E.g., -420000.0.
 		southEdge = envelope.getMinY(); // E.g., -1716000.0.
 //		cellWidth = Numerics.round1(envelope.getWidth() / columns); // 12000.0.
@@ -1886,8 +1892,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	 * @return the panel that contains the plot component.
 	 */
 
-	public JMapPane getPanel() {	// changed from JPanel
-		return this;
+	public JPanel getPane() {	
+		return (JPanel)this;
 	}
 
 	/**
@@ -3454,6 +3460,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				
 			// Draw projected/clipped map border lines over grid cells:
 			// NOTE: mapper.draw calls VerdiBoundaries.draw
+			Logger.debug("in FastTilePlot (3457) getting ready to call mapper.draw");
 			mapper.draw(domain, gridBounds, gridCRS,
 						g, xOffset, yOffset, tilePlot.getPlotWidth(),
 						tilePlot.getPlotHeight(), withHucs, withRivers, withRoads,
@@ -3472,11 +3479,18 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		}
 	}
 	
+	// get the JMapPane portion of the FastTilePlot
 	public JMapPane getMapPane()
 	{
 		return (JMapPane)this; 
 	}
 	
+	// get the JPanel portion of the FastTilePlot
+	public JPanel getPanel()
+	{
+		return (JPanel)this; 
+	}
+
 	public void addVectorAnnotation(VectorEvaluator eval) {
 		vectAnnotation = new VectorAnnotation(eval, timestep, getDataFrame().getAxes().getBoundingBoxer());
 	}

@@ -69,7 +69,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	private AreaFilePanel areaPanel;
 	private java.util.List<String> viewList = new ArrayList<String>(); // amw
 																		// 02May07
-	private java.util.List<JMapFrame> framesToDisplay = new ArrayList<JMapFrame>(); // amw	// try JFrame => JMapFrame
+	private java.util.List<JMapFrame> framesToDisplay = new ArrayList<JMapFrame>(); // amw	// JEB try JFrame => JMapFrame
 																				// 02May07
 	private HashMap<String, PlotPanel> plotPanels = new HashMap<String, PlotPanel>();
 	private HashMap<String, JPanel> scriptPanels = new HashMap<String, JPanel>();

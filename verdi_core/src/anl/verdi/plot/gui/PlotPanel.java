@@ -60,7 +60,7 @@ public class PlotPanel extends JPanel {
 
 	// use this constructor for a JMapPane (topMapPanel) instead of a JPanel (topJPanel) object
 	// used for FastTilePlot and ArealInterpolationPlot
-	public PlotPanel(Plot plot, String name, MapContent content, RenderingExecutor executor,
+	public PlotPanel(Plot plot, String name, JMapPane aJMapPane, MapContent content, RenderingExecutor executor,
 			GTRenderer renderer) {
 		super(new BorderLayout());
 		Logger.debug("in PlotPanel constructor for passed Plot plot, String name, MapContent content, RenderingExecutor executor, GTRenderer renderer");
@@ -69,8 +69,9 @@ public class PlotPanel extends JPanel {
 		JToolBar toolBar = plot.getToolBar();
 		if(content == null)		// if a MapContent was not passed in arg list, get the one from the plot
 			content = ((AbstractMapPane)plot).getMapContent();
-		topMapPanel = new JMapPane(content, executor, renderer);
-		topMapPanel.setLayout(new BoxLayout(topMapPanel, BoxLayout.Y_AXIS));
+//		topMapPanel = new JMapPane(content, executor, renderer);
+		topMapPanel = aJMapPane;
+//		topMapPanel.setLayout(new BoxLayout(topMapPanel, BoxLayout.Y_AXIS));
 		if (bar != null) {
 			bar.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 			bar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -86,9 +87,10 @@ public class PlotPanel extends JPanel {
 			topMapPanel.add(Box.createRigidArea(new Dimension(0, 4)));
 			Logger.debug("added toolBar components to topMapPanel");
 		}
-		if (topMapPanel.getComponentCount() > 0) 
-			add(topMapPanel, BorderLayout.NORTH);
-		add(plot.getPanel(), BorderLayout.CENTER);
+//		if (topMapPanel.getComponentCount() > 0) 
+	//		add(topMapPanel, BorderLayout.NORTH);
+		add(plot.getMapPane(), BorderLayout.CENTER);
+//		add(topMapPanel, BorderLayout.NORTH);
 		this.plot = plot;
 		this.name = name;
 		Logger.debug("done with PlotPanel constructor");

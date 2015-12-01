@@ -31,6 +31,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.swing.JMapPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
@@ -48,6 +49,7 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
+
 
 //import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
@@ -649,5 +651,10 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 	@Override
 	public String getTitle() {
 		return chart.getTitle().getText();
+	}
+	
+	public JMapPane getMapPane()		// required by interface
+	{
+		return null;
 	}
 }

@@ -9,6 +9,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
+import org.geotools.swing.JMapPane;
+
 import anl.verdi.data.DataFrame;
 import anl.verdi.formula.Formula;
 import anl.verdi.plot.config.PlotConfiguration;
@@ -31,6 +33,13 @@ public interface Plot {
 	 * @return the panel that contains the plot component.
 	 */
 	JPanel getPanel();
+
+	/**
+	 * Gets the JMapPane that contains the plot component.
+	 * 
+	 * @return the panel that contains the plot component.
+	 */
+	JMapPane getMapPane();
 
 	/**
 	 * Gets a menu bar for this Plot. This may return null if

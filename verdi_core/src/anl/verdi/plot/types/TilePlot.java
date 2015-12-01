@@ -20,6 +20,7 @@ import javax.vecmath.Point4i;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.swing.JMapPane;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -513,5 +514,10 @@ public class TilePlot extends AbstractTilePlot {
 	@Override
 	public String getTitle() {
 		return chart.getTitle().getText();
+	}
+	
+	public JMapPane getMapPane()		// required by interface
+	{
+		return null;
 	}
 }
