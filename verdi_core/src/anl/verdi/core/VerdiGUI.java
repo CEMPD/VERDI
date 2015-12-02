@@ -27,7 +27,7 @@ import javax.swing.JTable;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.swing.JMapFrame;
+//import org.geotools.swing.JMapFrame;
 import org.geotools.swing.JMapPane;
 
 import saf.core.ui.GUIBarManager;
@@ -69,7 +69,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	private AreaFilePanel areaPanel;
 	private java.util.List<String> viewList = new ArrayList<String>(); // amw
 																		// 02May07
-	private java.util.List<JMapFrame> framesToDisplay = new ArrayList<JMapFrame>(); // amw	// JEB try JFrame => JMapFrame
+	private java.util.List<JFrame> framesToDisplay = new ArrayList<JFrame>(); // amw	// JEB try JFrame => JMapFrame
 																				// 02May07
 	private HashMap<String, PlotPanel> plotPanels = new HashMap<String, PlotPanel>();
 	private HashMap<String, JPanel> scriptPanels = new HashMap<String, JPanel>();
@@ -168,14 +168,17 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 		
 		// BEGIN SECTION FOR TESTING
 		JMapPane aMapPane = plotPanel.getMapPane();
-		Logger.debug("in VerdiGUI.addPlot; existing JMapPane in plotPanel = " + aMapPane.toString());
-		ReferencedEnvelope aMPReferencedEnvelope = aMapPane.getDisplayArea();
-		double minX = aMPReferencedEnvelope.getMinX();
-		double minY = aMPReferencedEnvelope.getMinY();
-		double maxX = aMPReferencedEnvelope.getMaxX();
-		double maxY = aMPReferencedEnvelope.getMaxY();
-		Logger.debug("and its ReferencedEnvelope = (" + minX + ", " + maxX + ", " + minY + ", " + maxY + ")");
-		Logger.debug("and its current CRS = " + aMPReferencedEnvelope.getCoordinateReferenceSystem());
+		if(aMapPane != null)
+		{
+			Logger.debug("in VerdiGUI.addPlot; existing JMapPane in plotPanel = " + aMapPane.toString());
+			ReferencedEnvelope aMPReferencedEnvelope = aMapPane.getDisplayArea();
+			double minX = aMPReferencedEnvelope.getMinX();
+			double minY = aMPReferencedEnvelope.getMinY();
+			double maxX = aMPReferencedEnvelope.getMaxX();
+			double maxY = aMPReferencedEnvelope.getMaxY();
+			Logger.debug("and its ReferencedEnvelope = (" + minX + ", " + maxX + ", " + minY + ", " + maxY + ")");
+			Logger.debug("and its current CRS = " + aMPReferencedEnvelope.getCoordinateReferenceSystem());
+		}
 		// END SECTION FOR TESTING
 		
 		String viewId = replaceInvalidChars(name) + plotCount++;
@@ -266,7 +269,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 			dialog.setLocationRelativeTo(frame);
 		dialog.addWindowListener(new ContourDialogListener(dialog, id, name));
 		if (frame == null) {
-			framesToDisplay.add((JMapFrame) dialog);	// changed by making cast to JMapFrame
+			framesToDisplay.add(dialog);
 		}
 		dialog.setVisible(true);
 	}

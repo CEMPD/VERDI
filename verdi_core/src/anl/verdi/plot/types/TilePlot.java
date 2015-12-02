@@ -335,7 +335,7 @@ public class TilePlot extends AbstractTilePlot {
 		yAxis.setNumberFormatOverride(new AxisNumberFormatter(new DecimalFormat()));
 
 		XYBlockRenderer renderer = new XYBlockRenderer();
-		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);	// JEB LOOK AT THIS
 		chart = new JFreeChart(createTitle(), plot);
 		chart.removeLegend();
 		chart.setBackgroundPaint(Color.white);
