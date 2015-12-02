@@ -247,7 +247,6 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 
 	// For clipped/projected/clipped map lines:
 
-//	private static final String mapFileDirectory = System.getProperty("user.dir") + "/data"; // Contains map files
 	private static final String mapFileDirectory = System.getenv("VERDI_HOME") + "/plugins/bootstrap/data";	// nov 2015
 
 	private //final 
@@ -392,7 +391,6 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 		public void run() {
 			Logger.debug("within FastTilePlot.run()");
 			Logger.debug("mapFileDirectory = " + mapFileDirectory);
-			Logger.debug("System.getProperty('user.dir') = " + System.getProperty("user.dir")); 
 
 			do {
 				if ( drawMode != DRAW_NONE &&
