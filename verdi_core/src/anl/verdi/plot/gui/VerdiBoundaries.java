@@ -106,6 +106,7 @@ public class VerdiBoundaries {
 	private void reset()	// reset member variables to null
 	{
 		aVerdiStyle = null;
+		vColor = Color.black;
 		vFileName = null;
 		vFile = null;
 		vPath = null;
