@@ -1323,7 +1323,12 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		format = NumberFormat.getInstance();
 		format.setMaximumFractionDigits(4);
 
-		AreaFinder finder = new AreaFinder();
+//		AreaFinder finder = new AreaFinder();
+		// NOTE: 2015 appears AreaFinder is an inner class; based on Oracle's JavaSE tutorials,
+		// proper way to instantiate an inner class is to first instantiate the outer class, and
+		// then create the inner object with this syntax:
+		// OuterClass.InnerClass innerObject = outerObject.new InnerClass();
+		FastTilePlot.AreaFinder finder = this.new AreaFinder();
 		this.addMouseListener(finder);
 		this.addMouseMotionListener(finder);
 		// Initialize attributes from dataFrame argument:
@@ -1460,7 +1465,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				this.log = true;
 		if(map.getPalette() == null)
 		{
-			Logger.debug("map.getPalette is null so calling new PavePaletteCreator");
+			Logger.debug("map.getPalette is null so calling new PavePaletteCreator");	// JEB does not print this message
 		}
 			defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPavePalette(); // new PavePaletteCreator().createPalettes(8).get(0);
 			map.setPalette(defaultPalette);
@@ -1923,7 +1928,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		});
 		menu.add(new LoadConfiguration(this));
 		menu.add(new SaveConfiguration(this));
-		//configureMapMenu(menu);
+		//configureMapMenu(menu);		// HERE IS WHERE THE CONFIGURE GIS LAYERS GOES??? JEB
 		bar.add(menu);
 
 		menu = new JMenu("Controls");
@@ -2703,7 +2708,15 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	}
 
 	private void setDataRanges() {
-		DataRangeDialog dialog = new DataRangeDialog("Set Row and Column Ranges",
+//		DataRangeDialog dialog = new DataRangeDialog("Set Row and Column Ranges",
+//				FastTilePlot.this, firstRow + 1, lastRow + 1, firstColumn + 1,
+//				lastColumn + 1);
+
+		// NOTE: 2015 appears DataRangeDialog is an inner class; based on Oracle's JavaSE tutorials,
+		// proper way to instantiate an inner class is to first instantiate the outer class, and
+		// then create the inner object with this syntax:
+		// OuterClass.InnerClass innerObject = outerObject.new InnerClass();
+		FastTilePlot.DataRangeDialog dialog = this.new DataRangeDialog("Set Row and Column Ranges",
 				FastTilePlot.this, firstRow + 1, lastRow + 1, firstColumn + 1,
 				lastColumn + 1);
 		dialog.showDialog();

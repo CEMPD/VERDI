@@ -44,12 +44,12 @@ public class FastTilePlot extends AbstractSAFAction<VerdiApplication> {
 				Logger.debug("dataFrame is not null; ready to generate Plot for FastTilePlot");
 				final Plot plot = new anl.verdi.plot.gui.FastTilePlot(application, dataFrame);
 				final String variableName = dataFrame.getVariable().getName();
-				Logger.debug("have variableName = " + variableName);
+				Logger.debug("have variableName = " + variableName);	// O3[1]
 				JMapPane aJMapPane = ((anl.verdi.plot.gui.FastTilePlot)plot).getMapPane();
-				Logger.debug("plot.getMapPane = " + ((anl.verdi.plot.gui.FastTilePlot)plot).getMapPane());
-				Logger.debug("aJMapPane = " + aJMapPane);
+				Logger.debug("plot.getMapPane = " + ((anl.verdi.plot.gui.FastTilePlot)plot).getMapPane());	// anl.verdi.plot.gui.FastTilePlot[,0,0,0x0,invalid,layout=java.awt.FlowLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=8,maximumSize=,minimumSize=,preferredSize=]
+				Logger.debug("aJMapPane = " + aJMapPane);	// anl.verdi.plot.gui.FastTilePlot[,0,0,0x0,invalid,layout=java.awt.FlowLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=8,maximumSize=,minimumSize=,preferredSize=]
 				MapContent aMapContent = ((anl.verdi.plot.gui.FastTilePlot)plot).getMapContent();
-				Logger.debug("aMapContent = " + aMapContent);
+				Logger.debug("aMapContent = " + aMapContent);		// null here
 				RenderingExecutor aRenderingExecutor = ((anl.verdi.plot.gui.FastTilePlot)plot).getRenderingExecutor();
 				Logger.debug("aRenderingExecutor = " + aRenderingExecutor);
 				GTRenderer aRenderer = ((anl.verdi.plot.gui.FastTilePlot)plot).getRenderer();
