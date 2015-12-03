@@ -174,8 +174,8 @@ public class ChartThemePanel extends JPanel {
 			useShadowBox.setSelected(show);
 		}
 
-		//---- X-large font theme ----
-		xlargeFontLbl.setText("X-Large Font:");
+		//---- X-Large Font font theme ----
+		xlargeFontLbl.setText("Title Font:");
 		contentPanel.add(xlargeFontLbl, cc.xy(1, 3));
 		contentPanel.add(xlargeFontFld, cc.xy(3, 3));
 		xlargeFont = setFontField(xlargeFontFld, ThemeConfig.X_LARGE_FONT);
@@ -188,7 +188,7 @@ public class ChartThemePanel extends JPanel {
 		contentPanel.add(xlargeFontBtn, cc.xy(5, 3));
 		
 		//---- Large font theme ----
-		largeFontLbl.setText("Large Font:");
+		largeFontLbl.setText("Subtitle(s) Font:");
 		contentPanel.add(largeFontLbl, cc.xy(1, 5));
 		contentPanel.add(largeFontFld, cc.xy(3, 5));
 		largeFont = setFontField(largeFontFld, ThemeConfig.LARGE_FONT);
@@ -201,7 +201,7 @@ public class ChartThemePanel extends JPanel {
 		contentPanel.add(largeFontBtn, cc.xy(5, 5));
 		
 		//---- Regular font theme ----
-		regFontLbl.setText("Regular Font:");
+		regFontLbl.setText("Tick Label(s) Font:");
 		contentPanel.add(regFontLbl, cc.xy(1, 7));
 		contentPanel.add(regFontFld, cc.xy(3, 7));
 		regularFont = setFontField(regFontFld, ThemeConfig.REGULAR_FONT);
@@ -214,17 +214,17 @@ public class ChartThemePanel extends JPanel {
 		contentPanel.add(regFontBtn, cc.xy(5, 7));
 
 		//---- Small font theme ----
-		smallFontLbl.setText("Small Font:");
-		contentPanel.add(smallFontLbl, cc.xy(1, 9));
-		contentPanel.add(smallFontFld, cc.xy(3, 9));
-		smallFont = setFontField(smallFontFld, ThemeConfig.SMALL_FONT);
-		samllFontBtn.setText("Select");
-		samllFontBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				smallFont = selectFont(smallFontFld);
-			}
-		});
-		contentPanel.add(samllFontBtn, cc.xy(5, 9));
+//		smallFontLbl.setText("Small Font:");
+//		contentPanel.add(smallFontLbl, cc.xy(1, 9));
+//		contentPanel.add(smallFontFld, cc.xy(3, 9));
+//		smallFont = setFontField(smallFontFld, ThemeConfig.SMALL_FONT);
+//		samllFontBtn.setText("Select");
+//		samllFontBtn.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent evt) {
+//				smallFont = selectFont(smallFontFld);
+//			}
+//		});
+//		contentPanel.add(samllFontBtn, cc.xy(5, 9));
 		
 		return contentPanel;
 	}
