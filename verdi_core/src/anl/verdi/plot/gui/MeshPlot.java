@@ -7,6 +7,7 @@
 package anl.verdi.plot.gui;
 
 import gov.epa.emvl.ASCIIGridWriter;
+import gov.epa.emvl.AxisLabelCreator;
 import gov.epa.emvl.GridCellStatistics;
 //import gov.epa.emvl.GridShapefileWriter;		// 2014 disable write shapefile VERDI 1.5.0
 import gov.epa.emvl.MapLines;
@@ -125,6 +126,7 @@ import anl.verdi.data.DataFrameIndex;
 import anl.verdi.data.DataManager;
 import anl.verdi.data.DataReader;
 import anl.verdi.data.DataUtilities;
+import anl.verdi.data.MPASAxisLabelCreator;
 import anl.verdi.data.MPASDataFrameBuilder;
 import anl.verdi.data.DataUtilities.MinMax;
 import anl.verdi.data.Dataset;
@@ -205,6 +207,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	protected final int rows; // 259.
 	protected final int cells;
 	protected final int columns; // 268.
+	protected final CoordAxis columnAxis;
+	protected final CoordAxis rowAxis;
+	protected final AxisLabelCreator rowLabels;
+	protected final AxisLabelCreator columnLabels;
 	protected final int rowOrigin;
 	protected final int columnOrigin;
 	private final double westEdge; // -420000.0 meters from projection center
@@ -218,8 +224,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private double windowScale;
 	private double zoomLevel = 1.0;
 	private double scale;
-	private int windowWidth;
-	private int windowHeight;
+	private int screenWidth;
+	private int screenHeight;
+	private int xOffset = 0;
+	private int yOffset = 0;
 	// For legend-colored grid cells and annotations:
 
 	protected TilePlot tilePlot; // EMVL TilePlot.
@@ -437,7 +445,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					Font sFont1 = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
 					Font sFont2 = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
 					int fontSize = (tFont == null) ? 20 : tFont.getSize();
-					int yOffset = 20 + fontSize;
+					yOffset = 20 + fontSize;
 					marginScale *= 20f / (fontSize - 20 < 0 ? 20 : 20 + fontSize / 10f);
 
 					if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
@@ -460,7 +468,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 								: 20 + fontSize / 10f);
 					}
 
-					final int xOffset = 100;
+					xOffset = 100;
 					final int legendWidth = 80 + xOffset;
 					final int canvasSize =
 						Math.round( Math.min( Math.max( 0, canvasWidth - legendWidth ), canvasHeight ) * marginScale );
@@ -472,9 +480,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					final int width = Math.round(canvasSize * columnScale);
 					final int height = Math.round(canvasSize * rowScale);
 					
-					if (previousCanvasSize != canvasSize) {
+					if (previousCanvasSize != canvasSize || zoomFactor != previousZoomFactor) {
 						transformCells(/*gr,*/ canvasSize, xOffset, yOffset);						
 						previousCanvasSize = canvasSize;
+						previousZoomFactor = zoomFactor;
 					}
 					
 
@@ -606,12 +615,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							Logger.debug("ready to make revised function call to tilePlot.draw, thread = " + Thread.currentThread().toString());
 
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
-									width, height, stepsLapsed, layer, aRow,
+									screenWidth, screenHeight, stepsLapsed, layer, aRow,
 									bRow, aCol, bCol, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
 									aPlotUnits, 
 									config, aNumberFormat, gridLineColor,
-									subsetLayerData);
+									subsetLayerData, rowLabels, columnLabels);
 //							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 //									width, height, stepsLapsed, layer, firstRow + rowOrigin,
 //									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
@@ -625,7 +634,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						}
 						} //TAH finish rework if
 
-						dataArea.setRect(xOffset, yOffset, width, height);
+						dataArea.setRect(xOffset, yOffset, screenWidth, screenHeight);
 
 						// Draw projected/clipped map border lines over grid
 						// cells:
@@ -1016,8 +1025,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 
 		String command = event.getActionCommand();
-		Point start = new Point(getCol(popUpLocation), getRow(popUpLocation));
-		Rectangle rect = new Rectangle(start, new Dimension(0, 0));
+		//Point start = new Point((popUpLocation), getRow(popUpLocation));
+		Rectangle rect = new Rectangle(popUpLocation, new Dimension(0, 0));
 
 		if (command.equals(PROPERTIES_COMMAND)) {
 			editChartProperties();
@@ -1035,7 +1044,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			zoom(false, false, true, false, false, rect);
 		} else if (command.equals(ZOOM_OUT_BOTH_COMMAND) && inDataArea) {
 			zoom(false, false, false, false, true, rect);
-		} else if (command.equals(ZOOM_OUT_MAX_COMMAND) && inDataArea) {
+		} else if (command.equals(ZOOM_OUT_MAX_COMMAND)) {
 			resetZooming();
 		}
 
@@ -1151,21 +1160,26 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private void zoom(boolean rightClick, boolean leftClick, boolean popZoomIn, boolean reset, boolean zoomOut, Rectangle bounds) {
 		if (reset) {
 			resetZooming();
-			draw();
 			return;
 		}
 		
 		if (rightClick)
 			return;
 		
+
 		int rowSpan = lastRow - firstRow;
 		int colSpan = lastColumn - firstColumn;
 		int inScale = 5;
 		int rowInc = rowSpan < inScale * 2 ? rowSpan/2 - 1 : rowSpan / (inScale * 2);
 		int colInc = colSpan < inScale * 2 ? colSpan/2 - 1 : colSpan / (inScale * 2);
+		boolean popZoom = true;
 		
 		if (popZoomIn) { // click to zoom in or popup menu zoom in
-			if (rowSpan != 0) {
+			if (zoomFactor < MAX_ZOOM) {
+				previousZoomFactor = zoomFactor;
+				zoomFactor += 0.5;
+			}
+			/*if (rowSpan != 0) {
 				firstRow = bounds.y - rowInc < 1 ? 1 : bounds.y - rowInc;
 				lastRow = bounds.y + rowInc > rows ? rows : bounds.y + rowInc;
 			}
@@ -1173,21 +1187,50 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			if (colSpan != 0) {
 				firstColumn = bounds.x - colInc < 1 ? 1 : bounds.x - colInc;
 				lastColumn = bounds.x + colInc > columns ? columns : bounds.x + colInc;
-			}
+			}*/
 		} else if (zoomOut) {  //zoom out
-			int outInc = 1 + colSpan  / 5;
+			if (zoomFactor > MIN_ZOOM) {
+				previousZoomFactor = zoomFactor;
+				zoomFactor -= 0.5;
+				if (zoomFactor < MIN_ZOOM)
+					zoomFactor = MIN_ZOOM;
+			}
+			/*int outInc = 1 + colSpan  / 5;
 			firstRow = firstRow - outInc < 1 ? 1 : firstRow - outInc;
 			lastRow = lastRow + outInc > rows ? rows : lastRow + outInc;
 			firstColumn = firstColumn - outInc < 1 ? 1 : firstColumn - outInc;
-			lastColumn = lastColumn + outInc > columns ? columns : lastColumn + outInc;
+			lastColumn = lastColumn + outInc > columns ? columns : lastColumn + outInc;*/
 		} else if (leftClick && bounds.height == 0 && bounds.width == 0) {
 			return;
 		} else { // regular zoom in
-			firstRow = bounds.y - bounds.height;
-			lastRow = bounds.y;
-			firstColumn = bounds.x;
-			lastColumn = bounds.x + bounds.width;
+			clippedDataRatio = bounds.width / (double)bounds.height;
+			panX = (bounds.x - xOffset) / compositeFactor;
+			panY = (bounds.y - yOffset) / compositeFactor;
+			previousZoomFactor = zoomFactor;
+			zoomFactor *= screenWidth / bounds.width;
+			popZoom = false;
 		}
+		
+		double zoomedFactor = screenWidth / dataWidth * zoomFactor;
+		double visibleDataWidth = screenWidth / zoomedFactor;
+		
+		double xClickDistance = (bounds.x - xOffset) / compositeFactor + panX;
+		if (popZoom)
+			panX = xClickDistance - visibleDataWidth / 2;
+		if (panX < 0)
+			panX = 0;
+		if (panX > dataWidth - visibleDataWidth)
+			panX = dataWidth - visibleDataWidth;
+		
+		double yClickDistance = (bounds.y - yOffset) / compositeFactor + panY;
+		double visibleDataHeight = screenHeight / zoomedFactor;  //half visible height
+		if (popZoom)
+			panY = yClickDistance - visibleDataHeight / 2;
+		if (panY < 0)
+			panY = 0;
+		if (panY > dataHeight - visibleDataHeight)
+			panY = dataHeight - visibleDataHeight;
+
 		
 		lastRow = Numerics.clampInt(lastRow, firstRow, rows - 1);
 		lastColumn = Numerics.clampInt(lastColumn, firstColumn, columns - 1);
@@ -1312,10 +1355,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			cellId = id;
 		}
 		
-		private void transformCell(double factor, int imageWidth, int imageHeight, int xOffset, int yOffset) {
+		private void transformCell(double factor, int xOffset, int yOffset) {
 			for (int i = 0; i < lonCoords.length; ++i) {
-				lonTransformed[i] = (int)Math.round((lonCoords[i] - lonMin) * factor) + xOffset;
-				latTransformed[i] = (int)Math.round((latCoords[i] - latMin) * factor) + yOffset;
+				lonTransformed[i] = (int)Math.round((lonCoords[i] - lonMin - panX) * factor) + xOffset;
+				latTransformed[i] = (int)Math.round((latCoords[i] - latMin - panY) * factor) + yOffset;
 			}
 			colorIndex = indexOfObsValue((float) renderVariable.get(0, cellId), legendLevels);
 		}
@@ -1337,12 +1380,22 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	ucar.ma2.ArrayInt.D2 vertexList;
 	double latMin = Double.MAX_VALUE;
 	double lonMin = Double.MAX_VALUE;
-	double latMax = Double.MIN_VALUE;
-	double lonMax = Double.MIN_VALUE;
+	double latMax = Double.MAX_VALUE * -1;
+	double lonMax = Double.MAX_VALUE * -1;
 	int previousCanvasSize = 0;
+	double panX = 0;
+	double panY = 0;
+	final double MAX_ZOOM = Double.MAX_VALUE;
+	final double MIN_ZOOM = 1.0;
+	double zoomFactor = 1;
+	double compositeFactor;
+	double previousZoomFactor = 1;
 	double dataWidth = 0;
 	double dataHeight = 0;
 	double dataRatio = 0;
+	double clippedDataRatio = 0;
+	double clippedScreenWidth = 0;
+	double clippedScreenHeight = 0;
 	
 	private void loadCellStructure() throws IOException {
 		Dataset ds = dataFrame.getDataset().get(0);
@@ -1437,40 +1490,65 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			dataWidth = lonMax - lonMin;
 			dataHeight = latMax - latMin;
 			dataRatio = dataWidth / dataHeight;
+			clippedDataRatio = dataRatio;
+			//clippedDataWidth = dataWidth;
+			//clippedDataHeight = dataHeight;
 			renderVariable = (ArrayDouble.D2)dataFrame.getArray();
 			System.out.println("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
 	}
 	
-	private void transformCells(/*Graphics gr, */ int canvasSize, int xOffset, int yOffset) {
+	private void transformCells(/*Graphics gr, */ int canvasSize, int xOrigin, int yOrigin) {
 		long start = System.currentTimeMillis();
 		
-		if (dataRatio > 1) {		
-			windowWidth = canvasSize;
-			windowHeight = (int)Math.round(windowWidth / dataRatio);
+		if (clippedDataRatio > 1) {		
+			screenWidth = canvasSize;
+			screenHeight = (int)Math.round(screenWidth / clippedDataRatio);
 		}
 		else {
-			windowHeight = canvasSize;
-			windowWidth = (int)Math.round(windowHeight * dataRatio);
+			screenHeight = canvasSize;
+			screenWidth = (int)Math.round(screenHeight * clippedDataRatio);
 		}
-		double factor = windowWidth / dataWidth;
+		compositeFactor = screenWidth / dataWidth * zoomFactor;
 
-		//gr.setColor(Color.BLACK);
-		//gr.fillRect(0,  0,  canvasSize, canvasSize);
-		int imageWidth = windowWidth;
-		int imageHeight = (int)Math.round(imageWidth * dataHeight / dataWidth);
+		//int imageWidth = screenWidth;
+		//int imageHeight = (int)Math.round(imageWidth * dataHeight / dataWidth);
 		for (int i = 0; i < cellsToRender.length; ++i) {
-			cellsToRender[i].transformCell(factor, imageWidth, imageHeight, xOffset, yOffset);		
+			//cellsToRender[i].transformCell(factor, imageWidth, imageHeight, xOffset, yOffset);		
+			cellsToRender[i].transformCell(compositeFactor, xOrigin, yOrigin);		
 		}
 		for (int i = 0; i < splitCells.size(); ++i) {
-			splitCells.get(i).transformCell(factor, imageWidth, imageHeight, xOffset, yOffset);
+			//splitCells.get(i).transformCell(factor, imageWidth, imageHeight, xOffset, yOffset);
+			splitCells.get(i).transformCell(compositeFactor, xOrigin, yOrigin);
 		}
 		System.out.println("Scaled cells in " + (System.currentTimeMillis() - start) + "ms");
 	}
 
 	public void renderCells(Graphics gr, int xOffset, int yOffset) {
 		
+		//zoom menu item or rectangle selection
+		//menu item
+			//determine new scaling factor
+			//find window coordinate center
+			//translate to image coordinates
+			//find new viewable image width / height
+			//use to determine new image offset
+			//translate image offset coordinates to window offset coordinates 
+			//scale all cellinfos
+			//draw with translate, new offset
+		//select rectangle
+			//get window coordinates of selection
+			//translate to image coordinates
+			//calculate new aspect ratio
+			//determine new window width, height based on aspect ratio
+			//rescale cell infos
+			
+		 
+		
+		
 		long renderStart = System.currentTimeMillis();
 		
+		gr.setClip(xOffset, yOffset, screenWidth, screenHeight);
+		//gr.translate((int)Math.round(panX * compositeFactor * -1), (int)Math.round(panY * compositeFactor * -1));
 		//int imageWidth = 8192;
 		
 		/*
@@ -1490,8 +1568,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			gr.setColor(legendColors[splitCells.get(i).colorIndex]);
 			gr.fillPolygon(splitCells.get(i).lonTransformed, splitCells.get(i).latTransformed, splitCells.get(i).lonTransformed.length);
 		}
+		gr.setClip(null);
+		//gr.translate(0,  0);
 		long renderTime = System.currentTimeMillis() - renderStart;
-		System.out.println("Finished drawing image " + new Date() + " image in " + renderTime + "ms  window " + windowWidth + "x" + windowHeight);
+		System.out.println("Finished drawing image " + new Date() + " image in " + renderTime + "ms  window " + screenWidth + "x" + screenHeight);
 		//System.out.println("Var min " + varMin + " max " + varMax);
 		/*
 		java.io.File outputFile = new java.io.File("/tmp/mpasout.png");
@@ -1582,13 +1662,15 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		cells = (int)cellAxis.getRange().getExtent();
 		
 
-		final CoordAxis rowAxis = mpasAxes.getYAxis();
+		rowAxis = mpasAxes.getYAxis();
+		rowLabels = rowAxis != null ? new MPASAxisLabelCreator(rowAxis) : null;
 		rows = rowAxis != null ? (int)rowAxis.getRange().getExtent() : 1;
 		rowOrigin = rowAxis != null ? (int)rowAxis.getRange().getOrigin() : 0;
 		firstRow = 0;
 		lastRow = firstRow + rows - 1;
 
-		final CoordAxis columnAxis = mpasAxes.getXAxis();
+		columnAxis = mpasAxes.getXAxis();
+		columnLabels = columnAxis != null ? new MPASAxisLabelCreator(columnAxis) : null;
 		columns = columnAxis != null ? (int)columnAxis.getRange().getExtent() : 1;
 		columnOrigin = columnAxis != null ? (int)columnAxis.getRange().getOrigin() : 0;
 		firstColumn = 0;
@@ -2321,12 +2403,19 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	private void resetZooming() {
-		firstRow = 0;
+		previousZoomFactor = zoomFactor;
+		clippedDataRatio = dataRatio;
+		zoomFactor = 1;
+		compositeFactor = screenWidth / dataWidth;
+		panX = 0;
+		panY = 0;
+		draw();
+		/*firstRow = 0;
 		lastRow = rows - 1;
 		firstColumn = 0;
 		lastColumn = columns - 1;
 		computeDerivedAttributes();
-		copySubsetLayerData(this.log);
+		copySubsetLayerData(this.log);*/
 	}
 
 	private void gisLayersMenu(JMenu menu) {
@@ -3396,8 +3485,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	class AreaFinder extends MouseInputAdapter {
-
-		private Point start, end;
 		
 		private Point mpStart, mpEnd;
 
@@ -3407,22 +3494,20 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		public void mousePressed(MouseEvent e) {
 			if (isInDataArea(e)) {
 				mpStart = e.getPoint();
-				start = new Point(getCol(mpStart), getRow(mpStart));
-				rect = new Rectangle(start, new Dimension(0, 0));
+				rect = new Rectangle(mpStart, new Dimension(0, 0));
 				eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, createAreaString(rect),
 								false));
 			} else {
-				start = null;
+				mpStart = null;
 			}
 		}
 
 		public void mouseDragged(MouseEvent e) {
-			if (start != null) {
+			if (mpStart != null) {
 				if (isInDataArea(e)) {
 					mpEnd = e.getPoint();
-					end = new Point(getCol(mpEnd), getRow(mpEnd));
-					rect.width = end.x - rect.x;
-					rect.height = rect.y - end.y;
+					rect.width = mpEnd.x - rect.x;
+					rect.height = rect.y - mpEnd.y;
 					
 					boolean finished = rect.width < 0 || rect.height < 0;
 					eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, createAreaString(rect),
@@ -3448,12 +3533,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 
 		public void mouseReleased(MouseEvent e) {
-			if (start != null) {
+			if (mpStart != null) {
 				if (isInDataArea(e)) {
 					mpEnd = e.getPoint();
-					end = new Point(getCol(mpEnd), getRow(mpEnd));
-					rect.width = end.x - rect.x;
-					rect.height = rect.y - end.y;
+					rect.width = mpEnd.x - rect.x;
+					rect.height = mpEnd.y - rect.y;
 
 					if (probe)
 						probe(rect);
