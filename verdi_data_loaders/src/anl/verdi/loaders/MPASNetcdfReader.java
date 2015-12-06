@@ -65,7 +65,7 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 				continue;
 			if (axis.getAxisType().equals(AxisType.TIME))
 				builder.addAxis(DataFrameAxis.createDataFrameAxis(axis, 0));
-			else if (axis.getAxisType().equals(AxisType.X_AXIS)) {
+			else if (axis.getAxisType().equals(AxisType.X_AXIS)) { //MPAS has "virtual"  x/y axes, which can't be referenced within the data.  Use cell index as axis, and include simulated x/y axes
 				CoordAxis yAxis = set.getCoordAxes().getYAxis();
 				CoordAxis cellAxis = new MPASCellCoordAxis(axis, yAxis, set.numCells, "nCells", "nCells");
 				builder.addAxis(DataFrameAxis.createDataFrameAxis(cellAxis, 1));

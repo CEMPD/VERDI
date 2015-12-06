@@ -178,14 +178,14 @@ public class MPASDataset extends AbstractDataset {
 	
 	
 	//TODO = get these from ranges instead of storing here
-	double minX;
-	double minY;
-	double maxX;
-	double maxY;
-	double latMin;
-	double lonMin;
-	double latMax;
-	double lonMax;
+	double minX = Double.MAX_VALUE;
+	double minY = Double.MAX_VALUE;
+	double maxX = Double.MAX_VALUE * -1;
+	double maxY = Double.MAX_VALUE * -1;
+	double latMin = Double.MAX_VALUE;
+	double lonMin = Double.MAX_VALUE;
+	double latMax = Double.MAX_VALUE * -1;
+	double lonMax = Double.MAX_VALUE * -1;
 
 	double dataWidth = 0;
 	double dataHeight = 0;
@@ -602,13 +602,21 @@ public class MPASDataset extends AbstractDataset {
 				vertexPositionMap.put(indexToVertexId.getInt(i), i);
 
 			
-			Set<Double> latCoords = new TreeSet<Double>();
-			Set<Double> lonCoords = new TreeSet<Double>();
+			//Set<Double> latCoords = new TreeSet<Double>();
+			//Set<Double> lonCoords = new TreeSet<Double>();
 			
 			int[] vertexShape = vertexList.getShape();
 
 			cellsToRender = new CellInfo[vertexShape[0]];
 			splitCells = new ArrayList<CellInfo>();
+			//get average cell diameter
+			//get lat max min
+			//get lon max min
+			//num steps = ceil(lat range / diam)
+			//step size = range / numSteps
+			long cellDiamCount = 0;
+			double cellDiamSum = 0;
+			double avgDiam = 0;
 			for (int i = 0; i < vertexShape[0]; ++i) { //for each cell
 				int vertices = cellVertices.getInt(i);
 				cellsToRender[i] = new CellInfo(i, vertices);
@@ -620,26 +628,29 @@ public class MPASDataset extends AbstractDataset {
 					if (cellsToRender[i].lonCoords[j] < 0)
 						cellsToRender[i].lonCoords[j] = 2 * Math.PI + cellsToRender[i].lonCoords[j];
 					
-					if (latVert.getDouble(vId) < latMin)
-						latMin = latVert.getDouble(vId);
-					if (lonVert.getDouble(vId) < lonMin)
-						lonMin = lonVert.getDouble(vId);
-					if (latVert.getDouble(vId) > latMax)
-						latMax = latVert.getDouble(vId);
-					if (lonVert.getDouble(vId) > lonMax)
-						lonMax = lonVert.getDouble(vId);
+					if (cellsToRender[i].latCoords[j] < latMin)
+						latMin = cellsToRender[i].latCoords[j];
+					if (cellsToRender[i].lonCoords[j] < lonMin)
+						lonMin = cellsToRender[i].lonCoords[j];
+					if (cellsToRender[i].latCoords[j] > latMax)
+						latMax = cellsToRender[i].latCoords[j];
+					if (cellsToRender[i].lonCoords[j] > lonMax)
+						lonMax = cellsToRender[i].lonCoords[j];
 
-					latCoords.add(latVert.getDouble(vId) * -1);
-					lonCoords.add(lonVert.getDouble(vId));
+					//latCoords.add(cellsToRender[i].latCoords[j]);
+					//lonCoords.add(cellsToRender[i].lonCoords[j]);
 					//System.out.println("Cell " + i + " vertex " + j + " id " + vId + " x " + xCord.getDouble(vId) + " y " + yCord.getDouble(vId) + " z " + zCord.getDouble(vId));
 
 				}
 				
 				boolean splitCell = false;
+				boolean splitLat = false;
 				CellInfo cell = cellsToRender[i];
 				CellInfo cellHalf = null;
-				double minCellLon = Math.PI * 2;
-				double maxCellLon = 0; 
+				double minCellLon = Double.MAX_VALUE;
+				double maxCellLon = Double.MAX_VALUE * -1;; 
+				double minCellLat = Double.MAX_VALUE;
+				double maxCellLat = Double.MAX_VALUE * -1;
 				
 				for (int j = 0; j < cell.lonCoords.length; ++j) {
 					if (cell.lonCoords[j] < minCellLon)
@@ -659,16 +670,36 @@ public class MPASDataset extends AbstractDataset {
 						else if (cellHalf.lonCoords[j] > Math.PI)
 							cellHalf.lonCoords[j] = 0;
 					}
+					splitCells.add(cellHalf); //Longitude ranges from 0 to 2pi
+				}
+				else {
+					++cellDiamCount;
+					cellDiamSum += maxCellLon - minCellLon;
+				}
+				for (int j = 0; j < cell.latCoords.length; ++j) {
+					if (cell.latCoords[j] < minCellLat)
+						minCellLat = cell.latCoords[j];
+					if (cell.latCoords[j] > maxCellLat)
+						maxCellLat = cell.latCoords[j];
+					if (maxCellLat - minCellLat > Math.PI * 75) {
+						if (!splitCell)
+							cellHalf = cell.clone();
+						splitCell = true;
+						splitLat = true;
+					}
+				}
+				if (splitLat) {
+					for (int j = 0; j < cell.latCoords.length; ++j) {
+						if (cell.latCoords[j] < 0) {
+							cell.latCoords[j] = Math.PI / 2;
+						}
+						else if (cellHalf.lonCoords[j] > 0)
+							cellHalf.lonCoords[j] = Math.PI / -2;
+					}
 					splitCells.add(cellHalf);
-					
-					//System.out.println("Split cell " + cell.cellId + " negative: " + negativeCell);
-					//System.out.println("longitudes " + Arrays.toString(cell.lonCoords));
-					//System.out.println("latitudes " + Arrays.toString(cell.latCoords));
-					//System.out.println("longitudes " + Arrays.toString(cellHalf.lonCoords));
-					//System.out.println("latitudes " + Arrays.toString(cellHalf.latCoords));
 				}
 			}
-			
+						
 			dataWidth = lonMax - lonMin;
 			dataHeight = latMax - latMin;
 			System.out.println("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
@@ -680,13 +711,13 @@ public class MPASDataset extends AbstractDataset {
 				vertList[i] = (double)i;
 			list.add(new CSVCoordAxis(vertList, vertLevels, vertLevels, AxisType.LAYER));
 
-			Double[] dArr = new Double[0];
-			
-			Double[] lonList = lonCoords.toArray(dArr);
-			list.add(new CSVCoordAxis(lonList, "x", "x", AxisType.X_AXIS));
+			//Construct axes for latitude and longitude, using average diameter as spacing
+			avgDiam = cellDiamSum / cellDiamCount;
 
-			Double[] latList = latCoords.toArray(dArr);
-			list.add(new CSVCoordAxis(latList, "y", "y", AxisType.Y_AXIS));
+			
+			list.add(new MPASCoordAxis("x", "x", lonMin, lonMax, avgDiam, AxisType.X_AXIS));
+			list.add(new MPASCoordAxis("y", "y", latMin, latMax, avgDiam, AxisType.Y_AXIS));
+						
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
