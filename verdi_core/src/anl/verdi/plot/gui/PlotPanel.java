@@ -85,7 +85,8 @@ public class PlotPanel extends JPanel {
 			if (topMapPanel.getComponentCount() == 1) {
 				topMapPanel.add(Box.createRigidArea(new Dimension(0, 4)));
 			}
-			topMapPanel.add(toolBar);
+			topMapPanel.add(toolBar);	// JEB DEC 2015: NOT into topMapPanel, needs to go into JPanel
+										// that includes the titles, axes, footers, legend, and the map itself
 			topMapPanel.add(Box.createRigidArea(new Dimension(0, 4)));
 			Logger.debug("added toolBar components to topMapPanel");
 		}
