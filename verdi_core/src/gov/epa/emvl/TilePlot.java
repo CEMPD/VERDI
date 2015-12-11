@@ -102,6 +102,19 @@ public class TilePlot {
 		showObsLegend = showLegend;
 		obsAnnotations = obsAnnot;
 	}
+	
+	public synchronized void draw(final Graphics graphics, int xOffset, int yOffset,
+			int width, int height, int steplapse, int layer, int firstRow,
+			int lastRow, int firstColumn, int lastColumn,
+			final double[] legendLevels, final Color[] legendColors,
+			final Color axisColor, final Color labelColor,
+			final String variable, final String units,
+			PlotConfiguration config, NumberFormat format,
+			final Color gridLineColor, final float[][] data) {
+		draw(graphics, xOffset, yOffset, width, height, steplapse, layer, firstRow, lastRow,
+				firstColumn, lastColumn, legendLevels, legendColors, axisColor, labelColor,
+				variable, units, config, format, gridLineColor, data, null, null);
+	}
 
 	/**
 	 * draw - Draw a tile plot: colored rectangles with labels and legend.
@@ -142,7 +155,8 @@ public class TilePlot {
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data) 
+			final Color gridLineColor, final float[][] data,
+			AxisLabelCreator rowLabels, AxisLabelCreator columnLabels) 
 	{
 		Logger.debug("in gov.epa.emvl.TilePlot.draw(lots of parameters), thread = " + Thread.currentThread().toString());
 		this.config = config;
@@ -162,7 +176,7 @@ public class TilePlot {
 		drawGridBoundary(graphics, xMinimum, xMaximum, yMinimum, yMaximum);
 		Logger.debug("ready to call drawAxis");
 		drawAxis(graphics, xMinimum, xMaximum, yMinimum, yMaximum, firstRow,
-				lastRow, firstColumn, lastColumn);
+				lastRow, firstColumn, lastColumn, rowLabels, columnLabels);
 		Logger.debug("ready to call drawLegend");
 		drawLegend(graphics, xMaximum, yMinimum, yMaximum, legendLevels,
 				legendColors, units);
@@ -276,6 +290,11 @@ public class TilePlot {
 		graphics.drawLine(xMaximum, yMaximum, xMinimum, yMaximum);
 		graphics.drawLine(xMinimum, yMaximum, xMinimum, yMinimum);
 	}
+	protected void drawAxis(final Graphics graphics, int xMinimum, int xMaximum,
+			int yMinimum, int yMaximum, int firstRow, int lastRow,
+			int firstColumn, int lastColumn) {
+		drawAxis(graphics, xMinimum, xMaximum, yMinimum, yMaximum, firstRow, lastRow, firstColumn, lastColumn, null, null);
+	}
 
 	/**
 	 * drawAxis - draw row/column axis with tic marks and text labels.
@@ -295,7 +314,7 @@ public class TilePlot {
 
 	protected void drawAxis(final Graphics graphics, int xMinimum, int xMaximum,
 			int yMinimum, int yMaximum, int firstRow, int lastRow,
-			int firstColumn, int lastColumn) {
+			int firstColumn, int lastColumn, AxisLabelCreator rowLabels, AxisLabelCreator columnLabels) {
 
 		final int xAxisOffset = 5; // Pixel offset left of west edge of grid.
 		final int yAxisOffset = 5; // Pixel offset below south edge of grid.
@@ -357,7 +376,11 @@ public class TilePlot {
 		for (int row = firstRow; row <= lastRow; row += rowStep) {
 			final int offsetRow = row - firstRow;
 			final int yTic = yMaximum - replaceRound(offsetRow * rowSize + 0.5f);
-			final String label = Integer.toString(row + 1);
+			final String label;
+			if (rowLabels != null)
+				label = rowLabels.getLabel(row);
+			else
+				label = Integer.toString(row + 1);
 			final int lblWidth = graphics.getFontMetrics().stringWidth(label);
 			final int xpostn = tickLblBase - lblWidth;
 			if (rShowTick && rLevelValues[i]) graphics.drawString(label, xpostn, yTic + fSize / 2);
@@ -398,7 +421,11 @@ public class TilePlot {
 			final int offsetColumn = column - firstColumn;
 			final int xTic = xMinimum
 					+ replaceRound(offsetColumn * columnSize + 0.5f);
-			final String label = Integer.toString(column + 1);
+			final String label;
+			if (columnLabels != null)
+				label = columnLabels.getLabel(column);
+			else
+				label = Integer.toString(column + 1);
 			final int xpostn = xTic - graphics.getFontMetrics().stringWidth(label) / 2;
 			if (dShowTick && dLevelValues[i]) graphics.drawString(label, xpostn, dTickYBase + yspace);
 			if (dShowTick) graphics.drawLine(xTic, yAxis, xTic, dTickYBase);

@@ -110,24 +110,20 @@ import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
-import ucar.nc2.dataset.NetcdfDataset;
 import ucar.unidata.geoloc.Projection;
 import ucar.unidata.geoloc.projection.LatLonProjection;
 import anl.map.coordinates.Decidegrees;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiGUI;
 import anl.verdi.data.Axes;
-import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
-import anl.verdi.data.DataFrameBuilder;
 import anl.verdi.data.DataFrameIndex;
 import anl.verdi.data.DataManager;
 import anl.verdi.data.DataReader;
 import anl.verdi.data.DataUtilities;
 import anl.verdi.data.MPASAxisLabelCreator;
-import anl.verdi.data.MPASDataFrameBuilder;
 import anl.verdi.data.DataUtilities.MinMax;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.MPASDataFrameIndex;
@@ -150,7 +146,6 @@ import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.probe.ProbeEvent;
 import anl.verdi.plot.types.TimeAnimatablePlot;
-import anl.verdi.plot.util.FastTilePlotPrintAction;
 import anl.verdi.plot.util.PlotExporter;
 import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.util.Tools;
@@ -221,9 +216,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private final boolean invertRows; // HACK: Invert rows of AURAMS / GEM / CF Convention data?
 
 	//TAH
-	private double windowScale;
-	private double zoomLevel = 1.0;
-	private double scale;
 	private int screenWidth;
 	private int screenHeight;
 	private int xOffset = 0;
@@ -233,9 +225,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	protected TilePlot tilePlot; // EMVL TilePlot.
 
 	protected int timestep = 0; // 0..timesteps - 1.
+	private int previousTimestep = 0;
 	protected int firstTimestep = 0;
 	protected int lastTimestep = 0;
 	protected int layer = 0; // 0..layers - 1.
+	private int previousLayer = 0;
 	protected int firstLayer = 0;
 	protected int lastLayer = 0;
 	private int firstRow = 0; // 0..lastRow.
@@ -480,10 +474,14 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					final int width = Math.round(canvasSize * columnScale);
 					final int height = Math.round(canvasSize * rowScale);
 					
-					if (previousCanvasSize != canvasSize || zoomFactor != previousZoomFactor) {
+					if (previousCanvasSize != canvasSize || zoomFactor != previousZoomFactor || previousClippedDataRatio != clippedDataRatio
+							|| timestep != previousTimestep || layer != previousLayer) {
 						transformCells(/*gr,*/ canvasSize, xOffset, yOffset);						
 						previousCanvasSize = canvasSize;
 						previousZoomFactor = zoomFactor;
+						previousClippedDataRatio = clippedDataRatio;
+						previousTimestep = timestep;
+						previousLayer = layer;
 					}
 					
 
@@ -529,6 +527,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					assert graphics != null;
 
 					if (drawMode == DRAW_CONTINUOUS) {
+						previousTimestep = timestep;
 						timestep = nextValue(1, timestep, firstTimestep, lastTimestep);
 						timeLayerPanel.setTime(timestep);
 						drawOverLays();
@@ -555,9 +554,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 								canvasHeight);
 						boolean finishedRework = false;
 						finishedRework = true;
-						
-						renderCells(offScreenGraphics, xOffset, yOffset);
-						
+												
 						if (finishedRework) {
 
 						// Draw legend-colored grid cells, axis, text labels and
@@ -614,8 +611,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							Logger.debug("subsetLayerData.length = " + aSubsetLayerDataLength);
 							Logger.debug("ready to make revised function call to tilePlot.draw, thread = " + Thread.currentThread().toString());
 
+							//debug
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
-									screenWidth, screenHeight, stepsLapsed, layer, aRow,
+									screenWidth, screenHeight, stepsLapsed, 0, aRow,
 									bRow, aCol, bCol, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
 									aPlotUnits, 
@@ -633,6 +631,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							e.printStackTrace();
 						}
 						} //TAH finish rework if
+
+						renderCells(offScreenGraphics, xOffset, yOffset);
 
 						dataArea.setRect(xOffset, yOffset, screenWidth, screenHeight);
 
@@ -1167,47 +1167,51 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			return;
 		
 
-		int rowSpan = lastRow - firstRow;
-		int colSpan = lastColumn - firstColumn;
-		int inScale = 5;
-		int rowInc = rowSpan < inScale * 2 ? rowSpan/2 - 1 : rowSpan / (inScale * 2);
-		int colInc = colSpan < inScale * 2 ? colSpan/2 - 1 : colSpan / (inScale * 2);
 		boolean popZoom = true;
 		
 		if (popZoomIn) { // click to zoom in or popup menu zoom in
 			if (zoomFactor < MAX_ZOOM) {
 				previousZoomFactor = zoomFactor;
-				zoomFactor += 0.5;
+				//zoomFactor += 0.5;
+				zoomFactor *= 4/3.0;
 			}
-			/*if (rowSpan != 0) {
-				firstRow = bounds.y - rowInc < 1 ? 1 : bounds.y - rowInc;
-				lastRow = bounds.y + rowInc > rows ? rows : bounds.y + rowInc;
-			}
-			
-			if (colSpan != 0) {
-				firstColumn = bounds.x - colInc < 1 ? 1 : bounds.x - colInc;
-				lastColumn = bounds.x + colInc > columns ? columns : bounds.x + colInc;
-			}*/
 		} else if (zoomOut) {  //zoom out
 			if (zoomFactor > MIN_ZOOM) {
 				previousZoomFactor = zoomFactor;
-				zoomFactor -= 0.5;
+				//zoomFactor -= 0.5;
+				zoomFactor /= 4/3.0;
 				if (zoomFactor < MIN_ZOOM)
 					zoomFactor = MIN_ZOOM;
+			} else {
+				previousZoomFactor = zoomFactor;
+				zoomFactor = MIN_ZOOM;
+				
+				if (clippedDataRatio < dataRatio) {
+					previousClippedDataRatio = clippedDataRatio;
+					clippedDataRatio *= 1.25;
+					if (clippedDataRatio > dataRatio)
+						clippedDataRatio = dataRatio;
+					screenWidth = (int)Math.round(screenHeight * clippedDataRatio);
+				}
+				else if (clippedDataRatio > dataRatio) {
+					previousClippedDataRatio = clippedDataRatio;
+					clippedDataRatio /= 1.25;
+					if (clippedDataRatio < dataRatio)
+						clippedDataRatio = dataRatio;
+					screenHeight = (int)Math.round(screenWidth / clippedDataRatio);
+				}
+				
 			}
-			/*int outInc = 1 + colSpan  / 5;
-			firstRow = firstRow - outInc < 1 ? 1 : firstRow - outInc;
-			lastRow = lastRow + outInc > rows ? rows : lastRow + outInc;
-			firstColumn = firstColumn - outInc < 1 ? 1 : firstColumn - outInc;
-			lastColumn = lastColumn + outInc > columns ? columns : lastColumn + outInc;*/
 		} else if (leftClick && bounds.height == 0 && bounds.width == 0) {
 			return;
 		} else { // regular zoom in
+			previousClippedDataRatio = clippedDataRatio;
 			clippedDataRatio = bounds.width / (double)bounds.height;
 			panX = (bounds.x - xOffset) / compositeFactor;
 			panY = (bounds.y - yOffset) / compositeFactor;
 			previousZoomFactor = zoomFactor;
-			zoomFactor *= screenWidth / bounds.width;
+			previousZoomFactor = zoomFactor;
+			zoomFactor *= screenWidth / (double)bounds.width;
 			popZoom = false;
 		}
 		
@@ -1231,13 +1235,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		if (panY > dataHeight - visibleDataHeight)
 			panY = dataHeight - visibleDataHeight;
 
-		
-		lastRow = Numerics.clampInt(lastRow, firstRow, rows - 1);
-		lastColumn = Numerics.clampInt(lastColumn, firstColumn, columns - 1);
-		firstColumnField.setText(Integer.toString(firstColumn + 1));
-		lastColumnField.setText(Integer.toString(lastColumn + 1));
-		firstRowField.setText(Integer.toString(firstRow + 1));
-		lastRowField.setText(Integer.toString(lastRow + 1));
 		computeDerivedAttributes();
 		draw();
 	}
@@ -1298,6 +1295,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	public void setTimestep(int timestep) {
 		if (timestep >= firstTimestep && timestep <= lastTimestep && timestep != this.timestep) {
+			previousTimestep = timestep;
 			this.timestep = timestep;
 			copySubsetLayerData(this.log);
 			draw();
@@ -1307,6 +1305,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	public void setLayer(int layer) {
 		if (layer >= firstLayer && layer <= lastLayer && layer != this.layer) {
+			previousLayer = this.layer;
 			this.layer = layer;
 			final int selection = statisticsMenu.getSelectedIndex();
 
@@ -1360,7 +1359,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				lonTransformed[i] = (int)Math.round((lonCoords[i] - lonMin - panX) * factor) + xOffset;
 				latTransformed[i] = (int)Math.round((latCoords[i] - latMin - panY) * factor) + yOffset;
 			}
-			colorIndex = indexOfObsValue((float) renderVariable.get(0, cellId), legendLevels);
+			if (renderVariable instanceof ArrayDouble.D2)
+				colorIndex = indexOfObsValue((float) ((ArrayDouble.D2)renderVariable).get(MeshPlot.this.timestep, cellId), legendLevels);
+			else
+				colorIndex = indexOfObsValue((float) ((ArrayDouble.D3)renderVariable).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer), legendLevels);
+			//colorIndex = indexOfObsValue((float) ((ArrayDouble.D3)renderVariable).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer), legendLevels);
 		}
 		
 		public CellInfo clone() {
@@ -1376,7 +1379,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private Map<Integer, Integer> vertexPositionMap;
 	private CellInfo[] cellsToRender = null;
 	private ArrayList<CellInfo> splitCells = null;
-	ArrayDouble.D2 renderVariable = null;
+	ArrayDouble renderVariable = null;
 	ucar.ma2.ArrayInt.D2 vertexList;
 	double latMin = Double.MAX_VALUE;
 	double lonMin = Double.MAX_VALUE;
@@ -1394,6 +1397,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	double dataHeight = 0;
 	double dataRatio = 0;
 	double clippedDataRatio = 0;
+	double previousClippedDataRatio = 0;
 	double clippedScreenWidth = 0;
 	double clippedScreenHeight = 0;
 	
@@ -1490,10 +1494,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			dataWidth = lonMax - lonMin;
 			dataHeight = latMax - latMin;
 			dataRatio = dataWidth / dataHeight;
+			previousClippedDataRatio = clippedDataRatio;
 			clippedDataRatio = dataRatio;
-			//clippedDataWidth = dataWidth;
-			//clippedDataHeight = dataHeight;
-			renderVariable = (ArrayDouble.D2)dataFrame.getArray();
+			renderVariable = (ArrayDouble)dataFrame.getArray();
 			System.out.println("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
 	}
 	
@@ -1542,7 +1545,14 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			//determine new window width, height based on aspect ratio
 			//rescale cell infos
 			
-		 
+		 if (false) { //debug mode
+			 if (legendColors.length > 0 && layer > 0) {
+				gr.setColor(legendColors[legendColors.length % layer]);
+				gr.fillRect(0, 0, screenWidth,
+						screenHeight);
+				return;
+			 }
+		 }
 		
 		
 		long renderStart = System.currentTimeMillis();
@@ -2093,6 +2103,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 			final DataFrameIndex dataFrameIndex = getDataFrame(log).getIndex();
 
+			new Exception("fixme!!!").printStackTrace();
+			/*
 			for ( int row = firstRow; row <= lastRow; ++row ) {
 				final int dataRow = ! invertRows ? row : rows - 1 - row;
 
@@ -2101,7 +2113,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					final float value = getDataFrame(log).getFloat( dataFrameIndex );
 					subsetLayerData[row - firstRow][column - firstColumn] = value;
 				}
-			}
+			}*/
 		} else {
 			final int statistic = selection - 1;
 
@@ -3238,6 +3250,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	public void updateTimeStep(int step) {
 		processTimeChange = false;
 		drawMode = DRAW_ONCE;
+		previousTimestep = timestep;
 		timestep = firstTimestep + step;
 		
 		try {
