@@ -14,7 +14,6 @@ import org.pietschy.wizard.Wizard;
 import org.pietschy.wizard.models.SimplePath;
 
 import anl.verdi.plot.gui.VerdiBoundaries;
-//import gov.epa.emvl.MapLines;					// 2015 replaced by VerdiBoundaries
 
 /**
  * @author IE, UNC at Chapel Hill
@@ -33,24 +32,7 @@ public class FastTileAddLayerWizard {
 		Logger.debug("in default constructor for FastTileAddLayerWizard");
 	}
 		
-//	public FastTileAddLayerWizard(File mapFile, MapLayer control, MapLines layer, boolean fileStep) {
 	public FastTileAddLayerWizard(File mapFile, FeatureLayer control, VerdiBoundaries layer, boolean fileStep) {
-//System.out.println("in constructor for FastTileAddLayerWizard, mapFile = " + mapFile + ", FeatureLayer control = "
-//		+ control + ", MapLines layer = " + layer + ", fileStep = " + fileStep);
-//		SimplePath path = new SimplePath();
-//		
-//		if (fileStep)
-//			path.addStep(mapFile == null ? new FastTileFileSelectionStep() : new FastTileFileSelectionStep(mapFile));
-//		
-//		path.addStep(control == null ? new FastTileEditorStep() : new FastTileEditorStep(control));
-//		model = new FastTileAddLayerWizardModel(path);
-//		model.setControlLayer(control);
-//		model.setMapFile(layer != null ? new File(layer.getMapFile()) : mapFile);
-//		model.setLayer(layer);
-//		wizard = new Wizard(model);
-//		wizard.setDefaultExitMode(Wizard.EXIT_ON_FINISH);
-//		wizard.setPreferredSize(new Dimension(500, 600));
-//		model.setLastVisible(false);
 		Logger.debug("in constructor for FastTileAddLayerWizard, mapFile = " + mapFile + ", FeatureLayer control = "
 				+ control + ", VerdiBoundaries layer = " + layer + ", fileStep = " + fileStep);
 		SimplePath path = new SimplePath();

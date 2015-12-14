@@ -15,7 +15,6 @@ import org.pietschy.wizard.WizardModel;
 //import repast.gis.styleEditor.StyleEditorPanel;		// 2014 Repast Simphony changed the package name
 import repast.simphony.gis.styleEditor.StyleEditorPanel;
 import anl.verdi.plot.gui.VerdiBoundaries;
-//import gov.epa.emvl.MapLines;						// 2015 replaced with VerdiBoundaries and VerdiStyle
 // GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 
 /**
@@ -53,7 +52,7 @@ public class FastTileEditorStep extends PanelWizardStep {
 		model = (FastTileAddLayerWizardModel) wizardModel;
 	}
 
-//	@Override
+	@Override
 	public void prepare() {
 		// NOTE: 2014 appears that MapLayer, FeatureLayer, etc. cannot be assigned to StyleEditorPanel at this time
 		// printing an error message if hit this function
@@ -94,7 +93,6 @@ public class FastTileEditorStep extends PanelWizardStep {
 		Logger.debug("ready to getStyle for panel: " + panel.getName());	// panel.getName() == null, so bombs rest
 		Style aStyle = panel.getStyle();		// 2014 throws NullPointerException
 		Logger.debug("get the style = " + aStyle + ", now ready to set the Style");	// do NOT get this message
-//		aMapLines.setStyle(aStyle);		// 2014 throws NullPointerException
 		aVerdiBoundaries.getVerdiStyle().setStyle(aStyle);
 //		model.getLayer().setStyle(panel.getStyle());
 		Logger.debug("done in FastTileEditorStep.applyState & returning");

@@ -28,16 +28,16 @@ public interface Plot {
 	}
 
 	/**
-	 * Gets the panel that contains the plot component.
+	 * Gets the entire panel that contains the plot component.
 	 * 
-	 * @return the panel that contains the plot component.
+	 * @return the entire panel that contains the plot component.
 	 */
 	JPanel getPanel();
 
 	/**
-	 * Gets the JMapPane that contains the plot component.
+	 * Gets the JMapPane that contains the mapping portion of the plot component.
 	 * 
-	 * @return the panel that contains the plot component.
+	 * @return the mapping panel that contains the mapping portion of the plot component.
 	 */
 	JMapPane getMapPane();
 

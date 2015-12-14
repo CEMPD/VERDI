@@ -9,7 +9,6 @@ package anl.verdi.plot.gui;
 import gov.epa.emvl.ASCIIGridWriter;
 import gov.epa.emvl.GridCellStatistics;
 //import gov.epa.emvl.GridShapefileWriter;		// 2014 disable write shapefile VERDI 1.5.0
-//import gov.epa.emvl.MapLines;
 import gov.epa.emvl.Mapper;
 import gov.epa.emvl.Numerics;
 import gov.epa.emvl.Projector;
@@ -153,8 +152,7 @@ import anl.verdi.util.Utilities;
 
 //import com.vividsolutions.jts.geom.Envelope;
 
-//public class FastTilePlot extends JPanel implements ActionListener, Printable,
-public class FastTilePlot extends JMapPane implements ActionListener, Printable,	// JEB Sept 2015
+public class FastTilePlot extends FastTilePlotPanel implements ActionListener, Printable,
 		ChangeListener, ComponentListener, MouseListener,
 		TimeAnimatablePlot, Plot {
 	private final MapContent myMapContent = new MapContent();	// JEB Nov 2015
@@ -247,7 +245,7 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 
 	// For clipped/projected/clipped map lines:
 
-	private static final String mapFileDirectory = System.getenv("VERDI_HOME") + "/plugins/bootstrap/data";	// nov 2015
+	private String mapFileDirectory = System.getenv("VERDI_HOME") + "/plugins/bootstrap/data";	// nov 2015
 
 	private //final 
 	Mapper mapper = new Mapper(mapFileDirectory);
@@ -327,8 +325,8 @@ public class FastTilePlot extends JMapPane implements ActionListener, Printable,
 	final JMenu mapLayersMenu = new JMenu("Add Map Layers");
 	
 	private ConfigDialog dialog = null;
-//	@SuppressWarnings("unused")
-//	private Plot.ConfigSoure = Plot.ConfigSoure.GUI;
+	@SuppressWarnings("unused")										// had been out; put back in
+	private Plot.ConfigSoure configSource = Plot.ConfigSoure.GUI;	// had been out; put back in
 
 	VerdiApplication app;
 	
@@ -874,9 +872,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		bImage = null;
 		
 		dialog = null;
-		
 		controlLayer = null;
-		
 		config = null;
 		
 		doubleBufferedRendererThread = null;
@@ -901,13 +897,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		popUpLocation = null;
 		probedSlice = null;
 		showGridLines = null;
-		dialog = null;
 		app = null;
-		doubleBufferedRendererThread = null;
 		minMax = null;
-		config = null;
-		controlLayer = null;
-		
 	}
 	public void viewFloated(DockableFrameEvent unused_ ) { }
 	public void viewRestored(DockableFrameEvent unused_ ) { }		
@@ -1309,12 +1300,12 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	// Construct but do not draw yet.
 
 	public FastTilePlot(VerdiApplication app, DataFrame dataFrame) {
-		this.setRenderer(new StreamingRenderer());
+		super();		// calls constructor of FastTilePlotPanel
+//		this.setRenderer(new StreamingRenderer());
 		this.app=app;
 		setDoubleBuffered(false);	// JEB Sept 2015  had been set to true
 		assert dataFrame != null;
 		this.dataFrame = dataFrame;
-		// JEB:  HERE NEED TO TEST FOR EXISTENCE OF mapFileDirectory & POP UP A FILE CHOOSER IF DOESN'T EXIST
 		
 		this.calculateDataFrameLog();
 		hasNoLayer = (dataFrame.getAxes().getZAxis() == null);
@@ -1334,6 +1325,19 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		final Variable dataFrameVariable = dataFrame.getVariable();
 		variable = dataFrameVariable.getName();
 		Logger.debug("mapFileDirectory = " + mapFileDirectory);
+		// JEB:  HERE NEED TO TEST FOR EXISTENCE OF mapFileDirectory & POP UP A FILE CHOOSER IF DOESN'T EXIST
+		File vFile = new File(mapFileDirectory);
+		if (!vFile.exists() || !vFile.canRead() || !vFile.isDirectory())
+		{
+			vFile = JFileDataStoreChooser.showOpenFile("shp", null);
+			if(!vFile.exists() || !vFile.canRead() || !vFile.isDirectory())
+			{
+				Logger.error("incorrect map file directory: " + vFile.getAbsolutePath());
+				return;
+			}
+			mapFileDirectory = vFile.getAbsolutePath();
+			Logger.debug("mapFileDirectory now set to: " + mapFileDirectory);
+		}
 		Logger.debug("dataFrameVariable = " + dataFrameVariable);
 		Logger.debug("dataFrameVariable name = " + variable);
 		units = dataFrameVariable.getUnit().toString();
@@ -1587,7 +1591,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		// add(toolBar);
 		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
 		doubleBufferedRendererThread.start(); // Calls
-		
+		super.setToolBar(toolBar);
 		draw();
 	}
 	
@@ -1926,7 +1930,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		});
 		menu.add(new LoadConfiguration(this));
 		menu.add(new SaveConfiguration(this));
-		//configureMapMenu(menu);		// HERE IS WHERE THE CONFIGURE GIS LAYERS GOES??? JEB
+		//configureMapMenu(menu);		// HERE IS WHERE THE CONFIGURE GIS LAYERS GOES??? JEB (Also commented out in v1.4.1
 		bar.add(menu);
 
 		menu = new JMenu("Controls");
@@ -2074,6 +2078,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		// change cursor for initial zoom state
 		setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 		
+		super.setBar(bar);	// update the JMenuBar bar in FastTilePlotPanel
 		return bar;
 	}
 	
@@ -2267,7 +2272,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			Logger.debug("created style");
 			Query query = new Query("projectMap");
 			Logger.debug("created query");
-			// now ask to do the reprojection into the CRS of the FastTilePlot axes
+			// now ask to project into the CRS of the FastTilePlot axes
 			query.setCoordinateSystemReproject(getDataFrame().getAxes().getBoundingBox(getDataFrame().getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());
 			Logger.debug("setCoordinateSystemReproject");
 			controlLayer = new FeatureLayer(ds.getFeatureSource().getFeatures(query), style);
@@ -2412,7 +2417,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	 */
 
 	public JToolBar getToolBar() {
-		return toolBar;
+		return super.toolBar;
 	}
 
 	/**
@@ -2463,8 +2468,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	/**
 	 * Configure this Plot according to the specified PlotConfiguration.
 	 * 
-	 * @param config
-	 *            the new plot configuration
+	 * @param config    the new plot configuration
 	 */
 
 	public void configure(PlotConfiguration config) {
@@ -2535,7 +2539,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			}
 		}
 		
-//		this.configSource = source;		// not used
+		this.configSource = source;		// not used, but was not commentedo out in v1.4.1
 
 		ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
 
@@ -3490,13 +3494,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		}
 	}
 	
-	// get the JMapPane portion of the FastTilePlot
+	// get the JMapPane portion (the mapping rectangle containing the raster and shapefiles) of the FastTilePlot
 	public JMapPane getMapPane()
 	{
-		return (JMapPane)this; 
+		return null; // (JMapPane)this; // JEB Dec 2015 NEED TO CHANGE WHAT THIS FUNCTION RETURNS
 	}
 	
-	// get the JPanel portion of the FastTilePlot
+	// get the JPanel portion (the entire panel) of the FastTilePlot
 	public JPanel getPanel()
 	{
 		return (JPanel)this; 

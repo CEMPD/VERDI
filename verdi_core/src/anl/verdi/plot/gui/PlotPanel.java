@@ -20,7 +20,7 @@ import org.geotools.swing.RenderingExecutor;
 
 import saf.core.ui.event.DockableFrameEvent;
 import anl.verdi.formula.Formula;
-
+import anl.verdi.plot.gui.FastTilePlotPanel;
 public class PlotPanel extends JPanel {
 
 	private static final long serialVersionUID = 2937963505375601326L;
@@ -58,40 +58,42 @@ public class PlotPanel extends JPanel {
 		this.name = name;
 	}
 
-	// use this constructor for a JMapPane (topMapPanel) instead of a JPanel (topJPanel) object
+	// use this constructor for a FastAreaTilePlotPanel instead of a JPanel (topJPanel) object
 	// used for FastTilePlot and ArealInterpolationPlot
 	public PlotPanel(Plot plot, String name, JMapPane aJMapPane, MapContent content, RenderingExecutor executor,
 			GTRenderer renderer) {
-		super(new BorderLayout());
+//		super(new BorderLayout());
 		Logger.debug("in PlotPanel constructor for passed Plot plot, String name, MapContent content, RenderingExecutor executor, GTRenderer renderer");
 		isAMap = true;
-		JMenuBar bar = plot.getMenuBar();
-		JToolBar toolBar = plot.getToolBar();
+		JMenuBar bar = plot.getMenuBar();		// get the top menu from the plot
+		((FastTilePlotPanel)plot).setBar(bar);	// and put it in the FastTilePlotPanel
+		JToolBar toolBar = plot.getToolBar();			// get the JToolBar of time step, layer, etc. widgets
+		((FastTilePlotPanel)plot).setToolBar(toolBar);	// and put it in the FastTilePlotPanel
 		if(content == null)		// if a MapContent was not passed in arg list, get the one from the plot
 			content = ((AbstractMapPane)plot).getMapContent();
 		Logger.debug("MapContent content = " + content);
 		topMapPanel = new JMapPane(content, executor, renderer);
 //		topMapPanel = plot.getMapPane();		// aJMapPane;
 		Logger.debug("topMapPanel = " + topMapPanel);
-		topMapPanel.setLayout(new BoxLayout(topMapPanel, BoxLayout.Y_AXIS));
-		if (bar != null) {
-			bar.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-			bar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-			topMapPanel.add(bar);
-			Logger.debug("added bar components to topMapPanel");
-		}
-		if (toolBar != null) {
-			toolBar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-			if (topMapPanel.getComponentCount() == 1) {
-				topMapPanel.add(Box.createRigidArea(new Dimension(0, 4)));
-			}
-			topMapPanel.add(toolBar);	// JEB DEC 2015: NOT into topMapPanel, needs to go into JPanel
-										// that includes the titles, axes, footers, legend, and the map itself
-			topMapPanel.add(Box.createRigidArea(new Dimension(0, 4)));
-			Logger.debug("added toolBar components to topMapPanel");
-		}
-		if (topMapPanel.getComponentCount() > 0) 
-			add(topMapPanel, BorderLayout.NORTH);
+//		topMapPanel.setLayout(new BoxLayout(topMapPanel, BoxLayout.Y_AXIS));
+//		if (bar != null) {
+//			bar.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+//			bar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+//			topMapPanel.add(bar);
+//			Logger.debug("added bar components to topMapPanel");
+//		}
+//		if (toolBar != null) {
+//			toolBar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+//			if (topMapPanel.getComponentCount() == 1) {
+//				topMapPanel.add(Box.createRigidArea(new Dimension(0, 4)));
+//			}
+//			topMapPanel.add(toolBar);	// JEB DEC 2015: NOT into topMapPanel, needs to go into JPanel
+//										// that includes the titles, axes, footers, legend, and the map itself
+//			topMapPanel.add(Box.createRigidArea(new Dimension(0, 4)));
+//			Logger.debug("added toolBar components to topMapPanel");
+//		}
+//		if (topMapPanel.getComponentCount() > 0) 
+//			add(topMapPanel, BorderLayout.NORTH);
 //		add(plot.getMapPane(), BorderLayout.CENTER);	// had been center or NORTH?
 //		add(topMapPanel, BorderLayout.NORTH);
 		this.plot = plot;

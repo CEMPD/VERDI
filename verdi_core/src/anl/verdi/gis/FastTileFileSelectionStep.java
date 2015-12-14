@@ -16,7 +16,6 @@ import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
 import anl.verdi.plot.gui.VerdiBoundaries;
-//import gov.epa.emvl.MapLines;
 
 /**
  * @author User #2
@@ -26,10 +25,7 @@ public class FastTileFileSelectionStep extends PanelWizardStep {
 	private static final long serialVersionUID = -343980766506758133L;
 	static final Logger Logger = LogManager.getLogger(FastTileFileSelectionStep.class.getName());
 
-//	private static MessageCenter msg = MessageCenter.getMessageCenter(FastTileFileSelectionStep.class);
-
 	private JFileChooser chooser;
-
 	private FastTileAddLayerWizardModel model;
 	
 	public FastTileFileSelectionStep() {
@@ -90,7 +86,6 @@ public class FastTileFileSelectionStep extends PanelWizardStep {
 			// create a new default map layer from the shapefile.
 			try {
 				layer.setFileName(mapFile.getAbsolutePath());
-				// MapLines layer = new MapLines(mapFile.getAbsolutePath());
 				model.setLayer(layer);
 				model.setMapFile(mapFile);
 			} catch(Exception ex) {

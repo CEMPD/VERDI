@@ -1,7 +1,5 @@
 package anl.verdi.gis;
 
-//import gov.epa.emvl.MapLines; // 2015 replaced with anl.verdi.plot.gui.VerdiBoundaries;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -95,7 +93,6 @@ public class FastTileLayerPanel extends JPanel {
 			// going to call javax.swing.DefaultListCellRenderer
 			JLabel label = (JLabel) super.getListCellRendererComponent(list,
 							value, index, isSelected, cellHasFocus);
-//			MapLines layer = (MapLines) value;
 			VerdiBoundaries layer = (VerdiBoundaries) value;	// 2015 no longer MapLines class
 			label.setText(layer.getFileName());
 			return label;
