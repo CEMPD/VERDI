@@ -40,7 +40,6 @@ import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotPanel;
 import anl.verdi.plot.gui.ScatterPlotCreator;
 import anl.verdi.plot.gui.VerdiBoundaries;
-//import gov.epa.emvl.MapLines;								// 2015 replaced by VerdiBoundaries
 //import anl.verdi.plot.gui.VectorPlotCreator;
 import anl.verdi.plot.gui.VerticalCrossPlotCreator;
 import anl.verdi.plot.types.TimeAnimatablePlot;

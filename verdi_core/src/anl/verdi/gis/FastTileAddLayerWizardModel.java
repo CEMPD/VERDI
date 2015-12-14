@@ -11,7 +11,6 @@ import org.pietschy.wizard.models.MultiPathModel;
 import org.pietschy.wizard.models.Path;
 
 import anl.verdi.plot.gui.VerdiBoundaries;
-//import gov.epa.emvl.MapLines;
 
 /**
  * @author User #2

@@ -8,6 +8,8 @@ package anl.verdi.plot.gui.action;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.JPanel;
+
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.map.MapContent;
@@ -45,6 +47,7 @@ public class FastTilePlot extends AbstractSAFAction<VerdiApplication> {
 				final Plot plot = new anl.verdi.plot.gui.FastTilePlot(application, dataFrame);
 				final String variableName = dataFrame.getVariable().getName();
 				Logger.debug("have variableName = " + variableName);	// O3[1]
+				JPanel aJPanel = ((anl.verdi.plot.gui.FastTilePlot)plot).getPanel();
 				JMapPane aJMapPane = ((anl.verdi.plot.gui.FastTilePlot)plot).getMapPane();
 				Logger.debug("plot.getMapPane = " + ((anl.verdi.plot.gui.FastTilePlot)plot).getMapPane());	// anl.verdi.plot.gui.FastTilePlot[,0,0,0x0,invalid,layout=java.awt.FlowLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=8,maximumSize=,minimumSize=,preferredSize=]
 				Logger.debug("aJMapPane = " + aJMapPane);	// anl.verdi.plot.gui.FastTilePlot[,0,0,0x0,invalid,layout=java.awt.FlowLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=8,maximumSize=,minimumSize=,preferredSize=]

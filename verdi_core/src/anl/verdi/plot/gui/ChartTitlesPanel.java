@@ -5,10 +5,9 @@ import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import javax.swing.JFrame;
 
 import anl.verdi.plot.config.PlotConfiguration;
 
@@ -46,12 +45,13 @@ public class ChartTitlesPanel extends JPanel {
 	}
 
 	public PlotConfiguration fillConfiguration(PlotConfiguration config) {
-		if (titlePanel.useTitle()) {
+		if (titlePanel.useTitle() && (titlePanel.getTitle() != null || titlePanel.getTitle().length()>1)) {
 			config.setTitle(titlePanel.getTitle());
 			config.putObject(PlotConfiguration.TITLE_FONT, titlePanel.getSelectedFont());
 			config.putObject(PlotConfiguration.TITLE_COLOR, titlePanel.getSelectedColor());
-		} else {
-			config.setTitle("");
+		} else { 	// Dec 2015 If user deselects the Show Title checkbox OR selects checkbox but either title is null or length < 1
+			titlePanel.setTitleNull();
+			config.setTitle(null);
 		}
 
 		if (subtitle1Panel.useTitle()) {
