@@ -185,6 +185,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private static final int LATITUDE = 1;
 	private static final double MINIMUM_VALID_VALUE = -900.0;
 	
+	public static final double RAD_TO_DEG = 57.2958;
+	
 	// Log related
 	
 	protected boolean log = false;
@@ -1234,6 +1236,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			panY = 0;
 		if (panY > dataHeight - visibleDataHeight)
 			panY = dataHeight - visibleDataHeight;
+				
+		firstRow = (int)Math.round((dataHeight - panY - visibleDataHeight) * RAD_TO_DEG);
+		lastRow = (int)Math.round((dataHeight - panY) * RAD_TO_DEG);
+		firstColumn = (int)Math.round(panX * RAD_TO_DEG);
+		lastColumn = (int)Math.round((panX + visibleDataWidth) * RAD_TO_DEG);
 
 		computeDerivedAttributes();
 		draw();
@@ -1677,14 +1684,14 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 
 		rowAxis = mpasAxes.getYAxis();
-		rowLabels = rowAxis != null ? new MPASAxisLabelCreator(rowAxis) : null;
+		rowLabels = rowAxis != null ? new MPASAxisLabelCreator(null) : null;
 		rows = rowAxis != null ? (int)rowAxis.getRange().getExtent() : 1;
 		rowOrigin = rowAxis != null ? (int)rowAxis.getRange().getOrigin() : 0;
 		firstRow = 0;
 		lastRow = firstRow + rows - 1;
 
 		columnAxis = mpasAxes.getXAxis();
-		columnLabels = columnAxis != null ? new MPASAxisLabelCreator(columnAxis) : null;
+		columnLabels = columnAxis != null ? new MPASAxisLabelCreator(null) : null;
 		columns = columnAxis != null ? (int)columnAxis.getRange().getExtent() : 1;
 		columnOrigin = columnAxis != null ? (int)columnAxis.getRange().getOrigin() : 0;
 		firstColumn = 0;
@@ -2425,12 +2432,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		compositeFactor = screenWidth / dataWidth;
 		panX = 0;
 		panY = 0;
-		draw();
-		/*firstRow = 0;
+		firstRow = 0;
 		lastRow = rows - 1;
 		firstColumn = 0;
 		lastColumn = columns - 1;
-		computeDerivedAttributes();
+		draw();
+		/*computeDerivedAttributes();
 		copySubsetLayerData(this.log);*/
 	}
 

@@ -50,7 +50,7 @@ public class MPASCoordAxis implements CoordAxis {
 			length = 181;
 		}
 		
-		this.range = new Range(0, length);
+		this.range = new Range(Math.round(this.minValue), length);
 		Logger.debug("in CSVCoordAxis constructor, unit = " + this.unit);
 	}
 
