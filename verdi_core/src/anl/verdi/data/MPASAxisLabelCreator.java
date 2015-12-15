@@ -26,7 +26,7 @@ public class MPASAxisLabelCreator implements AxisLabelCreator {
 		
 		DecimalFormat df = new DecimalFormat("#.###");
 		for (int i = 0; i < length; ++i) {
-			double location = axis.getValue(i) * 57.2958 ;
+			double location = axis.getValue(i);// * 57.2958 ;
 			if (axis.getAxisType().equals(AxisType.X_AXIS)) //workaround for longitude ranging from 0 - 2pi radians
 				location -= 180;	
 			labels.add(df.format(location));

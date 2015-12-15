@@ -613,7 +613,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 							//debug
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
-									screenWidth, screenHeight, stepsLapsed, 0, aRow,
+									screenWidth, screenHeight, stepsLapsed, MeshPlot.this.layer, aRow,
 									bRow, aCol, bCol, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
 									aPlotUnits, 
@@ -1400,6 +1400,13 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	double previousClippedDataRatio = 0;
 	double clippedScreenWidth = 0;
 	double clippedScreenHeight = 0;
+	double avgCellDiam = 0;
+	boolean renderBorder = true;
+	double transformedCellDiam = 0;
+	double borderDisplayCutoff = 0.02; //Map colors become hidden by cell borders if borders are drawn
+										//when cells don't take up enough pixels.  Only allow borders
+										//if cell width / screen width is above this percentage;
+	Axes<CoordAxis> mpasAxes;
 	
 	private void loadCellStructure() throws IOException {
 		Dataset ds = dataFrame.getDataset().get(0);
@@ -1497,6 +1504,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			previousClippedDataRatio = clippedDataRatio;
 			clippedDataRatio = dataRatio;
 			renderVariable = (ArrayDouble)dataFrame.getArray();
+			CoordAxis xAxis = mpasAxes.getXAxis();
+			var = ds.getVariable("verdi.avgCellDiam");
+			avgCellDiam = reader.getValues(ds, null, var).getDouble(null);
 			System.out.println("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
 	}
 	
@@ -1512,6 +1522,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			screenWidth = (int)Math.round(screenHeight * clippedDataRatio);
 		}
 		compositeFactor = screenWidth / dataWidth * zoomFactor;
+		transformedCellDiam = (int)Math.round(avgCellDiam * compositeFactor);
+		renderBorder = transformedCellDiam / screenWidth > borderDisplayCutoff;
 
 		//int imageWidth = screenWidth;
 		//int imageHeight = (int)Math.round(imageWidth * dataHeight / dataWidth);
@@ -1528,38 +1540,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	public void renderCells(Graphics gr, int xOffset, int yOffset) {
 		
-		//zoom menu item or rectangle selection
-		//menu item
-			//determine new scaling factor
-			//find window coordinate center
-			//translate to image coordinates
-			//find new viewable image width / height
-			//use to determine new image offset
-			//translate image offset coordinates to window offset coordinates 
-			//scale all cellinfos
-			//draw with translate, new offset
-		//select rectangle
-			//get window coordinates of selection
-			//translate to image coordinates
-			//calculate new aspect ratio
-			//determine new window width, height based on aspect ratio
-			//rescale cell infos
-			
-		 if (false) { //debug mode
-			 if (legendColors.length > 0 && layer > 0) {
-				gr.setColor(legendColors[legendColors.length % layer]);
-				gr.fillRect(0, 0, screenWidth,
-						screenHeight);
-				return;
-			 }
-		 }
-		
-		
 		long renderStart = System.currentTimeMillis();
 		
 		gr.setClip(xOffset, yOffset, screenWidth, screenHeight);
-		//gr.translate((int)Math.round(panX * compositeFactor * -1), (int)Math.round(panY * compositeFactor * -1));
-		//int imageWidth = 8192;
 		
 		/*
 		BufferedImage img = new java.awt.image.BufferedImage(imageWidth, imageHeight, java.awt.image.BufferedImage.TYPE_3BYTE_BGR);
@@ -1571,13 +1554,34 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				continue;
 			gr.setColor(legendColors[cellsToRender[i].colorIndex]);
 			gr.fillPolygon(cellsToRender[i].lonTransformed, cellsToRender[i].latTransformed, cellsToRender[i].lonTransformed.length);
+			if (renderBorder) {
+				gr.setColor(Color.BLACK);
+				int length = cellsToRender[i].lonTransformed.length - 1;
+				for (int j = 0; j < length; ++j) {
+					gr.drawLine(cellsToRender[i].lonTransformed[j], cellsToRender[i].latTransformed[j],
+							cellsToRender[i].lonTransformed[j + 1], cellsToRender[i].latTransformed[j + 1]);
+				}
+				gr.drawLine(cellsToRender[i].lonTransformed[length],  cellsToRender[i].latTransformed[length], 
+						cellsToRender[i].lonTransformed[0], cellsToRender[i].latTransformed[0]);
+			}
 		}
 		for (int i = 0; i < splitCells.size(); ++i) {
 			if (splitCells.get(i).colorIndex == -1)
 				continue;
 			gr.setColor(legendColors[splitCells.get(i).colorIndex]);
 			gr.fillPolygon(splitCells.get(i).lonTransformed, splitCells.get(i).latTransformed, splitCells.get(i).lonTransformed.length);
+			if (renderBorder) {
+				gr.setColor(Color.BLACK);
+				int length = cellsToRender[i].lonTransformed.length - 1;
+				for (int j = 0; j < length; ++j) {
+					gr.drawLine(cellsToRender[i].lonTransformed[j], cellsToRender[i].latTransformed[j],
+							cellsToRender[i].lonTransformed[j + 1], cellsToRender[i].latTransformed[j + 1]);
+				}
+				gr.drawLine(cellsToRender[i].lonTransformed[length],  cellsToRender[i].latTransformed[length], 
+						cellsToRender[i].lonTransformed[0], cellsToRender[i].latTransformed[0]);
+			}
 		}
+		
 		gr.setClip(null);
 		//gr.translate(0,  0);
 		long renderTime = System.currentTimeMillis() - renderStart;
@@ -1633,8 +1637,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		final Dataset dataset = dataFrame.getDataset().get(0);
 		final Axes<CoordAxis> coordinateAxes = dataset.getCoordAxes();
-		final Axes<CoordAxis> mpasAxes = coordinateAxes;
 		final Projection projection = coordinateAxes.getProjection();
+		mpasAxes = coordinateAxes;
 
 		if (projection instanceof LatLonProjection) {
 			projector = null;

@@ -26,22 +26,29 @@ public class MPASCoordAxis implements CoordAxis {
 	private AxisType type;
 	private Unit unit;
 	protected String name, description;
-	protected int length;
 	private double minValue;
 	private double maxValue;
-	private double cellDiameter;
+	private int length;
 	
-	public MPASCoordAxis(String name, String description, double min, double max, double cellDiameter, AxisType type) {
+	public MPASCoordAxis(String name, String description, double min, double max, AxisType type) {
 		this.name = name;
 		this.description = description;
 		this.unit = VUnits.MISSING_UNIT;
 		this.type = type;
+		
 		this.minValue = min;
 		this.maxValue = max;
-		double range = maxValue - minValue;
 		
-		this.cellDiameter = cellDiameter;
-		length = (int)Math.ceil((maxValue - minValue) / cellDiameter); 
+		if (type == AxisType.X_AXIS) {
+			this.minValue = -180;
+			this.maxValue = 180;
+			length = 361;
+		}
+		else if (type == AxisType.Y_AXIS) {
+			this.minValue = -90;
+			this.maxValue = 90;
+			length = 181;
+		}
 		
 		this.range = new Range(0, length);
 		Logger.debug("in CSVCoordAxis constructor, unit = " + this.unit);
@@ -53,7 +60,11 @@ public class MPASCoordAxis implements CoordAxis {
 	 * @return the value at the specified index.
 	 */
 	public double getValue(int index) {
-		return minValue + index * cellDiameter;
+		if (type == AxisType.X_AXIS)
+			return index;
+		else if (type == AxisType.Y_AXIS)
+			return index;
+		return 0;
 	}
 
 	/**

@@ -95,14 +95,18 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 		List<Dataset> setList = new ArrayList<Dataset>();
 		Map<String, ucar.nc2.Variable> varMap;
 		
+		
+		
 		private MPASDataFrame(MPASDataset ds) {
-			setList.add(ds);
 			dataset = ds;
-			netDs = dataset.getNetDataset();
-			varMap = new HashMap<String, ucar.nc2.Variable>();
-			List<ucar.nc2.Variable> vars = netDs.getVariables();
-			for (ucar.nc2.Variable var : vars) {
-				varMap.put(var.getShortName(), var);
+			if (dataset != null) {
+				setList.add(dataset);
+				netDs = dataset.getNetDataset();
+				varMap = new HashMap<String, ucar.nc2.Variable>();
+				List<ucar.nc2.Variable> vars = netDs.getVariables();
+				for (ucar.nc2.Variable var : vars) {
+					varMap.put(var.getShortName(), var);
+				}
 			}
 
 		}
@@ -188,14 +192,37 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 		
 	}
 	
+	private class MPASDoubleVariableFrame extends MPASDataFrame {
+		
+		double value;
+		
+		public MPASDoubleVariableFrame(double val) {
+			super(null);
+			value = val;
+			
+		}
+		
+		@Override
+		public double getDouble(DataFrameIndex index) {
+			return value;
+		}
+		
+	}
+	
 	MPASDataFrame renderingFrame;
 
 	/**
 	 * get the values for the given data parameters
 	 */
 	public DataFrame getValues(MPASDataset set, List<AxisRange> ranges, Variable variable) {
+		
 		ucar.nc2.Variable varDS = set.getVariableDS(variable);
-		if (varDS == null) return null;
+		if (varDS == null) {
+			if (variable.getName().equals(MPASDataset.VAR_AVG_CELL_DIAM)) {
+				return new MPASDoubleVariableFrame(set.getAvgCellDiam());
+			}
+			return null;
+		}
 		if (ranges == null) {
 			if (renderingFrame == null)
 				renderingFrame = new MPASDataFrame(set);

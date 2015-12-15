@@ -99,6 +99,8 @@ public class MPASDataset extends AbstractDataset {
 		types.put(ucar.nc2.constants.AxisType.Height, AxisType.LAYER);
 		types.put(ucar.nc2.constants.AxisType.Time, AxisType.TIME);
 	}*/
+	
+	public static final String VAR_AVG_CELL_DIAM = "verdi.avgCellDiam";
 
 	private NetcdfDataset dataset;
 	private Axes<CoordAxis> coordAxes;
@@ -110,8 +112,6 @@ public class MPASDataset extends AbstractDataset {
 	private Map<Integer, Integer> vertexPositionMap = new HashMap<Integer, Integer>();
 	int numCells;
 	int maxEdges = 0;
-	//int[] xCords = null;
-    //int[] yCords = null;
 
 	double[] legendLevels = null;
 	
@@ -189,6 +189,12 @@ public class MPASDataset extends AbstractDataset {
 
 	double dataWidth = 0;
 	double dataHeight = 0;
+	
+	double avgCellDiam = 0;
+	
+	public double getAvgCellDiam() {
+		return avgCellDiam;
+	}
 
 	/**
 	 * Creates a GridNetcdfDataset from the specified url, grids and grid
@@ -303,6 +309,7 @@ public class MPASDataset extends AbstractDataset {
 			}
 				
 		}
+		this.vars.add(new DefaultVariable(VAR_AVG_CELL_DIAM, VAR_AVG_CELL_DIAM, VUnits.MISSING_UNIT, this));
 		numCells = dataset.findDimension("nCells").getLength();
 		maxEdges = dataset.findDimension("maxEdges").getLength();
 	    //xCords = new int[maxEdges];
@@ -616,7 +623,7 @@ public class MPASDataset extends AbstractDataset {
 			//step size = range / numSteps
 			long cellDiamCount = 0;
 			double cellDiamSum = 0;
-			double avgDiam = 0;
+			avgCellDiam = 0;
 			for (int i = 0; i < vertexShape[0]; ++i) { //for each cell
 				int vertices = cellVertices.getInt(i);
 				cellsToRender[i] = new CellInfo(i, vertices);
@@ -712,11 +719,11 @@ public class MPASDataset extends AbstractDataset {
 			list.add(new CSVCoordAxis(vertList, vertLevels, vertLevels, AxisType.LAYER));
 
 			//Construct axes for latitude and longitude, using average diameter as spacing
-			avgDiam = cellDiamSum / cellDiamCount;
+			avgCellDiam = cellDiamSum / cellDiamCount;
 
 			
-			list.add(new MPASCoordAxis("x", "x", lonMin, lonMax, avgDiam, AxisType.X_AXIS));
-			list.add(new MPASCoordAxis("y", "y", latMin, latMax, avgDiam, AxisType.Y_AXIS));
+			list.add(new MPASCoordAxis("x", "x", lonMin, lonMax, AxisType.X_AXIS));
+			list.add(new MPASCoordAxis("y", "y", latMin, latMax, AxisType.Y_AXIS));
 						
 		} catch (IOException e) {
 			e.printStackTrace();
