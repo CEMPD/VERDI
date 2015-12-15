@@ -510,7 +510,7 @@ public class MPASDataset extends AbstractDataset {
 		String[] arr = timeStr.split("[-_:.]");
 		cal.clear();
 		cal.set(Calendar.YEAR, Integer.parseInt(arr[0]));
-		cal.set(Calendar.MONTH, Integer.parseInt(arr[1]));
+		cal.set(Calendar.MONTH, Integer.parseInt(arr[1]) - 1);
 		cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(arr[2]));
 		if (arr.length > 3) {
 			cal.set(Calendar.HOUR, Integer.parseInt(arr[3]));
@@ -572,7 +572,7 @@ public class MPASDataset extends AbstractDataset {
 		Double[] timeVals = new Double[steps];
 		for (int i = 0; i < steps; i++) {
 			data.set(i, i * time_step);
-			timeVals[i] = new Double(i * time_step);
+			timeVals[i] = new Double(startCal.getTimeInMillis() + i * time_step);
 		}
 
 		// create the coord axis

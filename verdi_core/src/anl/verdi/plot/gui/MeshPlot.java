@@ -1717,7 +1717,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		// 2014 footer date/time for footer1
 		
-		GregorianCalendar firstDate = axes.getDate(firstTimestep);
+		GregorianCalendar firstDate = mpasAxes.getDate(firstTimestep);
 		final GregorianCalendar date0 = (firstDate == null) ? new GregorianCalendar() : firstDate;
 		Utilities.formatDate(date0);		// 2014 appears to fix starting date/time issue 
 		final int yyyy = date0.get(GregorianCalendar.YEAR);
