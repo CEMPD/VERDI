@@ -152,7 +152,7 @@ import anl.verdi.util.Utilities;
 
 //import com.vividsolutions.jts.geom.Envelope;
 
-public class FastTilePlot extends FastTilePlotPanel implements ActionListener, Printable,
+public class FastTilePlot extends FastTilePlotPanel implements ActionListener, Printable,	// had been JPanel
 		ChangeListener, ComponentListener, MouseListener,
 		TimeAnimatablePlot, Plot {
 	private final MapContent myMapContent = new MapContent();	// JEB Nov 2015
@@ -1439,7 +1439,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		if (timesteps > 1) {
 			final GregorianCalendar date1 = axes.getDate(firstTimestep + 1);
-			long step = (date1.getTimeInMillis() - date0.getTimeInMillis()) / 1000l;	// 2014 must  use getTimeInMillis()
+			long step = (date1.getTimeInMillis() - date0.getTimeInMillis()) / 1000l;	// 2014 must use getTimeInMillis()
 			final int dhh = (int) (step / 3600);
 			final int dmm = (int) (step % 3600 / 60);
 			final int dss = (int) (step % 3600 % 60);
@@ -2417,7 +2417,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	 */
 
 	public JToolBar getToolBar() {
-		return super.toolBar;
+		return super.getToolBar();
 	}
 
 	/**
@@ -3497,13 +3497,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	// get the JMapPane portion (the mapping rectangle containing the raster and shapefiles) of the FastTilePlot
 	public JMapPane getMapPane()
 	{
-		return null; // (JMapPane)this; // JEB Dec 2015 NEED TO CHANGE WHAT THIS FUNCTION RETURNS
+		return getMap(); 
 	}
 	
 	// get the JPanel portion (the entire panel) of the FastTilePlot
-	public JPanel getPanel()
+	public JPanel getEntirePane()
 	{
-		return (JPanel)this; 
+		return getContentPane(); 
 	}
 
 	public void addVectorAnnotation(VectorEvaluator eval) {
@@ -3672,5 +3672,10 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	
 	private int get_draw_once_requests() {
 		return draw_once_requests;
+	}
+
+	@Override
+	public JPanel getPanel() {
+		return getEntirePane();
 	}
 }

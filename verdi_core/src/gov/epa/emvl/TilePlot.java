@@ -525,17 +525,20 @@ public class TilePlot {
 			int xMaximum, int yMinimum, int yMaximum, final String variable,
 			int steplapse, int layer, int firstRow, int lastRow,
 			int firstColumn, int lastColumn, final float[][] data) {
+		// NOTE: steplapse = timestep - firstTimestep (from FastTilePlot.java code)
+		// where firstTimestep is either 0 or the origin of the time axis
 
 		final int xRange = xMaximum - xMinimum;
 		final int xCenter = xMinimum + xRange / 2;
 		final int space = 20; // Space between visual components
 		final Font gFont = graphics.getFont();
 		final Color gColor = graphics.getColor();
+		String title;
 		
 		// Title label:
 		String TITLE = config.getProperty(PlotConfiguration.TITLE);
-		final String titleStr = "Layer " + (layer + 1) + " " + variable;
-
+//		final String titleStr = "Layer " + (layer + 1) + " " + variable;	// do NOT want to recalculate title here
+																			// part of bug where user blanks title and it shows up again
 		Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
 		Color tColor = config.getColor(PlotConfiguration.TITLE_COLOR);
 		tColor = (tColor == null) ? labelColor : tColor;
@@ -552,8 +555,11 @@ public class TilePlot {
 		//Evaluate Title Naming Structure, if Layer # (where # is the layer number) then update to current layer
 		//Keep with the pattern of Layer Number, i.e., Layer 1 then Layer 2 ....
 		//look for Layer 1, if present keep with the same trend but update with current the Layer Number
-		final String title = (TITLE == null || TITLE.isEmpty() ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
-		
+//		final String title = (TITLE == null || TITLE.isEmpty() ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
+		if(TITLE == null || TITLE.length()<2)	// rest of fix for allowing user to blank out a title
+			title = null;
+		else
+			title = TITLE.replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
 		
 		Font currentFont = new Font(gFont.getFontName(), Font.BOLD, gFont.getSize() * 2);
 		tFont = (tFont == null ? currentFont : tFont);
