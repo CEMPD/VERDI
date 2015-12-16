@@ -121,7 +121,7 @@ public class ChartTitlePanel extends JPanel {
 	}
 	
 	public void setTitleNull() {
-		textFld.setText(null); 		// new VERDI 1.6 ability to null out a title when not Show Title
+		textFld.setText(null); 		// new VERDI 1.6 ability to null out a title when ! Show Title
 	}
 
 	public boolean useTitle() {
