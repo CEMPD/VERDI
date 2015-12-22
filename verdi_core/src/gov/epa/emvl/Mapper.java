@@ -7,8 +7,10 @@ package gov.epa.emvl;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
@@ -31,7 +33,7 @@ public class Mapper {
 	private static final String riversMapFileName = "map_rivers.bin";
 	private static final String roadsMapFileName = "map_roads.bin";
 	private static final Color mapColor = Color.black;
-	private final String mapFileDirectory; // URL/dir containing above files.
+	private String mapFileDirectory; // URL/dir containing above files.
 	private MapLines worldMap = null;
 	private MapLines northAmericaMap = null;
 	private MapLines stateMap = null;
@@ -46,6 +48,9 @@ public class Mapper {
 	public Mapper(String directoryName) {
 		Logger.debug("in constructor for Mapper, directoryName = " + directoryName);
 		mapFileDirectory = directoryName + "/";
+		File file = new File(mapFileDirectory);
+		if (!file.exists())
+			mapFileDirectory = System.getProperty("user.dir") + "/../verdi_bootstrap/data/";
 		try {
 			getWorldMap();
 			getNorthAmericaMap();

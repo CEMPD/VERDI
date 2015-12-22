@@ -169,6 +169,10 @@ public class MPASDataset extends AbstractDataset {
 		renderVarList.add("lonCell");
 	}
 	
+	static {
+		hiddenVars.add("latCell");
+	}
+	
 	ucar.ma2.Array cellVertices = null;
 	ucar.ma2.Array lonCell = null;
 	ucar.ma2.Array latVert = null;
@@ -276,6 +280,61 @@ public class MPASDataset extends AbstractDataset {
 	private ucar.nc2.Variable getRenderVariable(String name) {
 		return renderVars.get(name);
 	}
+	
+	private static HashMap<String, String> KNOWN_UNITS = new HashMap<String, String>();
+	
+	static {
+		KNOWN_UNITS.put("qv", "-");
+		KNOWN_UNITS.put("qc", "-");
+		KNOWN_UNITS.put("qr", "-");
+		KNOWN_UNITS.put("qi", "-");
+		KNOWN_UNITS.put("qs", "-");
+		KNOWN_UNITS.put("qg", "-");
+		KNOWN_UNITS.put("w", "m/s");
+		KNOWN_UNITS.put("surface_pressure", "Pa");
+		KNOWN_UNITS.put("pressure", "Pa");
+		KNOWN_UNITS.put("rho", "kg/m\u00b3");
+		KNOWN_UNITS.put("ter", "m");
+		KNOWN_UNITS.put("theta", "K");
+		KNOWN_UNITS.put("relhum", "-");
+		KNOWN_UNITS.put("divergence", "-");
+		KNOWN_UNITS.put("ke", "J");
+		KNOWN_UNITS.put("uReconstructZonal", "m/s");
+		KNOWN_UNITS.put("uReconstructMeridional", "m/s");
+		KNOWN_UNITS.put("i_rainnc", "-");
+		KNOWN_UNITS.put("rainnc", "mm");
+		KNOWN_UNITS.put("kpbl", "layer");
+		KNOWN_UNITS.put("precipw", "kg/m\u00b2");
+		KNOWN_UNITS.put("cuprec", "mm/s");
+		KNOWN_UNITS.put("i_rainc", "-");
+		KNOWN_UNITS.put("rainc", "mm");
+		KNOWN_UNITS.put("hpbl", "m");
+		KNOWN_UNITS.put("hfx", "W/m\u00b2");
+		KNOWN_UNITS.put("qfx", "kg/m\u00b2/s");
+		KNOWN_UNITS.put("cd", "-");
+		KNOWN_UNITS.put("cda", "-");
+		KNOWN_UNITS.put("ck", "-");
+		KNOWN_UNITS.put("cka", "-");
+		KNOWN_UNITS.put("lh", "W/m\u00b2");
+		KNOWN_UNITS.put("u10", "m/s");
+		KNOWN_UNITS.put("v10", "m/s");
+		KNOWN_UNITS.put("q2", "-");
+		KNOWN_UNITS.put("t2m", "K");
+		KNOWN_UNITS.put("th2m", "K");
+		KNOWN_UNITS.put("gsw", "W/m\u00b2");
+		KNOWN_UNITS.put("glw", "W/m\u00b2");
+		KNOWN_UNITS.put("acsnow", "kg/m\u00b2");
+		KNOWN_UNITS.put("skintemp", "K");
+		KNOWN_UNITS.put("snow", "kg/m\u00b2");
+		KNOWN_UNITS.put("snowh", "m");
+		KNOWN_UNITS.put("sst", "K");
+		KNOWN_UNITS.put("sh2o", "-");
+		KNOWN_UNITS.put("smois", "-");
+		KNOWN_UNITS.put("tslb", "K");		
+		KNOWN_UNITS.put("vegfra", "-");		
+		KNOWN_UNITS.put("xland", "-");		
+		KNOWN_UNITS.put("xice", "-");		
+	}
 
 	private void initVariables() {
 		List<ucar.nc2.Variable> vars = dataset.getVariables();
@@ -285,16 +344,29 @@ public class MPASDataset extends AbstractDataset {
 		for (ucar.nc2.Variable var : vars) {
 			String name = var.getShortName();	// getName replaced by either getShortName or getFullName (with escapes)
 			//System.out.println("Got variable " + name + " dim " + var.getDimensionsString());
-			Unit unit = VUnits.MISSING_UNIT;
+			Unit unit = null;
+
 			Logger.debug("in Models3ObsDataset.initVariables, unit = " + unit);
 			for (Attribute attribute : (Iterable<Attribute>) var.getAttributes()) {
 				if (attribute.getShortName().equals("units")) {
 					unit = VUnits.createUnit(attribute.getStringValue());
 					Logger.debug("in Models3ObsDatabase.initVariables, unit now = " + unit);
 				}
+			}	
+			if (unit == null) {
+				String  unitStr = KNOWN_UNITS.get(name);
+				if (unitStr != null)
+					unit = VUnits.createUnit(unitStr);
 			}
+			if (unit == null)
+				unit = VUnits.MISSING_UNIT;
 			
-			if (!hiddenVars.contains(name) &&
+			if (renderVarList.contains(name) || name.startsWith("verdi.")) {
+				this.renderVars.put(name, var);
+				//TODO - what should units be?
+				this.verdiRenderVars.add(new DefaultVariable(name, name, VUnits.MISSING_UNIT, this));
+			}
+			else if (!hiddenVars.contains(name) &&
 					var.getDimensionsString().indexOf("Time") != -1 &&
 					var.getDimensionsString().indexOf("nCells") != -1
 					) 
@@ -302,14 +374,10 @@ public class MPASDataset extends AbstractDataset {
 					this.vars.add(new DefaultVariable(name, name, unit, this));
 					Logger.debug("in Models3ObsDataset.initVariables, after check for hiddenVars, unit = " + unit);
 				}
-			else if (renderVarList.contains(name)) {
-				this.renderVars.put(name, var);
-				//TODO - what should units be?
-				this.verdiRenderVars.add(new DefaultVariable(name, name, VUnits.MISSING_UNIT, this));
-			}
+
 				
 		}
-		this.vars.add(new DefaultVariable(VAR_AVG_CELL_DIAM, VAR_AVG_CELL_DIAM, VUnits.MISSING_UNIT, this));
+		this.verdiRenderVars.add(new DefaultVariable(VAR_AVG_CELL_DIAM, VAR_AVG_CELL_DIAM, VUnits.MISSING_UNIT, this));
 		numCells = dataset.findDimension("nCells").getLength();
 		maxEdges = dataset.findDimension("maxEdges").getLength();
 	    //xCords = new int[maxEdges];

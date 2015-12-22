@@ -185,7 +185,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private static final int LATITUDE = 1;
 	private static final double MINIMUM_VALID_VALUE = -900.0;
 	
-	public static final double RAD_TO_DEG = 57.2958;
+	public static final double RAD_TO_DEG = 180 / Math.PI;
 	
 	// Log related
 	
@@ -217,7 +217,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private NumberFormat format;
 	private final boolean invertRows; // HACK: Invert rows of AURAMS / GEM / CF Convention data?
 
-	//TAH
+	//Screen width / height in pixels
 	private int screenWidth;
 	private int screenHeight;
 	private int xOffset = 0;
@@ -267,7 +267,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private //final 
 	Mapper mapper = new Mapper(mapFileDirectory);
 
-	protected final Projector projector;
+	protected final Projector projector = null;
 
 	protected double[][] gridBounds = { { 0.0, 0.0 }, { 0.0, 0.0 } };
 	protected double[][] domain = { { 0.0, 0.0 }, { 0.0, 0.0 } };
@@ -614,6 +614,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							Logger.debug("ready to make revised function call to tilePlot.draw, thread = " + Thread.currentThread().toString());
 
 							//debug
+							
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									screenWidth, screenHeight, stepsLapsed, MeshPlot.this.layer, aRow,
 									bRow, aCol, bCol, legendLevels,
@@ -1209,16 +1210,22 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		} else { // regular zoom in
 			previousClippedDataRatio = clippedDataRatio;
 			clippedDataRatio = bounds.width / (double)bounds.height;
-			panX = (bounds.x - xOffset) / compositeFactor;
-			panY = (bounds.y - yOffset) / compositeFactor;
-			previousZoomFactor = zoomFactor;
+			panX = (bounds.x - xOffset) / compositeFactor + panX;
+			panY = (bounds.y - yOffset) / compositeFactor + panY;
 			previousZoomFactor = zoomFactor;
 			zoomFactor *= screenWidth / (double)bounds.width;
 			popZoom = false;
 		}
 		
+		if (clippedDataRatio > previousClippedDataRatio) {		
+			screenHeight = (int)Math.round(screenWidth / clippedDataRatio);
+		}
+		else {
+			screenWidth = (int)Math.round(screenHeight * clippedDataRatio);
+		}
+		
 		double zoomedFactor = screenWidth / dataWidth * zoomFactor;
-		double visibleDataWidth = screenWidth / zoomedFactor;
+		visibleDataWidth = screenWidth / zoomedFactor;
 		
 		double xClickDistance = (bounds.x - xOffset) / compositeFactor + panX;
 		if (popZoom)
@@ -1229,7 +1236,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			panX = dataWidth - visibleDataWidth;
 		
 		double yClickDistance = (bounds.y - yOffset) / compositeFactor + panY;
-		double visibleDataHeight = screenHeight / zoomedFactor;  //half visible height
+		visibleDataHeight = screenHeight / zoomedFactor;  //half visible height
 		if (popZoom)
 			panY = yClickDistance - visibleDataHeight / 2;
 		if (panY < 0)
@@ -1402,6 +1409,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	double previousZoomFactor = 1;
 	double dataWidth = 0;
 	double dataHeight = 0;
+	double visibleDataWidth = 0;
+	double visibleDataHeight = 0;
 	double dataRatio = 0;
 	double clippedDataRatio = 0;
 	double previousClippedDataRatio = 0;
@@ -1507,6 +1516,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			
 			dataWidth = lonMax - lonMin;
 			dataHeight = latMax - latMin;
+			visibleDataWidth = dataWidth;
+			visibleDataHeight = dataHeight;
 			dataRatio = dataWidth / dataHeight;
 			previousClippedDataRatio = clippedDataRatio;
 			clippedDataRatio = dataRatio;
@@ -1542,6 +1553,16 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			//splitCells.get(i).transformCell(factor, imageWidth, imageHeight, xOffset, yOffset);
 			splitCells.get(i).transformCell(compositeFactor, xOrigin, yOrigin);
 		}
+		gridBounds[X][MINIMUM] = westEdge + panX * RAD_TO_DEG;
+		gridBounds[X][MAXIMUM] = westEdge + (panX + visibleDataWidth) * RAD_TO_DEG;
+		gridBounds[Y][MINIMUM] = southEdge + (dataHeight - panY - visibleDataHeight) * RAD_TO_DEG;
+		gridBounds[Y][MAXIMUM] = southEdge + (dataHeight - panY) * RAD_TO_DEG;
+
+		domain[LONGITUDE][MINIMUM] = gridBounds[X][MINIMUM];
+		domain[LONGITUDE][MAXIMUM] = gridBounds[X][MAXIMUM];
+		domain[LATITUDE][MINIMUM] = gridBounds[Y][MINIMUM];
+		domain[LATITUDE][MAXIMUM] = gridBounds[Y][MAXIMUM];
+		
 		System.out.println("Scaled cells in " + (System.currentTimeMillis() - start) + "ms");
 	}
 
@@ -1644,14 +1665,16 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		final Dataset dataset = dataFrame.getDataset().get(0);
 		final Axes<CoordAxis> coordinateAxes = dataset.getCoordAxes();
-		final Projection projection = coordinateAxes.getProjection();
 		mpasAxes = coordinateAxes;
+
+		
+		/*final Projection projection = coordinateAxes.getProjection();
 
 		if (projection instanceof LatLonProjection) {
 			projector = null;
 		} else {
 			projector = new Projector(projection);
-		}
+		}*/
 
 		// Initialize grid dimensions: timesteps, layers, rows, columns:
 
@@ -2010,6 +2033,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	// Compute derived attributes:
 
 	private void computeDerivedAttributes() {
+		if (true)
+			return;
 
 		// Compute grid bounds and domain:
 
@@ -2436,9 +2461,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		lastRow = rows - 1;
 		firstColumn = 0;
 		lastColumn = columns - 1;
+		visibleDataWidth = dataWidth;
+		visibleDataHeight = dataHeight;
 		draw();
-		/*computeDerivedAttributes();
-		copySubsetLayerData(this.log);*/
+		computeDerivedAttributes();
+		/*copySubsetLayerData(this.log);*/
 	}
 
 	private void gisLayersMenu(JMenu menu) {
@@ -3740,9 +3767,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				
 			// Draw projected/clipped map border lines over grid cells:
 
+			g.setClip(xOffset, yOffset, screenWidth, screenHeight);
 			mapper.draw(domain, gridBounds, projector,
 						g, xOffset, yOffset, tilePlot.getPlotWidth(),
 						tilePlot.getPlotHeight(), withHucs, withRivers, withRoads);
+			g.setClip(null);
 			
 			if (obsAnnotations != null) {
 				for (ObsAnnotation ann : obsAnnotations)
