@@ -12,6 +12,8 @@ import gov.epa.emvl.GridCellStatistics;
 //import gov.epa.emvl.GridShapefileWriter;		// 2014 disable write shapefile VERDI 1.5.0
 import gov.epa.emvl.MapLines;
 import gov.epa.emvl.Mapper;
+import gov.epa.emvl.GridCellStatistics;
+import gov.epa.emvl.MeshCellStatistics;
 import gov.epa.emvl.Numerics;
 import gov.epa.emvl.Projector;
 import gov.epa.emvl.TilePlot;
@@ -39,6 +41,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -206,6 +209,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	protected final int columns; // 268.
 	protected final CoordAxis columnAxis;
 	protected final CoordAxis rowAxis;
+	protected final DataFrameAxis timeAxis;
 	protected final AxisLabelCreator rowLabels;
 	protected final AxisLabelCreator columnLabels;
 	protected final int rowOrigin;
@@ -251,10 +255,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	// subsetLayerData[ 1 + lastRow - firstRow ][ 1 + lastColumn - firstColumn ]
 	// at current timestep and layer.
-	private float[][] subsetLayerData = null;
+	private float[] subsetLayerData = null;
 
 	// layerData[ rows ][ columns ][ timesteps ]
-	private float[][][] layerData = null;
+	private float[][] layerData = null;
 	//private float[][][] layerDataLog = null;
 	private float[][][] statisticsData = null;
 	//private float[][][] statisticsDataLog = null;
@@ -341,6 +345,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	protected Slice probedSlice;
 	protected JCheckBoxMenuItem showGridLines;
 	final JMenu mapLayersMenu = new JMenu("Add Map Layers");
+	
+	private double xClickLocation = 0;
+	private double yClickLocation = 0;
+	private static final boolean SHOW_ZOOM_LOCATION = true;
 	
 	private ConfigDialog dialog = null;
 	@SuppressWarnings("unused")
@@ -544,7 +552,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						}
 //					}
 
-					//copySubsetLayerData(log); // Based on current timestep and layer.
+					copySubsetLayerData(log); // Based on current timestep and layer.
 
 					
 					synchronized (lock) {
@@ -621,7 +629,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 									legendColors, axisColor, labelColor, plotVariable,
 									aPlotUnits, 
 									config, aNumberFormat, gridLineColor,
-									subsetLayerData, rowLabels, columnLabels);
+									null, rowLabels, columnLabels);
 //							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 //									width, height, stepsLapsed, layer, firstRow + rowOrigin,
 //									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
@@ -742,7 +750,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			assert offScreenImage != null;
 			assert offScreenGraphics != null;
 
-			//copySubsetLayerData(this.log); // Based on current timestep and layer.
+			copySubsetLayerData(this.log); // Based on current timestep and layer.
 
 				offScreenGraphics.setColor(Color.white);
 				offScreenGraphics.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -772,7 +780,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							lastRow, firstColumn, lastColumn, legendLevels,
 							legendColors, axisColor, labelColor, plotVariable,
 							((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
-							subsetLayerData);
+							null);
 				} catch (Exception e) {
 					Logger.error("FastTilePlot's drawBatch method" + e.getMessage());
 					e.printStackTrace();
@@ -925,9 +933,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex) {
 				if( statisticsMenu.getSelectedIndex() != 0) {
 					recomputeStatistics = true;
-				//} else {
+				} else {
 					//reset to no statistics...
-					//copySubsetLayerData(this.log);
+					copySubsetLayerData(this.log);
 				}
 				this.preStatIndex = statisticsMenu.getSelectedIndex();
 			}
@@ -1227,6 +1235,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		double zoomedFactor = screenWidth / dataWidth * zoomFactor;
 		visibleDataWidth = screenWidth / zoomedFactor;
 		
+		xClickLocation = bounds.x;
+		yClickLocation = bounds.y;
+		
 		double xClickDistance = (bounds.x - xOffset) / compositeFactor + panX;
 		if (popZoom)
 			panX = xClickDistance - visibleDataWidth / 2;
@@ -1359,6 +1370,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		int[] lonTransformed;
 		int cellId;
 		int colorIndex;
+		double lon = 0;
+		double lat = 0;
+		boolean cellClicked = false;
 		
 		private CellInfo(int id, int numVertices) {
 			latCoords = new double[numVertices];
@@ -1368,16 +1382,44 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			cellId = id;
 		}
 		
+		public double getValue() {
+			if (timeAxis == null)
+				return ((ArrayDouble.D2)renderVariable).get(cellId, MeshPlot.this.layer);
+			else if (renderVariable instanceof ArrayDouble.D2)
+				return ((ArrayDouble.D2)renderVariable).get(MeshPlot.this.timestep, cellId);
+			else
+				return ((ArrayDouble.D3)renderVariable).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer);		}
+		
+		public double getValue(int time, int level) {
+			if (time < 0)
+				time = MeshPlot.this.timestep;
+			if (level < 0)
+				level = MeshPlot.this.layer;
+			if (timeAxis == null)
+				return ((ArrayDouble.D2)renderVariable).get(cellId, level);
+			else if (renderVariable instanceof ArrayDouble.D2)
+				return ((ArrayDouble.D2)renderVariable).get(time, cellId);
+			else
+				return ((ArrayDouble.D3)renderVariable).get(time, cellId, level);
+		}
+		
 		private void transformCell(double factor, int xOffset, int yOffset) {
+			if (SHOW_ZOOM_LOCATION) {
+				cellClicked = false;
+				Path2D.Double p = new Path2D.Double();
+				int last = lonCoords.length - 1;
+				p.moveTo(lonTransformed[last], latTransformed[last]);
+				for (int j = 0; j < lonCoords.length; ++j)
+					p.lineTo(lonTransformed[j], latTransformed[j]);
+				if (p.contains(xClickLocation, yClickLocation))
+					cellClicked = true;
+			}
+
 			for (int i = 0; i < lonCoords.length; ++i) {
 				lonTransformed[i] = (int)Math.round((lonCoords[i] - lonMin - panX) * factor) + xOffset;
 				latTransformed[i] = (int)Math.round((latCoords[i] - latMin - panY) * factor) + yOffset;
 			}
-			if (renderVariable instanceof ArrayDouble.D2)
-				colorIndex = indexOfObsValue((float) ((ArrayDouble.D2)renderVariable).get(MeshPlot.this.timestep, cellId), legendLevels);
-			else
-				colorIndex = indexOfObsValue((float) ((ArrayDouble.D3)renderVariable).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer), legendLevels);
-			//colorIndex = indexOfObsValue((float) ((ArrayDouble.D3)renderVariable).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer), legendLevels);
+			colorIndex = indexOfObsValue((float)getValue(), legendLevels);
 		}
 		
 		public CellInfo clone() {
@@ -1389,8 +1431,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 
 	
-	Array cellVertices, latVert, lonVert, lonCell, indexToVertexId;
+	Array cellVertices, latVert, lonVert, latCell, lonCell, indexToVertexId, indexToCellId;
 	private Map<Integer, Integer> vertexPositionMap;
+	private Map<Integer, Integer> cellPositionMap;
 	private CellInfo[] cellsToRender = null;
 	private ArrayList<CellInfo> splitCells = null;
 	ArrayDouble renderVariable = null;
@@ -1433,18 +1476,28 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		latVert = reader.getValues(ds, null, var).getArray();
 		var = ds.getVariable("lonVertex");
 		lonVert = reader.getValues(ds, null, var).getArray();
+		var = ds.getVariable("latCell");
+		latCell = reader.getValues(ds, null, var).getArray();
 		var = ds.getVariable("lonCell");
 		lonCell = reader.getValues(ds, null, var).getArray();
 		var = ds.getVariable("indexToVertexID");
 		indexToVertexId = reader.getValues(ds, null, var).getArray();
+		//var = ds.getVariable("indexToCellID");
+		//indexToCellId = reader.getValues(ds, null, var).getArray();
 		var = ds.getVariable("verticesOnCell");
 		vertexList = (ucar.ma2.ArrayInt.D2) reader.getValues(ds, null, var).getArray();
 		
 		vertexPositionMap = new HashMap<Integer, Integer>();
+		cellPositionMap = new HashMap<Integer, Integer>();
 			
 		int numVertices = indexToVertexId.getShape()[0];
 		for (int i = 0; i < numVertices; ++i)
 			vertexPositionMap.put(indexToVertexId.getInt(i), i);
+		
+		//TODO - fixme, maybe delete this
+		/*int numCells = foo;
+		for (int i = 0; i < numCells; ++i)
+			cellPositionMap.put(indexToCellId.getInt(i), i);*/
 
 			
 			Set<Double> latCoords = new TreeSet<Double>();
@@ -1462,6 +1515,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					vId = vertexPositionMap.get(vId);
 					cellsToRender[i].latCoords[j] =latVert.getDouble(vId) * -1;
 					cellsToRender[i].lonCoords[j] =lonVert.getDouble(vId) - Math.PI;
+
 					if (cellsToRender[i].lonCoords[j] < 0)
 						cellsToRender[i].lonCoords[j] = 2 * Math.PI + cellsToRender[i].lonCoords[j];
 					
@@ -1477,8 +1531,14 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					latCoords.add(latVert.getDouble(vId) * -1);
 					lonCoords.add(lonVert.getDouble(vId));
 					//System.out.println("Cell " + i + " vertex " + j + " id " + vId + " x " + xCord.getDouble(vId) + " y " + yCord.getDouble(vId) + " z " + zCord.getDouble(vId));
-
 				}
+				cellsToRender[i].lat = latCell.getDouble(i);
+				cellsToRender[i].lon = lonCell.getDouble(i) - Math.PI;
+				if (cellsToRender[i].lon < 0)
+					cellsToRender[i].lon  = 2 * Math.PI + cellsToRender[i].lon;
+				cellsToRender[i].lon -= Math.PI;
+				cellsToRender[i].lat *= RAD_TO_DEG;
+				cellsToRender[i].lon *= RAD_TO_DEG;
 				
 				boolean splitCell = false;
 				CellInfo cell = cellsToRender[i];
@@ -1528,6 +1588,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			System.out.println("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
 	}
 	
+	
+	
 	private void transformCells(/*Graphics gr, */ int canvasSize, int xOrigin, int yOrigin) {
 		long start = System.currentTimeMillis();
 		
@@ -1571,6 +1633,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		long renderStart = System.currentTimeMillis();
 		
 		gr.setClip(xOffset, yOffset, screenWidth, screenHeight);
+		final int statisticsSelection = statisticsMenu.getSelectedIndex();
 		
 		/*
 		BufferedImage img = new java.awt.image.BufferedImage(imageWidth, imageHeight, java.awt.image.BufferedImage.TYPE_3BYTE_BGR);
@@ -1580,7 +1643,15 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		for (int i = 0; i < cells; ++i) { //for each cell
 			if (cellsToRender[i].colorIndex == -1)
 				continue;
-			gr.setColor(legendColors[cellsToRender[i].colorIndex]);
+			if (statisticsSelection == 0)
+				gr.setColor(legendColors[cellsToRender[i].colorIndex]);
+			else
+				gr.setColor(legendColors[indexOfObsValue(subsetLayerData[i], legendLevels)]);
+
+			if (SHOW_ZOOM_LOCATION && cellsToRender[i].cellClicked) {
+				gr.setColor(Color.BLACK);
+				System.err.println("Rendering clicked cell location " + cellsToRender[i].lon + ", " + cellsToRender[i].lat);
+			}
 			gr.fillPolygon(cellsToRender[i].lonTransformed, cellsToRender[i].latTransformed, cellsToRender[i].lonTransformed.length);
 			if (renderBorder) {
 				gr.setColor(Color.BLACK);
@@ -1678,7 +1749,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		// Initialize grid dimensions: timesteps, layers, rows, columns:
 
-		final DataFrameAxis timeAxis = axes.getTimeAxis();
+		timeAxis = axes.getTimeAxis();
 
 		if (timeAxis == null) {
 			timesteps = 1;
@@ -1705,7 +1776,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		final CoordAxis cellAxis = axes.getCellAxis();
 		cells = (int)cellAxis.getRange().getExtent();
 		
-
 		rowAxis = mpasAxes.getYAxis();
 		rowLabels = rowAxis != null ? new MPASAxisLabelCreator(null) : null;
 		rows = rowAxis != null ? (int)rowAxis.getRange().getExtent() : 1;
@@ -1962,29 +2032,26 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private void computeStatistics(boolean log) {
 
 		if ( layerData == null ) {
-			layerData = new float[ rows ][ columns ][ timesteps ];
+			layerData = new float[ cellsToRender.length ][ timesteps ];
 			//layerDataLog = new float[ rows ][ columns ][ timesteps ];
-			statisticsData = new float[ GridCellStatistics.STATISTICS ][ rows ][ columns ];
+			statisticsData = new float[ GridCellStatistics.STATISTICS ][1][ cellsToRender.length ];
 			//statisticsDataLog = new float[ GridCellStatistics.STATISTICS ][ rows ][ columns ];
 		}
 			
 		// Copy from dataFrame into layerData[ rows ][ columns ][ timesteps ]:
-
-		final DataFrameIndex dataFrameIndex = getDataFrame(log).getIndex();
-
-		for ( int row = 0; row < rows; ++row ) {
-			final int dataRow = ! invertRows ? row : rows - 1 - row;
-
-			for ( int column = 0; column < columns; ++column ) {
-
-				for ( int timestep = 0; timestep < timesteps; ++timestep ) {
-					dataFrameIndex.set( timestep, layer, column, dataRow );
+		
+		DataFrame dataFrame = getDataFrame(log);
+		final MPASDataFrameIndex dataFrameIndex = new MPASDataFrameIndex(dataFrame);
+			
+		for (int timestep = 0; timestep < timesteps; ++timestep) {
+			for (int cell = 0; cell < cellsToRender.length; ++cell) {
+					dataFrameIndex.set(timestep, layer, cell);
 					//float value = this.dataFrame.getFloat( dataFrameIndex ); // do not replace this one with getDataFrame()
 					float value = this.getDataFrame(log).getFloat( dataFrameIndex ); 
-					layerData[ row ][ column ][ timestep ] = value;
+					layerData[ cell ][ timestep ] = value;
 					//value = this.dataFrameLog.getFloat( dataFrameIndex );
 					//layerDataLog[ row ][ column ][ timestep ] = value;
-				}
+				
 			}
 		}
 
@@ -1992,7 +2059,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		final double hoursPerTimestep = 1.0;
 		
 		try {
-			GridCellStatistics.computeStatistics( layerData,
+			MeshCellStatistics.computeStatistics( layerData,
 					threshold, hoursPerTimestep,
 					statisticsData, this.statisticsMenu.getSelectedIndex()-1 );
 			//GridCellStatistics.computeStatistics( layerDataLog,
@@ -2001,6 +2068,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			this.statError = false;
 			this.statErrMsg = "";
 		} catch ( Exception e) {
+			e.printStackTrace();
 			Logger.error("Error occurred during computing statistics: " + e.getMessage());
 			this.statError = true;
 			this.statErrMsg = "Error occurred during computing statistics: " + e.getMessage();
@@ -2120,36 +2188,16 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	private void copySubsetLayerData(boolean log) {
 
-		// Reallocate the subsetLayerData[][] only if needed:
-
-		final int subsetLayerRows = 1 + lastRow - firstRow;
-		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
-
-		if (subsetLayerData == null
-				|| subsetLayerData.length != subsetLayerRows * subsetLayerColumns
-				|| subsetLayerData[0].length != subsetLayerColumns) {
-			subsetLayerData = new float[subsetLayerRows][subsetLayerColumns];
+		if (subsetLayerData == null) {
+			subsetLayerData = new float[cellsToRender.length];
 		}
 
 		final int selection = statisticsMenu.getSelectedIndex();
 		
-		if ( selection == 0 ) {
-
-			// Copy from dataFrame into subsetLayerData[ rows ][ columns ]:
-
-			final DataFrameIndex dataFrameIndex = getDataFrame(log).getIndex();
-
-			new Exception("fixme!!!").printStackTrace();
-			/*
-			for ( int row = firstRow; row <= lastRow; ++row ) {
-				final int dataRow = ! invertRows ? row : rows - 1 - row;
-
-				for ( int column = firstColumn; column <= lastColumn; ++column ) {
-					dataFrameIndex.set( timestep-firstTimestep, layer-firstLayer, column, dataRow ) ;
-					final float value = getDataFrame(log).getFloat( dataFrameIndex );
-					subsetLayerData[row - firstRow][column - firstColumn] = value;
-				}
-			}*/
+		if ( selection == 0 ) {			
+			for ( int cell = 0; cell < cellsToRender.length; ++cell ) {
+				subsetLayerData[cell] = (float)cellsToRender[cell].getValue();
+			}
 		} else {
 			final int statistic = selection - 1;
 
@@ -2159,13 +2207,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			}
 
 			// Copy from statisticsData into subsetLayerData[ rows ][ columns ]:
-
-			for ( int row = firstRow; row <= lastRow; ++row ) {
-
-				for ( int column = firstColumn; column <= lastColumn; ++column ) {
-					final float value = statisticsData[ statistic ][ row ][ column ];
-					subsetLayerData[row - firstRow][column - firstColumn] = value;
-				}
+			
+			for ( int cell = 0; cell < cellsToRender.length; ++cell ) {
+				subsetLayerData[cell] = (float)cellsToRender[cell].getValue();
 			}
 		}
 
@@ -2218,24 +2262,22 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			
 			final int statistic = selection - 1;
 
-			for ( int row = firstRow; row <= lastRow; ++row ) {
+			for ( int cell = firstRow; cell < cellsToRender.length; ++cell ) {
 
-				for ( int column = firstColumn; column <= lastColumn; ++column ) {
-					final float value = statisticsData[ statistic ][ row ][ column ];
+				final float value = statisticsData[ statistic ][0][ cell ];
+				
+				if (value > MINIMUM_VALID_VALUE) {
 					
-					if (value > MINIMUM_VALID_VALUE) {
-						
-						if (initialized) {
+					if (initialized) {
 
-							if (value < minmax[0]) {
-								minmax[0] = value;
-							} else if (value > minmax[1]) {
-								minmax[1] = value;
-							}
-						} else {
-							minmax[0] = minmax[1] = value;
-							initialized = true;
+						if (value < minmax[0]) {
+							minmax[0] = value;
+						} else if (value > minmax[1]) {
+							minmax[1] = value;
 						}
+					} else {
+						minmax[0] = minmax[1] = value;
+						initialized = true;
 					}
 				}
 			}
@@ -2465,7 +2507,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		visibleDataHeight = dataHeight;
 		draw();
 		computeDerivedAttributes();
-		/*copySubsetLayerData(this.log);*/
+		copySubsetLayerData(this.log);
 	}
 
 	private void gisLayersMenu(JMenu menu) {
@@ -3351,8 +3393,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					}
 				}			
 
+				
 				if ( statisticsMenu.getSelectedIndex() != 0 ) {
 					// HACK: copy and overwrite subsection.array with subsetLayerData:
+					//TODO - implement this for mesh plots
+					/*
 					subsection = getDataFrame().sliceCopy( slice );
 					final int probeLastColumn = probeFirstColumn + probeColumns -1 ;
 					final int probeLastRow = probeFirstRow + probeRows - 1 ;
@@ -3372,6 +3417,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							array.setFloat( index, value );
 						}
 					}
+					*/
 
 				} else {
 					subsection = getDataFrame().slice(slice);
@@ -3675,10 +3721,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
 		final double subsetWestEdge = westEdge + firstColumn * cellWidth;
 		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
+		float[][] exportCellData = new float[1][];
+		exportCellData[0] = subsetLayerData;
 		ASCIIGridWriter.write( baseFileName + ".asc",
-		subsetLayerRows, subsetLayerColumns,
+		1, cellsToRender.length,
 		subsetWestEdge, subsetSouthEdge,
-		cellWidth, subsetLayerData );
+		cellWidth, exportCellData );
 	}
 
 //	public void exportASCIIGrid( String baseFileName ) {
@@ -3758,7 +3806,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							lastRow, firstColumn, lastColumn, legendLevels,
 							legendColors, axisColor, labelColor, variable,
 							((units==null || units.trim().equals("")) ? "none" : units), config, map.getNumberFormat(), gridLineColor,
-							subsetLayerData);
+							null);
 			} catch (Exception e) {
 				Logger.error("Exception in FastTilePlot.Draw (EpsRenderer's draw method): " + e.getMessage());
 				e.printStackTrace();

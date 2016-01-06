@@ -55,24 +55,30 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 		*/
 		Set<String> dimSet = new HashSet<String>();
 		List<Dimension> dimensions = variableDS.getDimensions();
+		HashMap<String, Integer> indexMap = new HashMap<String, Integer>();
+		int i = 0;
 		for (Dimension dim : dimensions) {
 			dimSet.add(dim.getShortName());
+			indexMap.put(dim.getShortName(), i++);
 		}
+		System.err.println("Dim string " + variableDS.getDimensionsString());
 		//Workaround for the nCells -> x/y mapping
-		dimSet.add("x");
+		if (dimSet.contains("nCells"))
+			dimSet.add("x");
 		for (CoordAxis axis : set.getCoordAxes().getAxes()) {
 			if (!dimSet.contains(axis.getName()))
 				continue;
+			System.err.println("Adding axis " + axis.getName());
 			if (axis.getAxisType().equals(AxisType.TIME))
-				builder.addAxis(DataFrameAxis.createDataFrameAxis(axis, 0));
+				builder.addAxis(DataFrameAxis.createDataFrameAxis(axis, indexMap.get(axis.getName())));
 			else if (axis.getAxisType().equals(AxisType.X_AXIS)) { //MPAS has "virtual"  x/y axes, which can't be referenced within the data.  Use cell index as axis, and include simulated x/y axes
 				CoordAxis yAxis = set.getCoordAxes().getYAxis();
 				CoordAxis cellAxis = new MPASCellCoordAxis(axis, yAxis, set.numCells, "nCells", "nCells");
-				builder.addAxis(DataFrameAxis.createDataFrameAxis(cellAxis, 1));
+				builder.addAxis(DataFrameAxis.createDataFrameAxis(cellAxis, indexMap.get("nCells")));
 			}
-			else if (axis.getAxisType().equals(AxisType.LAYER))
-				builder.addAxis(DataFrameAxis.createDataFrameAxis(axis, 2));
-
+			else if (axis.getAxisType().equals(AxisType.LAYER)) {
+				builder.addAxis(DataFrameAxis.createDataFrameAxis(axis, indexMap.get(axis.getName())));
+			}
 
 		}
 		

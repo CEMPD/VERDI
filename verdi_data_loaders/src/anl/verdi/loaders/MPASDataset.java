@@ -166,14 +166,26 @@ public class MPASDataset extends AbstractDataset {
 		renderVarList.add("yVertex");
 		renderVarList.add("zVertex");
 		renderVarList.add("indexToVertexID");
+		renderVarList.add("latCell");
 		renderVarList.add("lonCell");
 	}
 	
 	static {
-		hiddenVars.add("latCell");
+		hiddenVars.add("xCell");
+		hiddenVars.add("yCell");
+		hiddenVars.add("zCell");
+		hiddenVars.add("indexToCellID");
+		hiddenVars.add("edgesOnCell");
+		hiddenVars.add("areaCell");
+		hiddenVars.add("cellsOnCell");
+		hiddenVars.add("verticesOnCell");
+		hiddenVars.add("meshDensity");
+		hiddenVars.add("zz");
 	}
+	//TODO - layers: nVertLevelsP1, nSoilLevels
 	
 	ucar.ma2.Array cellVertices = null;
+	ucar.ma2.Array latCell = null;
 	ucar.ma2.Array lonCell = null;
 	ucar.ma2.Array latVert = null;
 	ucar.ma2.Array lonVert = null;
@@ -290,19 +302,149 @@ public class MPASDataset extends AbstractDataset {
 		KNOWN_UNITS.put("qi", "-");
 		KNOWN_UNITS.put("qs", "-");
 		KNOWN_UNITS.put("qg", "-");
+		KNOWN_UNITS.put("u", "m/s");
 		KNOWN_UNITS.put("w", "m/s");
-		KNOWN_UNITS.put("surface_pressure", "Pa");
-		KNOWN_UNITS.put("pressure", "Pa");
-		KNOWN_UNITS.put("rho", "kg/m\u00b3");
+		KNOWN_UNITS.put("v", "m/s");
 		KNOWN_UNITS.put("ter", "m");
+		KNOWN_UNITS.put("dsz", "m");
+		KNOWN_UNITS.put("sz", "m");
+		KNOWN_UNITS.put("sh2o", "-");
+		KNOWN_UNITS.put("surface_pressure", "Pa");
+		KNOWN_UNITS.put("pressure_base", "Pa");
+		KNOWN_UNITS.put("pressure", "Pa");
+		KNOWN_UNITS.put("rho_base", "kg/m\u00b3");
+		KNOWN_UNITS.put("rho", "kg/m\u00b3");
+		KNOWN_UNITS.put("ndays_accum", "-");
+		KNOWN_UNITS.put("tlag", "K");
+		KNOWN_UNITS.put("tday_accum", "K");
+		KNOWN_UNITS.put("tyear_mean", "K");
+		KNOWN_UNITS.put("tyear_accum", "K");
+		KNOWN_UNITS.put("theta_base", "K");
 		KNOWN_UNITS.put("theta", "K");
 		KNOWN_UNITS.put("relhum", "-");
+		KNOWN_UNITS.put("cldfrac", "-");
+		KNOWN_UNITS.put("coszr", "-");
+		KNOWN_UNITS.put("gsw", "W/m\u00b2");
+		KNOWN_UNITS.put("swdnb", "W/m\u00b2");
+		KNOWN_UNITS.put("swdnbc", "W/m\u00b2");
+		KNOWN_UNITS.put("swupb", "W/m\u00b2");
+		KNOWN_UNITS.put("swupbc", "W/m\u00b2");
+		KNOWN_UNITS.put("swdnt", "W/m\u00b2");
+		KNOWN_UNITS.put("swdntc", "W/m\u00b2");
+		KNOWN_UNITS.put("swupt", "W/m\u00b2");
+		KNOWN_UNITS.put("swuptc", "W/m\u00b2");
+		KNOWN_UNITS.put("swcf", "W/m\u00b2");
+		KNOWN_UNITS.put("acswdnb", "W/m\u00b2");
+		KNOWN_UNITS.put("acswdnbc", "W/m\u00b2");
+		KNOWN_UNITS.put("acswdnt", "W/m\u00b2");
+		KNOWN_UNITS.put("acswdntc", "W/m\u00b2");
+		KNOWN_UNITS.put("acswupb", "W/m\u00b2");
+		KNOWN_UNITS.put("acswupbc", "W/m\u00b2");
+		KNOWN_UNITS.put("acswupt", "W/m\u00b2");
+		KNOWN_UNITS.put("acswuptc", "W/m\u00b2");
+		KNOWN_UNITS.put("rthratensw", "K/s");
+		KNOWN_UNITS.put("lwdnb", "W/m\u00b2");
+		KNOWN_UNITS.put("lwdnbc", "W/m\u00b2");
+		KNOWN_UNITS.put("lwupb", "W/m\u00b2");
+		KNOWN_UNITS.put("lwupbc", "W/m\u00b2");
+		KNOWN_UNITS.put("lwdnt", "W/m\u00b2");
+		KNOWN_UNITS.put("lwdntc", "W/m\u00b2");
+		KNOWN_UNITS.put("lwupt", "W/m\u00b2");
+		KNOWN_UNITS.put("lwuptc", "W/m\u00b2");
+		KNOWN_UNITS.put("lwc", "W/m\u00b2");
+		KNOWN_UNITS.put("olrtoa", "W/m\u00b2");
+		KNOWN_UNITS.put("aclwdnb", "W/m\u00b2");
+		KNOWN_UNITS.put("aclwdnbc", "W/m\u00b2");
+		KNOWN_UNITS.put("aclwdnt", "W/m\u00b2");
+		KNOWN_UNITS.put("aclwdntc", "W/m\u00b2");
+		KNOWN_UNITS.put("aclwupb", "W/m\u00b2");
+		KNOWN_UNITS.put("aclwupbc", "W/m\u00b2");
+		KNOWN_UNITS.put("aclwupt", "W/m\u00b2");
+		KNOWN_UNITS.put("aclwuptc", "W/m\u00b2");
+		KNOWN_UNITS.put("rthratenlw", "K/s");
+		KNOWN_UNITS.put("plrad", "Pa");
+		KNOWN_UNITS.put("absnxt", "-");
+		KNOWN_UNITS.put("abstot", "-");
+		KNOWN_UNITS.put("emstot", "-");
+		KNOWN_UNITS.put("pin", "hPa");
+		KNOWN_UNITS.put("ozmixm", "-");
+		KNOWN_UNITS.put("m_hybi", "-");
+		KNOWN_UNITS.put("m_ps", "-");
+		KNOWN_UNITS.put("sul", "kg/m\u00b3");
+		KNOWN_UNITS.put("sslt", "kg/m\u00b3");
+		KNOWN_UNITS.put("dust1", "kg/m\u00b3");
+		KNOWN_UNITS.put("dust2", "kg/m\u00b3");
+		KNOWN_UNITS.put("dust3", "kg/m\u00b3");
+		KNOWN_UNITS.put("dust4", "kg/m\u00b3");
+		KNOWN_UNITS.put("ocpho", "kg/m\u00b3");
+		KNOWN_UNITS.put("bcpho", "kg/m\u00b3");
+		KNOWN_UNITS.put("ocphi", "kg/m\u00b3");
+		KNOWN_UNITS.put("bcphi", "kg/m\u00b3");
+		KNOWN_UNITS.put("bg", "kg/m\u00b3");
+		KNOWN_UNITS.put("volc", "kg/m\u00b3");
+		KNOWN_UNITS.put("br", "-");
+		KNOWN_UNITS.put("cd", "-");
+		KNOWN_UNITS.put("cda", "-");
+		KNOWN_UNITS.put("ck", "-");
+		KNOWN_UNITS.put("cka", "-");
+		KNOWN_UNITS.put("cpm", "-");
+		KNOWN_UNITS.put("hfx", "W/m\u00b2");
+		KNOWN_UNITS.put("lh", "W/m\u00b2");
+		KNOWN_UNITS.put("mavail", "-");
+		KNOWN_UNITS.put("mol", "K");
+		KNOWN_UNITS.put("psim", "-");
+		KNOWN_UNITS.put("psih", "-");
+		KNOWN_UNITS.put("q2", "-");
+		KNOWN_UNITS.put("qfx", "-");
+		KNOWN_UNITS.put("qsfc", "-");
+		KNOWN_UNITS.put("u10", "m/s");
+		KNOWN_UNITS.put("ust", "m/s");
+		KNOWN_UNITS.put("ustm", "m/s");
+		KNOWN_UNITS.put("t2m", "K");
+		KNOWN_UNITS.put("th2m", "K");
+		KNOWN_UNITS.put("v10", "m/s");
+		KNOWN_UNITS.put("wspd", "m/s");
+		KNOWN_UNITS.put("zol", "-");
+		KNOWN_UNITS.put("znt", "m");
+		KNOWN_UNITS.put("dtaux3d", "m/s");
+		KNOWN_UNITS.put("dtauy3d", "m/s");
+		KNOWN_UNITS.put("acsnom", "kg/m\u00b2");
+		KNOWN_UNITS.put("canwat", "kg/m\u00b2");
+		KNOWN_UNITS.put("grdflx", "W/m\u00b2");
+		KNOWN_UNITS.put("lai", "-");
+		KNOWN_UNITS.put("noahres", "W/m\u00b2");
+		KNOWN_UNITS.put("potevp", "W/m\u00b2");
+		KNOWN_UNITS.put("qz0", "-");
+		KNOWN_UNITS.put("sfcrunoff", "mm");
+		KNOWN_UNITS.put("smstav", "-");
+		KNOWN_UNITS.put("smstot", "-");
+		KNOWN_UNITS.put("snopcx", "W/m\u00b2");
+		KNOWN_UNITS.put("sstsk", "K");
+		KNOWN_UNITS.put("sstsk_diurn", "K");
+		KNOWN_UNITS.put("udrunoff", "mm");
+		KNOWN_UNITS.put("z0", "m");
+		KNOWN_UNITS.put("zs", "m");
 		KNOWN_UNITS.put("divergence", "-");
 		KNOWN_UNITS.put("ke", "J");
 		KNOWN_UNITS.put("uReconstructZonal", "m/s");
 		KNOWN_UNITS.put("uReconstructMeridional", "m/s");
 		KNOWN_UNITS.put("i_rainnc", "-");
+		KNOWN_UNITS.put("refl10cm_max", "dBz");
+		KNOWN_UNITS.put("rthcuten", "K/s");
+		KNOWN_UNITS.put("nca", "s");
+		KNOWN_UNITS.put("zgrid", "m");
+		KNOWN_UNITS.put("cubot", "-");
+		KNOWN_UNITS.put("cutop", "-");
+		KNOWN_UNITS.put("wavg0", "m/s");
+		KNOWN_UNITS.put("rain", "mm");
+		KNOWN_UNITS.put("raincv", "mm");
 		KNOWN_UNITS.put("rainnc", "mm");
+		KNOWN_UNITS.put("rainncv", "mm");
+		KNOWN_UNITS.put("snownc", "mm");
+		KNOWN_UNITS.put("snowncv", "mm");
+		KNOWN_UNITS.put("graupelncv", "mm");
+		KNOWN_UNITS.put("graupelnc", "mm");
+		KNOWN_UNITS.put("sr", "-");
 		KNOWN_UNITS.put("kpbl", "layer");
 		KNOWN_UNITS.put("precipw", "kg/m\u00b2");
 		KNOWN_UNITS.put("cuprec", "mm/s");
@@ -331,8 +473,14 @@ public class MPASDataset extends AbstractDataset {
 		KNOWN_UNITS.put("sh2o", "-");
 		KNOWN_UNITS.put("smois", "-");
 		KNOWN_UNITS.put("tslb", "K");		
+		KNOWN_UNITS.put("tmn", "K");	
+		KNOWN_UNITS.put("snow", "kg/m\u00b2");
+		KNOWN_UNITS.put("snowc", "-");
+		KNOWN_UNITS.put("dzs", "m");
+		KNOWN_UNITS.put("smcrel", "-");
 		KNOWN_UNITS.put("vegfra", "-");		
 		KNOWN_UNITS.put("xland", "-");		
+		KNOWN_UNITS.put("seaice", "-");		
 		KNOWN_UNITS.put("xice", "-");		
 	}
 
@@ -367,7 +515,7 @@ public class MPASDataset extends AbstractDataset {
 				this.verdiRenderVars.add(new DefaultVariable(name, name, VUnits.MISSING_UNIT, this));
 			}
 			else if (!hiddenVars.contains(name) &&
-					var.getDimensionsString().indexOf("Time") != -1 &&
+					//var.getDimensionsString().indexOf("Time") != -1 &&
 					var.getDimensionsString().indexOf("nCells") != -1
 					) 
 				{
@@ -667,6 +815,7 @@ public class MPASDataset extends AbstractDataset {
 			cellVertices = getRenderVariable("nEdgesOnCell").read();
 			latVert = getRenderVariable("latVertex").read();
 			lonVert = getRenderVariable("lonVertex").read();
+			latCell = getRenderVariable("lonCell").read();
 			lonCell = getRenderVariable("lonCell").read();
 			vertexList = (ucar.ma2.ArrayInt.D2) getRenderVariable("verticesOnCell").read();
 
@@ -779,16 +928,12 @@ public class MPASDataset extends AbstractDataset {
 			dataHeight = latMax - latMin;
 			System.out.println("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
 			
-			String vertLevels = "nVertLevels";
-			int numLevels = dataset.findDimension("nVertLevels").getLength();
-			Double[] vertList = new Double[numLevels];
-			for (int i = 0; i < vertList.length; ++i)
-				vertList[i] = (double)i;
-			list.add(new CSVCoordAxis(vertList, vertLevels, vertLevels, AxisType.LAYER));
-
+			addLayer("nVertLevels", list);
+			addLayer("nVertLevelsP1", list);
+			addLayer("nSoilLevels", list);
+			
 			//Construct axes for latitude and longitude, using average diameter as spacing
 			avgCellDiam = cellDiamSum / cellDiamCount;
-
 			
 			list.add(new MPASCoordAxis("x", "x", lonMin, lonMax, AxisType.X_AXIS));
 			list.add(new MPASCoordAxis("y", "y", latMin, latMax, AxisType.Y_AXIS));
@@ -797,18 +942,17 @@ public class MPASDataset extends AbstractDataset {
 			e.printStackTrace();
 		}
 
-		
-		
-		//list.add(new SyntheticTimeAxis(timeAxis));
-
-		/*var = columnNameMap.get(fields[1]);
-		list.add(new CSVCoordAxis(axesMap.get(var), var, var, AxisType.X_AXIS));
-		
-		var = columnNameMap.get(fields[2]);
-		list.add(new CSVCoordAxis(axesMap.get(var), var, var, AxisType.Y_AXIS));*/
-
 		coordAxes = new Axes<CoordAxis>(list, boxer);
 		
+	}
+	
+	private void addLayer(String layerName, List<CoordAxis> axisList) {
+		int numLevels = dataset.findDimension(layerName).getLength();
+		Double[] vertList = new Double[numLevels];
+		for (int i = 0; i < vertList.length; ++i)
+			vertList[i] = (double)i;
+		if (vertList.length > 0)
+			axisList.add(new CSVCoordAxis(vertList, layerName, layerName, AxisType.LAYER));
 	}
 	
 	private void transformCells(Graphics gr, int windowWidth, int windowHeight) {

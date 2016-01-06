@@ -651,17 +651,20 @@ public class TilePlot {
 
 		// Range label:
 
-		final int[] minimumCell = { 0, 0 };
-		final int[] maximumCell = { 0, 0 };
-		final float[] range = { 0.0f, 0.0f };
-
-		layerMinimumMaximum(firstRow, lastRow, firstColumn, lastColumn, data,
-				minimumCell, maximumCell, range);
-
-		final String minMaxLabel = "Min (" + (1 + minimumCell[COLUMN]) + ", "
-				+ (1 + minimumCell[ROW]) + ") = " + gFormat(range[0]) + ", "
-				+ "Max (" + (1 + maximumCell[COLUMN]) + ", "
-				+ (1 + maximumCell[ROW]) + ") = " + gFormat(range[1]);
+		String minMaxLabel = "";
+		if (data != null) {
+			final int[] minimumCell = { 0, 0 };
+			final int[] maximumCell = { 0, 0 };
+			final float[] range = { 0.0f, 0.0f };
+	
+			layerMinimumMaximum(firstRow, lastRow, firstColumn, lastColumn, data,
+					minimumCell, maximumCell, range);
+	
+			minMaxLabel = "Min (" + (1 + minimumCell[COLUMN]) + ", "
+					+ (1 + minimumCell[ROW]) + ") = " + gFormat(range[0]) + ", "
+					+ "Max (" + (1 + maximumCell[COLUMN]) + ", "
+					+ (1 + maximumCell[ROW]) + ") = " + gFormat(range[1]);
+		}
 		final int yMinMax = yTimestamp + graphics.getFontMetrics().getHeight() + 5;
 		footerYOffset += graphics.getFontMetrics().getHeight() + 5;
 
@@ -1020,6 +1023,8 @@ public class TilePlot {
 			int lastRow, int firstColumn, int lastColumn,
 			final double[] legendLevels, final Color[] legendColors,
 			final float[][] data) {
+		if (data == null)
+			return;
 
 		final int rows = 1 + lastRow - firstRow;
 		final int columns = 1 + lastColumn - firstColumn;
