@@ -743,5 +743,5 @@ public class GUIBarManager {
         ((JLabel) component).setText(text);
       }
     }
-  }
+  }  /**   * Returns a String containing the current text in a status bar.   * added as part of the VERDI 2016 update   * Jo Ellen Brandmeyer, Institute for the Environment, 1/12/2016   *    * @param statusFieldName	the name of the status field   * @return				a String containing the contents of the status field or null   */  public String getStatusBarText(String statusFieldName)  {	  StatusBarItem item = statusBarMap.get(statusFieldName);	  if (item == null)			  return null;	  JComponent component = item.getComponent();	  if(component instanceof JTextComponent)	  {		  String aString = ((JTextField)component).getText();		  return aString;	  }	  if(component instanceof JLabel)	  {		  String lString = ((JLabel)component).getText();		  return lString;	  }	  return null;  }
 }

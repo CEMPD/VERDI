@@ -363,11 +363,19 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	}
 
 	public void setStatusTwoText(String text) {
+		// JEB 2016 altered function to compare new and existing strings and do nothing if they are the same
+		String currentText = manager.getBarManager().getStatusBarText("verdi.status.two");
+		if(currentText.equalsIgnoreCase(text))
+			return;
 		manager.getBarManager().setStatusBarText("verdi.status.two", text);
 		manager.getBarManager().getStatusBar().repaint();
 	}
 
 	public void setStatusOneText(String text) {
+		// JEB 2016 altered function to compare new and existing strings and do nothing if they are the same
+		String currentText = manager.getBarManager().getStatusBarText("verdi.status.one");
+		if(currentText.equalsIgnoreCase(text))
+			return;
 		manager.getBarManager().setStatusBarText("verdi.status.one", text);
 		manager.getBarManager().getStatusBar().repaint();
 	}
