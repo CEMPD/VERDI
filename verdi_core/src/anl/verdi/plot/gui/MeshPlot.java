@@ -485,7 +485,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					final int height = Math.round(canvasSize * rowScale);
 					
 					if (previousCanvasSize != canvasSize || zoomFactor != previousZoomFactor || previousClippedDataRatio != clippedDataRatio
-							|| timestep != previousTimestep || layer != previousLayer) {
+							|| timestep != previousTimestep || layer != previousLayer || panX != previousPanX || panY != prevousPanY) {
 						transformCells(/*gr,*/ canvasSize, xOffset, yOffset);						
 						previousCanvasSize = canvasSize;
 						previousZoomFactor = zoomFactor;
@@ -1180,6 +1180,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		boolean popZoom = true;
 		
+		previousPanX = panX;
+		prevousPanY = panY;
+		
 		if (popZoomIn) { // click to zoom in or popup menu zoom in
 			if (zoomFactor < MAX_ZOOM) {
 				previousZoomFactor = zoomFactor;
@@ -1218,6 +1221,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		} else { // regular zoom in
 			previousClippedDataRatio = clippedDataRatio;
 			clippedDataRatio = bounds.width / (double)bounds.height;
+			previousPanX = panX;
+			prevousPanY = panY;
 			panX = (bounds.x - xOffset) / compositeFactor + panX;
 			panY = (bounds.y - yOffset) / compositeFactor + panY;
 			previousZoomFactor = zoomFactor;
@@ -1445,6 +1450,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	int previousCanvasSize = 0;
 	double panX = 0;
 	double panY = 0;
+	double previousPanX = 0;
+	double prevousPanY = 0;
 	final double MAX_ZOOM = Double.MAX_VALUE;
 	final double MIN_ZOOM = 1.0;
 	double zoomFactor = 1;
@@ -1460,7 +1467,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	double clippedScreenWidth = 0;
 	double clippedScreenHeight = 0;
 	double avgCellDiam = 0;
-	boolean renderBorder = true;
+	boolean renderBorder = true; //preseverd at the moment but replaced with Show Cell Border menu item
 	double transformedCellDiam = 0;
 	double borderDisplayCutoff = 0.02; //Map colors become hidden by cell borders if borders are drawn
 										//when cells don't take up enough pixels.  Only allow borders
@@ -1507,6 +1514,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 			cellsToRender = new CellInfo[vertexShape[0]];
 			splitCells = new ArrayList<CellInfo>();
+			boolean splitHeight = false;
 			for (int i = 0; i < vertexShape[0]; ++i) { //for each cell
 				int vertices = cellVertices.getInt(i);
 				cellsToRender[i] = new CellInfo(i, vertices);
@@ -1546,6 +1554,20 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				double minCellLon = Math.PI * 2;
 				double maxCellLon = 0; 
 				
+				double minCellLat = Double.MAX_VALUE;
+				double maxCellLat = Double.MIN_VALUE;
+				for (int j = 0; !splitHeight && j < cell.latCoords.length; ++j) {
+					if (cell.latCoords[j] < maxCellLat)
+						minCellLat = cell.latCoords[j];
+					if (cell.latCoords[j] > maxCellLat)
+						maxCellLat = cell.latCoords[j];
+					if (maxCellLat - minCellLat > Math.PI * .4) {
+						latMin = Math.PI * -0.5;
+						latMax = Math.PI * 0.5;
+						splitHeight = true;
+					}
+				}
+
 				for (int j = 0; j < cell.lonCoords.length; ++j) {
 					if (cell.lonCoords[j] < minCellLon)
 						minCellLon = cell.lonCoords[j];
@@ -1553,6 +1575,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						maxCellLon = cell.lonCoords[j];
 					if (maxCellLon - minCellLon > Math.PI * 1.5) {
 						splitCell = true;
+						lonMin = 0;
+						lonMax = Math.PI * 2;
 						cellHalf = cell.clone();
 					}
 				}
@@ -1635,6 +1659,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		gr.setClip(xOffset, yOffset, screenWidth, screenHeight);
 		final int statisticsSelection = statisticsMenu.getSelectedIndex();
 		
+		final Boolean showGridLines = (Boolean)
+				config.getObject( TilePlotConfiguration.SHOW_GRID_LINES );
+		final boolean showCellBorder = showGridLines != null && showGridLines.booleanValue();
+		
 		/*
 		BufferedImage img = new java.awt.image.BufferedImage(imageWidth, imageHeight, java.awt.image.BufferedImage.TYPE_3BYTE_BGR);
         java.awt.Graphics2D g = img.createGraphics();
@@ -1653,7 +1681,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				System.err.println("Rendering clicked cell location " + cellsToRender[i].lon + ", " + cellsToRender[i].lat);
 			}
 			gr.fillPolygon(cellsToRender[i].lonTransformed, cellsToRender[i].latTransformed, cellsToRender[i].lonTransformed.length);
-			if (renderBorder) {
+			if (showCellBorder) {
 				gr.setColor(Color.BLACK);
 				int length = cellsToRender[i].lonTransformed.length - 1;
 				for (int j = 0; j < length; ++j) {
@@ -2381,7 +2409,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		// item.setSelected(true);
 		JMenuItem menuItem = new JMenuItem(
-				new AbstractAction("Set Row and Column Ranges") {
+				new AbstractAction("Set Longitude and Latitude Ranges") {
 					private static final long serialVersionUID = -4465758432397962782L;
 
 					@Override
@@ -2392,7 +2420,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		menu.add(menuItem);
 
 		menu.addSeparator();
-		showGridLines = new JCheckBoxMenuItem(new AbstractAction("Show Grid Lines") {
+		showGridLines = new JCheckBoxMenuItem(new AbstractAction("Show Cell Borders") {
 			private static final long serialVersionUID = 2699330329257731588L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -2497,6 +2525,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		clippedDataRatio = dataRatio;
 		zoomFactor = 1;
 		compositeFactor = screenWidth / dataWidth;
+		previousPanX = panX;
+		prevousPanY = panY;
 		panX = 0;
 		panY = 0;
 		firstRow = 0;
@@ -3078,9 +3108,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 
 	private void setDataRanges() {
-		DataRangeDialog dialog = new DataRangeDialog("Set Row and Column Ranges",
-				MeshPlot.this, firstRow + 1, lastRow + 1, firstColumn + 1,
-				lastColumn + 1);
+		DataRangeDialog dialog = new DataRangeDialog("Set Longitude and Latitude Ranges",
+				MeshPlot.this, firstColumn + columnOrigin, lastColumn + columnOrigin, firstRow + rowOrigin, lastRow + rowOrigin);
 		dialog.showDialog();
 	}
 
@@ -3090,27 +3119,27 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		public static final int YES_OPTION = 1;
 		public static final int ERROR = 0;
 		private MeshPlot plot;
-		private JTextField fRowField;
-		private JTextField lRowField;
-		private JTextField fColumnField;
-		private JTextField lColumnField;
+		private JTextField fLonField;
+		private JTextField lLonField;
+		private JTextField fLatField;
+		private JTextField lLatField;
 		private boolean cancelled = false;
-		private int firstRow, lastRow, firstColumn, lastColumn;
+		private int lonLow, lonHigh, latLow, latHigh;
 
-		public DataRangeDialog(String title, MeshPlot plot, int firstRow,
-				int lastRow, int firstColumn, int lastColumn) {
+		public DataRangeDialog(String title, MeshPlot plot, int lonLow,
+				int lonHigh, int latLow, int latHigh) {
 			super.setTitle(title);
 			super.setLocation(getCenterPoint(plot));
 			super.setModal(true);
 			super.setPreferredSize(new Dimension(400, 300));
-			this.firstRow = firstRow;
-			this.lastRow = lastRow;
-			this.firstColumn = firstColumn;
-			this.lastColumn = lastColumn;
-			this.fRowField = new JTextField("1", 4);
-			this.lRowField = new JTextField("1", 4);
-			this.fColumnField = new JTextField("1", 4);
-			this.lColumnField = new JTextField("1", 4);
+			this.lonLow = lonLow;
+			this.lonHigh = lonHigh;
+			this.latLow = latLow;
+			this.latHigh = latHigh;
+			this.fLonField = new JTextField("1", 4);
+			this.lLonField = new JTextField("1", 4);
+			this.fLatField = new JTextField("1", 4);
+			this.lLatField = new JTextField("1", 4);
 			this.plot = plot;
 			this.getContentPane().add(createLayout());
 		}
@@ -3123,12 +3152,50 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				return CANCEL_OPTION;
 
 			try {
-				firstRow = Integer.valueOf(fRowField.getText());
-				lastRow = Integer.valueOf(lRowField.getText());
-				firstColumn = Integer.valueOf(fColumnField.getText());
-				lastColumn = Integer.valueOf(lColumnField.getText());
-				plot.resetRowsNColumns(firstRow, lastRow, firstColumn,
-						lastColumn);
+				lonLow = Integer.valueOf(fLonField.getText());
+				lonHigh = Integer.valueOf(lLonField.getText());
+				latLow = Integer.valueOf(fLatField.getText());
+				latHigh = Integer.valueOf(lLatField.getText());
+				
+				//TODO - move this into resetRowsNColumns
+				//plot.resetRowsNColumns(firstRow, lastRow, firstColumn,
+						//lastColumn);
+				
+				System.out.println("Setting latlon, screenWidth " + screenWidth + " height " + screenHeight);
+				
+				double clippedWidth = (lonHigh - lonLow) / RAD_TO_DEG;
+				double clippedHeight = (latHigh - latLow) / RAD_TO_DEG;
+				previousClippedDataRatio = clippedDataRatio;
+				clippedDataRatio = clippedWidth / clippedHeight;
+				previousZoomFactor = zoomFactor;
+				double originalZoom = screenWidth / dataWidth;
+				double compositeZoom;
+				if (clippedDataRatio > 1) {
+					compositeZoom = screenWidth / clippedWidth;
+					visibleDataWidth = clippedWidth;
+					visibleDataHeight = visibleDataWidth / clippedDataRatio;
+				}
+				else {
+					compositeZoom = screenHeight / clippedHeight;
+					visibleDataHeight = clippedHeight;
+					visibleDataWidth = visibleDataHeight * clippedDataRatio;
+				}
+				zoomFactor = compositeZoom / originalZoom;
+				
+				firstRow = latLow - rowOrigin;
+				lastRow = latHigh - rowOrigin;
+				firstColumn = lonLow - columnOrigin;
+				lastColumn = lonHigh - columnOrigin;
+				
+				previousPanX = panX;
+				prevousPanY = panY;
+				
+				panX = firstColumn / RAD_TO_DEG;
+				panY = dataHeight - lastRow / RAD_TO_DEG;
+												
+				computeDerivedAttributes();
+				draw();
+
 				return YES_OPTION;
 			} catch (NumberFormatException e) {
 				Logger.error("Number Format Exception in FastTilePlot.showDialog: Set Rows and Columns: " + e.getMessage());
@@ -3157,40 +3224,40 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			c.weightx = 1.0;
 			c.insets = new Insets(1, 1, 7, 5);
 
-			JLabel rowLabel = new JLabel("Rows:");
-			JPanel rowPanel = new JPanel();
-			rowPanel.add(fRowField, BorderLayout.LINE_START);
-			fRowField.setText(this.firstRow + "");
-			rowPanel.add(new JLabel("..."));
-			rowPanel.add(lRowField, BorderLayout.LINE_END);
-			lRowField.setText(this.lastRow + "");
+			JLabel lonLabel = new JLabel("Longitude:");
+			JPanel lonPanel = new JPanel();
+			lonPanel.add(fLonField, BorderLayout.LINE_START);
+			fLonField.setText(this.lonLow + "");
+			lonPanel.add(new JLabel("..."));
+			lonPanel.add(lLonField, BorderLayout.LINE_END);
+			lLonField.setText(this.lonHigh + "");
 			JLabel holder1 = new JLabel();
 
-			gridbag.setConstraints(rowLabel, c);
-			gridbag.setConstraints(rowPanel, c);
+			gridbag.setConstraints(lonLabel, c);
+			gridbag.setConstraints(lonPanel, c);
 			c.gridwidth = GridBagConstraints.REMAINDER; // end row
 			gridbag.setConstraints(holder1, c);
-			contentPanel.add(rowLabel);
-			contentPanel.add(rowPanel);
+			contentPanel.add(lonLabel);
+			contentPanel.add(lonPanel);
 			contentPanel.add(holder1);
 
 			c.gridwidth = 1; // next-to-last in row
 
-			JLabel colLabel = new JLabel("Columns:");
-			JPanel columnPanel = new JPanel();
-			columnPanel.add(fColumnField, BorderLayout.LINE_START);
-			fColumnField.setText(this.firstColumn + "");
-			columnPanel.add(new JLabel("..."));
-			columnPanel.add(lColumnField, BorderLayout.LINE_END);
-			lColumnField.setText(this.lastColumn + "");
+			JLabel latLabel = new JLabel("Latitude:");
+			JPanel latPanel = new JPanel();
+			latPanel.add(fLatField, BorderLayout.LINE_START);
+			fLatField.setText(this.latLow + "");
+			latPanel.add(new JLabel("..."));
+			latPanel.add(lLatField, BorderLayout.LINE_END);
+			lLatField.setText(this.latHigh + "");
 			JLabel holder2 = new JLabel();
 
-			gridbag.setConstraints(colLabel, c);
-			gridbag.setConstraints(columnPanel, c);
+			gridbag.setConstraints(latLabel, c);
+			gridbag.setConstraints(lonPanel, c);
 			c.gridwidth = GridBagConstraints.REMAINDER;
 			gridbag.setConstraints(holder2, c);
-			contentPanel.add(colLabel);
-			contentPanel.add(columnPanel);
+			contentPanel.add(latLabel);
+			contentPanel.add(latPanel);
 			contentPanel.add(holder2);
 
 			return contentPanel;

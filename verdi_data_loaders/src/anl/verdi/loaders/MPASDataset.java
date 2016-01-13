@@ -500,7 +500,7 @@ public class MPASDataset extends AbstractDataset {
 					unit = VUnits.createUnit(attribute.getStringValue());
 					Logger.debug("in Models3ObsDatabase.initVariables, unit now = " + unit);
 				}
-			}	
+			}
 			if (unit == null) {
 				String  unitStr = KNOWN_UNITS.get(name);
 				if (unitStr != null)
@@ -508,6 +508,14 @@ public class MPASDataset extends AbstractDataset {
 			}
 			if (unit == null)
 				unit = VUnits.MISSING_UNIT;
+			else {
+				String unitStr = unit.toString();
+				String cleanedString = unitStr.replaceAll(" ", "").trim();
+				if (cleanedString.equals("") || cleanedString.equals("none"))
+					cleanedString = "-";
+				if (!cleanedString.equals(unitStr))
+					unit = VUnits.createUnit(cleanedString);
+			}
 			
 			if (renderVarList.contains(name) || name.startsWith("verdi.")) {
 				this.renderVars.put(name, var);
