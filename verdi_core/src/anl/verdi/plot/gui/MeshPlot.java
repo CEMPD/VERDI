@@ -63,7 +63,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -219,6 +219,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private final double cellWidth; // 12000.0 meters.
 	private final double cellHeight; // 12000.0 meters.
 	private NumberFormat format;
+	private NumberFormat coordFormat;
 	private final boolean invertRows; // HACK: Invert rows of AURAMS / GEM / CF Convention data?
 
 	//Screen width / height in pixels
@@ -331,7 +332,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private int delay = 50; // In milliseconds.
 	private final int MAXIMUM_DELAY = 3000; // 3 seconds per frame.
 
-	protected boolean showLatLon = false;
 	protected boolean showObsLegend = false;
 
 	private final JPanel threadParent = this;
@@ -1111,12 +1111,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	public void processMouseMotionEvent(MouseEvent me) {
-		if(isInDataArea(me)){
-			if(me.getID() == MouseEvent.MOUSE_MOVED && showLatLon){
-				Decidegrees gp = getLatLonFor(me.getX(), me.getY());
-				app.getGui().setStatusTwoText(gp.toString());
-			}
-		}else{
+		if(!isInDataArea(me)){
 			app.getGui().setStatusTwoText("");
 		}
 		
@@ -1153,19 +1148,43 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	protected int getRow(Point p) {
-		int dist = dataArea.y + dataArea.height - p.y;
+		int dist = p.y - dataArea.y;
+		return dist;
+		/*
 		int div = dist * (lastRow - firstRow + 1);
 		int den = dataArea.height;
 		
-		return firstRow +  div/den;
+		return firstRow +  div/den;*/
 	}
 	
 	protected int getCol(Point p) {
 		int dist = p.x - dataArea.x;
+		return dist;
+		/*
 		int div = dist * (lastColumn - firstColumn + 1);
 		int den = dataArea.width;
 		
-		return firstColumn +  div/den;
+		return firstColumn +  div/den;*/
+	}
+	
+	protected double getXDistance(Point p) {
+		int dist = p.x - dataArea.x;
+		double xCoord = dist / compositeFactor + panX;
+		xCoord *= RAD_TO_DEG;
+		int div = dist * (lastColumn - firstColumn + 1);
+		int den = dataArea.width;
+		
+		return xCoord;
+	}
+	
+	protected double getYDistance(Point p) {
+		int dist = p.y - dataArea.y;
+		double yCoord = latMax - dist / compositeFactor + panY;
+		yCoord *= RAD_TO_DEG;
+		//int div = dist * (lastColumn - firstColumn + 1);
+		//int den = dataArea.width;
+		
+		return yCoord;
 	}
 	
 	private void zoom(boolean rightClick, boolean leftClick, boolean popZoomIn, boolean reset, boolean zoomOut, Rectangle bounds) {
@@ -1507,8 +1526,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			cellPositionMap.put(indexToCellId.getInt(i), i);*/
 
 			
-			Set<Double> latCoords = new TreeSet<Double>();
-			Set<Double> lonCoords = new TreeSet<Double>();
+			Map<Double, Integer> latMap = new TreeMap<Double, Integer>();
+			Map<Double, Integer> lonMap = new TreeMap<Double, Integer>();
 			
 			int[] vertexShape = vertexList.getShape();
 
@@ -1536,8 +1555,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					if (lonVert.getDouble(vId) > lonMax)
 						lonMax = lonVert.getDouble(vId);
 
-					latCoords.add(latVert.getDouble(vId) * -1);
-					lonCoords.add(lonVert.getDouble(vId));
+					latMap.put(latVert.getDouble(vId) * -1, vId);
+					lonMap.put(lonVert.getDouble(vId), vId);
 					//System.out.println("Cell " + i + " vertex " + j + " id " + vId + " x " + xCord.getDouble(vId) + " y " + yCord.getDouble(vId) + " z " + zCord.getDouble(vId));
 				}
 				cellsToRender[i].lat = latCell.getDouble(i);
@@ -1741,6 +1760,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		hasNoLayer = (dataFrame.getAxes().getZAxis() == null);
 		format = NumberFormat.getInstance();
 		format.setMaximumFractionDigits(4);
+		
+		coordFormat = NumberFormat.getInstance();
+		coordFormat.setMaximumFractionDigits(2);
 
 		AreaFinder finder = new AreaFinder();
 		this.addMouseListener(finder);
@@ -2432,17 +2454,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			}
 		});
 		menu.add(showGridLines);
-		
-		menu.addSeparator();
-		item = new JCheckBoxMenuItem(new AbstractAction("Show Lat / Lon") {
-			private static final long serialVersionUID = 2699330329257731588L;
-
-			public void actionPerformed(ActionEvent e) {
-				JCheckBoxMenuItem latlon = (JCheckBoxMenuItem) e.getSource();
-				showLatLon = latlon.isSelected();
-			}
-		});
-		menu.add(item);
 		
 		bar.add(menu);
 
@@ -3588,8 +3599,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		p.z = point[1];
 		p.x = point[2];
 		p.y = point[3];
-		if (showLatLon) return formatPointLatLon(p);
-		return formatPoint(p);
+		return formatPointLatLon(p);
 	}
 	
 	public String formatPoint(Point4i point) {
@@ -3616,29 +3626,20 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	private String formatPointLatLon(Point4i point) {
-		Point2D llul = getLatLonForAxisPoint(new Point(point.x, point.y));
-		StringBuilder builder = new StringBuilder("(");
-		double[] vals = new double[4];
-//		vals[0] = point.getW();
-//		vals[1] = point.getZ();
-		vals[2] = llul.getY();
-		vals[3] = llul.getX();
-		vals[0] = point.w;
-		vals[1] = point.z;
-		boolean addComma = false;
-		for (int i = 0; i < 4; i++) {
-			double val = vals[i];
-			if (val != NO_VAL) {
-				if (addComma) builder.append(", ");
-
-				if (i == 2) builder.append(Utilities.formatLat(val, 4));
-				else if (i == 3) builder.append(Utilities.formatLon(val, 4));
-				else builder.append(format.format(val + 1)); //NOTE: to make the notation of timesteps and layers 1-based
-				addComma = true;
-			}
+		double lonCoord = ((point.x / compositeFactor) + panX) * RAD_TO_DEG + columnOrigin;
+		double latCoord = (dataHeight - ((point.y / compositeFactor)  + panY )) * RAD_TO_DEG + rowOrigin;
+		
+		String lonSuffix = "E";
+		String latSuffix = "N";
+		if (lonCoord < 0) {
+			lonCoord *= -1;
+			lonSuffix = "W";
 		}
-		builder.append(")");
-		return builder.toString();
+		if (latCoord < 0) {
+			latCoord *= -1;
+			latSuffix = "S";
+		}
+		return "(" + coordFormat.format(lonCoord) + lonSuffix + ", " + coordFormat.format(latCoord) + latSuffix + ")";
 	}
 	
 	protected Point2D getLatLonForAxisPoint(Point axisPoint) {
@@ -3686,7 +3687,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			if (isInDataArea(e)) {
 				Point p = new Point(getCol(e.getPoint()), getRow(e.getPoint()));
 				Rectangle rect = new Rectangle(p.x, p.y, 0, 0);
-				if (!showLatLon) eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, createAreaString(rect), false));
+				eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, createAreaString(rect), false));
 			} else {
 				eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(new Rectangle(0, 0, 0, 0), true));
 			}
@@ -3720,8 +3721,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		private String createAreaString(Rectangle rect) {
 			Point4i[] points = rectToPoints(rect);
-			if (showLatLon) return createLonLatAreaString(points);
-			else return createAxisCoordAreaString(points);
+			return createLonLatAreaString(points);
 		}
 		
 		private Point4i[] rectToPoints(Rectangle rect) {
@@ -3739,13 +3739,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		// rect is in axis coords
 		private String createAxisCoordAreaString(Point4i[] points) {
-			StringBuilder builder = new StringBuilder();
-			builder.append(formatPoint(points[0]));
-			if (points[1] != null) {
-				builder.append(" - ");
-				builder.append(formatPoint(points[1]));
-			}
-			return builder.toString();
+			return createLonLatAreaString(points);
 		}
 		
 		// rect is in axis coordinates
