@@ -63,8 +63,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -222,6 +222,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private NumberFormat coordFormat;
 	private final boolean invertRows; // HACK: Invert rows of AURAMS / GEM / CF Convention data?
 
+	/** Cell id are stored as colors in an image to facilitate a quick mapping of
+	 *  pixels to cell id.  Retrieved values must be adjusted by COLOR_BASE to get cell id
+	 **/
+	private static final int COLOR_BASE = 16777216;
+
 	//Screen width / height in pixels
 	private int screenWidth;
 	private int screenHeight;
@@ -263,6 +268,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	//private float[][][] layerDataLog = null;
 	private float[][][] statisticsData = null;
 	//private float[][][] statisticsDataLog = null;
+	
+	private BufferedImage cellIdMap = null;
 
 	// For clipped/projected/clipped map lines:
 
@@ -1148,7 +1155,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	protected int getRow(Point p) {
-		int dist = p.y - dataArea.y;
+		int dist =  (p.y - dataArea.y);
 		return dist;
 		/*
 		int div = dist * (lastRow - firstRow + 1);
@@ -1404,6 +1411,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			latTransformed = new int[numVertices];
 			lonTransformed = new int[numVertices];
 			cellId = id;
+			cellIdInfoMap.put(id,  this);
 		}
 		
 		public double getValue() {
@@ -1457,7 +1465,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	Array cellVertices, latVert, lonVert, latCell, lonCell, indexToVertexId, indexToCellId;
 	private Map<Integer, Integer> vertexPositionMap;
-	private Map<Integer, Integer> cellPositionMap;
+	private Map<Integer, CellInfo> cellIdInfoMap;
 	private CellInfo[] cellsToRender = null;
 	private ArrayList<CellInfo> splitCells = null;
 	ArrayDouble renderVariable = null;
@@ -1514,7 +1522,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		vertexList = (ucar.ma2.ArrayInt.D2) reader.getValues(ds, null, var).getArray();
 		
 		vertexPositionMap = new HashMap<Integer, Integer>();
-		cellPositionMap = new HashMap<Integer, Integer>();
 			
 		int numVertices = indexToVertexId.getShape()[0];
 		for (int i = 0; i < numVertices; ++i)
@@ -1524,16 +1531,13 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		/*int numCells = foo;
 		for (int i = 0; i < numCells; ++i)
 			cellPositionMap.put(indexToCellId.getInt(i), i);*/
-
-			
-			Map<Double, Integer> latMap = new TreeMap<Double, Integer>();
-			Map<Double, Integer> lonMap = new TreeMap<Double, Integer>();
 			
 			int[] vertexShape = vertexList.getShape();
 
 			cellsToRender = new CellInfo[vertexShape[0]];
 			splitCells = new ArrayList<CellInfo>();
 			boolean splitHeight = false;
+			cellIdInfoMap = new HashMap<Integer, CellInfo>();
 			for (int i = 0; i < vertexShape[0]; ++i) { //for each cell
 				int vertices = cellVertices.getInt(i);
 				cellsToRender[i] = new CellInfo(i, vertices);
@@ -1555,8 +1559,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					if (lonVert.getDouble(vId) > lonMax)
 						lonMax = lonVert.getDouble(vId);
 
-					latMap.put(latVert.getDouble(vId) * -1, vId);
-					lonMap.put(lonVert.getDouble(vId), vId);
 					//System.out.println("Cell " + i + " vertex " + j + " id " + vId + " x " + xCord.getDouble(vId) + " y " + yCord.getDouble(vId) + " z " + zCord.getDouble(vId));
 				}
 				cellsToRender[i].lat = latCell.getDouble(i);
@@ -1668,6 +1670,23 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		domain[LATITUDE][MINIMUM] = gridBounds[Y][MINIMUM];
 		domain[LATITUDE][MAXIMUM] = gridBounds[Y][MAXIMUM];
 		
+		if (screenWidth > 0) {
+			cellIdMap = new BufferedImage(screenWidth + 1, screenHeight + 1, BufferedImage.TYPE_INT_RGB);
+			java.awt.Graphics2D g = cellIdMap.createGraphics();
+	        System.err.println("Creating cell id map size " + screenWidth + "x" + screenHeight);
+	        g.setColor(new Color(COLOR_BASE * -1));
+	        g.fillRect(0,  0,  screenWidth+1, screenHeight + 1);
+	        g.translate(xOffset * -1,  yOffset * -1);
+	        renderCells(g, 0, 0);
+	       /* File outputfile = new File("/tmp/data.bmp");
+	        try {
+				ImageIO.write(cellIdMap,  "bmp", outputfile);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
+		}
+        
 		System.out.println("Scaled cells in " + (System.currentTimeMillis() - start) + "ms");
 	}
 
@@ -1675,7 +1694,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		long renderStart = System.currentTimeMillis();
 		
-		gr.setClip(xOffset, yOffset, screenWidth, screenHeight);
+		if (xOffset != 0)
+			gr.setClip(xOffset, yOffset, screenWidth, screenHeight);
 		final int statisticsSelection = statisticsMenu.getSelectedIndex();
 		
 		final Boolean showGridLines = (Boolean)
@@ -1690,14 +1710,20 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		for (int i = 0; i < cells; ++i) { //for each cell
 			if (cellsToRender[i].colorIndex == -1)
 				continue;
-			if (statisticsSelection == 0)
+			/**
+			 * 0 xOffset means this is the image used to map coordinates to cell IDs, not the actual screen.
+			 * Store the cell ID as the image's color.
+			 */
+			if (xOffset == 0)
+				gr.setColor(new Color(cellsToRender[i].cellId));
+			else if (statisticsSelection == 0)
 				gr.setColor(legendColors[cellsToRender[i].colorIndex]);
 			else
 				gr.setColor(legendColors[indexOfObsValue(subsetLayerData[i], legendLevels)]);
 
 			if (SHOW_ZOOM_LOCATION && cellsToRender[i].cellClicked) {
 				gr.setColor(Color.BLACK);
-				System.err.println("Rendering clicked cell location " + cellsToRender[i].lon + ", " + cellsToRender[i].lat);
+				System.err.println("Rendering clicked cell location " + cellsToRender[i].lon + ", " + cellsToRender[i].lat + " id " + cellsToRender[i].cellId);
 			}
 			gr.fillPolygon(cellsToRender[i].lonTransformed, cellsToRender[i].latTransformed, cellsToRender[i].lonTransformed.length);
 			if (showCellBorder) {
@@ -3625,6 +3651,25 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		return builder.toString();
 	}
 	
+	
+	public static void main(String[] args) {
+		System.out.println("Hello there");
+		//ARGB String: Color 1 -16777194 color 2 -1677717 from 22 / 44
+		//BufferedImage imgMap = new java.awt.image.BufferedImage(10, 10, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+		//BufferedImage imgMap = new java.awt.image.BufferedImage(10, 10, java.awt.image.BufferedImage.TYPE_3BYTE_BGR);
+		BufferedImage imgMap = new java.awt.image.BufferedImage(10, 10, java.awt.image.BufferedImage.TYPE_INT_RGB);
+		Graphics g = imgMap.getGraphics();
+		g.setColor(new Color(22));
+		g.fillRect(0,  0,  2,  2);
+		g.setColor(new Color(44));
+		g.fillRect(2, 0, 2, 2);
+		g.setColor(new Color(199990));
+		g.fillRect(3, 0, 2, 2);
+		System.out.println("Color 1 " + (imgMap.getRGB(0,  0) + COLOR_BASE) + " color 3 " + (imgMap.getRGB(3, 0) + COLOR_BASE));
+		System.out.println("Color 1 " + imgMap.getRGB(0,  0) + " color 3 " + imgMap.getRGB(3, 0));
+
+	}
+	
 	private String formatPointLatLon(Point4i point) {
 		double lonCoord = ((point.x / compositeFactor) + panX) * RAD_TO_DEG + columnOrigin;
 		double latCoord = (dataHeight - ((point.y / compositeFactor)  + panY )) * RAD_TO_DEG + rowOrigin;
@@ -3639,7 +3684,20 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			latCoord *= -1;
 			latSuffix = "S";
 		}
-		return "(" + coordFormat.format(lonCoord) + lonSuffix + ", " + coordFormat.format(latCoord) + latSuffix + ")";
+		String ret = "(" + coordFormat.format(lonCoord) + lonSuffix + ", " + coordFormat.format(latCoord) + latSuffix + ")"; 
+		//ret += " xy " + point.x + "," + point.y;
+
+		try {
+			int hoveredId = cellIdMap.getRGB(point.x, point.y) + COLOR_BASE;
+			CellInfo cell = cellIdInfoMap.get(hoveredId);
+			if (cell != null) {
+				ret += " " + coordFormat.format(cell.getValue()) + " " + units;
+
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			ret += "ArrayIndexOutOfBoundsException";
+		}
+		return ret;
 	}
 	
 	protected Point2D getLatLonForAxisPoint(Point axisPoint) {
