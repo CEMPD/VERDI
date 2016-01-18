@@ -355,6 +355,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	private double xClickLocation = 0;
 	private double yClickLocation = 0;
+	private int currentClickedCell = 0;
+	private int previousClickedCell = 0;
 	private static final boolean SHOW_ZOOM_LOCATION = true;
 	
 	private ConfigDialog dialog = null;
@@ -1269,6 +1271,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		xClickLocation = bounds.x;
 		yClickLocation = bounds.y;
 		
+		Point p = new Point(bounds.x, bounds.y);
+		setCellClicked(getCellIdByCoord(getCol(p), getRow(p)));
+		
 		double xClickDistance = (bounds.x - xOffset) / compositeFactor + panX;
 		if (popZoom)
 			panX = xClickDistance - visibleDataWidth / 2;
@@ -1293,6 +1298,17 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		computeDerivedAttributes();
 		draw();
+	}
+	
+	private void setCellClicked(int cellId) {
+		previousClickedCell = currentClickedCell;
+		currentClickedCell = cellId;
+		CellInfo cell = cellIdInfoMap.get(previousClickedCell);
+		if (cell != null)
+			cell.cellClicked = false;
+		cell = cellIdInfoMap.get(currentClickedCell);
+		if (cell != null)
+			cell.cellClicked = true;
 	}
 
 	private void doStep(int steps) {
@@ -1436,17 +1452,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 		
 		private void transformCell(double factor, int xOffset, int yOffset) {
-			if (SHOW_ZOOM_LOCATION) {
-				cellClicked = false;
-				Path2D.Double p = new Path2D.Double();
-				int last = lonCoords.length - 1;
-				p.moveTo(lonTransformed[last], latTransformed[last]);
-				for (int j = 0; j < lonCoords.length; ++j)
-					p.lineTo(lonTransformed[j], latTransformed[j]);
-				if (p.contains(xClickLocation, yClickLocation))
-					cellClicked = true;
-			}
-
 			for (int i = 0; i < lonCoords.length; ++i) {
 				lonTransformed[i] = (int)Math.round((lonCoords[i] - lonMin - panX) * factor) + xOffset;
 				latTransformed[i] = (int)Math.round((latCoords[i] - latMin - panY) * factor) + yOffset;
@@ -1467,7 +1472,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private Map<Integer, Integer> vertexPositionMap;
 	private Map<Integer, CellInfo> cellIdInfoMap;
 	private CellInfo[] cellsToRender = null;
-	private ArrayList<CellInfo> splitCells = null;
+	private Map<Integer, CellInfo> splitCells = null;
+	
 	ArrayDouble renderVariable = null;
 	ucar.ma2.ArrayInt.D2 vertexList;
 	double latMin = Double.MAX_VALUE;
@@ -1535,7 +1541,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			int[] vertexShape = vertexList.getShape();
 
 			cellsToRender = new CellInfo[vertexShape[0]];
-			splitCells = new ArrayList<CellInfo>();
+			splitCells = new HashMap<Integer, CellInfo>();
 			boolean splitHeight = false;
 			cellIdInfoMap = new HashMap<Integer, CellInfo>();
 			for (int i = 0; i < vertexShape[0]; ++i) { //for each cell
@@ -1609,7 +1615,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						else if (cellHalf.lonCoords[j] > Math.PI)
 							cellHalf.lonCoords[j] = 0;
 					}
-					splitCells.add(cellHalf);
+					splitCells.put(i, cellHalf);
 					
 					//System.out.println("Split cell " + cell.cellId + " negative: " + negativeCell);
 					//System.out.println("longitudes " + Arrays.toString(cell.lonCoords));
@@ -1656,10 +1662,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			//cellsToRender[i].transformCell(factor, imageWidth, imageHeight, xOffset, yOffset);		
 			cellsToRender[i].transformCell(compositeFactor, xOrigin, yOrigin);		
 		}
-		for (int i = 0; i < splitCells.size(); ++i) {
-			//splitCells.get(i).transformCell(factor, imageWidth, imageHeight, xOffset, yOffset);
-			splitCells.get(i).transformCell(compositeFactor, xOrigin, yOrigin);
-		}
+		for (CellInfo cell : splitCells.values())
+			cell.transformCell(compositeFactor, xOrigin, yOrigin);
+		
 		gridBounds[X][MINIMUM] = westEdge + panX * RAD_TO_DEG;
 		gridBounds[X][MAXIMUM] = westEdge + (panX + visibleDataWidth) * RAD_TO_DEG;
 		gridBounds[Y][MINIMUM] = southEdge + (dataHeight - panY - visibleDataHeight) * RAD_TO_DEG;
@@ -1708,50 +1713,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
         */
 
 		for (int i = 0; i < cells; ++i) { //for each cell
-			if (cellsToRender[i].colorIndex == -1)
-				continue;
-			/**
-			 * 0 xOffset means this is the image used to map coordinates to cell IDs, not the actual screen.
-			 * Store the cell ID as the image's color.
-			 */
-			if (xOffset == 0)
-				gr.setColor(new Color(cellsToRender[i].cellId));
-			else if (statisticsSelection == 0)
-				gr.setColor(legendColors[cellsToRender[i].colorIndex]);
-			else
-				gr.setColor(legendColors[indexOfObsValue(subsetLayerData[i], legendLevels)]);
-
-			if (SHOW_ZOOM_LOCATION && cellsToRender[i].cellClicked) {
-				gr.setColor(Color.BLACK);
-				System.err.println("Rendering clicked cell location " + cellsToRender[i].lon + ", " + cellsToRender[i].lat + " id " + cellsToRender[i].cellId);
-			}
-			gr.fillPolygon(cellsToRender[i].lonTransformed, cellsToRender[i].latTransformed, cellsToRender[i].lonTransformed.length);
-			if (showCellBorder) {
-				gr.setColor(Color.BLACK);
-				int length = cellsToRender[i].lonTransformed.length - 1;
-				for (int j = 0; j < length; ++j) {
-					gr.drawLine(cellsToRender[i].lonTransformed[j], cellsToRender[i].latTransformed[j],
-							cellsToRender[i].lonTransformed[j + 1], cellsToRender[i].latTransformed[j + 1]);
-				}
-				gr.drawLine(cellsToRender[i].lonTransformed[length],  cellsToRender[i].latTransformed[length], 
-						cellsToRender[i].lonTransformed[0], cellsToRender[i].latTransformed[0]);
-			}
+			renderCell(gr, xOffset, yOffset, cellsToRender[i], statisticsSelection, showGridLines, showCellBorder, i);
 		}
-		for (int i = 0; i < splitCells.size(); ++i) {
-			if (splitCells.get(i).colorIndex == -1)
-				continue;
-			gr.setColor(legendColors[splitCells.get(i).colorIndex]);
-			gr.fillPolygon(splitCells.get(i).lonTransformed, splitCells.get(i).latTransformed, splitCells.get(i).lonTransformed.length);
-			if (renderBorder) {
-				gr.setColor(Color.BLACK);
-				int length = cellsToRender[i].lonTransformed.length - 1;
-				for (int j = 0; j < length; ++j) {
-					gr.drawLine(cellsToRender[i].lonTransformed[j], cellsToRender[i].latTransformed[j],
-							cellsToRender[i].lonTransformed[j + 1], cellsToRender[i].latTransformed[j + 1]);
-				}
-				gr.drawLine(cellsToRender[i].lonTransformed[length],  cellsToRender[i].latTransformed[length], 
-						cellsToRender[i].lonTransformed[0], cellsToRender[i].latTransformed[0]);
-			}
+		for (Map.Entry<Integer, CellInfo> cell : splitCells.entrySet()) {
+			renderCell(gr, xOffset, yOffset, cell.getValue(), statisticsSelection, showGridLines, showCellBorder, cell.getKey());
 		}
 		
 		gr.setClip(null);
@@ -1772,6 +1737,37 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		*/
 		System.out.println("Image drawn to screen " + new Date());
 		
+	}
+	
+	private void renderCell(Graphics gr, int xOffset, int yOffset, CellInfo cell, int statisticsSelection, boolean showGridLines, boolean showCellBorder, int index) {
+		if (cell.colorIndex == -1)
+			return;
+		/**
+		 * 0 xOffset means this is the image used to map coordinates to cell IDs, not the actual screen.
+		 * Store the cell ID as the image's color.
+		 */
+		if (xOffset == 0)
+			gr.setColor(new Color(cell.cellId));
+		else if (SHOW_ZOOM_LOCATION && cell.cellClicked) {
+			gr.setColor(Color.BLACK);
+			System.err.println("Rendering clicked cell location " + cell.lon + ", " + cell.lat + " id " + cell.cellId);
+		}
+		else if (statisticsSelection == 0)
+			gr.setColor(legendColors[cell.colorIndex]);
+		else
+			gr.setColor(legendColors[indexOfObsValue(subsetLayerData[index], legendLevels)]);
+
+		gr.fillPolygon(cell.lonTransformed, cell.latTransformed, cell.lonTransformed.length);
+		if (showCellBorder) {
+			gr.setColor(Color.BLACK);
+			int length = cell.lonTransformed.length - 1;
+			for (int j = 0; j < length; ++j) {
+				gr.drawLine(cell.lonTransformed[j], cell.latTransformed[j],
+						cell.lonTransformed[j + 1], cell.latTransformed[j + 1]);
+			}
+			gr.drawLine(cell.lonTransformed[length],  cell.latTransformed[length], 
+					cell.lonTransformed[0], cell.latTransformed[0]);
+		}
 	}
 	
 	// Construct but do not draw yet.
@@ -2572,6 +2568,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		lastColumn = columns - 1;
 		visibleDataWidth = dataWidth;
 		visibleDataHeight = dataHeight;
+		setCellClicked(0);
 		draw();
 		computeDerivedAttributes();
 		copySubsetLayerData(this.log);
@@ -3670,6 +3667,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	}
 	
+	private int getCellIdByCoord(int x, int y) {
+		return cellIdMap.getRGB(x, y) + COLOR_BASE;
+	}
+	
 	private String formatPointLatLon(Point4i point) {
 		double lonCoord = ((point.x / compositeFactor) + panX) * RAD_TO_DEG + columnOrigin;
 		double latCoord = (dataHeight - ((point.y / compositeFactor)  + panY )) * RAD_TO_DEG + rowOrigin;
@@ -3688,7 +3689,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		//ret += " xy " + point.x + "," + point.y;
 
 		try {
-			int hoveredId = cellIdMap.getRGB(point.x, point.y) + COLOR_BASE;
+			int hoveredId = getCellIdByCoord(point.x, point.y);
 			CellInfo cell = cellIdInfoMap.get(hoveredId);
 			if (cell != null) {
 				ret += " " + coordFormat.format(cell.getValue()) + " " + units;
