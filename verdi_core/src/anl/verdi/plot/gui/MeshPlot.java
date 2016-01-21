@@ -210,6 +210,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	protected final CoordAxis columnAxis;
 	protected final CoordAxis rowAxis;
 	protected final DataFrameAxis timeAxis;
+	protected final DataFrameAxis layerAxis;
 	protected final AxisLabelCreator rowLabels;
 	protected final AxisLabelCreator columnLabels;
 	protected final int rowOrigin;
@@ -286,6 +287,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	private final String variable; // "PM25".
 	protected String units; // "ug/m3".
+	private String unitString; // "ug/m3".
 
 	private boolean withHucs = false; // Draw watersheds on map?
 	private boolean withRivers = false; // Draw rivers on map?
@@ -1435,8 +1437,14 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			cellIdInfoMap.put(id,  this);
 		}
 		
-		public double getElevation() {
-			return 0;
+		public String getElevation() {
+			if (layerAxis != null) {
+				if (layerAxis.getName().equals(VAR_ELEVATION))
+					return " " + coordFormat.format(((ArrayDouble.D2)elevation).get(cellId, MeshPlot.this.layer + 1)) + " m";
+				if (layerAxis.getName().equals(VAR_DEPTH) && depth != null)
+					return " " + coordFormat.format(((ArrayDouble.D3)depth).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer)) + " m";
+			}
+			return "";
 		}
 		
 		public double getValue() {
@@ -1477,7 +1485,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 
 	
-	Array cellVertices, latVert, lonVert, latCell, lonCell, indexToVertexId, indexToCellId;
+	Array cellVertices, latVert, lonVert, latCell, lonCell, indexToVertexId, indexToCellId, elevation, depth;
 	private Map<Integer, Integer> vertexPositionMap;
 	private Map<Integer, CellInfo> cellIdInfoMap;
 	private CellInfo[] cellsToRender = null;
@@ -1517,6 +1525,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 										//if cell width / screen width is above this percentage;
 	Axes<CoordAxis> mpasAxes;
 	
+	private static final String VAR_ELEVATION = "nVertLevels";
+	private static final String VAR_DEPTH = "nSoilLevels";
+	
 	private void loadCellStructure() throws IOException {
 		Dataset ds = dataFrame.getDataset().get(0);
 		DataReader reader = app.getDataManager().getDataReader(ds);
@@ -1532,6 +1543,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		lonCell = reader.getValues(ds, null, var).getArray();
 		var = ds.getVariable("indexToVertexID");
 		indexToVertexId = reader.getValues(ds, null, var).getArray();
+		var = ds.getVariable("zgrid");
+		elevation = reader.getValues(ds, null, var).getArray();
+		var = ds.getVariable("zs");
+		if (var != null)
+			depth = reader.getValues(ds, null, var).getArray();
 		//var = ds.getVariable("indexToCellID");
 		//indexToCellId = reader.getValues(ds, null, var).getArray();
 		var = ds.getVariable("verticesOnCell");
@@ -1806,8 +1822,14 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		Logger.debug("dataFrameVariable name = " + variable);
 		units = dataFrameVariable.getUnit().toString();
 		Logger.debug("units of dataFrameVariable = " + units);
-		if ( units==null || units.trim().equals(""))
+		if ( units==null || units.trim().equals("")) {
 			units = "none";
+			unitString = "";
+		}
+		else if (units.equals("-"))
+			unitString = "";
+		else
+			unitString = " " + units;
 		Logger.debug("now units = " + units);
 		
 		assert dataFrame.getAxes() != null;
@@ -1841,7 +1863,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			lastTimestep = firstTimestep + timesteps - 1;
 		}
 
-		final DataFrameAxis layerAxis = axes.getZAxis();
+		layerAxis = axes.getZAxis();
 
 		if (layerAxis == null) {
 			layers = 1;
@@ -3701,7 +3723,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			int hoveredId = getCellIdByCoord(point.x, point.y);
 			CellInfo cell = cellIdInfoMap.get(hoveredId);
 			if (cell != null) {
-				ret += " " + coordFormat.format(cell.getElevation()) + " m " + coordFormat.format(cell.getValue()) + " " + units;
+				ret += cell.getElevation() + " " + coordFormat.format(cell.getValue()) + unitString;
 
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
