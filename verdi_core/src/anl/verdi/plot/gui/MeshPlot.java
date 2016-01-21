@@ -494,13 +494,15 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					final int height = Math.round(canvasSize * rowScale);
 					
 					if (previousCanvasSize != canvasSize || zoomFactor != previousZoomFactor || previousClippedDataRatio != clippedDataRatio
-							|| timestep != previousTimestep || layer != previousLayer || panX != previousPanX || panY != prevousPanY) {
+							|| timestep != previousTimestep || layer != previousLayer || panX != previousPanX || panY != previousPanY) {
 						transformCells(/*gr,*/ canvasSize, xOffset, yOffset);						
 						previousCanvasSize = canvasSize;
 						previousZoomFactor = zoomFactor;
 						previousClippedDataRatio = clippedDataRatio;
 						previousTimestep = timestep;
 						previousLayer = layer;
+						previousPanX = panX;
+						previousPanY = panY;
 					}
 					
 
@@ -600,6 +602,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						
 						if (get_draw_once_requests() > 0) {
 							draw_once_requests = 0;
+							//System.err.println("Resetting 3 draw once requests");
 							if ( get_draw_once_requests() < 0) 
 								restoreCursor();
 							continue;
@@ -661,7 +664,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 						if (get_draw_once_requests() > 0) {
 							draw_once_requests = 0;
-							if ( get_draw_once_requests() < 0) 
+							//System.err.println("Resetting 4 draw once requests " + getWidth() + "x" + getHeight());
+							if ( get_draw_once_requests() < 0)
 								restoreCursor();
 							continue;
 						}
@@ -697,6 +701,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					} // End of synchronized block.
 					if (drawMode == DRAW_ONCE ) {
 						decrease_draw_once_requests();
+						draw_once_requests = -1;
 						if (get_draw_once_requests() < 0) {
 							drawMode = DRAW_NONE;
 							restoreCursor();
@@ -1209,7 +1214,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		boolean popZoom = true;
 		
 		previousPanX = panX;
-		prevousPanY = panY;
+		previousPanY = panY;
 		
 		if (popZoomIn) { // click to zoom in or popup menu zoom in
 			if (zoomFactor < MAX_ZOOM) {
@@ -1250,7 +1255,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			previousClippedDataRatio = clippedDataRatio;
 			clippedDataRatio = bounds.width / (double)bounds.height;
 			previousPanX = panX;
-			prevousPanY = panY;
+			previousPanY = panY;
 			panX = (bounds.x - xOffset) / compositeFactor + panX;
 			panY = (bounds.y - yOffset) / compositeFactor + panY;
 			previousZoomFactor = zoomFactor;
@@ -1430,6 +1435,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			cellIdInfoMap.put(id,  this);
 		}
 		
+		public double getElevation() {
+			return 0;
+		}
+		
 		public double getValue() {
 			if (timeAxis == null)
 				return ((ArrayDouble.D2)renderVariable).get(cellId, MeshPlot.this.layer);
@@ -1474,6 +1483,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private CellInfo[] cellsToRender = null;
 	private Map<Integer, CellInfo> splitCells = null;
 	
+	ArrayDouble eleveation = null;
 	ArrayDouble renderVariable = null;
 	ucar.ma2.ArrayInt.D2 vertexList;
 	double latMin = Double.MAX_VALUE;
@@ -1484,7 +1494,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	double panX = 0;
 	double panY = 0;
 	double previousPanX = 0;
-	double prevousPanY = 0;
+	double previousPanY = 0;
 	final double MAX_ZOOM = Double.MAX_VALUE;
 	final double MIN_ZOOM = 1.0;
 	double zoomFactor = 1;
@@ -1678,7 +1688,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		if (screenWidth > 0) {
 			cellIdMap = new BufferedImage(screenWidth + 1, screenHeight + 1, BufferedImage.TYPE_INT_RGB);
 			java.awt.Graphics2D g = cellIdMap.createGraphics();
-	        System.err.println("Creating cell id map size " + screenWidth + "x" + screenHeight);
 	        g.setColor(new Color(COLOR_BASE * -1));
 	        g.fillRect(0,  0,  screenWidth+1, screenHeight + 1);
 	        g.translate(xOffset * -1,  yOffset * -1);
@@ -1722,7 +1731,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		gr.setClip(null);
 		//gr.translate(0,  0);
 		long renderTime = System.currentTimeMillis() - renderStart;
-		System.out.println("Finished drawing image " + new Date() + " image in " + renderTime + "ms  window " + screenWidth + "x" + screenHeight);
+		//TODO - consider only doing this once, scaling mouseover coordinates on the fly
+		System.out.println("Finished drawing image " + new Date() + " image in " + renderTime + "ms");
 		//System.out.println("Var min " + varMin + " max " + varMax);
 		/*
 		java.io.File outputFile = new java.io.File("/tmp/mpasout.png");
@@ -1735,7 +1745,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		gr.drawImage(img.getScaledInstance(windowWidth, -1, Image.SCALE_FAST), 0, 0, null);
 		*/
-		System.out.println("Image drawn to screen " + new Date());
 		
 	}
 	
@@ -2559,7 +2568,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		zoomFactor = 1;
 		compositeFactor = screenWidth / dataWidth;
 		previousPanX = panX;
-		prevousPanY = panY;
+		previousPanY = panY;
 		panX = 0;
 		panY = 0;
 		firstRow = 0;
@@ -3222,7 +3231,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				lastColumn = lonHigh - columnOrigin;
 				
 				previousPanX = panX;
-				prevousPanY = panY;
+				previousPanY = panY;
 				
 				panX = firstColumn / RAD_TO_DEG;
 				panY = dataHeight - lastRow / RAD_TO_DEG;
@@ -3692,7 +3701,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			int hoveredId = getCellIdByCoord(point.x, point.y);
 			CellInfo cell = cellIdInfoMap.get(hoveredId);
 			if (cell != null) {
-				ret += " " + coordFormat.format(cell.getValue()) + " " + units;
+				ret += " " + coordFormat.format(cell.getElevation()) + " m " + coordFormat.format(cell.getValue()) + " " + units;
 
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -4112,13 +4121,16 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	private void increase_draw_once_requests() {
 		draw_once_requests ++;
+		//System.err.println("Increased requests to " + draw_once_requests + " from " + Thread.currentThread().getStackTrace()[3]);
 	}
 	
 	private void decrease_draw_once_requests() {
 		draw_once_requests --;
+		//System.err.println("Decreased requests to " + draw_once_requests);
 	}
 	
 	private int get_draw_once_requests() {
+		//System.err.println("Got " + draw_once_requests + " requests from " + Thread.currentThread().getStackTrace()[3]);
 		return draw_once_requests;
 	}
 
