@@ -221,6 +221,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private final double cellHeight; // 12000.0 meters.
 	private NumberFormat format;
 	private NumberFormat coordFormat;
+	private NumberFormat valueFormat;
 	private final boolean invertRows; // HACK: Invert rows of AURAMS / GEM / CF Convention data?
 
 	/** Cell id are stored as colors in an image to facilitate a quick mapping of
@@ -1438,11 +1439,22 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 		
 		public String getElevation() {
+			//TODO - add forumula to calculate layer elevation instead of level
+			String e = null;
 			if (layerAxis != null) {
-				if (layerAxis.getName().equals(VAR_ELEVATION))
-					return " " + coordFormat.format(((ArrayDouble.D2)elevation).get(cellId, MeshPlot.this.layer + 1)) + " m";
-				if (layerAxis.getName().equals(VAR_DEPTH) && depth != null)
-					return " " + coordFormat.format(((ArrayDouble.D3)depth).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer)) + " m";
+				if (layerAxis.getName().equals(VAR_ELEVATION)) {
+					double h1 = ((ArrayDouble.D2)elevation).get(cellId, MeshPlot.this.layer);
+					double h2 = ((ArrayDouble.D2)elevation).get(cellId, MeshPlot.this.layer + 1);
+					e = Long.toString(Math.round((h2 - h1) / 2 + h1));
+				}
+				if (layerAxis.getName().equals(VAR_DEPTH) && depth != null) {
+					double h1 = Math.round(((ArrayDouble.D3)depth).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer));
+					double h2 = Math.round(((ArrayDouble.D3)depth).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer + 1));
+					e = Long.toString(Math.round((h2 - h1) / 2 + h1));
+
+				}
+				if (e != null)
+					return ", " + e + "m";
 			}
 			return "";
 		}
@@ -1450,10 +1462,13 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		public double getValue() {
 			if (timeAxis == null)
 				return ((ArrayDouble.D2)renderVariable).get(cellId, MeshPlot.this.layer);
-			else if (renderVariable instanceof ArrayDouble.D2)
+			else if (renderVariable instanceof ArrayDouble.D2) {
 				return ((ArrayDouble.D2)renderVariable).get(MeshPlot.this.timestep, cellId);
-			else
-				return ((ArrayDouble.D3)renderVariable).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer);		}
+			}
+			else {
+				return ((ArrayDouble.D3)renderVariable).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer);
+			}
+		}
 		
 		public double getValue(int time, int level) {
 			if (time < 0)
@@ -1809,7 +1824,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		format.setMaximumFractionDigits(4);
 		
 		coordFormat = NumberFormat.getInstance();
-		coordFormat.setMaximumFractionDigits(2);
+		coordFormat.setMaximumFractionDigits(5);
+
+		valueFormat = NumberFormat.getInstance();
+		valueFormat.setGroupingUsed(false);
+		valueFormat.setMaximumFractionDigits(3);
 
 		AreaFinder finder = new AreaFinder();
 		this.addMouseListener(finder);
@@ -3706,7 +3725,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		double lonCoord = ((point.x / compositeFactor) + panX) * RAD_TO_DEG + columnOrigin;
 		double latCoord = (dataHeight - ((point.y / compositeFactor)  + panY )) * RAD_TO_DEG + rowOrigin;
 		
-		String lonSuffix = "E";
+		/*String lonSuffix = "E";
 		String latSuffix = "N";
 		if (lonCoord < 0) {
 			lonCoord *= -1;
@@ -3715,15 +3734,15 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		if (latCoord < 0) {
 			latCoord *= -1;
 			latSuffix = "S";
-		}
-		String ret = "(" + coordFormat.format(lonCoord) + lonSuffix + ", " + coordFormat.format(latCoord) + latSuffix + ")"; 
+		}*/
+		String ret = "(" + coordFormat.format(lonCoord) + ", " + coordFormat.format(latCoord); 
 		//ret += " xy " + point.x + "," + point.y;
 
 		try {
 			int hoveredId = getCellIdByCoord(point.x, point.y);
 			CellInfo cell = cellIdInfoMap.get(hoveredId);
 			if (cell != null) {
-				ret += cell.getElevation() + " " + coordFormat.format(cell.getValue()) + unitString;
+				ret += cell.getElevation() + ") " + variable + " " + valueFormat.format(cell.getValue()) + unitString;
 
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
