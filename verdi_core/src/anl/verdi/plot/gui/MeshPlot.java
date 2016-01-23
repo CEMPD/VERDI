@@ -1504,7 +1504,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private Map<Integer, Integer> vertexPositionMap;
 	private Map<Integer, CellInfo> cellIdInfoMap;
 	private CellInfo[] cellsToRender = null;
-	private Map<Integer, CellInfo> splitCells = null;
+	private Map<CellInfo, Integer> splitCells = null;
 	
 	ArrayDouble eleveation = null;
 	ArrayDouble renderVariable = null;
@@ -1582,7 +1582,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			int[] vertexShape = vertexList.getShape();
 
 			cellsToRender = new CellInfo[vertexShape[0]];
-			splitCells = new HashMap<Integer, CellInfo>();
+			splitCells = new HashMap<CellInfo, Integer>();
 			boolean splitHeight = false;
 			cellIdInfoMap = new HashMap<Integer, CellInfo>();
 			for (int i = 0; i < vertexShape[0]; ++i) { //for each cell
@@ -1656,7 +1656,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						else if (cellHalf.lonCoords[j] > Math.PI)
 							cellHalf.lonCoords[j] = 0;
 					}
-					splitCells.put(i, cellHalf);
+					splitCells.put(cellHalf, i);
 					
 					//System.out.println("Split cell " + cell.cellId + " negative: " + negativeCell);
 					//System.out.println("longitudes " + Arrays.toString(cell.lonCoords));
@@ -1703,7 +1703,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			//cellsToRender[i].transformCell(factor, imageWidth, imageHeight, xOffset, yOffset);		
 			cellsToRender[i].transformCell(compositeFactor, xOrigin, yOrigin);		
 		}
-		for (CellInfo cell : splitCells.values())
+		for (CellInfo cell : splitCells.keySet())
 			cell.transformCell(compositeFactor, xOrigin, yOrigin);
 		
 		gridBounds[X][MINIMUM] = westEdge + panX * RAD_TO_DEG;
@@ -1755,8 +1755,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		for (int i = 0; i < cells; ++i) { //for each cell
 			renderCell(gr, xOffset, yOffset, cellsToRender[i], statisticsSelection, showGridLines, showCellBorder, i);
 		}
-		for (Map.Entry<Integer, CellInfo> cell : splitCells.entrySet()) {
-			renderCell(gr, xOffset, yOffset, cell.getValue(), statisticsSelection, showGridLines, showCellBorder, cell.getKey());
+		for (Map.Entry<CellInfo, Integer> cell : splitCells.entrySet()) {
+			renderCell(gr, xOffset, yOffset, cell.getKey(), statisticsSelection, showGridLines, showCellBorder, cell.getValue());
 		}
 		
 		gr.setClip(null);
@@ -1782,6 +1782,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private void renderCell(Graphics gr, int xOffset, int yOffset, CellInfo cell, int statisticsSelection, boolean showGridLines, boolean showCellBorder, int index) {
 		if (cell.colorIndex == -1)
 			return;
+
 		/**
 		 * 0 xOffset means this is the image used to map coordinates to cell IDs, not the actual screen.
 		 * Store the cell ID as the image's color.
