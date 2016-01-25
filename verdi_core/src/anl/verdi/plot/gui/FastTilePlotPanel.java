@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.FontMetrics;
 
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
@@ -32,8 +33,9 @@ public class FastTilePlotPanel extends JPanel {
 
 	private JPanel contentPane;	// overall pane
 	// pull declaration of all other components from constructor to here as class-level data members
-	private GridBagLayout gbl_contentPane;
+	private GridBagLayout gbl_contentPane;	// overall layout manager
 	private GridBagConstraints c;
+	private BoxLayout titlesLayout;
 	private JMenuBar bar;				// bar at top of contentPane; plot-specific menu items
 	private JToolBar toolBar;			// toolBar just below bar in contentPane; widgets for the
 								// user to define what to plot (time step, etc.)
@@ -112,6 +114,8 @@ public class FastTilePlotPanel extends JPanel {
 
 		titlesPanel = new JPanel();	// contains title, subtitle1, subtitle2
 		// start just below toolBar, 8 cell height, white background
+		titlesLayout = new BoxLayout(titlesPanel,BoxLayout.Y_AXIS);		// declare BoxLayout for this JPanel
+		titlesPanel.setLayout(titlesLayout);
 		titlesPanel.setBackground(Color.WHITE);
 		c.fill = GridBagConstraints.BOTH;	// adjust this object both horizontally and vertically
 		c.gridx = BORDER;
@@ -194,6 +198,9 @@ public class FastTilePlotPanel extends JPanel {
 		c.weighty = 1.0;
 		gbl_contentPane.setConstraints(topMapPanel, c);
 		contentPane.add(topMapPanel);
+		System.out.println("all done with constructing contentPane");
+		System.out.println("contentPane = " + contentPane.toString());
+		System.out.println("titlesPanel = " + titlesPanel.toString());
 	}
 	
 	/**
@@ -221,6 +228,18 @@ public class FastTilePlotPanel extends JPanel {
 	{
 		return toolBar;
 	}
+	
+	public JPanel getTitlesPanel()
+	{
+		return titlesPanel;
+	}
+	
+	public Graphics getTitlesPanelGraphics()
+	{
+		System.out.println("in getTitlesPanelGraphics()");
+		System.out.println("returning: " + titlesPanel.getGraphics());
+		return titlesPanel.getGraphics();
+	}
 
 	/**
 	 * Return the JMapPane container for the tile chart and the shapefiles 
@@ -242,43 +261,51 @@ public class FastTilePlotPanel extends JPanel {
 	/** 
 	 * Set information for the titlesPanel (title, subtitle1, subtitle2; all optional)
 	 * NOTE: t* for title, s1* for subtitle 1, s2* for subtitle 2
+	 * Called by gov.epa.emvl.TilePlot
 	 */
 	public void setTitlesPanel(Font tFont, Color tColor, String tString,
 			Font s1Font, Color s1Color, String s1String,
 			Font s2Font, Color s2Color, String s2String)
 	{
-		Graphics g = titlesPanel.getGraphics();
+		System.out.println("in setTitlesPanel, ready to get graphics for titlesPanel");
+		Graphics2D g2 = // new Graphics();	// want to have g reference titlesPanel.getGraphics() reference to draw onto that Graphics object
+		(Graphics2D) getTitlesPanelGraphics();			// titlesPanel.getGraphics();
+		System.out.println("g = " + g2.toString());
 		int yTitle = 0;
 		int ys1String = 0;
 		int ys2String = 0;
 		int width = titlesPanel.getWidth();
 		
+		System.out.println("tFont = " + tFont + ", tColor = " + tColor + "tString = " + tString);
+		System.out.println("width = " + width);
+		
 		if(tString != null && !tString.trim().isEmpty())	// draw title if not null or empty
 		{
-			g.setFont(tFont);
-			g.setColor(tColor);
-			FontMetrics tMetrx = g.getFontMetrics(tFont);
-			int xTitle = width/2 - tMetrx.stringWidth(tString)/2;
+			System.out.println("tString not empty, proceeding, g = " + g2.toString());
+			g2.setFont(tFont);
+			g2.setColor(tColor);
+			FontMetrics tMetrx = g2.getFontMetrics(tFont);
+			int xTitle = width/2 - tMetrx.stringWidth(tString)/2;		// here attempt to center the string
 			yTitle = VMIN + tMetrx.getHeight()/2; // tFont.getSize()/2;	// change from code in TilePlot.java
-			g.drawString(tString, xTitle, yTitle);
+			g2.drawString(tString, xTitle, yTitle);
 		}
 		if(s1String != null && !s1String.trim().isEmpty())
 		{
-			g.setFont(s1Font);
-			g.setColor(s1Color);
-			FontMetrics s1Metrx = g.getFontMetrics(s1Font);
-			int xs1String = width/2 - s1Metrx.stringWidth(s1String)/2;
+			g2.setFont(s1Font);
+			g2.setColor(s1Color);
+			FontMetrics s1Metrx = g2.getFontMetrics(s1Font);
+			int xs1String = width/2 - s1Metrx.stringWidth(s1String)/2;	// here attempt to center the string
 			ys1String = VMIN + yTitle + s1Metrx.getHeight()/2;
-			g.drawString(s1String, xs1String, ys1String);
+			g2.drawString(s1String, xs1String, ys1String);
 		}
 		if(s2String != null && !s2String.trim().isEmpty())
 		{
-			g.setFont(s2Font);
-			g.setColor(s2Color);
-			FontMetrics s2Metrx = g.getFontMetrics(s2Font);
-			int xs2String = width/2 - s2Metrx.stringWidth(s2String)/2;
+			g2.setFont(s2Font);
+			g2.setColor(s2Color);
+			FontMetrics s2Metrx = g2.getFontMetrics(s2Font);
+			int xs2String = width/2 - s2Metrx.stringWidth(s2String)/2;	// here attempt to center the string
 			ys2String = VMIN + yTitle + ys1String + s2Metrx.getHeight()/2;
-			g.drawString(s2String, xs2String, ys2String);
+			g2.drawString(s2String, xs2String, ys2String);
 		}
 	}
 	
@@ -292,7 +319,7 @@ public class FastTilePlotPanel extends JPanel {
 		return myRenderingExecutor;
 	}
 	
-	public GTRenderer getGTRenderer()
+	public GTRenderer getRenderer()
 	{
 		return myGTRenderer;
 	}
@@ -301,15 +328,21 @@ public class FastTilePlotPanel extends JPanel {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
 				try {
 					FastTilePlotPanel frame = new FastTilePlotPanel();
+					System.out.println("FastTilePlotPanel frame = " + frame);
 					frame.setVisible(true);
+					System.out.println("made frame visible, ready to call setTitlesPanel");
+					frame.setTitlesPanel(new Font(Font.DIALOG, 1, 5),Color.BLACK,"Here is my TITLE string",
+							new Font(Font.SANS_SERIF, 1, 4), Color.BLUE, "Here is a blue subtitle1 string",
+							new Font(Font.SERIF,2,3), Color.RED, "Here is a red subtitle2 STRING");
 				} catch (Exception e) {
+					System.out.println("here I caught an exception");
 					e.printStackTrace();
 				}
 			}
-		});
-	}
+//		});
+//	}
 }
