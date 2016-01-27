@@ -1,5 +1,8 @@
 package anl.verdi.plot.gui;
 
+// Appears to set up the configuration object config with string, font, and color for
+// title, subtitle1, and subtitle2
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;

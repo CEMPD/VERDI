@@ -162,6 +162,7 @@ public final class GridCellStatistics {
 			  computeMeans( statistics[ COUNT ],
 					  statistics[ SUM ],
 					  statistics[ MEAN ] );
+			  // JEB 2016 WHY NO return; FOR THIS "ELSE"?
 		  }
 		  
 

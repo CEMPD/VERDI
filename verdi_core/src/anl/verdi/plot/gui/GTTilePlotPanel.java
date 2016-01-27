@@ -28,9 +28,9 @@ import javax.swing.border.LineBorder;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 
-// class forms the basis for the VERDI panel that displays the entire FastTilePlot
+// class forms the basis for the VERDI panel that displays the entire GTTilePlot
 // title, subtitle1, subtitle2, axes, axis ticks and labels, footers, legend, JMapPane for geographic content
-public class FastTilePlotPanel extends JPanel {
+public class GTTilePlotPanel extends JPanel {
 
 	/**
 	 * 
@@ -79,7 +79,7 @@ public class FastTilePlotPanel extends JPanel {
 	/**
 	 * Create the overall frame and all of its components.
 	 */
-	public FastTilePlotPanel() {
+	public GTTilePlotPanel() {
 
 		setBorder(new EmptyBorder(1, 1, 1, 1));
 		
@@ -368,7 +368,7 @@ public class FastTilePlotPanel extends JPanel {
 		c.weighty = 1.0;
 		gbl_contentPane.setConstraints(topMapPanel, c);
 		add(topMapPanel);
-		System.out.println("all done with constructing FastTilePlotPanel");
+		System.out.println("all done with constructing GTTilePlotPanel");
 		System.out.println("titlesPanel = " + titlesPanel.toString());
 	}
 	
@@ -474,11 +474,9 @@ public class FastTilePlotPanel extends JPanel {
 				JFrame mainFrame = new JFrame("Main window");
 				mainFrame.setPreferredSize(new Dimension(500, 500));
 				mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				FastTilePlotPanel frame = new FastTilePlotPanel();	// called constructor for FastTilePlotPanel
+				GTTilePlotPanel frame = new GTTilePlotPanel();	// called constructor for GTTilePlotPanel
 				try {
-					System.out.println("FastTilePlotPanel frame = " + frame);
-//					frame.setVisible(true);
-//					System.out.println("made frame visible, ready to call setTitlesPanel");
+					System.out.println("GTTilePlotPanel frame = " + frame);
 					frame.setTitlesPanel(new Font(Font.DIALOG, 1, 15),Color.BLACK,"Here is my TITLE string",
 							new Font(Font.SANS_SERIF, 1, 24), Color.BLUE, "Here is a blue subtitle1 string",
 							new Font(Font.SERIF,2,33), Color.RED, "Here is a red subtitle2 STRING");

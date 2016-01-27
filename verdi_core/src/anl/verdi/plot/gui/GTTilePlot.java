@@ -6,16 +6,19 @@
 package anl.verdi.plot.gui;
 
 import gov.epa.emvl.GridCellStatistics;
+import gov.epa.emvl.Mapper;
 import gov.epa.emvl.TilePlot;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -24,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import anl.verdi.plot.color.Palette;
@@ -32,10 +37,14 @@ import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.vecmath.Point4i;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -43,12 +52,21 @@ import org.geotools.map.MapContent;
 import org.geotools.swing.JMapPane;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import saf.core.ui.event.DockableFrameEvent;
+import anl.verdi.core.VerdiApplication;
+import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
+import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataFrameIndex;
+import anl.verdi.data.DataManager;
 import anl.verdi.data.DataUtilities;
 import anl.verdi.data.DataUtilities.MinMax;
+import anl.verdi.data.Dataset;
+import anl.verdi.data.ObsEvaluator;
+import anl.verdi.data.VectorEvaluator;
 import anl.verdi.formula.Formula;
 import anl.verdi.formula.Formula.Type;
+import anl.verdi.gis.OverlayObject;
 import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
@@ -56,6 +74,7 @@ import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.util.PlotExporter;
+import anl.verdi.util.Utilities;
 
 /**
  * @author ellenjo
@@ -148,6 +167,16 @@ public class GTTilePlot extends FastTilePlotPanel
 	private float[][][] statisticsData = null;
 	//private float[][][] statisticsDataLog = null;
 	private CoordinateReferenceSystem gridCRS = null;	// axes -> ReferencedEnvelope -> gridCRS
+
+	// For clipped/projected/clipped map lines:
+
+	private String mapFileDirectory = System.getenv("VERDI_HOME") + "/plugins/bootstrap/data";	// nov 2015
+
+	private Mapper mapper = new Mapper(mapFileDirectory);
+
+	protected List<OverlayObject> obsData = new ArrayList<OverlayObject>();
+	protected List<ObsAnnotation> obsAnnotations;
+	protected VectorAnnotation vectAnnotation;
 	
 	// GUI attributes
 	
@@ -157,10 +186,18 @@ public class GTTilePlot extends FastTilePlotPanel
 	private JTextField threshold;
 	private boolean recomputeLegend = false;
 	protected JCheckBoxMenuItem showGridLines;
+	protected boolean zoom = true;
+	private int delay = 50; // animation delay in milliseconds.
+	private final int MAXIMUM_DELAY = 3000; // maximum animation delay: 3 seconds per frame.
+
+	protected boolean showLatLon = false;
+	protected boolean showObsLegend = false;
 	private BufferedImage bImage;
+	private JPopupMenu popup;
 	
 	@SuppressWarnings("unused")
 	private Plot.ConfigSoure configSource = Plot.ConfigSoure.GUI;
+	VerdiApplication app;
 
 	
 	/**
@@ -171,7 +208,7 @@ public class GTTilePlot extends FastTilePlotPanel
 	/**
 	 * 
 	 */
-	public GTTilePlot() {
+	public GTTilePlot(VerdiApplication app, DataFrame dataFrame) {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -608,67 +645,7 @@ public class GTTilePlot extends FastTilePlotPanel
 	}
 
 	@Override
-	public void viewClosed() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void updateTimeStep(int timestep) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void componentResized(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void componentMoved(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void componentShown(ComponentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void componentHidden(ComponentEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -692,4 +669,347 @@ public class GTTilePlot extends FastTilePlotPanel
 		
 	}
 
+
+	/**
+	 * from FastTilePlot.java; converts 4 ints to a Point4i to a string for display
+	 */
+	public String createAreaString(int[] point) {
+		// TODO rewrite; currently converts int[] to Point4i and then calls formatPointLatLon or formatPoint; will this work?
+		Point4i p = new Point4i();
+		p.w = point[0];
+		p.z = point[1];
+		p.x = point[2];
+		p.y = point[3];
+		if (showLatLon) return formatPointLatLon(p);
+		return formatPoint(p);
+	}
+	
+	/**
+	 * from FastTilePlot.java; converts a Point4i to a string for display
+	 * @param point	coordinate as Point4i
+	 * @return	string to display point formatted as a string
+	 */
+	public String formatPoint(Point4i point) {
+		StringBuilder builder = new StringBuilder("(");
+		int[] vals = new int[4];
+		vals[0] = point.w;
+		vals[1] = point.z;
+		vals[2] = point.x;
+		vals[3] = point.y;
+		boolean addComma = false;
+		for (int val : vals) {
+			if (val != NO_VAL) {
+				if (addComma) builder.append(", ");
+				builder.append(val + 1);
+				addComma = true;
+			}
+		}
+		builder.append(")");
+		return builder.toString();
+	}
+	
+	/**
+	 * from FastTilePlot.java; converts a Point4i to lat/lon for display
+	 * @param point	coordinate as Point4i
+	 * @return	string to display point as latitude/longitude coordinates
+	 */
+	private String formatPointLatLon(Point4i point) {
+		Point2D llul = getLatLonForAxisPoint(new Point(point.x, point.y));
+		StringBuilder builder = new StringBuilder("(");
+		double[] vals = new double[4];
+		vals[2] = llul.getY();
+		vals[3] = llul.getX();
+		vals[0] = point.w;
+		vals[1] = point.z;
+		boolean addComma = false;
+		for (int i = 0; i < 4; i++) {
+			double val = vals[i];
+			if (val != NO_VAL) {
+				if (addComma) builder.append(", ");
+
+				if (i == 2) builder.append(Utilities.formatLat(val, 4));
+				else if (i == 3) builder.append(Utilities.formatLon(val, 4));
+				else builder.append(format.format(val + 1)); //NOTE: to make the notation of timesteps and layers 1-based
+				addComma = true;
+			}
+		}
+		builder.append(")");
+		return builder.toString();
+	}
+
+	/**
+	 * from FastTilePlot.java
+	 * @param axisPoint
+	 * @return
+	 */
+	protected Point2D getLatLonForAxisPoint(Point axisPoint) {
+		//Since the NetCDF boxer used middle of the grid as origin of the grid
+		//FastTilePlot use SW corner as the origin of the grid, hence the minus 1
+		// TODO may need to change this: GeoTools uses top-left corner of each JPanel as (0,0)
+//		return getDataFrame().getAxes().getBoundingBoxer().axisPointToLatLonPoint(axisPoint.x-1, axisPoint.y-1); 
+		return getDataFrame().getAxes().getBoundingBoxer().axisPointToLatLonPoint(axisPoint.x, axisPoint.y); //NOTE: the shift has been considered for in the netcdf boxer!!!
+	}
+
+	/**
+	 * copied from FastTilePlot
+	 * @param manager
+	 * @param showLegend
+	 */
+	public void addObservationData(DataManager manager, boolean showLegend) {
+		// TODO edit as needed
+		showObsLegend = showLegend;
+		obsAnnotations = new ArrayList<ObsAnnotation>();
+		Axes<DataFrameAxis> axs = getDataFrame().getAxes();
+		GregorianCalendar initDate = getDataFrame().getAxes().getDate(timestep);
+		List<String> subtitles = new ArrayList<String>();
+		String subtitle1 = "";
+		boolean showST1 = false;
+		
+		if (config != null) {
+			subtitle1 += (config.getSubtitle1() == null ? "" : config.getSubtitle1()).trim();
+			showST1 = !subtitle1.isEmpty();
+			if (showST1) subtitles.add(subtitle1);
+		}
+		
+		try {
+			for (OverlayObject obs : obsData) {
+				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
+				ObsAnnotation ann = new ObsAnnotation(eval, axs, initDate, layer);
+				ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
+				obsAnnotations.add(ann);
+				Dataset ds = eval.getVariable().getDataset();
+				
+				if (showST1 && ds != null) {
+					StringBuffer sb = new StringBuffer(ds.getName());
+					String alias = ds.getAlias();
+					int index = sb.indexOf(alias) + alias.length();
+					String temp = sb.replace(index, ++index, "=").toString();
+					if (subtitle1.indexOf(temp) < 0 && !subtitles.contains(temp)) 
+						subtitles.add(temp);
+				}
+			}
+			
+			tilePlot.setObsLegend(obsAnnotations, showLegend);
+			config.putObject(PlotConfiguration.OBS_SHOW_LEGEND, showLegend);
+			
+			if (showST1) {
+				Collections.sort(subtitles);
+				subtitle1 = "";
+			
+				for (String str : subtitles)
+					subtitle1 += str + "  ";
+			
+				config.setSubtitle1(subtitle1.trim());
+			}
+		
+			draw();
+		} catch (Exception e) {
+			setOverlayErrorMsg(e.getMessage());
+			Logger.error("Check if overlay time steps match the underlying data");
+			Logger.error(e.getMessage());
+			// TODO evaluate what drawing activity should take place
+//			drawMode = DRAW_NONE;	// no longer using the drawMode etc. for drawing the tile plot
+		}
+	}
+
+	
+	/**
+	 * copied from FastTilePlot
+	 * @return	observation data
+	 */
+	public List<OverlayObject> getObservationData() {
+		return this.obsData;
+	}
+
+	/**
+	 * Function to throw up a dialog box to tell the user that the overlay time steps may not match the time steps of the underlying data.
+	 * Copied from FastTilePlot
+	 * @param msg	The getMessage() exception message caught in the try/catch block
+	 */
+	private void setOverlayErrorMsg(String msg) {
+		if (msg == null) 
+			msg = "";
+		JOptionPane.showMessageDialog(app.getGui().getFrame(), "Please check if the overlay time steps match the underlying data.\n" + msg, "Overlay Error", JOptionPane.ERROR_MESSAGE, null);
+	}
+
+	/**
+	 * copied from FastTilePlot
+	 * @param eval a VectorEvaluator object
+	 */
+	public void addVectorAnnotation(VectorEvaluator eval) {
+		// TODO check if anything here needs to be changed (expect different method required to draw vectors)
+		vectAnnotation = new VectorAnnotation(eval, timestep, getDataFrame().getAxes().getBoundingBoxer());
+	}
+	
+	// GUI Callbacks:
+
+	// Plot frame closed:
+
+	public void stopThread() {	// called by anl.verdi.plot.gui.PlotPanel
+//		drawMode = DRAW_END;
+		// TODO figure out what stopThread needs to do because not using drawMode
+		draw();
+	}
+
+	// Window hidden callback:
+
+	@Override
+	public void componentHidden(ComponentEvent unused) { }
+
+	// Window shown callback:
+
+	@Override
+	public void componentShown(ComponentEvent unused) {
+		draw();
+	}
+
+	// Window resized callback:
+
+	@Override
+	public void componentResized(ComponentEvent unused) {
+		draw();
+	}
+
+	// Window moved callback:
+
+	@Override
+	public void componentMoved(ComponentEvent unused) { }
+
+	// Mouse callbacks:
+
+	protected void showPopup( MouseEvent me ) {
+		popup = createPopupMenu(true, true, true, zoom);
+
+		int mod = me.getModifiers();
+		int mask = MouseEvent.BUTTON3_MASK;
+
+		if ((mod & mask) != 0) {
+			popup.show(this, me.getPoint().x, me.getPoint().y);
+		}
+	}
+
+	public void mousePressed( MouseEvent unused_ ) { }
+	public void mouseEntered( MouseEvent unused_ ) { }
+	public void mouseExited( MouseEvent unused_ ) { }
+	public void mouseReleased( MouseEvent unused_ ) { }
+	public void mouseClicked( MouseEvent unused_ ) { }
+
+	public void viewClosed() { 
+		// 
+		mapper = null;
+		dataFrameLog = null;
+		dataFrame = null;
+		
+		obsData = null;
+		obsAnnotations = null;
+		vectAnnotation = null;
+		eventProducer = null;
+		
+		bImage = null;
+		
+		dialog = null;
+		controlLayer = null;
+		config = null;
+		
+//		doubleBufferedRendererThread = null;
+		
+		subsetLayerData = null;
+		layerData = null;
+		statisticsData = null;	
+		
+		format = null;
+		tilePlot = null;
+		legendLevels = null;
+		defaultPalette = null;
+		legendColors = null;
+		map = null;
+		gridBounds = null;
+		domain = null;
+
+		timeLayerPanel = null;
+		probeItems = null;
+		popup = null;
+		dataArea = null;
+		popUpLocation = null;
+		probedSlice = null;
+		showGridLines = null;
+		app = null;
+		minMax = null;
+	}
+	
+	public void viewFloated(DockableFrameEvent unused_ ) { }
+	public void viewRestored(DockableFrameEvent unused_ ) { }		
+
+	/**
+	 * Creates a popup menu for the panel. Copied from FastTilePlot
+	 * 
+	 * @param properties	include a menu item for the chart property editor.
+	 * @param save	include a menu item for saving the chart.
+	 * @param print	include a menu item for printing the chart.
+	 * @param zoom	include menu items for zooming.
+	 * @return The popup menu.
+	 */
+	protected JPopupMenu createPopupMenu(boolean properties, boolean save,
+			boolean print, boolean zoomable) {
+
+		JPopupMenu result = new JPopupMenu("FastTile:");
+		boolean separator = false;
+
+		if (properties) {
+			JMenuItem propertiesItem = new JMenuItem("Properties...");
+			propertiesItem.setActionCommand(PROPERTIES_COMMAND);
+			propertiesItem.addActionListener(this);
+			result.add(propertiesItem);
+			separator = true;
+		}
+
+		if (save) {
+			if (separator) {
+				result.addSeparator();
+				separator = false;
+			}
+			JMenuItem saveItem = new JMenuItem("Save Image As...");
+			saveItem.setActionCommand(SAVE_COMMAND);
+			saveItem.addActionListener(this);
+			result.add(saveItem);
+			separator = true;
+		}
+
+		if (print) {
+			if (separator) {
+				result.addSeparator();
+				separator = false;
+			}
+			JMenuItem printItem = new JMenuItem("Print...");
+			printItem.setActionCommand(PRINT_COMMAND);
+			printItem.addActionListener(this);
+			result.add(printItem);
+			separator = true;
+		}
+
+		if (zoomable) {
+			if (separator) {
+				result.addSeparator();
+				separator = false;
+			}
+
+			JMenuItem zoomInItem = new JMenuItem("Zoom_In");
+			zoomInItem.setActionCommand(ZOOM_IN_BOTH_COMMAND);
+			zoomInItem.addActionListener(this);
+			result.add(zoomInItem);
+
+			JMenuItem zoomOutItem = new JMenuItem("Zoom_Out");
+			zoomOutItem.setActionCommand(ZOOM_OUT_BOTH_COMMAND);
+			zoomOutItem.addActionListener(this);
+			result.add(zoomOutItem);
+			
+			JMenuItem zoomOut2Pic = new JMenuItem("Max_Zoom_Out");
+			zoomOut2Pic.setActionCommand(ZOOM_OUT_MAX_COMMAND);
+			zoomOut2Pic.addActionListener(this);
+			result.add(zoomOut2Pic);
+		}
+
+		return result;
+	}
+	
 }
