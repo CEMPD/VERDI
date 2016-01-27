@@ -166,8 +166,11 @@ public class MPASDataset extends AbstractDataset {
 		renderVarList.add("yVertex");
 		renderVarList.add("zVertex");
 		renderVarList.add("indexToVertexID");
+		renderVarList.add("indexToCellID");
 		renderVarList.add("latCell");
 		renderVarList.add("lonCell");
+		renderVarList.add("zgrid");
+		renderVarList.add("zs");
 	}
 	
 	static {

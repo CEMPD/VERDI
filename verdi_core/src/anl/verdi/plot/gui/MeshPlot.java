@@ -9,6 +9,7 @@ package anl.verdi.plot.gui;
 import gov.epa.emvl.ASCIIGridWriter;
 import gov.epa.emvl.AxisLabelCreator;
 import gov.epa.emvl.GridCellStatistics;
+import gov.epa.emvl.MPASTilePlot;
 //import gov.epa.emvl.GridShapefileWriter;		// 2014 disable write shapefile VERDI 1.5.0
 import gov.epa.emvl.MapLines;
 import gov.epa.emvl.Mapper;
@@ -236,7 +237,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private int yOffset = 0;
 	// For legend-colored grid cells and annotations:
 
-	protected TilePlot tilePlot; // EMVL TilePlot.
+	protected MPASTilePlot tilePlot; // EMVL TilePlot.
 
 	protected int timestep = 0; // 0..timesteps - 1.
 	private int previousTimestep = 0;
@@ -638,13 +639,22 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 							//debug
 							
+
+							Font defaultFont = offScreenGraphics.getFont();
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									screenWidth, screenHeight, stepsLapsed, MeshPlot.this.layer, aRow,
 									bRow, aCol, bCol, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
 									aPlotUnits, 
 									config, aNumberFormat, gridLineColor,
-									null, rowLabels, columnLabels);
+									null);
+							
+							offScreenGraphics.setFont(defaultFont);
+							offScreenGraphics.setColor(axisColor);
+							tilePlot.drawAxis(offScreenGraphics, xOffset, xOffset + screenWidth, yOffset, yOffset + screenHeight, panX * RAD_TO_DEG + columnOrigin, visibleDataWidth * RAD_TO_DEG,
+									panY * RAD_TO_DEG + rowOrigin, visibleDataHeight * RAD_TO_DEG, rowLabels, columnLabels);
+
+
 //							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 //									width, height, stepsLapsed, layer, firstRow + rowOrigin,
 //									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
@@ -661,6 +671,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						renderCells(offScreenGraphics, xOffset, yOffset);
 
 						dataArea.setRect(xOffset, yOffset, screenWidth, screenHeight);
+						
 
 						// Draw projected/clipped map border lines over grid
 						// cells:
@@ -2011,7 +2022,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		// Create EMVL TilePlot (but does not draw yet - see draw()):
 
-		tilePlot = new TilePlot(startDate, startTime, timestepSize);
+		tilePlot = new MPASTilePlot(startDate, startTime, timestepSize);
 
 		// Create GUI.
 
