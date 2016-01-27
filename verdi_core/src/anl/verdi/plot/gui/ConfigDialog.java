@@ -1,5 +1,8 @@
 package anl.verdi.plot.gui;
 
+// appears to be configuration dialog box; shows color map
+// includes tabbed panels titles, labels, other, and overlay
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -22,6 +25,7 @@ import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.color.PaletteSelectionPanel;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
+import anl.verdi.plot.gui.GTTilePlot;
 //import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 //import anl.verdi.plot.config.VectorPlotConfiguration;
 
@@ -92,7 +96,7 @@ public class ConfigDialog extends JDialog {
 		this.dispose();
 	}
 
-	// commit the plot configuration
+	// writes the plot configuration to the PlotConfiguration object (read and used by other parts of VERDI
 	private void commit() throws Exception {
 		PlotConfiguration config = new PlotConfiguration();
 		if (tabbedPanel.indexOfTab("Color Map") != -1) {
@@ -158,7 +162,7 @@ public class ConfigDialog extends JDialog {
 			initOverlays(config);
 		}
 
-		if ( plot instanceof FastTilePlot && colorMapPanel != null ){
+		if ( plot instanceof GTTilePlot && colorMapPanel != null ){
 			colorMapPanel.setForFastTitle( true);
 		} else {
 			colorMapPanel.setForFastTitle( false);

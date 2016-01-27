@@ -1,5 +1,8 @@
 package anl.verdi.plot.gui;
 
+// appears to be dialog for user to select the string, font, and font size for the
+// title, subtitle1, and subtitle2
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;

@@ -20,9 +20,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Level;
-//import org.geotools.map.DefaultMapContext;
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.apache.logging.log4j.LogManager;	
+import org.apache.logging.log4j.Logger;	
 import org.geotools.map.MapContent;
 import org.jdesktop.swingx.JXTable;
 
@@ -60,7 +59,7 @@ import anl.verdi.plot.anim.MultPlotAnimationDialog;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.gui.AreaSelectionEvent;
 import anl.verdi.plot.gui.FastObsOverlayDialog;
-import anl.verdi.plot.gui.FastTilePlot;
+import anl.verdi.plot.gui.GTTilePlot;
 import anl.verdi.plot.gui.ObsOverlayDialog;
 import anl.verdi.plot.gui.OverlayRequest;
 import anl.verdi.plot.gui.Plot;
@@ -104,7 +103,6 @@ FormulaElementCreator, ListDataListener {
 
 	private Project project;
 
-//	private MapContext domainPanelContext = new DefaultMapContext(DefaultGeographicCRS.WGS84);
 	private MapContent domainPanelContext = new MapContent();
 //	MapViewport viewport = new MapViewport();
 //	viewport.setCoordinateReferenceSystem((CoordinateReferenceSystem)DefaultGeographicCRS.WGS84);
@@ -162,10 +160,7 @@ FormulaElementCreator, ListDataListener {
 			}
 		});
 
-		//File file = new File(Tools.getPropertyFile());
 		try {
-			//if (file.exists()) {
-			//System.getProperties().load(new FileInputStream(file));
 			String datasetHome = System.getProperty(Tools.DATASET_HOME);
 			String projectHome = System.getProperty(Tools.PROJECT_HOME);
 			String scriptHome = System.getProperty(Tools.SCRIPT_HOME);
@@ -448,8 +443,6 @@ FormulaElementCreator, ListDataListener {
 		return frame;
 	}
 
-
-
 	/**
 	 * Called whenever an area in a plot is being selected.
 	 *
@@ -476,30 +469,8 @@ FormulaElementCreator, ListDataListener {
 			JXTable table = new JXTable(creator.createTableModel());
 			table.setColumnControlVisible(true);
 			table.setHorizontalScrollEnabled(true);
-//			table.setHighlighters(new HighlighterPipeline(
-//					new Highlighter[]{AlternateRowHighlighter.classicLinePrinter}));
-//			table.getHighlighters().addHighlighter(new RolloverHighlighter(Color.BLACK, Color.WHITE));
 			table.setRolloverEnabled(true);
 			gui.addProbe(table, creator.getName(), creator.getRangeAxisName());
-
-			/*
-			 * int rowNameOffset = 0; List<String> rowHeaders = new ArrayList<String>();
-			 * if (frame.getAxes().getYAxis() != null) { // assume probe from
-			 * tile type plot if (slice.getYRange() != null) { rowNameOffset =
-			 * slice.getYRange().getOrigin(); } DataFrameAxis yAxis =
-			 * frame.getAxes().getYAxis(); int origin = yAxis.getOrigin();
-			 * 
-			 * for (int row = 0; row < yAxis.getRange().getExtent(); row++) {
-			 * rowHeaders.add(String.valueOf(row + origin + rowNameOffset)); } }
-			 * else { // assume time series type plot if (slice.getYRange() !=
-			 * null) { rowNameOffset = slice.getTimeRange().getOrigin(); }
-			 * DataFrameAxis timeAxis = frame.getAxes().getTimeAxis(); int
-			 * origin = timeAxis.getOrigin();
-			 * rowHeaders.add(String.valueOf(origin + rowNameOffset)); }
-			 * 
-			 * RowHeader rowHeader = new RowHeader(rowHeaders, table);
-			 */
-
 		}
 	}
 
@@ -530,8 +501,7 @@ FormulaElementCreator, ListDataListener {
 		if (plot.getType() == Formula.Type.TILE) {
 			int[] p = point;
 			if (point.length == 3) {
-				// must be no layer, but we want to
-				// add that with the NO_VALUE marker
+				// must be no layer, but we want to add that with the NO_VALUE marker
 				p = new int[4];
 				p[0] = point[0];
 				p[1] = TilePlot.NO_VAL;
@@ -541,8 +511,8 @@ FormulaElementCreator, ListDataListener {
 
 			String status = "";
 
-			if (plot instanceof FastTilePlot)
-				status = ((FastTilePlot)plot).createAreaString(p);
+			if (plot instanceof GTTilePlot)
+				status = ((GTTilePlot)plot).createAreaString(p);
 			else
 				status = ((TilePlot)plot).createAreaString(p);
 
@@ -631,6 +601,7 @@ FormulaElementCreator, ListDataListener {
 			}
 		}
 	}
+	
 	/**
 	 * Loads the specified area files.
 	 *
@@ -710,7 +681,6 @@ FormulaElementCreator, ListDataListener {
 				boolean enabled = selectedFormula.getAxes().getZAxis() != null;
 				gui.setVertCrossPlotEnabled(enabled);
 			}
-
 		}
 	}
 
@@ -755,7 +725,7 @@ FormulaElementCreator, ListDataListener {
 		// and if it fails then error message.
 		FormulaFactory factory = new FormulaFactory();
 		Formula formula = factory.createTileFormula(strFormula, null);
-		// don't do any range checking here / that can wait until later
+		// don't do any range checking here - that can wait until later
 		// when we have an element created
 		ValidationResult result = formula.validate(manager, new ArrayList<AxisRange>());
 		ValidationResult.Status status = result.getStatus();
@@ -798,7 +768,7 @@ FormulaElementCreator, ListDataListener {
 	 */
 	public void overlayRequested(OverlayRequest request) {
 		Logger.debug("in VerdiApplication.overlayRequested");
-			// 2015 called from FastTilePlot drop-down menu to select obs/vectors
+			// 2015 called from GTTilePlot drop-down menu to select obs/vectors
 		if (request.getType() == OverlayRequest.Type.OBS) {
 			Logger.debug("in VerdiApplication. OverlayRequest.Type.OBS");
 			List<Variable> vars = new ArrayList<Variable>();
@@ -809,7 +779,7 @@ FormulaElementCreator, ListDataListener {
 			}
 
 			TilePlot plot = request.getPlot();
-			FastTilePlot fastPlot = request.getFastTilePlot();
+			GTTilePlot fastPlot = request.getGTTilePlot();
 
 			ObsOverlayDialog dialog = null;
 			DataFrame data = null;
@@ -844,20 +814,13 @@ FormulaElementCreator, ListDataListener {
 			}
 		} else if (request.getType() == OverlayRequest.Type.VECTOR) {
 			Logger.debug("in VerdiApplication. OverlayRequest.Type.VECTOR");
-			FastTilePlot fastPlot = request.getFastTilePlot();
+			GTTilePlot fastPlot = request.getGTTilePlot();
 			VectorOverlayDialog dialog = new VectorOverlayDialog(gui.getFrame());
 			Logger.debug("instantiated VectorOverlayDialog");
 
 			if (fastPlot != null) {
 				dialog.init(project.getFormulasAsList(), new VectorOverlayTimeChecker(project.getDatasetsAsList(),
 						fastPlot.getData().get(0)));
-				// 2015 FastTilePlot vector overlay; before next debug message printed messages from:
-				//		anl.verdi.core.Project - in Project getFormulasAsList
-				//		anl.verdi.gui.FormulaListModel - in FormulaListModel elements
-				//		anl.verdi.core.Project - in Project getDatasetAsList
-				//		anl.verdi.gui.DatasetListModel - in DatasetListModel elements
-				//		anl.verdi.util.VectorOverlayTimeChecker - in constructor for VectorOverlayTimeChecker
-				
 				Logger.debug("did dialog.init for fastPlot != null");
 			} else {
 				dialog.init(project.getFormulasAsList(), new VectorOverlayTimeChecker(project.getDatasetsAsList(),
@@ -866,11 +829,6 @@ FormulaElementCreator, ListDataListener {
 			}
 			dialog.pack();
 			dialog.setVisible(true);
-			// 2015 anl.verdi.gui.FormulaListElement - in FormulaListElement toString
-			//		anl.verdi.gui.FormulaListElement - in FormulaListElement getDataset
-			//			above 2 messages many times, followed by next message multiple times
-			//		anl.verdi.gui.FormulaListElement - in FormulaListElement getFormula
-			//			then toString/getDataset pairs 3 times followed by multiple getFormula
 			Logger.debug("dialog is now visible");
 
 			FormulaListElement xElement = dialog.getUElement();
@@ -883,9 +841,6 @@ FormulaElementCreator, ListDataListener {
 				DataFrame yFrame = evaluateFormula(Formula.Type.VECTOR); //, range);	// range
 				int vectorSamplingInc = dialog.getVectorSamplingInc();	// 2015 get input Vector Sampling Increment
 				Logger.debug("got vectorSamplingIncrement = " + vectorSamplingInc);
-				
-// for testing old code w/o vectorSamplingInc
-//				DataFrame[] frames = DataUtilities.unitVectorTransform(xFrame, yFrame);	// 2015 do not pass in vector sampling increment
 				
 				DataFrame[] frames = DataUtilities.unitVectorTransform(xFrame, yFrame, vectorSamplingInc);	// 2015 pass in vector sampling increment
 				Logger.debug("back from DataUtilities.unitVectorTransform");
@@ -907,13 +862,11 @@ FormulaElementCreator, ListDataListener {
 		}
 	}
 
-//	public MapContext getDomainPanelContext() {
 	public MapContent getDomainPanelContext() {
 		Logger.debug("Logger #5 & #7: in VerdiApplication.getDomainPanelContext");
 		return domainPanelContext;
 	}
 
-//	public void setDomainPanelContext(MapContext domainPanelContext) {
 	public void setDomainPanelContext(MapContent domainPanelContext) {
 		Logger.debug("in VerdiApplication setDomainPlanelContext");
 		this.domainPanelContext = domainPanelContext;
@@ -956,8 +909,6 @@ FormulaElementCreator, ListDataListener {
 			return;
 		helpDir = helpDir + "/help";
 
-		//String helpName = helpDir + "\\wdtUserManual.pdf";
-		//AcrobatHelpWindow.showContents(window, winTitle + ":Help Contents", helpName);
 		String helpName1 = helpDir + "/verdiUserManualIndex.htm";
 		String helpName2 = helpDir + "/verdiUserManual.htm";
 		HelpWindowWithContents.showContents(null, "VERDI Help", helpName1, helpName2);

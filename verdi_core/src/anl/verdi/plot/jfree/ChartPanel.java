@@ -1,5 +1,7 @@
 package anl.verdi.plot.jfree;
 
+// for a chart based on JFreeChart
+
 import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Dimension;

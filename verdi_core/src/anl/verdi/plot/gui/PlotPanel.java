@@ -20,7 +20,9 @@ import org.geotools.swing.RenderingExecutor;
 
 import saf.core.ui.event.DockableFrameEvent;
 import anl.verdi.formula.Formula;
-import anl.verdi.plot.gui.FastTilePlotPanel;
+import anl.verdi.plot.gui.GTTilePlotPanel;
+import anl.verdi.plot.gui.GTTilePlot;
+
 public class PlotPanel extends JPanel {
 
 	private static final long serialVersionUID = 2937963505375601326L;
@@ -59,16 +61,17 @@ public class PlotPanel extends JPanel {
 	}
 
 	// use this constructor for a FastAreaTilePlotPanel instead of a JPanel (topJPanel) object
-	// used for FastTilePlot and ArealInterpolationPlot
+	// used for GTTilePlot and ArealInterpolationPlot
 	public PlotPanel(Plot plot, String name, JMapPane aJMapPane, MapContent content, RenderingExecutor executor,
 			GTRenderer renderer) {
+		// TODO How exactly is this PlotPanel used? How should it be used for a GTTilePlot?
 //		super(new BorderLayout());
 		Logger.debug("in PlotPanel constructor for passed Plot plot, String name, MapContent content, RenderingExecutor executor, GTRenderer renderer");
 		isAMap = true;
 		JMenuBar bar = plot.getMenuBar();		// get the top menu from the plot
-		((FastTilePlotPanel)plot).setBar(bar);	// and put it in the FastTilePlotPanel
+		((GTTilePlotPanel)plot).setBar(bar);	// and put it in the GTTilePlotPanel
 		JToolBar toolBar = plot.getToolBar();			// get the JToolBar of time step, layer, etc. widgets
-		((FastTilePlotPanel)plot).setToolBar(toolBar);	// and put it in the FastTilePlotPanel
+		((GTTilePlotPanel)plot).setToolBar(toolBar);	// and put it in the GTTilePlotPanel
 		if(content == null)		// if a MapContent was not passed in arg list, get the one from the plot
 			content = ((AbstractMapPane)plot).getMapContent();
 		Logger.debug("MapContent content = " + content);
@@ -164,8 +167,8 @@ public class PlotPanel extends JPanel {
 	 */
 	public void viewClosed() {
 		Logger.debug("in viewClosed()");
-		if ( plot instanceof anl.verdi.plot.gui.FastTilePlot ) {
-			( (anl.verdi.plot.gui.FastTilePlot) plot).stopThread();
+		if ( plot instanceof anl.verdi.plot.gui.GTTilePlot ) {
+			( (anl.verdi.plot.gui.GTTilePlot) plot).stopThread();
 			try {
 				Thread.sleep(500);
 			} catch( Exception e) {
@@ -183,9 +186,9 @@ public class PlotPanel extends JPanel {
 	 * @param evt
 	 */
 	public void viewFloated(DockableFrameEvent evt){
-		if ( plot instanceof anl.verdi.plot.gui.FastTilePlot ) {
-			Logger.debug("Changing a FastTilePlot to viewFloated");
-			( (anl.verdi.plot.gui.FastTilePlot) plot).viewFloated(evt);
+		if ( plot instanceof anl.verdi.plot.gui.GTTilePlot ) {
+			Logger.debug("Changing a GTTilePlot to viewFloated");
+			( (anl.verdi.plot.gui.GTTilePlot) plot).viewFloated(evt);
 		}
 	}
 
@@ -194,9 +197,9 @@ public class PlotPanel extends JPanel {
 	 * @param evt
 	 */
 	public void viewRestored(DockableFrameEvent evt){		
-		if ( plot instanceof anl.verdi.plot.gui.FastTilePlot ) {
-			Logger.debug("Changing a FastTilePlot to viewRestored");
-			( (anl.verdi.plot.gui.FastTilePlot) plot).viewRestored(evt);
+		if ( plot instanceof anl.verdi.plot.gui.GTTilePlot ) {
+			Logger.debug("Changing a GTTilePlot to viewRestored");
+			( (anl.verdi.plot.gui.GTTilePlot) plot).viewRestored(evt);
 		}
 	}
 

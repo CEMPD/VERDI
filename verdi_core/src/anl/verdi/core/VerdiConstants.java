@@ -23,7 +23,7 @@ public interface VerdiConstants {
 	String FORMULA_LABEL = "anl.verdi.core.bar.formula_label";
 
 	String TILE_BUTTON_ID = "anl.verdi.plot.gui.action.TilePlot";
-	String FAST_TILE_BUTTON_ID = "anl.verdi.plot.gui.action.FastTilePlot";
+	String FAST_TILE_BUTTON_ID = "anl.verdi.plot.gui.action.GTTilePlotAction";
 	String VERT_CROSS_BUTTON_ID = "anl.verdi.plot.gui.action.VerticalCrossSection";
 	String TIME_SERIES_LINE_BUTTON_ID = "anl.verdi.plot.gui.action.TimeSeriesPlot";
 	String TIME_SERIES_BAR_BUTTON_ID = "anl.verdi.plot.gui.action.TimeSeriesBarPlot";
