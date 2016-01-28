@@ -48,6 +48,7 @@ import javax.vecmath.Point4i;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
 import org.geotools.swing.JMapPane;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -63,6 +64,7 @@ import anl.verdi.data.DataUtilities;
 import anl.verdi.data.DataUtilities.MinMax;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.ObsEvaluator;
+import anl.verdi.data.Slice;
 import anl.verdi.data.VectorEvaluator;
 import anl.verdi.formula.Formula;
 import anl.verdi.formula.Formula.Type;
@@ -173,6 +175,9 @@ public class GTTilePlot extends FastTilePlotPanel
 	private String mapFileDirectory = System.getenv("VERDI_HOME") + "/plugins/bootstrap/data";	// nov 2015
 
 	private Mapper mapper = new Mapper(mapFileDirectory);
+	
+	protected double[][] gridBounds = { { 0.0, 0.0 }, { 0.0, 0.0 } };
+	protected double[][] domain = { { 0.0, 0.0 }, { 0.0, 0.0 } };
 
 	protected List<OverlayObject> obsData = new ArrayList<OverlayObject>();
 	protected List<ObsAnnotation> obsAnnotations;
@@ -180,6 +185,7 @@ public class GTTilePlot extends FastTilePlotPanel
 	
 	// GUI attributes
 	
+	private TimeLayerPanel timeLayerPanel;
 	private boolean recomputeStatistics = false;
 	private boolean statError = false;
 	private JComboBox statisticsMenu;
@@ -189,11 +195,19 @@ public class GTTilePlot extends FastTilePlotPanel
 	protected boolean zoom = true;
 	private int delay = 50; // animation delay in milliseconds.
 	private final int MAXIMUM_DELAY = 3000; // maximum animation delay: 3 seconds per frame.
+	
+	protected List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
 
 	protected boolean showLatLon = false;
 	protected boolean showObsLegend = false;
+	
 	private BufferedImage bImage;
 	private JPopupMenu popup;
+	//TODO change dataArea [was defined as a Rectangle()]; used in run()
+	private Point popUpLocation = new Point(1,1);
+	protected Slice probedSlice;
+	private ConfigDialog dialog = null;
+	private FeatureLayer controlLayer;
 	
 	@SuppressWarnings("unused")
 	private Plot.ConfigSoure configSource = Plot.ConfigSoure.GUI;
@@ -929,7 +943,7 @@ public class GTTilePlot extends FastTilePlotPanel
 		timeLayerPanel = null;
 		probeItems = null;
 		popup = null;
-		dataArea = null;
+//		dataArea = null;		// TODO change dataArea; was defined as a Rectangle
 		popUpLocation = null;
 		probedSlice = null;
 		showGridLines = null;
