@@ -82,7 +82,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
-import javax.vecmath.Point4i;
+import javax.vecmath.Point4i;	// 4 integers (x, y, z, w coordinates)
 
 import net.sf.epsgraphics.ColorMode;
 import net.sf.epsgraphics.Drawable;
@@ -191,21 +191,21 @@ public class FastTilePlot extends FastTilePlotPanel implements ActionListener, P
 
 	// 2D grid parameters:
 
-	protected final int startDate; 		// (YYYYDDD).
-	protected final int startTime; 		// 0 (HHMMSS).
-	protected final int timestepSize; 	// 10000 (HHMMSS)
-	protected final int timesteps; 
-	protected final int layers; 
-	protected final int rows;
-	protected final int columns;
-	protected final int rowOrigin;
-	protected final int columnOrigin;
-	private final double westEdge; 		// meters from projection center
-	private final double southEdge; 	// meters from projection center
-	private final double cellWidth; 	// meters.
-	private final double cellHeight; 	// meters.
+	protected int startDate; 		// (YYYYDDD).
+	protected int startTime; 		// 0 (HHMMSS).
+	protected int timestepSize; 	// 10000 (HHMMSS)
+	protected int timesteps; 
+	protected int layers; 
+	protected int rows;
+	protected int columns;
+	protected int rowOrigin;
+	protected int columnOrigin;
+	private double westEdge; 		// meters from projection center
+	private double southEdge; 	// meters from projection center
+	private double cellWidth; 	// meters.
+	private double cellHeight; 	// meters.
 	private NumberFormat format;
-	private final boolean invertRows; // HACK: Invert rows of AURAMS / GEM / CF Convention data?
+	private boolean invertRows; // HACK: Invert rows of AURAMS / GEM / CF Convention data?
 
 	// For legend-colored grid cells and annotations:
 
@@ -250,7 +250,7 @@ public class FastTilePlot extends FastTilePlotPanel implements ActionListener, P
 	private //final 
 	Mapper mapper = new Mapper(mapFileDirectory);
 
-	protected final Projector projector;
+	protected Projector projector;
 
 	protected double[][] gridBounds = { { 0.0, 0.0 }, { 0.0, 0.0 } };
 	protected double[][] domain = { { 0.0, 0.0 }, { 0.0, 0.0 } };
@@ -272,9 +272,9 @@ public class FastTilePlot extends FastTilePlotPanel implements ActionListener, P
 	private PlotEventProducer eventProducer = new PlotEventProducer();
 
 	// GUI attributes:
-	private final JButton playStopButton;
-	private final JButton leftStepButton;
-	private final JButton rightStepButton;
+	private JButton playStopButton;
+	private JButton leftStepButton;
+	private JButton rightStepButton;
 	private final String LEFT = "<";
 	private final String RIGHT = ">";
 	private final String PLAY = "|>";
@@ -284,9 +284,9 @@ public class FastTilePlot extends FastTilePlotPanel implements ActionListener, P
 	private final String PLAY_TIP = "Play/Stop";
 	private TimeLayerPanel timeLayerPanel;
 	private final JToolBar toolBar = new JToolBar();
-	private final JComboBox statisticsMenu;
+	private JComboBox statisticsMenu;
 	private int preStatIndex = -1;
-	private final JTextField threshold;
+	private JTextField threshold;
 	private boolean recomputeStatistics = false;
 	private boolean recomputeLegend = false;
 
@@ -297,11 +297,11 @@ public class FastTilePlot extends FastTilePlotPanel implements ActionListener, P
 	private int drawMode = DRAW_ONCE;
 	private int draw_once_requests = -1;
 	private final String DELAY_LABEL = "Slow:";
-	private final JTextField delayField;
-	private final JTextField firstRowField;
-	private final JTextField lastRowField;
-	private final JTextField firstColumnField;
-	private final JTextField lastColumnField;
+	private JTextField delayField;
+	private JTextField firstRowField;
+	private JTextField lastRowField;
+	private JTextField firstColumnField;
+	private JTextField lastColumnField;
 	protected final Rubberband rubberband = new Rubberband(this);
 	protected boolean zoom = true;
 	protected boolean probe = false;
@@ -581,7 +581,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							Logger.debug("subsetLayerData.length = " + aSubsetLayerDataLength);
 							Logger.debug("ready to make revised function call to tilePlot.draw, thread = " + Thread.currentThread().toString());
 
-							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
+							tilePlot.draw(offScreenGraphics, (FastTilePlotPanel)this, // HOW TO GET TO FastTilePlotPanel FROM HERE???
+									xOffset, yOffset,
 									width, height, stepsLapsed, layer, aRow,
 									bRow, aCol, bCol, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
@@ -701,9 +702,11 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				}
 			} while (drawMode != DRAW_END);		// drawMode set to DRAW_END in stopThread()
 		}		// HERE FINALLY DREW FastTilePlot - NO MAP BOUNDARIES YET; waiting for user input (change time step, layer, etc.)
-	};
+				// end run()
+	};		// end Runnable()
 	
 	private BufferedImage toBufferedImage(Image image, int type, int width, int height) {
+		// NEEDS COMPLETE REWRITE
         BufferedImage result = new BufferedImage(width, height, type);
         Graphics2D g = result.createGraphics();
         g.drawImage(image, 0, 0, null);
@@ -775,7 +778,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		Logger.debug("plotUnits = " + plotUnits);
 		final int stepsLapsed = timestep - firstTimestep;
 		try {
-			tilePlot.drawBatchImage(offScreenGraphics, xOffset, yOffset,
+			tilePlot.drawBatchImage(offScreenGraphics,(FastTilePlotPanel)this, 
+					xOffset, yOffset,
 					canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
 					lastRow, firstColumn, lastColumn, legendLevels,
 					legendColors, axisColor, labelColor, plotVariable,
@@ -905,7 +909,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	// Paint/draw:
 
-	public void paintComponent(final Graphics graphics) {
+	public void paintComponent(final Graphics graphics) {	// REDO - NOW HAVE SEPARATE Graphics objects
 		super.paintComponent(graphics);
 		draw();
 	}
@@ -1138,7 +1142,9 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		super.processMouseEvent(me);
 	}
 	
-	protected boolean isInDataArea(MouseEvent me) {
+	protected boolean isInDataArea(MouseEvent me) {	// JEB 2016 MAY NEED TO CHANGE THIS
+			// WANT WITHIN THE JMapPane DATA MEMBER OF OVERALL JPanel
+		// dataArea is a Rectangle object, so those functions will not work as they are
 		int x = me.getPoint().x;
 		int y = me.getPoint().y;
 		
@@ -1151,7 +1157,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		return true;
 	}
 	
-	protected int getRow(Point p) {
+	protected int getRow(Point p) {	// JEB 2016 NEED TO CHANGE THIS
+		// no longer working with a Rectangle object
 		int dist = dataArea.y + dataArea.height - p.y;
 		int div = dist * (lastRow - firstRow + 1);
 		int den = dataArea.height;
@@ -1159,7 +1166,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		return firstRow +  div/den;
 	}
 	
-	protected int getCol(Point p) {
+	protected int getCol(Point p) {	// JEB 2016 NEED TO CHANGE THIS
+		// no longer working with a Rectangle object
 		int dist = p.x - dataArea.x;
 		int div = dist * (lastColumn - firstColumn + 1);
 		int den = dataArea.width;
@@ -1633,7 +1641,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		config.setUnits("");
 	}
 	
-	private boolean statError = false;
+	private boolean statError = false;	// JEB WHY IS THIS HERE INSTEAD OF WITH THE OTHER CLASS DATA MEMBERS?
 
 	private void computeStatistics(boolean log) {
 
@@ -1685,7 +1693,9 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	// Compute derived attributes:
 
-	private void computeDerivedAttributes() {
+	private void computeDerivedAttributes() {	// called by zooming and resetRowsNColumns
+		// JEB 2016 figure this out & rewrite for JMapPane
+		// & get rid of Projector (use CRS) ???
 
 		// Compute grid bounds and domain:
 
@@ -1706,8 +1716,10 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	// Compute map domain from grid bounds:
 
-	private static void computeMapDomain(final Projector projector,
+	private static void computeMapDomain(final Projector projector,		// 2016 replace Projector with CRS ???
 			final double[][] gridBounds, double[][] mapDomain) {
+		// JEB 2016 figure this out & rewrite for JMapPane
+		// & get rid of Projector (use CRS) ???
 
 		final double margin = 1.0; // Degrees lon/lat beyond grid corners.
 		final double xMinimum = gridBounds[X][MINIMUM];
@@ -1739,7 +1751,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				longitudeLatitude[LATITUDE]);
 
 		if ( projector.getProjection() instanceof
-				ucar.unidata.geoloc.projection.Stereographic ) {
+				ucar.unidata.geoloc.projection.Stereographic ) {	// JEB 2016 probably need to change
+						// testing for a polar projection
 
 			// Must be a polar projection so
 			// use full domain in case grid crosses the equator:
@@ -2401,7 +2414,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		Window window = SwingUtilities.getWindowAncestor(FastTilePlot.this);
 		dialog = null;
 		if (window instanceof JFrame)
-			dialog = new ConfigDialog((JFrame) window);
+			dialog = new ConfigDialog((JFrame) window);	// ConfigDialog is anl.verdi.plot.gui.ConfigDialog
 		else
 			dialog = new ConfigDialog((JDialog) window);
 		dialog.init(FastTilePlot.this, minMax);
@@ -2417,7 +2430,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	 */
 
 	public JToolBar getToolBar() {
-		return super.getToolBar();
+		return super.getToolBar();	// in anl.verdi.plot.gui.FastTilePlotPanel
 	}
 
 	/**
@@ -2682,7 +2695,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	@Override
 	public int print(Graphics g, PageFormat pf, int pageIndex)
-			throws PrinterException {
+			throws PrinterException {	// JEB 2016 REDO; NO LONGER HAVE JUST 1 Graphics OBJECT TO PRINT
 		if (pageIndex != 0) {
 			return NO_SUCH_PAGE;
 		}
@@ -3003,7 +3016,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		return null;
 	}
 
-	private void probe(Rectangle axisRect) {
+	private void probe(Rectangle axisRect) {	// JEB 2016 REWRITE: no longer using Rectangle object
 		synchronized (lock) {
 			Slice slice = new Slice();
 			slice.setTimeRange(timestep - firstTimestep, 1);
@@ -3125,7 +3138,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		}
 	}
 
-	public Decidegrees getLatLonFor(int screenx,int screeny){
+	public Decidegrees getLatLonFor(int screenx,int screeny){	// JEB 2016 REWRITE no longer using Rectangle object
 		int yHeightOffset = (int)(dataArea.getHeight() + dataArea.getY());
 		int xOffset=(int)dataArea.getX();
 		int width=(int)dataArea.getWidth();
@@ -3460,8 +3473,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 					: config.getObject( TilePlotConfiguration.GRID_LINE_COLOR ) );
 				
 			final int stepsLapsed = timestep - firstTimestep;
-			try {
-				tilePlot.drawBatchImage(g, xOffset, yOffset,
+			try {tilePlot.drawBatchImage(g, (FastTilePlotPanel) this,
+						xOffset, yOffset,
 							canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
 							lastRow, firstColumn, lastColumn, legendLevels,
 							legendColors, axisColor, labelColor, variable,

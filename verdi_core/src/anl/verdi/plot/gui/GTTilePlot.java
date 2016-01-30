@@ -1,6 +1,6 @@
 /** GTTilePlot: GeoTools version of a tile plot
- * developed 2016 based on VERDI TilePlot and FastTilePlot
- * uses new FastTilePlotPanel for GTTilePlot frame layout and to supply GeoTools geographic data support
+ * Developed 2016 based on VERDI TilePlot and FastTilePlot
+ * Uses new GTTilePlotPanel for GTTilePlot frame layout and to supply GeoTools geographic data support
  */
 
 package anl.verdi.plot.gui;
@@ -79,10 +79,10 @@ import anl.verdi.plot.util.PlotExporter;
 import anl.verdi.util.Utilities;
 
 /**
- * @author ellenjo
+ * @author Jo Ellen Brandmeyer, Ph.D., Institute for the Environment, University of North Carolina at Chapel Hill
  *
  */
-public class GTTilePlot extends FastTilePlotPanel 
+public class GTTilePlot extends GTTilePlotPanel 
 	implements ActionListener, Printable, ChangeListener, ComponentListener, MouseListener, TimeAnimatablePlot, Plot
 	{
 	private PlotEventProducer eventProducer = new PlotEventProducer();
@@ -290,18 +290,18 @@ public class GTTilePlot extends FastTilePlotPanel
 	}
 	
 	protected DataFrame getDataFrame() {
-		if ( this.log) {
-			return this.dataFrameLog;
+		if ( log) {
+			return dataFrameLog;
 		} else {
-			return this.dataFrame;
+			return dataFrame;
 		}
 	}
 	
 	protected DataFrame getDataFrame(boolean log) {
 		if (log) {
-			return this.dataFrameLog;
+			return dataFrameLog;
 		} else {
-			return this.dataFrame;
+			return dataFrame;
 		}
 	}
 
@@ -356,12 +356,12 @@ public class GTTilePlot extends FastTilePlotPanel
 			
 			// set log related info
 			ColorMap.ScaleType sType = map.getScaleType();
-			this.preLog = this.log;
+			preLog = log;
 			if ( sType == ColorMap.ScaleType.LOGARITHM ) {
-				this.log = true;
-				if ( this.tilePlot != null) {
-					this.tilePlot.setLog( true);
-					this.tilePlot.setLogBase( (int)map.getLogBase());
+				log = true;
+				if ( tilePlot != null) {
+					tilePlot.setLog( true);
+					tilePlot.setLogBase( (int)map.getLogBase());
 				}					
 				
 				//we need to also populate the non log intervals to some default range...
@@ -371,9 +371,9 @@ public class GTTilePlot extends FastTilePlotPanel
 				map.setMinMax( minmax[0], minmax[1]);
 
 			} else {
-				this.log = false;
-				if ( this.tilePlot != null) {
-					this.tilePlot.setLog( false);
+				log = false;
+				if ( tilePlot != null) {
+					tilePlot.setLog( false);
 				}				
 				//we need to also populate the log intervals to some default range...
 				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
@@ -385,12 +385,12 @@ public class GTTilePlot extends FastTilePlotPanel
 			recomputeStatistics = true;
 		}
 
-		this.draw();
-		this.config = new TilePlotConfiguration(config);
+		draw();
+		config = new TilePlotConfiguration(config);
 		
-		if (this.showGridLines != null) {
+		if (showGridLines != null) {
 			Boolean gridlines = (Boolean)config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
-			this.showGridLines.setSelected(gridlines == null ? false : gridlines);
+			showGridLines.setSelected(gridlines == null ? false : gridlines);
 		}
 	}
 
@@ -408,7 +408,7 @@ public class GTTilePlot extends FastTilePlotPanel
 			}
 		}
 		
-		this.configSource = source;		// not used, but was not commentedo out in v1.4.1
+		configSource = source;		// not used, but was not commented out in v1.4.1
 
 		ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
 
@@ -416,12 +416,12 @@ public class GTTilePlot extends FastTilePlotPanel
 			
 			// set log related info
 			ColorMap.ScaleType sType = map.getScaleType();
-			this.preLog = this.log;
+			preLog = log;
 			if ( sType == ColorMap.ScaleType.LOGARITHM ) {
-				this.log = true;
-				if ( this.tilePlot != null) {
-					this.tilePlot.setLog( true);
-					this.tilePlot.setLogBase( (int)map.getLogBase());
+				log = true;
+				if ( tilePlot != null) {
+					tilePlot.setLog( true);
+					tilePlot.setLogBase( (int)map.getLogBase());
 				}					
 				
 				//we need to also populate the non log intervals to some default range...
@@ -431,9 +431,9 @@ public class GTTilePlot extends FastTilePlotPanel
 				map.setMinMax( minmax[0], minmax[1]);
 
 			} else {
-				this.log = false;
-				if ( this.tilePlot != null) {
-					this.tilePlot.setLog( false);
+				log = false;
+				if ( tilePlot != null) {
+					tilePlot.setLog( false);
 				}				
 				//we need to also populate the log intervals to some default range...
 				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
@@ -445,16 +445,16 @@ public class GTTilePlot extends FastTilePlotPanel
 			updateColorMap(map);
 			recomputeStatistics = true;	
 			if ( source == Plot.ConfigSoure.FILE) {
-				this.recomputeLegend = true;
+				recomputeLegend = true;
 			} 
 		}
 
-		this.config = new TilePlotConfiguration(config);
-		this.draw();
+		config = new TilePlotConfiguration(config);
+		draw();
 		
-		if (this.showGridLines != null) {
+		if (showGridLines != null) {
 			Boolean gridlines = (Boolean)config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
-			this.showGridLines.setSelected(gridlines == null ? false : gridlines);
+			showGridLines.setSelected(gridlines == null ? false : gridlines);
 		}
 		
 	}
@@ -499,7 +499,7 @@ public class GTTilePlot extends FastTilePlotPanel
 			}
 		} else {
 						
-				this.computeStatistics(log);					
+				computeStatistics(log);					
 			
 			final int statistic = selection - 1;
 
@@ -546,7 +546,7 @@ public class GTTilePlot extends FastTilePlotPanel
 
 				for ( int timestep = 0; timestep < timesteps; ++timestep ) {
 					dataFrameIndex.set( timestep, layer, column, dataRow );
-					float value = this.getDataFrame(log).getFloat( dataFrameIndex ); 
+					float value = getDataFrame(log).getFloat( dataFrameIndex ); 
 					layerData[ row ][ column ][ timestep ] = value;
 				}
 			}
@@ -558,20 +558,20 @@ public class GTTilePlot extends FastTilePlotPanel
 		try {
 			GridCellStatistics.computeStatistics( layerData,
 					threshold, hoursPerTimestep,
-					statisticsData, this.statisticsMenu.getSelectedIndex()-1 );
-			this.statError = false;
+					statisticsData, statisticsMenu.getSelectedIndex()-1 );
+			statError = false;
 		} catch ( Exception e) {
 			Logger.error("Error occurred during computing statistics: " + e.getMessage());
-			this.statError = true;
+			statError = true;
 			if ( map != null && map.getScaleType() == ColorMap.ScaleType.LOGARITHM) {
-				this.preLog = true;
-				this.log = false;
-				if ( this.tilePlot != null) {
-					this.tilePlot.setLog( false);
+				preLog = true;
+				log = false;
+				if ( tilePlot != null) {
+					tilePlot.setLog( false);
 				}
 				map.setScaleType( ColorMap.ScaleType.LINEAR);
 				
-				draw();	// TODO Why is this section, including draw(), within a catch block?
+				draw();	// draw() is here because just changed the ScaleType
 			}
 		}
 	}
@@ -583,7 +583,7 @@ public class GTTilePlot extends FastTilePlotPanel
 	}
 
 	private void updateColorMap(ColorMap map) {
-		this.map = map;
+		map = map;
 		
 		try {
 			minMax = new DataUtilities.MinMax(map.getMin(), map.getMax());
@@ -655,7 +655,7 @@ public class GTTilePlot extends FastTilePlotPanel
 	@Override
 	public String getTitle() {
 		// TODO Auto-generated method stub
-		return null;
+		return super.getTString();
 	}
 
 	@Override
@@ -832,7 +832,7 @@ public class GTTilePlot extends FastTilePlotPanel
 	 * @return	observation data
 	 */
 	public List<OverlayObject> getObservationData() {
-		return this.obsData;
+		return obsData;
 	}
 
 	/**
