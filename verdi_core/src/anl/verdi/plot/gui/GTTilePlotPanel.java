@@ -449,19 +449,40 @@ public class GTTilePlotPanel extends JPanel {
 //		System.out.println("in master paintComponent");
 //	}
 	
+	/**
+	 * Return the MapContent object for the geospatial panel
+	 * @return myMapContent
+	 */
 	public MapContent getMapContent()
 	{
 		return myMapContent;
 	}
 	
+	/**
+	 * Return the Rendering Executor object for the geospatial panel
+	 * @return myRenderingExecutor
+	 */
 	public RenderingExecutor getRenderingExecutor()
 	{
 		return myRenderingExecutor;
 	}
 	
+	/**
+	 * Return the GTRenderer object for the geospatial panel
+	 * @return myGTRenderer
+	 */
 	public GTRenderer getRenderer()
 	{
 		return myGTRenderer;
+	}
+	
+	/**
+	 * Return the title string to calling program
+	 * @return	String the title string
+	 */
+	public String getTString()
+	{
+		return tString;
 	}
 	
 	/**
@@ -469,17 +490,17 @@ public class GTTilePlotPanel extends JPanel {
 	 */
 	public static void main(String[] args) {
 //		EventQueue.invokeLater(new Runnable() {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {	// internally calls EventQueue.invokeLater
+			public void run() {	// run() required by Interface Runnable
 				JFrame mainFrame = new JFrame("Main window");
 				mainFrame.setPreferredSize(new Dimension(500, 500));
-				mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);		// JFrame.EXIT_ON_CLOSE);
 				GTTilePlotPanel frame = new GTTilePlotPanel();	// called constructor for GTTilePlotPanel
 				try {
 					System.out.println("GTTilePlotPanel frame = " + frame);
-					frame.setTitlesPanel(new Font(Font.DIALOG, 1, 15),Color.BLACK,"Here is my TITLE string",
-							new Font(Font.SANS_SERIF, 1, 24), Color.BLUE, "Here is a blue subtitle1 string",
-							new Font(Font.SERIF,2,33), Color.RED, "Here is a red subtitle2 STRING");
+					frame.setTitlesPanel(new Font(Font.DIALOG, Font.BOLD, 15),Color.BLACK,"Here is my TITLE string",
+							new Font(Font.SANS_SERIF, Font.ITALIC, 24), Color.BLUE, "Here is a blue subtitle1 string",
+							new Font(Font.SERIF,Font.BOLD|Font.ITALIC,33), Color.RED, "Here is a red subtitle2 STRING");
 					System.out.println("back from setTitlesPanel");
 				} catch (Exception e) {
 					System.out.println("here I caught an exception");

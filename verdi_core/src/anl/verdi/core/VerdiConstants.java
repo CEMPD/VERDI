@@ -30,7 +30,7 @@ public interface VerdiConstants {
 	String SCATTER_BUTTON_ID = "anl.verdi.plot.gui.action.ScatterPlot";
 //	String VECTOR_BUTTON_ID = "anl.verdi.plot.gui.action.VectorPlot";	// 2014 removed old Vector Plot
 	String CONTOUR_BUTTON_ID = "anl.verdi.plot.gui.action.Contour3DPlot";
-	String AREAL_INTERPOLATION_BUTTON_ID = "anl.verdi.plot.gui.action.ArealInterpolation";
+	String AREAL_INTERPOLATION_BUTTON_ID = "anl.verdi.plot.gui.action.AreaGTTilePlotAction";
 
 	String SAVE_ID = "anl.verdi.core.action.SaveAction";
 	String SAVE_AS_ID = "anl.verdi.core.action.SaveAsAction";

@@ -16,8 +16,6 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.MapContent;
-// import org.geotools.map.MapContent;
-import org.geotools.swing.JMapFrame;
 import org.geotools.swing.JMapPane;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
