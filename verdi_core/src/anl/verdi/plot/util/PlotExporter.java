@@ -11,14 +11,17 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.io.FilenameUtils;
 
 import anl.verdi.plot.gui.FastAreaTilePlot;
 import anl.verdi.plot.gui.FastTilePlot;
+import anl.verdi.plot.gui.MeshPlot;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.io.TIFConvertImage;
 import anl.verdi.util.Utilities;
+
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
@@ -41,6 +44,7 @@ public class PlotExporter {
 	public final static String EPS = "eps";
 	public final static String SHP = "shp";		// 2014 disabling shapefile export in VERDI 1.5.0
 												// 2015 enabled for FastAreaTilePlot in VERDI 1.5.2
+												// 2016 enabled for MeshPlot in VERDI 1.6
 	public final static String ASC = "asc";
 
 	private Plot plot;
@@ -66,6 +70,13 @@ public class PlotExporter {
 		}
 
 		public boolean accept(File f) {
+			/*if (plot instanceof MeshPlot) {
+				String fileName = FilenameUtils.getBaseName(f.getName());
+				if (fileName.length() > 8)
+					return false;
+				ext = findExtension(f);
+				return ext.equalsIgnoreCase(SHP) || ext.equalsIgnoreCase(SHX) || ext.equalsIgnoreCase(DBF) || ext.isEmpty();
+			}*/
 			if (f.isDirectory()) return true;
 			String ext = findExtension(f);
 			return ext != null && imageExt.contains(ext);
@@ -101,7 +112,7 @@ public class PlotExporter {
 		chooser.addChoosableFileFilter(new ImageFileFilter("EPS Image (*.eps)", EPS));
 		final FileFilter pngFileFilter = new ImageFileFilter("PNG Image (*.png)", PNG);
 		chooser.addChoosableFileFilter(pngFileFilter);
-		if(plot instanceof FastAreaTilePlot)
+		if(plot instanceof FastAreaTilePlot || plot instanceof MeshPlot)
 			chooser.addChoosableFileFilter(new ImageFileFilter("Shapefile (*.shp, *.shx, *.dbf)", SHP));
 		chooser.addChoosableFileFilter(new ImageFileFilter("ASCII Grid (*.asc)", ASC));
 		chooser.setFileFilter(pngFileFilter);
@@ -146,7 +157,12 @@ public class PlotExporter {
 			file = new File(file.getAbsolutePath() + "." + currentExt);
 		}
 
-		if(plot instanceof FastAreaTilePlot && currentExt.equals(SHP)){
+		if( plot instanceof MeshPlot && currentExt.equals(SHP)){
+			String filename = file.getAbsolutePath();
+			filename = filename.substring(0, filename.length() - (SHP.length() + 1));
+			((MeshPlot)plot).exportShapeFile(filename);
+		}
+		else if( plot instanceof FastAreaTilePlot && currentExt.equals(SHP)){
 			String filename = file.getAbsolutePath();
 //			((FastAreaTilePlot)plot).exportShapeFile(filename);
 		}

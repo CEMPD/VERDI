@@ -9,6 +9,7 @@ package anl.verdi.plot.gui;
 import gov.epa.emvl.ASCIIGridWriter;
 import gov.epa.emvl.AxisLabelCreator;
 import gov.epa.emvl.GridCellStatistics;
+import gov.epa.emvl.MPASShapefileWriter;
 import gov.epa.emvl.MPASTilePlot;
 //import gov.epa.emvl.GridShapefileWriter;		// 2014 disable write shapefile VERDI 1.5.0
 import gov.epa.emvl.MapLines;
@@ -1074,7 +1075,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				PlotExporterAction save = new PlotExporterAction(this);
 				save.actionPerformed(event);
 			} catch (Exception e) {
-				Logger.error("Error exporting image " + e.getMessage());
+				e.printStackTrace();
 			}
 		/*} else if (command.equals(PRINT_COMMAND)) {
 			FastTilePlotPrintAction print = new FastTilePlotPrintAction(this);
@@ -1429,7 +1430,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		return count - 2;
 	}
 	
-	private class CellInfo { 
+	public class CellInfo { 
 		double[] latCoords;
 		double[] lonCoords;
 		int[] latTransformed;
@@ -1438,6 +1439,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		int colorIndex;
 		double lon = 0;
 		double lat = 0;
+		int minX;
+		int minY;
+		int maxX;
+		int maxY;
 		boolean cellClicked = false;
 		
 		private CellInfo(int id, int numVertices) {
@@ -1449,6 +1454,18 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			cellIdInfoMap.put(id,  this);
 		}
 		
+		public int getNumVertices() {
+			return latCoords.length;
+		}
+		
+		public double getLon(int index) {
+			return lonCoords[index] * RAD_TO_DEG + columnAxis.getRange().getOrigin();
+		}
+
+		public double getLat(int index) {
+			return latCoords[index] * RAD_TO_DEG;
+		}
+
 		public String getElevation() {
 			//TODO - add forumula to calculate layer elevation instead of level
 			String e = null;
@@ -1479,6 +1496,22 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			else {
 				return ((ArrayDouble.D3)renderVariable).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer);
 			}
+		}
+		
+		public double getMinX() {
+			return getLon(minX);
+		}
+		
+		public double getMaxX() {
+			return getLon(maxX);
+		}
+		
+		public double getMinY() {
+			return getLat(minY);
+		}
+		
+		public double getMaxY() {
+			return getLat(maxY);
 		}
 		
 		public double getValue(int time, int level) {
@@ -1598,15 +1631,34 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			cellIdInfoMap = new HashMap<Integer, CellInfo>();
 			for (int i = 0; i < vertexShape[0]; ++i) { //for each cell
 				int vertices = cellVertices.getInt(i);
-				cellsToRender[i] = new CellInfo(i, vertices);
+				CellInfo cell = new CellInfo(i, vertices);
+				cellsToRender[i] = cell;
+				double cellMinX = Double.MAX_VALUE;
+				double cellMaxX = Double.MIN_VALUE;
+				double celLMinY = Double.MAX_VALUE;
+				double cellMaxY = Double.MIN_VALUE;
+				
 				for (int j = 0; j < vertices; ++j) { //for each vertex
 					int vId = vertexList.get(i,j);
 					vId = vertexPositionMap.get(vId);
-					cellsToRender[i].latCoords[j] =latVert.getDouble(vId) * -1;
-					cellsToRender[i].lonCoords[j] =lonVert.getDouble(vId) - Math.PI;
+					double currentLat = latVert.getDouble(vId);
+					double currentLon = lonVert.getDouble(vId);
+					
+					
+					cell.latCoords[j] =latVert.getDouble(vId) * -1;
+					cell.lonCoords[j] =lonVert.getDouble(vId) - Math.PI;
 
-					if (cellsToRender[i].lonCoords[j] < 0)
-						cellsToRender[i].lonCoords[j] = 2 * Math.PI + cellsToRender[i].lonCoords[j];
+					if (cell.lonCoords[j] < 0)
+						cell.lonCoords[j] = 2 * Math.PI + cell.lonCoords[j];
+					
+					if (cell.lonCoords[j] < cell.lonCoords[cell.minX])
+						cell.minX = j;
+					if (cell.lonCoords[j] > cell.lonCoords[cell.maxX])
+						cell.maxX = j;
+					if (cell.latCoords[j] < cell.latCoords[cell.minY])
+						cell.minY = j;
+					if (cell.latCoords[j] > cell.latCoords[cell.maxY])
+						cell.maxY = j;
 					
 					if (latVert.getDouble(vId) < latMin)
 						latMin = latVert.getDouble(vId);
@@ -1619,16 +1671,15 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 					//System.out.println("Cell " + i + " vertex " + j + " id " + vId + " x " + xCord.getDouble(vId) + " y " + yCord.getDouble(vId) + " z " + zCord.getDouble(vId));
 				}
-				cellsToRender[i].lat = latCell.getDouble(i);
-				cellsToRender[i].lon = lonCell.getDouble(i) - Math.PI;
-				if (cellsToRender[i].lon < 0)
-					cellsToRender[i].lon  = 2 * Math.PI + cellsToRender[i].lon;
-				cellsToRender[i].lon -= Math.PI;
-				cellsToRender[i].lat *= RAD_TO_DEG;
-				cellsToRender[i].lon *= RAD_TO_DEG;
+				cell.lat = latCell.getDouble(i);
+				cell.lon = lonCell.getDouble(i) - Math.PI;
+				if (cell.lon < 0)
+					cell.lon  = 2 * Math.PI + cell.lon;
+				cell.lon -= Math.PI;
+				cell.lat *= RAD_TO_DEG;
+				cell.lon *= RAD_TO_DEG;
 				
 				boolean splitCell = false;
-				CellInfo cell = cellsToRender[i];
 				CellInfo cellHalf = null;
 				double minCellLon = Math.PI * 2;
 				double maxCellLon = 0; 
@@ -1820,6 +1871,17 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			gr.drawLine(cell.lonTransformed[length],  cell.latTransformed[length], 
 					cell.lonTransformed[0], cell.latTransformed[0]);
 		}
+	}
+	
+	public void exportShapeFile(String filename) {
+		try {
+			MPASShapefileWriter.write(filename, lonMin * RAD_TO_DEG + columnAxis.getRange().getOrigin(), lonMax * RAD_TO_DEG + columnAxis.getRange().getOrigin(),
+					latMin * RAD_TO_DEG, latMax * RAD_TO_DEG, variable, cellsToRender);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
 	}
 	
 	// Construct but do not draw yet.
