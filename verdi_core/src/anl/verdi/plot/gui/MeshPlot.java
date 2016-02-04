@@ -236,6 +236,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private int screenHeight;
 	private int xOffset = 0;
 	private int yOffset = 0;
+	
+	private int canvasSize = 0;
 	// For legend-colored grid cells and annotations:
 
 	protected MPASTilePlot tilePlot; // EMVL TilePlot.
@@ -488,7 +490,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 					xOffset = 100;
 					final int legendWidth = 80 + xOffset;
-					final int canvasSize =
+					canvasSize =
 						Math.round( Math.min( Math.max( 0, canvasWidth - legendWidth ), canvasHeight ) * marginScale );
 					final int subsetRows = 1 + lastRow - firstRow;
 					final int subsetColumns = 1 + lastColumn - firstColumn;
@@ -1066,7 +1068,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		String command = event.getActionCommand();
 		//Point start = new Point((popUpLocation), getRow(popUpLocation));
-		Rectangle rect = new Rectangle(popUpLocation, new Dimension(0, 0));
+		Rectangle rect = new Rectangle(new Point(getCol(popUpLocation), getRow(popUpLocation)), new Dimension(0, 0));
 
 		if (command.equals(PROPERTIES_COMMAND)) {
 			editChartProperties();
@@ -1228,8 +1230,16 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		boolean popZoom = true;
 		
-		previousPanX = panX;
-		previousPanY = panY;
+		boolean setLatLonRange = false;
+		if (previousPanX == -1) {
+			//previousPanX/Y was set alread, ignore
+			//also there was no clicked cell, so don't try to set it
+			setLatLonRange = true;
+		}
+		else {
+			previousPanX = panX;
+			previousPanY = panY;
+		}
 		
 		if (popZoomIn) { // click to zoom in or popup menu zoom in
 			if (zoomFactor < MAX_ZOOM) {
@@ -1269,10 +1279,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		} else { // regular zoom in
 			previousClippedDataRatio = clippedDataRatio;
 			clippedDataRatio = bounds.width / (double)bounds.height;
-			previousPanX = panX;
-			previousPanY = panY;
-			panX = (bounds.x - xOffset) / compositeFactor + panX;
-			panY = (bounds.y - yOffset) / compositeFactor + panY;
+			panX = bounds.x / compositeFactor + panX;
+			panY = bounds.y / compositeFactor + panY;
 			previousZoomFactor = zoomFactor;
 			zoomFactor *= screenWidth / (double)bounds.width;
 			popZoom = false;
@@ -1291,10 +1299,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		xClickLocation = bounds.x;
 		yClickLocation = bounds.y;
 		
-		Point p = new Point(bounds.x, bounds.y);
-		setCellClicked(getCellIdByCoord(getCol(p), getRow(p)));
+		if (!setLatLonRange)
+			setCellClicked(getCellIdByCoord(bounds.x, bounds.y));
 		
-		double xClickDistance = (bounds.x - xOffset) / compositeFactor + panX;
+		double xClickDistance = bounds.x / compositeFactor + panX;
 		if (popZoom)
 			panX = xClickDistance - visibleDataWidth / 2;
 		if (panX < 0)
@@ -1302,7 +1310,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		if (panX > dataWidth - visibleDataWidth)
 			panX = dataWidth - visibleDataWidth;
 		
-		double yClickDistance = (bounds.y - yOffset) / compositeFactor + panY;
+		double yClickDistance = bounds.y / compositeFactor + panY;
 		visibleDataHeight = screenHeight / zoomedFactor;  //half visible height
 		if (popZoom)
 			panY = yClickDistance - visibleDataHeight / 2;
@@ -1454,16 +1462,28 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			cellIdInfoMap.put(id,  this);
 		}
 		
+		public void setLat(double val) {
+			lat = val;
+		}
+		
+		public void setLon(double val) {
+			lon = val;
+		}
+		
 		public int getNumVertices() {
 			return latCoords.length;
 		}
 		
 		public double getLon(int index) {
-			return lonCoords[index] * RAD_TO_DEG + columnAxis.getRange().getOrigin();
+			return lonCoords[index] * RAD_TO_DEG;
 		}
 
 		public double getLat(int index) {
 			return latCoords[index] * RAD_TO_DEG;
+		}
+		
+		public int getId() {
+			return cellId;
 		}
 
 		public String getElevation() {
@@ -1530,15 +1550,57 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		private void transformCell(double factor, int xOffset, int yOffset) {
 			for (int i = 0; i < lonCoords.length; ++i) {
 				lonTransformed[i] = (int)Math.round((lonCoords[i] - lonMin - panX) * factor) + xOffset;
-				latTransformed[i] = (int)Math.round((latCoords[i] - latMin - panY) * factor) + yOffset;
+				latTransformed[i] = (int)Math.round((latCoords[i] * -1 - latMin - panY) * factor) + yOffset;
 			}
 			colorIndex = indexOfObsValue((float)getValue(), legendLevels);
 		}
 		
-		public CellInfo clone() {
+		public void calculateCellBounds() {
+			for (int j = 0; j < latCoords.length; ++j) {
+				if (lonCoords[j] < lonCoords[minX])
+					minX = j;
+				if (lonCoords[j] > lonCoords[maxX])
+					maxX = j;
+				if (latCoords[j] < latCoords[minY])
+					minY = j;
+				if (latCoords[j] > latCoords[maxY])
+					maxY = j;
+			}	
+		}
+		
+		public CellInfo split(int index) {
+			lonMin = Math.PI * -1;
+			lonMax = Math.PI;
+			
 			CellInfo clone = new CellInfo(cellId, lonCoords.length);
 			clone.latCoords = Arrays.copyOf(latCoords, latCoords.length);
 			clone.lonCoords = Arrays.copyOf(lonCoords, lonCoords.length);
+			
+			for (int j = 0; j < lonCoords.length; ++j) {
+				if (lonCoords[j] < 0) {
+					lonCoords[j] = Math.PI;
+				}
+				else if (clone.lonCoords[j] > 0)
+					clone.lonCoords[j] = Math.PI * -1;
+			}
+			
+			calculateCellBounds();
+			clone.calculateCellBounds();
+			
+			clone.lat = lat;
+			
+			lon = (lonCoords[maxX] + lonCoords[minX]) / 2;
+			clone.lon = (clone.lonCoords[clone.maxX] + clone.lonCoords[clone.minX]) / 2;
+			
+			
+			splitCells.put(clone, index);
+			
+			//System.out.println("Split cell " + cell.cellId + " negative: " + negativeCell);
+			//System.out.println("longitudes " + Arrays.toString(cell.lonCoords));
+			//System.out.println("latitudes " + Arrays.toString(cell.latCoords));
+			//System.out.println("longitudes " + Arrays.toString(cellHalf.lonCoords));
+			//System.out.println("latitudes " + Arrays.toString(cellHalf.latCoords));
+
 			return clone;
 		}
 	}
@@ -1587,6 +1649,17 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private static final String VAR_ELEVATION = "nVertLevels";
 	private static final String VAR_DEPTH = "nSoilLevels";
 	
+	private static double normalizeLon(double lon) {
+		lon = lon - 2 * Math.PI;
+		if (lon < Math.PI * -1)
+			lon = 2 * Math.PI + lon;
+		return lon;
+	}
+	
+	private static double normalizeLat(double lat) {
+		return lat;
+	}
+	
 	private void loadCellStructure() throws IOException {
 		Dataset ds = dataFrame.getDataset().get(0);
 		DataReader reader = app.getDataManager().getDataReader(ds);
@@ -1627,109 +1700,36 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 			cellsToRender = new CellInfo[vertexShape[0]];
 			splitCells = new HashMap<CellInfo, Integer>();
-			boolean splitHeight = false;
 			cellIdInfoMap = new HashMap<Integer, CellInfo>();
 			for (int i = 0; i < vertexShape[0]; ++i) { //for each cell
 				int vertices = cellVertices.getInt(i);
 				CellInfo cell = new CellInfo(i, vertices);
 				cellsToRender[i] = cell;
-				double cellMinX = Double.MAX_VALUE;
-				double cellMaxX = Double.MIN_VALUE;
-				double celLMinY = Double.MAX_VALUE;
-				double cellMaxY = Double.MIN_VALUE;
 				
 				for (int j = 0; j < vertices; ++j) { //for each vertex
 					int vId = vertexList.get(i,j);
 					vId = vertexPositionMap.get(vId);
-					double currentLat = latVert.getDouble(vId);
-					double currentLon = lonVert.getDouble(vId);
-					
-					
-					cell.latCoords[j] =latVert.getDouble(vId) * -1;
-					cell.lonCoords[j] =lonVert.getDouble(vId) - Math.PI;
-
-					if (cell.lonCoords[j] < 0)
-						cell.lonCoords[j] = 2 * Math.PI + cell.lonCoords[j];
-					
-					if (cell.lonCoords[j] < cell.lonCoords[cell.minX])
-						cell.minX = j;
-					if (cell.lonCoords[j] > cell.lonCoords[cell.maxX])
-						cell.maxX = j;
-					if (cell.latCoords[j] < cell.latCoords[cell.minY])
-						cell.minY = j;
-					if (cell.latCoords[j] > cell.latCoords[cell.maxY])
-						cell.maxY = j;
-					
-					if (latVert.getDouble(vId) < latMin)
-						latMin = latVert.getDouble(vId);
-					if (lonVert.getDouble(vId) < lonMin)
-						lonMin = lonVert.getDouble(vId);
-					if (latVert.getDouble(vId) > latMax)
-						latMax = latVert.getDouble(vId);
-					if (lonVert.getDouble(vId) > lonMax)
-						lonMax = lonVert.getDouble(vId);
+					cell.latCoords[j] = normalizeLat(latVert.getDouble(vId));
+					cell.lonCoords[j] = normalizeLon(lonVert.getDouble(vId));
 
 					//System.out.println("Cell " + i + " vertex " + j + " id " + vId + " x " + xCord.getDouble(vId) + " y " + yCord.getDouble(vId) + " z " + zCord.getDouble(vId));
 				}
-				cell.lat = latCell.getDouble(i);
-				cell.lon = lonCell.getDouble(i) - Math.PI;
-				if (cell.lon < 0)
-					cell.lon  = 2 * Math.PI + cell.lon;
-				cell.lon -= Math.PI;
-				cell.lat *= RAD_TO_DEG;
-				cell.lon *= RAD_TO_DEG;
 				
-				boolean splitCell = false;
-				CellInfo cellHalf = null;
-				double minCellLon = Math.PI * 2;
-				double maxCellLon = 0; 
+				cell.calculateCellBounds();
 				
-				double minCellLat = Double.MAX_VALUE;
-				double maxCellLat = Double.MIN_VALUE;
-				for (int j = 0; !splitHeight && j < cell.latCoords.length; ++j) {
-					if (cell.latCoords[j] < maxCellLat)
-						minCellLat = cell.latCoords[j];
-					if (cell.latCoords[j] > maxCellLat)
-						maxCellLat = cell.latCoords[j];
-					if (maxCellLat - minCellLat > Math.PI * .4) {
-						latMin = Math.PI * -0.5;
-						latMax = Math.PI * 0.5;
-						splitHeight = true;
-					}
-				}
-
-				for (int j = 0; j < cell.lonCoords.length; ++j) {
-					if (cell.lonCoords[j] < minCellLon)
-						minCellLon = cell.lonCoords[j];
-					if (cell.lonCoords[j] > maxCellLon)
-						maxCellLon = cell.lonCoords[j];
-					if (maxCellLon - minCellLon > Math.PI * 1.5) {
-						splitCell = true;
-						lonMin = 0;
-						lonMax = Math.PI * 2;
-						cellHalf = cell.clone();
-					}
-				}
-				if (splitCell) {
-					for (int j = 0; j < cell.lonCoords.length; ++j) {
-						if (cell.lonCoords[j] < Math.PI) {
-							cell.lonCoords[j] = Math.PI * 2;
-						}
-						else if (cellHalf.lonCoords[j] > Math.PI)
-							cellHalf.lonCoords[j] = 0;
-					}
-					splitCells.put(cellHalf, i);
-					
-					//System.out.println("Split cell " + cell.cellId + " negative: " + negativeCell);
-					//System.out.println("longitudes " + Arrays.toString(cell.lonCoords));
-					//System.out.println("latitudes " + Arrays.toString(cell.latCoords));
-					//System.out.println("longitudes " + Arrays.toString(cellHalf.lonCoords));
-					//System.out.println("latitudes " + Arrays.toString(cellHalf.latCoords));
-				}
+				cell.setLat(normalizeLat(latCell.getDouble(i)) * RAD_TO_DEG);
+				cell.setLon(normalizeLon(lonCell.getDouble(i)) * RAD_TO_DEG);
+				
+				if (cell.lonCoords[cell.maxX] - cell.lonCoords[cell.minX] > Math.PI * 1.5)
+					cell.split(i);
 			}
 			
-			dataWidth = lonMax - lonMin;
-			dataHeight = latMax - latMin;
+			lonMin = columnAxis.getRange().getLowerBound() / RAD_TO_DEG;
+			latMin = rowAxis.getRange().getLowerBound() / RAD_TO_DEG;
+			dataWidth = (columnAxis.getRange().getExtent() - 1) / RAD_TO_DEG;
+			dataHeight = (rowAxis.getRange().getExtent() - 1) / RAD_TO_DEG;
+			lonMax = lonMin + dataWidth;
+			latMax = latMin + dataHeight;
 			visibleDataWidth = dataWidth;
 			visibleDataHeight = dataHeight;
 			dataRatio = dataWidth / dataHeight;
@@ -1875,8 +1875,13 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	public void exportShapeFile(String filename) {
 		try {
-			MPASShapefileWriter.write(filename, lonMin * RAD_TO_DEG + columnAxis.getRange().getOrigin(), lonMax * RAD_TO_DEG + columnAxis.getRange().getOrigin(),
-					latMin * RAD_TO_DEG, latMax * RAD_TO_DEG, variable, cellsToRender);
+			MPASShapefileWriter.write(filename, 
+					(double)firstColumn + columnOrigin,
+					(double)lastColumn + columnOrigin,
+					(double)firstRow + rowOrigin,
+					(double)lastRow + rowOrigin,
+					variable,
+					cellsToRender);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -3315,44 +3320,31 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				latLow = Integer.valueOf(fLatField.getText());
 				latHigh = Integer.valueOf(lLatField.getText());
 				
-				//TODO - move this into resetRowsNColumns
-				//plot.resetRowsNColumns(firstRow, lastRow, firstColumn,
-						//lastColumn);
-				
-				System.out.println("Setting latlon, screenWidth " + screenWidth + " height " + screenHeight);
-				
-				double clippedWidth = (lonHigh - lonLow) / RAD_TO_DEG;
-				double clippedHeight = (latHigh - latLow) / RAD_TO_DEG;
-				previousClippedDataRatio = clippedDataRatio;
-				clippedDataRatio = clippedWidth / clippedHeight;
-				previousZoomFactor = zoomFactor;
-				double originalZoom = screenWidth / dataWidth;
-				double compositeZoom;
-				if (clippedDataRatio > 1) {
-					compositeZoom = screenWidth / clippedWidth;
-					visibleDataWidth = clippedWidth;
-					visibleDataHeight = visibleDataWidth / clippedDataRatio;
+				if (dataRatio > 1) {		
+					screenWidth = canvasSize;
+					screenHeight = (int)Math.round(screenWidth / dataRatio);
 				}
 				else {
-					compositeZoom = screenHeight / clippedHeight;
-					visibleDataHeight = clippedHeight;
-					visibleDataWidth = visibleDataHeight * clippedDataRatio;
+					screenHeight = canvasSize;
+					screenWidth = (int)Math.round(screenHeight * dataRatio);
 				}
-				zoomFactor = compositeZoom / originalZoom;
 				
-				firstRow = latLow - rowOrigin;
-				lastRow = latHigh - rowOrigin;
-				firstColumn = lonLow - columnOrigin;
-				lastColumn = lonHigh - columnOrigin;
+				previousPanX = -1;
+				previousPanY = -1;
+				panX = 0;
+				panY = 0;
+				zoomFactor = 1;
+				compositeFactor = screenWidth / dataWidth;
 				
-				previousPanX = panX;
-				previousPanY = panY;
+				int x = (int)Math.round((lonLow - columnOrigin) / RAD_TO_DEG / dataWidth * screenWidth);
+				int y = (int)Math.round((dataHeight - (latHigh - rowOrigin) / RAD_TO_DEG) / dataHeight * screenHeight);
+				int width = (int)Math.round((lonHigh - lonLow) / RAD_TO_DEG / dataWidth * screenWidth);
+				int height = (int)Math.round((latHigh - latLow) / RAD_TO_DEG / dataHeight * screenHeight);				
+
 				
-				panX = firstColumn / RAD_TO_DEG;
-				panY = dataHeight - lastRow / RAD_TO_DEG;
-												
-				computeDerivedAttributes();
-				draw();
+				Rectangle rect = new Rectangle(x, y, width, height);
+				
+				zoom(false, true, false, false, false, rect);
 
 				return YES_OPTION;
 			} catch (NumberFormatException e) {
@@ -3773,7 +3765,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	
-	public static void main(String[] args) {
+	public static void debugMain(String[] args) {
 		System.out.println("Hello there");
 		//ARGB String: Color 1 -16777194 color 2 -1677717 from 22 / 44
 		//BufferedImage imgMap = new java.awt.image.BufferedImage(10, 10, java.awt.image.BufferedImage.TYPE_INT_ARGB);
@@ -3817,6 +3809,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			CellInfo cell = cellIdInfoMap.get(hoveredId);
 			if (cell != null) {
 				ret += cell.getElevation() + ") " + variable + " " + valueFormat.format(cell.getValue()) + unitString;
+				//ret += ") " + cell.getId() + " " + " " + valueFormat.format(cell.getValue()) + " c " + coordFormat.format(cell.lon) + "," + coordFormat.format(cell.lat) + " " + point.x + "," + point.y;
 
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -3841,7 +3834,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		public void mousePressed(MouseEvent e) {
 			if (isInDataArea(e)) {
-				mpStart = e.getPoint();
+				mpStart = new Point(getCol(e.getPoint()), getRow(e.getPoint()));
 				rect = new Rectangle(mpStart, new Dimension(0, 0));
 				eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, createAreaString(rect),
 								false));
@@ -3853,7 +3846,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		public void mouseDragged(MouseEvent e) {
 			if (mpStart != null) {
 				if (isInDataArea(e)) {
-					mpEnd = e.getPoint();
+					mpEnd = new Point(getCol(e.getPoint()), getRow(e.getPoint()));
 					rect.width = mpEnd.x - rect.x;
 					rect.height = rect.y - mpEnd.y;
 					
@@ -3883,7 +3876,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		public void mouseReleased(MouseEvent e) {
 			if (mpStart != null) {
 				if (isInDataArea(e)) {
-					mpEnd = e.getPoint();
+					mpEnd = new Point(getCol(e.getPoint()), getRow(e.getPoint()));
 					rect.width = mpEnd.x - rect.x;
 					rect.height = mpEnd.y - rect.y;
 

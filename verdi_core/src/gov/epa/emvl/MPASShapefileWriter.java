@@ -13,6 +13,7 @@ package gov.epa.emvl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -86,24 +87,23 @@ public final class MPASShapefileWriter {
     // would continue running just as they do under a 32-bit VM.
     
 	//Debug - export subset
-	/*MeshPlot.CellInfo[] newCells = new MeshPlot.CellInfo[10];
-	int k = 0;
-	for (int i = 0; i < cells.length && k < newCells.length; ++i) {
-		if (cells[i].getMinX() > 3.83 &&
-				cells[i].getMaxX() < 13.46 &&
-				cells[i].getMinY() > 1.62 &&
-				cells[i].getMaxY() < 12.76)
-			newCells[k++] = cells[i];
+	ArrayList<MeshPlot.CellInfo> newCells = new ArrayList<MeshPlot.CellInfo>();
+	for (int i = 0; i < cells.length; ++i) {
+		if (cells[i].getMinX() >= minLon &&
+				cells[i].getMaxX() <= maxLon &&
+				cells[i].getMinY() >= minLat &&
+				cells[i].getMaxY() <= maxLat)
+			newCells.add(cells[i]);
 	}
 	
-	cells = newCells;*/
+	cells = newCells.toArray(new MeshPlot.CellInfo[0]);
 	int numVertices = 0;
 	minLon = Double.MAX_VALUE;
 	maxLon = -1 * Double.MAX_VALUE;
 	minLat = Double.MAX_VALUE;
 	maxLat = -1 *Double.MAX_VALUE;
 	for (int i = 0; i < cells.length; ++i) {
-		numVertices += cells[i].getNumVertices() + 1;
+		numVertices = numVertices + cells[i].getNumVertices() + 1;
 		if (cells[i].getMinX() < minLon)
 			minLon = cells[i].getMinX();
 		if (cells[i].getMaxX() > maxLon)
@@ -119,7 +119,6 @@ public final class MPASShapefileWriter {
     
     final int POLYGON = 5;
     final int PARTS_PER_POLYGON = 1;
-    final int VERTICES_PER_POLYGON = 5;
     final int HEADER_BYTES = 100;
     final int RECORD_HEADER_BYTES_SHP = 8;
     final int RECORD_BYTES_SHX = 8;
@@ -158,13 +157,13 @@ public final class MPASShapefileWriter {
     final int shxFileBytes = HEADER_BYTES + records * RECORD_BYTES_SHX;
     final int shpFileBytes = HEADER_BYTES + records * (RECORD_HEADER_BYTES_SHP + RECORD_CONTENT_BYTES_SHP) + RECORD_CONTENT_BYTES_VERTICES;
     int byteIndex = 0;
-    final double[] xyRange = { 0.0, 0.0, 0.0, 0.0 };
     FileOutputStream file = null;
 
     // Initialize shx file header and records:
 
     writeInt( header, 0, 9994, BIG ); // file code, always 9994
     byteIndex = writeInt( header, 24, shxFileBytes / 2, BIG ); // file length
+    System.err.println("Wrote shx " + shxFileBytes + " bytes");
     byteIndex = writeInt( header, 28, 1000, LITTLE );
     byteIndex = writeInt( header, 32, POLYGON, LITTLE );
     byteIndex = writeDouble( header, byteIndex, minLon, LITTLE );
@@ -207,6 +206,7 @@ public final class MPASShapefileWriter {
     try {
       file = new FileOutputStream( fileName + ".shp" );
       writeInt( header, 24, shpFileBytes / 2, BIG );
+      System.err.println("Wrote shp " + shpFileBytes + " bytes");
       file.write( header );
       file.flush();
 
@@ -265,127 +265,20 @@ public final class MPASShapefileWriter {
   private static void writeDBF( final String fileName, final String variable,
           MeshPlot.CellInfo[] cells ) throws IOException {
 	  DbaseFileHeader header = new DbaseFileHeader();
+	  header.addColumn("ID", 'N', 10, 0);
       header.addColumn(variable, 'F', 20, 6);
       header.setNumRecords(cells.length);
       File f = new File(fileName + ".dbf");
       FileOutputStream fout = new FileOutputStream(f);
       DbaseFileWriter dbf = new DbaseFileWriter(header, fout.getChannel());
       for (int i = 0; i < cells.length; ++i) {
-    	  Object[] row = new Object[1];
-    	  row[0] = new Double(cells[i].getValue());
+    	  Object[] row = new Object[2];
+    	  row[0] = new Double(cells[i].getId());
+    	  row[1] = new Double(cells[i].getValue());
        	  dbf.write(row);
       }
       dbf.close();  
   }
-// 2014 writeDBF_old appears to not be used. Commenting it out to check.
-//  private static void writeDBF_old( final String fileName, final String variable,
-//                                final int rows, final int columns,
-//                                final float[][] data ) {
-//	boolean ok = true;
-//	String fileNameDbfConvert;
-//	
-//    final int HEADER_BYTES = 32 + 32 + 1;
-//    final int FIELD_WIDTH = 17; // "%17.6lf".
-//    final int FIELD_DECIMAL_DIGITS = 6; // # of digits to the right of decimal
-//    final int records = rows * columns;
-//    final byte[] header = {
-//      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//      0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//      0, 0, 0, 0, 0
-//    };
-//
-//    // Initialize header:
-//    
-//    GregorianCalendar calendar = new GregorianCalendar();
-//Logger.debug("in GridShapefileWriter, writeDBF_old, created GregorianCalendar calendar");
-//	byte year = (byte)( calendar.get( Calendar.YEAR) - 1900);
-//	byte month = (byte)( calendar.get( Calendar.MONTH)+1);
-//	byte day = (byte)( calendar.get( Calendar.DAY_OF_MONTH));
-//
-//    header[ 0 ] = 0x3;   // dBASE Level 5.
-//    header[ 1 ] = year;  // Update timestamp: YY - 1900.
-//    header[ 2 ] = month;   // Update timestamp: MM.
-//    header[ 3 ] = day;  // Update timestamp: DD.
-//    writeInt( header, 4, records, LITTLE );
-//    writeShort( header, 8, HEADER_BYTES, LITTLE );
-//    writeShort( header, 10, FIELD_WIDTH, LITTLE );
-//    header[29] = languageDriver;
-//
-//    // Field Descriptor:
-//
-//    final int length = variable.length();
-//    final int letters = length < 10 ? length : 10;
-//    String newVar = variable.substring(0, letters);
-//    byte[] varBytes = newVar.getBytes(java.nio.charset.Charset.forName(characterSetName));
-//
-//    for ( int letter = 0; letter < letters; ++letter ) {
-//      header[ 32 + letter ] = (byte) varBytes[letter]; //variable.charAt( letter );
-//    }
-//
-//    header[ 43 ] = 'N';  /* Formatted real number. */
-//    header[ 48 ] = FIELD_WIDTH;
-//    header[ 49 ] = FIELD_DECIMAL_DIGITS;
-//    header[ 64 ] = 0x0D; /* Terminator. */
-//    FileOutputStream file = null;
-//
-//    try {
-//      file = new FileOutputStream( fileName + ".dbf" );
-//      file.write( header );
-//      file.flush();
-//      
-//      for ( int row = 0; row < rows; ++row ) {
-//
-//        for ( int column = 0; column < columns; ++column ) {
-//          final float value = data[ row ][ column ];
-//          final String format =
-//            String.format( "%%%d.%df", FIELD_WIDTH, FIELD_DECIMAL_DIGITS );
-//          final String formattedValue = String.format( format, value );
-//          file.write( formattedValue.getBytes( characterSetName ), 0, FIELD_WIDTH );
-//          file.flush();
-//        }
-//      }
-//    } catch ( Exception unused_ ) {
-//      System.err.println( unused_ );
-//      ok = false;
-//    } finally {
-//
-//      if ( file != null ) {
-//        try { file.close(); } catch ( Exception unused2 ) { }
-//        file = null;
-//      }
-//    }
-//    
-////    try {
-////		Thread.sleep(200);
-////	} catch (InterruptedException e1) {
-////		// TODO Auto-generated catch block
-////		e1.printStackTrace();
-////	}
-//    
-//	
-//    if ( ok) {
-//    	com.bbn.openmap.dataAccess.shape.DbfFile dtm = (com.bbn.openmap.dataAccess.shape.DbfFile) com.bbn.openmap.dataAccess.shape.DbfFile.getDbfTableModel(fileName + ".dbf");
-//    	OutputStream os;
-//		try {
-//			double num = Double.MAX_VALUE;
-//			dtm.readData(0, (int) num);
-//			os = new FileOutputStream(fileName + ".dbf");
-//			com.bbn.openmap.dataAccess.shape.output.DbfOutputStream dos = new com.bbn.openmap.dataAccess.shape.output.DbfOutputStream(os);
-//			dos.writeModel(dtm);				
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} catch (FormatException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} 
-//    }
-//  }
 
   private static void writePRJ( final String fileName ) {
     final String contentString =
@@ -407,296 +300,6 @@ public final class MPASShapefileWriter {
         file = null;
       }
     }
-  }
-
-
-  // Compute xy vertex range[ 4 ] = { xMinimum, yMinimum, xMaximum, yMaximum }:
-
-  private static void computeGridBounds( final int rows,
-                                         final int columns,
-                                         final double westEdge,
-                                         final double southEdge,
-                                         final double cellWidth,
-                                         final double cellHeight,
-                                         final Projector projector,
-                                         double[] range ) {
-    final int rows1 = rows + 1;
-    final int columns1 = columns + 1;
-    double x = westEdge;
-    double y = southEdge;
-    double[] pxy = { 0.0, 0.0 };
-    double minimumX = x;
-    double maximumX = minimumX;
-    double minimumY = y;
-    double maximumY = minimumY;
-
-    // Initialize to west/south point:
-
-    if ( projector != null ) {
-      projector.unproject( x, y, pxy );
-      minimumX = maximumX = pxy[ 0 ];
-      minimumY = maximumY = pxy[ 1 ];
-    } else {
-      pxy[ 0 ] = x;
-      pxy[ 1 ] = y;
-    }
-    
-    // Check against rest of west edge of grid:
-
-    y += cellHeight;
-
-    for ( int row = 1; row < rows1; ++row, y += cellHeight ) {
-
-      if ( projector != null ) {
-        projector.unproject( x, y, pxy );
-       } else {
-        pxy[ 0 ] = x;
-        pxy[ 1 ] = y;
-      }
-
-      if ( pxy[ 0 ] < minimumX ) {
-        minimumX = pxy[ 0 ];
-      } else if ( pxy[ 0 ] > maximumX ) {
-        maximumX = pxy[ 0 ];
-      }
-
-      if ( pxy[ 1 ] < minimumY ) {
-        minimumY = pxy[ 1 ];
-      } else if ( pxy[ 1 ] > maximumY ) {
-        maximumY = pxy[ 1 ];
-      }
-    }
-
-    // Check against east edge of grid:
-
-    x = westEdge + columns * cellWidth;
-    y = southEdge;
-
-    for ( int row = 0; row < rows1; ++row, y += cellHeight ) {
-
-      if ( projector != null ) {
-        projector.unproject( x, y, pxy );
-      } else {
-        pxy[ 0 ] = x;
-        pxy[ 1 ] = y;
-      }
-
-      if ( pxy[ 0 ] < minimumX ) {
-        minimumX = pxy[ 0 ];
-      } else if ( pxy[ 0 ] > maximumX ) {
-        maximumX = pxy[ 0 ];
-      }
-
-      if ( pxy[ 1 ] < minimumY ) {
-        minimumY = pxy[ 1 ];
-      } else if ( pxy[ 1 ] > maximumY ) {
-        maximumY = pxy[ 1 ];
-      }
-    }
-
-    // Check against rest of south edge of grid:
-
-    x = westEdge + cellWidth;
-    y = southEdge;
-
-    for ( int column = 1; column < columns1; ++column, x += cellWidth ) {
-
-      if ( projector != null ) {
-        projector.unproject( x, y, pxy );
-       } else {
-        pxy[ 0 ] = x;
-        pxy[ 1 ] = y;
-      }
-
-      if ( pxy[ 0 ] < minimumX ) {
-        minimumX = pxy[ 0 ];
-      } else if ( pxy[ 0 ] > maximumX ) {
-        maximumX = pxy[ 0 ];
-      }
-
-      if ( pxy[ 1 ] < minimumY ) {
-        minimumY = pxy[ 1 ];
-      } else if ( pxy[ 1 ] > maximumY ) {
-        maximumY = pxy[ 1 ];
-      }
-    }
-
-    // Check against north edge of grid:
-
-    x = westEdge;
-    y = southEdge + rows * cellHeight;
-
-    for ( int column = 0; column < columns1; ++column, x += cellWidth ) {
-
-      if ( projector != null ) {
-        projector.unproject( x, y, pxy );
-       } else {
-        pxy[ 0 ] = x;
-        pxy[ 1 ] = y;
-      }
-
-      if ( pxy[ 0 ] < minimumX ) {
-        minimumX = pxy[ 0 ];
-      } else if ( pxy[ 0 ] > maximumX ) {
-        maximumX = pxy[ 0 ];
-      }
-
-      if ( pxy[ 1 ] < minimumY ) {
-        minimumY = pxy[ 1 ];
-      } else if ( pxy[ 1 ] > maximumY ) {
-        maximumY = pxy[ 1 ];
-      }
-    }
-
-    range[ 0 ] = minimumX;
-    range[ 1 ] = minimumY;
-    range[ 2 ] = maximumX;
-    range[ 3 ] = maximumY;
-
-    if ( projector != null ) {
-      // Adjust latitudes from sphere to WGS84/GRS80/NAD83 spheroid/datum:
-        range[ 1 ] = latitudeWGS84( range[ 1 ] );
-        range[ 3 ] = latitudeWGS84( range[ 3 ] );
-    }
-  }
-
-  /**
-   * Compute vertices of grid cell as an explicitly closed 2D 5-vertex polygon
-   * ring in clockwise order.
-   */
-
-  private static void computePolygonVertices( final int row,
-                                              final int column,
-                                              final double westEdge,
-                                              final double southEdge,
-                                              final double cellWidth,
-                                              final double cellHeight,
-                                              final Projector projector,
-                                              double[] xy,
-                                              double[] xyRange ) {
-
-    double x = westEdge + column * cellWidth;
-    double y = southEdge + row * cellHeight;
-    double[] pxy = { 0.0, 0.0 };
-
-    if ( projector != null ) {
-      projector.unproject( x, y, pxy );
-    } else {
-      pxy[ 0 ] = x;
-      pxy[ 1 ] = y;
-    }
-
-    xy[ 0 ] = pxy[ 0 ];
-    xy[ 1 ] = pxy[ 1 ];
-
-    y += cellHeight;
-
-    if ( projector != null ) {
-      projector.unproject( x, y, pxy );
-    } else {
-      pxy[ 0 ] = x;
-      pxy[ 1 ] = y;
-    }
-
-    xy[ 2 ] = pxy[ 0 ];
-    xy[ 3 ] = pxy[ 1 ];
-
-    x += cellWidth;
-
-    if ( projector != null ) {
-      projector.unproject( x, y, pxy );
-    } else {
-      pxy[ 0 ] = x;
-      pxy[ 1 ] = y;
-    }
-
-    xy[ 4 ] = pxy[ 0 ];
-    xy[ 5 ] = pxy[ 1 ];
-
-    y -= cellHeight;
-
-    if ( projector != null ) {
-      projector.unproject( x, y, pxy );
-    } else {
-      pxy[ 0 ] = x;
-      pxy[ 1 ] = y;
-    }
-
-    xy[ 6 ] = pxy[ 0 ];
-    xy[ 7 ] = pxy[ 1 ];
-
-    xy[ 8 ] = xy[ 0 ];
-    xy[ 9 ] = xy[ 1 ];
-
-    xyRange[ 0 ] = xyRange[ 1 ] = xyRange[ 2 ] = xyRange[ 3 ] = 0.0;
-    computeRange( xy, 0, 10, 2, xyRange );
-    computeRange( xy, 1, 10, 2, pxy );
-    final double xMaximum = xyRange[ 1 ];
-    xyRange[ 1 ] = pxy[ 0 ];
-    xyRange[ 2 ] = xMaximum;
-    xyRange[ 3 ] = pxy[ 1 ];
-
-   if ( projector != null ) {
-      // Adjust latitudes from sphere to WGS84/GRS80/NAD83 spheroid/datum:
-      xyRange[ 1 ] = latitudeWGS84( xyRange[ 1 ] );
-      xyRange[ 3 ] = latitudeWGS84( xyRange[ 3 ] );
-      xy[ 1 ] = latitudeWGS84( xy[ 1 ] );
-      xy[ 3 ] = latitudeWGS84( xy[ 3 ] );
-      xy[ 5 ] = latitudeWGS84( xy[ 5 ] );
-      xy[ 7 ] = latitudeWGS84( xy[ 7 ] );
-      xy[ 9 ] = latitudeWGS84( xy[ 9 ] );
-    }
-  }
-
-  private static void computeRange( final double[] array,
-                                    final int start,
-                                    final int count,
-                                    final int stride,
-                                    double[] range ) {
-    double minimum = array[ start ];
-    double maximum = minimum;
-
-    for ( int index = start + stride; index < count; index += stride ) {
-      final double item = array[ index ];
-
-      if ( item < minimum ) {
-        minimum = item;
-      } else if ( item > maximum ) {
-        maximum = item;
-      }
-    }
-
-    range[ 0 ] = minimum;
-    range[ 1 ] = maximum;
-  }
-
-  // Convert latitude on sphere to latitude on WGS84/GRS80/NAD83 spheroid.
-  // http://en.wikipedia.org/wiki/Latitude#Geocentric_latitude.
-  
-  private static double latitudeWGS84( final double latitudeSphere ) {
-    final double inverseWGS84AxisRatioSquared = 1.006739496756587;
-    final double latitudeSphereRadians = latitudeSphere * ( Math.PI / 180.0 );
-    final double latitudeWGS84Radians =
-      Math.atan( Math.tan( latitudeSphereRadians ) * inverseWGS84AxisRatioSquared );
-    final double result = latitudeWGS84Radians * ( 180.0 / Math.PI );
-    return result;
-  }
-
-  private static int writeShort( byte[] bytes, final int index,
-                                 final int value, final int endian ) {
-    final int result = index + 4;
-    final byte byte1 = (byte)   ( value & 0x0000ff );
-    final byte byte2 = (byte) ( ( value & 0x00ff00 ) >> 8 );
-
-    if ( endian == BIG ) {
-      bytes[ index     ] = byte2;
-      bytes[ index + 1 ] = byte1;
-    } else {
-      bytes[ index     ] = byte1;
-      bytes[ index + 1 ] = byte2;
-    }
-
-    return result;
   }
 
   private static int writeInt( byte[] bytes, final int index,
