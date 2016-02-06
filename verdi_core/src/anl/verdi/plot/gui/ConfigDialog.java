@@ -96,7 +96,7 @@ public class ConfigDialog extends JDialog {
 		this.dispose();
 	}
 
-	// writes the plot configuration to the PlotConfiguration object (read and used by other parts of VERDI
+	// writes the plot configuration to the PlotConfiguration object (read and used by other parts of VERDI)
 	private void commit() throws Exception {
 		PlotConfiguration config = new PlotConfiguration();
 		if (tabbedPanel.indexOfTab("Color Map") != -1) {
@@ -259,19 +259,31 @@ public class ConfigDialog extends JDialog {
 	}
 
 	private void initTitles(PlotConfiguration config) {
-		String title = plot.getTitle();
-		titlesPanel.initTitle(title != null && !title.trim().isEmpty(), title, (Font) config
-				.getObject(PlotConfiguration.TITLE_FONT), (Color) config
-				.getObject(PlotConfiguration.TITLE_COLOR));
+		String title = config.getTitle(); // plot.getTitle(); Feb 2016 use config like everything else here
+		String showTitle = config.getShowTitle();
+		boolean bShowTitle = true; 
+		if (showTitle.compareTo("FALSE") == 0)
+			bShowTitle = false;
+		titlesPanel.initTitle(bShowTitle, title,	// title != null && !title.trim().isEmpty(), title, 
+				(Font) config.getObject(PlotConfiguration.TITLE_FONT), 
+				(Color) config.getObject(PlotConfiguration.TITLE_COLOR));
 
-		titlesPanel.initSubTitle1(config.getSubtitle1().trim().length() > 0,
-				config.getSubtitle1(), (Font) config
-						.getObject(PlotConfiguration.SUBTITLE_1_FONT),
+		bShowTitle = true;
+		String showSubTitle1 = config.getShowSubtitle1();
+		if (showSubTitle1.compareTo("FALSE") == 0)
+			bShowTitle = false;
+		titlesPanel.initSubTitle1(bShowTitle,	// config.getSubtitle1().trim().length() > 0,
+				config.getSubtitle1(), 
+				(Font) config.getObject(PlotConfiguration.SUBTITLE_1_FONT),
 				(Color) config.getObject(PlotConfiguration.SUBTITLE_1_COLOR));
 
-		titlesPanel.initSubTitle2(config.getSubtitle2().trim().length() > 0,
-				config.getSubtitle2(), (Font) config
-						.getObject(PlotConfiguration.SUBTITLE_2_FONT),
+		bShowTitle = true;
+		String showSubTitle2 = config.getShowSubtitle2();
+		if(showSubTitle2.compareTo("FALSE") == 0)
+			bShowTitle = false;
+		titlesPanel.initSubTitle2(bShowTitle,	// config.getSubtitle2().trim().length() > 0,
+				config.getSubtitle2(), 
+				(Font) config.getObject(PlotConfiguration.SUBTITLE_2_FONT),
 				(Color) config.getObject(PlotConfiguration.SUBTITLE_2_COLOR));
 	}
 

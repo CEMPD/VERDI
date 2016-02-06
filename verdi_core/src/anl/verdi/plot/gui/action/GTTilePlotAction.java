@@ -24,19 +24,21 @@ import anl.verdi.data.DataFrame;
 import anl.verdi.formula.Formula;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotPanel;
+import anl.verdi.plot.gui.GTTilePlot;
+
 
 public class GTTilePlotAction extends AbstractSAFAction<VerdiApplication> {
 
-	// FastTilePlot button callback:
+	// GTTilePlot button callback:
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7433688932017847111L;
-	static final Logger Logger = LogManager.getLogger(anl.verdi.plot.gui.action.GTTilePlotAction.class.getName());
+	static final Logger Logger = LogManager.getLogger(GTTilePlotAction.class.getName());
 
 	public void actionPerformed( ActionEvent unused ) {
-		Logger.debug("in action.GTTilePlotAction.actionPerformed");
+		Logger.debug("in GTTilePlotAction.actionPerformed");
 		final VerdiApplication application = workspace.getApplicationMediator();
 
 		if ( application.getProject().getSelectedFormula() != null ) {
@@ -45,18 +47,18 @@ public class GTTilePlotAction extends AbstractSAFAction<VerdiApplication> {
 			Logger.debug("look at dataFrame, check if null");
 			if ( dataFrame != null ) {
 				Logger.debug("dataFrame is not null; ready to generate Plot for GTTilePlot");
-				final Plot plot = new anl.verdi.plot.gui.GTTilePlot(application, dataFrame);
+				final Plot plot = new GTTilePlot(application, dataFrame);
 				final String variableName = dataFrame.getVariable().getName();
 				Logger.debug("have variableName = " + variableName);	// O3[1]
-				JPanel aJPanel = ((anl.verdi.plot.gui.GTTilePlot)plot).getPanel();
-				JMapPane aJMapPane = ((anl.verdi.plot.gui.GTTilePlot)plot).getMapPane();
-				Logger.debug("plot.getMapPane = " + ((anl.verdi.plot.gui.GTTilePlot)plot).getMapPane());
+				JPanel aJPanel = ((GTTilePlot)plot).getPanel();
+				JMapPane aJMapPane = ((GTTilePlot)plot).getMapPane();
+				Logger.debug("plot.getMapPane = " + ((GTTilePlot)plot).getMapPane());
 				Logger.debug("aJMapPane = " + aJMapPane);
-				MapContent aMapContent = ((anl.verdi.plot.gui.GTTilePlot)plot).getMapContent();
+				MapContent aMapContent = ((GTTilePlot)plot).getMapContent();
 				Logger.debug("aMapContent = " + aMapContent);
-				RenderingExecutor aRenderingExecutor = ((anl.verdi.plot.gui.GTTilePlot)plot).getRenderingExecutor();
+				RenderingExecutor aRenderingExecutor = ((GTTilePlot)plot).getRenderingExecutor();
 				Logger.debug("aRenderingExecutor = " + aRenderingExecutor);
-				GTRenderer aRenderer = ((anl.verdi.plot.gui.GTTilePlot)plot).getRenderer();
+				GTRenderer aRenderer = ((GTTilePlot)plot).getRenderer();
 				Logger.debug("aRenderer = " + aRenderer);
 				Logger.debug("ready to generate PlotPanel for a plot, variableName, and additional values");
 				final PlotPanel panel = new PlotPanel(plot, variableName, aJMapPane, aMapContent, aRenderingExecutor, aRenderer);

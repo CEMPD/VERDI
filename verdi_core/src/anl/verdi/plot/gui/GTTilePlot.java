@@ -201,7 +201,7 @@ public class GTTilePlot extends GTTilePlotPanel
 	protected boolean showLatLon = false;
 	protected boolean showObsLegend = false;
 	
-	private BufferedImage bImage;
+	private BufferedImage bImage;	// TODO Do we still need this?
 	private JPopupMenu popup;
 	//TODO change dataArea [was defined as a Rectangle()]; used in run()
 	private Point popUpLocation = new Point(1,1);
@@ -232,7 +232,7 @@ public class GTTilePlot extends GTTilePlotPanel
 	}
 
 	private JPanel getEntirePane() {
-		return (JPanel) this;	// FastTilePlotPanel is-a JPanel
+		return (JPanel) this;	// GTTilePlotPanel is-a JPanel
 	}
 
 	@Override

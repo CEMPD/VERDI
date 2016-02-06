@@ -167,23 +167,6 @@ public class ChartTitlePanel extends JPanel {
 										FormFactory.LINE_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC
 						}));
-//		setLayout(new FormLayout(
-//				new ColumnSpec[]{
-//								FormFactory.DEFAULT_COLSPEC,
-//								FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-//								new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-//								FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-//								FormFactory.DEFAULT_COLSPEC
-//				},
-//				new RowSpec[]{
-//								FormFactory.DEFAULT_ROWSPEC,
-//								FormFactory.LINE_GAP_ROWSPEC,
-//								FormFactory.DEFAULT_ROWSPEC,
-//								FormFactory.LINE_GAP_ROWSPEC,
-//								FormFactory.DEFAULT_ROWSPEC,
-//								FormFactory.LINE_GAP_ROWSPEC,
-//								FormFactory.DEFAULT_ROWSPEC
-//				}));
 
 		//---- label4 ----
 		label4.setText("Show Title");

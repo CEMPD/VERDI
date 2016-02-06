@@ -376,7 +376,7 @@ public class GTTilePlotPanel extends JPanel {
 	 * Set a premade JMenuBar object
 	 * @param aBar	the JMenuBar object that was already fully populated
 	 */
-	public void setBar(JMenuBar aBar)
+	public void setMenuBar(JMenuBar aBar)
 	{
 		bar = aBar;
 	}

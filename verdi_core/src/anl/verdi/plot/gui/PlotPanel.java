@@ -60,8 +60,8 @@ public class PlotPanel extends JPanel {
 		this.name = name;
 	}
 
-	// use this constructor for a FastAreaTilePlotPanel instead of a JPanel (topJPanel) object
-	// used for GTTilePlot and ArealInterpolationPlot
+	// use this constructor for a AreaGTTilePlotPanel instead of a JPanel (topJPanel) object
+	// used for GTTilePlot and AreaGTTilePlot
 	public PlotPanel(Plot plot, String name, JMapPane aJMapPane, MapContent content, RenderingExecutor executor,
 			GTRenderer renderer) {
 		// TODO How exactly is this PlotPanel used? How should it be used for a GTTilePlot?
@@ -69,7 +69,7 @@ public class PlotPanel extends JPanel {
 		Logger.debug("in PlotPanel constructor for passed Plot plot, String name, MapContent content, RenderingExecutor executor, GTRenderer renderer");
 		isAMap = true;
 		JMenuBar bar = plot.getMenuBar();		// get the top menu from the plot
-		((GTTilePlotPanel)plot).setBar(bar);	// and put it in the GTTilePlotPanel
+		((GTTilePlotPanel)plot).setMenuBar(bar);	// and put it in the GTTilePlotPanel
 		JToolBar toolBar = plot.getToolBar();			// get the JToolBar of time step, layer, etc. widgets
 		((GTTilePlotPanel)plot).setToolBar(toolBar);	// and put it in the GTTilePlotPanel
 		if(content == null)		// if a MapContent was not passed in arg list, get the one from the plot
@@ -306,19 +306,19 @@ public class PlotPanel extends JPanel {
 	//			getMapPane()
 	//	}
 
-	/**
-	 * access to JMapPane function getBaseImage
-	 */
-	public java.awt.image.RenderedImage getBaseImage()
-	{
-		if(isAMap)
-		{
-			return topMapPanel.getBaseImage();
-		}
-		else
-		{
-			return null;
-		}
-	}
+//	/**
+//	 * access to JMapPane function getBaseImage	
+//	 */
+//	public java.awt.image.RenderedImage getBaseImage()	// not currently used
+//	{
+//		if(isAMap)
+//		{
+//			return topMapPanel.getBaseImage();
+//		}
+//		else
+//		{
+//			return null;
+//		}
+//	}
 
 }
