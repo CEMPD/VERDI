@@ -24,8 +24,6 @@ import javax.swing.ImageIcon;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-import org.geotools.map.MapContent;
-import org.geotools.swing.JMapPane;
 
 import anl.verdi.data.DataUtilities;
 import anl.verdi.plot.config.PlotConfiguration;
@@ -85,7 +83,7 @@ public class TilePlot {
 	private boolean log = false;
 	private int logBase = 10; //Math.E;
 	
-	static int callInx = 1;
+//	static int callInx = 1;
 
 	/**
 	 * Constructor - inputs 2D grid parameters.
@@ -205,8 +203,6 @@ public class TilePlot {
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
 			final Color gridLineColor, final float[][] data
-//			,JMapPane existingJMapPane, 
-//			MapContent myMapContent) // JEB 2015 added these last 2
 			)
 	{
 
@@ -733,12 +729,6 @@ public class TilePlot {
 		symbols.put(Symbol.STAR, new ImageIcon(fileStar));
 		symbols.put(Symbol.SUN, new ImageIcon(fileSun));
 		symbols.put(Symbol.TRIANGLE, new ImageIcon(fileTriangle));
-//		symbols.put(Symbol.CIRCLE, new ImageIcon(getClass().getResource("/circle.png")));
-//		symbols.put(Symbol.DIAMOND, new ImageIcon(getClass().getResource("/diamond.png")));
-//		symbols.put(Symbol.SQUARE, new ImageIcon(getClass().getResource("/square.png")));
-//		symbols.put(Symbol.STAR, new ImageIcon(getClass().getResource("/star.png")));
-//		symbols.put(Symbol.SUN, new ImageIcon(getClass().getResource("/sun.png")));
-//		symbols.put(Symbol.TRIANGLE, new ImageIcon(getClass().getResource("/triangle.png")));
 		
 		HashMap<String, ImageIcon> legends = new HashMap<String, ImageIcon>();
 		List<String> names = new ArrayList<String>();
@@ -1012,8 +1002,7 @@ public class TilePlot {
 		final int columns = 1 + lastColumn - firstColumn;
 		final float width = xMaximum - xMinimum;
 		final float height = yMaximum - yMinimum;
-		final float xDelta = width / columns; // Width in pixels of a grid
-		// cell.
+		final float xDelta = width / columns; // Width in pixels of a grid cell.
 		final float yDelta = height / rows; // Height in pixels of a grid cell.
 		final int rectangleHeight = replaceRound(yDelta + 0.5f);
 		float rectangleWidth = xDelta;
@@ -1022,8 +1011,7 @@ public class TilePlot {
 		Color previousCellColor = null;
 
 		// Color entire grid area with the lowest legend color then
-		// avoid drawing the (usually numerous) grid cells that have
-		// that color.
+		// avoid drawing the (usually numerous) grid cells that have that color.
 
 		graphics.setColor(backgroundColor);
 		
@@ -1295,14 +1283,6 @@ public class TilePlot {
 		calendar.set(Calendar.ZONE_OFFSET, 0);
 		calendar.set(year, month - zero_based_offset, day, hour, minute, second);
 
-//		final int unused = calendar.get(Calendar.HOUR_OF_DAY); // UGLY Java
-		// BUG:
-		// Must call get() so the previous set() takes effect before calling
-		// add()!
-		// Terrible design of java.util.Calendar! Violates CQSP and the primary
-		// design rule: make it easy to use correctly and hard to use
-		// incorrectly.
-
 		calendar.add(Calendar.DAY_OF_MONTH, days);
 		calendar.add(Calendar.HOUR_OF_DAY, hours);
 		calendar.add(Calendar.MINUTE, minutes);
@@ -1314,17 +1294,6 @@ public class TilePlot {
 		hour = calendar.get(Calendar.HOUR_OF_DAY);
 		minute = calendar.get(Calendar.MINUTE);
 		second = calendar.get(Calendar.SECOND);
-		// 2014 commented out next lines & replaced with GregorianCalendar & Utilities.formatDate
-//		final String[] monthNames = { "January", "February", "March", "April",
-//				"May", "June", "July", "August", "September", "October",
-//				"November", "December" };
-//		final String monthName = monthNames[month];
-//		final String h0 = hour < 10 ? "0" : "";
-//		final String m0 = minute < 10 ? "0" : "";
-//		final String s0 = second < 10 ? "0" : "";
-//		final String result = monthName + " " + day + ", " + year + " " + h0
-//				+ hour + ":" + m0 + minute + ":" + s0 + second + " UTC";
-//		return result;
 		GregorianCalendar aGregorianCalendar = new GregorianCalendar(year,month,day,hour,minute,second);
 		String result = Utilities.formatDate(aGregorianCalendar); 
 		return result;
@@ -1448,6 +1417,5 @@ public class TilePlot {
 	
 	private int replaceRound(float num) {
 		return Math.round(num);
-		//(int)Math.floor(num);
 	}
 }

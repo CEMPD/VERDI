@@ -22,78 +22,48 @@ import com.bbn.openmap.util.DeepCopyUtil;
 public class PlotConfiguration {
 	static final Logger Logger = LogManager.getLogger(PlotConfiguration.class.getName());
 
-	public static final String TITLE = PlotConfiguration.class.getName()
-			+ ".title";
-	public static final String TITLE_FONT = PlotConfiguration.class.getName()
-			+ ".title_font";
-	public static final String TITLE_COLOR = PlotConfiguration.class.getName()
-			+ ".title_color";
-	public static final String SUBTITLE_1 = PlotConfiguration.class.getName()
-			+ ".subtitle1";
-	public static final String SUBTITLE_1_FONT = PlotConfiguration.class.getName()
-			+ ".subtitle1_font";
-	public static final String SUBTITLE_1_COLOR = PlotConfiguration.class.getName()
-			+ ".subtitle1_color";
-	public static final String SUBTITLE_2 = PlotConfiguration.class.getName()
-			+ ".subtitle2";
-	public static final String SUBTITLE_2_FONT = PlotConfiguration.class.getName()
-			+ ".subtitle2_font";
-	public static final String SUBTITLE_2_COLOR = PlotConfiguration.class.getName()
-			+ ".subtitle2_color";
-	public static final String UNITS = PlotConfiguration.class.getName()
-			+ ".units";
-	public static final String UNITS_FONT = PlotConfiguration.class.getName()
-			+ ".units_font";
-	public static final String UNITS_COLOR = PlotConfiguration.class.getName()
-			+ ".units_color";
-	public static final String UNITS_SHOW_TICK = PlotConfiguration.class.getName()
-			+ ".units_show_tick";
-	public static final String UNITS_TICK_COLOR = PlotConfiguration.class.getName()
-			+ ".units_tick_color";
-	public static final String UNITS_TICK_FONT = PlotConfiguration.class.getName()
-			+ ".units_tick_font";
+	public static final String TITLE = PlotConfiguration.class.getName() + ".title";
+	public static final String TITLE_FONT = PlotConfiguration.class.getName() + ".title_font";
+	public static final String TITLE_COLOR = PlotConfiguration.class.getName() + ".title_color";
+	public static final String TITLE_SHOW_LINE = PlotConfiguration.class.getName() + ".title_show_line";
+	public static final String SUBTITLE_1 = PlotConfiguration.class.getName() + ".subtitle1";
+	public static final String SUBTITLE_1_FONT = PlotConfiguration.class.getName() + ".subtitle1_font";
+	public static final String SUBTITLE_1_COLOR = PlotConfiguration.class.getName() + ".subtitle1_color";
+	public static final String SUBTITLE_1_SHOW_LINE = PlotConfiguration.class.getName() + ".subtitle1_show_line";
+	public static final String SUBTITLE_2 = PlotConfiguration.class.getName() + ".subtitle2";
+	public static final String SUBTITLE_2_FONT = PlotConfiguration.class.getName() + ".subtitle2_font";
+	public static final String SUBTITLE_2_COLOR = PlotConfiguration.class.getName() + ".subtitle2_color";
+	public static final String SUBTITLE_2_SHOW_LINE = PlotConfiguration.class.getName() + ".subtitle2_show_line";
+	public static final String UNITS = PlotConfiguration.class.getName() + ".units";
+	public static final String UNITS_FONT = PlotConfiguration.class.getName() + ".units_font";
+	public static final String UNITS_COLOR = PlotConfiguration.class.getName() + ".units_color";
+	public static final String UNITS_SHOW_TICK = PlotConfiguration.class.getName() + ".units_show_tick";
+	public static final String UNITS_TICK_COLOR = PlotConfiguration.class.getName() + ".units_tick_color";
+	public static final String UNITS_TICK_FONT = PlotConfiguration.class.getName() + ".units_tick_font";
 	public static final String UNITS_TICK_NUMBER = PlotConfiguration.class.getName() + ".units_tick_number";
 
-	public static final String DOMAIN_LABEL = PlotConfiguration.class.getName()
-			+ ".domain";
-	public static final String DOMAIN_FONT = PlotConfiguration.class.getName()
-			+ ".domain_font";
-	public static final String DOMAIN_COLOR = PlotConfiguration.class.getName()
-			+ ".domain_color";
-	public static final String DOMAIN_SHOW_TICK = PlotConfiguration.class.getName()
-			+ ".domain_show_tick";
-	public static final String DOMAIN_TICK_COLOR = PlotConfiguration.class.getName()
-			+ ".domain_tick_color";
-	public static final String DOMAIN_TICK_FONT = PlotConfiguration.class.getName()
-			+ ".domain_tick_font";
+	public static final String DOMAIN_LABEL = PlotConfiguration.class.getName() + ".domain";
+	public static final String DOMAIN_FONT = PlotConfiguration.class.getName() + ".domain_font";
+	public static final String DOMAIN_COLOR = PlotConfiguration.class.getName() + ".domain_color";
+	public static final String DOMAIN_SHOW_TICK = PlotConfiguration.class.getName() + ".domain_show_tick";
+	public static final String DOMAIN_TICK_COLOR = PlotConfiguration.class.getName() + ".domain_tick_color";
+	public static final String DOMAIN_TICK_FONT = PlotConfiguration.class.getName() + ".domain_tick_font";
 	public static final String DOMAIN_TICK_NUMBER = PlotConfiguration.class.getName() + ".domain_tick_number";
 	
-	public static final String RANGE_LABEL = PlotConfiguration.class.getName()
-			+ ".range";
-	public static final String RANGE_FONT = PlotConfiguration.class.getName()
-			+ ".range_font";
-	public static final String RANGE_COLOR = PlotConfiguration.class.getName()
-			+ ".range_color";
-	public static final String RANGE_SHOW_TICK = PlotConfiguration.class.getName()
-			+ ".range_show_tick";
-	public static final String RANGE_TICK_COLOR = PlotConfiguration.class.getName()
-			+ ".range_tick_color";
-	public static final String RANGE_TICK_FONT = PlotConfiguration.class.getName()
-			+ ".range_tick_font";
+	public static final String RANGE_LABEL = PlotConfiguration.class.getName() + ".range";
+	public static final String RANGE_FONT = PlotConfiguration.class.getName() + ".range_font";
+	public static final String RANGE_COLOR = PlotConfiguration.class.getName() + ".range_color";
+	public static final String RANGE_SHOW_TICK = PlotConfiguration.class.getName() + ".range_show_tick";
+	public static final String RANGE_TICK_COLOR = PlotConfiguration.class.getName() + ".range_tick_color";
+	public static final String RANGE_TICK_FONT = PlotConfiguration.class.getName() + ".range_tick_font";
 	public static final String RANGE_TICK_NUMBER = PlotConfiguration.class.getName() + ".range_tick_number";
 	
-	public static final String Z_LABEL = PlotConfiguration.class.getName()
-			+ ".z";
-	public static final String Z_FONT = PlotConfiguration.class.getName()
-			+ ".z_font";
-	public static final String Z_COLOR = PlotConfiguration.class.getName()
-			+ ".z_color";
-	public static final String Z_SHOW_TICK = PlotConfiguration.class.getName()
-			+ ".z_show_tick";
-	public static final String Z_TICK_COLOR = PlotConfiguration.class.getName()
-			+ ".z_tick_color";
-	public static final String Z_TICK_FONT = PlotConfiguration.class.getName()
-			+ ".z_tick_font";
+	public static final String Z_LABEL = PlotConfiguration.class.getName() + ".z";
+	public static final String Z_FONT = PlotConfiguration.class.getName() + ".z_font";
+	public static final String Z_COLOR = PlotConfiguration.class.getName() + ".z_color";
+	public static final String Z_SHOW_TICK = PlotConfiguration.class.getName() + ".z_show_tick";
+	public static final String Z_TICK_COLOR = PlotConfiguration.class.getName() + ".z_tick_color";
+	public static final String Z_TICK_FONT = PlotConfiguration.class.getName() + ".z_tick_font";
 	public static final String Z_TICK_NUMBER = PlotConfiguration.class.getName() + ".z_tick_number";
 	
 	public static final String FOOTER1 = PlotConfiguration.class.getName() + ".footer_line_1";
@@ -110,8 +80,7 @@ public class PlotConfiguration {
     public static final String OBS_LEGEND_COLOR = PlotConfiguration.class.getName() + ".obs_legend_color";
     public static final String OBS_LEGEND_FONT = PlotConfiguration.class.getName() + ".obs_legend_font";
 
-	public static final String CONFIG_FILE = PlotConfiguration.class.getName()
-			+ ".config_file";
+	public static final String CONFIG_FILE = PlotConfiguration.class.getName() + ".config_file";
 
 	private static File previousFolder;
 
@@ -124,10 +93,8 @@ public class PlotConfiguration {
 	/**
 	 * Loads the configuration from the specified File.
 	 * 
-	 * @param file
-	 *            the file to load from
-	 * @throws IOException
-	 *             if there is an error during loading.
+	 * @param file	the file to load from
+	 * @throws IOException	if there is an error during loading.
 	 */
 	public PlotConfiguration(File file) throws IOException {
 		PlotConfiguration config = new PlotConfigurationIO().loadConfiguration(file);
@@ -138,38 +105,24 @@ public class PlotConfiguration {
 	/**
 	 * Copy constructor.
 	 * 
-	 * @param config
-	 *            the configuration to copy into this PlotConfiguration
+	 * @param config	the configuration to copy into this PlotConfiguration
 	 */
 	public PlotConfiguration(PlotConfiguration config) {
-//		PlotConfiguration config2 = null; 
 		Logger.debug("in Plot Configuration, copy constructor");
 		try {
-//			config2 = (PlotConfiguration)DeepCopyUtil.copy(config);
 			for (Object key : config.props.keySet()) {
-//				props.put(key, config.props.get(key));
 				props.put(key, DeepCopyUtil.copy(config.props.get(key)));
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.error("Error in copy constructor for PlotConfiguration: " + e.getMessage());
 		}
-//		props = config2.props;
-//		for (Object key : config.props.keySet()) {
-//			props.put(key, String.valueOf(config.props.get(key)));
-//		}
-		
-		
 	}
 
 	/**
-	 * Puts the specified object into the configuration map with the specified
-	 * key.
+	 * Puts the specified object into the configuration map with the specified key.
 	 * 
-	 * @param key
-	 *            the configuration key
-	 * @param value
-	 *            the configuration value
+	 * @param key	the configuration key
+	 * @param value	the configuration value
 	 */
 	public void putObject(Object key, Object value) {
 		if (value != null)
@@ -179,8 +132,7 @@ public class PlotConfiguration {
 	/**
 	 * Removes the specified object from the configuration map.
 	 * 
-	 * @param key
-	 *            the configuration key
+	 * @param key	the configuration key
 	 */
 	public void removeObject(Object key) {
 		if (props.contains(key))
@@ -188,13 +140,10 @@ public class PlotConfiguration {
 	}
 
 	/**
-	 * Gets the object associated with the specified key from the configuration
-	 * map.
+	 * Gets the object associated with the specified key from the configuration map.
 	 * 
-	 * @param key
-	 *            the key of the object to return
-	 * @return the object associated with the specified key from the
-	 *         configuration map or null if no such object exists.
+	 * @param key	the key of the object to return
+	 * @return the object associated with the specified key from the configuration map or null if no such object exists.
 	 */
 	public Object getObject(Object key) {
 		return props.get(key);
@@ -203,10 +152,8 @@ public class PlotConfiguration {
 	/**
 	 * Sets the named configuration property to the specified value.
 	 * 
-	 * @param name
-	 *            the name of the property to set
-	 * @param value
-	 *            the value of the property
+	 * @param name	the name of the property to set
+	 * @param value	the value of the property
 	 */
 	public void setProperty(String name, String value) {
 		props.setProperty(name, value);
@@ -215,8 +162,7 @@ public class PlotConfiguration {
 	/**
 	 * Gets the value of the named property.
 	 * 
-	 * @param name
-	 *            the name of the property to get
+	 * @param name	the name of the property to get
 	 * @return the value of the named property.
 	 */
 	public String getProperty(String name) {
@@ -226,8 +172,7 @@ public class PlotConfiguration {
 	/**
 	 * Sets the text for subtitle 1.
 	 * 
-	 * @param val
-	 *            the text of subtitle 1.
+	 * @param val	the text of subtitle 1.
 	 */
 	public void setSubtitle1(String val) {
 		props.setProperty(SUBTITLE_1, val);
@@ -236,8 +181,7 @@ public class PlotConfiguration {
 	/**
 	 * Sets the text for subtitle 2.
 	 * 
-	 * @param val
-	 *            the text of subtitle 2.
+	 * @param val	the text of subtitle 2.
 	 */
 	public void setSubtitle2(String val) {
 		props.setProperty(SUBTITLE_2, val);
@@ -246,8 +190,7 @@ public class PlotConfiguration {
 	/**
 	 * Sets the title text.
 	 * 
-	 * @param val
-	 *            the title text
+	 * @param val	the title text
 	 */
 	public void setTitle(String val) {
 		props.setProperty(TITLE, val);
@@ -256,8 +199,7 @@ public class PlotConfiguration {
 	/**
 	 * Sets the units text.
 	 * 
-	 * @param val
-	 *            the units text
+	 * @param val	the units text
 	 */
 	public void setUnits(String val) {
 		props.setProperty(UNITS, val);
@@ -291,6 +233,30 @@ public class PlotConfiguration {
 	}
 
 	/**
+	 * Gets value to show or not the title
+	 * @return	TRUE or FALSE
+	 */
+	public String getShowTitle() {
+		return props.getProperty(TITLE_SHOW_LINE);
+	}
+	
+	/**
+	 * Gets value to show or not the subtitle #1
+	 * @return	TRUE or FALSE
+	 */
+	public String getShowSubtitle1() {
+		return props.getProperty(SUBTITLE_1_SHOW_LINE);
+	}
+	
+	/**
+	 * Gets value to show or not the subtitle #2
+	 * @return	TRUE or FALSE
+	 */
+	public String getShowSubtitle2() {
+		return props.getProperty(SUBTITLE_2_SHOW_LINE);
+	}
+	
+	/**
 	 * Gets the units text.
 	 * 
 	 * @return the units text.
@@ -311,8 +277,7 @@ public class PlotConfiguration {
 	/**
 	 * Sets the file name of a configuration file.
 	 * 
-	 * @param fileName
-	 *            the name of the configuration file
+	 * @param fileName	the name of the configuration file
 	 */
 	public void setConfigFileName(String fileName) {
 		props.setProperty(CONFIG_FILE, fileName);
@@ -344,11 +309,9 @@ public class PlotConfiguration {
 
 	/**
 	 * Merges this PlotConfiguration with the specified configuration. The
-	 * specified config will override any configuration info in this
-	 * PlotConfiguration.
+	 * specified config will override any configuration info in this PlotConfiguration.
 	 * 
-	 * @param config
-	 *            the configuration to merge with
+	 * @param config	the configuration to merge with
 	 */
 	public void merge(PlotConfiguration config) {
 		for (Object key : config.props.keySet()) {
@@ -357,15 +320,35 @@ public class PlotConfiguration {
 	}
 
 	/**
+	 * Sets value to show or not the title
+	 * @return	TRUE or FALSE
+	 */
+	public void setShowTitle(String show) {
+		props.setProperty(TITLE_SHOW_LINE, show);
+	}
+	
+	/**
+	 * Sets value to show or not the subtitle #1
+	 * @return	TRUE or FALSE
+	 */
+	public void setShowSubtitle1(String show) {
+		props.setProperty(SUBTITLE_1_SHOW_LINE, show);
+	}
+	
+	/**
+	 * Sets value to show or not the subtitle #2
+	 * @return	TRUE or FALSE
+	 */
+	public void setShowSubtitle2(String show) {
+		props.setProperty(SUBTITLE_2_SHOW_LINE, show);
+	}
+
+	/**
 	 * Saves this PlotConfiguration to a file.
 	 * 
-	 * @param file
-	 *            the file to save the configuration to
-	 * @param saveTitle
-	 *            indicates whether to save the tile as part of the
-	 *            configuration or not
-	 * @throws IOException
-	 *             if there is an error during saving.
+	 * @param file	the file to save the configuration to
+	 * @param saveTitle	indicates whether to save the tile as part of the configuration or not
+	 * @throws IOException	if there is an error during saving.
 	 */
 	public void save(File file, boolean saveTitle) throws IOException {
 		PlotConfigurationIO io = new PlotConfigurationIO();
