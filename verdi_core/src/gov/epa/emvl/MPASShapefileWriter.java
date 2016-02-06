@@ -231,16 +231,16 @@ public final class MPASShapefileWriter {
         byteIndex = writeInt( recordContents, byteIndex, cells[i].getNumVertices() + 1, LITTLE );
         byteIndex = writeInt( recordContents, byteIndex, 0, LITTLE );
 
-        for (int j = 0; j < cells[i].getNumVertices(); ++j) {
+        for (int j = cells[i].getNumVertices() - 1; j >= 0; --j) {
         	byteIndex =
         	          writeDouble( recordContents, byteIndex,cells[i].getLon(j), LITTLE );
         	byteIndex =
       	          writeDouble( recordContents, byteIndex,cells[i].getLat(j), LITTLE );
         }
     	byteIndex =
-  	          writeDouble( recordContents, byteIndex,cells[i].getLon(0), LITTLE );
+  	          writeDouble( recordContents, byteIndex,cells[i].getLon(cells[i].getNumVertices() - 1), LITTLE );
     	byteIndex =
-	          writeDouble( recordContents, byteIndex,cells[i].getLat(0), LITTLE );
+	          writeDouble( recordContents, byteIndex,cells[i].getLat(cells[i].getNumVertices() - 1), LITTLE );
 
         file.write(recordContents, 0, length * 2);
         file.flush();
