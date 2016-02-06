@@ -163,7 +163,6 @@ public final class MPASShapefileWriter {
 
     writeInt( header, 0, 9994, BIG ); // file code, always 9994
     byteIndex = writeInt( header, 24, shxFileBytes / 2, BIG ); // file length
-    System.err.println("Wrote shx " + shxFileBytes + " bytes");
     byteIndex = writeInt( header, 28, 1000, LITTLE );
     byteIndex = writeInt( header, 32, POLYGON, LITTLE );
     byteIndex = writeDouble( header, byteIndex, minLon, LITTLE );
@@ -185,9 +184,9 @@ public final class MPASShapefileWriter {
       int offset = HEADER_BYTES / 2;
       for ( int i = 0; i < cells.length; ++i ) {
     	writeInt( recordHeader, 0, offset, BIG);
-    	int length = (RECORD_HEADER_BYTES_SHP + RECORD_CONTENT_BYTES_SHP + 2 * BYTES_PER_DOUBLE * (cells[i].getNumVertices() + 1)) / 2;
+    	int length = (RECORD_CONTENT_BYTES_SHP + 2 * BYTES_PER_DOUBLE * (cells[i].getNumVertices() + 1)) / 2;
     	writeInt( recordHeader, 4, length, BIG );
-    	offset += length;
+    	offset += length + RECORD_HEADER_BYTES_SHP / 2;
     	file.write( recordHeader );
     	file.flush();
       }
@@ -206,13 +205,12 @@ public final class MPASShapefileWriter {
     try {
       file = new FileOutputStream( fileName + ".shp" );
       writeInt( header, 24, shpFileBytes / 2, BIG );
-      System.err.println("Wrote shp " + shpFileBytes + " bytes");
       file.write( header );
       file.flush();
 
       for ( int i = 0; i < cells.length; ++i ) {	  
           writeInt( recordHeader, 0, i + 1, BIG );
-          int length = (RECORD_HEADER_BYTES_SHP + RECORD_CONTENT_BYTES_SHP + 2 * BYTES_PER_DOUBLE * (cells[i].getNumVertices() + 1)) / 2;
+          int length = (RECORD_CONTENT_BYTES_SHP + 2 * BYTES_PER_DOUBLE * (cells[i].getNumVertices() + 1)) / 2;
           writeInt( recordHeader, 4, length, BIG );
         file.write( recordHeader );
         file.flush();
@@ -244,7 +242,7 @@ public final class MPASShapefileWriter {
     	byteIndex =
 	          writeDouble( recordContents, byteIndex,cells[i].getLat(0), LITTLE );
 
-        file.write(recordContents, 0, byteIndex);
+        file.write(recordContents, 0, length * 2);
         file.flush();
       }
     } catch ( Exception unused_ ) {
