@@ -12,6 +12,17 @@ import anl.verdi.plot.config.TilePlotConfiguration;
 
 public class MPASTilePlot extends TilePlot {
 	
+	protected int footerHeight = 83;
+	
+	Color labelColor = null;
+	String variable = null;
+	int layer;
+	int steplapse;
+	int firstRow;
+	int lastRow;
+	int firstColumn;
+	int lastColumn;
+	
 	public MPASTilePlot(int startDate, int startTime, int timestepSize) {
 		super(startDate, startTime, timestepSize);
 	}
@@ -19,6 +30,21 @@ public class MPASTilePlot extends TilePlot {
 	protected void drawAxis(final Graphics graphics, int xMinimum, int xMaximum,
 			int yMinimum, int yMaximum, int firstRow, int lastRow,
 			int firstColumn, int lastColumn) {
+		return;
+	}
+	
+	//This needs to run after MeshPlot.drawAxis() so footerYOffset will be available, not within TilePlot.draw()
+	protected void drawLabels(final Graphics graphics, Color labelColor, int xMinimum,
+			int xMaximum, int yMinimum, int yMaximum, final String variable,
+			int steplapse, int layer, int firstRow, int lastRow,
+			int firstColumn, int lastColumn, final float[][] data) {
+		this.labelColor = labelColor;
+		this.variable = variable;
+		this.layer = layer;
+		this.firstRow = firstRow;
+		this.lastRow = lastRow;
+		this.firstColumn = firstColumn;
+		this.lastColumn = lastColumn;
 		return;
 	}
 
@@ -136,6 +162,7 @@ public class MPASTilePlot extends TilePlot {
 		}
 		
 		footerYOffset = xTicLength + yspace + graphics.getFontMetrics().getHeight() + yspace;
+		int fontHeight = graphics.getFontMetrics().getHeight() + yspace;
 		
 		// Resume graphics default settings
 		graphics.setColor(gColor);
@@ -148,13 +175,15 @@ public class MPASTilePlot extends TilePlot {
 			final int dLabelX = xAxis + (int)xRange / 2;
 			final int dLabelY = dTickYBase + yspace + graphics.getFontMetrics().getHeight();
 			graphics.drawString(domainX, dLabelX, dLabelY);
-			footerYOffset += graphics.getFontMetrics().getHeight() + yspace;
+			footerYOffset += fontHeight;
 			
 			// Resume graphics default settings
 			graphics.setColor(gColor);
 			graphics.setFont(gFont);
 		}
 		
+		footerHeight = footerYOffset + fontHeight;
+				
 		config.putObject(PlotConfiguration.DOMAIN_LABEL, domainX);
 		config.putObject(PlotConfiguration.DOMAIN_FONT, domainFont == null ? gFont : domainFont);
 		config.putObject(PlotConfiguration.DOMAIN_COLOR, domainClr == null ? gColor : domainClr);
@@ -171,6 +200,16 @@ public class MPASTilePlot extends TilePlot {
 		config.putObject(PlotConfiguration.RANGE_TICK_COLOR, rangeTickClr == null ? gColor : rangeTickClr);
 		config.putObject(PlotConfiguration.RANGE_TICK_FONT, rangeTickFont == null ? gFont : rangeTickFont);
 
+		super.drawLabels(graphics, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
+				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn, null);
+	}
+	
+	public int getFooterHeight() {
+		return footerHeight;
+	}
+	
+	public int getLegendBoxWidth() {
+		return 52 + legendBoxWidth; //20 offset *2 + 6 space *2
 	}
 	
 	private int getDisplayPrecision(double range) {

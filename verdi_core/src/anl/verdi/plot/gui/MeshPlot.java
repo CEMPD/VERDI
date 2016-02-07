@@ -489,17 +489,35 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					}
 
 					xOffset = 100;
-					final int legendWidth = 80 + xOffset;
-					canvasSize =
-						Math.round( Math.min( Math.max( 0, canvasWidth - legendWidth ), canvasHeight ) * marginScale );
+					
 					final int subsetRows = 1 + lastRow - firstRow;
 					final int subsetColumns = 1 + lastColumn - firstColumn;
-					final float subsetMax = Math.max(subsetRows, subsetColumns);
-					final float rowScale = subsetRows / subsetMax;
-					final float columnScale = subsetColumns / subsetMax;
-					final int width = Math.round(canvasSize * columnScale);
-					final int height = Math.round(canvasSize * rowScale);
 					
+					final float dataRatio = subsetColumns / (float)subsetRows;
+					final float screenRatio = canvasWidth / (float)canvasHeight;
+					
+					
+					int width;
+					int height;
+					
+					String prefix = "w";
+					if (dataRatio > screenRatio) {
+						width = Math.round(canvasWidth - (tilePlot.getLegendBoxWidth() + xOffset));
+						height = Math.round(width / dataRatio);
+						int minHeight = canvasHeight - tilePlot.getFooterHeight() * 2;
+						if (minHeight < height) {
+							height = minHeight;
+							width = Math.round(height * dataRatio);
+							prefix = "wm";
+						}
+					}
+					else {
+						height = Math.round(canvasHeight - tilePlot.getFooterHeight() * 2);
+						width = Math.round(height * dataRatio);
+						prefix = "h";
+					}
+					canvasSize = width;
+										
 					if (previousCanvasSize != canvasSize || zoomFactor != previousZoomFactor || previousClippedDataRatio != clippedDataRatio
 							|| timestep != previousTimestep || layer != previousLayer || panX != previousPanX || panY != previousPanY) {
 						transformCells(/*gr,*/ canvasSize, xOffset, yOffset);						
@@ -706,8 +724,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						Toolkit.getDefaultToolkit().sync();
 
 						try {
-							bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
-							graphics.drawImage(offScreenImage, 0, 0,threadParent);
+							if (canvasWidth > 0 && canvasHeight > 0) {
+								bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
+								graphics.drawImage(offScreenImage, 0, 0,threadParent);
+							}
 						} finally {
 							graphics.dispose();
 							offScreenGraphics.dispose();
@@ -3319,6 +3339,16 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				lonHigh = Integer.valueOf(lLonField.getText());
 				latLow = Integer.valueOf(fLatField.getText());
 				latHigh = Integer.valueOf(lLatField.getText());
+				if (lonLow > lonHigh) {
+					int temp = lonLow;
+					lonLow = lonHigh;
+					lonHigh = temp;
+				}
+				if (latLow > latHigh) {
+					int temp = latLow;
+					latLow = latHigh;
+					latHigh = temp;
+				}
 				
 				if (dataRatio > 1) {		
 					screenWidth = canvasSize;
@@ -3808,8 +3838,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			int hoveredId = getCellIdByCoord(point.x, point.y);
 			CellInfo cell = cellIdInfoMap.get(hoveredId);
 			if (cell != null) {
-				ret += cell.getElevation() + ") " + variable + " " + valueFormat.format(cell.getValue()) + unitString;
-				//ret += ") " + cell.getId() + " " + " " + valueFormat.format(cell.getValue()) + " c " + coordFormat.format(cell.lon) + "," + coordFormat.format(cell.lat) + " " + point.x + "," + point.y;
+				//ret += cell.getElevation() + ") " + variable + " " + valueFormat.format(cell.getValue()) + unitString;
+				ret += ") " + cell.getId() + " " + " " + valueFormat.format(cell.getValue()) + " c " + coordFormat.format(cell.lon) + "," + coordFormat.format(cell.lat) + " " + point.x + "," + point.y;
 
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {

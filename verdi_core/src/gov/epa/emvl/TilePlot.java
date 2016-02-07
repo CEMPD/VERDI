@@ -71,6 +71,7 @@ public class TilePlot {
 	protected PlotConfiguration config;
 	protected NumberFormat numberFormat;
 	private int preLayer = 0;
+	protected int legendBoxWidth = 100;
 	private List<ObsAnnotation> obsAnnotations;
 	private boolean showObsLegend = false;
 	private String plotTitle;
@@ -932,7 +933,7 @@ public class TilePlot {
 		graphics.setColor(Color.BLACK);
 		graphics.drawRect(colorBarX, y, binWidth, colors*binHeight);
 		
-		int legendBoxWidth = colorBarX - x + binWidth + unitHeight / 2;
+		legendBoxWidth = colorBarX - x + binWidth + unitHeight / 2;
 		int legendBoxHeight = space + yRange + halfCharHeight * 2 + 2 * space; //add space to top and bottom of the legend
 		
 		// Draw legend box
