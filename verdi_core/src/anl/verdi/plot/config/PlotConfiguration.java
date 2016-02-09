@@ -257,6 +257,22 @@ public class PlotConfiguration {
 	}
 	
 	/**
+	 * Gets value to show or not the footer #1
+	 * @return	TRUE or FALSE
+	 */
+	public String getShowFooter1() {
+		return props.getProperty(FOOTER1_SHOW_LINE);
+	}
+	
+	/**
+	 * Gets value to show or not the footer #2
+	 * @return	TRUE or FALSE
+	 */
+	public String getShowFooter2() {
+		return props.getProperty(FOOTER2_SHOW_LINE);
+	}
+	
+	/**
 	 * Gets the units text.
 	 * 
 	 * @return the units text.

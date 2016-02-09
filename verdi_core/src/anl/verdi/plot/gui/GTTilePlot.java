@@ -10,6 +10,7 @@ import gov.epa.emvl.Mapper;
 import gov.epa.emvl.TilePlot;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -83,8 +84,8 @@ import anl.verdi.util.Utilities;
  *
  */
 public class GTTilePlot extends GTTilePlotPanel 
-	implements ActionListener, Printable, ChangeListener, ComponentListener, MouseListener, TimeAnimatablePlot, Plot
-	{
+implements ActionListener, Printable, ChangeListener, ComponentListener, MouseListener, TimeAnimatablePlot, Plot
+{
 	private PlotEventProducer eventProducer = new PlotEventProducer();
 	protected DataFrame dataFrame;
 	protected DataFrame dataFrameLog;
@@ -105,16 +106,16 @@ public class GTTilePlot extends GTTilePlotPanel
 	public static final String ZOOM_IN_BOTH_COMMAND = "ZOOM_IN_BOTH";
 	public static final String ZOOM_OUT_BOTH_COMMAND = "ZOOM_OUT_BOTH";
 	public static final String ZOOM_OUT_MAX_COMMAND = "ZOOM_OUT_MAX";
-	
+
 	// Attributes
 	private static final double MINIMUM_VALID_VALUE = -900.0;
 
 	// Log related
-	
+
 	protected boolean log = false;
 	private boolean preLog = false;
 	private double logBase = 10.0; //Math.E;	
-	
+
 	// 2D grid parameters
 
 	protected int startDate; 		// (YYYYDDD).
@@ -135,7 +136,7 @@ public class GTTilePlot extends GTTilePlotPanel
 
 	// For legend-colored grid cells and annotations:
 
-	protected TilePlot tilePlot; // EMVL TilePlot.
+//	protected TilePlot tilePlot; // EMVL TilePlot.
 
 	protected int timestep = 0; // 0..timesteps - 1.
 	protected int firstTimestep = 0;
@@ -175,16 +176,16 @@ public class GTTilePlot extends GTTilePlotPanel
 	private String mapFileDirectory = System.getenv("VERDI_HOME") + "/plugins/bootstrap/data";	// nov 2015
 
 	private Mapper mapper = new Mapper(mapFileDirectory);
-	
+
 	protected double[][] gridBounds = { { 0.0, 0.0 }, { 0.0, 0.0 } };
 	protected double[][] domain = { { 0.0, 0.0 }, { 0.0, 0.0 } };
 
 	protected List<OverlayObject> obsData = new ArrayList<OverlayObject>();
 	protected List<ObsAnnotation> obsAnnotations;
 	protected VectorAnnotation vectAnnotation;
-	
+
 	// GUI attributes
-	
+
 	private TimeLayerPanel timeLayerPanel;
 	private boolean recomputeStatistics = false;
 	private boolean statError = false;
@@ -195,12 +196,12 @@ public class GTTilePlot extends GTTilePlotPanel
 	protected boolean zoom = true;
 	private int delay = 50; // animation delay in milliseconds.
 	private final int MAXIMUM_DELAY = 3000; // maximum animation delay: 3 seconds per frame.
-	
+
 	protected List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
 
 	protected boolean showLatLon = false;
 	protected boolean showObsLegend = false;
-	
+
 	private BufferedImage bImage;	// TODO Do we still need this?
 	private JPopupMenu popup;
 	//TODO change dataArea [was defined as a Rectangle()]; used in run()
@@ -208,12 +209,12 @@ public class GTTilePlot extends GTTilePlotPanel
 	protected Slice probedSlice;
 	private ConfigDialog dialog = null;
 	private FeatureLayer controlLayer;
-	
+
 	@SuppressWarnings("unused")
-	private Plot.ConfigSoure configSource = Plot.ConfigSoure.GUI;
+	private Plot.ConfigSource configSource = Plot.ConfigSource.GUI;
 	VerdiApplication app;
 
-	
+
 	/**
 	 * 
 	 */
@@ -288,7 +289,7 @@ public class GTTilePlot extends GTTilePlotPanel
 		result.add(getDataFrame());
 		return result;
 	}
-	
+
 	protected DataFrame getDataFrame() {
 		if ( log) {
 			return dataFrameLog;
@@ -296,7 +297,7 @@ public class GTTilePlot extends GTTilePlotPanel
 			return dataFrame;
 		}
 	}
-	
+
 	protected DataFrame getDataFrame(boolean log) {
 		if (log) {
 			return dataFrameLog;
@@ -324,7 +325,7 @@ public class GTTilePlot extends GTTilePlotPanel
 		PlotExporter exporter = new PlotExporter(this);
 		exporter.save(format, file, width, height);
 	}
-		
+
 	private void drawBatchImage(int width, int height) {
 		// TODO Auto-generated method stub
 		// TODO rewrite from FastTilePlot.java (uses BufferedImage, offScreenGraphics)
@@ -346,48 +347,48 @@ public class GTTilePlot extends GTTilePlotPanel
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)));
 			} catch (IOException ex) {
-				Logger.error("IOException in FastTilePlot.configure: loading configuration: " + ex.getMessage());
+				Logger.error("IOException in GTTilePlot.configure: loading configuration: " + ex.getMessage());
+				return;
 			}
 		}
+		else
+		{
+			Logger.error("Error in GTTilePlot.configure: No configuration file specified.");
+			return;
+		}
 
-		ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
+		ColorMap colorMap = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
 
-		if (map != null) {
-			
+		if (colorMap != null) {
+
 			// set log related info
-			ColorMap.ScaleType sType = map.getScaleType();
+			ColorMap.ScaleType sType = colorMap.getScaleType();
 			preLog = log;
 			if ( sType == ColorMap.ScaleType.LOGARITHM ) {
 				log = true;
-				if ( tilePlot != null) {
-					tilePlot.setLog( true);
-					tilePlot.setLogBase( (int)map.getLogBase());
-				}					
-				
-				//we need to also populate the non log intervals to some default range...
-				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
-				//so we need to make sure and pre populate just in case user changes between linear and log scales
+				logBase = (int)colorMap.getLogBase();
+
+				// we need to also populate the non-log intervals to some default range...
+				// a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
+				// so we need to make sure and prepopulate just in case user changes between linear and log scales
 				computeDataRange(minmax, false);
-				map.setMinMax( minmax[0], minmax[1]);
+				colorMap.setMinMax( minmax[0], minmax[1]);
 
 			} else {
 				log = false;
-				if ( tilePlot != null) {
-					tilePlot.setLog( false);
-				}				
-				//we need to also populate the log intervals to some default range...
-				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
-				//so we need to make sure and pre populate just in case user changes between linear and log scales
+				// we need to also populate the log intervals to some default range...
+				// a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
+				// so we need to make sure and prepopulate just in case user changes between linear and log scales
 				computeDataRange(minmax, true);
-				map.setLogMinMax( minmax[0], minmax[1]);
+				colorMap.setLogMinMax( minmax[0], minmax[1]);
 			}
-			updateColorMap(map);
+			updateColorMap(colorMap);
 			recomputeStatistics = true;
 		}
 
 		draw();
 		config = new TilePlotConfiguration(config);
-		
+
 		if (showGridLines != null) {
 			Boolean gridlines = (Boolean)config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
 			showGridLines.setSelected(gridlines == null ? false : gridlines);
@@ -395,7 +396,7 @@ public class GTTilePlot extends GTTilePlotPanel
 	}
 
 	@Override
-	public void configure(PlotConfiguration config, ConfigSoure source) {
+	public void configure(PlotConfiguration config, ConfigSource source) {
 		// TODO copied from FastTilePlot; may need some rewriting
 		String configFile = config.getConfigFileName();
 		double[] minmax = { 0.0, 0.0 };
@@ -405,58 +406,57 @@ public class GTTilePlot extends GTTilePlotPanel
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)), source);
 			} catch (IOException ex) {
 				Logger.error("IOException in FastTilePlot.configure: loading configuration: " + ex.getMessage());
+				return;
 			}
 		}
-		
+		else
+		{
+			Logger.error("Error in GTTilePlot.configure: No configuration file specified.");
+			return;
+		}
+
 		configSource = source;		// not used, but was not commented out in v1.4.1
 
 		ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
 
 		if (map != null) {
-			
+
 			// set log related info
 			ColorMap.ScaleType sType = map.getScaleType();
 			preLog = log;
 			if ( sType == ColorMap.ScaleType.LOGARITHM ) {
 				log = true;
-				if ( tilePlot != null) {
-					tilePlot.setLog( true);
-					tilePlot.setLogBase( (int)map.getLogBase());
-				}					
-				
-				//we need to also populate the non log intervals to some default range...
-				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
-				//so we need to make sure and pre populate just in case user changes between linear and log scales
+				logBase = (int)map.getLogBase();
+
+				// we need to also populate the non-log intervals to some default range...
+				// a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
+				// so we need to make sure and prepopulate just in case user changes between linear and log scales
 				computeDataRange(minmax, false);
 				map.setMinMax( minmax[0], minmax[1]);
 
 			} else {
 				log = false;
-				if ( tilePlot != null) {
-					tilePlot.setLog( false);
-				}				
-				//we need to also populate the log intervals to some default range...
-				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
-				//so we need to make sure and pre populate just in case user changes between linear and log scales
+				// we need to also populate the log intervals to some default range...
+				// a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
+				// so we need to make sure and prepopulate just in case user changes between linear and log scales
 				computeDataRange(minmax, true);
 				map.setLogMinMax( minmax[0], minmax[1]);
 			}
-			
+
 			updateColorMap(map);
 			recomputeStatistics = true;	
-			if ( source == Plot.ConfigSoure.FILE) {
+			if ( source == Plot.ConfigSource.FILE) {
 				recomputeLegend = true;
 			} 
 		}
 
 		config = new TilePlotConfiguration(config);
 		draw();
-		
+
 		if (showGridLines != null) {
 			Boolean gridlines = (Boolean)config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
 			showGridLines.setSelected(gridlines == null ? false : gridlines);
 		}
-		
 	}
 
 
@@ -469,20 +469,19 @@ public class GTTilePlot extends GTTilePlotPanel
 		if ( selection == 0 ) {
 			DataFrame dataFrame = getDataFrame(log);
 			final DataFrameIndex dataFrameIndex = 
-				dataFrame.getIndex();
-	
+					dataFrame.getIndex();
+
 			for (int timestep = 0; timestep < timesteps; ++timestep) {
 				for (int layer = 0; layer < layers; ++layer) {
 					for (int row = 0; row < rows; ++row) {
 						for (int column = 0; column < columns; ++column) {
 							dataFrameIndex.set(timestep, layer, column, row);
 							final float value = 
-								dataFrame.getFloat(dataFrameIndex);
-	
+									dataFrame.getFloat(dataFrameIndex);
+
 							if (value > MINIMUM_VALID_VALUE) {
-	
+
 								if (initialized) {
-	
 									if (value < minmax[0]) {
 										minmax[0] = value;
 									} else if (value > minmax[1]) {
@@ -498,18 +497,18 @@ public class GTTilePlot extends GTTilePlotPanel
 				}
 			}
 		} else {
-						
-				computeStatistics(log);					
-			
+
+			computeStatistics(log);					
+
 			final int statistic = selection - 1;
 
 			for ( int row = firstRow; row <= lastRow; ++row ) {
 
 				for ( int column = firstColumn; column <= lastColumn; ++column ) {
 					final float value = statisticsData[ statistic ][ row ][ column ];
-					
+
 					if (value > MINIMUM_VALID_VALUE) {
-						
+
 						if (initialized) {
 
 							if (value < minmax[0]) {
@@ -529,12 +528,11 @@ public class GTTilePlot extends GTTilePlotPanel
 
 
 	private void computeStatistics(boolean log) {
-
 		if ( layerData == null ) {
 			layerData = new float[ rows ][ columns ][ timesteps ];
 			statisticsData = new float[ GridCellStatistics.STATISTICS ][ rows ][ columns ];
 		}
-			
+
 		// Copy from dataFrame into layerData[ rows ][ columns ][ timesteps ]:
 
 		final DataFrameIndex dataFrameIndex = getDataFrame(log).getIndex();
@@ -554,7 +552,7 @@ public class GTTilePlot extends GTTilePlotPanel
 
 		final double threshold = Double.parseDouble( this.threshold.getText() );
 		final double hoursPerTimestep = 1.0;
-		
+
 		try {
 			GridCellStatistics.computeStatistics( layerData,
 					threshold, hoursPerTimestep,
@@ -566,48 +564,129 @@ public class GTTilePlot extends GTTilePlotPanel
 			if ( map != null && map.getScaleType() == ColorMap.ScaleType.LOGARITHM) {
 				preLog = true;
 				log = false;
-				if ( tilePlot != null) {
-					tilePlot.setLog( false);
-				}
 				map.setScaleType( ColorMap.ScaleType.LINEAR);
-				
+
 				draw();	// draw() is here because just changed the ScaleType
 			}
 		}
 	}
-	
 
+	/**
+	 * This drawTitles member function passes the values of the GTTilePlot to the GTTilePlotPanel
+	 * for the title and 2 subtitles. Adapted from part of the drawLabels function of TilePlot.java.
+	 * Must have config already populated.
+	 * @return	true = success, false = failure
+	 */
+	public boolean drawTitles()
+	{
+		boolean retValue = false;	// default to failure
+		boolean showString;			// show string (title, etc.) or set it to null
+		
+		if(config == null)	// plot configuration structure must already be populated
+		{
+			Logger.error("Plot configuration was not set prior to calling drawTitles in GTTilePlot");
+			return retValue;
+		}
+		// values for title
+		String showTitle = config.getShowTitle();
+		if (showTitle.compareTo("FALSE") == 0 )
+			showString = false;
+		else
+			showString = true;
+		String tString = config.getProperty(PlotConfiguration.TITLE);
+		Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
+		Color tColor = config.getColor(PlotConfiguration.TITLE_COLOR);
+		if(tColor == null)
+			tColor = labelColor;
+		if(!showString)
+			tString = null;
+		// values for subtitle1
+		String showSubtitle1 = config.getShowSubtitle1();
+		if(showSubtitle1.compareTo("FALSE") == 0)
+			showString = false;
+		else
+			showString = true;
+		String s1String = config.getSubtitle1();
+		Font s1Font = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
+		Color s1Color = config.getColor(PlotConfiguration.SUBTITLE_1_COLOR);
+		if(!showString)
+			s1String = null;
+		// values for subtitle2
+		String showSubtitle2 = config.getShowSubtitle2();
+		if(showSubtitle2.compareTo("FALSE") == 0)
+			showString = false;
+		else
+			showString = true;
+		String s2String = config.getShowSubtitle2();
+		Font s2Font = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
+		Color s2Color = config.getColor(PlotConfiguration.SUBTITLE_2_COLOR);
+		if(!showString)
+			s2String = null;
+		// send the titles & their properties to the panel
+		super.setTitlesPanel(tFont, tColor, tString, s1Font, s1Color, s1String, s2Font, s2Color, s2String);
+		retValue = true;	// return success
+		return retValue;
+	}
+	
+	/**
+	 * This drawFooters member function passes the values of the GTTilePlot to the GTTilePlotPanel
+	 * for the 2 footers. Adapted from part of the drawLabels function of TilePlot.java.
+	 * Must have config already populated.
+	 * @return	true = success, false = failure
+	 */
+	public boolean drawFooters()
+	{
+		boolean retValue = false;		// default to failure
+		boolean showString;				// show footer string or set it to null
+		
+		if(config == null)
+		{
+			Logger.error("Plot configuration was not set prior to calling drawFooters in GTTilePlot");
+			return retValue;
+		}
+		// values for footer1
+		String showFooter1 = config.getShowFooter1();
+		if(showFooter1.compareTo("FALSE") == 0)
+			showString = false;
+		else
+			showString = true;
+		return retValue;
+	}
+	
+	/**
+	 * The purpose of this draw function appears to be to trigger a redraw of the tile plot
+	 */
 	private void draw() {
 		// TODO Auto-generated method stub; need to rewrite this
-		
+
 	}
 
-	private void updateColorMap(ColorMap map) {
-		map = map;
-		
+	private void updateColorMap(ColorMap colorMap) {
+		//		map = map;		// Feb 2016 Why have this line? It doesn't do anything
+
 		try {
-			minMax = new DataUtilities.MinMax(map.getMin(), map.getMax());
+			minMax = new DataUtilities.MinMax(colorMap.getMin(), colorMap.getMax());
 		} catch (Exception e) {
 			Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
 			e.printStackTrace();
 			return;
 		}
-		
-		defaultPalette = map.getPalette();
+
+		defaultPalette = colorMap.getPalette();
 		legendColors = defaultPalette.getColors();
 		int count = legendColors.length;
 		legendLevels = new double[count + 1];
 
 		for (int i = 0; i < count; i++)
 			try {
-				legendLevels[i] = map.getIntervalStart(i);
+				legendLevels[i] = colorMap.getIntervalStart(i);
 			} catch (Exception e) {
 				Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
 				e.printStackTrace();
 			}
 
 		try {
-			legendLevels[count] = map.getMax();
+			legendLevels[count] = colorMap.getMax();
 		} catch (Exception e) {
 			Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
 			e.printStackTrace();
@@ -616,7 +695,7 @@ public class GTTilePlot extends GTTilePlotPanel
 		}
 	}
 
-	
+
 	/**
 	 * Gets this Plot's configuration data.
 	 * 
@@ -624,8 +703,7 @@ public class GTTilePlot extends GTTilePlotPanel
 	 */
 	@Override
 	public PlotConfiguration getPlotConfiguration() {
-		// TODO copied from FastTilePlot; is this OK?
-		return tilePlot.getPlotConfiguration();
+		return config;
 	}
 
 	/**
@@ -661,13 +739,13 @@ public class GTTilePlot extends GTTilePlotPanel
 	@Override
 	public void updateTimeStep(int timestep) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -680,7 +758,7 @@ public class GTTilePlot extends GTTilePlotPanel
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 
@@ -697,7 +775,7 @@ public class GTTilePlot extends GTTilePlotPanel
 		if (showLatLon) return formatPointLatLon(p);
 		return formatPoint(p);
 	}
-	
+
 	/**
 	 * from FastTilePlot.java; converts a Point4i to a string for display
 	 * @param point	coordinate as Point4i
@@ -721,7 +799,7 @@ public class GTTilePlot extends GTTilePlotPanel
 		builder.append(")");
 		return builder.toString();
 	}
-	
+
 	/**
 	 * from FastTilePlot.java; converts a Point4i to lat/lon for display
 	 * @param point	coordinate as Point4i
@@ -760,7 +838,7 @@ public class GTTilePlot extends GTTilePlotPanel
 		//Since the NetCDF boxer used middle of the grid as origin of the grid
 		//FastTilePlot use SW corner as the origin of the grid, hence the minus 1
 		// TODO may need to change this: GeoTools uses top-left corner of each JPanel as (0,0)
-//		return getDataFrame().getAxes().getBoundingBoxer().axisPointToLatLonPoint(axisPoint.x-1, axisPoint.y-1); 
+		//		return getDataFrame().getAxes().getBoundingBoxer().axisPointToLatLonPoint(axisPoint.x-1, axisPoint.y-1); 
 		return getDataFrame().getAxes().getBoundingBoxer().axisPointToLatLonPoint(axisPoint.x, axisPoint.y); //NOTE: the shift has been considered for in the netcdf boxer!!!
 	}
 
@@ -778,13 +856,13 @@ public class GTTilePlot extends GTTilePlotPanel
 		List<String> subtitles = new ArrayList<String>();
 		String subtitle1 = "";
 		boolean showST1 = false;
-		
+
 		if (config != null) {
 			subtitle1 += (config.getSubtitle1() == null ? "" : config.getSubtitle1()).trim();
 			showST1 = !subtitle1.isEmpty();
 			if (showST1) subtitles.add(subtitle1);
 		}
-		
+
 		try {
 			for (OverlayObject obs : obsData) {
 				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
@@ -792,7 +870,7 @@ public class GTTilePlot extends GTTilePlotPanel
 				ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
 				obsAnnotations.add(ann);
 				Dataset ds = eval.getVariable().getDataset();
-				
+
 				if (showST1 && ds != null) {
 					StringBuffer sb = new StringBuffer(ds.getName());
 					String alias = ds.getAlias();
@@ -802,31 +880,31 @@ public class GTTilePlot extends GTTilePlotPanel
 						subtitles.add(temp);
 				}
 			}
-			
+
 			tilePlot.setObsLegend(obsAnnotations, showLegend);
 			config.putObject(PlotConfiguration.OBS_SHOW_LEGEND, showLegend);
-			
+
 			if (showST1) {
 				Collections.sort(subtitles);
 				subtitle1 = "";
-			
+
 				for (String str : subtitles)
 					subtitle1 += str + "  ";
-			
+
 				config.setSubtitle1(subtitle1.trim());
 			}
-		
+
 			draw();
 		} catch (Exception e) {
 			setOverlayErrorMsg(e.getMessage());
 			Logger.error("Check if overlay time steps match the underlying data");
 			Logger.error(e.getMessage());
 			// TODO evaluate what drawing activity should take place
-//			drawMode = DRAW_NONE;	// no longer using the drawMode etc. for drawing the tile plot
+			//			drawMode = DRAW_NONE;	// no longer using the drawMode etc. for drawing the tile plot
 		}
 	}
 
-	
+
 	/**
 	 * copied from FastTilePlot
 	 * @return	observation data
@@ -854,13 +932,13 @@ public class GTTilePlot extends GTTilePlotPanel
 		// TODO check if anything here needs to be changed (expect different method required to draw vectors)
 		vectAnnotation = new VectorAnnotation(eval, timestep, getDataFrame().getAxes().getBoundingBoxer());
 	}
-	
+
 	// GUI Callbacks:
 
 	// Plot frame closed:
 
 	public void stopThread() {	// called by anl.verdi.plot.gui.PlotPanel
-//		drawMode = DRAW_END;
+		//		drawMode = DRAW_END;
 		// TODO figure out what stopThread needs to do because not using drawMode
 		draw();
 	}
@@ -913,26 +991,26 @@ public class GTTilePlot extends GTTilePlotPanel
 		mapper = null;
 		dataFrameLog = null;
 		dataFrame = null;
-		
+
 		obsData = null;
 		obsAnnotations = null;
 		vectAnnotation = null;
 		eventProducer = null;
-		
+
 		bImage = null;
-		
+
 		dialog = null;
 		controlLayer = null;
 		config = null;
-		
-//		doubleBufferedRendererThread = null;
-		
+
+		//		doubleBufferedRendererThread = null;
+
 		subsetLayerData = null;
 		layerData = null;
 		statisticsData = null;	
-		
+
 		format = null;
-		tilePlot = null;
+//		tilePlot = null;
 		legendLevels = null;
 		defaultPalette = null;
 		legendColors = null;
@@ -943,14 +1021,14 @@ public class GTTilePlot extends GTTilePlotPanel
 		timeLayerPanel = null;
 		probeItems = null;
 		popup = null;
-//		dataArea = null;		// TODO change dataArea; was defined as a Rectangle
+		//		dataArea = null;		// TODO change dataArea; was defined as a Rectangle
 		popUpLocation = null;
 		probedSlice = null;
 		showGridLines = null;
 		app = null;
 		minMax = null;
 	}
-	
+
 	public void viewFloated(DockableFrameEvent unused_ ) { }
 	public void viewRestored(DockableFrameEvent unused_ ) { }		
 
@@ -1016,14 +1094,13 @@ public class GTTilePlot extends GTTilePlotPanel
 			zoomOutItem.setActionCommand(ZOOM_OUT_BOTH_COMMAND);
 			zoomOutItem.addActionListener(this);
 			result.add(zoomOutItem);
-			
+
 			JMenuItem zoomOut2Pic = new JMenuItem("Max_Zoom_Out");
 			zoomOut2Pic.setActionCommand(ZOOM_OUT_MAX_COMMAND);
 			zoomOut2Pic.addActionListener(this);
 			result.add(zoomOut2Pic);
 		}
-
 		return result;
 	}
-	
+
 }

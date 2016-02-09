@@ -83,7 +83,7 @@ public abstract class AbstractPlot implements Plot {
 		//todo implement method
 	}
 	
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
+	public void configure(PlotConfiguration config, Plot.ConfigSource source) {
 		Logger.debug("in AbstractPlot.configure#2, not yet written");
 		//todo implement method
 	}

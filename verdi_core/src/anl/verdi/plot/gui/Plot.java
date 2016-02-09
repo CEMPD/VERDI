@@ -23,7 +23,7 @@ import anl.verdi.plot.config.PlotConfiguration;
  */
 public interface Plot {
 	
-	public enum ConfigSoure { 
+	public enum ConfigSource { 
 		GUI, FILE
 	}
 
@@ -104,7 +104,7 @@ public interface Plot {
 	 * @param config the new plot configuration
 	 */
 	void configure(PlotConfiguration config);
-	void configure(PlotConfiguration config, ConfigSoure source);
+	void configure(PlotConfiguration config, ConfigSource source);
 
 	/**
 	 * Gets this Plot's configuration data.

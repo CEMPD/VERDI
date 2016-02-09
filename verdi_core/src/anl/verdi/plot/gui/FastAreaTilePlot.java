@@ -109,7 +109,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 	public void configure(PlotConfiguration config) {
 		super.configure(config);
 	}
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
+	public void configure(PlotConfiguration config, Plot.ConfigSource source) {
 		super.configure(config, source);
 	}	
 	public void init(){

@@ -155,7 +155,7 @@ public class GTTilePlotPanel extends JPanel {
 				System.out.println("in paintComponent, ready to get graphics for titlesPanel");
 				Graphics2D g2 = (Graphics2D) g;
 				System.out.println("in PaintComponent: g2 = " + g2.toString());
-				int yTitle = 0;
+				int yTitle = 0;		// default string heights to 0 (no string to display)
 				int ys1String = 0;
 				int ys2String = 0;
 				int width = titlesPanel.getWidth();		// says width = 0

@@ -100,7 +100,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 		configure(defaultConfig);
 	}
 
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
+	public void configure(PlotConfiguration config, Plot.ConfigSource source) {
 		PlotConfiguration defaultConfig = getPlotConfiguration();
 		defaultConfig.merge(config);
 		configure(defaultConfig);

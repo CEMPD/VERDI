@@ -133,7 +133,7 @@ public class TilePlotTask implements AbstractTask {
 			if (dataFrame != null) {
 	   	
 				plot = new FastTilePlot(verdiApp, dataFrame);
-	        	plot.configure(tconfig, Plot.ConfigSoure.FILE);
+	        	plot.configure(tconfig, Plot.ConfigSource.FILE);
 	        	// here handle subdomain
 	        	if(subDomainArgs != null)	// have a subdomain defined
 	        	{

@@ -784,8 +784,8 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 	 *
 	 * @param config the new plot configuration
 	 */
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
-		configure( config);
+	public void configure(PlotConfiguration config, Plot.ConfigSource source) {
+		configure(config);
 	}
 	public void configure(PlotConfiguration config) {
 		String configFile = config.getConfigFileName();
