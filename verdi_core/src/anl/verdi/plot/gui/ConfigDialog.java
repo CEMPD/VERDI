@@ -123,7 +123,7 @@ public class ConfigDialog extends JDialog {
 		if (index >= 0)
 			config = overlays.fillConfiguration(config);
 
-		plot.configure(config, Plot.ConfigSoure.GUI);
+		plot.configure(config, Plot.ConfigSource.GUI);
 	}
 
 	public void init(Plot plot) {
@@ -259,7 +259,7 @@ public class ConfigDialog extends JDialog {
 	}
 
 	private void initTitles(PlotConfiguration config) {
-		String title = config.getTitle(); // plot.getTitle(); Feb 2016 use config like everything else here
+		String title = config.getTitle(); // plot.getTitle(); Feb 2016 use config here like everything else 
 		String showTitle = config.getShowTitle();
 		boolean bShowTitle = true; 
 		if (showTitle.compareTo("FALSE") == 0)

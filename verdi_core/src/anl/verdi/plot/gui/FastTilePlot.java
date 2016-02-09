@@ -326,7 +326,7 @@ public class FastTilePlot extends FastTilePlotPanel implements ActionListener, P
 	
 	private ConfigDialog dialog = null;
 	@SuppressWarnings("unused")										// had been out; put back in
-	private Plot.ConfigSoure configSource = Plot.ConfigSoure.GUI;	// had been out; put back in
+	private Plot.ConfigSource configSource = Plot.ConfigSource.GUI;	// had been out; put back in
 
 	VerdiApplication app;
 	
@@ -2540,7 +2540,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		}
 	}
 	
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
+	public void configure(PlotConfiguration config, Plot.ConfigSource source) {
 		String configFile = config.getConfigFileName();
 		double[] minmax = { 0.0, 0.0 };
 
@@ -2588,7 +2588,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			
 			updateColorMap(map);
 			recomputeStatistics = true;	
-			if ( source == Plot.ConfigSoure.FILE) {
+			if ( source == Plot.ConfigSource.FILE) {
 				this.recomputeLegend = true;
 			} 
 		}

@@ -573,7 +573,7 @@ public class ScriptHandler {
 								//timestep 1-based
 								Axes<DataFrameAxis> axes = dataFrame.getAxes();
 								((anl.verdi.plot.gui.FastTilePlot)plot).updateTimeStep(selectedTimeStep - 1 - axes.getTimeAxis().getOrigin());
-								plot.configure(new TilePlotConfiguration(config), Plot.ConfigSoure.FILE);
+								plot.configure(new TilePlotConfiguration(config), Plot.ConfigSource.FILE);
 
 								PlotPanel panel = new PlotPanel( plot, "Tile: " + verdiApp.getProject().getSelectedFormula());
 								verdiApp.getGui().addPlot( panel );
@@ -668,7 +668,7 @@ public class ScriptHandler {
 								//timestep 1-based
 								Axes<DataFrameAxis> axes = dataFrame.getAxes();
 								((anl.verdi.plot.gui.FastTilePlot)plot).updateTimeStep(selectedTimeStep - 1 - axes.getTimeAxis().getOrigin());
-								plot.configure(new TilePlotConfiguration(config), Plot.ConfigSoure.FILE);
+								plot.configure(new TilePlotConfiguration(config), Plot.ConfigSource.FILE);
 
 								PlotPanel panel = new PlotPanel( plot, "Tile: " + verdiApp.getProject().getSelectedFormula());
 								verdiApp.getGui().addPlot( panel );
