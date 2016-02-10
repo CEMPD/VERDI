@@ -71,6 +71,9 @@ public class GTTilePlotPanel extends JPanel {
 	private Font tFont, s1Font, s2Font;				// fonts for title, subtitle1, subtitle2
 	private Color tColor, s1Color, s2Color;			// colors for title, subtitle1, subtitle2
 	private String tString, s1String, s2String;		// strings to print for title, subtitle1, subtitle2
+	private Font f1Font, f2Font;					// fonts for footer1, footer2
+	private Color f1Color, f2Color;					// colors for footer1, footer2
+	private String f1String, f2String;				// strings to print for footer1, footer2
 	
 	private MapContent myMapContent;
 	private RenderingExecutor myRenderingExecutor;
@@ -311,6 +314,35 @@ public class GTTilePlotPanel extends JPanel {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
 				System.out.println("footersPanel paintComponent");
+				int yf1String = 0;		// default string heights to 0 (no string to display)
+				int yf2String = 0;
+				int width = footersPanel.getWidth();
+				
+				System.out.println("f1String = " + f1String + ", f1Font = " + f1Font + ", f1Color = " + f1Color);
+				System.out.println("width = " + width);
+				
+				if(f1String != null && !f1String.trim().isEmpty())	// draw footer1 if not null or empty
+				{
+					System.out.println("f1String not empty, proceeding, g = " + g2.toString());
+					g2.setFont(f1Font);
+					g2.setColor(f1Color);
+					FontMetrics tMetrx = g2.getFontMetrics(f1Font);
+					int xf1String = width/2 - tMetrx.stringWidth(f1String)/2;		// here attempt to center the string
+					yf1String = VMIN + tMetrx.getHeight()/2; // tFont.getSize()/2;	// change from code in TilePlot.java
+					g2.drawString(f1String, xf1String, yf1String);
+				}
+				if(f2String != null && !f2String.trim().isEmpty())	// draw footer2 if not null or empty
+				{
+					System.out.println("f2String not empty, proceeding");
+					g2.setFont(f2Font);
+					g2.setColor(f2Color);
+					FontMetrics s1Metrx = g2.getFontMetrics(f2Font);
+					int xf2String = width/2 - s1Metrx.stringWidth(f2String)/2;	// here attempt to center the string
+					yf2String = VMIN + yf1String + s1Metrx.getHeight()/2;
+					g2.drawString(f2String, xf2String, yf2String);
+				}
+				width = footersPanel.getWidth();
+				System.out.println("width of footersPanel now = " + width);
 			}
 		};	
 		// go horizontally across the entire very bottom of contentPane
@@ -443,6 +475,18 @@ public class GTTilePlotPanel extends JPanel {
 	    this.s2String = s2String;
 	}
 	
+	
+	public void setFootersPanel (Font f1Font, Color f1Color, String f1String,
+			Font f2Font, Color f2Color, String f2String)
+	{
+		this.f1Font = f1Font;
+		this.f1Color = f1Color;
+		this.f1String = f1String;
+		
+		this.f2Font = f2Font;
+		this.f2Color = f2Color;
+		this.f2String = f2String;
+	}
 //	@Override
 //	public void paintComponent(Graphics g) {
 //		super.paintComponent(g); 	// have to start with this

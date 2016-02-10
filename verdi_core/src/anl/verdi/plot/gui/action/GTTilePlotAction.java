@@ -1,5 +1,5 @@
 /**
- * FastTilePlot - Callback for GTTilePlot button. Originally FastTilePlot in anl.verdi.plot.gui.action package
+ * GTTilePlotAction - Callback for GTTilePlot button. Originally FastTilePlot in anl.verdi.plot.gui.action package
  * Modified January 2016 by Jo Ellen Brandmeyer for GeoTools version of TilePlot
  * @author plessel.todd@epa.gov 2008-09-16
  * @version $Revision$ $Date$
