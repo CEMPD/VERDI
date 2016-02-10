@@ -8,22 +8,24 @@ import java.awt.print.PrinterJob;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
+import anl.verdi.plot.gui.GTTilePlot;
+
 /**
- * Action for printing plots.
+ * Action for printing plots. Based on old FastTilePlotPrintAction.
  *
- * @author Qun He
+ * @author Qun He; Jo Ellen Brandmeyer
  * @version $Revision$ $Date$
  */
 public class GTTilePlotPrintAction extends AbstractAction {
 	private static final long serialVersionUID = 3718644254313035055L;
-	private anl.verdi.plot.gui.FastTilePlot panel;
+	private GTTilePlot panel;
 
 	/**
-	 * Creates a FastTilePlotPrintAction that will print the specified chart panel.
+	 * Creates a GTTilePlotPrintAction that will print the specified chart panel.
 	 *
 	 * @param panel the panel to print
 	 */
-	public GTTilePlotPrintAction(anl.verdi.plot.gui.FastTilePlot panel) {
+	public GTTilePlotPrintAction(GTTilePlot panel) {
 		super("Print");
 		this.panel = panel;
 	}

@@ -7,12 +7,27 @@ package anl.verdi.plot.gui;
 
 import gov.epa.emvl.GridCellStatistics;
 import gov.epa.emvl.Mapper;
+import gov.epa.emvl.Numerics;
+import gov.epa.emvl.Projector;
 import gov.epa.emvl.TilePlot;
 
 import java.awt.Color;
+
+import javax.swing.JPopupMenu;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -31,18 +46,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Set;
 
+import anl.verdi.plot.anim.AnimationPanel;
 import anl.verdi.plot.color.Palette;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Point4i;
@@ -52,9 +81,11 @@ import org.apache.log4j.Logger;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
 import org.geotools.swing.JMapPane;
+import org.geotools.swing.data.JFileDataStoreChooser;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import saf.core.ui.event.DockableFrameEvent;
+import ucar.ma2.InvalidRangeException;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
@@ -69,14 +100,20 @@ import anl.verdi.data.Slice;
 import anl.verdi.data.VectorEvaluator;
 import anl.verdi.formula.Formula;
 import anl.verdi.formula.Formula.Type;
+import anl.verdi.gis.GTTileLayerEditor;
 import anl.verdi.gis.OverlayObject;
 import anl.verdi.plot.color.ColorMap;
+import anl.verdi.plot.config.LoadConfiguration;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
+import anl.verdi.plot.config.SaveConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
+//import anl.verdi.plot.gui.GTTilePlot.DataRangeDialog;
 import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.types.TimeAnimatablePlot;
+import anl.verdi.plot.util.GTTilePlotPrintAction;
 import anl.verdi.plot.util.PlotExporter;
+import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.util.Utilities;
 
 /**
@@ -87,6 +124,9 @@ public class GTTilePlot extends GTTilePlotPanel
 implements ActionListener, Printable, ChangeListener, ComponentListener, MouseListener, TimeAnimatablePlot, Plot
 {
 	private PlotEventProducer eventProducer = new PlotEventProducer();
+	private boolean withHucs = false; // Draw watersheds on map?
+	private boolean withRivers = false; // Draw rivers on map?
+	private boolean withRoads = false; // Draw roads on map?
 	protected DataFrame dataFrame;
 	protected DataFrame dataFrameLog;
 	static final Logger Logger = LogManager.getLogger(GTTilePlot.class.getName());
@@ -108,6 +148,13 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	public static final String ZOOM_OUT_MAX_COMMAND = "ZOOM_OUT_MAX";
 
 	// Attributes
+	// Attributes:
+	private static final int X = 0;
+	private static final int Y = 1;
+	private static final int MINIMUM = 0;
+	private static final int MAXIMUM = 1;
+	private static final int LONGITUDE = 0;
+	private static final int LATITUDE = 1;
 	private static final double MINIMUM_VALID_VALUE = -900.0;
 
 	// Log related
@@ -136,7 +183,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 
 	// For legend-colored grid cells and annotations:
 
-//	protected TilePlot tilePlot; // EMVL TilePlot.
+	//	protected TilePlot tilePlot; // EMVL TilePlot.
 
 	protected int timestep = 0; // 0..timesteps - 1.
 	protected int firstTimestep = 0;
@@ -176,6 +223,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	private String mapFileDirectory = System.getenv("VERDI_HOME") + "/plugins/bootstrap/data";	// nov 2015
 
 	private Mapper mapper = new Mapper(mapFileDirectory);
+	protected Projector projector;
 
 	protected double[][] gridBounds = { { 0.0, 0.0 }, { 0.0, 0.0 } };
 	protected double[][] domain = { { 0.0, 0.0 }, { 0.0, 0.0 } };
@@ -194,6 +242,9 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	private boolean recomputeLegend = false;
 	protected JCheckBoxMenuItem showGridLines;
 	protected boolean zoom = true;
+	protected boolean probe = false;
+	private boolean hasNoLayer = false;
+	protected final Rubberband rubberband = new Rubberband(this);
 	private int delay = 50; // animation delay in milliseconds.
 	private final int MAXIMUM_DELAY = 3000; // maximum animation delay: 3 seconds per frame.
 
@@ -209,6 +260,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	protected Slice probedSlice;
 	private ConfigDialog dialog = null;
 	private FeatureLayer controlLayer;
+	final JMenu mapLayersMenu = new JMenu("Add Map Layers");
 
 	@SuppressWarnings("unused")
 	private Plot.ConfigSource configSource = Plot.ConfigSource.GUI;
@@ -225,6 +277,16 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	 */
 	public GTTilePlot(VerdiApplication app, DataFrame dataFrame) {
 		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * From TilePlot
+	 * @param obsAnnot List<ObsAnnotation>
+	 * @param showLegend boolean
+	 */
+	public void setObsLegend(List<ObsAnnotation> obsAnnot, boolean showLegend) {
+		showObsLegend = showLegend;
+		obsAnnotations = obsAnnot;
 	}
 
 	@Override
@@ -249,8 +311,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	/**
 	 * Adds the specified PlotListener.
 	 * 
-	 * @param listener
-	 *            the plot listener to add
+	 * @param listener	the plot listener to add
 	 */
 	@Override
 	public void addPlotListener(PlotListener listener) {
@@ -260,8 +321,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	/**
 	 * Removes the specified PlotListener.
 	 * 
-	 * @param listener
-	 *            the plot listener to remove
+	 * @param listener	the plot listener to remove
 	 */
 	@Override
 	public void removePlotListener(PlotListener listener) {
@@ -405,7 +465,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)), source);
 			} catch (IOException ex) {
-				Logger.error("IOException in FastTilePlot.configure: loading configuration: " + ex.getMessage());
+				Logger.error("IOException in GTTilePlot.configure: loading configuration: " + ex.getMessage());
 				return;
 			}
 		}
@@ -581,7 +641,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	{
 		boolean retValue = false;	// default to failure
 		boolean showString;			// show string (title, etc.) or set it to null
-		
+
 		if(config == null)	// plot configuration structure must already be populated
 		{
 			Logger.error("Plot configuration was not set prior to calling drawTitles in GTTilePlot");
@@ -627,7 +687,932 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		retValue = true;	// return success
 		return retValue;
 	}
-	
+	protected Action timeSeriesSelected = new AbstractAction(
+			"Time Series of Probed Cell(s)") {
+		private static final long serialVersionUID = -2940008125642497962L;
+
+		public void actionPerformed(ActionEvent e) {
+			requestTimeSeries(Formula.Type.TIME_SERIES_LINE);
+		}
+	};
+
+	protected Action timeSeriesBarSelected = new AbstractAction(
+			"Time Series Bar of Probed Cell(s)") {
+		private static final long serialVersionUID = 2455217937515200807L;
+
+		public void actionPerformed(ActionEvent e) {
+			requestTimeSeries(Formula.Type.TIME_SERIES_BAR);
+		}
+	};
+
+	protected Action timeSeriesMin = new AbstractAction(
+			"Time Series of Min. Cell(s)") {
+		private static final long serialVersionUID = 5282480503103839989L;
+
+		public void actionPerformed(ActionEvent e) {
+			DataUtilities.MinMaxPoint points = getMinMaxPoints();
+			requestTimeSeries(points.getMinPoints(), "Min. cells ");
+		}
+	};
+
+	protected Action timeSeriesMax = new AbstractAction(
+			"Time Series of Max. Cell(s)") {
+		private static final long serialVersionUID = -4465758432397962782L;
+
+		public void actionPerformed(ActionEvent e) {
+			DataUtilities.MinMaxPoint points = getMinMaxPoints();
+			requestTimeSeries(points.getMaxPoints(), "Max. cells ");
+		}
+	};
+
+
+	/**
+	 *  From FastTilePlot. Creates a menu bar for this GTTilePlot. 
+	 *  This may return null if there is no menu bar.
+	 * 
+	 * @return a menu bar for this Plot.
+	 */
+	public JMenuBar createMenuBar() {
+		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+		JMenuBar bar = new JMenuBar();
+
+		JMenu menu = new JMenu("File");
+		menu.setMnemonic('F');
+		menu.add(new GTTilePlotPrintAction(this));
+		menu.add(new PlotExporterAction(this));
+		bar.add(menu);
+
+		menu = new JMenu("Configure");
+		menu.add(new AbstractAction("Configure Plot") {
+			private static final long serialVersionUID = 2455217937515200807L;
+
+			public void actionPerformed(ActionEvent e) {
+				editChartProperties();
+			}
+		});
+		menu.add(new LoadConfiguration(this));
+		menu.add(new SaveConfiguration(this));
+		//configureMapMenu(menu);		// HERE IS WHERE THE CONFIGURE GIS LAYERS GOES??? JEB (Also commented out in v1.4.1
+		bar.add(menu);
+
+		menu = new JMenu("Controls");
+		bar.add(menu);
+		ButtonGroup grp = new ButtonGroup();
+		JMenuItem item = menu.add(new JRadioButtonMenuItem(new AbstractAction("Zoom") {
+			private static final long serialVersionUID = 5282480503103839989L;
+
+			public void actionPerformed(ActionEvent e) {
+				JRadioButtonMenuItem src = (JRadioButtonMenuItem) e.getSource();
+				zoom = src.isSelected();
+				probe = !zoom;
+				if(probe)	// 2014 added logic and ability to turn probe off 
+				{
+					activateRubberBand();
+					// change cursor
+					setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+				}
+				else
+				{
+					deactivateRubberBand();
+					// change cursor
+					setCursor(Cursor.getDefaultCursor());
+				}
+			}
+		}));
+		item.setSelected(true);
+		grp.add(item);
+
+		activateRubberBand();
+
+		item = menu.add(new JRadioButtonMenuItem(new AbstractAction("Probe") {
+			private static final long serialVersionUID = 8777942675687929471L;
+
+			public void actionPerformed(ActionEvent e) {
+				JRadioButtonMenuItem src = (JRadioButtonMenuItem) e.getSource();
+				probe = src.isSelected();
+				if(probe)
+				{	// 2014 changed logic to allow user to turn probe mode on/off
+					activateRubberBand();
+					// change cursor
+					setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+				}
+				else
+				{
+					deactivateRubberBand();
+					// change cursor
+					setCursor(Cursor.getDefaultCursor());
+				}
+			}
+		}));
+		grp.add(item);
+		menu.add(item);
+
+		menu.addSeparator();
+
+		JMenuItem menuItem = new JMenuItem(
+				new AbstractAction("Set Row and Column Ranges") {
+					private static final long serialVersionUID = -4465758432397962782L;
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						setDataRanges();
+					}
+				});
+		menu.add(menuItem);
+
+		menu.addSeparator();
+		showGridLines = new JCheckBoxMenuItem(new AbstractAction("Show Grid Lines") {
+			private static final long serialVersionUID = 2699330329257731588L;
+
+			public void actionPerformed(ActionEvent e) {
+				JCheckBoxMenuItem gridlines = (JCheckBoxMenuItem) e.getSource();
+				Color configColor = (Color)config.getObject(TilePlotConfiguration.GRID_LINE_COLOR);
+				Color glColor = (configColor == null ? Color.GRAY : configColor);
+				((TilePlotConfiguration) config).setGridLines(gridlines.isSelected(), glColor);
+				draw();
+			}
+		});
+		menu.add(showGridLines);
+
+		menu.addSeparator();
+		item = new JCheckBoxMenuItem(new AbstractAction("Show Lat / Lon") {
+			private static final long serialVersionUID = 2699330329257731588L;
+
+			public void actionPerformed(ActionEvent e) {
+				JCheckBoxMenuItem latlon = (JCheckBoxMenuItem) e.getSource();
+				showLatLon = latlon.isSelected();
+			}
+		});
+		menu.add(item);
+
+		bar.add(menu);
+
+		menu = new JMenu("Plot");
+		bar.add(menu);
+		item = menu.add(timeSeriesSelected);
+		item.setEnabled(false);
+		probeItems.add(item);
+
+		item = menu.add(timeSeriesBarSelected);
+		item.setEnabled(false);
+		probeItems.add(item);
+
+		item = menu.add(timeSeriesMin);
+		item = menu.add(timeSeriesMax);
+
+		menu.addSeparator();
+
+		JMenuItem item2 = new JMenuItem(new AbstractAction("Animate Plot") {
+			private static final long serialVersionUID = 6336130019191512947L;
+
+			public void actionPerformed(ActionEvent e) {
+				AnimationPanel panel = new AnimationPanel();
+				panel.init(getDataFrame().getAxes(), GTTilePlot.this);
+			}
+		});
+		menu.add(item2);
+
+		if (this.getClass().equals(GTTilePlot.class)) {
+			JMenu sub = new JMenu("Add Overlay");
+			item2 = sub.add(new JMenuItem(new AbstractAction("Observations") {
+				private static final long serialVersionUID = 2699330329257731588L;
+
+				public void actionPerformed(ActionEvent e) {
+					addObsOverlay();
+				}
+			}));
+
+			item2 = sub.add(new JMenuItem(new AbstractAction("Vectors") {
+				private static final long serialVersionUID = 1408918800912242196L;
+
+				public void actionPerformed(ActionEvent e) {
+					addVectorOverlay();
+				}
+			}));
+
+			menu.add(sub);
+		}
+
+		menu = new JMenu("GIS Layers");	
+		gisLayersMenu(menu);
+		bar.add(menu);
+
+		// change cursor for initial zoom state
+		setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+
+		super.setMenuBar(bar);	// update the JMenuBar bar in GTTilePlotPanel
+		return bar;
+	}
+
+	/**
+	 * From FastTilePlot; handles which GIS layers to show and which ones to not show
+	 * @param layerKey	Key into structure of layers
+	 * @param show	boolean: true to show layer, false to not show that layer
+	 * @param addJMenuLayers	JMenu
+	 */
+	private void showLayer(String layerKey, boolean show, JMenu addJMenuLayers) {
+		try {
+			if (show && layerKey.equals(STATES_LAYER)) {
+				VerdiBoundaries map2Add = mapper.getUsaStatesMap();
+				myMapContent.addLayers(map2Add.getMap().layers());
+				mapper.getLayers().add(map2Add);
+			}
+
+			if (!show && layerKey.equals(STATES_LAYER)) {
+				VerdiBoundaries map2Remove = mapper.getUsaStatesMap();
+				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));	// assume 1st layer
+				mapper.removeUsaStates();
+			}
+
+			if (show && layerKey.equals(COUNTIES_LAYER)) {
+				VerdiBoundaries map2Add = mapper.getUsaCountiesMap();
+				myMapContent.addLayers(map2Add.getMap().layers());
+				mapper.getLayers().add(map2Add);
+			}
+
+			if (!show && layerKey.equals(COUNTIES_LAYER)) {
+				VerdiBoundaries map2Remove = mapper.getUsaCountiesMap();
+				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));
+				mapper.removeUsaCounties();
+			}
+
+			if (show && layerKey.equals(WORLD_LAYER)) {
+				VerdiBoundaries map2Add = mapper.getWorldMap();
+				myMapContent.addLayers(map2Add.getMap().layers());
+				mapper.getLayers().add(map2Add);
+			}
+
+			if (!show && layerKey.equals(WORLD_LAYER)) {
+				VerdiBoundaries map2Remove = mapper.getWorldMap();
+				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));
+				mapper.removeWorld();
+			}
+
+			if (show && layerKey.equals(NA_LAYER)) {
+				VerdiBoundaries map2Add = mapper.getNorthAmericaMap();
+				myMapContent.addLayers(map2Add.getMap().layers());
+				mapper.getLayers().add(map2Add);
+			}
+
+			if (!show && layerKey.equals(NA_LAYER)) {
+				VerdiBoundaries map2Remove = mapper.getNorthAmericaMap();
+				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));
+				mapper.removeNorthAmerica();
+			}
+
+			if (show && layerKey.equals(HUCS)) {
+				withHucs = show;
+				myMapContent.addLayers(mapper.getUSHucMap().getMap().layers());
+				mapper.getLayers().add(mapper.getUSHucMap());
+			}
+
+			if (!show && layerKey.equals(HUCS)) {
+				withHucs = show;
+				VerdiBoundaries map2Remove = mapper.getUSHucMap();
+				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));
+				mapper.removeUSHucMap();
+			}
+
+			if (show && layerKey.equals(RIVERS)) {
+				withRivers = show;
+				myMapContent.addLayers(mapper.getUSRiversMap().getMap().layers());
+				mapper.getLayers().add(mapper.getUSRiversMap());
+			}
+
+			if (!show && layerKey.equals(RIVERS)) {
+				withRivers = show;
+				VerdiBoundaries map2Remove = mapper.getUSRiversMap();
+				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));
+				mapper.removeUSRiversMap();
+			}
+
+			if (show && layerKey.equals(ROADS)) {
+				withRoads = show;
+				myMapContent.addLayers(mapper.getUSRoadsMap().getMap().layers());
+				mapper.getLayers().add(mapper.getUSRoadsMap());
+			}
+
+			if (!show && layerKey.equals(ROADS)) {
+				withRoads = show;
+				VerdiBoundaries map2Remove = mapper.getUSRoadsMap();
+				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));
+				mapper.removeUSRoadsMap();
+			}
+
+			if (layerKey.equals(OTHER_MAPS)) {
+				//				showGISLayersDialog();	// 2015 CHANGED THIS TO BRING UP FILE BROWSER FOR .SHP FILES
+				File selectFile = JFileDataStoreChooser.showOpenFile("shp", null);
+				VerdiBoundaries aVerdiBoundaries = new VerdiBoundaries();
+				aVerdiBoundaries.setFileName(selectFile.getAbsolutePath());
+				mapper.getLayers().add(aVerdiBoundaries);
+				myMapContent.addLayers(aVerdiBoundaries.getMap().layers());
+			}
+			draw();
+		} catch (Exception e) {
+			Logger.error("Error adding layer " + e.getMessage());
+		}
+	}
+
+
+	/**
+	 * From FastTilePlot. Displays a dialog that allows the user to edit the properties for the current chart.
+	 * 
+	 * @since 1.0.5
+	 */
+	public void editChartProperties() {
+		Window window = SwingUtilities.getWindowAncestor(GTTilePlot.this);
+		dialog = null;
+		if (window instanceof JFrame)
+			dialog = new ConfigDialog((JFrame) window);	// ConfigDialog is anl.verdi.plot.gui.ConfigDialog
+		else
+			dialog = new ConfigDialog((JDialog) window);
+		dialog.init(GTTilePlot.this, minMax);
+		dialog.enableScale( !this.statError);
+		dialog.setSize(500, 600);
+		dialog.setVisible(true);
+	}
+
+	/**
+	 * from FastTilePlot
+	 */
+	protected void addObsOverlay() {
+		OverlayRequest<ObsEvaluator> request = new OverlayRequest<ObsEvaluator>(OverlayRequest.Type.OBS, this);
+		eventProducer.fireOverlayRequest(request);
+	}
+
+	/**
+	 * from FastTilePlot
+	 */
+	protected void addVectorOverlay() {
+		OverlayRequest<VectorEvaluator> request = new OverlayRequest<VectorEvaluator>(OverlayRequest.Type.VECTOR, this);
+		eventProducer.fireOverlayRequest(request);
+	}
+
+	/**
+	 * From FastTilePlot; turn on rubber band widget.
+	 */
+	protected void activateRubberBand() {
+		rubberband.setActive(true);
+	}
+
+	/**
+	 * from FastTilePlot; turn off rubber band widget
+	 */
+	protected void deactivateRubberBand() {	// 2014 to allow user to turn OFF probe
+		rubberband.setActive(false);
+	}
+
+	private void setDataRanges() {
+
+		// NOTE: 2015 appears DataRangeDialog is an inner class; based on Oracle's JavaSE tutorials,
+		// proper way to instantiate an inner class is to first instantiate the outer class, and
+		// then create the inner object with this syntax:
+		// OuterClass.InnerClass innerObject = outerObject.new InnerClass();
+		GTTilePlot.DataRangeDialog dialog = this.new DataRangeDialog("Set Row and Column Ranges",
+				GTTilePlot.this, firstRow + 1, lastRow + 1, firstColumn + 1,
+				lastColumn + 1);
+		dialog.showDialog();
+	}
+
+	private class DataRangeDialog extends JDialog {
+		private static final long serialVersionUID = -1110292652911018568L;
+		public static final int CANCEL_OPTION = -1;
+		public static final int YES_OPTION = 1;
+		public static final int ERROR = 0;
+		private GTTilePlot plot;
+		private JTextField fRowField;
+		private JTextField lRowField;
+		private JTextField fColumnField;
+		private JTextField lColumnField;
+		private boolean cancelled = false;
+		private int firstRow, lastRow, firstColumn, lastColumn;
+
+		public DataRangeDialog(String title, GTTilePlot plot, int firstRow,
+				int lastRow, int firstColumn, int lastColumn) {
+			super.setTitle(title);
+			super.setLocation(getCenterPoint(plot));
+			super.setModal(true);
+			super.setPreferredSize(new Dimension(400, 300));
+			this.firstRow = firstRow;
+			this.lastRow = lastRow;
+			this.firstColumn = firstColumn;
+			this.lastColumn = lastColumn;
+			this.fRowField = new JTextField("1", 4);
+			this.lRowField = new JTextField("1", 4);
+			this.fColumnField = new JTextField("1", 4);
+			this.lColumnField = new JTextField("1", 4);
+			this.plot = plot;
+			this.getContentPane().add(createLayout());
+		}
+
+		public int showDialog() {
+			this.pack();
+			this.setVisible(true);
+
+			if (this.cancelled)
+				return CANCEL_OPTION;
+
+			try {
+				firstRow = Integer.valueOf(fRowField.getText());
+				lastRow = Integer.valueOf(lRowField.getText());
+				firstColumn = Integer.valueOf(fColumnField.getText());
+				lastColumn = Integer.valueOf(lColumnField.getText());
+				plot.resetRowsNColumns(firstRow, lastRow, firstColumn,
+						lastColumn);
+				return YES_OPTION;
+			} catch (NumberFormatException e) {
+				Logger.error("Number Format Exception in GTTilePlot.showDialog: Set Rows and Columns: " + e.getMessage());
+			}
+
+			return ERROR;
+		}
+
+		private void gisLayersMenu(JMenu menu) {
+			menu.add(mapLayersMenu);
+
+			ActionListener listener = new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					Object srcObj = evt.getSource();
+
+					if (srcObj instanceof JCheckBoxMenuItem) {
+						JCheckBoxMenuItem item = (JCheckBoxMenuItem) srcObj;
+						showLayer(item.getActionCommand(),  item.isSelected(), mapLayersMenu);
+					} else 
+						showLayer(OTHER_MAPS, false, mapLayersMenu);
+				}
+			};
+
+			JCheckBoxMenuItem item = new JCheckBoxMenuItem("World", false);
+			item.setActionCommand(WORLD_LAYER);
+			item.addActionListener(listener);
+			mapLayersMenu.add(item);
+
+			item = new JCheckBoxMenuItem("North America", false);
+			item.setActionCommand(NA_LAYER);
+			item.addActionListener(listener);
+			mapLayersMenu.add(item);
+
+			item = new JCheckBoxMenuItem("USA States", false);
+			item.setActionCommand(STATES_LAYER);
+			item.addActionListener(listener);
+			mapLayersMenu.add(item);
+
+			item = new JCheckBoxMenuItem("USA Counties", false);
+			item.setActionCommand(COUNTIES_LAYER);
+			item.addActionListener(listener);
+			mapLayersMenu.add(item);
+
+			item = new JCheckBoxMenuItem("HUCs", false);
+			item.setActionCommand(HUCS);
+			item.addActionListener(listener);
+			mapLayersMenu.add(item);
+
+			item = new JCheckBoxMenuItem("Rivers", false);
+			item.setActionCommand(RIVERS);
+			item.addActionListener(listener);
+			mapLayersMenu.add(item);
+
+			item = new JCheckBoxMenuItem("Roads", false);
+			item.setActionCommand(ROADS);
+			item.addActionListener(listener);
+			mapLayersMenu.add(item);
+
+			JMenuItem otheritem = new JMenuItem("Other...");
+			otheritem.setActionCommand(OTHER_MAPS);
+			otheritem.addActionListener(listener);
+			mapLayersMenu.add(otheritem);
+
+			menu.add(new AbstractAction("Configure GIS Layers") {
+				private static final long serialVersionUID = -3679673290623274686L;
+
+				public void actionPerformed(ActionEvent e) {
+					GTTileLayerEditor editor = showGISLayersDialog();
+
+					if (!editor.wasCanceled()) {
+						resetMenuItems(mapLayersMenu);
+						draw();
+					}
+				}
+			});
+
+			menu.addSeparator();
+
+			JMenuItem defaultItem = new JMenuItem(new AbstractAction(
+					"Set Current Maps As Plot Default") {
+				private static final long serialVersionUID = 2403382186582489960L;
+
+				public void actionPerformed(ActionEvent e) {
+					// TBI
+				}
+			});
+			defaultItem.setEnabled(false);
+			menu.add(defaultItem);
+		}
+
+		/**
+		 * From FastTilePlot; creates a JPanel to hold a "middle panel" JPanel and a "buttons panel" JPanel
+		 * @return	JPanel containing 2 JPanel objects
+		 */
+		private JPanel createLayout() {
+			JPanel panel = new JPanel();
+			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+			panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+			panel.add(createMiddlePanel());
+			panel.add(createButtonsPanel());
+
+			return panel;
+		}
+
+		/**
+		 * From FastTilePlot
+		 * @return	JPanel
+		 */
+		private JPanel createMiddlePanel() {
+			GridBagLayout gridbag = new GridBagLayout();
+			GridBagConstraints c = new GridBagConstraints();
+			JPanel contentPanel = new JPanel(gridbag);
+
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.weightx = 1.0;
+			c.insets = new Insets(1, 1, 7, 5);
+
+			JLabel rowLabel = new JLabel("Rows:");
+			JPanel rowPanel = new JPanel();
+			rowPanel.add(fRowField, BorderLayout.LINE_START);
+			fRowField.setText(this.firstRow + "");
+			rowPanel.add(new JLabel("..."));
+			rowPanel.add(lRowField, BorderLayout.LINE_END);
+			lRowField.setText(this.lastRow + "");
+			JLabel holder1 = new JLabel();
+
+			gridbag.setConstraints(rowLabel, c);
+			gridbag.setConstraints(rowPanel, c);
+			c.gridwidth = GridBagConstraints.REMAINDER; // end row
+			gridbag.setConstraints(holder1, c);
+			contentPanel.add(rowLabel);
+			contentPanel.add(rowPanel);
+			contentPanel.add(holder1);
+
+			c.gridwidth = 1; // next-to-last in row
+
+			JLabel colLabel = new JLabel("Columns:");
+			JPanel columnPanel = new JPanel();
+			columnPanel.add(fColumnField, BorderLayout.LINE_START);
+			fColumnField.setText(this.firstColumn + "");
+			columnPanel.add(new JLabel("..."));
+			columnPanel.add(lColumnField, BorderLayout.LINE_END);
+			lColumnField.setText(this.lastColumn + "");
+			JLabel holder2 = new JLabel();
+
+			gridbag.setConstraints(colLabel, c);
+			gridbag.setConstraints(columnPanel, c);
+			c.gridwidth = GridBagConstraints.REMAINDER;
+			gridbag.setConstraints(holder2, c);
+			contentPanel.add(colLabel);
+			contentPanel.add(columnPanel);
+			contentPanel.add(holder2);
+
+			return contentPanel;
+		}
+
+		/**
+		 * From FastTilePlot; create a buttons panel (OK, Cancel buttons)
+		 * @return	JPanel 
+		 */
+		private JPanel createButtonsPanel() {
+			JPanel container = new JPanel();
+			FlowLayout layout = new FlowLayout();
+			layout.setHgap(20);
+			layout.setVgap(2);
+			container.setLayout(layout);
+
+			JButton okButton = new JButton("OK");
+			okButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					cancelled = false;
+					dispose();
+				}
+			});
+
+			container.add(okButton);
+			getRootPane().setDefaultButton(okButton);
+
+			JButton cancelButton = new JButton("Cancel");
+			cancelButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					cancelled = true;
+					dispose();
+				}
+			});
+			container.add(cancelButton);
+			container.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+
+			return container;
+		}
+
+		/**
+		 * From FastTilePlot; get the location of the center the screen (primary display only)
+		 * @param comp	a Component; the screen
+		 * @return	a Point; the center point of the screen
+		 */
+		private Point getCenterPoint(Component comp) {
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+			if (comp == null) {
+				return new Point((int) screenSize.getWidth() / 2,
+						(int) screenSize.getHeight() / 2);
+			}
+
+			Dimension frameSize = comp.getSize();
+
+			if (frameSize.height > screenSize.height) {
+				frameSize.height = screenSize.height;
+			}
+
+			if (frameSize.width > screenSize.width) {
+				frameSize.width = screenSize.width;
+			}
+
+			return new Point((screenSize.width - frameSize.width) / 2,
+					(screenSize.height - frameSize.height) / 2);
+		}
+	}
+
+	/**
+	 * From FastTilePlot
+	 * @param addLayers	JMenu of GIS layers, each of which may be checked
+	 */
+	protected void resetMenuItems(JMenu addLayers) {
+		if (addLayers == null) return;
+
+		JCheckBoxMenuItem world = (JCheckBoxMenuItem)addLayers.getItem(0);
+		JCheckBoxMenuItem na = (JCheckBoxMenuItem)addLayers.getItem(1);
+		JCheckBoxMenuItem states = (JCheckBoxMenuItem)addLayers.getItem(2);
+		JCheckBoxMenuItem counties = (JCheckBoxMenuItem)addLayers.getItem(3);
+		JCheckBoxMenuItem hucs = (JCheckBoxMenuItem)addLayers.getItem(4);
+		JCheckBoxMenuItem rivers = (JCheckBoxMenuItem)addLayers.getItem(5);
+		JCheckBoxMenuItem roads = (JCheckBoxMenuItem)addLayers.getItem(6);
+
+		world.setSelected(mapper.worldMapIncluded());
+		states.setSelected(mapper.usStatesMapIncluded());
+		counties.setSelected(mapper.usCountiesMapIncluded());
+		hucs.setSelected(mapper.usHucsMapIncluded());
+		rivers.setSelected(mapper.usRiversMapIncluded());
+		roads.setSelected(mapper.usRoadsMapIncluded());
+		na.setSelected(mapper.naMapIncluded());
+	}
+
+	private GTTileLayerEditor showGISLayersDialog() {	// JEB possibly replace this by JFileDataStoreChooser
+		// and separate GeoTools dialog to handle layer order and features (colors, etc.)
+		Logger.debug("in GTTilePlot.showGISLayersDialog()");
+		Window frame = SwingUtilities.getWindowAncestor(this);
+		GTTileLayerEditor editor = null;
+
+		if (frame instanceof JFrame)
+			editor = new GTTileLayerEditor((JFrame) frame);
+		else
+			editor = new GTTileLayerEditor((JDialog) frame);
+
+		editor.init(mapper);
+		editor.setLocationRelativeTo(frame);
+		editor.setVisible(true);
+		editor.pack();
+		return editor;
+	}
+
+	/**
+	 * From FastTilePlot. Set subdomain by rows and columns, with adjustment for 0-based data
+	 * and 1-based user input.
+	 * @param fRow	first row
+	 * @param lRow	last for
+	 * @param fColumn	first column
+	 * @param lColumn	last column
+	 */
+	public void resetRowsNColumns(int fRow, int lRow, int fColumn, int lColumn) {
+		if (fRow < 1)
+			fRow = 1;
+
+		if (fRow > rows)
+			fRow = rows;
+
+		firstRow = fRow - 1;
+
+		if (lRow < 1)
+			lRow = 1;
+
+		if (lRow > rows)
+			lRow = rows;
+
+		lastRow = lRow - 1;
+
+		if (firstRow > lastRow) {
+			int temp = firstRow;
+			firstRow = lastRow;
+			lastRow = temp;
+		}
+
+		if (fColumn < 1)
+			fColumn = 1;
+
+		if (fColumn > columns)
+			fColumn = columns;
+
+		firstColumn = fColumn - 1;
+
+		if (lColumn < 1)
+			lColumn = 1;
+
+		if (lColumn > columns)
+			lColumn = columns;
+
+		lastColumn = lColumn - 1;
+
+		if (firstColumn > lastColumn) {
+			int temp = firstColumn;
+			firstColumn = lastColumn;
+			lastColumn = temp;
+		}
+
+		computeDerivedAttributes();
+	}
+
+	/**
+	 * From FastTilePlot; need to rewrite for a JMapPane
+	 * Called by changing zoom and by changing subset through resetRowsNColumns()
+	 */
+	private void computeDerivedAttributes() {	// called by zooming and resetRowsNColumns
+		// JEB 2016 figure this out & rewrite for JMapPane
+		// & get rid of Projector (use CRS) ???
+
+		// Compute grid bounds and domain:
+
+		gridBounds[X][MINIMUM] = westEdge + firstColumn * cellWidth;
+		gridBounds[X][MAXIMUM] = westEdge + (1 + lastColumn) * cellWidth;
+		gridBounds[Y][MINIMUM] = southEdge + firstRow * cellHeight;
+		gridBounds[Y][MAXIMUM] = southEdge + (1 + lastRow) * cellHeight;
+
+		if (projector != null) {
+			computeMapDomain(projector, gridBounds, domain);
+		} else {
+			domain[LONGITUDE][MINIMUM] = gridBounds[X][MINIMUM];
+			domain[LONGITUDE][MAXIMUM] = gridBounds[X][MAXIMUM];
+			domain[LATITUDE][MINIMUM] = gridBounds[Y][MINIMUM];
+			domain[LATITUDE][MAXIMUM] = gridBounds[Y][MAXIMUM];
+		}
+	}
+
+	// Compute map domain from grid bounds:
+
+	private static void computeMapDomain(final Projector projector,		// 2016 replace Projector with CRS ???
+			final double[][] gridBounds, double[][] mapDomain) {
+		// JEB 2016 figure this out & rewrite for JMapPane
+		// & get rid of Projector (use CRS) ???
+
+		final double margin = 1.0; // Degrees lon/lat beyond grid corners.
+		final double xMinimum = gridBounds[X][MINIMUM];
+		final double xMaximum = gridBounds[X][MAXIMUM];
+		final double yMinimum = gridBounds[Y][MINIMUM];
+		final double yMaximum = gridBounds[Y][MAXIMUM];
+		final double xMean = (xMinimum + xMaximum) * 0.5;
+		double[] longitudeLatitude = { 0.0, 0.0 };
+
+		// Unproject corners of bottom edge of grid for latitude minimum:
+		projector.unproject(xMinimum, yMinimum, longitudeLatitude);
+		mapDomain[LONGITUDE][MINIMUM] = longitudeLatitude[LONGITUDE];
+		mapDomain[LATITUDE][MINIMUM] = longitudeLatitude[LATITUDE];
+		projector.unproject(xMaximum, yMinimum, longitudeLatitude);
+		mapDomain[LONGITUDE][MAXIMUM] = longitudeLatitude[LONGITUDE];
+		mapDomain[LATITUDE][MINIMUM] = Math.min(mapDomain[LATITUDE][MINIMUM],
+				longitudeLatitude[LATITUDE]);
+
+		// Unproject corners and center of top edge of grid for latitude maximum:
+
+		projector.unproject(xMinimum, yMaximum, longitudeLatitude);
+		mapDomain[LONGITUDE][MINIMUM] = Math.min(mapDomain[LONGITUDE][MINIMUM],
+				longitudeLatitude[LONGITUDE]);
+		mapDomain[LATITUDE][MAXIMUM] = longitudeLatitude[LATITUDE];
+		projector.unproject(xMaximum, yMaximum, longitudeLatitude);
+		mapDomain[LONGITUDE][MAXIMUM] = Math.max(mapDomain[LONGITUDE][MAXIMUM],
+				longitudeLatitude[LONGITUDE]);
+		mapDomain[LATITUDE][MAXIMUM] = Math.max(mapDomain[LATITUDE][MAXIMUM],
+				longitudeLatitude[LATITUDE]);
+
+		if ( projector.getProjection() instanceof
+				ucar.unidata.geoloc.projection.Stereographic ) {	// JEB 2016 probably need to change
+			// testing for a polar projection
+
+			// Must be a polar projection so
+			// use full domain in case grid crosses the equator:
+
+			mapDomain[LATITUDE ][MINIMUM] = -90.0;
+			mapDomain[LATITUDE ][MAXIMUM] =  90.0;
+			mapDomain[LONGITUDE][MINIMUM] = -180.0;
+			mapDomain[LONGITUDE][MAXIMUM] = 180.0;
+		} else { // Non-polar projection:
+			projector.unproject(xMean, yMaximum, longitudeLatitude);
+			mapDomain[LATITUDE][MAXIMUM] = Math.max(
+					mapDomain[LATITUDE][MAXIMUM], longitudeLatitude[LATITUDE]);
+
+			// Expand domain by margin all around, within valid range:
+
+			mapDomain[LONGITUDE][MINIMUM] = Numerics.clamp(
+					mapDomain[LONGITUDE][MINIMUM] - margin, -180.0, 180.0);
+			mapDomain[LONGITUDE][MAXIMUM] = Numerics.clamp(
+					mapDomain[LONGITUDE][MAXIMUM] + margin, -180.0, 180.0);
+			mapDomain[LATITUDE][MINIMUM] = Numerics.clamp(
+					mapDomain[LATITUDE][MINIMUM] - margin, -90.0, 90.0);
+			mapDomain[LATITUDE][MAXIMUM] = Numerics.clamp(
+					mapDomain[LATITUDE][MAXIMUM] + margin, -90.0, 90.0);
+		}
+	}
+
+	/**
+	 * From FastTilePlot; menu of GIS coverages from which the user can pick layers to include on the chart 
+	 * @param menu	JMenu on which the map layers are displayed
+	 */
+	private void gisLayersMenu(JMenu menu) {
+		menu.add(mapLayersMenu);
+
+		ActionListener listener = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				Object srcObj = evt.getSource();
+
+				if (srcObj instanceof JCheckBoxMenuItem) {
+					JCheckBoxMenuItem item = (JCheckBoxMenuItem) srcObj;
+					showLayer(item.getActionCommand(),  item.isSelected(), mapLayersMenu);
+				} else 
+					showLayer(OTHER_MAPS, false, mapLayersMenu);
+			}
+		};
+
+		JCheckBoxMenuItem item = new JCheckBoxMenuItem("World", false);
+		item.setActionCommand(WORLD_LAYER);
+		item.addActionListener(listener);
+		mapLayersMenu.add(item);
+
+		item = new JCheckBoxMenuItem("North America", false);
+		item.setActionCommand(NA_LAYER);
+		item.addActionListener(listener);
+		mapLayersMenu.add(item);
+
+		item = new JCheckBoxMenuItem("USA States", false);
+		item.setActionCommand(STATES_LAYER);
+		item.addActionListener(listener);
+		mapLayersMenu.add(item);
+
+		item = new JCheckBoxMenuItem("USA Counties", false);
+		item.setActionCommand(COUNTIES_LAYER);
+		item.addActionListener(listener);
+		mapLayersMenu.add(item);
+
+		item = new JCheckBoxMenuItem("HUCs", false);
+		item.setActionCommand(HUCS);
+		item.addActionListener(listener);
+		mapLayersMenu.add(item);
+
+		item = new JCheckBoxMenuItem("Rivers", false);
+		item.setActionCommand(RIVERS);
+		item.addActionListener(listener);
+		mapLayersMenu.add(item);
+
+		item = new JCheckBoxMenuItem("Roads", false);
+		item.setActionCommand(ROADS);
+		item.addActionListener(listener);
+		mapLayersMenu.add(item);
+
+		JMenuItem otheritem = new JMenuItem("Other...");
+		otheritem.setActionCommand(OTHER_MAPS);
+		otheritem.addActionListener(listener);
+		mapLayersMenu.add(otheritem);
+
+		menu.add(new AbstractAction("Configure GIS Layers") {
+			private static final long serialVersionUID = -3679673290623274686L;
+
+			public void actionPerformed(ActionEvent e) {
+				GTTileLayerEditor editor = showGISLayersDialog();
+
+				if (!editor.wasCanceled()) {
+					resetMenuItems(mapLayersMenu);
+					draw();
+				}
+			}
+		});
+
+		menu.addSeparator();
+
+		JMenuItem defaultItem = new JMenuItem(new AbstractAction(
+				"Set Current Maps As Plot Default") {
+			private static final long serialVersionUID = 2403382186582489960L;
+
+			public void actionPerformed(ActionEvent e) {
+				// TBI
+			}
+		});
+		defaultItem.setEnabled(false);
+		menu.add(defaultItem);
+	}
+
 	/**
 	 * This drawFooters member function passes the values of the GTTilePlot to the GTTilePlotPanel
 	 * for the 2 footers. Adapted from part of the drawLabels function of TilePlot.java.
@@ -638,7 +1623,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	{
 		boolean retValue = false;		// default to failure
 		boolean showString;				// show footer string or set it to null
-		
+
 		if(config == null)
 		{
 			Logger.error("Plot configuration was not set prior to calling drawFooters in GTTilePlot");
@@ -650,9 +1635,32 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			showString = false;
 		else
 			showString = true;
+		String f1String = config.getString(PlotConfiguration.FOOTER1);
+		Font f1Font = config.getFont(PlotConfiguration.FOOTER1_FONT);
+		Color f1Color = config.getColor(PlotConfiguration.FOOTER1_COLOR);
+		if(f1Color == null)
+			f1Color = labelColor;
+		if(!showString)
+			f1String = null;
+		// values for footer2
+		String showFooter2 = config.getShowFooter2();
+		if(showFooter2.compareTo("FALSE") == 0)
+			showString = false;
+		else
+			showString = true;
+		String f2String = config.getString(PlotConfiguration.FOOTER2);
+		Font f2Font = config.getFont(PlotConfiguration.FOOTER2_FONT);
+		Color f2Color = config.getColor(PlotConfiguration.FOOTER2_COLOR);
+		if(f2Color == null)
+			f2Color = labelColor;
+		if(!showString)
+			f2String = null;
+		// send the footers and their properties to the panel
+		super.setFootersPanel(f1Font, f1Color, f1String, f2Font, f2Color, f2String);
+		retValue = true;
 		return retValue;
 	}
-	
+
 	/**
 	 * The purpose of this draw function appears to be to trigger a redraw of the tile plot
 	 */
@@ -667,7 +1675,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		try {
 			minMax = new DataUtilities.MinMax(colorMap.getMin(), colorMap.getMax());
 		} catch (Exception e) {
-			Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
+			Logger.error("Exception in GTTilePlot.updateColorMap: " + e.getMessage());
 			e.printStackTrace();
 			return;
 		}
@@ -681,16 +1689,16 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			try {
 				legendLevels[i] = colorMap.getIntervalStart(i);
 			} catch (Exception e) {
-				Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
+				Logger.error("Exception in GTTilePlot.updateColorMap: " + e.getMessage());
 				e.printStackTrace();
 			}
 
 		try {
 			legendLevels[count] = colorMap.getMax();
 		} catch (Exception e) {
-			Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
+			Logger.error("Exception in GTTilePlot.updateColorMap: " + e.getMessage());
 			e.printStackTrace();
-			Logger.error("FastTilePlot's updateColorMap method "+ e.getMessage());
+			Logger.error("GTTilePlot's updateColorMap method "+ e.getMessage());
 			return;
 		}
 	}
@@ -881,7 +1889,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 				}
 			}
 
-			tilePlot.setObsLegend(obsAnnotations, showLegend);
+			setObsLegend(obsAnnotations, showLegend);
 			config.putObject(PlotConfiguration.OBS_SHOW_LEGEND, showLegend);
 
 			if (showST1) {
@@ -1010,7 +2018,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		statisticsData = null;	
 
 		format = null;
-//		tilePlot = null;
+		//		tilePlot = null;
 		legendLevels = null;
 		defaultPalette = null;
 		legendColors = null;
@@ -1044,7 +2052,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	protected JPopupMenu createPopupMenu(boolean properties, boolean save,
 			boolean print, boolean zoomable) {
 
-		JPopupMenu result = new JPopupMenu("FastTile:");
+		JPopupMenu result = new JPopupMenu("GTTile:");
 		boolean separator = false;
 
 		if (properties) {
@@ -1101,6 +2109,64 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			result.add(zoomOut2Pic);
 		}
 		return result;
+	}
+	private void requestTimeSeries(Formula.Type type) {
+		Slice slice = new Slice();
+		// slice needs to be in terms of the actual array indices
+		// of the frame, but the axes ranges refer to the range
+		// of the original dataset. So, the origin will always
+		// be 0 and the extent is the frame's extent.
+		slice.setTimeRange(0, getDataFrame().getAxes().getTimeAxis().getExtent());
+		DataFrameAxis frameAxis = getDataFrame().getAxes().getZAxis();
+		if (frameAxis != null) slice.setLayerRange(0, frameAxis.getExtent());
+		slice.setXRange(probedSlice.getXRange());
+		slice.setYRange(probedSlice.getYRange());
+
+		try {
+			DataFrame subsection = getDataFrame().slice(slice);
+			eventProducer.firePlotRequest(new TimeSeriesPlotRequest(subsection, slice, type));
+		} catch (InvalidRangeException e1) {
+			Logger.error("InvalidRangeException in GTTilePlot.requestTimeSeries: " + e1.getMessage());
+		}
+	}
+
+	private void requestTimeSeries(Set<Point> points, String title) {
+		MultiTimeSeriesPlotRequest request = new MultiTimeSeriesPlotRequest(title);
+		for (Point point : points) {
+			Slice slice = new Slice();
+			// slice needs to be in terms of the actual array indices
+			// of the frame, but the axes ranges refer to the range
+			// of the original dataset. So, the origin will always
+			// be 0 and the extent is the frame's extent.
+			slice.setTimeRange(0, getDataFrame().getAxes().getTimeAxis().getExtent());
+			DataFrameAxis frameAxis = getDataFrame().getAxes().getZAxis();
+			if (frameAxis != null) slice.setLayerRange(0, frameAxis.getExtent());
+			slice.setXRange(point.x, 1);
+			slice.setYRange(point.y, 1);
+			try {
+				DataFrame subsection = getDataFrame().slice(slice);
+				request.addItem(subsection);
+			} catch (InvalidRangeException e1) {
+				Logger.error("InvalidRangeException in GTTilePlot.requestTimeSeries: " + e1.getMessage());
+			}
+		}
+		eventProducer.firePlotRequest(request);
+	}
+
+
+	/**
+	 * Gets the MinMax points for this plot.
+	 *
+	 * @return the MinMax points for this plot.
+	 */
+	protected DataUtilities.MinMaxPoint getMinMaxPoints() {
+		try {
+			if (hasNoLayer) return DataUtilities.minMaxPoint(getDataFrame(), timestep - firstTimestep);
+			return DataUtilities.minMaxTLPoint(getDataFrame(), timestep - firstTimestep, layer - firstLayer);
+		} catch (InvalidRangeException e) {
+			Logger.error("Invalid Range Exception in GTTilePlot getMinMaxPoints: " + e.getMessage());
+		}
+		return null;
 	}
 
 }
