@@ -501,19 +501,19 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					int height;
 					
 					String prefix = "w";
-					if (dataRatio > screenRatio) {
+					if (clippedDataRatio > 1) {
 						width = Math.round(canvasWidth - (tilePlot.getLegendBoxWidth() + xOffset));
-						height = Math.round(width / dataRatio);
+						height = (int)Math.round(width / clippedDataRatio);
 						int minHeight = canvasHeight - tilePlot.getFooterHeight() * 2;
 						if (minHeight < height) {
 							height = minHeight;
-							width = Math.round(height * dataRatio);
+							width = (int)Math.round(height * clippedDataRatio);
 							prefix = "wm";
 						}
 					}
 					else {
 						height = Math.round(canvasHeight - tilePlot.getFooterHeight() * 2);
-						width = Math.round(height * dataRatio);
+						width = (int)Math.round(height * clippedDataRatio);
 						prefix = "h";
 					}
 					canvasSize = width;
@@ -531,7 +531,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					}
 					
 
-					if (canvasSize == 0) {
+					if (canvasSize < 1) {
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
 						continue;
@@ -1285,7 +1285,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						clippedDataRatio = dataRatio;
 					screenWidth = (int)Math.round(screenHeight * clippedDataRatio);
 				}
-				else if (clippedDataRatio > dataRatio) {
+				else if (clippedDataRatio >= dataRatio) {
 					previousClippedDataRatio = clippedDataRatio;
 					clippedDataRatio /= 1.25;
 					if (clippedDataRatio < dataRatio)
@@ -1767,14 +1767,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private void transformCells(/*Graphics gr, */ int canvasSize, int xOrigin, int yOrigin) {
 		long start = System.currentTimeMillis();
 		
-		if (clippedDataRatio > 1) {		
-			screenWidth = canvasSize;
-			screenHeight = (int)Math.round(screenWidth / clippedDataRatio);
-		}
-		else {
-			screenHeight = canvasSize;
-			screenWidth = (int)Math.round(screenHeight * clippedDataRatio);
-		}
+		screenWidth = canvasSize;
+		screenHeight = (int)Math.round(screenWidth / clippedDataRatio);
+
 		compositeFactor = screenWidth / dataWidth * zoomFactor;
 		transformedCellDiam = (int)Math.round(avgCellDiam * compositeFactor);
 		renderBorder = transformedCellDiam / screenWidth > borderDisplayCutoff;
@@ -3369,7 +3364,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				int x = (int)Math.round((lonLow - columnOrigin) / RAD_TO_DEG / dataWidth * screenWidth);
 				int y = (int)Math.round((dataHeight - (latHigh - rowOrigin) / RAD_TO_DEG) / dataHeight * screenHeight);
 				int width = (int)Math.round((lonHigh - lonLow) / RAD_TO_DEG / dataWidth * screenWidth);
-				int height = (int)Math.round((latHigh - latLow) / RAD_TO_DEG / dataHeight * screenHeight);				
+				int height = (int)Math.round((latHigh - latLow) / RAD_TO_DEG / dataHeight * screenHeight);	
 
 				
 				Rectangle rect = new Rectangle(x, y, width, height);
