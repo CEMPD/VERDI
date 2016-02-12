@@ -71,6 +71,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -147,7 +148,6 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	public static final String ZOOM_OUT_BOTH_COMMAND = "ZOOM_OUT_BOTH";
 	public static final String ZOOM_OUT_MAX_COMMAND = "ZOOM_OUT_MAX";
 
-	// Attributes
 	// Attributes:
 	private static final int X = 0;
 	private static final int Y = 1;
@@ -198,6 +198,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 
 	protected double[] legendLevels;
 	protected MinMax minMax;
+	private boolean processTimeChange = true;
 	protected PlotConfiguration config;
 
 	protected Palette defaultPalette;
@@ -234,16 +235,36 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 
 	// GUI attributes
 
+	// GUI attributes:
+	private JButton playStopButton;
+	private JButton leftStepButton;
+	private JButton rightStepButton;
+	private final String LEFT = "<";
+	private final String RIGHT = ">";
+	private final String PLAY = "|>";
+	private final String STOP = "||";
+	private final String LEFT_TIP = "Move One Timestep to the Left";
+	private final String RIGHT_TIP = "Move One Timestep to the Right";
+	private final String PLAY_TIP = "Play/Stop";
 	private TimeLayerPanel timeLayerPanel;
-	private boolean recomputeStatistics = false;
-	private boolean statError = false;
+	private final JToolBar toolBar = new JToolBar();
 	private JComboBox statisticsMenu;
+	//	private int preStatIndex = -1;
 	private JTextField threshold;
+	private boolean recomputeStatistics = false;
 	private boolean recomputeLegend = false;
+
+	private boolean statError = false;
 	protected JCheckBoxMenuItem showGridLines;
 	protected boolean zoom = true;
 	protected boolean probe = false;
 	private boolean hasNoLayer = false;
+	private final String DELAY_LABEL = "Slow:";
+	private JTextField delayField;
+	private JTextField firstRowField;
+	private JTextField lastRowField;
+	private JTextField firstColumnField;
+	private JTextField lastColumnField;
 	protected final Rubberband rubberband = new Rubberband(this);
 	private int delay = 50; // animation delay in milliseconds.
 	private final int MAXIMUM_DELAY = 3000; // maximum animation delay: 3 seconds per frame.
@@ -277,6 +298,9 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	 */
 	public GTTilePlot(VerdiApplication app, DataFrame dataFrame) {
 		// TODO Auto-generated constructor stub
+		super();										// call constructor of GTTilePlotPanel
+		JToolBar theToolBar = createToolBar(dataFrame);	// create the tool bar here
+		super.setToolBar(theToolBar);					// and send it to the GTTilePlotPanel
 	}
 
 	/**
@@ -289,17 +313,27 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		obsAnnotations = obsAnnot;
 	}
 
+	/**
+	 * getPanel(): returns the largest JPanel container (contains all others)
+	 */
 	@Override
-	public JPanel getPanel() {	// return the largest JPanel (contains all others)
+	public JPanel getPanel() {
 		return getEntirePane();
 	}
 
+	/**
+	 * getEntirePane(): returns the largest JPanel container
+	 * @return	GTTilePlotPanel as a JPanel
+	 */
 	private JPanel getEntirePane() {
 		return (JPanel) this;	// GTTilePlotPanel is-a JPanel
 	}
 
+	/**
+	 * getMapPane(): returns the JMapPane container that contains just the geographic component.
+	 */
 	@Override
-	public JMapPane getMapPane() {	// return the container that contains just the geographic component
+	public JMapPane getMapPane() {
 		return super.getMap();
 	}
 
@@ -350,14 +384,23 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		return result;
 	}
 
+	/**
+	 * From FastTilePlot: getDataFrame(); uses the value of the data member "log" to determine if returning a log version or not.
+	 * @return	DataFrame used in GTTilePlot
+	 */
 	protected DataFrame getDataFrame() {
-		if ( log) {
+		if (log) {
 			return dataFrameLog;
 		} else {
 			return dataFrame;
 		}
 	}
 
+	/**
+	 * From FastTilePlot: getDataFrame(log); uses the passed value of the boolean "log" to determine if returning a log version or not.
+	 * @param log	boolean value: if true returns log version of the DataFrame
+	 * @return	DataFrame used in GTTilePlot
+	 */
 	protected DataFrame getDataFrame(boolean log) {
 		if (log) {
 			return dataFrameLog;
@@ -586,7 +629,6 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		}
 	}
 
-
 	private void computeStatistics(boolean log) {
 		if ( layerData == null ) {
 			layerData = new float[ rows ][ columns ][ timesteps ];
@@ -625,7 +667,6 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 				preLog = true;
 				log = false;
 				map.setScaleType( ColorMap.ScaleType.LINEAR);
-
 				draw();	// draw() is here because just changed the ScaleType
 			}
 		}
@@ -687,6 +728,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		retValue = true;	// return success
 		return retValue;
 	}
+	
 	protected Action timeSeriesSelected = new AbstractAction(
 			"Time Series of Probed Cell(s)") {
 		private static final long serialVersionUID = -2940008125642497962L;
@@ -752,7 +794,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		});
 		menu.add(new LoadConfiguration(this));
 		menu.add(new SaveConfiguration(this));
-		//configureMapMenu(menu);		// HERE IS WHERE THE CONFIGURE GIS LAYERS GOES??? JEB (Also commented out in v1.4.1
+//TODO		//configureMapMenu(menu);		// HERE IS WHERE THE CONFIGURE GIS LAYERS GOES??? JEB (Also commented out in v1.4.1
 		bar.add(menu);
 
 		menu = new JMenu("Controls");
@@ -1062,6 +1104,9 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		rubberband.setActive(false);
 	}
 
+	/**
+	 * From FastTilePlot: setDataRanges instantiates a special dialog for data ranges and then calls that dialog.
+	 */
 	private void setDataRanges() {
 
 		// NOTE: 2015 appears DataRangeDialog is an inner class; based on Oracle's JavaSE tutorials,
@@ -1074,6 +1119,11 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		dialog.showDialog();
 	}
 
+	/**
+	 * Private class DataRangeDialog to handle functionality of DataRangeDialog objects
+	 * @author Jo Ellen Brandmeyer
+	 *
+	 */
 	private class DataRangeDialog extends JDialog {
 		private static final long serialVersionUID = -1110292652911018568L;
 		public static final int CANCEL_OPTION = -1;
@@ -1087,6 +1137,15 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		private boolean cancelled = false;
 		private int firstRow, lastRow, firstColumn, lastColumn;
 
+		/**
+		 * From FastTilePlot: Constructor for DataRangeDialog class
+		 * @param title	Title of the dialog frame.
+		 * @param plot	The current GTTilePlot object.
+		 * @param firstRow	Number of the first row of the plot.
+		 * @param lastRow	Number of the last row of the plot.
+		 * @param firstColumn	Number of the first column of the plot.
+		 * @param lastColumn	Number of the last column of the plot.
+		 */
 		public DataRangeDialog(String title, GTTilePlot plot, int firstRow,
 				int lastRow, int firstColumn, int lastColumn) {
 			super.setTitle(title);
@@ -1105,6 +1164,11 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			this.getContentPane().add(createLayout());
 		}
 
+		/**
+		 * From FastTilePlot: showDialog() member function of private class DataRangeDialog.
+		 * Displays the dialog and processes the ranges for the rows and columns as set by the user.
+		 * @return	An integer representing the error condition.
+		 */
 		public int showDialog() {
 			this.pack();
 			this.setVisible(true);
@@ -1127,87 +1191,6 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			return ERROR;
 		}
 
-		private void gisLayersMenu(JMenu menu) {
-			menu.add(mapLayersMenu);
-
-			ActionListener listener = new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					Object srcObj = evt.getSource();
-
-					if (srcObj instanceof JCheckBoxMenuItem) {
-						JCheckBoxMenuItem item = (JCheckBoxMenuItem) srcObj;
-						showLayer(item.getActionCommand(),  item.isSelected(), mapLayersMenu);
-					} else 
-						showLayer(OTHER_MAPS, false, mapLayersMenu);
-				}
-			};
-
-			JCheckBoxMenuItem item = new JCheckBoxMenuItem("World", false);
-			item.setActionCommand(WORLD_LAYER);
-			item.addActionListener(listener);
-			mapLayersMenu.add(item);
-
-			item = new JCheckBoxMenuItem("North America", false);
-			item.setActionCommand(NA_LAYER);
-			item.addActionListener(listener);
-			mapLayersMenu.add(item);
-
-			item = new JCheckBoxMenuItem("USA States", false);
-			item.setActionCommand(STATES_LAYER);
-			item.addActionListener(listener);
-			mapLayersMenu.add(item);
-
-			item = new JCheckBoxMenuItem("USA Counties", false);
-			item.setActionCommand(COUNTIES_LAYER);
-			item.addActionListener(listener);
-			mapLayersMenu.add(item);
-
-			item = new JCheckBoxMenuItem("HUCs", false);
-			item.setActionCommand(HUCS);
-			item.addActionListener(listener);
-			mapLayersMenu.add(item);
-
-			item = new JCheckBoxMenuItem("Rivers", false);
-			item.setActionCommand(RIVERS);
-			item.addActionListener(listener);
-			mapLayersMenu.add(item);
-
-			item = new JCheckBoxMenuItem("Roads", false);
-			item.setActionCommand(ROADS);
-			item.addActionListener(listener);
-			mapLayersMenu.add(item);
-
-			JMenuItem otheritem = new JMenuItem("Other...");
-			otheritem.setActionCommand(OTHER_MAPS);
-			otheritem.addActionListener(listener);
-			mapLayersMenu.add(otheritem);
-
-			menu.add(new AbstractAction("Configure GIS Layers") {
-				private static final long serialVersionUID = -3679673290623274686L;
-
-				public void actionPerformed(ActionEvent e) {
-					GTTileLayerEditor editor = showGISLayersDialog();
-
-					if (!editor.wasCanceled()) {
-						resetMenuItems(mapLayersMenu);
-						draw();
-					}
-				}
-			});
-
-			menu.addSeparator();
-
-			JMenuItem defaultItem = new JMenuItem(new AbstractAction(
-					"Set Current Maps As Plot Default") {
-				private static final long serialVersionUID = 2403382186582489960L;
-
-				public void actionPerformed(ActionEvent e) {
-					// TBI
-				}
-			});
-			defaultItem.setEnabled(false);
-			menu.add(defaultItem);
-		}
 
 		/**
 		 * From FastTilePlot; creates a JPanel to hold a "middle panel" JPanel and a "buttons panel" JPanel
@@ -1311,6 +1294,8 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			return container;
 		}
 
+
+
 		/**
 		 * From FastTilePlot; get the location of the center the screen (primary display only)
 		 * @param comp	a Component; the screen
@@ -1363,8 +1348,16 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		na.setSelected(mapper.naMapIncluded());
 	}
 
-	private GTTileLayerEditor showGISLayersDialog() {	// JEB possibly replace this by JFileDataStoreChooser
-		// and separate GeoTools dialog to handle layer order and features (colors, etc.)
+	
+	
+	/**
+	 * From FastTilePlot: showGISLayersDialog()
+	 * Possibly replace this by JFileDataStoreChooser
+	 * and separate GeoTools dialog to handle layer order and features (colors, etc.)
+	 * @return	GTTileLayerEditor
+	 */
+	private GTTileLayerEditor showGISLayersDialog() {
+		// TODO evaluate GeoTools built-in box for specifying color, thickness of shapefile lines
 		Logger.debug("in GTTilePlot.showGISLayersDialog()");
 		Window frame = SwingUtilities.getWindowAncestor(this);
 		GTTileLayerEditor editor = null;
@@ -1526,6 +1519,225 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 					mapDomain[LATITUDE][MAXIMUM] + margin, -90.0, 90.0);
 		}
 	}
+	/**
+	 * From FastTilePlot constructor: new function to create the JToolBar that goes into the GTTilePlotPanel
+	 * @param dataFrame	DataFrame passed from GTTilePlot constructor
+	 * @return JToolBar object created and populated in this function, ready to be sent to GTTilePlotPanel
+	 */
+	public JToolBar createToolBar(DataFrame dataFrame)
+	{
+		timeLayerPanel = new TimeLayerPanel();
+		final DataFrameAxis lAxis = dataFrame.getAxes().getZAxis();
+		if (hasNoLayer) {
+			timeLayerPanel.init(dataFrame.getAxes(), firstTimestep, 0, false);
+		} else {
+			timeLayerPanel.init(dataFrame.getAxes(), firstTimestep, firstLayer, lAxis.getExtent() > 1);
+		}
+
+		ChangeListener timeStepListener = new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (processTimeChange) {
+					redrawTimeLayer();
+				}
+			}
+		};
+
+		timeLayerPanel.addSpinnerListeners(timeStepListener, timeStepListener);
+
+		playStopButton = new JButton(PLAY);
+		playStopButton.setToolTipText(PLAY_TIP);
+		playStopButton.addActionListener(this);
+		leftStepButton = new JButton(LEFT);
+		leftStepButton.addActionListener(this);
+		leftStepButton.setToolTipText(LEFT_TIP);
+		rightStepButton = new JButton(RIGHT);
+		rightStepButton.addActionListener(this);
+		rightStepButton.setToolTipText(RIGHT_TIP);
+		delayField = new JTextField("50", 4);
+		delayField.addActionListener(this);						// 2014 needed to handle user changing delay in an animation
+		delayField.setToolTipText("Set animation delay (ms)");	// 2014
+		firstRowField = new JTextField("1", 4);
+		firstRowField.addActionListener(this);
+		lastRowField = new JTextField(rows + "", 4);
+		lastRowField.addActionListener(this);
+		firstColumnField = new JTextField("1", 4);
+		firstColumnField.addActionListener(this);
+		lastColumnField = new JTextField(columns + "", 4);
+		lastColumnField.addActionListener(this);
+
+		GridBagLayout gridbag = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		JPanel panel = new JPanel(gridbag);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 1.0;
+		c.insets = new Insets(0, 0, 0, 10);
+
+		final JPanel statisticsPanel = new JPanel();
+		final String[] statisticsNames = new String[ GridCellStatistics.STATISTICS ];
+		statisticsNames[ 0 ] = "None";
+
+		for ( int index = 1; index < GridCellStatistics.STATISTICS; ++index ) {
+			statisticsNames[ index ] = GridCellStatistics.name( index - 1 );
+		}
+
+		// Force menu visible on WIN32?
+		javax.swing.JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+		statisticsMenu = new JComboBox(statisticsNames);
+		statisticsMenu.addActionListener(this); // Just so draw() is called.
+		statisticsPanel.add( new JLabel( "Stats:" ) );
+		statisticsPanel.add( statisticsMenu );
+		statisticsPanel.add( new JLabel( ">" ) );
+		threshold = new JTextField( "0.12" );
+		threshold.addActionListener( this );
+		statisticsPanel.add( threshold );
+
+		JPanel animate = new JPanel();
+		animate.add(leftStepButton); 
+		animate.add(playStopButton);
+		animate.add(rightStepButton);
+		animate.add(new JLabel(DELAY_LABEL));
+		animate.add(delayField);
+
+		gridbag.setConstraints(timeLayerPanel, c);
+		c.weightx = 0.2;
+		gridbag.setConstraints(animate, c);
+		panel.add(timeLayerPanel);
+		panel.add( statisticsPanel );
+		panel.add(animate);
+		toolBar.add(panel);		// END createToolBar function
+		return toolBar;
+	}
+
+	/**
+	 * From FastTilePlot: redrawTimeLayer called from createToolBar 
+	 * Uses the selected time step and layer to update both the time step and the layer.
+	 * The update functions also call the draw() function to trigger graphics repaint.
+	 */
+	private void redrawTimeLayer() {
+		final int tValue = timeLayerPanel.getTime();
+		final int lValue = timeLayerPanel.getLayer();
+
+		if (tValue >= firstTimestep) {
+			setTimestep(tValue); // Calls draw().
+		} 
+
+		if (lValue >= firstLayer) {
+			setLayer(lValue); // Calls draw().
+		}
+	}
+
+	/**
+	 * From FastTilePlot: called as part of redrawTimeLayer, from createToolBar
+	 * @param timestep	Time step for which map needs to be displayed
+	 */
+	public void setTimestep(int timestep) {
+		if (timestep >= firstTimestep && timestep <= lastTimestep && timestep != this.timestep) {
+			this.timestep = timestep;
+			Logger.debug("ready to call copySubsetLayerData from setTimestep");
+			copySubsetLayerData(this.log);
+			draw();
+			drawOverLays();
+		}
+	}
+
+	/**
+	 * From FastTilePlot: called as part of redrawTimeLayer, from createToolBar
+	 * @param layer	vertical layer for which map needs to be displayed
+	 */
+	public void setLayer(int layer) {
+		if (layer >= firstLayer && layer <= lastLayer && layer != this.layer) {
+			this.layer = layer;
+			final int selection = statisticsMenu.getSelectedIndex();
+
+			if ( selection > 0 ) {
+				recomputeStatistics = true;
+			}
+
+			Logger.debug("ready to call copySubsetLayerData from setLayer");
+			copySubsetLayerData(this.log);
+			draw();
+		}
+	}
+
+	/**
+	 * From FastTilePlot: called as part of setTimestep and setLayer; from redrawTimeLayer, from createToolBar
+	 * Copy current timestep, layer and row/column subset data from dataFrame into subsetlayerdata[][]:
+	 * @param log	boolean (true/false) to govern which parts of the code are executed
+	 */
+	private void copySubsetLayerData(boolean log) {
+
+		// Reallocate the subsetLayerData[][] only if needed:
+
+		final int subsetLayerRows = 1 + lastRow - firstRow;
+		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
+
+		Logger.debug("into function copySubsetLayerData");	// NOT IN LOG FILE
+
+		if (subsetLayerData == null
+				|| subsetLayerData.length != subsetLayerRows * subsetLayerColumns
+				|| subsetLayerData[0].length != subsetLayerColumns) {
+			subsetLayerData = new float[subsetLayerRows][subsetLayerColumns];
+		}
+
+		final int selection = statisticsMenu.getSelectedIndex();
+
+		if ( selection == 0 ) {
+
+			// Copy from dataFrame into subsetLayerData[ rows ][ columns ]:
+
+			final DataFrameIndex dataFrameIndex = getDataFrame(log).getIndex();
+
+			for ( int row = firstRow; row <= lastRow; ++row ) {
+				final int dataRow = ! invertRows ? row : rows - 1 - row;
+
+				for ( int column = firstColumn; column <= lastColumn; ++column ) {
+					dataFrameIndex.set( timestep-firstTimestep, layer-firstLayer, column, dataRow ) ;
+					final float value = getDataFrame(log).getFloat( dataFrameIndex );
+					subsetLayerData[row - firstRow][column - firstColumn] = value;
+				}
+			}
+		} else {
+			final int statistic = selection - 1;
+
+			if ( statisticsData == null || recomputeStatistics ) {
+				computeStatistics(log);
+				recomputeStatistics = false;
+			}
+
+			// Copy from statisticsData into subsetLayerData[ rows ][ columns ]:
+
+			for ( int row = firstRow; row <= lastRow; ++row ) {
+
+				for ( int column = firstColumn; column <= lastColumn; ++column ) {
+					final float value = statisticsData[ statistic ][ row ][ column ];
+					subsetLayerData[row - firstRow][column - firstColumn] = value;
+				}
+			}
+		}
+
+		if ( recomputeLegend ) {
+			// computeLegend();		// WHY IS THIS COMMENTED OUT?
+			recomputeLegend = false;
+		}
+	}
+
+	/**
+	 * From FastTilePlot: update observation and/or vector annotations to current timestep
+	 */
+	private void drawOverLays() {
+		try {
+			if (obsAnnotations != null)  {
+				for (ObsAnnotation ann : obsAnnotations) 
+					ann.update(timestep);
+			}
+
+			if (vectAnnotation != null) {
+				vectAnnotation.update(timestep);
+			}
+		} catch (Exception e) {
+			setOverlayErrorMsg(e.getMessage());
+		}
+	}
 
 	/**
 	 * From FastTilePlot; menu of GIS coverages from which the user can pick layers to include on the chart 
@@ -1662,11 +1874,20 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	}
 
 	/**
-	 * The purpose of this draw function appears to be to trigger a redraw of the tile plot
+	 * paintComponent method for overall graphics
+	 */
+	public void paintComponent(final Graphics g)
+	{
+		super.paintComponent(g);
+		draw();
+	}
+	
+	/**
+	 * The purpose of this draw function is to trigger a redraw of the tile plot
 	 */
 	private void draw() {
 		// TODO Auto-generated method stub; need to rewrite this
-
+		repaint();	// tell graphics system to redraw appropriate portion of the graphics
 	}
 
 	private void updateColorMap(ColorMap colorMap) {
@@ -1738,9 +1959,11 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		return bImage;
 	}
 
+	/**
+	 * getTitle(): Return the figure's title to the calling program
+	 */
 	@Override
 	public String getTitle() {
-		// TODO Auto-generated method stub
 		return super.getTString();
 	}
 
@@ -1750,11 +1973,51 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 
 	}
 
+	/**
+	 * From FastTilePlot: stateChanged for a ChangeEvent
+	 * Executed only if the ChangeEvent is for the TimeLayerPanel
+	 */
 	@Override
-	public void stateChanged(ChangeEvent e) {
-		// TODO Auto-generated method stub
+	public void stateChanged(ChangeEvent event) {
+		final Object source = event.getSource();
+		if (source instanceof TimeLayerPanel) {
+			final TimeLayerPanel timelayer = (TimeLayerPanel) source;
+			final int tValue = timelayer.getTime();
+			final int lValue = timelayer.getLayer();
+
+			if (tValue > 0) {
+				final int newValue = nextValue(tValue - timestep, timestep, firstTimestep, lastTimestep);
+				timeLayerPanel.setTime(newValue);
+				setTimestep(newValue); // Calls draw().
+			} else if (lValue > 0) {
+				final int newValue = nextValue(lValue - layer, layer, firstLayer, lastLayer);
+				timeLayerPanel.setLayer(newValue);
+				setLayer(newValue); // Calls draw().
+			}
+		}
 
 	}
+
+	/**
+	 * From FastTilePlot: Get the next value in a series; used for both time and layer
+	 * @param delta	Difference from current to selected value
+	 * @param current	Current value
+	 * @param min	Minimum value
+	 * @param max	Maximum value
+	 * @return	The next value
+	 */
+	private int nextValue(int delta, int current, int min, int max) {
+		int result = current + delta;
+
+		if (result < min) {
+			result = max - (min - result) + 1;
+		} else if (result > max) {
+			result = min + (result - max) - 1;
+		}
+
+		return result;
+	}
+
 
 	@Override
 	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
@@ -1780,7 +2043,8 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		p.z = point[1];
 		p.x = point[2];
 		p.y = point[3];
-		if (showLatLon) return formatPointLatLon(p);
+		if (showLatLon) 
+			return formatPointLatLon(p);
 		return formatPoint(p);
 	}
 
@@ -1937,7 +2201,8 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	 * @param eval a VectorEvaluator object
 	 */
 	public void addVectorAnnotation(VectorEvaluator eval) {
-		// TODO check if anything here needs to be changed (expect different method required to draw vectors)
+		// TODO rewrite VectorAnnotation: different method required to draw vectors on a JMapPane instead of
+		// on a Rectangle2D
 		vectAnnotation = new VectorAnnotation(eval, timestep, getDataFrame().getAxes().getBoundingBoxer());
 	}
 
@@ -1945,38 +2210,45 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 
 	// Plot frame closed:
 
-	public void stopThread() {	// called by anl.verdi.plot.gui.PlotPanel
-		//		drawMode = DRAW_END;
-		// TODO figure out what stopThread needs to do because not using drawMode
-		draw();
-	}
+//	public void stopThread() {	// called by anl.verdi.plot.gui.PlotPanel
+//		//		drawMode = DRAW_END;
+//		// TODO figure out what stopThread needs to do because not using drawMode
+//		//		draw();
+//	}
 
-	// Window hidden callback:
-
+	/**
+	 * Window hidden callback (does nothing)
+	 */
 	@Override
 	public void componentHidden(ComponentEvent unused) { }
 
-	// Window shown callback:
-
+	/**
+	 * Window shown callback (redraws graphics)
+	 */
 	@Override
 	public void componentShown(ComponentEvent unused) {
 		draw();
 	}
 
-	// Window resized callback:
-
+	/**
+	 * Window resized callback (redraws graphics)
+	 */
 	@Override
 	public void componentResized(ComponentEvent unused) {
 		draw();
 	}
 
-	// Window moved callback:
-
+	/**
+	 * Window moved callback (does nothing)
+	 */
 	@Override
 	public void componentMoved(ComponentEvent unused) { }
 
-	// Mouse callbacks:
-
+	/**
+	 * Mouse callbacks: showPopup
+	 * Creates popup menu in response to a mouse event
+	 * @param me	MouseEvent
+	 */
 	protected void showPopup( MouseEvent me ) {
 		popup = createPopupMenu(true, true, true, zoom);
 
@@ -1988,12 +2260,16 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		}
 	}
 
+	// mousePressed, mouseEntered, mouseExited, mouseReleased, and mouseClicked events are all ignored
 	public void mousePressed( MouseEvent unused_ ) { }
 	public void mouseEntered( MouseEvent unused_ ) { }
 	public void mouseExited( MouseEvent unused_ ) { }
 	public void mouseReleased( MouseEvent unused_ ) { }
 	public void mouseClicked( MouseEvent unused_ ) { }
 
+	/**
+	 * viewClosed function to reset components to null
+	 */
 	public void viewClosed() { 
 		// 
 		mapper = null;
@@ -2037,6 +2313,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		minMax = null;
 	}
 
+	// viewFloated and viewRestored events are ignored
 	public void viewFloated(DockableFrameEvent unused_ ) { }
 	public void viewRestored(DockableFrameEvent unused_ ) { }		
 
@@ -2110,7 +2387,13 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		}
 		return result;
 	}
+	
+	/**
+	 * From FastTilePlot: requestTimeSeries for a formula type
+	 * @param type	value of Formula.Type
+	 */
 	private void requestTimeSeries(Formula.Type type) {
+		// TODO probably need to rewrite this
 		Slice slice = new Slice();
 		// slice needs to be in terms of the actual array indices
 		// of the frame, but the axes ranges refer to the range
@@ -2130,7 +2413,13 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		}
 	}
 
+	/**
+	 * From FastTilePlot: requestTimeSeries for a set of points
+	 * @param points	Set<Point>
+	 * @param title	Title to display on the plot
+	 */
 	private void requestTimeSeries(Set<Point> points, String title) {
+		// TODO probably need to rewrite this
 		MultiTimeSeriesPlotRequest request = new MultiTimeSeriesPlotRequest(title);
 		for (Point point : points) {
 			Slice slice = new Slice();

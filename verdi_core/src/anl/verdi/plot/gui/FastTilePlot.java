@@ -1516,6 +1516,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		// Create GUI.
 
+		// 	BEGINNING OF NEW FUNCTION createToolBar to construct the toolbar for GTTilePlotPanel
 		timeLayerPanel = new TimeLayerPanel();
 		final DataFrameAxis lAxis = dataFrame.getAxes().getZAxis();
 		if (hasNoLayer) {
@@ -1594,12 +1595,12 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
         panel.add(timeLayerPanel);
         panel.add( statisticsPanel );
         panel.add(animate);
-		toolBar.add(panel);
+		toolBar.add(panel);		// END createToolBar function
 
 		// add(toolBar);
 		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
 		doubleBufferedRendererThread.start(); // Calls
-		super.setToolBar(toolBar);
+		super.(toolBar);
 		draw();
 	}
 	

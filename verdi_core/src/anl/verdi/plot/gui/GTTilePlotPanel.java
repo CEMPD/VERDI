@@ -42,7 +42,7 @@ public class GTTilePlotPanel extends JPanel {
 	private BoxLayout titlesLayout;
 	private JMenuBar bar;				// bar at top of contentPane; plot-specific menu items
 	private JToolBar toolBar;			// toolBar just below bar in contentPane; widgets for the
-								// user to define what to plot (time step, etc.)
+											// user to define what to plot (time step, etc.)
 	private JPanel titlesPanel;			// titlesPanel just below toolBar in contentPane; title, subtitles 1 & 2
 	private JPanel rangeAxisLabel;		// rangeAxisLabel at left side of contentPane; axis label for Range axis
 	private JPanel rangeTickLabels;		// rangeTickLabels just to right of rangeAxisLabel in contentPane; tick marks and values
