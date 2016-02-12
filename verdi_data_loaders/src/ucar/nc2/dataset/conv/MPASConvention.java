@@ -71,6 +71,7 @@ public class MPASConvention extends CoordSysBuilder {
    * @return true if we think this is a M3IO file.
    */
   public static boolean isMine(NetcdfFile ncfile) {
+	  boolean supported = false;
 //	  System.out.println("in M3IOConvention isMine: earthRadius= " + earthRadius);
 	  List<Variable> vars = ncfile.getVariables();
 	  System.out.println("\nMPAS Variables:");
@@ -83,13 +84,11 @@ public class MPASConvention extends CoordSysBuilder {
 	  System.out.println("Got to start over now");
 	  for (Attribute attr : attrs) {
 		  System.out.println("Attribute " + attr.getFullName() + ": " + attr.getStringValue());
+		  if ( (attr.getFullName().equalsIgnoreCase("model_name") || attr.getFullName().equalsIgnoreCase("Conventions")) &&
+				  "mpas".equalsIgnoreCase(attr.getStringValue()))
+			  supported = true;
 	  }
-    return (null != ncfile.findGlobalAttribute("Conventions") && "MPAS".equals(ncfile.findGlobalAttribute("Conventions").getStringValue()));
-
-
-    // M3IOVGGridConvention - is this true for this class ??
-    // return ncFile.findGlobalAttribute( "VGLVLS" ) != null && isValidM3IOFile_( ncFile );
-
+    return supported;
   }
 
   public MPASConvention() {
