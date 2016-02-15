@@ -904,10 +904,12 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			
 			//set min/max for both log and non log values...
 			map.setMinMax( minmax[0], minmax[1]);
-			computeDataRange(minmax, true);
-			map.setLogMinMax( minmax[0], minmax[1]);
+			double[] logminmax = { 0.0, 0.0 };
+			computeDataRange(logminmax, true);
+			map.setLogMinMax( logminmax[0], logminmax[1]);
 			//this final one is for the below legend value calculations
-			computeDataRange(minmax, this.log);
+			if (this.log)
+				minmax = logminmax;
 
 			legendColors = defaultPalette.getColors();
 			final double minimum = minmax[0];
@@ -3472,12 +3474,13 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		if ( doDebug) 
 			Logger.debug( "debug print 2:");
 		float val1, val2;
+		double currentLogBase = Math.log(this.logBase);
 		while (iter2.hasNext()) {
 			val1 = iter1.getFloatNext(); 
 			val2 = iter2.getFloatNext(); 
 			if ( doDebug && count<100) 
 				Logger.debug( "" + val1 + " " + val2);
-			val2 = (float)(Math.log(val1) / Math.log( this.logBase));
+			val2 = (float)(Math.log(val1) / currentLogBase);
 			iter2.setFloatCurrent( (float)( val2));
 
 			val2 = iter2.getFloatCurrent();
