@@ -113,6 +113,8 @@ import org.geotools.styling.StyleBuilder;
 import saf.core.ui.event.DockableFrameEvent;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
+import ucar.ma2.ArrayFloat;
+import ucar.ma2.ArrayLogFactory;
 import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
 import ucar.unidata.geoloc.Projection;
@@ -120,10 +122,12 @@ import ucar.unidata.geoloc.projection.LatLonProjection;
 import anl.map.coordinates.Decidegrees;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiGUI;
+import anl.verdi.data.ArrayReader;
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
+import anl.verdi.data.DataFrameBuilder;
 import anl.verdi.data.DataFrameIndex;
 import anl.verdi.data.DataManager;
 import anl.verdi.data.DataReader;
@@ -153,6 +157,7 @@ import anl.verdi.plot.probe.ProbeEvent;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.util.PlotExporter;
 import anl.verdi.plot.util.PlotExporterAction;
+import anl.verdi.util.ArrayFactory;
 import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;
 
@@ -1511,13 +1516,13 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			String e = null;
 			if (layerAxis != null) {
 				if (layerAxis.getName().equals(VAR_ELEVATION)) {
-					double h1 = ((ArrayDouble.D2)elevation).get(cellId, MeshPlot.this.layer);
-					double h2 = ((ArrayDouble.D2)elevation).get(cellId, MeshPlot.this.layer + 1);
+					double h1 = elevation.get(cellId, MeshPlot.this.layer);
+					double h2 = elevation.get(cellId, MeshPlot.this.layer + 1);
 					e = Long.toString(Math.round((h2 - h1) / 2 + h1));
 				}
 				if (layerAxis.getName().equals(VAR_DEPTH) && depth != null) {
-					double h1 = Math.round(((ArrayDouble.D3)depth).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer));
-					double h2 = Math.round(((ArrayDouble.D3)depth).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer + 1));
+					double h1 = Math.round(depth.get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer));
+					double h2 = Math.round(depth.get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer + 1));
 					e = Long.toString(Math.round((h2 - h1) / 2 + h1));
 
 				}
@@ -1529,13 +1534,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		public double getValue() {
 			if (timeAxis == null)
-				return ((ArrayDouble.D2)renderVariable).get(cellId, MeshPlot.this.layer);
-			else if (renderVariable instanceof ArrayDouble.D2) {
-				return ((ArrayDouble.D2)renderVariable).get(MeshPlot.this.timestep, cellId);
-			}
-			else {
-				return ((ArrayDouble.D3)renderVariable).get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer);
-			}
+				return renderVariable.get(cellId, MeshPlot.this.layer);
+			else if (renderVariable.getRank() == 3)
+				return renderVariable.get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer);
+			else
+				return renderVariable.get(MeshPlot.this.timestep, cellId);
 		}
 		
 		public double getMinX() {
@@ -1560,11 +1563,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			if (level < 0)
 				level = MeshPlot.this.layer;
 			if (timeAxis == null)
-				return ((ArrayDouble.D2)renderVariable).get(cellId, level);
-			else if (renderVariable instanceof ArrayDouble.D2)
-				return ((ArrayDouble.D2)renderVariable).get(time, cellId);
+				return renderVariable.get(cellId, level);
+			else if (renderVariable.getRank() == 3)
+				return renderVariable.get(time, cellId, level);
 			else
-				return ((ArrayDouble.D3)renderVariable).get(time, cellId, level);
+				return renderVariable.get(time, cellId);
+
 		}
 		
 		private void transformCell(double factor, int xOffset, int yOffset) {
@@ -1626,14 +1630,15 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 
 	
-	Array cellVertices, latVert, lonVert, latCell, lonCell, indexToVertexId, indexToCellId, elevation, depth;
+	Array cellVertices, latVert, lonVert, latCell, lonCell, indexToVertexId, indexToCellId;
+	ArrayReader depth, elevation;
 	private Map<Integer, Integer> vertexPositionMap;
 	private Map<Integer, CellInfo> cellIdInfoMap;
 	private CellInfo[] cellsToRender = null;
 	private Map<CellInfo, Integer> splitCells = null;
 	
-	ArrayDouble eleveation = null;
-	ArrayDouble renderVariable = null;
+	ArrayReader renderVariable = null;
+	
 	ucar.ma2.ArrayInt.D2 vertexList;
 	double latMin = Double.MAX_VALUE;
 	double lonMin = Double.MAX_VALUE;
@@ -1696,10 +1701,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		var = ds.getVariable("indexToVertexID");
 		indexToVertexId = reader.getValues(ds, null, var).getArray();
 		var = ds.getVariable("zgrid");
-		elevation = reader.getValues(ds, null, var).getArray();
+		elevation = ArrayReader.getReader(reader.getValues(ds, null, var).getArray());
 		var = ds.getVariable("zs");
 		if (var != null)
-			depth = reader.getValues(ds, null, var).getArray();
+			depth = ArrayReader.getReader(reader.getValues(ds, null, var).getArray());
 		//var = ds.getVariable("indexToCellID");
 		//indexToCellId = reader.getValues(ds, null, var).getArray();
 		var = ds.getVariable("verticesOnCell");
@@ -1739,6 +1744,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				
 				cell.setLat(normalizeLat(latCell.getDouble(i)) * RAD_TO_DEG);
 				cell.setLon(normalizeLon(lonCell.getDouble(i)) * RAD_TO_DEG);
+				//if (vertices != 6)
+					//System.out.println("Cell " + cell.getId() + " " + vertices + " vertices lon " + cell.lon + " lat " + cell.lat);
+
 				
 				if (cell.lonCoords[cell.maxX] - cell.lonCoords[cell.minX] > Math.PI * 1.5)
 					cell.split(i);
@@ -1755,7 +1763,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			dataRatio = dataWidth / dataHeight;
 			previousClippedDataRatio = clippedDataRatio;
 			clippedDataRatio = dataRatio;
-			renderVariable = (ArrayDouble)dataFrame.getArray();
+			renderVariable = ArrayReader.getReader(dataFrame.getArray());
 			CoordAxis xAxis = mpasAxes.getXAxis();
 			var = ds.getVariable("verdi.avgCellDiam");
 			avgCellDiam = reader.getValues(ds, null, var).getDouble(null);
@@ -1866,10 +1874,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		 */
 		if (xOffset == 0)
 			gr.setColor(new Color(cell.cellId));
-		else if (SHOW_ZOOM_LOCATION && cell.cellClicked) {
+		/*else if (SHOW_ZOOM_LOCATION && cell.cellClicked) {
 			gr.setColor(Color.BLACK);
 			System.err.println("Rendering clicked cell location " + cell.lon + ", " + cell.lat + " id " + cell.cellId);
-		}
+		}*/
 		else if (statisticsSelection == 0)
 			gr.setColor(legendColors[cell.colorIndex]);
 		else
@@ -2055,6 +2063,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		this.log = false;
 		//calculate the non log min/max values, keep the code here
 		//first part of IF ELSE will use the min/max values
+		System.err.println("Calculating data range " + new Date());
 		computeDataRange(minmax, false);
 		if ( this.map == null) {
 			
@@ -2075,10 +2084,14 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		//set min/max for both log and non log values...
 		map.setMinMax( minmax[0], minmax[1]);
-		computeDataRange(minmax, true);
-		map.setLogMinMax( minmax[0], minmax[1]);
+		double[] logminmax = { 0.0, 0.0 };
+		computeDataRange(logminmax, true);
+		System.err.println("Calculating log data range " + new Date());
+		map.setLogMinMax( logminmax[0], logminmax[1]);
 		//this final one is for the below legend value calculations
-		computeDataRange(minmax, this.log);
+		if (this.log)
+			minmax = logminmax;
+		System.err.println("Data ranges calculated " + new Date());
 
 		//default to this type...
 		map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
@@ -3833,8 +3846,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			int hoveredId = getCellIdByCoord(point.x, point.y);
 			CellInfo cell = cellIdInfoMap.get(hoveredId);
 			if (cell != null) {
-				//ret += cell.getElevation() + ") " + variable + " " + valueFormat.format(cell.getValue()) + unitString;
-				ret += ") " + cell.getId() + " " + " " + valueFormat.format(cell.getValue()) + " c " + coordFormat.format(cell.lon) + "," + coordFormat.format(cell.lat) + " " + point.x + "," + point.y;
+				ret += cell.getElevation() + ") " + variable + " " + valueFormat.format(cell.getValue()) + unitString;
+				//ret += ") " + cell.getId() + " " + " " + valueFormat.format(cell.getValue()) + " c " + coordFormat.format(cell.lon) + "," + coordFormat.format(cell.lat) + " " + point.x + "," + point.y;
 
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -4181,6 +4194,27 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		return tilePlot.getTitle();
 	}
 	
+	public DataFrame createLogDataFrame(DataFrame frame) {
+		DataFrameBuilder builder = new DataFrameBuilder();
+		builder.addDataset(frame.getDataset());
+		builder.setVariable(frame.getVariable());
+		builder.setArray(ArrayLogFactory.getArray(frame.getArray(), this.logBase));
+		Axes<DataFrameAxis> axes = frame.getAxes();
+		if (axes.getTimeAxis() != null)
+			builder.addAxis(DataFrameAxis.createDataFrameAxis(axes.getTimeAxis(), axes.getTimeAxis().getArrayIndex()));
+		if (axes.getZAxis() != null)
+			builder.addAxis(DataFrameAxis.createDataFrameAxis(axes.getZAxis(), axes.getZAxis().getArrayIndex()));
+		if (axes.getXAxis() != null)
+			builder.addAxis(DataFrameAxis.createDataFrameAxis(axes.getXAxis(), axes.getXAxis().getArrayIndex()));
+		if (axes.getYAxis() != null)
+			builder.addAxis(DataFrameAxis.createDataFrameAxis(axes.getYAxis(), axes.getYAxis().getArrayIndex()));
+		if (axes.getCellAxis() != null)
+			builder.addAxis(DataFrameAxis.createDataFrameAxis(axes.getCellAxis(), axes.getCellAxis().getArrayIndex()));
+		return builder.createDataFrame();
+	}
+
+
+	//Only read single timestep at a time
 	private void calculateDataFrameLog() {
 		if ( this.dataFrame == null) {
 			return;
@@ -4188,31 +4222,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		boolean doDebug = false;
 		
-		this.dataFrameLog = DataUtilities.createDataFrame( this.dataFrame);
+		this.dataFrameLog = createLogDataFrame( this.dataFrame);
  
-		if ( doDebug) {
-			Logger.debug( "debug print 1:");
-		}
-		
-		int count = 0;	    	
-		IndexIterator iter2 = this.dataFrameLog.getArray().getIndexIterator();
-		IndexIterator iter1 = this.dataFrame.getArray().getIndexIterator();
-		if ( doDebug) 
-			Logger.debug( "debug print 2:");
-		float val1, val2;
-		while (iter2.hasNext()) {
-			val1 = iter1.getFloatNext(); 
-			val2 = iter2.getFloatNext(); 
-			if ( doDebug && count<100) 
-				Logger.debug( "" + val1 + " " + val2);
-			val2 = (float)(Math.log(val1) / Math.log( this.logBase));
-			iter2.setFloatCurrent( (float)( val2));
-
-			val2 = iter2.getFloatCurrent();
-
-			if ( doDebug && count++<100) 
-				Logger.debug( " : " + val1 + " " + val2);
-		}
 	}
 	
 	protected DataFrame getDataFrame() {
