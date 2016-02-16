@@ -29,6 +29,8 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 // Sequence of unprojected cartographic border polylines.
+// TODO PROBABLY GET RID OF THIS .JAVA FILE
+// OR REPLACE ALL OF ITS FUNCTIONS WITH GeoTools geospatial function calls
 
 public class MapPolygon {
 //	private java.awt.Color xorColor = new java.awt.Color(255,127,0);

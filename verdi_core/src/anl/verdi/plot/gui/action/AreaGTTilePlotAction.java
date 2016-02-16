@@ -56,7 +56,7 @@ public class AreaGTTilePlotAction extends AbstractSAFAction<VerdiApplication> {
 				// calculate the areas 
 				TargetCalculator calc = new TargetCalculator();
 				Logger.debug("ready to call TargetCalculator.calculateIntersections");
-				boolean retValue = calc.calculateIntersections(Target.getTargets(),dataFrame,(AreaTilePlot)plot.getTilePlot());
+				boolean retValue = calc.calculateIntersections(Target.getTargets(),dataFrame,(AreaGTTilePlot)plot.getTilePlot());
 				Logger.debug("back from calculateIntersections, retValue = " + retValue);
 				if(!retValue)
 				{

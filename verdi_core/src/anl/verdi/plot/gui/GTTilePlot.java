@@ -1,5 +1,6 @@
 /** GTTilePlot: GeoTools version of a tile plot
- * Developed 2016 based on VERDI TilePlot and FastTilePlot
+ * Developed 2016 Jo Ellen Brandmeyer
+ * based on VERDI TilePlot and FastTilePlot
  * Uses new GTTilePlotPanel for GTTilePlot frame layout and to supply GeoTools geographic data support
  */
 
@@ -9,7 +10,6 @@ import gov.epa.emvl.GridCellStatistics;
 import gov.epa.emvl.Mapper;
 import gov.epa.emvl.Numerics;
 import gov.epa.emvl.Projector;
-import gov.epa.emvl.TilePlot;
 
 import java.awt.Color;
 
@@ -68,7 +68,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -109,7 +108,6 @@ import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
 import anl.verdi.plot.config.SaveConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
-//import anl.verdi.plot.gui.GTTilePlot.DataRangeDialog;
 import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.util.GTTilePlotPrintAction;
@@ -301,6 +299,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		super();										// call constructor of GTTilePlotPanel
 		JToolBar theToolBar = createToolBar(dataFrame);	// create the tool bar here
 		super.setToolBar(theToolBar);					// and send it to the GTTilePlotPanel
+		
 	}
 
 	/**
@@ -430,8 +429,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	}
 
 	private void drawBatchImage(int width, int height) {
-		// TODO Auto-generated method stub
-		// TODO rewrite from FastTilePlot.java (uses BufferedImage, offScreenGraphics)
+		// TODO rewrite (or delete???) drawBatchImage function from FastTilePlot.java (uses BufferedImage, offScreenGraphics)
 	}
 
 
@@ -1581,7 +1579,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		}
 
 		// Force menu visible on WIN32?
-		javax.swing.JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 		statisticsMenu = new JComboBox(statisticsNames);
 		statisticsMenu.addActionListener(this); // Just so draw() is called.
 		statisticsPanel.add( new JLabel( "Stats:" ) );
@@ -1886,7 +1884,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	 * The purpose of this draw function is to trigger a redraw of the tile plot
 	 */
 	private void draw() {
-		// TODO Auto-generated method stub; need to rewrite this
+		super.repaint();
 		repaint();	// tell graphics system to redraw appropriate portion of the graphics
 	}
 
@@ -1935,29 +1933,29 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		return config;
 	}
 
-	/**
-	 * Gets a BufferedImage of the plot.
-	 * 
-	 * @return a BufferedImage of the plot.
-	 */
-	@Override
-	public BufferedImage getBufferedImage() {
-		// TODO copied from FastTilePlot; needs rewrite
-		return getBufferedImage(getWidth(), getHeight());
-	}
-
-	/**
-	 * Gets a BufferedImage of the plot.
-	 * 
-	 * @param width	the width of the image in pixels
-	 * @param height	the height of the image in pixels
-	 * @return a BufferedImage of the plot.
-	 */
-	@Override
-	public BufferedImage getBufferedImage(int width, int height) {
-		// TODO copied from FastTilePlot; needs rewrite
-		return bImage;
-	}
+//	/**
+//	 * Gets a BufferedImage of the plot.
+//	 * 
+//	 * @return a BufferedImage of the plot.
+//	 */
+//	@Override
+//	public BufferedImage getBufferedImage() {
+//		// copied from FastTilePlot; needs rewrite
+//		return getBufferedImage(getWidth(), getHeight());
+//	}
+//
+//	/**
+//	 * Gets a BufferedImage of the plot.
+//	 * 
+//	 * @param width	the width of the image in pixels
+//	 * @param height	the height of the image in pixels
+//	 * @return a BufferedImage of the plot.
+//	 */
+//	@Override
+//	public BufferedImage getBufferedImage(int width, int height) {
+//		// copied from FastTilePlot; needs rewrite
+//		return bImage;
+//	}
 
 	/**
 	 * getTitle(): Return the figure's title to the calling program
@@ -2210,11 +2208,9 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 
 	// Plot frame closed:
 
-//	public void stopThread() {	// called by anl.verdi.plot.gui.PlotPanel
-//		//		drawMode = DRAW_END;
+	public void stopThread() {	// called by anl.verdi.plot.gui.PlotPanel
 //		// TODO figure out what stopThread needs to do because not using drawMode
-//		//		draw();
-//	}
+	}
 
 	/**
 	 * Window hidden callback (does nothing)
@@ -2458,4 +2454,70 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		return null;
 	}
 
+	@Override
+	public BufferedImage getBufferedImage() {
+		// not used by GTTilePlot
+		return null;
+	}
+
+	@Override
+	public BufferedImage getBufferedImage(int width, int height) {
+		// not used by GTTilePlot
+		return null;
+	}
+
+	/**
+	 * drawLegend member function originally from TilePlot, called by TilePlot.draw
+	 * Read and construct some original values and pass them to GTTilePlotPanel.setLegendPanel.
+	 * Remainder of TilePlot.drawLegend functionality in GTTilePlotPanel, legendPanel, paintComponent
+	 * @param xMaximum
+	 * @param yMinimum
+	 * @param yMaximum
+	 * @param legendLevels	array of double containing the break points for each change in color of legend and tiles
+	 * @param legendColors	array of Color containing the color for each tile and associated position in legend
+	 * @param units	string representing the unit of measure for displayed values in this tile plot
+	 */
+	protected void drawLegend(int xMaximum, int yMinimum, int yMaximum, final double[] legendLevels,
+			final Color[] legendColors, final String units)
+	{
+		final int colors = legendColors.length;
+		super.setLog(log); 	// set log value for GTTilePlotPanel
+		String unitStr = config.getProperty(PlotConfiguration.UNITS);	// get unit of measure from config
+		unitStr = (unitStr == null || unitStr.isEmpty() ? units : unitStr);	// must use units if grid cell statistics
+		config.putObject(PlotConfiguration.UNITS, unitStr);		// save updated unit of measure to config
+		String logStr = " (Log";
+		String baseStr = null;		// base of log string
+		Boolean uShowTick = (Boolean) config.getObject(PlotConfiguration.UNITS_SHOW_TICK);
+		uShowTick = (uShowTick == null ? true : uShowTick); 
+		config.putObject(PlotConfiguration.UNITS_SHOW_TICK, uShowTick); 	// save updated show tick for units to config
+		Color uTickColor = (Color) config.getObject(PlotConfiguration.UNITS_TICK_COLOR);	// get color for tick marks
+		uTickColor = (uTickColor == null ? Color.black : uTickColor);	// if no color designated, default to black
+		config.putObject(PlotConfiguration.UNITS_TICK_COLOR, uTickColor); 	// save updated color for tick marks
+		Integer labelCnt = (Integer) config.getObject(TilePlotConfiguration.UNITS_TICK_NUMBER);	// number of tick marks
+			// NOTE: using Integer instead of int because (1) object stored in a container, (2) null value must be allowed
+		config.putObject(PlotConfiguration.UNITS_TICK_NUMBER, labelCnt == null ? colors + 1 : labelCnt);
+		Font labelFont = config.getFont(TilePlotConfiguration.UNITS_TICK_FONT); 	// get Font
+		Font gFont = super.getLegendPanel().getGraphics().getFont();	// get the font for the legendPanel
+		config.putObject(PlotConfiguration.UNITS_TICK_FONT, labelFont == null ? gFont : labelFont);	// save the labelFont or, if null, the legendPanel's default font
+		Font unitsFont = config.getFont(TilePlotConfiguration.UNITS_FONT);	// get the font for the units
+		config.putObject(PlotConfiguration.UNITS_FONT, unitsFont == null ? gFont : unitsFont);
+		Color unitsClr = (Color)config.getObject(TilePlotConfiguration.UNITS_COLOR);	// get the color for the units
+		final Color currentColor = super.getLegendPanel().getGraphics().getColor();		// get the color from the legendPanel
+		config.putObject(PlotConfiguration.UNITS_COLOR, unitsClr == null ? currentColor : unitsClr);	// save updated color for units
+
+		if(log)
+		{
+			if(logBase == Math.E)
+			{
+				baseStr = "E";
+			}
+			else
+			{
+				baseStr = logBase + "";
+			}
+		}
+		super.setLegendPanel(uShowTick, labelCnt, xMaximum, yMinimum, yMaximum, uTickColor, unitsClr,
+				labelFont, unitsFont, baseStr, logStr, unitStr, legendLevels, legendColors);
+	}
+	
 }

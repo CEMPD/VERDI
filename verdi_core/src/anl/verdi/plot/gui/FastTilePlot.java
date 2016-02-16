@@ -1600,7 +1600,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		// add(toolBar);
 		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
 		doubleBufferedRendererThread.start(); // Calls
-		super.(toolBar);
+		super(toolBar);
 		draw();
 	}
 	

@@ -19,14 +19,24 @@ import java.awt.Color;
 
 //import javax.swing.SwingConstants;
 
+
+
+
+
+
 import org.geotools.map.MapContent;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.swing.JMapPane;
 import org.geotools.swing.RenderingExecutor;
 
 import javax.swing.border.LineBorder;
+
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.font.TextAttribute;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
+import java.text.NumberFormat;
 
 // class forms the basis for the VERDI panel that displays the entire GTTilePlot
 // title, subtitle1, subtitle2, axes, axis ticks and labels, footers, legend, JMapPane for geographic content
@@ -68,16 +78,40 @@ public class GTTilePlotPanel extends JPanel {
 	
 	private final static boolean RIGHT_TO_LEFT = false;
 
+	// Log-related
+
+	protected boolean log = false;
+//	private boolean preLog = false;
+	private double logBase = 10.0; //Math.E;	
+
+	// titles & footers
 	private Font tFont, s1Font, s2Font;				// fonts for title, subtitle1, subtitle2
 	private Color tColor, s1Color, s2Color;			// colors for title, subtitle1, subtitle2
 	private String tString, s1String, s2String;		// strings to print for title, subtitle1, subtitle2
 	private Font f1Font, f2Font;					// fonts for footer1, footer2
 	private Color f1Color, f2Color;					// colors for footer1, footer2
 	private String f1String, f2String;				// strings to print for footer1, footer2
+
+	// legend-related
+	private String unitStr;							// unit of measure
+	private String logStr;							// " (Log"
+	private String baseStr;							// base of log string
+	private Boolean uShowTick;						// true/false show tick for units
+	private Color uTickColor;						// color for tick marks
+	private Integer labelCnt;						// number of tick marks (1/label)
+	private Font labelFont;							// Font for tick labels
+	private Font unitsFont;							// Font for units
+	private Color unitsClr;							// Color for units
+	private int xMaximum;							// ???
+	private int yMinimum;							// ???
+	private int yMaximum;							// ???
+	private double[] legendLevels;					// value associated with the break point between legend levels
+	private Color[] legendColors;					// Color for each range of values in legend and tile plot
 	
 	private MapContent myMapContent;
 	private RenderingExecutor myRenderingExecutor;
 	private GTRenderer myGTRenderer;
+	protected NumberFormat numberFormat;
 
 	/**
 	 * Create the overall frame and all of its components.
@@ -365,6 +399,115 @@ public class GTTilePlotPanel extends JPanel {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
 				System.out.println("legendPanel paintComponent");
+				// parts originally from TilePlot.drawLegend
+				final int colors = legendColors.length;
+				String unitStrAll = unitStr;
+				AttributedString as = null;
+				final Color currentColor = g2.getColor();		// get the color from the legendPanel
+				final int binWidth = 20;	// of color bar in pixels
+				final int ticSize = 3;		// of level tick marks in pixels
+				int space = 6;				// space between 2 visual components
+				final int yRange = yMaximum = yMinimum;
+				final int binHeight = yRange / colors;
+				final int xOffset = binWidth;
+				int subStart = 0, subEnd = 0;
+				if(log)
+				{
+					unitStrAll += logStr;
+					subStart = unitStrAll.length();
+					unitStrAll += baseStr;
+					subEnd = unitStrAll.length();
+					unitStrAll += " )";
+				}
+				as = new AttributedString(unitStrAll);
+				
+				// Estimate the margin between the plot and the legend
+				String maxLenLabel = "";
+				
+				for (int color = 0; color <= colors; ++color) {
+					String label = gFormat(legendLevels[color]);
+					if (maxLenLabel.length() < label.length()) maxLenLabel = label;
+				}
+				Font gFont = g2.getFont();	// get the font for the legendPanel
+				int maxLabelLen = g2.getFontMetrics(labelFont == null ? gFont : labelFont).stringWidth(maxLenLabel);
+				
+				final int x = xMaximum + xOffset;
+				int legendBoxX = x, legendBoxY = yMinimum - space;
+
+				// Draw unit string:
+				if (unitsFont != null) {
+					g2.setFont(unitsFont);
+					
+					if (log) {
+						as.addAttribute(TextAttribute.FONT, unitsFont, 0, subStart);
+						as.addAttribute(TextAttribute.FONT, unitsFont, subEnd +1, unitStrAll.length());
+						as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, subStart, subEnd);
+					} else
+						as.addAttribute(TextAttribute.FONT, unitsFont);
+				}
+				
+				if (unitsClr != null) {
+					g2.setColor(unitsClr);
+				}
+				int unitHeight = g2.getFontMetrics().getHeight();
+				int unitWidth = g2.getFontMetrics().getMaxAdvance();
+				int unitStrX = x + unitHeight;
+				int unitStrY = yMaximum - yRange/2 + (unitStrAll.length() * unitWidth)/8;
+				final double theta = Math.toRadians(90.0);
+				g2.translate(unitStrX, unitStrY);
+				g2.rotate(-theta);
+				AttributedCharacterIterator aci = as.getIterator();
+				g2.drawString(aci, 0, 0);
+				g2.rotate(theta);
+				g2.translate(-unitStrX, -unitStrY);
+				g2.setFont(gFont);
+				
+				// Draw level values and tic marks in the current color:
+				final int xTic = unitStrX + unitHeight/2 + space + maxLabelLen + space;
+				final boolean[] showLevelValues = getLevelValues(labelCnt == null ? colors : labelCnt, legendLevels.length);
+				
+				g2.setColor(uTickColor);
+				if (labelFont != null) g2.setFont(labelFont);
+				FontMetrics lFontMtrx = g2.getFontMetrics(); // Of level value characters in pixels.
+				int halfCharHeight = lFontMtrx.getHeight() / 2;
+				
+				for (int color = 0; color <= colors; ++color) {
+					final double value = legendLevels[color];
+					final String label = gFormat(value);
+					final int labelLen = lFontMtrx.stringWidth(label);
+					final int xLabel = xTic - labelLen - space;
+					final int yTic = yMaximum - color * binHeight;
+					final int yLabel = yTic + halfCharHeight;
+					
+					if (showLevelValues[color] && uShowTick)
+						g2.drawString(label, xLabel, yLabel);
+
+					if (uShowTick) g2.drawLine(xTic, yTic, xTic + ticSize, yTic);
+				}
+				
+				// Draw color bar:
+				int colorBarX = (uShowTick) ? xTic + ticSize : unitStrX + unitHeight + space;
+				
+				for (int color = 0; color < colors; ++color) {
+					final int y = yMaximum - (color + 1) * binHeight;
+					g2.setColor(legendColors[color]);
+					g2.fillRect(colorBarX, y, binWidth, binHeight);
+				}
+
+				// Draw box around color bar:
+				final int y = yMaximum - colors * binHeight;
+				g2.setColor(Color.BLACK);
+				g2.drawRect(colorBarX, y, binWidth, colors*binHeight);
+				
+				int legendBoxWidth = colorBarX - x + binWidth + unitHeight / 2;
+				int legendBoxHeight = space + yRange + halfCharHeight * 2 + 2 * space; //add space to top and bottom of the legend
+				
+				// Draw legend box
+				g2.setColor(Color.BLACK);
+				g2.drawRect(legendBoxX, legendBoxY - halfCharHeight, legendBoxWidth, legendBoxHeight);
+				
+				g2.setColor(currentColor); // Restore original color.
+
 			}
 		};	
 		legendPanel.setBorder(new LineBorder(new Color(0, 0, 0)));		// black BORDER around legend area
@@ -403,6 +546,31 @@ public class GTTilePlotPanel extends JPanel {
 		System.out.println("all done with constructing GTTilePlotPanel");
 		System.out.println("titlesPanel = " + titlesPanel.toString());
 	}
+
+	/**
+	 * This member function does not actually return level values (that purpose could be construed from the name)
+	 * but returns a vector (1-D array) of boolean values for whether or not to display the associated labels.
+	 * This could support showing every 2nd label, every 3rd label, etc. in addition to every label.
+	 * @param labelCnt	number of labels to show
+	 * @param length	total number of label slots
+	 * @return
+	 */
+	private boolean[] getLevelValues(int labelCnt, int length) {
+		boolean[] show = new boolean[length];
+		int labels = labelCnt - 1;
+		int multiple = Math.round((float)(length - 1) / (float)labels);
+		
+		for (int i = 0; i < length; i++)
+			show[i] = true;
+		
+		if (multiple == 0) 
+			return show;
+		
+		for (int i = 1; i < length - 1; i++) 
+			show[i] = (i % multiple == 0);
+		
+		return show;
+	}
 	
 	/**
 	 * Set a premade JMenuBar object
@@ -433,15 +601,29 @@ public class GTTilePlotPanel extends JPanel {
 	
 	/**
 	 * Return the JToolBar
+	 * @return	the toolBar object
 	 */
 	public JToolBar getToolBar()
 	{
 		return toolBar;
 	}
 	
+	/**
+	 * Return the JPanel for the titles
+	 * @return	the titlesPanel object
+	 */
 	public JPanel getTitlesPanel()
 	{
 		return titlesPanel;
+	}
+	
+	/**
+	 * Return the JPanel for the legend
+	 * @return	the legendPanel object
+	 */
+	public JPanel getLegendPanel()
+	{
+		return legendPanel;
 	}
 	
 	/**
@@ -453,10 +635,18 @@ public class GTTilePlotPanel extends JPanel {
 		return topMapPanel;
 	}
 	
-	/** 
-	 * Set information for the titlesPanel (title, subtitle1, subtitle2; all optional)
+	/**
+	 * setTitlesPanel member function to Set information for the titlesPanel (title, subtitle1, subtitle2; all optional)
 	 * NOTE: t* for title, s1* for subtitle 1, s2* for subtitle 2
-	 * Called by gov.epa.emvl.TilePlot
+	 * @param tFont	Font for title
+	 * @param tColor	Color for title
+	 * @param tString	String for title
+	 * @param s1Font	Font for subtitle #1
+	 * @param s1Color	Color for subtitle #1
+	 * @param s1String	String for subtitle #1
+	 * @param s2Font	Font for subtitle #2
+	 * @param s2Color	Color for subtitle #2
+	 * @param s2String	String for subtitle #2
 	 */
 	public void setTitlesPanel(Font tFont, Color tColor, String tString,
 			Font s1Font, Color s1Color, String s1String,
@@ -475,7 +665,15 @@ public class GTTilePlotPanel extends JPanel {
 	    this.s2String = s2String;
 	}
 	
-	
+	/**
+	 * setFootersPanel member function to set values required to draw footers when needed
+	 * @param f1Font	Font for footer #1
+	 * @param f1Color	Color for footer #1
+	 * @param f1String	String for footer #1
+	 * @param f2Font	Font for footer #2
+	 * @param f2Color	Color for footer #2
+	 * @param f2String	String for footer #2
+	 */
 	public void setFootersPanel (Font f1Font, Color f1Color, String f1String,
 			Font f2Font, Color f2Color, String f2String)
 	{
@@ -487,6 +685,55 @@ public class GTTilePlotPanel extends JPanel {
 		this.f2Color = f2Color;
 		this.f2String = f2String;
 	}
+	
+	/**
+	 * setLegendPanel member function to set values required to draw legend
+	 * Originally from TilePlot.drawLegend.
+	 * @param uShowTick	true/false show tick for units
+	 * @param labelCnt	number of tick marks (1/label)
+	 * @param xMaximum
+	 * @param yMinimum
+	 * @param yMaximum
+	 * @param uTickColor	color for tick marks
+	 * @param unitsClr	Color for units
+	 * @param labelFont	Font for tick labels
+	 * @param unitsFont	Font for units
+	 * @param baseStr	base of log string
+	 * @param logStr	" (Log"
+	 * @param unitStr	unit of measure
+	 * @param legendLevels	value associated with the break point between legend levels
+	 * @param legendColors	Color for each range of values in legend and tile plot
+	 */
+	public void setLegendPanel(Boolean uShowTick, Integer labelCnt, int xMaximum, int yMinimum, int yMaximum,
+			Color uTickColor, Color unitsClr, Font labelFont, Font unitsFont, 
+			String baseStr, String logStr, String unitStr, double[] legendLevels, Color[] legendColors)
+	{
+		// copy argument values into class data members
+		this.uShowTick = uShowTick;
+		this.labelCnt = labelCnt;
+		this.xMaximum = xMaximum;
+		this.yMinimum = yMinimum;
+		this.yMaximum = yMaximum;
+		this.uTickColor = uTickColor;
+		this.unitsClr = unitsClr;
+		this.labelFont = labelFont;
+		this.unitsFont = unitsFont;
+		this.baseStr = baseStr;
+		this.logStr = logStr;
+		this.unitStr = unitStr;
+		this.legendLevels = legendLevels;
+		this.legendColors = legendColors;
+	}
+	
+	/**
+	 * setLog member function; set the boolean value (true = log transform, false = regular values)
+	 * @param aLog	true/false value of boolean for setting value of class data member log
+	 */
+	public void setLog(boolean aLog)
+	{
+		this.log = aLog;
+	}
+	
 //	@Override
 //	public void paintComponent(Graphics g) {
 //		super.paintComponent(g); 	// have to start with this
@@ -530,7 +777,18 @@ public class GTTilePlotPanel extends JPanel {
 	}
 	
 	/**
-	 * Launch the application.
+	 * gFormat - %g-like formatted string of value.
+	 * 
+	 * @post return != null
+	 * @post return.length() <= 11
+	 */
+
+	private String gFormat(double value) {
+		return numberFormat.format(value);
+	}
+
+	/**
+	 * Launch the simple test.
 	 */
 	public static void main(String[] args) {
 //		EventQueue.invokeLater(new Runnable() {
