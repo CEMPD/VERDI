@@ -167,8 +167,8 @@ public class PlotPanel extends JPanel {
 	 */
 	public void viewClosed() {
 		Logger.debug("in viewClosed()");
-		if ( plot instanceof anl.verdi.plot.gui.GTTilePlot ) {
-			( (anl.verdi.plot.gui.GTTilePlot) plot).stopThread();
+		if ( plot instanceof GTTilePlot ) {
+			( (GTTilePlot) plot).stopThread();
 			try {
 				Thread.sleep(500);
 			} catch( Exception e) {

@@ -71,7 +71,7 @@ public class AreaGTTilePlot extends GTTilePlot {
 	public AreaGTTilePlot(VerdiApplication app,DataFrame dataFrame) {
 		super(app,dataFrame);
 		//app.getGui().setStatusOneText("Loading data. This may take a while please be patient...");
-		this.tilePlot=new AreaTilePlot(this,startDate,startTime,timestepSize,domain,gridBounds,projector);
+		this.tilePlot=new AreaGTTilePlot(this,startDate,startTime,timestepSize,domain,gridBounds,projector);
 //		calculateAverageLevels();
 //		minMax=null;
 	}
@@ -509,15 +509,16 @@ public class AreaGTTilePlot extends GTTilePlot {
 		AreaGTTilePlot.showSelectedOnly = showSelectedOnly;
 	}
 
-	public TilePlot getTilePlot() {
-		return tilePlot;
-	}
+//	public TilePlot getTilePlot() {
+//		return tilePlot;
+//	}
 	public void recalculateAreas(){
 		// redo the area calculations because something changed with the areas 
 		Logger.debug("recalculating areas in FastAreaTilePlot.recalculateAreas");
 		TargetCalculator calc = new TargetCalculator();
-		if(tilePlot==null||getDataFrame()==null)return;
-		calc.calculateIntersections(Target.getTargets(),getDataFrame(),(AreaTilePlot)tilePlot);
+		if(tilePlot==null||getDataFrame()==null)
+			return;
+		calc.calculateIntersections(Target.getTargets(),getDataFrame(),(AreaGTTilePlot)tilePlot);
 	}
 	public void repaintAll(){
 		validate();

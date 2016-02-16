@@ -13,7 +13,8 @@ import org.unitsofmeasurement.unit.Unit;
 
 import ucar.unidata.geoloc.Projection;
 import ucar.unidata.geoloc.projection.LatLonProjection;
-import anl.verdi.area.AreaTilePlot;
+import anl.verdi.area.AreaGTTilePlot;
+//import anl.verdi.area.AreaTilePlot;
 import anl.verdi.area.LongTask;
 import anl.verdi.area.Units;
 import anl.verdi.data.Axes;
@@ -42,6 +43,9 @@ import com.vividsolutions.jts.geom.Polygon;
  *
  */
 public class TargetCalculator extends LongTask {
+	// TODO complete redesign and rewrite for GeoTools functions
+	// What did this code do?
+	// What should this code do?
 	static final Logger Logger = LogManager.getLogger(TargetCalculator.class.getName());
 	
 	// whether depositions should be shown
@@ -79,13 +83,13 @@ public class TargetCalculator extends LongTask {
 		}
 	}
 	
-  public boolean calculateIntersections(ArrayList targets,DataFrame dataFrame,AreaTilePlot plot) {
+  public boolean calculateIntersections(ArrayList targets,DataFrame dataFrame,AreaGTTilePlot areaGTTilePlot) {
 	  
 	    statMessage = "Calculating Intersections...";
 	    Logger.debug("TargetCalculator.calculateIntersections for multiple args " + statMessage);
 	    Logger.debug("targets = " + targets);
 	    Logger.debug("dataFrame = " + dataFrame);
-	    Logger.debug("plot = " + plot);
+	    Logger.debug("plot = " + areaGTTilePlot);
 	    // change to busy cursor
 	    boolean didCalcs = false;
 	    try {
@@ -154,9 +158,9 @@ public class TargetCalculator extends LongTask {
 //			double[] t = { 0.0, 1.0 }; 
 			
 			// only do this if new plot
-			if(plot!=null){
-				Target.setCurrentTilePlot(plot);
-				Target.setCurrentGridInfo(plot.getGridInfo());
+			if(areaGTTilePlot!=null){
+				Target.setCurrentTilePlot(areaGTTilePlot);
+				Target.setCurrentGridInfo(areaGTTilePlot.getGridInfo());
 			}
 			int num=Target.getCurrentGridNum();
 			

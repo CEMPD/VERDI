@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+
 //import javax.measure.converters.UnitConverter;
 //import javax.measure.converter.UnitConverter;
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
@@ -38,6 +39,7 @@ import org.unitsofmeasurement.unit.UnitConverter;
 
 import anl.verdi.area.Area;
 import anl.verdi.area.AreaFile;
+import anl.verdi.area.AreaGTTilePlot;
 import anl.verdi.area.AreaTilePlot;
 import anl.verdi.area.Units;
 import anl.verdi.data.DataUtilities;
@@ -66,7 +68,7 @@ public class Target implements Area{
 	ArrayList<int[]> rowIndex;
 	ArrayList<int[]> colIndex;
 	ArrayList<float[]> overlapArea;
-	static ArrayList <AreaTilePlot> plots=new ArrayList<AreaTilePlot>();;
+	static ArrayList <AreaGTTilePlot> plots=new ArrayList<AreaGTTilePlot>();;
 	Color color;
 	ArrayList<Float> deposition;
 	double area;
@@ -76,7 +78,7 @@ public class Target implements Area{
 	SourceData sourceData;
 	public static boolean useFixedWidth=false;
 	public final static String NAME="Watershed Segment";
-	static AreaTilePlot currentTilePlot;
+	static AreaGTTilePlot currentTilePlot;
 	public static int currentGridNum=-1;
 	public static UnitConverter converterGrid=null;
 	public static UnitConverter converterTargetStandard=null;
@@ -937,7 +939,7 @@ public class Target implements Area{
 		return getKeyName();
 	}
 
-	public static void computeDepositionRange(AreaTilePlot plot,double[] minmax,boolean selectedOnly){
+	public static void computeDepositionRange(AreaGTTilePlot plot,double[] minmax,boolean selectedOnly){
 		minmax[1]=0;
 		minmax[0]=-1;
 		setCurrentTilePlot(plot);
@@ -951,7 +953,7 @@ public class Target implements Area{
 		}
 	}
 	
-	public static void computeAverageDepositionRange(AreaTilePlot plot,double[] minmax,boolean selectedOnly){
+	public static void computeAverageDepositionRange(AreaGTTilePlot plot,double[] minmax,boolean selectedOnly){
 		minmax[1]=0;
 		minmax[0]=-1;
 		setCurrentTilePlot(plot);
@@ -971,15 +973,15 @@ public class Target implements Area{
 	}
 
 	// returns whether or not tile plot already in list
-	public static boolean setCurrentTilePlot(AreaTilePlot currentTilePlot) {
-		boolean plotExisting=plots.contains(currentTilePlot);
-		if(currentTilePlot!=null){
+	public static boolean setCurrentTilePlot(AreaGTTilePlot areaGTTilePlot) {
+		boolean plotExisting=plots.contains(areaGTTilePlot);
+		if(areaGTTilePlot!=null){
 			if(!plotExisting){
-				plots.add(currentTilePlot);
+				plots.add(areaGTTilePlot);
 			}
 		}
 
-		Target.currentTilePlot = currentTilePlot;
+		Target.currentTilePlot = areaGTTilePlot;
 		return plotExisting;
 	}
 
