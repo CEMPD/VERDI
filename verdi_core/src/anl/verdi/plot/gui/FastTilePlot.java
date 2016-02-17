@@ -1604,43 +1604,43 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		draw();
 	}
 	
-	// Compute legend levels from data range:
-
-	private void computeLegend() {
-
-		//populate legend colors and ranges on initiation
-		//default to not a log scale
-		double[] minmax = { 0.0, 0.0 };
-		//calculate the non log min/max values, keep the code here
-		//first part of IF ELSE will use the min/max values
-		computeDataRange(minmax, false);
-		//computeDataRange function need this.log set correctly...
-		if(map.getPalette() == null)
-		{
-			Logger.debug("getPalette is null here also so getting ready to call PavePaletteCreator");
-		}
-		defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPavePalette(); // new PavePaletteCreator().createPalettes(8).get(0);
-		map.setPalette(defaultPalette);
-		
-		//set min/max for both log and non log values...
-		map.setMinMax( minmax[0], minmax[1]);
-		computeDataRange(minmax, true);
-		map.setLogMinMax( minmax[0], minmax[1]);
-		//this final one is for the below legend value calculations
-		computeDataRange(minmax, this.log);
-
-		legendColors = defaultPalette.getColors();
-		final double minimum = minmax[0];
-		final double maximum = minmax[1];
-		minMax = new DataUtilities.MinMax(minimum, maximum);
-		int count = legendColors.length + 1;
-		final double delta = (minmax[1] - minmax[0]) / (count - 1);
-		legendLevels = new double[count];
-		for (int level = 0; level < count; ++level) {
-			legendLevels[level] = minmax[0] + level * delta;
-		}
-		config.setUnits("");
-	}
+//	// Compute legend levels from data range:
+//
+//	private void computeLegend() {		// JEB 2/2016 THIS FUNCTION IS NEVER CALLED
+//
+//		//populate legend colors and ranges on initiation
+//		//default to not a log scale
+//		double[] minmax = { 0.0, 0.0 };
+//		//calculate the non log min/max values, keep the code here
+//		//first part of IF ELSE will use the min/max values
+//		computeDataRange(minmax, false);
+//		//computeDataRange function need this.log set correctly...
+//		if(map.getPalette() == null)
+//		{
+//			Logger.debug("getPalette is null here also so getting ready to call PavePaletteCreator");
+//		}
+//		defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPavePalette(); // new PavePaletteCreator().createPalettes(8).get(0);
+//		map.setPalette(defaultPalette);
+//		
+//		//set min/max for both log and non log values...
+//		map.setMinMax( minmax[0], minmax[1]);
+//		computeDataRange(minmax, true);
+//		map.setLogMinMax( minmax[0], minmax[1]);
+//		//this final one is for the below legend value calculations
+//		computeDataRange(minmax, this.log);
+//
+//		legendColors = defaultPalette.getColors();
+//		final double minimum = minmax[0];
+//		final double maximum = minmax[1];
+//		minMax = new DataUtilities.MinMax(minimum, maximum);
+//		int count = legendColors.length + 1;
+//		final double delta = (minmax[1] - minmax[0]) / (count - 1);
+//		legendLevels = new double[count];
+//		for (int level = 0; level < count; ++level) {
+//			legendLevels[level] = minmax[0] + level * delta;
+//		}
+//		config.setUnits("");
+//	}
 	
 	private boolean statError = false;	// JEB WHY IS THIS HERE INSTEAD OF WITH THE OTHER CLASS DATA MEMBERS?
 
