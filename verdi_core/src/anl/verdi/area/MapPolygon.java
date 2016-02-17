@@ -95,7 +95,7 @@ public class MapPolygon {
 		// get the polygons from the target overlay
 		ArrayList polygons=Target.getTargets();
 		//if(showSelectedOnly)polygons=Target.getSelectedTargets();
-		Target.setCurrentTilePlot(plot);
+//		Target.setCurrentTilePlot(plot);
 		Target.setCurrentGridInfo(plot.getGridInfo());
 
 		for(Target polygon:(ArrayList<Target>)polygons){
@@ -201,7 +201,7 @@ public class MapPolygon {
 		// get the polygons from the target overlay
 		ArrayList polygons=Target.getTargets();
 		if(showSelectedOnly)polygons=Target.getSelectedTargets();
-		Target.setCurrentTilePlot(plot);
+//		Target.setCurrentTilePlot(plot);
 		Target.setCurrentGridInfo(plot.getGridInfo());
 
 		for(Target polygon:(ArrayList<Target>)polygons){
