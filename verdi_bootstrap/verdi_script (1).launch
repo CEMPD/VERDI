@@ -25,7 +25,7 @@
 <listEntry value="1"/>
 </listAttribute>
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
-<mapEntry key="VERDI_HOME" value="/home/lizadams/apps/VERDI_1.5"/>
+<mapEntry key="VERDI_HOME" value="/applications/VERDI_1.5"/>
 <mapEntry key="VERDI_USER" value="/home/lizadams"/>
 </mapAttribute>
 <stringAttribute key="org.eclipse.debug.core.source_locator_id" value="org.eclipse.jdt.launching.sourceLocator.JavaSourceLookupDirector"/>
