@@ -517,7 +517,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 		Logger.debug("recalculating areas in FastAreaTilePlot.recalculateAreas");
 		TargetCalculator calc = new TargetCalculator();
 		if(tilePlot==null||getDataFrame()==null)return;
-		calc.calculateIntersections(Target.getTargets(),getDataFrame(),(AreaTilePlot)tilePlot);
+//		calc.calculateIntersections(Target.getTargets(),getDataFrame(),(AreaTilePlot)tilePlot);
 	}
 	public void repaintAll(){
 		validate();

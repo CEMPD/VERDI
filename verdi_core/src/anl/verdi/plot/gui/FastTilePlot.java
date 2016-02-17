@@ -388,7 +388,7 @@ public class FastTilePlot extends FastTilePlotPanel implements ActionListener, P
 
 		public void run() {
 			Logger.debug("within FastTilePlot.run()");
-			Logger.debug("mapFileDirectory = " + mapFileDirectory);
+			Logger.debug("391: mapFileDirectory = " + mapFileDirectory);
 
 			do {
 				if ( drawMode != DRAW_NONE &&
@@ -581,14 +581,14 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							Logger.debug("subsetLayerData.length = " + aSubsetLayerDataLength);
 							Logger.debug("ready to make revised function call to tilePlot.draw, thread = " + Thread.currentThread().toString());
 
-							tilePlot.draw(offScreenGraphics, (FastTilePlotPanel)this, // HOW TO GET TO FastTilePlotPanel FROM HERE???
-									xOffset, yOffset,
-									width, height, stepsLapsed, layer, aRow,
-									bRow, aCol, bCol, legendLevels,
-									legendColors, axisColor, labelColor, plotVariable,
-									aPlotUnits, 
-									config, aNumberFormat, gridLineColor,
-									subsetLayerData);
+//							tilePlot.draw(offScreenGraphics, (FastTilePlotPanel)this, // HOW TO GET TO FastTilePlotPanel FROM HERE???
+//									xOffset, yOffset,
+//									width, height, stepsLapsed, layer, aRow,
+//									bRow, aCol, bCol, legendLevels,
+//									legendColors, axisColor, labelColor, plotVariable,
+//									aPlotUnits, 
+//									config, aNumberFormat, gridLineColor,
+//									subsetLayerData);
 //							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 //									width, height, stepsLapsed, layer, firstRow + rowOrigin,
 //									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
@@ -1332,7 +1332,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		final Variable dataFrameVariable = dataFrame.getVariable();
 		variable = dataFrameVariable.getName();
-		Logger.debug("mapFileDirectory = " + mapFileDirectory);
+		Logger.debug("1335: mapFileDirectory = " + mapFileDirectory);
 		// JEB:  HERE NEED TO TEST FOR EXISTENCE OF mapFileDirectory & POP UP A FILE CHOOSER IF DOESN'T EXIST
 		File vFile = new File(mapFileDirectory);
 		if (!vFile.exists() || !vFile.canRead() || !vFile.isDirectory())
@@ -1600,7 +1600,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		// add(toolBar);
 		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
 		doubleBufferedRendererThread.start(); // Calls
-		super(toolBar);
+//		super(toolBar);
 		draw();
 	}
 	
@@ -2097,13 +2097,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	}
 	
 	protected void addObsOverlay() {
-		OverlayRequest<ObsEvaluator> request = new OverlayRequest<ObsEvaluator>(OverlayRequest.Type.OBS, this);
-		eventProducer.fireOverlayRequest(request);
+//		OverlayRequest<ObsEvaluator> request = new OverlayRequest<ObsEvaluator>(OverlayRequest.Type.OBS, this);
+//		eventProducer.fireOverlayRequest(request);
 	}
 	
 	protected void addVectorOverlay() {
-		OverlayRequest<VectorEvaluator> request = new OverlayRequest<VectorEvaluator>(OverlayRequest.Type.VECTOR, this);
-		eventProducer.fireOverlayRequest(request);
+//		OverlayRequest<VectorEvaluator> request = new OverlayRequest<VectorEvaluator>(OverlayRequest.Type.VECTOR, this);
+//		eventProducer.fireOverlayRequest(request);
 	}
 
 	protected void activateRubberBand() {
@@ -3474,18 +3474,18 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 					: config.getObject( TilePlotConfiguration.GRID_LINE_COLOR ) );
 				
 			final int stepsLapsed = timestep - firstTimestep;
-			try {tilePlot.drawBatchImage(g, (FastTilePlotPanel) this,
-						xOffset, yOffset,
-							canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
-							lastRow, firstColumn, lastColumn, legendLevels,
-							legendColors, axisColor, labelColor, variable,
-							((units==null || units.trim().equals("")) ? "none" : units), config, map.getNumberFormat(), gridLineColor,
-							subsetLayerData);
-			} catch (Exception e) {
-				Logger.error("Exception in FastTilePlot.Draw (EpsRenderer's draw method): " + e.getMessage());
-				e.printStackTrace();
-				return;
-			}
+//			try {tilePlot.drawBatchImage(g, (FastTilePlotPanel) this,
+//						xOffset, yOffset,
+//							canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
+//							lastRow, firstColumn, lastColumn, legendLevels,
+//							legendColors, axisColor, labelColor, variable,
+//							((units==null || units.trim().equals("")) ? "none" : units), config, map.getNumberFormat(), gridLineColor,
+//							subsetLayerData);
+//			} catch (Exception e) {
+//				Logger.error("Exception in FastTilePlot.Draw (EpsRenderer's draw method): " + e.getMessage());
+//				e.printStackTrace();
+//				return;
+//			}
 				
 			// Draw projected/clipped map border lines over grid cells:
 			// NOTE: mapper.draw calls VerdiBoundaries.draw
@@ -3517,7 +3517,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	// get the JPanel portion (the entire panel) of the FastTilePlot
 	public JPanel getEntirePane()
 	{
-		return getContentPane(); 
+//		return getContentPane(); 
+		return null;
 	}
 
 	public void addVectorAnnotation(VectorEvaluator eval) {

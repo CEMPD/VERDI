@@ -105,7 +105,7 @@ public class AreaTilePlot extends TilePlot{
 	 * @pre data.length == (1 + lastRow - firstRow) * (1 + lastColumn-firstColumn)
 	 */
 
-	@Override
+//	@Override
 	public void draw( final Graphics graphics,
 			int xOffset, int yOffset,
 			int width, int height,
@@ -154,12 +154,12 @@ public class AreaTilePlot extends TilePlot{
 
 		Font gFont = graphics.getFont();
 
-		// Draw text label annotations (date-time, data min/max cells):
-
-		drawLabels( graphics, labelColor,xMinimum, xMaximum, yMinimum, yMaximum,
-				variable,
-				timelapse, layer, firstRow, lastRow, firstColumn, lastColumn,
-				data );
+//		// Draw text label annotations (date-time, data min/max cells):
+//
+//		drawLabels( graphics, labelColor,xMinimum, xMaximum, yMinimum, yMaximum,
+//				variable,
+//				timelapse, layer, firstRow, lastRow, firstColumn, lastColumn,
+//				data );
 
 		// Draw legend-colored grid cells or polygons
 

@@ -71,7 +71,7 @@ public class AreaGTTilePlot extends GTTilePlot {
 	public AreaGTTilePlot(VerdiApplication app,DataFrame dataFrame) {
 		super(app,dataFrame);
 		//app.getGui().setStatusOneText("Loading data. This may take a while please be patient...");
-		this.tilePlot=new AreaGTTilePlot(this,startDate,startTime,timestepSize,domain,gridBounds,projector);
+//		this.tilePlot=new AreaGTTilePlot(this,startDate,startTime,timestepSize,domain,gridBounds,projector);
 //		calculateAverageLevels();
 //		minMax=null;
 	}
@@ -86,25 +86,25 @@ public class AreaGTTilePlot extends GTTilePlot {
 		repaint();
 	}
 	public void showAverages() {
-		((AreaTilePlot)tilePlot).showAverages();
-		calculateAverageLevels();
-//		minMax=null;
-		invalidate();
-		repaint();
+//		((AreaTilePlot)tilePlot).showAverages();
+//		calculateAverageLevels();
+////		minMax=null;
+//		invalidate();
+//		repaint();
 	}
 	public void showTotals() {
-		((AreaTilePlot)tilePlot).showTotals();
-		calculateTotalLevels();
-//		minMax=null;
-		invalidate();
-		repaint();
+//		((AreaTilePlot)tilePlot).showTotals();
+//		calculateTotalLevels();
+////		minMax=null;
+//		invalidate();
+//		repaint();
 	}
 	public void showGrid() {
-		((AreaTilePlot)tilePlot).showGrid();
-		calculateGridLevels();
-//		minMax=null;
-		invalidate();
-		repaint();
+//		((AreaTilePlot)tilePlot).showGrid();
+//		calculateGridLevels();
+////		minMax=null;
+//		invalidate();
+//		repaint();
 	}
 	public void configure(PlotConfiguration config) {
 		super.configure(config);
@@ -160,66 +160,66 @@ public class AreaGTTilePlot extends GTTilePlot {
 
 	public void calculateAverageLevels(){
 
-		if (((AreaTilePlot) tilePlot).mouseOverOK) {
-//			final int count = legendLevels.length;
-			
-			Logger.debug("calculateAverageLevels ");
-
-			// calc range for this set of numbers
-			double[] minmax = { 0.0, 0.0 };
-
-			DepositionRange range = this.getGlobalDepositionRange();
-			minmax[0] = range.averageMin;
-			minmax[1] = range.averageMax;
-
-			{
-				// initialize colormap to these min max values
-				minMax=new MinMax(minmax[0],minmax[1]);
-				if ( map == null) {
-					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
-				} else {
-					map.setPalette(defaultPalette);
-					map.setMinMax( minmax[0], minmax[1]);
-				}
-				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
-				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
-
-
-				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
-				setLegendLevels(minMax);
-			}
-		}
+//		if (((AreaTilePlot) tilePlot).mouseOverOK) {
+////			final int count = legendLevels.length;
+//			
+//			Logger.debug("calculateAverageLevels ");
+//
+//			// calc range for this set of numbers
+//			double[] minmax = { 0.0, 0.0 };
+//
+//			DepositionRange range = this.getGlobalDepositionRange();
+//			minmax[0] = range.averageMin;
+//			minmax[1] = range.averageMax;
+//
+//			{
+//				// initialize colormap to these min max values
+//				minMax=new MinMax(minmax[0],minmax[1]);
+//				if ( map == null) {
+//					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+//				} else {
+//					map.setPalette(defaultPalette);
+//					map.setMinMax( minmax[0], minmax[1]);
+//				}
+//				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+//				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+//
+//
+//				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
+//				setLegendLevels(minMax);
+//			}
+//		}
 	}
 
 	public void calculateGridLevels(){
-
-		if (((AreaTilePlot) tilePlot).mouseOverOK) {
-//			final int count = legendLevels.length;
-			
-			Logger.debug("calculateGridLevels ");
-
-			// calc range for this set of numbers
-			double[] minmax = { 0.0, 0.0 };
-			computeDataRange(minmax, this.log); // grid min max
-
-			{
-				// initialize colormap to these min max values
-				minMax=new MinMax(minmax[0],minmax[1]);
-				if ( map == null) {
-					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
-				} else {
-					map.setPalette(defaultPalette);
-					map.setMinMax( minmax[0], minmax[1]);
-				}
-				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
-				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
-
-
-				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
-				setLegendLevels(minMax);
-			}
-			Logger.debug("minMax "+minMax.getMin()+" "+minMax.getMax());
-		}
+//
+//		if (((AreaTilePlot) tilePlot).mouseOverOK) {
+////			final int count = legendLevels.length;
+//			
+//			Logger.debug("calculateGridLevels ");
+//
+//			// calc range for this set of numbers
+//			double[] minmax = { 0.0, 0.0 };
+//			computeDataRange(minmax, this.log); // grid min max
+//
+//			{
+//				// initialize colormap to these min max values
+//				minMax=new MinMax(minmax[0],minmax[1]);
+//				if ( map == null) {
+//					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+//				} else {
+//					map.setPalette(defaultPalette);
+//					map.setMinMax( minmax[0], minmax[1]);
+//				}
+//				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+//				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+//
+//
+//				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
+//				setLegendLevels(minMax);
+//			}
+//			Logger.debug("minMax "+minMax.getMin()+" "+minMax.getMax());
+//		}
 	}
 
 	public void setLegendLevels(MinMax minMax){
@@ -231,35 +231,35 @@ public class AreaGTTilePlot extends GTTilePlot {
 		}
 	}
 	public void calculateTotalLevels(){
-		if (((AreaTilePlot) tilePlot).mouseOverOK) {
-			Logger.debug("calculateTotalLevels");
-
-			// calc range for this set of numbers
-			double[] minmax = { 0.0, 0.0 };
-			DepositionRange range = this.getGlobalDepositionRange();
-			minmax[0] = range.totalMin;
-			minmax[1] = range.totalMax;
-
-			// if never set before or if larger range than last set of numbers
-			{
-				Logger.debug("computing total data minmax...");
-
-				// initialize colormap to these min max values
-				minMax=new MinMax(minmax[0],minmax[1]);
-				if ( map == null){
-					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
-				} else {
-					map.setPalette(defaultPalette);
-					map.setMinMax( minmax[0], minmax[1]);
-				}
-				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
-				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
-
-				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
-				setLegendLevels(minMax);
-			}
-			
-		}
+//		if (((AreaTilePlot) tilePlot).mouseOverOK) {
+//			Logger.debug("calculateTotalLevels");
+//
+//			// calc range for this set of numbers
+//			double[] minmax = { 0.0, 0.0 };
+//			DepositionRange range = this.getGlobalDepositionRange();
+//			minmax[0] = range.totalMin;
+//			minmax[1] = range.totalMax;
+//
+//			// if never set before or if larger range than last set of numbers
+//			{
+//				Logger.debug("computing total data minmax...");
+//
+//				// initialize colormap to these min max values
+//				minMax=new MinMax(minmax[0],minmax[1]);
+//				if ( map == null){
+//					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+//				} else {
+//					map.setPalette(defaultPalette);
+//					map.setMinMax( minmax[0], minmax[1]);
+//				}
+//				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+//				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+//
+//				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
+//				setLegendLevels(minMax);
+//			}
+//			
+//		}
 	}
 	JRadioButtonMenuItem selectionMenuItem=null;
 	public boolean selectingAreas(){
@@ -342,135 +342,136 @@ public class AreaGTTilePlot extends GTTilePlot {
 	public JMenuBar getMenuBar() {
 		JMenuBar bar=super.getMenuBar();
 		JMenu menu=null;
-
-		// add in my extra option to control menu
-		for(int i=0;i<bar.getMenuCount();i++){
-			if(bar.getMenu(i).getText().equals("Controls"))menu=bar.getMenu(i);	
-		}
-		// get the buttonGroup
-		if(menu!=null){
-			DefaultButtonModel model=((DefaultButtonModel)((JRadioButtonMenuItem)menu.getMenuComponent(0)).getModel());
-			ButtonGroup selectionGroup=model.getGroup(); 
-			selectionMenuItem = new JRadioButtonMenuItem(new AbstractAction(
-			"Select Areas") {
-				private static final long serialVersionUID = 5282480503103839989L;
-
-				public void actionPerformed(ActionEvent e) {
-					JRadioButtonMenuItem src = (JRadioButtonMenuItem) e.getSource();
-					Logger.debug("selection action "+src.isSelected());
-					probe=false;
-					zoom=false;
-					float xScale = (float)columns / (dataArea.width == 0 ? columns : dataArea.width);
-					float yScale = (float)rows / (dataArea.height == 0 ? rows : dataArea.height);
-
-					rubberband.setActive(true);
-					rubberband.setDataArea(dataArea, xScale, yScale);
-					// change cursor
-					setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-				}
-			});
-
-			selectionGroup.add(selectionMenuItem);
-			menu.add(selectionMenuItem,0);
-
-			selectionMenuItem.setEnabled(ADD_SELECT_AREA_TO_CONTROL_MENU);
-
-		}
-
-		// add in my extra option menu
-		menu = new JMenu("Options");
-		ButtonGroup group = new ButtonGroup();
-
-		JRadioButtonMenuItem radioButton=new JRadioButtonMenuItem(new AbstractAction("Show Area Averages") {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 4673389754505180377L;
-
-			public void actionPerformed(ActionEvent e) {
-				JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
-				if(item.isSelected())AreaGTTilePlot.this.showAverages();
-				draw();
-			}
-		});
-		radioButton.setSelected(true);
-		group.add(radioButton);
-		menu.add(radioButton);
-
-		showTotalButton=new JRadioButtonMenuItem(new AbstractAction("Show Area Totals") {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -4078259126612838335L;
-
-			public void actionPerformed(ActionEvent e) {
-				JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
-				if(item.isSelected())AreaGTTilePlot.this.showTotals();
-				draw();
-			}
-		});
-		group.add(showTotalButton);
-		menu.add(showTotalButton);
-		// disable the radiobutton if needed
-		// see if the current formula type allows this
-		if(Units.isConcentration(getDataFrame().getVariable().getUnit().toString())){
-			showTotalButton.setEnabled(false);
-		}
-
-		radioButton=new JRadioButtonMenuItem(new AbstractAction("Show Gridded Data") {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = -6206984806970043891L;
-
-			public void actionPerformed(ActionEvent e) {
-				JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
-				if(item.isSelected())AreaGTTilePlot.this.showGrid();
-				draw();
-			}
-		});
-		group.add(radioButton);
-		menu.add(radioButton);
-
-		menu.addSeparator();
-
-		// make radio buttons for filling options
-		ButtonGroup group2 = new ButtonGroup();
-
-		radioButton=new JRadioButtonMenuItem(new AbstractAction("Selected Areas") {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 8704295164108322755L;
-
-			public void actionPerformed(ActionEvent e) {
-				JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
-				if(item.isSelected())AreaGTTilePlot.this.showSelected();
-				draw();
-			}
-		});
-		radioButton.setSelected(false);
-		group2.add(radioButton);
-		menu.add(radioButton);
-
-		radioButton=new JRadioButtonMenuItem(new AbstractAction("All Areas") {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 841441627768110972L;
-
-			public void actionPerformed(ActionEvent e) {
-				JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
-				if(item.isSelected())AreaGTTilePlot.this.showAll();
-				draw();
-			}
-		});
-		radioButton.setSelected(true);
-		group2.add(radioButton);
-		menu.add(radioButton);
-
-		bar.add(menu);
-		return bar;
+//
+//		// add in my extra option to control menu
+//		for(int i=0;i<bar.getMenuCount();i++){
+//			if(bar.getMenu(i).getText().equals("Controls"))menu=bar.getMenu(i);	
+//		}
+//		// get the buttonGroup
+//		if(menu!=null){
+//			DefaultButtonModel model=((DefaultButtonModel)((JRadioButtonMenuItem)menu.getMenuComponent(0)).getModel());
+//			ButtonGroup selectionGroup=model.getGroup(); 
+//			selectionMenuItem = new JRadioButtonMenuItem(new AbstractAction(
+//			"Select Areas") {
+//				private static final long serialVersionUID = 5282480503103839989L;
+//
+//				public void actionPerformed(ActionEvent e) {
+//					JRadioButtonMenuItem src = (JRadioButtonMenuItem) e.getSource();
+//					Logger.debug("selection action "+src.isSelected());
+//					probe=false;
+//					zoom=false;
+//					float xScale = (float)columns / (dataArea.width == 0 ? columns : dataArea.width);
+//					float yScale = (float)rows / (dataArea.height == 0 ? rows : dataArea.height);
+//
+//					rubberband.setActive(true);
+//					rubberband.setDataArea(dataArea, xScale, yScale);
+//					// change cursor
+//					setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+//				}
+//			});
+//
+//			selectionGroup.add(selectionMenuItem);
+//			menu.add(selectionMenuItem,0);
+//
+//			selectionMenuItem.setEnabled(ADD_SELECT_AREA_TO_CONTROL_MENU);
+//
+//		}
+//
+//		// add in my extra option menu
+//		menu = new JMenu("Options");
+//		ButtonGroup group = new ButtonGroup();
+//
+//		JRadioButtonMenuItem radioButton=new JRadioButtonMenuItem(new AbstractAction("Show Area Averages") {
+//			/**
+//			 * 
+//			 */
+//			private static final long serialVersionUID = 4673389754505180377L;
+//
+//			public void actionPerformed(ActionEvent e) {
+//				JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+//				if(item.isSelected())AreaGTTilePlot.this.showAverages();
+//				draw();
+//			}
+//		});
+//		radioButton.setSelected(true);
+//		group.add(radioButton);
+//		menu.add(radioButton);
+//
+//		showTotalButton=new JRadioButtonMenuItem(new AbstractAction("Show Area Totals") {
+//			/**
+//			 * 
+//			 */
+//			private static final long serialVersionUID = -4078259126612838335L;
+//
+//			public void actionPerformed(ActionEvent e) {
+//				JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+//				if(item.isSelected())AreaGTTilePlot.this.showTotals();
+//				draw();
+//			}
+//		});
+//		group.add(showTotalButton);
+//		menu.add(showTotalButton);
+//		// disable the radiobutton if needed
+//		// see if the current formula type allows this
+//		if(Units.isConcentration(getDataFrame().getVariable().getUnit().toString())){
+//			showTotalButton.setEnabled(false);
+//		}
+//
+//		radioButton=new JRadioButtonMenuItem(new AbstractAction("Show Gridded Data") {
+//			/**
+//			 * 
+//			 */
+//			private static final long serialVersionUID = -6206984806970043891L;
+//
+//			public void actionPerformed(ActionEvent e) {
+//				JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+//				if(item.isSelected())AreaGTTilePlot.this.showGrid();
+//				draw();
+//			}
+//		});
+//		group.add(radioButton);
+//		menu.add(radioButton);
+//
+//		menu.addSeparator();
+//
+//		// make radio buttons for filling options
+//		ButtonGroup group2 = new ButtonGroup();
+//
+//		radioButton=new JRadioButtonMenuItem(new AbstractAction("Selected Areas") {
+//			/**
+//			 * 
+//			 */
+//			private static final long serialVersionUID = 8704295164108322755L;
+//
+//			public void actionPerformed(ActionEvent e) {
+//				JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+//				if(item.isSelected())AreaGTTilePlot.this.showSelected();
+//				draw();
+//			}
+//		});
+//		radioButton.setSelected(false);
+//		group2.add(radioButton);
+//		menu.add(radioButton);
+//
+//		radioButton=new JRadioButtonMenuItem(new AbstractAction("All Areas") {
+//			/**
+//			 * 
+//			 */
+//			private static final long serialVersionUID = 841441627768110972L;
+//
+//			public void actionPerformed(ActionEvent e) {
+//				JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+//				if(item.isSelected())AreaGTTilePlot.this.showAll();
+//				draw();
+//			}
+//		});
+//		radioButton.setSelected(true);
+//		group2.add(radioButton);
+//		menu.add(radioButton);
+//
+//		bar.add(menu);
+//		return bar;
+		return null;
 	}
 
 	public float[][] getAllLayerData() {
@@ -513,16 +514,16 @@ public class AreaGTTilePlot extends GTTilePlot {
 //		return tilePlot;
 //	}
 	public void recalculateAreas(){
-		// redo the area calculations because something changed with the areas 
-		Logger.debug("recalculating areas in FastAreaTilePlot.recalculateAreas");
-		TargetCalculator calc = new TargetCalculator();
-		if(tilePlot==null||getDataFrame()==null)
-			return;
-		calc.calculateIntersections(Target.getTargets(),getDataFrame(),(AreaGTTilePlot)tilePlot);
+//		// redo the area calculations because something changed with the areas 
+//		Logger.debug("recalculating areas in FastAreaTilePlot.recalculateAreas");
+//		TargetCalculator calc = new TargetCalculator();
+//		if(tilePlot==null||getDataFrame()==null)
+//			return;
+//		calc.calculateIntersections(Target.getTargets(),getDataFrame(),(AreaGTTilePlot)tilePlot);
 	}
 	public void repaintAll(){
 		validate();
-		draw();
+//		draw();
 		repaint();
 
 	}
@@ -543,102 +544,102 @@ public class AreaGTTilePlot extends GTTilePlot {
 
 		return result;
 	}
-	public void processMouseEvent(MouseEvent me) {
-		int mod = me.getModifiers();
-		int mask = MouseEvent.BUTTON3_MASK; 
-		//see if they are popping up data on a polygon
-		if ((mod & mask) != 0) {
-			super.processMouseEvent(me);
-			return;
-		}
+//	public void processMouseEvent(MouseEvent me) {
+//		int mod = me.getModifiers();
+//		int mask = MouseEvent.BUTTON3_MASK; 
+//		//see if they are popping up data on a polygon
+//		if ((mod & mask) != 0) {
+//			super.processMouseEvent(me);
+//			return;
+//		}
+//
+//		if(selectingAreas()){
+//
+//			if(isInDataArea(me)&&me.getID()==MouseEvent.MOUSE_RELEASED){
+//				Rectangle axisRect = rubberband.getAxisBounds();
+//				Rectangle rect = rubberband.getBounds();
+//
+//				super.processMouseEvent(me);
+//
+//				// assume they meant to pick a point if it was a tiny square
+//				if(axisRect.getWidth()<TOLERANCE&&axisRect.getHeight()<TOLERANCE){
+//					// select the area in the list
+//					Decidegrees gp = getLatLonFor(me.getX(), me.getY());
+//					Target target=MapPolygon.getTargetWithin(gp.y, gp.x);
+//
+//					if(target!=null){
+//						if(!me.isControlDown()){
+//							//clear all other selections
+//							Target.setSelectedTargets(new ArrayList());
+//							// turn this one on
+//							target.setSelected(true);
+//						}else{
+//							// toggle the state
+//							target.setSelected(!target.isSelectedPolygon());
+//						}
+//					}
+//					app.getGui().getAreaPanel().areasSelected(Target.getSelectedTargets());
+//					repaintAll();
+//				}else{
+//					// pick every polygon within that area
+//					ArrayList<Target> targets=MapPolygon.getTargetsWithin(rect);
+//					if(!me.isControlDown()){
+//						// turn off everything else and turn these on instead
+//						Target.setSelectedTargets(targets);
+//					}else{
+//						// leave other ones alone
+//						// toggle selected ones
+//						for(Target target:targets){
+//							// toggle the state
+//							target.setSelected(!target.isSelectedPolygon());
+//
+//						}
+//					}
+//					app.getGui().getAreaPanel().areasSelected(Target.getSelectedTargets());
+//					repaintAll();
+//				}
+//
+//			}else super.processMouseEvent(me);
+//			return;
+//		}
+//		super.processMouseEvent(me);
+//	}
 
-		if(selectingAreas()){
-
-			if(isInDataArea(me)&&me.getID()==MouseEvent.MOUSE_RELEASED){
-				Rectangle axisRect = rubberband.getAxisBounds();
-				Rectangle rect = rubberband.getBounds();
-
-				super.processMouseEvent(me);
-
-				// assume they meant to pick a point if it was a tiny square
-				if(axisRect.getWidth()<TOLERANCE&&axisRect.getHeight()<TOLERANCE){
-					// select the area in the list
-					Decidegrees gp = getLatLonFor(me.getX(), me.getY());
-					Target target=MapPolygon.getTargetWithin(gp.y, gp.x);
-
-					if(target!=null){
-						if(!me.isControlDown()){
-							//clear all other selections
-							Target.setSelectedTargets(new ArrayList());
-							// turn this one on
-							target.setSelected(true);
-						}else{
-							// toggle the state
-							target.setSelected(!target.isSelectedPolygon());
-						}
-					}
-					app.getGui().getAreaPanel().areasSelected(Target.getSelectedTargets());
-					repaintAll();
-				}else{
-					// pick every polygon within that area
-					ArrayList<Target> targets=MapPolygon.getTargetsWithin(rect);
-					if(!me.isControlDown()){
-						// turn off everything else and turn these on instead
-						Target.setSelectedTargets(targets);
-					}else{
-						// leave other ones alone
-						// toggle selected ones
-						for(Target target:targets){
-							// toggle the state
-							target.setSelected(!target.isSelectedPolygon());
-
-						}
-					}
-					app.getGui().getAreaPanel().areasSelected(Target.getSelectedTargets());
-					repaintAll();
-				}
-
-			}else super.processMouseEvent(me);
-			return;
-		}
-		super.processMouseEvent(me);
-	}
-
-	public void processMouseMotionEvent(MouseEvent me) {
-		String units = getDataFrame().getVariable().getUnit().toString();
-		if (units==null || units.trim().equals(""))
-			units = "none";
-		String massUnit = Units.getTotalVariable(units);
-		String areaUnit = (Units.getAreaUnit(units) != null ? Units.getAreaUnit(units).toString() : "");
-		if(Units.isConcentration(units))massUnit=null;
-		if(isInDataArea(me)){
-			if(me.getID() == MouseEvent.MOUSE_MOVED){
-				Decidegrees gp = getLatLonFor(me.getX(), me.getY());
-				Target target=MapPolygon.getTargetWithin(gp.y, gp.x);
-
-				if(target!=null){
-					try {
-						double areaValue = target.getArea();
-
-						if(target.containsDeposition()){
-							float value = target.getDeposition();
-							float aveValue = target.getAverageDeposition();
-
-							if(massUnit!=null)app.getGui().setStatusOneText("Area "+target.toString()+": " + areaValue + " " + areaUnit + ", Total: "+value+" "+massUnit+", Average: "+aveValue+" "+units);
-							else app.getGui().setStatusOneText("Area "+target.toString()+": " + areaValue + " " + areaUnit + ", Average: "+aveValue+" "+units);
-						}else app.getGui().setStatusOneText("Area "+target.toString()+": " + areaValue  + " " + areaUnit + ".");
-					} catch ( Exception e) {
-						//
-					}
-				}
-				else app.getGui().setStatusOneText(gp.toString());
-			}
-		}else{
-			app.getGui().setStatusOneText("");
-		}
-		super.processMouseMotionEvent(me);
-
-	}
+//	public void processMouseMotionEvent(MouseEvent me) {
+//		String units = getDataFrame().getVariable().getUnit().toString();
+//		if (units==null || units.trim().equals(""))
+//			units = "none";
+//		String massUnit = Units.getTotalVariable(units);
+//		String areaUnit = (Units.getAreaUnit(units) != null ? Units.getAreaUnit(units).toString() : "");
+//		if(Units.isConcentration(units))massUnit=null;
+//		if(isInDataArea(me)){
+//			if(me.getID() == MouseEvent.MOUSE_MOVED){
+//				Decidegrees gp = getLatLonFor(me.getX(), me.getY());
+//				Target target=MapPolygon.getTargetWithin(gp.y, gp.x);
+//
+//				if(target!=null){
+//					try {
+//						double areaValue = target.getArea();
+//
+//						if(target.containsDeposition()){
+//							float value = target.getDeposition();
+//							float aveValue = target.getAverageDeposition();
+//
+//							if(massUnit!=null)app.getGui().setStatusOneText("Area "+target.toString()+": " + areaValue + " " + areaUnit + ", Total: "+value+" "+massUnit+", Average: "+aveValue+" "+units);
+//							else app.getGui().setStatusOneText("Area "+target.toString()+": " + areaValue + " " + areaUnit + ", Average: "+aveValue+" "+units);
+//						}else app.getGui().setStatusOneText("Area "+target.toString()+": " + areaValue  + " " + areaUnit + ".");
+//					} catch ( Exception e) {
+//						//
+//					}
+//				}
+//				else app.getGui().setStatusOneText(gp.toString());
+//			}
+//		}else{
+//			app.getGui().setStatusOneText("");
+//		}
+//		super.processMouseMotionEvent(me);
+//
+//	}
 	// show info on all selected areas
 	private class ProbeExportAction extends AbstractAction {
 
@@ -814,24 +815,24 @@ public class AreaGTTilePlot extends GTTilePlot {
 	}
 
 	private void calcFrameDepositionRange(float [][] data, int gridIndex, DepositionRange range) {
-		ArrayList polygons=Target.getTargets();
-		
-		TargetDeposition deposition = new TargetDeposition();
-		for(Target polygon:(ArrayList<Target>)polygons){
-			Target.setUnitConverters(units);
-			polygon.computeAverageDeposition(data,gridIndex, deposition);
-			if (deposition.total > range.totalMax) {
-				range.totalMax = deposition.total;
-			}
-			if (deposition.total < range.totalMin) {
-				range.totalMin = deposition.total;
-			}
-			if (deposition.average > range.averageMax) {
-				range.averageMax = deposition.average;
-			}
-			if (deposition.average < range.averageMin) {
-				range.averageMin = deposition.average;
-			}
-		}
+//		ArrayList polygons=Target.getTargets();
+//		
+//		TargetDeposition deposition = new TargetDeposition();
+//		for(Target polygon:(ArrayList<Target>)polygons){
+//			Target.setUnitConverters(units);
+//			polygon.computeAverageDeposition(data,gridIndex, deposition);
+//			if (deposition.total > range.totalMax) {
+//				range.totalMax = deposition.total;
+//			}
+//			if (deposition.total < range.totalMin) {
+//				range.totalMin = deposition.total;
+//			}
+//			if (deposition.average > range.averageMax) {
+//				range.averageMax = deposition.average;
+//			}
+//			if (deposition.average < range.averageMin) {
+//				range.averageMin = deposition.average;
+//			}
+//		}
 	}
 }

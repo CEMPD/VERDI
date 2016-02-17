@@ -56,14 +56,14 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 				// calculate the areas 
 				TargetCalculator calc = new TargetCalculator();
 				Logger.debug("ready to call TargetCalculator.calculateIntersections");
-				boolean retValue = calc.calculateIntersections(Target.getTargets(),dataFrame,(AreaTilePlot)plot.getTilePlot());
-				Logger.debug("back from calculateIntersections, retValue = " + retValue);
-				if(!retValue)
-				{
-					// 2014 added in message dialog to show message to user
-					String aMessage = "Problem with areal interpolation calculations. Check if polygons intersect grid cells.";
-					JOptionPane.showMessageDialog(null, aMessage, "Areal Interpolation Issue", JOptionPane.WARNING_MESSAGE);
-				}
+//				boolean retValue = calc.calculateIntersections(Target.getTargets(),dataFrame,(AreaTilePlot)plot.getTilePlot());
+//				Logger.debug("back from calculateIntersections, retValue = " + retValue);
+//				if(!retValue)
+//				{
+//					// 2014 added in message dialog to show message to user
+//					String aMessage = "Problem with areal interpolation calculations. Check if polygons intersect grid cells.";
+//					JOptionPane.showMessageDialog(null, aMessage, "Areal Interpolation Issue", JOptionPane.WARNING_MESSAGE);
+//				}
 				
 // WIP			// 2015 changing PlotPanel to MapPlotPanel
 				// need different constructor in MapPlotPanel

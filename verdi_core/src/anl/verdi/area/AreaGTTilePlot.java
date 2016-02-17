@@ -105,7 +105,7 @@ public class AreaGTTilePlot extends TilePlot{
 	 * @pre data.length == (1 + lastRow - firstRow) * (1 + lastColumn-firstColumn)
 	 */
 
-	@Override
+//	@Override
 	public void draw( final Graphics graphics,
 			int xOffset, int yOffset,
 			int width, int height,
@@ -154,12 +154,12 @@ public class AreaGTTilePlot extends TilePlot{
 
 		Font gFont = graphics.getFont();
 
-		// Draw text label annotations (date-time, data min/max cells):
-
-		drawLabels( graphics, labelColor,xMinimum, xMaximum, yMinimum, yMaximum,
-				variable,
-				timelapse, layer, firstRow, lastRow, firstColumn, lastColumn,
-				data );
+//		// Draw text label annotations (date-time, data min/max cells):
+//
+//		drawLabels( graphics, labelColor,xMinimum, xMaximum, yMinimum, yMaximum,
+//				variable,
+//				timelapse, layer, firstRow, lastRow, firstColumn, lastColumn,
+//				data );
 
 		// Draw legend-colored grid cells or polygons
 
@@ -174,17 +174,17 @@ public class AreaGTTilePlot extends TilePlot{
 					firstRow, lastRow, firstColumn, lastColumn,
 					legendLevels, legendColors, data );
 			// draw the area polygons
-			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
-					legendColors,graphics, data,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView, FastAreaTilePlot.isShowSelectedOnly());
+//			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
+//					legendColors,graphics, data,units,firstColumn,firstRow,
+//					xOffset, yOffset, width, height,currentView, FastAreaTilePlot.isShowSelectedOnly());
 			break;
 		case AVERAGES:
 			float[][] allData=tilePlotPanel.getAllLayerData();
 			// draw the area polygons
-			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
-					legendColors,graphics, allData,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView,FastAreaTilePlot.isShowSelectedOnly() );
-			mouseOverOK = true;
+//			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
+//					legendColors,graphics, allData,units,firstColumn,firstRow,
+//					xOffset, yOffset, width, height,currentView,FastAreaTilePlot.isShowSelectedOnly() );
+//			mouseOverOK = true;
 //			tilePlotPanel.calculateAverageLevels();
 //			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
 //					legendColors,graphics, allData,units,firstColumn,firstRow,
@@ -193,14 +193,14 @@ public class AreaGTTilePlot extends TilePlot{
 		case TOTALS:
 			float[][] allData2=tilePlotPanel.getAllLayerData();
 			// draw the area polygons
-			mapPolygon.calculateValues(this,domain, gridBounds, projector,legendLevels,
-					legendColors,graphics, allData2,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView ,FastAreaTilePlot.isShowSelectedOnly() );
-			mouseOverOK = true;
+//			mapPolygon.calculateValues(this,domain, gridBounds, projector,legendLevels,
+//					legendColors,graphics, allData2,units,firstColumn,firstRow,
+//					xOffset, yOffset, width, height,currentView ,FastAreaTilePlot.isShowSelectedOnly() );
+//			mouseOverOK = true;
 //			tilePlotPanel.calculateTotalLevels();
-			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
-					legendColors,graphics, allData2,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView,FastAreaTilePlot.isShowSelectedOnly() );
+//			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
+//					legendColors,graphics, allData2,units,firstColumn,firstRow,
+//					xOffset, yOffset, width, height,currentView,FastAreaTilePlot.isShowSelectedOnly() );
 			break;	
 		}
 
