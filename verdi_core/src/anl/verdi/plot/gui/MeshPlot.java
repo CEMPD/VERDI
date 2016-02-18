@@ -14,11 +14,8 @@ import gov.epa.emvl.MPASTilePlot;
 //import gov.epa.emvl.GridShapefileWriter;		// 2014 disable write shapefile VERDI 1.5.0
 import gov.epa.emvl.MapLines;
 import gov.epa.emvl.Mapper;
-import gov.epa.emvl.GridCellStatistics;
 import gov.epa.emvl.MeshCellStatistics;
-import gov.epa.emvl.Numerics;
 import gov.epa.emvl.Projector;
-import gov.epa.emvl.TilePlot;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -43,7 +40,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -66,7 +62,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -112,13 +107,8 @@ import org.geotools.styling.StyleBuilder;
 
 import saf.core.ui.event.DockableFrameEvent;
 import ucar.ma2.Array;
-import ucar.ma2.ArrayDouble;
-import ucar.ma2.ArrayFloat;
 import ucar.ma2.ArrayLogFactory;
-import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
-import ucar.unidata.geoloc.Projection;
-import ucar.unidata.geoloc.projection.LatLonProjection;
 import anl.map.coordinates.Decidegrees;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiGUI;
@@ -128,7 +118,6 @@ import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataFrameBuilder;
-import anl.verdi.data.DataFrameIndex;
 import anl.verdi.data.DataManager;
 import anl.verdi.data.DataReader;
 import anl.verdi.data.DataUtilities;
@@ -157,7 +146,6 @@ import anl.verdi.plot.probe.ProbeEvent;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.util.PlotExporter;
 import anl.verdi.plot.util.PlotExporterAction;
-import anl.verdi.util.ArrayFactory;
 import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;
 
@@ -229,7 +217,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private NumberFormat format;
 	private NumberFormat coordFormat;
 	private NumberFormat valueFormat;
-	private final boolean invertRows; // HACK: Invert rows of AURAMS / GEM / CF Convention data?
 
 	/** Cell id are stored as colors in an image to facilitate a quick mapping of
 	 *  pixels to cell id.  Retrieved values must be adjusted by COLOR_BASE to get cell id
@@ -365,11 +352,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	protected JCheckBoxMenuItem showGridLines;
 	final JMenu mapLayersMenu = new JMenu("Add Map Layers");
 	
-	private double xClickLocation = 0;
-	private double yClickLocation = 0;
 	private int currentClickedCell = 0;
 	private int previousClickedCell = 0;
-	private static final boolean SHOW_ZOOM_LOCATION = true;
+	//private static final boolean SHOW_ZOOM_LOCATION = true;
 	
 	private ConfigDialog dialog = null;
 	@SuppressWarnings("unused")
@@ -463,7 +448,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 					final int canvasWidth = getWidth();
 					final int canvasHeight = getHeight();
-					float marginScale = 0.95f; // Controls whitespace margin around plot window.
 					String sTitle1 = config.getSubtitle1();
 					String sTitle2 = config.getSubtitle2();
 					Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
@@ -471,13 +455,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					Font sFont2 = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
 					int fontSize = (tFont == null) ? 20 : tFont.getSize();
 					yOffset = 20 + fontSize;
-					marginScale *= 20f / (fontSize - 20 < 0 ? 20 : 20 + fontSize / 10f);
 
 					if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
 						fontSize = (sFont1 == null) ? 20 : sFont1.getSize();
 						yOffset += fontSize + 6;
-						marginScale *= 20f / (fontSize - 20 < 0 ? 20
-								: 20 + fontSize / 10f);
 					}
 
 					if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
@@ -485,27 +466,16 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 						if (sTitle1 == null || sTitle1.trim().isEmpty()) {
 							yOffset += 26;
-							marginScale *= 20f / 22f;
 						}
 
 						yOffset += fontSize + 6;
-						marginScale *= 20f / (fontSize - 20 < 0 ? 20
-								: 20 + fontSize / 10f);
 					}
 
 					xOffset = 100;
-					
-					final int subsetRows = 1 + lastRow - firstRow;
-					final int subsetColumns = 1 + lastColumn - firstColumn;
-					
-					final float dataRatio = subsetColumns / (float)subsetRows;
-					final float screenRatio = canvasWidth / (float)canvasHeight;
-					
-					
+										
 					int width;
 					int height;
 					
-					String prefix = "w";
 					if (clippedDataRatio > 1) {
 						width = Math.round(canvasWidth - (tilePlot.getLegendBoxWidth() + xOffset));
 						height = (int)Math.round(width / clippedDataRatio);
@@ -513,13 +483,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						if (minHeight < height) {
 							height = minHeight;
 							width = (int)Math.round(height * clippedDataRatio);
-							prefix = "wm";
 						}
 					}
 					else {
 						height = Math.round(canvasHeight - tilePlot.getFooterHeight() * 2);
 						width = (int)Math.round(height * clippedDataRatio);
-						prefix = "h";
 					}
 					canvasSize = width;
 										
@@ -688,9 +656,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 //									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
 //									subsetLayerData);
 						} catch (Exception e) {
-							Logger.error("FastTilePlot's run method " + e.getMessage());
-							//TODO - remove this
-							e.printStackTrace();
+							Logger.error("FastTilePlot's run method", e);
 						}
 						} //TAH finish rework if
 
@@ -1163,7 +1129,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			lastColumn = temp;
 		}
 
-		computeDerivedAttributes();
+		//computeDerivedAttributes();
 	}
 	
 	public void processMouseMotionEvent(MouseEvent me) {
@@ -1225,20 +1191,14 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	protected double getXDistance(Point p) {
 		int dist = p.x - dataArea.x;
-		double xCoord = dist / compositeFactor + panX;
-		xCoord *= RAD_TO_DEG;
-		int div = dist * (lastColumn - firstColumn + 1);
-		int den = dataArea.width;
+		double xCoord = (dist / compositeFactor + panX) * RAD_TO_DEG;
 		
 		return xCoord;
 	}
 	
 	protected double getYDistance(Point p) {
 		int dist = p.y - dataArea.y;
-		double yCoord = latMax - dist / compositeFactor + panY;
-		yCoord *= RAD_TO_DEG;
-		//int div = dist * (lastColumn - firstColumn + 1);
-		//int den = dataArea.width;
+		double yCoord = (latMax - dist / compositeFactor + panY) * RAD_TO_DEG;
 		
 		return yCoord;
 	}
@@ -1320,10 +1280,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		double zoomedFactor = screenWidth / dataWidth * zoomFactor;
 		visibleDataWidth = screenWidth / zoomedFactor;
-		
-		xClickLocation = bounds.x;
-		yClickLocation = bounds.y;
-		
+				
 		if (!setLatLonRange)
 			setCellClicked(getCellIdByCoord(bounds.x, bounds.y));
 		
@@ -1349,7 +1306,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		firstColumn = (int)Math.round(panX * RAD_TO_DEG);
 		lastColumn = (int)Math.round((panX + visibleDataWidth) * RAD_TO_DEG);
 
-		computeDerivedAttributes();
+		//computeDerivedAttributes();
 		draw();
 	}
 	
@@ -1512,7 +1469,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 
 		public String getElevation() {
-			//TODO - add forumula to calculate layer elevation instead of level
 			String e = null;
 			if (layerAxis != null) {
 				if (layerAxis.getName().equals(VAR_ELEVATION)) {
@@ -1764,7 +1720,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			previousClippedDataRatio = clippedDataRatio;
 			clippedDataRatio = dataRatio;
 			renderVariable = ArrayReader.getReader(dataFrame.getArray());
-			CoordAxis xAxis = mpasAxes.getXAxis();
 			var = ds.getVariable("verdi.avgCellDiam");
 			avgCellDiam = reader.getValues(ds, null, var).getDouble(null);
 			System.out.println("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
@@ -1916,6 +1871,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	public MeshPlot(VerdiApplication app, DataFrame dataFrame) {
 		super(true);
+		long start = System.currentTimeMillis();
 		this.app=app;
 		setDoubleBuffered(true);
 		assert dataFrame != null;
@@ -2025,13 +1981,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		cellWidth = envelope.getWidth() / columns; // 12000.0.
 		cellHeight = envelope.getHeight() / rows; // 12000.0.
 
-		// HACK to invert row indexing for AURAMS / GEM / CF Convention files:
-
-		final CoordAxis yAxis = coordinateAxes.getYAxis();
-		final double firstYValue = yAxis.getValue( 0 );
-		final double lastYValue  = yAxis.getValue( rows - 1 );
-		invertRows = firstYValue > lastYValue;
-
 		// 2014 footer date/time for footer1
 		
 		GregorianCalendar firstDate = mpasAxes.getDate(firstTimestep);
@@ -2113,7 +2062,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		// Compute attributes derived from the above attributes and dataFrame:
 
-		computeDerivedAttributes();
+		//computeDerivedAttributes();
 
 		// Create EMVL TilePlot (but does not draw yet - see draw()):
 
@@ -2214,45 +2163,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		doubleBufferedRendererThread.start(); // Calls
 		
 		draw();
-	}
-	
-	// Compute legend levels from data range:
-
-	private void computeLegend() {
-
-		//populate legend colors and ranges on initiation
-		//default to not a log scale
-		double[] minmax = { 0.0, 0.0 };
-		//calculate the non log min/max values, keep the code here
-		//first part of IF ELSE will use the min/max values
-		computeDataRange(minmax, false);
-//		ColorMap.ScaleType sType = map.getScaleType();
-		//computeDataRange function need this.log set correctly...
-		if(map.getPalette() == null)
-		{
-			Logger.debug("getPalette is null here also so getting ready to call PavePaletteCreator");
-		}
-		defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPalettes(8).get(0);
-		map.setPalette(defaultPalette);
-		
-		//set min/max for both log and non log values...
-		map.setMinMax( minmax[0], minmax[1]);
-		computeDataRange(minmax, true);
-		map.setLogMinMax( minmax[0], minmax[1]);
-		//this final one is for the below legend value calculations
-		computeDataRange(minmax, this.log);
-
-		legendColors = defaultPalette.getColors();
-		final double minimum = minmax[0];
-		final double maximum = minmax[1];
-		minMax = new DataUtilities.MinMax(minimum, maximum);
-		int count = legendColors.length + 1;
-		final double delta = (minmax[1] - minmax[0]) / (count - 1);
-		legendLevels = new double[count];
-		for (int level = 0; level < count; ++level) {
-			legendLevels[level] = minmax[0] + level * delta;
-		}
-		config.setUnits("");
+		long total = (System.currentTimeMillis() - start) / 1000;
+		System.err.println("MeshPlot initialized in " + total + "s");
 	}
 	
 	private boolean statError = false;
@@ -2329,7 +2241,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	// Compute derived attributes:
 
-	private void computeDerivedAttributes() {
+	/*private void computeDerivedAttributes() {
 		if (true)
 			return;
 
@@ -2348,10 +2260,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			domain[LATITUDE][MINIMUM] = gridBounds[Y][MINIMUM];
 			domain[LATITUDE][MAXIMUM] = gridBounds[Y][MAXIMUM];
 		}
-	}
+	}*/
 
 	// Compute map domain from grid bounds:
 
+	/*
 	private static void computeMapDomain(final Projector projector,
 			final double[][] gridBounds, double[][] mapDomain) {
 
@@ -2411,6 +2324,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					mapDomain[LATITUDE][MAXIMUM] + margin, -90.0, 90.0);
 		}
 	}
+	*/
 
 	// Copy current timestep, layer and row/column subset data from dataFrame
 	// into subsetlayerdata[][]:
@@ -2428,7 +2342,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				subsetLayerData[cell] = (float)cellsToRender[cell].getValue();
 			}
 		} else {
-			final int statistic = selection - 1;
 
 			if ( statisticsData == null || recomputeStatistics ) {
 				computeStatistics(log);
@@ -2727,7 +2640,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		visibleDataHeight = dataHeight;
 		setCellClicked(0);
 		draw();
-		computeDerivedAttributes();
+		//computeDerivedAttributes();
 		copySubsetLayerData(this.log);
 	}
 
@@ -3309,7 +3222,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		public static final int CANCEL_OPTION = -1;
 		public static final int YES_OPTION = 1;
 		public static final int ERROR = 0;
-		private MeshPlot plot;
 		private JTextField fLonField;
 		private JTextField lLonField;
 		private JTextField fLatField;
@@ -3331,7 +3243,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			this.lLonField = new JTextField("1", 4);
 			this.fLatField = new JTextField("1", 4);
 			this.lLatField = new JTextField("1", 4);
-			this.plot = plot;
 			this.getContentPane().add(createLayout());
 		}
 
@@ -3952,9 +3863,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 		
 		// rect is in axis coords
-		private String createAxisCoordAreaString(Point4i[] points) {
+		/*private String createAxisCoordAreaString(Point4i[] points) {
 			return createLonLatAreaString(points);
-		}
+		}*/
 		
 		// rect is in axis coordinates
 		private String createLonLatAreaString(Point4i[] points) {
@@ -3992,8 +3903,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 //	}
 	
 	public void exportASCIIGrid( String baseFileName ) {
-		final int subsetLayerRows = 1 + lastRow - firstRow;
-		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
 		final double subsetWestEdge = westEdge + firstColumn * cellWidth;
 		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
 		float[][] exportCellData = new float[1][];
@@ -4219,9 +4128,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		if ( this.dataFrame == null) {
 			return;
 		}
-		
-		boolean doDebug = false;
-		
+				
 		this.dataFrameLog = createLogDataFrame( this.dataFrame);
  
 	}
