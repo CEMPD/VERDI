@@ -42,10 +42,6 @@
 			<export prefix="*"/>
 		</library>
 		
-		<library id="netcdf" path="../core/lib/netcdfAll-4.5.5-SNAPSHOT.jar" type="code">
-			<export prefix="*"/>
-		</library>
-		
 		<library id="log4j-1.2" path="../core/lib/log4j-1.2-api-2.0-rc1.jar" type="code">
 			<export prefix="*"/>
 		</library>

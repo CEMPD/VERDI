@@ -29,11 +29,7 @@
 		<library id="grib" path="../core/lib/grib-8.0.29.jar" type="code">
 			<export prefix="*"/>
 		</library>
-		
-		<library id="netcdf" path="../core/lib/netcdfAll-4.5.5-SNAPSHOT.jar" type="code">
-			<export prefix="*"/>
-		</library>
-		
+
 		<library id="commons-codec" path="../core/lib/commons-codec-1.9.jar" type="code">
 			<export prefix="*"/>
 		</library>
