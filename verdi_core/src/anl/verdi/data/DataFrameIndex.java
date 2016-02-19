@@ -10,8 +10,6 @@ import ucar.ma2.Index;
  */
 public class DataFrameIndex {
 	
-	public Exception e = new Exception();
-
 	protected int xIndex, yIndex, tIndex, kIndex;
 	protected int[] indices;
 	/* private */ Index index;
@@ -71,14 +69,7 @@ public class DataFrameIndex {
 			}
 		} else {
 			indices[tIndex] = timeStep;
-			try {
 			index.set(indices);
-			}
-			catch (Throwable t) {
-				e.printStackTrace();
-				t.printStackTrace();
-				throw t;
-			}
 		}
 	}
 
