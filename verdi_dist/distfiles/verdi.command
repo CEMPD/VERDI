@@ -11,7 +11,7 @@ JAVAMAXMEM="-Xmx1024M"
 # Limit the number of default spawned threads (eca):
 JAVAOPTS="-XX:+UseParallelGC -XX:ParallelGCThreads=1 -Djava.ext.dirs="
 
-JAVACMD="$JAVA $JAVAOPTS $JAVAMAXMEM -classpath ./bootstrap.jar:./lib/saf.core.runtime.jar:./lib/jpf.jar:./lib/jpf-boot.jar:./lib/:../core/lib/MacOSX/*:../core/lib/* saf.core.runtime.Boot"
+JAVACMD="$JAVA $JAVAOPTS $JAVAMAXMEM -classpath ./bootstrap.jar:./lib/saf.core.runtime.jar:./lib/jpf.jar:./lib/jpf-boot.jar:./lib/:../core/lib/MacOSX/*:../core/lib/org.apache.xalan_2.7.1.v201005080400.jar:../core/lib/org.apache.xml.serializer_2.7.1.v201005080400.jar:../core/lib/* saf.core.runtime.Boot"
 
 BATCHCMD=$1
 
