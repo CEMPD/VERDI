@@ -257,10 +257,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private Color axisColor = Color.darkGray;
 	private Color labelColor = Color.black;
 
-	// subsetLayerData[ 1 + lastRow - firstRow ][ 1 + lastColumn - firstColumn ]
-	// at current timestep and layer.
-	private float[] subsetLayerData = null;
-
 	// layerData[ rows ][ columns ][ timesteps ]
 	private float[][] layerData = null;
 	//private float[][][] layerDataLog = null;
@@ -361,6 +357,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private Plot.ConfigSoure configSource = Plot.ConfigSoure.GUI;
 
 	VerdiApplication app;
+	
+	double[] minmax = { 0.0, 0.0 };
+	double[] logminmax = { 0.0, 0.0 };
 	
 	// Create a Thread that contains the above Runnable:
 
@@ -625,10 +624,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							Logger.debug("aPlotUnits = " + aPlotUnits);
 							NumberFormat aNumberFormat = map.getNumberFormat();
 							Logger.debug("aNumberFormat = " + aNumberFormat);
-							int aSubsetLayerDataLength = 0;
-							if (subsetLayerData != null)
-								aSubsetLayerDataLength = subsetLayerData.length;
-							Logger.debug("subsetLayerData.length = " + aSubsetLayerDataLength);
 							Logger.debug("ready to make revised function call to tilePlot.draw, thread = " + Thread.currentThread().toString());
 
 							//debug
@@ -896,7 +891,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		doubleBufferedRendererThread = null;
 		
-		subsetLayerData = null;
 		layerData = null;
 		statisticsData = null;	
 		
@@ -966,10 +960,16 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			
 			//populate legend colors and ranges on initiation
 			//default to not a log scale
-			double[] minmax = { 0.0, 0.0 };
+			double[] lminmax = { 0.0, 0.0 };
+			double[] llogminmax = { 0.0, 0.0 };
 			//calculate the non log min/max values, keep the code here
 			//first part of IF ELSE will use the min/max values
-			computeDataRange(minmax, false);
+			if (this.preStatIndex < 1) {
+				lminmax[0] = minmax[0];
+				lminmax[1] = minmax[1];
+			}
+			else
+				computeDataRange(lminmax, false);
 //			ColorMap.ScaleType sType = map.getScaleType();		// local variable sType not used
 			//computeDataRange function need this.log set correctly...
 			if (map.getPalette() == null)
@@ -980,21 +980,27 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			map.setPalette(defaultPalette);
 			
 			//set min/max for both log and non log values...
-			map.setMinMax( minmax[0], minmax[1]);
-			computeDataRange(minmax, true);
-			map.setLogMinMax( minmax[0], minmax[1]);
+			map.setMinMax( lminmax[0], lminmax[1]);
+			if (this.preStatIndex < 1) {
+				llogminmax[0] = logminmax[0];
+				llogminmax[1] = logminmax[1];
+			}
+			else
+				computeDataRange(llogminmax, true);
+			map.setLogMinMax( llogminmax[0], llogminmax[1]);
 			//this final one is for the below legend value calculations
-			computeDataRange(minmax, this.log);
+			if (this.log)
+				lminmax = llogminmax;
 
 			legendColors = defaultPalette.getColors();
-			final double minimum = minmax[0];
-			final double maximum = minmax[1];
+			final double minimum = lminmax[0];
+			final double maximum = lminmax[1];
 			minMax = new DataUtilities.MinMax(minimum, maximum);
 			int count = legendColors.length + 1;
-			final double delta = (minmax[1] - minmax[0]) / (count - 1);
+			final double delta = (lminmax[1] - lminmax[0]) / (count - 1);
 			legendLevels = new double[count];
 			for (int level = 0; level < count; ++level) {
-				legendLevels[level] = minmax[0] + level * delta;
+				legendLevels[level] = lminmax[0] + level * delta;
 			}
 			config.setUnits("");
 	    } else if (source == playStopButton) {
@@ -1058,7 +1064,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 
 		String command = event.getActionCommand();
-		//Point start = new Point((popUpLocation), getRow(popUpLocation));
 		Rectangle rect = new Rectangle(new Point(getCol(popUpLocation), getRow(popUpLocation)), new Dimension(0, 0));
 
 		if (command.equals(PROPERTIES_COMMAND)) {
@@ -1671,58 +1676,50 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		int numVertices = indexToVertexId.getShape()[0];
 		for (int i = 0; i < numVertices; ++i)
 			vertexPositionMap.put(indexToVertexId.getInt(i), i);
-		
-		//TODO - fixme, maybe delete this
-		/*int numCells = foo;
-		for (int i = 0; i < numCells; ++i)
-			cellPositionMap.put(indexToCellId.getInt(i), i);*/
 			
-			int[] vertexShape = vertexList.getShape();
+		int[] vertexShape = vertexList.getShape();
 
-			cellsToRender = new CellInfo[vertexShape[0]];
-			splitCells = new HashMap<CellInfo, Integer>();
-			cellIdInfoMap = new HashMap<Integer, CellInfo>();
-			for (int i = 0; i < vertexShape[0]; ++i) { //for each cell
-				int vertices = cellVertices.getInt(i);
-				CellInfo cell = new CellInfo(i, vertices);
-				cellsToRender[i] = cell;
-				
-				for (int j = 0; j < vertices; ++j) { //for each vertex
-					int vId = vertexList.get(i,j);
-					vId = vertexPositionMap.get(vId);
-					cell.latCoords[j] = normalizeLat(latVert.getDouble(vId));
-					cell.lonCoords[j] = normalizeLon(lonVert.getDouble(vId));
-
-					//System.out.println("Cell " + i + " vertex " + j + " id " + vId + " x " + xCord.getDouble(vId) + " y " + yCord.getDouble(vId) + " z " + zCord.getDouble(vId));
-				}
-				
-				cell.calculateCellBounds();
-				
-				cell.setLat(normalizeLat(latCell.getDouble(i)) * RAD_TO_DEG);
-				cell.setLon(normalizeLon(lonCell.getDouble(i)) * RAD_TO_DEG);
-				//if (vertices != 6)
-					//System.out.println("Cell " + cell.getId() + " " + vertices + " vertices lon " + cell.lon + " lat " + cell.lat);
-
-				
-				if (cell.lonCoords[cell.maxX] - cell.lonCoords[cell.minX] > Math.PI * 1.5)
-					cell.split(i);
+		cellsToRender = new CellInfo[vertexShape[0]];
+		splitCells = new HashMap<CellInfo, Integer>();
+		cellIdInfoMap = new HashMap<Integer, CellInfo>();
+		for (int i = 0; i < vertexShape[0]; ++i) { //for each cell
+			int vertices = cellVertices.getInt(i);
+			CellInfo cell = new CellInfo(i, vertices);
+			cellsToRender[i] = cell;
+			
+			for (int j = 0; j < vertices; ++j) { //for each vertex
+				int vId = vertexList.get(i,j);
+				vId = vertexPositionMap.get(vId);
+				cell.latCoords[j] = normalizeLat(latVert.getDouble(vId));
+				cell.lonCoords[j] = normalizeLon(lonVert.getDouble(vId));
 			}
 			
-			lonMin = columnAxis.getRange().getLowerBound() / RAD_TO_DEG;
-			latMin = rowAxis.getRange().getLowerBound() / RAD_TO_DEG;
-			dataWidth = (columnAxis.getRange().getExtent() - 1) / RAD_TO_DEG;
-			dataHeight = (rowAxis.getRange().getExtent() - 1) / RAD_TO_DEG;
-			lonMax = lonMin + dataWidth;
-			latMax = latMin + dataHeight;
-			visibleDataWidth = dataWidth;
-			visibleDataHeight = dataHeight;
-			dataRatio = dataWidth / dataHeight;
-			previousClippedDataRatio = clippedDataRatio;
-			clippedDataRatio = dataRatio;
-			renderVariable = ArrayReader.getReader(dataFrame.getArray());
-			var = ds.getVariable("verdi.avgCellDiam");
-			avgCellDiam = reader.getValues(ds, null, var).getDouble(null);
-			System.out.println("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
+			cell.calculateCellBounds();
+			
+			cell.setLat(normalizeLat(latCell.getDouble(i)) * RAD_TO_DEG);
+			cell.setLon(normalizeLon(lonCell.getDouble(i)) * RAD_TO_DEG);
+			//if (vertices != 6)
+				//System.out.println("Cell " + cell.getId() + " " + vertices + " vertices lon " + cell.lon + " lat " + cell.lat);
+			
+			if (cell.lonCoords[cell.maxX] - cell.lonCoords[cell.minX] > Math.PI * 1.5)
+				cell.split(i);
+		}
+		
+		lonMin = columnAxis.getRange().getLowerBound() / RAD_TO_DEG;
+		latMin = rowAxis.getRange().getLowerBound() / RAD_TO_DEG;
+		dataWidth = (columnAxis.getRange().getExtent() - 1) / RAD_TO_DEG;
+		dataHeight = (rowAxis.getRange().getExtent() - 1) / RAD_TO_DEG;
+		lonMax = lonMin + dataWidth;
+		latMax = latMin + dataHeight;
+		visibleDataWidth = dataWidth;
+		visibleDataHeight = dataHeight;
+		dataRatio = dataWidth / dataHeight;
+		previousClippedDataRatio = clippedDataRatio;
+		clippedDataRatio = dataRatio;
+		renderVariable = ArrayReader.getReader(dataFrame.getArray());
+		var = ds.getVariable("verdi.avgCellDiam");
+		avgCellDiam = reader.getValues(ds, null, var).getDouble(null);
+		//System.out.println("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
 	}
 	
 	
@@ -1737,12 +1734,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		transformedCellDiam = (int)Math.round(avgCellDiam * compositeFactor);
 		renderBorder = transformedCellDiam / screenWidth > borderDisplayCutoff;
 
-		//int imageWidth = screenWidth;
-		//int imageHeight = (int)Math.round(imageWidth * dataHeight / dataWidth);
-		for (int i = 0; i < cellsToRender.length; ++i) {
-			//cellsToRender[i].transformCell(factor, imageWidth, imageHeight, xOffset, yOffset);		
+		for (int i = 0; i < cellsToRender.length; ++i)
 			cellsToRender[i].transformCell(compositeFactor, xOrigin, yOrigin);		
-		}
+		
 		for (CellInfo cell : splitCells.keySet())
 			cell.transformCell(compositeFactor, xOrigin, yOrigin);
 		
@@ -1767,7 +1761,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	        try {
 				ImageIO.write(cellIdMap,  "bmp", outputfile);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}*/
 		}
@@ -1781,7 +1774,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		if (xOffset != 0)
 			gr.setClip(xOffset, yOffset, screenWidth, screenHeight);
-		final int statisticsSelection = statisticsMenu.getSelectedIndex();
 		
 		final Boolean showGridLines = (Boolean)
 				config.getObject( TilePlotConfiguration.SHOW_GRID_LINES );
@@ -1793,10 +1785,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
         */
 
 		for (int i = 0; i < cells; ++i) { //for each cell
-			renderCell(gr, xOffset, yOffset, cellsToRender[i], statisticsSelection, showGridLines, showCellBorder, i);
+			renderCell(gr, xOffset, yOffset, cellsToRender[i], showGridLines, showCellBorder, i);
 		}
-		for (Map.Entry<CellInfo, Integer> cell : splitCells.entrySet()) {
-			renderCell(gr, xOffset, yOffset, cell.getKey(), statisticsSelection, showGridLines, showCellBorder, cell.getValue());
+		for (Map.Entry<CellInfo, Integer> cellMap : splitCells.entrySet()) {
+			renderCell(gr, xOffset, yOffset, cellMap.getKey(), showGridLines, showCellBorder, cellMap.getValue());
 		}
 		
 		gr.setClip(null);
@@ -1819,7 +1811,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 	}
 	
-	private void renderCell(Graphics gr, int xOffset, int yOffset, CellInfo cell, int statisticsSelection, boolean showGridLines, boolean showCellBorder, int index) {
+	private void renderCell(Graphics gr, int xOffset, int yOffset, CellInfo cell, boolean showGridLines, boolean showCellBorder, int index) {
 		if (cell.colorIndex == -1)
 			return;
 
@@ -1833,10 +1825,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			gr.setColor(Color.BLACK);
 			System.err.println("Rendering clicked cell location " + cell.lon + ", " + cell.lat + " id " + cell.cellId);
 		}*/
-		else if (statisticsSelection == 0)
+		else if (preStatIndex < 1)
 			gr.setColor(legendColors[cell.colorIndex]);
-		else
-			gr.setColor(legendColors[indexOfObsValue(subsetLayerData[index], legendLevels)]);
+		else {
+			gr.setColor(legendColors[indexOfObsValue(statisticsData[preStatIndex - 1][0][cell.cellId], legendLevels)]);
+		}
 
 		gr.fillPolygon(cell.lonTransformed, cell.latTransformed, cell.lonTransformed.length);
 		if (showCellBorder) {
@@ -2007,7 +2000,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 		
 		//populate legend colors and ranges on initiation
-		double[] minmax = { 0.0, 0.0 };
+
 		//default to not a log scale
 		this.log = false;
 		//calculate the non log min/max values, keep the code here
@@ -2033,7 +2026,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		//set min/max for both log and non log values...
 		map.setMinMax( minmax[0], minmax[1]);
-		double[] logminmax = { 0.0, 0.0 };
 		computeDataRange(logminmax, true);
 		System.err.println("Calculating log data range " + new Date());
 		map.setLogMinMax( logminmax[0], logminmax[1]);
@@ -2331,28 +2323,20 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	private void copySubsetLayerData(boolean log) {
 
-		if (subsetLayerData == null) {
-			subsetLayerData = new float[cellsToRender.length];
-		}
 
 		final int selection = statisticsMenu.getSelectedIndex();
 		
-		if ( selection == 0 ) {			
-			for ( int cell = 0; cell < cellsToRender.length; ++cell ) {
-				subsetLayerData[cell] = (float)cellsToRender[cell].getValue();
-			}
-		} else {
+		if ( selection > 0 ) {
 
 			if ( statisticsData == null || recomputeStatistics ) {
 				computeStatistics(log);
+				/*final boolean doLog = log;
+				new Thread(new Runnable() { public void run() {
+					computeStatistics(doLog);
+				}}).start();*/
 				recomputeStatistics = false;
 			}
 
-			// Copy from statisticsData into subsetLayerData[ rows ][ columns ]:
-			
-			for ( int cell = 0; cell < cellsToRender.length; ++cell ) {
-				subsetLayerData[cell] = (float)cellsToRender[cell].getValue();
-			}
 		}
 
 		if ( recomputeLegend ) {
@@ -2367,7 +2351,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		final int selection = statisticsMenu != null ? statisticsMenu.getSelectedIndex() : 0;
 		boolean initialized = false;
 		minmax[0] = minmax[1] = 0.0;
-		if ( selection == 0 ) {
+		if ( selection < 1 ) {
 			DataFrame dataFrame = getDataFrame(log);
 			final MPASDataFrameIndex dataFrameIndex = new MPASDataFrameIndex(dataFrame);
 				
@@ -3740,24 +3724,20 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		double lonCoord = ((point.x / compositeFactor) + panX) * RAD_TO_DEG + columnOrigin;
 		double latCoord = (dataHeight - ((point.y / compositeFactor)  + panY )) * RAD_TO_DEG + rowOrigin;
 		
-		/*String lonSuffix = "E";
-		String latSuffix = "N";
-		if (lonCoord < 0) {
-			lonCoord *= -1;
-			lonSuffix = "W";
-		}
-		if (latCoord < 0) {
-			latCoord *= -1;
-			latSuffix = "S";
-		}*/
+
 		String ret = "(" + coordFormat.format(lonCoord) + ", " + coordFormat.format(latCoord); 
 		//ret += " xy " + point.x + "," + point.y;
 
 		try {
 			int hoveredId = getCellIdByCoord(point.x, point.y);
 			CellInfo cell = cellIdInfoMap.get(hoveredId);
+			double value;
+			if (preStatIndex < 1)
+				value = cell.getValue();
+			else
+				value = statisticsData[preStatIndex - 1][0][cell.cellId];
 			if (cell != null) {
-				ret += cell.getElevation() + ") " + variable + " " + valueFormat.format(cell.getValue()) + unitString;
+				ret += cell.getElevation() + ") " + variable + " " + valueFormat.format(value) + unitString;
 				//ret += ") " + cell.getId() + " " + " " + valueFormat.format(cell.getValue()) + " c " + coordFormat.format(cell.lon) + "," + coordFormat.format(cell.lat) + " " + point.x + "," + point.y;
 
 			}
@@ -3905,8 +3885,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	public void exportASCIIGrid( String baseFileName ) {
 		final double subsetWestEdge = westEdge + firstColumn * cellWidth;
 		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
-		float[][] exportCellData = new float[1][];
-		exportCellData[0] = subsetLayerData;
+		float[][] exportCellData = new float[1][cellsToRender.length];
+		
+		for ( int cell = 0; cell < cellsToRender.length; ++cell ) {
+			exportCellData[0][cell] = (float)cellsToRender[cell].getValue();
+		}
 		ASCIIGridWriter.write( baseFileName + ".asc",
 		1, cellsToRender.length,
 		subsetWestEdge, subsetSouthEdge,
