@@ -447,30 +447,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 					final int canvasWidth = getWidth();
 					final int canvasHeight = getHeight();
-					String sTitle1 = config.getSubtitle1();
-					String sTitle2 = config.getSubtitle2();
-					Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
-					Font sFont1 = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
-					Font sFont2 = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
-					int fontSize = (tFont == null) ? 20 : tFont.getSize();
-					yOffset = 20 + fontSize;
-
-					if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
-						fontSize = (sFont1 == null) ? 20 : sFont1.getSize();
-						yOffset += fontSize + 6;
-					}
-
-					if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
-						fontSize = (sFont2 == null) ? 20 : sFont2.getSize();
-
-						if (sTitle1 == null || sTitle1.trim().isEmpty()) {
-							yOffset += 26;
-						}
-
-						yOffset += fontSize + 6;
-					}
-
-					xOffset = 100;
 										
 					int width;
 					int height;
@@ -488,20 +464,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						height = Math.round(canvasHeight - tilePlot.getFooterHeight() * 2);
 						width = (int)Math.round(height * clippedDataRatio);
 					}
-					canvasSize = width;
-										
-					if (previousCanvasSize != canvasSize || zoomFactor != previousZoomFactor || previousClippedDataRatio != clippedDataRatio
-							|| timestep != previousTimestep || layer != previousLayer || panX != previousPanX || panY != previousPanY) {
-						transformCells(/*gr,*/ canvasSize, xOffset, yOffset);						
-						previousCanvasSize = canvasSize;
-						previousZoomFactor = zoomFactor;
-						previousClippedDataRatio = clippedDataRatio;
-						previousTimestep = timestep;
-						previousLayer = layer;
-						previousPanX = panX;
-						previousPanY = panY;
-					}
-					
+					canvasSize = width;					
 
 					if (canvasSize < 1) {
 						if ( get_draw_once_requests() < 0) 
@@ -530,6 +493,57 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							restoreCursor();
 						continue;// graphics system is not ready
 					}
+					
+					String sTitle1 = config.getSubtitle1();
+					String sTitle2 = config.getSubtitle2();
+					Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
+					if (tFont == null) {
+						config.putObject(PlotConfiguration.TITLE_FONT, offScreenGraphics.getFont());
+						tFont = config.getFont(PlotConfiguration.TITLE_FONT);
+					}
+					Font sFont1 = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
+					if (sFont1 == null) {
+						config.putObject(PlotConfiguration.SUBTITLE_1_FONT, offScreenGraphics.getFont());
+						sFont1 = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
+					}
+					Font sFont2 = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
+					if (sFont2 == null) {
+						config.putObject(PlotConfiguration.SUBTITLE_2_FONT, offScreenGraphics.getFont());
+						sFont2 = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
+					}
+					int fontSize = (tFont == null) ? 20 : tFont.getSize();
+					yOffset = 20 + fontSize;
+
+					if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
+						fontSize = (sFont1 == null) ? 20 : sFont1.getSize();
+						yOffset += fontSize + 6;
+					}
+
+					if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
+						fontSize = (sFont2 == null) ? 20 : sFont2.getSize();
+
+						if (sTitle1 == null || sTitle1.trim().isEmpty()) {
+							yOffset += 26;
+						}
+
+						yOffset += fontSize + 6;
+					}
+
+					xOffset = 100;
+
+										
+					if (previousCanvasSize != canvasSize || zoomFactor != previousZoomFactor || previousClippedDataRatio != clippedDataRatio
+							|| timestep != previousTimestep || layer != previousLayer || panX != previousPanX || panY != previousPanY) {
+						transformCells(/*gr,*/ canvasSize, xOffset, yOffset);						
+						previousCanvasSize = canvasSize;
+						previousZoomFactor = zoomFactor;
+						previousClippedDataRatio = clippedDataRatio;
+						previousTimestep = timestep;
+						previousLayer = layer;
+						previousPanX = panX;
+						previousPanY = panY;
+					}
+
 
 					final Graphics graphics = threadParent.getGraphics();
 
