@@ -1753,7 +1753,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		if (screenWidth > 0) {
 			cellIdMap = new BufferedImage(screenWidth + 1, screenHeight + 1, BufferedImage.TYPE_INT_RGB);
 			java.awt.Graphics2D g = cellIdMap.createGraphics();
-	        g.setColor(new Color(COLOR_BASE * -1));
+	        g.setColor(new Color(COLOR_BASE * -1 - 1));
 	        g.fillRect(0,  0,  screenWidth+1, screenHeight + 1);
 	        g.translate(xOffset * -1,  yOffset * -1);
 	        renderCells(g, 0, 0);
@@ -3731,6 +3731,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		try {
 			int hoveredId = getCellIdByCoord(point.x, point.y);
 			CellInfo cell = cellIdInfoMap.get(hoveredId);
+			if (cell == null) //Hovered over an unpainted space, where the model did not include a cell
+				return "";
 			double value;
 			if (preStatIndex < 1)
 				value = cell.getValue();

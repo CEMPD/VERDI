@@ -33,6 +33,13 @@ public class MPASTilePlot extends TilePlot {
 		return;
 	}
 	
+	public void drawGridLines(final Graphics graphics, int xMinimum,
+			int xMaximum, int yMinimum, int yMaximum, int firstRow,
+			int lastRow, int firstColumn, int lastColumn,
+			final Color gridLineColor ) {
+		return;
+	}
+	
 	//This needs to run after MeshPlot.drawAxis() so footerYOffset will be available, not within TilePlot.draw()
 	protected void drawLabels(final Graphics graphics, Color labelColor, int xMinimum,
 			int xMaximum, int yMinimum, int yMaximum, final String variable,
