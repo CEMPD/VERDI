@@ -222,11 +222,11 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 	 */
 	public DataFrame getValues(MPASDataset set, List<AxisRange> ranges, Variable variable) {
 		
+		if (variable.getName().equals(MPASDataset.VAR_AVG_CELL_DIAM)) {
+			return new MPASDoubleVariableFrame(set.getAvgCellDiam());
+		}
 		ucar.nc2.Variable varDS = set.getVariableDS(variable);
 		if (varDS == null) {
-			if (variable.getName().equals(MPASDataset.VAR_AVG_CELL_DIAM)) {
-				return new MPASDoubleVariableFrame(set.getAvgCellDiam());
-			}
 			return null;
 		}
 		if (ranges == null) {
@@ -255,10 +255,10 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 					DataFrameAxis frameAxis = DataFrameAxis.createDataFrameAxis(axis.getAxis(), axis.getOrigin(), axis.getExtent(), dimIndex);
 					builder.addAxis(frameAxis);
 				}
-				array = varDS.read(origin, shape);
+				array = set.read(variable.getName(), origin, shape);
 			}
 			else
-				array = varDS.read();
+				array = set.read(variable.getName());
 			builder.setArray(array);
 			return builder.createDataFrame();
 		} catch (IOException ie) {

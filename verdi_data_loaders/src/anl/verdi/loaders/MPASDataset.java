@@ -21,11 +21,15 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import org.unitsofmeasurement.unit.Unit;
 
 
+
+
 import java.awt.*;
 
+import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.DataType;
+import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.dataset.CoordinateAxis1D;
@@ -422,6 +426,34 @@ public class MPASDataset extends AbstractDataset {
 		KNOWN_UNITS.put("seaice", "-");		
 		KNOWN_UNITS.put("xice", "-");		
 	}
+	
+	Map<String, Array> arrayCache = new HashMap<String, Array>();
+	public Array read(String name) throws IOException {
+		Array ret = arrayCache.get(name);
+		if (ret != null)
+			return ret;
+		ucar.nc2.Variable var = getVariableDS(getVariable(name));
+		ret = var.read();
+		arrayCache.put(name, ret);
+		return ret;
+	}
+	
+	public Array read(String name, int[] origin, int[] shape) throws IOException, InvalidRangeException {
+		if (origin == null && shape == null)
+			return read(name);
+		String key = name;
+		if (origin != null)
+			key += "." + Arrays.toString(origin);
+		if (shape != null)
+			key += "." + Arrays.toString(shape);
+		Array ret = arrayCache.get(key);
+		if (ret != null)
+			return ret;
+		ucar.nc2.Variable var = getVariableDS(getVariable(name));
+		ret = var.read(origin, shape);
+		arrayCache.put(key, ret);
+		return ret;
+	}
 
 	private void initVariables() {
 		List<ucar.nc2.Variable> vars = dataset.getVariables();
@@ -577,15 +609,15 @@ public class MPASDataset extends AbstractDataset {
 		MPASBoxer boxer = new MPASBoxer();
 		
 		try {
-			cellVertices = getRenderVariable("nEdgesOnCell").read();
-			latVert = getRenderVariable("latVertex").read();
-			lonVert = getRenderVariable("lonVertex").read();
-			latCell = getRenderVariable("lonCell").read();
-			lonCell = getRenderVariable("lonCell").read();
-			vertexList = (ucar.ma2.ArrayInt.D2) getRenderVariable("verticesOnCell").read();
+			cellVertices = read("nEdgesOnCell");
+			latVert = read("latVertex");
+			lonVert = read("lonVertex");
+			latCell = read("lonCell");
+			lonCell = read("lonCell");
+			vertexList = (ucar.ma2.ArrayInt.D2) read("verticesOnCell");
 
 			
-			indexToVertexId = getRenderVariable("indexToVertexID").read();
+			indexToVertexId = read("indexToVertexID");
 			int numVertices = indexToVertexId.getShape()[0];
 			for (int i = 0; i < numVertices; ++i)
 				vertexPositionMap.put(indexToVertexId.getInt(i), i);
@@ -780,6 +812,8 @@ public class MPASDataset extends AbstractDataset {
 	 * @return the corresponding netsdf varibleDS object
 	 */
 	ucar.nc2.Variable getVariableDS(Variable var) {
+		if (var == null)
+			return null;
 		List<ucar.nc2.Variable> variables = dataset.getVariables();
 		for (ucar.nc2.Variable varDS : variables) {
 			if (varDS.getShortName().equals(var.getName())) {	// 2014 replaced deprecated getName() with getShortName()
