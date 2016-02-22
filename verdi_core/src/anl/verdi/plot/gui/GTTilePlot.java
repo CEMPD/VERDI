@@ -309,6 +309,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		hasNoLayer = (dataFrame.getAxes().getZAxis() == null);	// if no Z axis then hasNoLayer = true
 		format = NumberFormat.getInstance();
 		format.setMaximumFractionDigits(4);
+		setupMouse();
 
 //		GTTilePlot.AreaFinder finder = this.new AreaFinder();	// TODO implement later
 //		this.addMouseListener(finder);
@@ -2553,27 +2554,29 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	/**
 	 * from JMapPane canvas class class - GeoTools 14-SNAPSHOT User Guide
 	 */
-	topMapPanel.addMouseListener(new MapMouseAdapter() {
-		
-		@Override
-		public void onMouseClicked(MapMouseEvent ev)
-		{
-			Logger.debug("mouse click at screen: x=" + ev.getX() + ", y=" + ev.getY());
-			DirectPosition2D pos = ev.getWorldPos();
-			Logger.debug("     world: x=" + pos.x + ", y=" + pos.y);
-		}
-		
-		@Override
-		public void onMouseEntered(MapMouseEvent ev)
-		{
-			Logger.debug("Mouse entered map pane");
-		}
-		
-		@Override
-		public void onMouseExited(MapMouseEvent ev)
-		{ Logger.debug("     Mouse left map pane");
-		}
-		
-	});	// end addMouseListener for 1 argument
+	private void setupMouse() {
+		topMapPanel.addMouseListener(new MapMouseAdapter() {
+			
+			@Override
+			public void onMouseClicked(MapMouseEvent ev)
+			{
+				Logger.debug("mouse click at screen: x=" + ev.getX() + ", y=" + ev.getY());
+				DirectPosition2D pos = ev.getWorldPos();
+				Logger.debug("     world: x=" + pos.x + ", y=" + pos.y);
+			}
+			
+			@Override
+			public void onMouseEntered(MapMouseEvent ev)
+			{
+				Logger.debug("Mouse entered map pane");
+			}
+			
+			@Override
+			public void onMouseExited(MapMouseEvent ev)
+			{ Logger.debug("     Mouse left map pane");
+			}
+			
+		});	// end addMouseListener for 1 argument
+	}
 	
 }	// end class GTTilePlot
