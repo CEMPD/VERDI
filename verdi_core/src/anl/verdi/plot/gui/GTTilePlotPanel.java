@@ -24,6 +24,9 @@ import java.awt.Color;
 
 
 
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.geotools.map.MapContent;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.swing.JMapPane;
@@ -46,6 +49,7 @@ public class GTTilePlotPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 4854488557959521575L;
+	static final Logger Logger = LogManager.getLogger(GTTilePlot.class.getName());
 	// pull declaration of all other components from constructor to here as class-level data members
 	private GridBagLayout gbl_contentPane;	// overall layout manager
 	private GridBagConstraints c;
@@ -60,7 +64,7 @@ public class GTTilePlotPanel extends JPanel {
 	private JPanel domainAxisLabel;		// domainAxisLabel just below domainTickLabels in contentPane; axis label for Domain axis
 	private JPanel footersPanel;		// footersPanel below domainAxisLabel in contentPane; footers 1 & 2 & annotations legend
 	private JPanel legendPanel;			// legendPanel at right side of contentPane; legend for the tile chart colors
-	private JMapPane topMapPanel;		// primary chart (geospatial) for tile chart and associated shapefiles
+	protected JMapPane topMapPanel;		// primary chart (geospatial) for tile chart and associated shapefiles
 	
 	private final static int BORDER = 1;	// 1 blank row/column between outer line of outermost widget to first widget 
 	private final static int BAR_HT = 1;
@@ -145,7 +149,7 @@ public class GTTilePlotPanel extends JPanel {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
-				System.out.println("JMenuBar.paintComponent");
+				Logger.debug("JMenuBar.paintComponent");
 			}
 		};	
 		// start upper-left corner of window, 1-cell height, lt. gray background
@@ -167,7 +171,7 @@ public class GTTilePlotPanel extends JPanel {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
-				System.out.println("JToolBar.paintComponent");
+				Logger.debug("JToolBar.paintComponent");
 			}
 		};	
 		// start just below bar, 3 cell height, lt. gray background
@@ -189,20 +193,20 @@ public class GTTilePlotPanel extends JPanel {
 			@Override
 			protected void paintComponent(Graphics g){
 				super.paintComponent(g); 	// have to start with this 
-				System.out.println("in paintComponent, ready to get graphics for titlesPanel");
+				Logger.debug("in paintComponent, ready to get graphics for titlesPanel");
 				Graphics2D g2 = (Graphics2D) g;
-				System.out.println("in PaintComponent: g2 = " + g2.toString());
+				Logger.debug("in PaintComponent: g2 = " + g2.toString());
 				int yTitle = 0;		// default string heights to 0 (no string to display)
 				int ys1String = 0;
 				int ys2String = 0;
 				int width = titlesPanel.getWidth();		// says width = 0
 				
-				System.out.println("tFont = " + tFont + ", tColor = " + tColor + "tString = " + tString);
-				System.out.println("width = " + width);
+				Logger.debug("tFont = " + tFont + ", tColor = " + tColor + "tString = " + tString);
+				Logger.debug("width = " + width);
 				
 				if(tString != null && !tString.trim().isEmpty())	// draw title if not null or empty
 				{
-					System.out.println("tString not empty, proceeding, g = " + g2.toString());
+					Logger.debug("tString not empty, proceeding, g = " + g2.toString());
 					g2.setFont(tFont);
 					g2.setColor(tColor);
 					FontMetrics tMetrx = g2.getFontMetrics(tFont);
@@ -212,7 +216,7 @@ public class GTTilePlotPanel extends JPanel {
 				}
 				if(s1String != null && !s1String.trim().isEmpty())
 				{
-					System.out.println("s1String not empty, proceeding");
+					Logger.debug("s1String not empty, proceeding");
 					g2.setFont(s1Font);
 					g2.setColor(s1Color);
 					FontMetrics s1Metrx = g2.getFontMetrics(s1Font);
@@ -222,7 +226,7 @@ public class GTTilePlotPanel extends JPanel {
 				}
 				if(s2String != null && !s2String.trim().isEmpty())
 				{
-					System.out.println("s2String not empty, proceeding");
+					Logger.debug("s2String not empty, proceeding");
 					g2.setFont(s2Font);
 					g2.setColor(s2Color);
 					FontMetrics s2Metrx = g2.getFontMetrics(s2Font);
@@ -231,7 +235,7 @@ public class GTTilePlotPanel extends JPanel {
 					g2.drawString(s2String, xs2String, ys2String);
 				}
 				width = titlesPanel.getWidth();
-				System.out.println("width of titlesPanel now = " + width);
+				Logger.debug("width of titlesPanel now = " + width);
 				
 			}
 		};
@@ -259,7 +263,7 @@ public class GTTilePlotPanel extends JPanel {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
-				System.out.println("rangeAxisLabel paintComponent");
+				Logger.debug("rangeAxisLabel paintComponent");
 			}
 		};	
 		// go vertically from just above top of domain tick labels object to just under titlesPanel
@@ -281,7 +285,7 @@ public class GTTilePlotPanel extends JPanel {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
-				System.out.println("rangeTickLabels paintComponent");
+				Logger.debug("rangeTickLabels paintComponent");
 			}
 		};	
 		// go vertically just to right of rangeAxisLabel
@@ -303,7 +307,7 @@ public class GTTilePlotPanel extends JPanel {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
-				System.out.println("domainTickLabels paintComponent");
+				Logger.debug("domainTickLabels paintComponent");
 			}
 		};	
 		// go horizontally just above domainAxisLabel from right edge of rangeTickLabels
@@ -325,7 +329,7 @@ public class GTTilePlotPanel extends JPanel {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
-				System.out.println("domainAxisLabel paintComponent");
+				Logger.debug("domainAxisLabel paintComponent");
 			}
 		};	
 		// go horizontally just above footersPanel from right edge of rangeTickLabels 
@@ -347,17 +351,17 @@ public class GTTilePlotPanel extends JPanel {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
-				System.out.println("footersPanel paintComponent");
+				Logger.debug("footersPanel paintComponent");
 				int yf1String = 0;		// default string heights to 0 (no string to display)
 				int yf2String = 0;
 				int width = footersPanel.getWidth();
 				
-				System.out.println("f1String = " + f1String + ", f1Font = " + f1Font + ", f1Color = " + f1Color);
-				System.out.println("width = " + width);
+				Logger.debug("f1String = " + f1String + ", f1Font = " + f1Font + ", f1Color = " + f1Color);
+				Logger.debug("width = " + width);
 				
 				if(f1String != null && !f1String.trim().isEmpty())	// draw footer1 if not null or empty
 				{
-					System.out.println("f1String not empty, proceeding, g = " + g2.toString());
+					Logger.debug("f1String not empty, proceeding, g = " + g2.toString());
 					g2.setFont(f1Font);
 					g2.setColor(f1Color);
 					FontMetrics tMetrx = g2.getFontMetrics(f1Font);
@@ -367,7 +371,7 @@ public class GTTilePlotPanel extends JPanel {
 				}
 				if(f2String != null && !f2String.trim().isEmpty())	// draw footer2 if not null or empty
 				{
-					System.out.println("f2String not empty, proceeding");
+					Logger.debug("f2String not empty, proceeding");
 					g2.setFont(f2Font);
 					g2.setColor(f2Color);
 					FontMetrics s1Metrx = g2.getFontMetrics(f2Font);
@@ -376,7 +380,7 @@ public class GTTilePlotPanel extends JPanel {
 					g2.drawString(f2String, xf2String, yf2String);
 				}
 				width = footersPanel.getWidth();
-				System.out.println("width of footersPanel now = " + width);
+				Logger.debug("width of footersPanel now = " + width);
 			}
 		};	
 		// go horizontally across the entire very bottom of contentPane
@@ -398,7 +402,7 @@ public class GTTilePlotPanel extends JPanel {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
-				System.out.println("legendPanel paintComponent");
+				Logger.debug("legendPanel paintComponent");
 				// parts originally from TilePlot.drawLegend
 				final int colors = legendColors.length;
 				String unitStrAll = unitStr;
@@ -530,7 +534,7 @@ public class GTTilePlotPanel extends JPanel {
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
-				System.out.println("topMapPanel paintComponent");
+				Logger.debug("topMapPanel paintComponent");
 			}
 		};	
 		// expand both horizontally and vertically
@@ -543,8 +547,8 @@ public class GTTilePlotPanel extends JPanel {
 		c.weighty = 1.0;
 		gbl_contentPane.setConstraints(topMapPanel, c);
 		add(topMapPanel);
-		System.out.println("all done with constructing GTTilePlotPanel");
-		System.out.println("titlesPanel = " + titlesPanel.toString());
+		Logger.debug("all done with constructing GTTilePlotPanel");
+		Logger.debug("titlesPanel = " + titlesPanel.toString());
 	}
 
 	/**

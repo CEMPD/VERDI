@@ -26,6 +26,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -74,14 +75,18 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MouseInputAdapter;
 import javax.vecmath.Point4i;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.geotools.geometry.DirectPosition2D;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
 import org.geotools.swing.JMapPane;
 import org.geotools.swing.data.JFileDataStoreChooser;
+import org.geotools.swing.event.MapMouseAdapter;
+import org.geotools.swing.event.MapMouseEvent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import saf.core.ui.event.DockableFrameEvent;
@@ -109,6 +114,7 @@ import anl.verdi.plot.config.PlotConfigurationIO;
 import anl.verdi.plot.config.SaveConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.probe.PlotEventProducer;
+import anl.verdi.plot.probe.ProbeEvent;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.util.GTTilePlotPrintAction;
 import anl.verdi.plot.util.PlotExporter;
@@ -117,6 +123,8 @@ import anl.verdi.util.Utilities;
 
 /**
  * @author Jo Ellen Brandmeyer, Ph.D., Institute for the Environment, University of North Carolina at Chapel Hill
+ * Portions adapted from gov.epa.emvl.TilePlot.java, anl.verdi.plot.gui.FastTilePlot.java,
+ * and other portions of VERDI
  *
  */
 public class GTTilePlot extends GTTilePlotPanel 
@@ -181,8 +189,6 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 
 	// For legend-colored grid cells and annotations:
 
-	//	protected TilePlot tilePlot; // EMVL TilePlot.
-
 	protected int timestep = 0; // 0..timesteps - 1.
 	protected int firstTimestep = 0;
 	protected int lastTimestep = 0;
@@ -231,8 +237,6 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	protected List<ObsAnnotation> obsAnnotations;
 	protected VectorAnnotation vectAnnotation;
 
-	// GUI attributes
-
 	// GUI attributes:
 	private JButton playStopButton;
 	private JButton leftStepButton;
@@ -267,6 +271,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	private int delay = 50; // animation delay in milliseconds.
 	private final int MAXIMUM_DELAY = 3000; // maximum animation delay: 3 seconds per frame.
 
+	private static final Object lock = new Object();
 	protected List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
 
 	protected boolean showLatLon = false;
@@ -285,22 +290,32 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	private Plot.ConfigSource configSource = Plot.ConfigSource.GUI;
 	VerdiApplication app;
 
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * Constructor for GTTilePlot class
+	 * @param aVerdiApp	VerdiApplication object; the main VERDI application facade
+	 * @param aDataFrame	DataFrame object; array-based data and metadata for one variable
 	 */
-	public GTTilePlot(VerdiApplication app, DataFrame dataFrame) {
+	public GTTilePlot(VerdiApplication aVerdiApp, DataFrame aDataFrame) {
 		// TODO Auto-generated constructor stub
 		super();										// call constructor of GTTilePlotPanel
+		app = aVerdiApp;								// copy the VerdiApplication object to data member
+		dataFrame = aDataFrame;							// copy the DataFrame object to data member
 		JToolBar theToolBar = createToolBar(dataFrame);	// create the tool bar here
 		super.setToolBar(theToolBar);					// and send it to the GTTilePlotPanel
-		
-	}
+		JMenuBar theMenuBar = createMenuBar();			// create the menu bar here
+		super.setMenuBar(theMenuBar);					// and send it to the GTTilePlotPanel
+		hasNoLayer = (dataFrame.getAxes().getZAxis() == null);	// if no Z axis then hasNoLayer = true
+		format = NumberFormat.getInstance();
+		format.setMaximumFractionDigits(4);
+
+//		GTTilePlot.AreaFinder finder = this.new AreaFinder();	// TODO implement later
+//		this.addMouseListener(finder);
+//		this.addMouseMotionListener(finder);
+		super.repaint();								// force components to show ???
+
+	}	// end of GTTilePlot constructor
 
 	/**
 	 * From TilePlot
@@ -310,7 +325,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	public void setObsLegend(List<ObsAnnotation> obsAnnot, boolean showLegend) {
 		showObsLegend = showLegend;
 		obsAnnotations = obsAnnot;
-	}
+	}	// end setObsLebend with 2 arguments
 
 	/**
 	 * getPanel(): returns the largest JPanel container (contains all others)
@@ -318,7 +333,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	@Override
 	public JPanel getPanel() {
 		return getEntirePane();
-	}
+	}	// end getPanel with 0 arguments
 
 	/**
 	 * getEntirePane(): returns the largest JPanel container
@@ -326,20 +341,25 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	 */
 	private JPanel getEntirePane() {
 		return (JPanel) this;	// GTTilePlotPanel is-a JPanel
-	}
+	}	// end getEntirePanel with 0 arguments
 
 	/**
-	 * getMapPane(): returns the JMapPane container that contains just the geographic component.
+	 * getMapPane(): calls the getMap function of the GTTilePlotPanel class
+	 * returns the JMapPane container that contains just the geographic component.
 	 */
 	@Override
 	public JMapPane getMapPane() {
 		return super.getMap();
-	}
+	}	// end getMapPane with 0 arguments
 
+	/**
+	 * getMenuBar() calls the getMenuBar function of the GTTilePlotPanel class
+	 * returns the container of the menu bar at the top of the overall frame
+	 */
 	@Override
 	public JMenuBar getMenuBar() {	// return the container of the menu bar at the top of the overall frame
 		return super.getMenuBar();
-	}
+	}	// end getMenuBar with 0 arguments
 
 	/**
 	 * Adds the specified PlotListener.
@@ -349,7 +369,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	@Override
 	public void addPlotListener(PlotListener listener) {
 		eventProducer.addListener(listener);
-	}
+	}	// end addPlotListener with 1 argument
 
 	/**
 	 * Removes the specified PlotListener.
@@ -359,17 +379,17 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	@Override
 	public void removePlotListener(PlotListener listener) {
 		eventProducer.removeListener(listener);
-	}
+	}	// end removePlotListener with 1 argument
 
 	/**
 	 * Gets the type of the Plot.
 	 * 
-	 * @return the type of the Plot.
+	 * @return the type of the Plot (set to TILE).
 	 */
 	@Override
 	public Type getType() {
 		return Formula.Type.TILE;
-	}
+	}	// end getType with 0 arguments
 
 	/**
 	 * Gets the data that this Plot plots.
@@ -381,7 +401,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		final List<DataFrame> result = new ArrayList<DataFrame>();
 		result.add(getDataFrame());
 		return result;
-	}
+	}	// end getData with 0 arguments
 
 	/**
 	 * From FastTilePlot: getDataFrame(); uses the value of the data member "log" to determine if returning a log version or not.
@@ -393,7 +413,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		} else {
 			return dataFrame;
 		}
-	}
+	}	// end getDataFrame with 0 arguments
 
 	/**
 	 * From FastTilePlot: getDataFrame(log); uses the passed value of the boolean "log" to determine if returning a log version or not.
@@ -406,7 +426,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		} else {
 			return dataFrame;
 		}
-	}
+	}	// end getDataFrame with 1 argument
 
 
 	/**
@@ -426,12 +446,11 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		drawBatchImage(width, height);
 		PlotExporter exporter = new PlotExporter(this);
 		exporter.save(format, file, width, height);
-	}
+	}	// end exportImage
 
 	private void drawBatchImage(int width, int height) {
 		// TODO rewrite (or delete???) drawBatchImage function from FastTilePlot.java (uses BufferedImage, offScreenGraphics)
-	}
-
+	}	// end drawBatchImage
 
 	/**
 	 * Configure this Plot according to the specified PlotConfiguration.
@@ -494,7 +513,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			Boolean gridlines = (Boolean)config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
 			showGridLines.setSelected(gridlines == null ? false : gridlines);
 		}
-	}
+	}	// end Configure with 1 argument
 
 	@Override
 	public void configure(PlotConfiguration config, ConfigSource source) {
@@ -558,11 +577,14 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			Boolean gridlines = (Boolean)config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
 			showGridLines.setSelected(gridlines == null ? false : gridlines);
 		}
-	}
+	} // end configure with 2 arguments
 
-
-	// Compute data range excluding BADVAL3 values:
-
+	/**
+	 * computeDataRange for the entire dataset
+	 * @param minmax	2-element array where [0] = minimum value, [1] = maximum value; values are
+	 * computed in this function and returned to calling code within this argument
+	 * @param log	boolean value: if true uses the log version of the dataset
+	 */
 	public void computeDataRange(double[] minmax, boolean log) {
 		final int selection = statisticsMenu != null ? statisticsMenu.getSelectedIndex() : 0;
 		boolean initialized = false;
@@ -625,8 +647,12 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 				}
 			}
 		}
-	}
+	}	// end computeDataRange with 2 arguments
 
+	/**
+	 * computeStatistics: sets up and populates data structure and then calls the computeStatistics function
+	 * @param log	boolean; if true uses log version of the data
+	 */
 	private void computeStatistics(boolean log) {
 		if ( layerData == null ) {
 			layerData = new float[ rows ][ columns ][ timesteps ];
@@ -668,7 +694,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 				draw();	// draw() is here because just changed the ScaleType
 			}
 		}
-	}
+	}	// end computeStatistics with 1 argument
 
 	/**
 	 * This drawTitles member function passes the values of the GTTilePlot to the GTTilePlotPanel
@@ -725,8 +751,8 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		super.setTitlesPanel(tFont, tColor, tString, s1Font, s1Color, s1String, s2Font, s2Color, s2String);
 		retValue = true;	// return success
 		return retValue;
-	}
-	
+	}	// end drawTitles with 0 arguments
+
 	protected Action timeSeriesSelected = new AbstractAction(
 			"Time Series of Probed Cell(s)") {
 		private static final long serialVersionUID = -2940008125642497962L;
@@ -734,7 +760,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		public void actionPerformed(ActionEvent e) {
 			requestTimeSeries(Formula.Type.TIME_SERIES_LINE);
 		}
-	};
+	};	// end timeSeriesSelected AbstractAction
 
 	protected Action timeSeriesBarSelected = new AbstractAction(
 			"Time Series Bar of Probed Cell(s)") {
@@ -743,7 +769,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		public void actionPerformed(ActionEvent e) {
 			requestTimeSeries(Formula.Type.TIME_SERIES_BAR);
 		}
-	};
+	};	// end timeSeriesBarSelected AbstractAction
 
 	protected Action timeSeriesMin = new AbstractAction(
 			"Time Series of Min. Cell(s)") {
@@ -753,7 +779,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			DataUtilities.MinMaxPoint points = getMinMaxPoints();
 			requestTimeSeries(points.getMinPoints(), "Min. cells ");
 		}
-	};
+	};	// end timeSeriesMin AbstractAction
 
 	protected Action timeSeriesMax = new AbstractAction(
 			"Time Series of Max. Cell(s)") {
@@ -763,8 +789,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			DataUtilities.MinMaxPoint points = getMinMaxPoints();
 			requestTimeSeries(points.getMaxPoints(), "Max. cells ");
 		}
-	};
-
+	};	// end timeSeriesMax AbstractAction
 
 	/**
 	 *  From FastTilePlot. Creates a menu bar for this GTTilePlot. 
@@ -792,7 +817,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		});
 		menu.add(new LoadConfiguration(this));
 		menu.add(new SaveConfiguration(this));
-//TODO		//configureMapMenu(menu);		// HERE IS WHERE THE CONFIGURE GIS LAYERS GOES??? JEB (Also commented out in v1.4.1
+		//TODO		//configureMapMenu(menu);		// HERE IS WHERE THE CONFIGURE GIS LAYERS GOES??? JEB (Also commented out in v1.4.1
 		bar.add(menu);
 
 		menu = new JMenu("Controls");
@@ -942,7 +967,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 
 		super.setMenuBar(bar);	// update the JMenuBar bar in GTTilePlotPanel
 		return bar;
-	}
+	}	// end createMenuBar with 0 arguments
 
 	/**
 	 * From FastTilePlot; handles which GIS layers to show and which ones to not show
@@ -1051,8 +1076,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		} catch (Exception e) {
 			Logger.error("Error adding layer " + e.getMessage());
 		}
-	}
-
+	}	// end showLayer with 3 arguments
 
 	/**
 	 * From FastTilePlot. Displays a dialog that allows the user to edit the properties for the current chart.
@@ -1070,7 +1094,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		dialog.enableScale( !this.statError);
 		dialog.setSize(500, 600);
 		dialog.setVisible(true);
-	}
+	}	// end editChartProperties with 0 arguments
 
 	/**
 	 * from FastTilePlot
@@ -1078,7 +1102,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	protected void addObsOverlay() {
 		OverlayRequest<ObsEvaluator> request = new OverlayRequest<ObsEvaluator>(OverlayRequest.Type.OBS, this);
 		eventProducer.fireOverlayRequest(request);
-	}
+	}	// end addObsOverlay with 0 arguments
 
 	/**
 	 * from FastTilePlot
@@ -1086,21 +1110,21 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	protected void addVectorOverlay() {
 		OverlayRequest<VectorEvaluator> request = new OverlayRequest<VectorEvaluator>(OverlayRequest.Type.VECTOR, this);
 		eventProducer.fireOverlayRequest(request);
-	}
+	}	// end addVectorOverlay with 0 arguments
 
 	/**
 	 * From FastTilePlot; turn on rubber band widget.
 	 */
 	protected void activateRubberBand() {
 		rubberband.setActive(true);
-	}
+	}	// end activateRubberBand with 0 arguments
 
 	/**
 	 * from FastTilePlot; turn off rubber band widget
 	 */
 	protected void deactivateRubberBand() {	// 2014 to allow user to turn OFF probe
 		rubberband.setActive(false);
-	}
+	}	// end deactivateRubberBand with 0 arguments
 
 	/**
 	 * From FastTilePlot: setDataRanges instantiates a special dialog for data ranges and then calls that dialog.
@@ -1115,7 +1139,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 				GTTilePlot.this, firstRow + 1, lastRow + 1, firstColumn + 1,
 				lastColumn + 1);
 		dialog.showDialog();
-	}
+	}	// end setDataRanges with 0 arguments
 
 	/**
 	 * Private class DataRangeDialog to handle functionality of DataRangeDialog objects
@@ -1160,7 +1184,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			this.lColumnField = new JTextField("1", 4);
 			this.plot = plot;
 			this.getContentPane().add(createLayout());
-		}
+		}	// end constructor DataRangeDialog with 6 arguments
 
 		/**
 		 * From FastTilePlot: showDialog() member function of private class DataRangeDialog.
@@ -1185,10 +1209,8 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			} catch (NumberFormatException e) {
 				Logger.error("Number Format Exception in GTTilePlot.showDialog: Set Rows and Columns: " + e.getMessage());
 			}
-
 			return ERROR;
-		}
-
+		}	// end showDialog with 0 arguments
 
 		/**
 		 * From FastTilePlot; creates a JPanel to hold a "middle panel" JPanel and a "buttons panel" JPanel
@@ -1203,7 +1225,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			panel.add(createButtonsPanel());
 
 			return panel;
-		}
+		}	// end createLayout with 0 arguments
 
 		/**
 		 * From FastTilePlot
@@ -1255,7 +1277,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			contentPanel.add(holder2);
 
 			return contentPanel;
-		}
+		}	// end createMiddlePanel with 0 arguments
 
 		/**
 		 * From FastTilePlot; create a buttons panel (OK, Cancel buttons)
@@ -1290,9 +1312,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			container.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
 			return container;
-		}
-
-
+		}	// end createButtonsPanel
 
 		/**
 		 * From FastTilePlot; get the location of the center the screen (primary display only)
@@ -1319,8 +1339,9 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 
 			return new Point((screenSize.width - frameSize.width) / 2,
 					(screenSize.height - frameSize.height) / 2);
-		}
-	}
+		}	// end getCenterPoint with 1 argument
+		
+	}	// end inner class DataRangeDialog
 
 	/**
 	 * From FastTilePlot
@@ -1344,17 +1365,15 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		rivers.setSelected(mapper.usRiversMapIncluded());
 		roads.setSelected(mapper.usRoadsMapIncluded());
 		na.setSelected(mapper.naMapIncluded());
-	}
+	}	// end resetMenuItems with 1 argument
 
-	
-	
 	/**
 	 * From FastTilePlot: showGISLayersDialog()
 	 * Possibly replace this by JFileDataStoreChooser
 	 * and separate GeoTools dialog to handle layer order and features (colors, etc.)
 	 * @return	GTTileLayerEditor
 	 */
-	private GTTileLayerEditor showGISLayersDialog() {
+	protected GTTileLayerEditor showGISLayersDialog() {
 		// TODO evaluate GeoTools built-in box for specifying color, thickness of shapefile lines
 		Logger.debug("in GTTilePlot.showGISLayersDialog()");
 		Window frame = SwingUtilities.getWindowAncestor(this);
@@ -1370,7 +1389,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		editor.setVisible(true);
 		editor.pack();
 		return editor;
-	}
+	}	// end showGISLayersDialog
 
 	/**
 	 * From FastTilePlot. Set subdomain by rows and columns, with adjustment for 0-based data
@@ -1426,7 +1445,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		}
 
 		computeDerivedAttributes();
-	}
+	}	// end resetRowsNColumns with 4 arguments
 
 	/**
 	 * From FastTilePlot; need to rewrite for a JMapPane
@@ -1451,13 +1470,17 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			domain[LATITUDE][MINIMUM] = gridBounds[Y][MINIMUM];
 			domain[LATITUDE][MAXIMUM] = gridBounds[Y][MAXIMUM];
 		}
-	}
+	}	// end computeDerivedAttributes with 0 arguments
 
-	// Compute map domain from grid bounds:
-
+	/**
+	 * computeMapDomain: Compute map domain from grid bounds
+	 * @param projector	Projector object	// TODO replace with CRS ???
+	 * @param gridBounds	2-D array gridBounds containing minimum and maximum values in X and Y
+	 * @param mapDomain	2-D mapDomain containing minimum and maximum values in longitude and latitude
+	 */
 	private static void computeMapDomain(final Projector projector,		// 2016 replace Projector with CRS ???
 			final double[][] gridBounds, double[][] mapDomain) {
-		// JEB 2016 figure this out & rewrite for JMapPane
+		// TODO JEB 2016 figure this out & rewrite for JMapPane
 		// & get rid of Projector (use CRS) ???
 
 		final double margin = 1.0; // Degrees lon/lat beyond grid corners.
@@ -1490,7 +1513,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 				longitudeLatitude[LATITUDE]);
 
 		if ( projector.getProjection() instanceof
-				ucar.unidata.geoloc.projection.Stereographic ) {	// JEB 2016 probably need to change
+				ucar.unidata.geoloc.projection.Stereographic ) {	// TODO JEB 2016 probably need to change
 			// testing for a polar projection
 
 			// Must be a polar projection so
@@ -1516,7 +1539,8 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			mapDomain[LATITUDE][MAXIMUM] = Numerics.clamp(
 					mapDomain[LATITUDE][MAXIMUM] + margin, -90.0, 90.0);
 		}
-	}
+	}	// end computeMapDomain with 3 arguments
+	
 	/**
 	 * From FastTilePlot constructor: new function to create the JToolBar that goes into the GTTilePlotPanel
 	 * @param dataFrame	DataFrame passed from GTTilePlot constructor
@@ -1604,7 +1628,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		panel.add(animate);
 		toolBar.add(panel);		// END createToolBar function
 		return toolBar;
-	}
+	}	// end createToolBar with 1 argument
 
 	/**
 	 * From FastTilePlot: redrawTimeLayer called from createToolBar 
@@ -1622,7 +1646,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		if (lValue >= firstLayer) {
 			setLayer(lValue); // Calls draw().
 		}
-	}
+	}	// end redrawTimeLayer with 0 arguments
 
 	/**
 	 * From FastTilePlot: called as part of redrawTimeLayer, from createToolBar
@@ -1636,7 +1660,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			draw();
 			drawOverLays();
 		}
-	}
+	}	// end setTimestep with 1 argument
 
 	/**
 	 * From FastTilePlot: called as part of redrawTimeLayer, from createToolBar
@@ -1655,7 +1679,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			copySubsetLayerData(this.log);
 			draw();
 		}
-	}
+	}	// end setLayer with 1 argument
 
 	/**
 	 * From FastTilePlot: called as part of setTimestep and setLayer; from redrawTimeLayer, from createToolBar
@@ -1717,7 +1741,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			// computeLegend();		// WHY IS THIS COMMENTED OUT?
 			recomputeLegend = false;
 		}
-	}
+	}	// end copySubsetLayerData with 1 argument
 
 	/**
 	 * From FastTilePlot: update observation and/or vector annotations to current timestep
@@ -1735,7 +1759,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		} catch (Exception e) {
 			setOverlayErrorMsg(e.getMessage());
 		}
-	}
+	}	// end drawOverLays with 0 arguments
 
 	/**
 	 * From FastTilePlot; menu of GIS coverages from which the user can pick layers to include on the chart 
@@ -1821,7 +1845,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		});
 		defaultItem.setEnabled(false);
 		menu.add(defaultItem);
-	}
+	}	// end gisLayersMenu with 1 argument
 
 	/**
 	 * This drawFooters member function passes the values of the GTTilePlot to the GTTilePlotPanel
@@ -1869,7 +1893,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		super.setFootersPanel(f1Font, f1Color, f1String, f2Font, f2Color, f2String);
 		retValue = true;
 		return retValue;
-	}
+	}	// end drawFooters with 0 arguments
 
 	/**
 	 * paintComponent method for overall graphics
@@ -1878,19 +1902,22 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	{
 		super.paintComponent(g);
 		draw();
-	}
-	
+	}	// end paintComponent with 1 argument
+
 	/**
 	 * The purpose of this draw function is to trigger a redraw of the tile plot
 	 */
 	private void draw() {
 		super.repaint();
 		repaint();	// tell graphics system to redraw appropriate portion of the graphics
-	}
+	}	// end draw with 0 arguments
 
+	/**
+	 * updateColorMap: update the legend colors and levels to the selected colorMap
+	 * @param colorMap	the colorMap to which the colors are changed
+	 */
 	private void updateColorMap(ColorMap colorMap) {
 		//		map = map;		// Feb 2016 Why have this line? It doesn't do anything
-
 		try {
 			minMax = new DataUtilities.MinMax(colorMap.getMin(), colorMap.getMax());
 		} catch (Exception e) {
@@ -1905,12 +1932,14 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		legendLevels = new double[count + 1];
 
 		for (int i = 0; i < count; i++)
+		{
 			try {
 				legendLevels[i] = colorMap.getIntervalStart(i);
 			} catch (Exception e) {
 				Logger.error("Exception in GTTilePlot.updateColorMap: " + e.getMessage());
 				e.printStackTrace();
 			}
+		}
 
 		try {
 			legendLevels[count] = colorMap.getMax();
@@ -1920,8 +1949,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			Logger.error("GTTilePlot's updateColorMap method "+ e.getMessage());
 			return;
 		}
-	}
-
+	}	// end updateColorMap with 1 argument
 
 	/**
 	 * Gets this Plot's configuration data.
@@ -1931,31 +1959,31 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	@Override
 	public PlotConfiguration getPlotConfiguration() {
 		return config;
-	}
+	}	// end getPlotConfiguration with 0 arguments
 
-//	/**
-//	 * Gets a BufferedImage of the plot.
-//	 * 
-//	 * @return a BufferedImage of the plot.
-//	 */
-//	@Override
-//	public BufferedImage getBufferedImage() {
-//		// copied from FastTilePlot; needs rewrite
-//		return getBufferedImage(getWidth(), getHeight());
-//	}
-//
-//	/**
-//	 * Gets a BufferedImage of the plot.
-//	 * 
-//	 * @param width	the width of the image in pixels
-//	 * @param height	the height of the image in pixels
-//	 * @return a BufferedImage of the plot.
-//	 */
-//	@Override
-//	public BufferedImage getBufferedImage(int width, int height) {
-//		// copied from FastTilePlot; needs rewrite
-//		return bImage;
-//	}
+	//	/**
+	//	 * Gets a BufferedImage of the plot.
+	//	 * 
+	//	 * @return a BufferedImage of the plot.
+	//	 */
+	//	@Override
+	//	public BufferedImage getBufferedImage() {
+	//		// copied from FastTilePlot; needs rewrite
+	//		return getBufferedImage(getWidth(), getHeight());
+	//	}
+	//
+	//	/**
+	//	 * Gets a BufferedImage of the plot.
+	//	 * 
+	//	 * @param width	the width of the image in pixels
+	//	 * @param height	the height of the image in pixels
+	//	 * @return a BufferedImage of the plot.
+	//	 */
+	//	@Override
+	//	public BufferedImage getBufferedImage(int width, int height) {
+	//		// copied from FastTilePlot; needs rewrite
+	//		return bImage;
+	//	}	// end getBufferedImage with 0 arguments
 
 	/**
 	 * getTitle(): Return the figure's title to the calling program
@@ -1963,13 +1991,17 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	@Override
 	public String getTitle() {
 		return super.getTString();
-	}
+	}	// end getTitle with 0 arguments
 
+	/**
+	 * updateTimeStep: changes the value of the time step to the value specified
+	 * @param timestep	Time step for which map needs to be displayed
+	 */
 	@Override
 	public void updateTimeStep(int timestep) {
 		// TODO Auto-generated method stub
 
-	}
+	}	// end updateTimeStep with 1 argument
 
 	/**
 	 * From FastTilePlot: stateChanged for a ChangeEvent
@@ -1993,8 +2025,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 				setLayer(newValue); // Calls draw().
 			}
 		}
-
-	}
+	}	// end stateChanged with 1 argument
 
 	/**
 	 * From FastTilePlot: Get the next value in a series; used for both time and layer
@@ -2012,11 +2043,12 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		} else if (result > max) {
 			result = min + (result - max) - 1;
 		}
-
 		return result;
-	}
+	}	// end nextValue with 4 arguments
 
-
+	/**
+	 * print function
+	 */
 	@Override
 	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
 			throws PrinterException {
@@ -2029,7 +2061,6 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		// TODO Auto-generated method stub
 
 	}
-
 
 	/**
 	 * from FastTilePlot.java; converts 4 ints to a Point4i to a string for display
@@ -2044,7 +2075,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		if (showLatLon) 
 			return formatPointLatLon(p);
 		return formatPoint(p);
-	}
+	}	// end createAreaString with 1 argument
 
 	/**
 	 * from FastTilePlot.java; converts a Point4i to a string for display
@@ -2068,7 +2099,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		}
 		builder.append(")");
 		return builder.toString();
-	}
+	}	// end formatPoint with 1 argument
 
 	/**
 	 * from FastTilePlot.java; converts a Point4i to lat/lon for display
@@ -2097,7 +2128,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		}
 		builder.append(")");
 		return builder.toString();
-	}
+	}	// end formatPointLatLon with 1 argument
 
 	/**
 	 * from FastTilePlot.java
@@ -2110,7 +2141,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		// TODO may need to change this: GeoTools uses top-left corner of each JPanel as (0,0)
 		//		return getDataFrame().getAxes().getBoundingBoxer().axisPointToLatLonPoint(axisPoint.x-1, axisPoint.y-1); 
 		return getDataFrame().getAxes().getBoundingBoxer().axisPointToLatLonPoint(axisPoint.x, axisPoint.y); //NOTE: the shift has been considered for in the netcdf boxer!!!
-	}
+	}	// end getLatLonForAxisPoint with 1 argument
 
 	/**
 	 * copied from FastTilePlot
@@ -2149,7 +2180,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 					if (subtitle1.indexOf(temp) < 0 && !subtitles.contains(temp)) 
 						subtitles.add(temp);
 				}
-			}
+			}	// end each obsData
 
 			setObsLegend(obsAnnotations, showLegend);
 			config.putObject(PlotConfiguration.OBS_SHOW_LEGEND, showLegend);
@@ -2159,7 +2190,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 				subtitle1 = "";
 
 				for (String str : subtitles)
-					subtitle1 += str + "  ";
+					subtitle1 += str + "  ";	// TODO change to StringBuilder???
 
 				config.setSubtitle1(subtitle1.trim());
 			}
@@ -2170,10 +2201,8 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			Logger.error("Check if overlay time steps match the underlying data");
 			Logger.error(e.getMessage());
 			// TODO evaluate what drawing activity should take place
-			//			drawMode = DRAW_NONE;	// no longer using the drawMode etc. for drawing the tile plot
 		}
-	}
-
+	}	// end addObservationData with 2 arguments
 
 	/**
 	 * copied from FastTilePlot
@@ -2181,7 +2210,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	 */
 	public List<OverlayObject> getObservationData() {
 		return obsData;
-	}
+	}	// end getObservationData with 0 arguments
 
 	/**
 	 * Function to throw up a dialog box to tell the user that the overlay time steps may not match the time steps of the underlying data.
@@ -2192,7 +2221,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		if (msg == null) 
 			msg = "";
 		JOptionPane.showMessageDialog(app.getGui().getFrame(), "Please check if the overlay time steps match the underlying data.\n" + msg, "Overlay Error", JOptionPane.ERROR_MESSAGE, null);
-	}
+	}	// end setOverlayErrorMsg with 1 argument
 
 	/**
 	 * copied from FastTilePlot
@@ -2202,15 +2231,16 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		// TODO rewrite VectorAnnotation: different method required to draw vectors on a JMapPane instead of
 		// on a Rectangle2D
 		vectAnnotation = new VectorAnnotation(eval, timestep, getDataFrame().getAxes().getBoundingBoxer());
-	}
+	}	// end addVectorAnnotation with 1 argument
 
 	// GUI Callbacks:
 
-	// Plot frame closed:
-
+	/**
+	 * stopThread() - is this needed??? // TODO
+	 */
 	public void stopThread() {	// called by anl.verdi.plot.gui.PlotPanel
-//		// TODO figure out what stopThread needs to do because not using drawMode
-	}
+		//		// TODO figure out what stopThread needs to do because not using drawMode
+	}	// end stopThread with 0 arguments
 
 	/**
 	 * Window hidden callback (does nothing)
@@ -2224,7 +2254,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	@Override
 	public void componentShown(ComponentEvent unused) {
 		draw();
-	}
+	}	// end componentShown with 1 argument
 
 	/**
 	 * Window resized callback (redraws graphics)
@@ -2232,7 +2262,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	@Override
 	public void componentResized(ComponentEvent unused) {
 		draw();
-	}
+	}	// end componentResized with 1 argument
 
 	/**
 	 * Window moved callback (does nothing)
@@ -2254,7 +2284,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		if ((mod & mask) != 0) {
 			popup.show(this, me.getPoint().x, me.getPoint().y);
 		}
-	}
+	}	// end showPopup with 1 argument
 
 	// mousePressed, mouseEntered, mouseExited, mouseReleased, and mouseClicked events are all ignored
 	public void mousePressed( MouseEvent unused_ ) { }
@@ -2307,7 +2337,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		showGridLines = null;
 		app = null;
 		minMax = null;
-	}
+	}	// end viewClosed with 0 arguments
 
 	// viewFloated and viewRestored events are ignored
 	public void viewFloated(DockableFrameEvent unused_ ) { }
@@ -2334,37 +2364,37 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			propertiesItem.addActionListener(this);
 			result.add(propertiesItem);
 			separator = true;
-		}
+		}	// and if properties
 
 		if (save) {
 			if (separator) {
 				result.addSeparator();
 				separator = false;
-			}
+			}	// end if separator
 			JMenuItem saveItem = new JMenuItem("Save Image As...");
 			saveItem.setActionCommand(SAVE_COMMAND);
 			saveItem.addActionListener(this);
 			result.add(saveItem);
 			separator = true;
-		}
+		}	// end if save
 
 		if (print) {
 			if (separator) {
 				result.addSeparator();
 				separator = false;
-			}
+			}	// end if separator
 			JMenuItem printItem = new JMenuItem("Print...");
 			printItem.setActionCommand(PRINT_COMMAND);
 			printItem.addActionListener(this);
 			result.add(printItem);
 			separator = true;
-		}
+		}	// end if print
 
 		if (zoomable) {
 			if (separator) {
 				result.addSeparator();
 				separator = false;
-			}
+			}	// end if separator
 
 			JMenuItem zoomInItem = new JMenuItem("Zoom_In");
 			zoomInItem.setActionCommand(ZOOM_IN_BOTH_COMMAND);
@@ -2380,10 +2410,10 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			zoomOut2Pic.setActionCommand(ZOOM_OUT_MAX_COMMAND);
 			zoomOut2Pic.addActionListener(this);
 			result.add(zoomOut2Pic);
-		}
+		}	// end if zoomable
 		return result;
-	}
-	
+	}	// end createPopupMenu with 4 arguments
+
 	/**
 	 * From FastTilePlot: requestTimeSeries for a formula type
 	 * @param type	value of Formula.Type
@@ -2407,7 +2437,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		} catch (InvalidRangeException e1) {
 			Logger.error("InvalidRangeException in GTTilePlot.requestTimeSeries: " + e1.getMessage());
 		}
-	}
+	}	// end requestTimeSeries with 1 argument
 
 	/**
 	 * From FastTilePlot: requestTimeSeries for a set of points
@@ -2434,10 +2464,9 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			} catch (InvalidRangeException e1) {
 				Logger.error("InvalidRangeException in GTTilePlot.requestTimeSeries: " + e1.getMessage());
 			}
-		}
+		}	// end points
 		eventProducer.firePlotRequest(request);
-	}
-
+	}	// end requestTimeSeries with 2 arguments
 
 	/**
 	 * Gets the MinMax points for this plot.
@@ -2452,19 +2481,19 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			Logger.error("Invalid Range Exception in GTTilePlot getMinMaxPoints: " + e.getMessage());
 		}
 		return null;
-	}
+	}	// end getMinMaxPoints with 0 arguments
 
 	@Override
 	public BufferedImage getBufferedImage() {
 		// not used by GTTilePlot
 		return null;
-	}
+	}	// end getBufferedImage with 0 arguments
 
 	@Override
 	public BufferedImage getBufferedImage(int width, int height) {
 		// not used by GTTilePlot
 		return null;
-	}
+	}	// end getBufferedImage with 2 arguments
 
 	/**
 	 * drawLegend member function originally from TilePlot, called by TilePlot.draw
@@ -2494,7 +2523,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		uTickColor = (uTickColor == null ? Color.black : uTickColor);	// if no color designated, default to black
 		config.putObject(PlotConfiguration.UNITS_TICK_COLOR, uTickColor); 	// save updated color for tick marks
 		Integer labelCnt = (Integer) config.getObject(TilePlotConfiguration.UNITS_TICK_NUMBER);	// number of tick marks
-			// NOTE: using Integer instead of int because (1) object stored in a container, (2) null value must be allowed
+		// NOTE: using Integer instead of int because (1) object stored in a container, (2) null value must be allowed
 		config.putObject(PlotConfiguration.UNITS_TICK_NUMBER, labelCnt == null ? colors + 1 : labelCnt);
 		Font labelFont = config.getFont(TilePlotConfiguration.UNITS_TICK_FONT); 	// get Font
 		Font gFont = super.getLegendPanel().getGraphics().getFont();	// get the font for the legendPanel
@@ -2518,6 +2547,33 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		}
 		super.setLegendPanel(uShowTick, labelCnt, xMaximum, yMinimum, yMaximum, uTickColor, unitsClr,
 				labelFont, unitsFont, baseStr, logStr, unitStr, legendLevels, legendColors);
-	}
+	}	// end drawLegend with 6 arguments
+
+
+	/**
+	 * from JMapPane canvas class class - GeoTools 14-SNAPSHOT User Guide
+	 */
+	topMapPanel.addMouseListener(new MapMouseAdapter() {
+		
+		@Override
+		public void onMouseClicked(MapMouseEvent ev)
+		{
+			Logger.debug("mouse click at screen: x=" + ev.getX() + ", y=" + ev.getY());
+			DirectPosition2D pos = ev.getWorldPos();
+			Logger.debug("     world: x=" + pos.x + ", y=" + pos.y);
+		}
+		
+		@Override
+		public void onMouseEntered(MapMouseEvent ev)
+		{
+			Logger.debug("Mouse entered map pane");
+		}
+		
+		@Override
+		public void onMouseExited(MapMouseEvent ev)
+		{ Logger.debug("     Mouse left map pane");
+		}
+		
+	});	// end addMouseListener for 1 argument
 	
-}
+}	// end class GTTilePlot

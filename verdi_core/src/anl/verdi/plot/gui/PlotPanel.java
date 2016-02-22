@@ -60,12 +60,10 @@ public class PlotPanel extends JPanel {
 		this.name = name;
 	}
 
-	// use this constructor for a AreaGTTilePlotPanel instead of a JPanel (topJPanel) object
+	// use this constructor for a GTTilePlotPanel instead of a JPanel object
 	// used for GTTilePlot and AreaGTTilePlot
 	public PlotPanel(Plot plot, String name, JMapPane aJMapPane, MapContent content, RenderingExecutor executor,
 			GTRenderer renderer) {
-		// TODO How exactly is this PlotPanel used? How should it be used for a GTTilePlot?
-//		super(new BorderLayout());
 		Logger.debug("in PlotPanel constructor for passed Plot plot, String name, MapContent content, RenderingExecutor executor, GTRenderer renderer");
 		isAMap = true;
 		JMenuBar bar = plot.getMenuBar();		// get the top menu from the plot
@@ -73,34 +71,24 @@ public class PlotPanel extends JPanel {
 		JToolBar toolBar = plot.getToolBar();			// get the JToolBar of time step, layer, etc. widgets
 		((GTTilePlotPanel)plot).setToolBar(toolBar);	// and put it in the GTTilePlotPanel
 		if(content == null)		// if a MapContent was not passed in arg list, get the one from the plot
-			content = ((AbstractMapPane)plot).getMapContent();
+			content = topMapPanel.getMapContent();
+		else
+			topMapPanel.setMapContent(content);
 		Logger.debug("MapContent content = " + content);
-		topMapPanel = new JMapPane(content, executor, renderer);
-//		topMapPanel = plot.getMapPane();		// aJMapPane;
+		if(executor == null)	// if a RenderingExecutor was not passed in arg list, get the one from the plot
+			executor = topMapPanel.getRenderingExecutor();
+		else
+			topMapPanel.setRenderingExecutor(executor);
+		if(renderer == null)	// if a GTRenderer was not passed in arg list, get the one from the plot
+			renderer = topMapPanel.getRenderer();
+		else 
+			topMapPanel.setRenderer(renderer);
 		Logger.debug("topMapPanel = " + topMapPanel);
-//		topMapPanel.setLayout(new BoxLayout(topMapPanel, BoxLayout.Y_AXIS));
-//		if (bar != null) {
-//			bar.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-//			bar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-//			topMapPanel.add(bar);
-//			Logger.debug("added bar components to topMapPanel");
-//		}
-//		if (toolBar != null) {
-//			toolBar.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-//			if (topMapPanel.getComponentCount() == 1) {
-//				topMapPanel.add(Box.createRigidArea(new Dimension(0, 4)));
-//			}
-//			topMapPanel.add(toolBar);	// JEB DEC 2015: NOT into topMapPanel, needs to go into JPanel
-//										// that includes the titles, axes, footers, legend, and the map itself
-//			topMapPanel.add(Box.createRigidArea(new Dimension(0, 4)));
-//			Logger.debug("added toolBar components to topMapPanel");
-//		}
-//		if (topMapPanel.getComponentCount() > 0) 
-//			add(topMapPanel, BorderLayout.NORTH);
-//		add(plot.getMapPane(), BorderLayout.CENTER);	// had been center or NORTH?
-//		add(topMapPanel, BorderLayout.NORTH);
 		this.plot = plot;
+		Logger.debug("plot = " + plot.toString());
 		this.name = name;
+		Logger.debug("name = " + name);
+		Logger.debug("PlotPanel = " + this.toString());
 		Logger.debug("done with PlotPanel constructor");
 	}
 
