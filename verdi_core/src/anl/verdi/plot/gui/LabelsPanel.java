@@ -124,7 +124,7 @@ public class LabelsPanel extends JPanel {
 		domainPanel = new LabelPanel();
 		rangePanel = new LabelPanel();
 		zAxisPanel = new LabelPanel();
-		unitsPanel = new LabelPanel();
+		unitsPanel = new LegendLabelPanel();
 		footersPanel = new FootersPanel();
 
 		//======== this ========
@@ -164,7 +164,7 @@ public class LabelsPanel extends JPanel {
 	private LabelPanel domainPanel;
 	private LabelPanel rangePanel;
 	private LabelPanel zAxisPanel;
-	private LabelPanel unitsPanel;
+	private LegendLabelPanel unitsPanel;
 	private FootersPanel footersPanel;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }
