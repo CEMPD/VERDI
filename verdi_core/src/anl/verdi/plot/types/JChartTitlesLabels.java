@@ -2,9 +2,13 @@ package anl.verdi.plot.types;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.text.SimpleDateFormat;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.Axis;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.XYPlot;
@@ -42,13 +46,12 @@ public class JChartTitlesLabels {
 		title = new TextTitle();
 		title.setPosition(RectangleEdge.TOP);
 		chart.addSubtitle(title);
-		// 2 is first because titles are pushed "down" as they are added
-		subTitle2Index = index++;
-
+		subTitle1Index = index++;
+		
 		title = new TextTitle();
 		title.setPosition(RectangleEdge.TOP);
 		chart.addSubtitle(title);
-		subTitle1Index = index++;
+		subTitle2Index = index++;
 	}
 
 	public void setTitle(String text) {
@@ -80,7 +83,12 @@ public class JChartTitlesLabels {
 			config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, axis.isTickLabelsVisible());
 			config.putObject(PlotConfiguration.DOMAIN_TICK_COLOR, (Color) axis.getTickLabelPaint());
 			config.putObject(PlotConfiguration.DOMAIN_TICK_FONT, axis.getTickLabelFont());
-
+			
+			if (axis instanceof DateAxis) {
+				DateAxis dAxis = (DateAxis) axis;
+				config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT, ((SimpleDateFormat) dAxis.getDateFormatOverride()).toPattern());
+				config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION,(dAxis.isVerticalTickLabels()) ? "VERTICAL" : "HORIZONTAL");
+			}
 
 			axis = plot.getRangeAxis();
 			config.putObject(PlotConfiguration.RANGE_LABEL, axis.getLabel());
@@ -101,6 +109,26 @@ public class JChartTitlesLabels {
 			config.putObject(PlotConfiguration.DOMAIN_TICK_COLOR, (Color) axis.getTickLabelPaint());
 			config.putObject(PlotConfiguration.DOMAIN_TICK_FONT, axis.getTickLabelFont());
 
+			CategoryAxis cAxis = (CategoryAxis) axis;
+			CategoryLabelPositions positions = cAxis.getCategoryLabelPositions();
+
+			if (positions != null && positions.equals(CategoryLabelPositions.UP_90)) {
+				config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION, "VERTICAL");
+			}
+
+			if (positions != null && positions.equals(CategoryLabelPositions.UP_45)) {
+				config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION, "LEFTSLANT");
+			}
+
+			if (positions != null && positions.equals(CategoryLabelPositions.createUpRotationLabelPositions(0))) {
+				config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION, "HORIZONTAL");
+			}
+
+			if (positions != null
+					&& positions.equals(CategoryLabelPositions.createDownRotationLabelPositions(Math.PI / 4.0))) {
+				config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION, "RIGHTSLANT");
+			}
+			
 			ValueAxis vAxis = plot.getRangeAxis();
 			config.putObject(PlotConfiguration.RANGE_LABEL, vAxis.getLabel());
 			config.putObject(PlotConfiguration.RANGE_FONT, vAxis.getLabelFont());
@@ -144,4 +172,5 @@ public class JChartTitlesLabels {
 			}
 		}
 	}
+
 }

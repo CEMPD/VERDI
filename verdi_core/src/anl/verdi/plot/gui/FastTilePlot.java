@@ -2310,7 +2310,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			dialog = new ConfigDialog((JDialog) window);
 		dialog.init(FastTilePlot.this, minMax);
 		dialog.enableScale( !this.statError);
-		dialog.setSize(500, 600);
+		dialog.setSize(500, 506);
 		dialog.setVisible(true);
 	}
 

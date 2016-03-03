@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.border.EmptyBorder;
 
+import anl.verdi.formula.Formula;
 import anl.verdi.plot.config.PlotConfiguration;
 
 import com.jgoodies.forms.factories.Borders;
@@ -33,6 +34,18 @@ public class LabelsPanel extends JPanel {
 		config.putObject(PlotConfiguration.DOMAIN_TICK_FONT, domainPanel.getSelectedTickFont());
 		config.putObject(PlotConfiguration.DOMAIN_TICK_COLOR, domainPanel.getSelectedTickColor());
 		config.putObject(PlotConfiguration.DOMAIN_TICK_NUMBER, domainPanel.getNumberOfLabels());
+		
+		Formula.Type plottype = (Formula.Type)config.getObject(PlotConfiguration.PLOT_TYPE); //NOTE: to differentiate time series plots
+		
+		if (Formula.Type.TIME_SERIES_LINE.equals(plottype)) {
+			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT, domainPanel.getTickLabelFormat());
+		}
+		
+		if (Formula.Type.TIME_SERIES_BAR.equals(plottype)) {
+			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT_4CAT, domainPanel.getTickLabelFormat());
+		}
+		
+		config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION, domainPanel.getTickLabelOrientation());
 
 
 		config.putObject(PlotConfiguration.RANGE_LABEL, rangePanel.getText());
@@ -73,8 +86,8 @@ public class LabelsPanel extends JPanel {
 		domainPanel.initLabel(title, font, color);
 	}
 
-	public void initDomainTick(Boolean show, Font font, Color color, Integer num) {
-		domainPanel.initTicks(show, font, color, num);
+	public void initDomainTick(Boolean show, Font font, Color color, Integer num, String labelFormat, String labelOrientation, Formula.Type plottype) {
+		domainPanel.initTicks(show, font, color, num, labelFormat, labelOrientation, plottype);
 	}
 
 	public void initRange(String title, Font font, Color color) {
