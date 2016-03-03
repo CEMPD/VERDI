@@ -598,7 +598,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 
 		CategoryItemRenderer renderer = (CategoryItemRenderer) ((CategoryPlot) chart.getPlot()).getRenderer(0);
 		Color color = config.getColor(TimeSeriesPlotConfiguration.SERIES_COLOR);
-//		if (color != null) renderer.setSeriesPaint(0, color);
+		if (color != null) renderer.setSeriesPaint(0, color);
 	}
 
 	/**

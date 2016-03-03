@@ -199,12 +199,12 @@ public class ConfigDialog extends JDialog {
 //		} else {
 //			otherPanel.initVector(color);
 //		}
-//
-//		color = config.getColor(TimeSeriesPlotConfiguration.SERIES_COLOR);
-//		if (color == null)
-//			otherPanel.setSeriesColorEnabled(false);
-//		else
-//			otherPanel.initSeries(color);
+
+		Color color = config.getColor(TimeSeriesPlotConfiguration.SERIES_COLOR);
+		if (color == null)
+			otherPanel.setSeriesColorEnabled(false);
+		else
+			otherPanel.initSeries(color);
 	}
 
 	private void initLabels(PlotConfiguration config) {
