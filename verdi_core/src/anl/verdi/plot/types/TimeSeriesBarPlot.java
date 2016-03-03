@@ -578,8 +578,9 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 		}
 
 		UnitsConfigurator unitsConfig = new UnitsConfigurator() {
-			public void configureUnits(String text, Font font, Color color) {
+			public void configureUnits(Boolean showLegend, String text, Font font, Color color) {
 				LegendTitle legend = chart.getLegend();
+				legend.setVisible(showLegend);
 				if (!text.equals(dataset.getRowKey(0).toString())) {
 					rowKey.setVal(text);
 				}
@@ -610,6 +611,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 	public PlotConfiguration getPlotConfiguration() {
 		PlotConfiguration config = new PlotConfiguration();
 		config = titlesLabels.getConfiguration(config);
+		config.putObject(PlotConfiguration.LEGEND_SHOW, chart.getLegend().isVisible());
 		config.putObject(PlotConfiguration.UNITS, dataset.getRowKey(0).toString());
 		config.putObject(PlotConfiguration.UNITS_FONT, chart.getLegend().getItemFont());
 		config.putObject(PlotConfiguration.UNITS_COLOR, chart.getLegend().getItemPaint());

@@ -609,8 +609,9 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		}
 
 		UnitsConfigurator unitsConfig = new UnitsConfigurator() {
-			public void configureUnits(String text, Font font, Color color) {
+			public void configureUnits(Boolean showLegend, String text, Font font, Color color) {
 				LegendTitle legend = chart.getLegend();
+				legend.setVisible(showLegend);
 				if (!text.equals(dataset.getSeries(0).getKey())) {
 					dataset.getSeries(0).setKey(text);
 				}
@@ -640,6 +641,7 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		PlotConfiguration config = new PlotConfiguration();
 		config = titlesLabels.getConfiguration(config);
 
+		config.putObject(PlotConfiguration.LEGEND_SHOW, chart.getLegend().isVisible());
 		config.putObject(PlotConfiguration.UNITS, dataset.getSeries(0).getKey());
 		config.putObject(PlotConfiguration.UNITS_FONT, chart.getLegend().getItemFont());
 		config.putObject(PlotConfiguration.UNITS_COLOR, chart.getLegend().getItemPaint());

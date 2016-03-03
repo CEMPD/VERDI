@@ -40,10 +40,11 @@ public class JFreeChartConfigurator {
 
 	private void configureUnits(PlotConfiguration config) {
 		if (unitsConfigurator != null) {
+			Boolean showLegend = (Boolean) config.getObject(PlotConfiguration.LEGEND_SHOW);
 			String label = config.getString(PlotConfiguration.UNITS);
 			Color color = config.getColor(PlotConfiguration.UNITS_COLOR);
 			Font font = config.getFont(PlotConfiguration.UNITS_FONT);
-			unitsConfigurator.configureUnits(label, font, color);
+			unitsConfigurator.configureUnits(showLegend, label, font, color);
 
 			Boolean show = (Boolean) config.getObject(PlotConfiguration.UNITS_SHOW_TICK);
 			color = config.getColor(PlotConfiguration.UNITS_TICK_COLOR);

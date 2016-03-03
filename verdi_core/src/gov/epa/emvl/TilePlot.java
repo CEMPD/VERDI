@@ -805,6 +805,8 @@ public class TilePlot {
 	protected void drawLegend(final Graphics graphics, int xMaximum,
 			int yMinimum, int yMaximum, final double[] legendLevels,
 			final Color[] legendColors, final String units) {
+		Boolean showLegend = (Boolean) config.getObject(PlotConfiguration.LEGEND_SHOW);
+		showLegend = (showLegend == null ? true : showLegend);
 		String unitStr = config.getProperty(PlotConfiguration.UNITS); 
 		unitStr = (unitStr == null || unitStr.isEmpty() ? units : unitStr); // Must use units if grid cell statistics.
 		String logStr = " (Log";
@@ -885,7 +887,7 @@ public class TilePlot {
 		((Graphics2D)graphics).rotate(-theta);
 		//graphics.drawString(unitStr, 0, 0);
 		AttributedCharacterIterator aci = as.getIterator();
-		graphics.drawString(aci, 0, 0);
+		if (showLegend) graphics.drawString(aci, 0, 0);
 		((Graphics2D)graphics).rotate(theta);
 		graphics.translate(-unitStrX, -unitStrY);
 		graphics.setFont(gFont);
@@ -908,9 +910,9 @@ public class TilePlot {
 			final int yLabel = yTic + halfCharHeight;
 			
 			if (showLevelValues[color] && uShowTick)
-				graphics.drawString(label, xLabel, yLabel);
+				if (showLegend) graphics.drawString(label, xLabel, yLabel);
 
-			if (uShowTick) graphics.drawLine(xTic, yTic, xTic + ticSize, yTic);
+			if (showLegend && uShowTick) graphics.drawLine(xTic, yTic, xTic + ticSize, yTic);
 		}
 		
 		// Draw color bar:
@@ -919,23 +921,24 @@ public class TilePlot {
 		for (int color = 0; color < colors; ++color) {
 			final int y = yMaximum - (color + 1) * binHeight;
 			graphics.setColor(legendColors[color]);
-			graphics.fillRect(colorBarX, y, binWidth, binHeight);
+			if (showLegend) graphics.fillRect(colorBarX, y, binWidth, binHeight);
 		}
 
 		// Draw box around color bar:
 		final int y = yMaximum - colors * binHeight;
 		graphics.setColor(Color.BLACK);
-		graphics.drawRect(colorBarX, y, binWidth, colors*binHeight);
+		if (showLegend) graphics.drawRect(colorBarX, y, binWidth, colors*binHeight);
 		
 		int legendBoxWidth = colorBarX - x + binWidth + unitHeight / 2;
 		int legendBoxHeight = space + yRange + halfCharHeight * 2 + 2 * space; //add space to top and bottom of the legend
 		
 		// Draw legend box
 		graphics.setColor(Color.BLACK);
-		graphics.drawRect(legendBoxX, legendBoxY - halfCharHeight, legendBoxWidth, legendBoxHeight);
+		if (showLegend) graphics.drawRect(legendBoxX, legendBoxY - halfCharHeight, legendBoxWidth, legendBoxHeight);
 		
 		graphics.setColor(currentColor); // Restore original color.
 
+		config.putObject(PlotConfiguration.LEGEND_SHOW, showLegend);
 		config.putObject(PlotConfiguration.UNITS, unitStr);
 		config.putObject(PlotConfiguration.UNITS_COLOR, unitsClr == null ? currentColor : unitsClr);
 		config.putObject(PlotConfiguration.UNITS_FONT, unitsFont == null ? gFont : unitsFont);

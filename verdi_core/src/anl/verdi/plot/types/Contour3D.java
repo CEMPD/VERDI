@@ -842,6 +842,8 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		show = (Boolean) config.getObject(PlotConfiguration.Z_SHOW_TICK);
 		if (show != null) axis.setTicksVisible(show);
 
+		show = (Boolean) config.getObject(PlotConfiguration.LEGEND_SHOW);
+		legend.setVisible(show);
 		String units = config.getString(PlotConfiguration.UNITS);
 		if (units == null) units = "";
 		ValueAxis legendAxis = legend.getLegend().getAxis();
@@ -885,6 +887,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 
 		config = (TilePlotConfiguration) getTitlesLabelsConfig(config);
 
+		config.putObject(PlotConfiguration.LEGEND_SHOW, legend.isVisible());
 		ValueAxis axis = legend.getLegend().getAxis();
 		config.putObject(PlotConfiguration.UNITS, axis.getLabel());
 		Font font = axis.getLabelFont();

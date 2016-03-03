@@ -18,7 +18,7 @@ public interface UnitsConfigurator {
 	 * @param font the units label font
 	 * @param color the units label color
 	 */
-	void configureUnits(String text, Font font, Color color);
+	void configureUnits(Boolean showLegend, String text, Font font, Color color);
 
 	void configureUnitsTick(Boolean show, Font font, Color color);
 
