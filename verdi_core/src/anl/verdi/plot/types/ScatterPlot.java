@@ -67,6 +67,7 @@ import anl.verdi.plot.config.SaveConfiguration;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 import anl.verdi.plot.config.UnitsConfigurator;
 import anl.verdi.plot.data.ScatterXYDataset;
+import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotListener;
 import anl.verdi.plot.gui.TimeLayerPanel;
 import anl.verdi.plot.probe.PlotEventProducer;
@@ -465,6 +466,10 @@ public class ScatterPlot extends AbstractPlot {
 			renderer.setSeriesFillPaint(0, color);
 
 		this.config = config;
+	}
+	
+	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
+		configure(config);
 	}
 
 	/**
