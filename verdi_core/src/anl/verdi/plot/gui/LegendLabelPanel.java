@@ -96,6 +96,10 @@ public class LegendLabelPanel extends JPanel {
 			tickColorFld.setBackground(color);
 		}
 	}
+	
+	public void initLegend(Boolean show) {
+		legendChk.setSelected(show);
+	}
 
 	public void initLabel(String title, Font font, Color color) {
 		if (title != null) textFld.setText(title);
@@ -162,6 +166,10 @@ public class LegendLabelPanel extends JPanel {
 			strStyle = font.isItalic() ? "italic" : "plain";
 		}
 		tickFontFld.setText(font.getName() + ", " + strStyle + ", " + font.getSize());
+	}
+	
+	public boolean isShowLegend() {
+		return legendChk.isSelected();
 	}
 
 	public Font getSelectedFont() {

@@ -55,6 +55,7 @@ public class LabelsPanel extends JPanel {
 		
 		footersPanel.fillConfiguration(config);
 
+		config.putObject(PlotConfiguration.LEGEND_SHOW, unitsPanel.isShowLegend());
 		config.putObject(PlotConfiguration.UNITS, unitsPanel.getText());
 		Font font = unitsPanel.getSelectedFont();
 		if (font != null) config.putObject(PlotConfiguration.UNITS_FONT, font);
@@ -82,6 +83,10 @@ public class LabelsPanel extends JPanel {
 
 	public void initRangeTick(boolean show, Font font, Color color, Integer num) {
 		rangePanel.initTicks(show, font, color, num);
+	}
+	
+	public void initLegend(boolean show) {
+		unitsPanel.initLegend(show);
 	}
 
 	public void initUnits(String title, Font font, Color color) {

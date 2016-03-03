@@ -227,6 +227,7 @@ public class ConfigDialog extends JDialog {
 				.getColor(PlotConfiguration.RANGE_TICK_COLOR), (Integer)config
 				.getObject(PlotConfiguration.RANGE_TICK_NUMBER));
 
+		labelsPanel.initLegend((Boolean) config.getObject(PlotConfiguration.LEGEND_SHOW));
 		labelsPanel.initUnits(config.getString(PlotConfiguration.UNITS), config
 				.getFont(PlotConfiguration.UNITS_FONT), config
 				.getColor(PlotConfiguration.UNITS_COLOR));
