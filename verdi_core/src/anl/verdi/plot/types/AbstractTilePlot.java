@@ -269,9 +269,10 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 
 		UnitsConfigurator unitsConfig = new UnitsConfigurator() {
 
-			public void configureUnits(String text, Font font, Color color) {
+			public void configureUnits(Boolean showLegend, String text, Font font, Color color) {
 				if (text == null) text = "";
 				PaintScaleLegend legend = (PaintScaleLegend) chart.getSubtitle(legendIndex);
+				legend.setVisible(showLegend);
 				ValueAxis axis = legend.getAxis();
 				axis.setLabel(text);
 				if (font != null) axis.setLabelFont(font);
@@ -1177,6 +1178,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		XYPlot plot = (XYPlot) chart.getPlot();
 		PaintScaleLegend legend = (PaintScaleLegend) chart.getSubtitle(legendIndex);
 		ValueAxis axis = legend.getAxis();
+		config.putObject(PlotConfiguration.LEGEND_SHOW, legend.isVisible());
 		config.putObject(PlotConfiguration.UNITS, axis.getLabel());
 		config.putObject(PlotConfiguration.UNITS_FONT, axis.getLabelFont());
 		config.putObject(PlotConfiguration.UNITS_COLOR, axis.getLabelPaint());

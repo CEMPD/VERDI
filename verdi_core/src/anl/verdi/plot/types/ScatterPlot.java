@@ -439,8 +439,9 @@ public class ScatterPlot extends AbstractPlot {
 		}
 
 		UnitsConfigurator unitsConfig = new UnitsConfigurator() {
-			public void configureUnits(String text, Font font, Color color) {
+			public void configureUnits(Boolean showLegend, String text, Font font, Color color) {
 				LegendTitle legend = chart.getLegend();
+				legend.setVisible(showLegend);
 				if (!text.equals(dataset.getSeriesKey(0))) {
 					dataset.setSeriesKey(0, text);
 				}
@@ -482,6 +483,7 @@ public class ScatterPlot extends AbstractPlot {
 		PlotConfiguration config = new PlotConfiguration();
 		config = titlesLabels.getConfiguration(config);
 
+		config.putObject(PlotConfiguration.LEGEND_SHOW, chart.getLegend().isVisible());
 		config.putObject(PlotConfiguration.UNITS, dataset.getSeriesKey(0));
 		config.putObject(PlotConfiguration.UNITS_FONT, chart.getLegend()
 				.getItemFont());
