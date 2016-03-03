@@ -34,6 +34,7 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
+import org.jfree.chart.ChartTheme;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
@@ -59,11 +60,14 @@ import anl.verdi.data.DataUtilities;
 import anl.verdi.data.Range;
 import anl.verdi.data.Slice;
 import anl.verdi.formula.Formula;
+import anl.verdi.formula.Formula.Type;
 import anl.verdi.plot.config.JFreeChartConfigurator;
 import anl.verdi.plot.config.LoadConfiguration;
+import anl.verdi.plot.config.LoadTheme;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
 import anl.verdi.plot.config.SaveConfiguration;
+import anl.verdi.plot.config.SaveTheme;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 import anl.verdi.plot.config.UnitsConfigurator;
 import anl.verdi.plot.gui.LayerChartPanel;
@@ -74,6 +78,7 @@ import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.probe.ProbeEvent;
 import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.plot.util.PlotPrintAction;
+import anl.verdi.plot.util.PlotProperties;
 import anl.verdi.util.Tools;
 import anl.verdi.util.VUnits;
 
@@ -113,7 +118,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 	public TimeSeriesBarPlot(DataFrame frame, PlotConfiguration config) {
 		this.frame = frame;
 		this.config = config;
-		dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		dateFormat = new SimpleDateFormat("MMM d, h a");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		dataset = createDataset();
 		chart = createChart(dataset);
@@ -131,6 +136,10 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 		PlotConfiguration defaultConfig = getPlotConfiguration();
 		defaultConfig.merge(config);
 		configure(defaultConfig);
+		
+		/** Check if a chart theme has been loaded. */
+		ChartTheme theme = PlotProperties.getInstance().getCurrentTheme();
+		if (theme != null) theme.apply(chart);
 	}
 
 
@@ -241,6 +250,20 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 		});
 		menu.add(new LoadConfiguration(this));
 		menu.add(new SaveConfiguration(this));
+		menu.add(new LoadTheme(this, chart));
+		
+		menu.add(new AbstractAction("Edit Chart Theme") {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -6307695766431600549L;
+
+			public void actionPerformed(ActionEvent e) {
+				panel.doEditChartTheme();
+			}
+		});
+		
+		menu.add(new SaveTheme(this));
 		bar.add(menu);
 
 		menu = new JMenu("Controls");
@@ -394,7 +417,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 		plot.setDomainGridlinesVisible(true);
 
 		CategoryAxis axis = plot.getDomainAxis();
-		axis.setCategoryLabelPositions(CategoryLabelPositions.DOWN_90);
+		axis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
 		axis.setLabel("Time Step");
 
 		NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
@@ -407,7 +430,6 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 			rangeAxis.setRangeAboutValue(minMax.getMin(), .01);
 		} else rangeAxis.setRange(minMax.getMin() - interval, minMax.getMax() + interval);
 
-		
 		return chart;
 	}
 
@@ -564,8 +586,9 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 	 */
 	@Override
 	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
-	configure(config);
+		configure(config);
 	}
+	
 	@Override
 	public void configure(PlotConfiguration config) {
 		String configFile = config.getConfigFileName();
@@ -592,6 +615,14 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 			public void configureUnitsTick(Boolean show, Font font, Color color) {}
 		};
 
+		//NOTE: do the category label update here since there is no handle in the domain axis object for the label format
+		try {
+			dateFormat.applyPattern(config.getString(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT_4CAT));
+			refreshCategoryLabelFormat();
+		} catch (Exception e) {
+			// NOTE: if new date format doesn't format, there is no action is needed.
+		}
+		
 		// do the titles and the labels
 		JFreeChartConfigurator configurator = new JFreeChartConfigurator(chart,
 						titlesLabels.getTitleConfigurator(), unitsConfig);
@@ -602,6 +633,23 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 		if (color != null) renderer.setSeriesPaint(0, color);
 	}
 
+	/***
+	 * Refresh the domain axis label so to take the new date format
+	 */
+	private void refreshCategoryLabelFormat() {
+		dataset.clear();
+		Axes<DataFrameAxis> axes = frame.getAxes();
+		DataFrameAxis time = axes.getTimeAxis();
+		int origin = time.getOrigin();
+		DataFrameIndex index = frame.getIndex();
+		index.setLayer(layer);
+		for (int t = 0; t < time.getExtent(); t++) {
+			index.setTime(t);
+			GregorianCalendar date = axes.getDate(t + origin);		// 2014 changed Date to GregorianCalendar
+			dataset.addValue(frame.getDouble(index), "Series 1", dateFormat.format(date.getTimeInMillis()));
+		}
+	}
+	
 	/**
 	 * Gets this Plot's configuration data.
 	 *
@@ -611,6 +659,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 	public PlotConfiguration getPlotConfiguration() {
 		PlotConfiguration config = new PlotConfiguration();
 		config = titlesLabels.getConfiguration(config);
+		config.putObject(PlotConfiguration.PLOT_TYPE, Type.TIME_SERIES_BAR); //NOTE: to differentiate plot types
 		config.putObject(PlotConfiguration.LEGEND_SHOW, chart.getLegend().isVisible());
 		config.putObject(PlotConfiguration.UNITS, dataset.getRowKey(0).toString());
 		config.putObject(PlotConfiguration.UNITS_FONT, chart.getLegend().getItemFont());
@@ -618,6 +667,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 		config.putObject(PlotConfiguration.FOOTER1_SHOW_LINE, true);
 		config.putObject(PlotConfiguration.FOOTER2_SHOW_LINE, true);
 		config.putObject(PlotConfiguration.OBS_SHOW_LEGEND, false);
+		config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT_4CAT, dateFormat.toPattern());
 
 		CategoryItemRenderer renderer = (CategoryItemRenderer) ((CategoryPlot) chart.getPlot()).getRenderer(0);
 		config.putObject(TimeSeriesPlotConfiguration.SERIES_COLOR, (Color) renderer.getSeriesPaint(0));
