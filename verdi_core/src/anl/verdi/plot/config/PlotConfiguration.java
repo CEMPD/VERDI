@@ -40,6 +40,9 @@ public class PlotConfiguration {
 			+ ".subtitle2_font";
 	public static final String SUBTITLE_2_COLOR = PlotConfiguration.class.getName()
 			+ ".subtitle2_color";
+	
+	public static final String LEGEND_SHOW = PlotConfiguration.class.getName()
+			+ ".legend_show";
 	public static final String UNITS = PlotConfiguration.class.getName()
 			+ ".units";
 	public static final String UNITS_FONT = PlotConfiguration.class.getName()
