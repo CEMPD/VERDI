@@ -637,7 +637,7 @@ public class ScriptHandler {
 						//						vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 
 						config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
-						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
+						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 						//						vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 
 						config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
@@ -729,7 +729,7 @@ public class ScriptHandler {
 						//						vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 
 						config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
-						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
+						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 						//						vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 
 						config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
@@ -1345,7 +1345,7 @@ public class ScriptHandler {
 						//							vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 
 						config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
-						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
+						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 						//							vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 
 						config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
@@ -1431,7 +1431,7 @@ public class ScriptHandler {
 						//							vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 
 						config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
-						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
+						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 						//							vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 
 						config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
@@ -1511,7 +1511,7 @@ public class ScriptHandler {
 						//						vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 
 						config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
-						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
+						vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 						//						vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 
 						config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
@@ -1674,7 +1674,7 @@ public class ScriptHandler {
 			//			vectorConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
 
 			config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
-			vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
+			vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 			//			vectorConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
 
 			config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
