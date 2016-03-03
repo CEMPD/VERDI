@@ -200,8 +200,8 @@ public class LegendLabelPanel extends JPanel {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner non-commercial license
 		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
-		separator1 = compFactory.createSeparator("Label");
 		legendChk = new JCheckBox();
+		separator1 = compFactory.createSeparator("Label");
 		label1 = new JLabel();
 		textFld = new JTextField();
 		label2 = new JLabel();
@@ -286,11 +286,12 @@ public class LegendLabelPanel extends JPanel {
 //								FormFactory.LINE_GAP_ROWSPEC,
 //								FormFactory.DEFAULT_ROWSPEC
 //				}));
-		add(separator1, cc.xywh(1, 1, 7, 1));
 		
 		//---- legendChk ----
 		legendChk.setText("Show Legend");
-		add(legendChk, cc.xywh(3, 3, 3, 1));
+		add(legendChk, cc.xywh(1, 1, 7, 1));
+
+		add(separator1, cc.xywh(1, 3, 7, 1));
 
 		//---- label1 ----
 		label1.setText("Text:");
@@ -361,6 +362,7 @@ public class LegendLabelPanel extends JPanel {
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner non-commercial license
+	private JCheckBox legendChk;
 	private JComponent separator1;
 	private JLabel label1;
 	private JTextField textFld;
@@ -371,7 +373,6 @@ public class LegendLabelPanel extends JPanel {
 	private JTextField colorFld;
 	private JButton colorBtn;
 	private JComponent tickSep;
-	private JCheckBox legendChk;
 	private JCheckBox tickChk;
 	private JLabel number;
 	private JTextField numberFld;
