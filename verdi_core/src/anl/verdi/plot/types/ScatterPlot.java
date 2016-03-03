@@ -503,9 +503,6 @@ public class ScatterPlot extends AbstractPlot {
 		this.config = config;
 	}
 	
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
-		configure(config);
-	}
 
 	/**
 	 * Gets this Plot's configuration data.
