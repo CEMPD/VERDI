@@ -125,7 +125,6 @@ public class MPASDataset extends AbstractDataset {
 		hiddenVars.add("cellsOnCell");
 		hiddenVars.add("verticesOnCell");
 		hiddenVars.add("meshDensity");
-		hiddenVars.add("zz");
 	}
 	
 	ucar.ma2.Array cellVertices = null;
@@ -425,6 +424,7 @@ public class MPASDataset extends AbstractDataset {
 		KNOWN_UNITS.put("xland", "-");		
 		KNOWN_UNITS.put("seaice", "-");		
 		KNOWN_UNITS.put("xice", "-");		
+		KNOWN_UNITS.put("zz", "-");		
 	}
 	
 	Map<String, Array> arrayCache = new HashMap<String, Array>();

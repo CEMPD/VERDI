@@ -58,6 +58,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 //import java.util.Date;		// functions deprecated, replaced by GregorianCalendar
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -125,6 +126,8 @@ import anl.verdi.data.MPASAxisLabelCreator;
 import anl.verdi.data.DataUtilities.MinMax;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.MPASDataFrameIndex;
+import anl.verdi.data.MPASPlotDataFrame;
+import anl.verdi.data.MeshCellInfo;
 import anl.verdi.data.ObsEvaluator;
 import anl.verdi.data.Slice;
 import anl.verdi.data.Variable;
@@ -215,6 +218,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private final double cellWidth; // 12000.0 meters.
 	private final double cellHeight; // 12000.0 meters.
 	private NumberFormat format;
+	private NumberFormat plotFormat;
 	private NumberFormat coordFormat;
 	private NumberFormat valueFormat;
 
@@ -339,7 +343,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private final JPanel threadParent = this;
 	private BufferedImage bImage;
 	private static final Object lock = new Object();
-	protected java.util.List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
 	private JPopupMenu popup;
 	protected Rectangle dataArea = new Rectangle();
 	private boolean inDataArea = false;
@@ -373,20 +376,20 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	
 	protected Action timeSeriesSelected = new AbstractAction(
-			"Time Series of Probed Cell(s)") {
+			"Time Series of Visible Cell(s)") {
 		private static final long serialVersionUID = -2940008125642497962L;
 
 		public void actionPerformed(ActionEvent e) {
-			requestTimeSeries(Formula.Type.TIME_SERIES_LINE);
+			requestTimeSeries(getVisibleCells(), Formula.Type.TIME_SERIES_LINE);
 		}
 	};
 
 	protected Action timeSeriesBarSelected = new AbstractAction(
-			"Time Series Bar of Probed Cell(s)") {
+			"Time Series Bar of Visible Cell(s)") {
 		private static final long serialVersionUID = 2455217937515200807L;
 
 		public void actionPerformed(ActionEvent e) {
-			requestTimeSeries(Formula.Type.TIME_SERIES_BAR);
+			requestTimeSeries(getVisibleCells(), Formula.Type.TIME_SERIES_BAR);
 		}
 	};
 
@@ -395,8 +398,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		private static final long serialVersionUID = 5282480503103839989L;
 
 		public void actionPerformed(ActionEvent e) {
-			DataUtilities.MinMaxPoint points = getMinMaxPoints();
-			requestTimeSeries(points.getMinPoints(), "Min. cells ");
+			requestTimeSeries(getMinCells(), "Min. cells ");
 		}
 	};
 
@@ -405,8 +407,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		private static final long serialVersionUID = -4465758432397962782L;
 
 		public void actionPerformed(ActionEvent e) {
-			DataUtilities.MinMaxPoint points = getMinMaxPoints();
-			requestTimeSeries(points.getMaxPoints(), "Max. cells ");
+			requestTimeSeries(getMaxCells(), "Max. cells ");
 		}
 	};
 
@@ -422,7 +423,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		public void run() {
 
 			do {
-
 				
 				if ( drawMode != DRAW_NONE &&
 					 ! VerdiGUI.isHidden( (Plot) threadParent ) ) {
@@ -736,6 +736,38 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 	};
 	
+	private double getCurrentWidthDeg() {
+		return visibleDataWidth * RAD_TO_DEG;
+	}
+	
+	private double getCurrentHeightDeg() {
+		return visibleDataHeight * RAD_TO_DEG;
+	}
+	
+	private double getCurrentLonMaxDeg() {
+		return (panX + visibleDataWidth) * RAD_TO_DEG + columnOrigin;
+	}
+	
+	private double getCurrentLonMinDeg() {
+		return panX * RAD_TO_DEG + columnOrigin;
+	}
+	
+	private double getCurrentLatMaxDeg() {
+		return (dataHeight - panY) * RAD_TO_DEG + rowOrigin;
+	}
+	
+	private double getCurrentLatMinDeg() {
+		return (dataHeight - panY - visibleDataHeight) * RAD_TO_DEG + rowOrigin;
+	}
+	
+//	tilePlot.drawAxis(offScreenGraphics, xOffset, xOffset + screenWidth, yOffset, yOffset + screenHeight, panX * RAD_TO_DEG + columnOrigin, visibleDataWidth * RAD_TO_DEG,
+//	panY * RAD_TO_DEG + rowOrigin, visibleDataHeight * RAD_TO_DEG, rowLabels, columnLabels);
+
+	//firstRow = (int)Math.round((dataHeight - panY - visibleDataHeight) * RAD_TO_DEG);
+	//lastRow = (int)Math.round((dataHeight - panY) * RAD_TO_DEG);
+	//firstColumn = (int)Math.round(panX * RAD_TO_DEG);
+	//lastColumn = (int)Math.round((panX + visibleDataWidth) * RAD_TO_DEG);
+	
 	private BufferedImage toBufferedImage(Image image, int type, int width, int height) {
         BufferedImage result = new BufferedImage(width, height, type);
         Graphics2D g = result.createGraphics();
@@ -918,7 +950,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		domain = null;
 
 		timeLayerPanel = null;
-		probeItems = null;
 		popup = null;
 		dataArea = null;
 		popUpLocation = null;
@@ -1396,7 +1427,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	public void setTimestep(int timestep) {
 		if (timestep >= firstTimestep && timestep <= lastTimestep && timestep != this.timestep) {
-			previousTimestep = timestep;
+			previousTimestep = this.timestep;
 			this.timestep = timestep;
 			copySubsetLayerData(this.log);
 			draw();
@@ -1439,7 +1470,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		return count - 2;
 	}
 	
-	public class CellInfo { 
+	public class CellInfo implements MeshCellInfo { 
 		double[] latCoords;
 		double[] lonCoords;
 		int[] latTransformed;
@@ -1475,8 +1506,16 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			return latCoords.length;
 		}
 		
+		public double getLon() {
+			return lon;
+		}
+		
 		public double getLon(int index) {
 			return lonCoords[index] * RAD_TO_DEG;
+		}
+		
+		public double getLat() {
+			return lat;
 		}
 
 		public double getLat(int index) {
@@ -1609,6 +1648,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	ArrayReader depth, elevation;
 	private Map<Integer, Integer> vertexPositionMap;
 	private Map<Integer, CellInfo> cellIdInfoMap;
+	private static final int CELL_NONE = 16777215;
 	private CellInfo[] cellsToRender = null;
 	private Map<CellInfo, Integer> splitCells = null;
 	
@@ -1888,6 +1928,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		format = NumberFormat.getInstance();
 		format.setMaximumFractionDigits(4);
 		
+		plotFormat = NumberFormat.getInstance();
+		
 		coordFormat = NumberFormat.getInstance();
 		coordFormat.setMaximumFractionDigits(5);
 
@@ -1978,8 +2020,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		lastColumn = firstColumn + columns - 1;
 		final Envelope envelope = mpasAxes.getBoundingBox(dataFrame.getDataset().get(0).getNetcdfCovn());
 
-		if (envelope == null)
-			axes.e.printStackTrace();
 		westEdge = envelope.getMinX(); // E.g., -420000.0.
 		southEdge = envelope.getMinY(); // E.g., -1716000.0.
 //		cellWidth = Numerics.round1(envelope.getWidth() / columns); // 12000.0.
@@ -2170,7 +2210,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		draw();
 		long total = (System.currentTimeMillis() - start) / 1000;
-		System.err.println("MeshPlot initialized in " + total + "s");
 	}
 	
 	private boolean statError = false;
@@ -2550,13 +2589,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		menu = new JMenu("Plot");
 		bar.add(menu);
 		item = menu.add(timeSeriesSelected);
-		item.setEnabled(false);
-		probeItems.add(item);
-
 		item = menu.add(timeSeriesBarSelected);
-		item.setEnabled(false);
-		probeItems.add(item);
-
 		item = menu.add(timeSeriesMin);
 		item = menu.add(timeSeriesMax);
 
@@ -3030,7 +3063,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
 		String configFile = config.getConfigFileName();
-		double[] minmax = { 0.0, 0.0 };
 
 		if (configFile != null) {
 			try {
@@ -3059,7 +3091,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				//we need to also populate the non log intervals to some default range...
 				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
 				//so we need to make sure and pre populate just in case user changes between linear and log scales
-				computeDataRange(minmax, false);
 				map.setMinMax( minmax[0], minmax[1]);
 
 			} else {
@@ -3070,8 +3101,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				//we need to also populate the log intervals to some default range...
 				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
 				//so we need to make sure and pre populate just in case user changes between linear and log scales
-				computeDataRange(minmax, true);
-				map.setLogMinMax( minmax[0], minmax[1]);
+				map.setLogMinMax( logminmax[0], logminmax[1]);
 			}
 			
 			updateColorMap(map);
@@ -3514,18 +3544,75 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	/**
+	 * Gets the visible cells for this plot.
+	 *
+	 * @return the visible cells for this plot.
+	 */
+	protected Set<CellInfo> getVisibleCells() {
+		Set<CellInfo> visibleCells = new HashSet<CellInfo>();	
+		
+		Set<Integer> cellIdList = new HashSet<Integer>();
+		int width = cellIdMap.getWidth();
+		int height = cellIdMap.getHeight();
+		for (int i = 0; i < width; ++i)
+			for (int j = 0; j < height; ++j) {
+				cellIdList.add(getCellIdByCoord(i, j));
+			}
+		for (int hoveredId : cellIdList) {
+			CellInfo cell = cellIdInfoMap.get(hoveredId);
+			if (cell != null)
+				visibleCells.add(cell);
+			//else if (hoveredId != CELL_NONE)
+				//System.err.println("Could not find cell id " + hoveredId);
+		}
+		return visibleCells;
+	}
+	
+	/**
 	 * Gets the MinMax points for this plot.
 	 *
 	 * @return the MinMax points for this plot.
 	 */
-	protected DataUtilities.MinMaxPoint getMinMaxPoints() {
-		try {
-			if (hasNoLayer) return DataUtilities.minMaxPoint(getDataFrame(), timestep - firstTimestep);
-			return DataUtilities.minMaxTLPoint(getDataFrame(), timestep - firstTimestep, layer - firstLayer);
-		} catch (InvalidRangeException e) {
-			Logger.error("Invalid Range Exception in FastTilePlot getMinMaxPoints: " + e.getMessage());
+	protected Set<CellInfo> getMinCells() {
+		Set<CellInfo> minCells = new HashSet<CellInfo>();
+		double min = Double.MAX_VALUE;
+		double value = 0;
+		int time = timestep - firstTimestep;
+		for (CellInfo cell : cellsToRender) {
+			if (hasNoLayer)
+				value = cell.getValue(time, -1);
+			else
+				value = cell.getValue(time, layer);
+			if (value == min)
+				minCells.add(cell);
+			else if (value < min) {
+				min = value;
+				minCells.clear();
+				minCells.add(cell);
+			}			
 		}
-		return null;
+		return minCells;
+	}
+	
+	protected Set<CellInfo> getMaxCells() {
+		Set<CellInfo> maxCells = new HashSet<CellInfo>();
+		double max = Double.MAX_VALUE * -1;
+		double value;
+		int time = timestep - firstTimestep;
+		for (CellInfo cell : cellsToRender) {
+			if (hasNoLayer)
+				value = cell.getValue(time, -1);
+			else
+				value = cell.getValue(time, layer);
+			if (value == max)
+				maxCells.add(cell);
+			else if (value > max) {
+				max = value;
+				maxCells.clear();
+				maxCells.add(cell);
+			}			
+		}
+		return maxCells;
 	}
 
 	private void probe(Rectangle axisRect) {
@@ -3588,7 +3675,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				}
 
 				probedSlice = slice;
-				enableProbeItems(true);
 				ProbeEvent ent = new ProbeEvent(this, subsection, slice, Formula.Type.TILE);	// 2014 fixed code not knowing what TILE meant
 				ent.setIsLog( false); //isLog); // JIZHEN: always set to false, take log inside this class
 				ent.setLogBase( logBase);
@@ -3599,42 +3685,26 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 	}
 
-	private void requestTimeSeries(Formula.Type type) {
-		Slice slice = new Slice();
-		// slice needs to be in terms of the actual array indices
-		// of the frame, but the axes ranges refer to the range
-		// of the original dataset. So, the origin will always
-		// be 0 and the extent is the frame's extent.
-		slice.setTimeRange(0, getDataFrame().getAxes().getTimeAxis().getExtent());
-		DataFrameAxis frameAxis = getDataFrame().getAxes().getZAxis();
-		if (frameAxis != null) slice.setLayerRange(0, frameAxis.getExtent());
-		slice.setXRange(probedSlice.getXRange());
-		slice.setYRange(probedSlice.getYRange());
-
-		try {
-			DataFrame subsection = getDataFrame().slice(slice);
-			eventProducer.firePlotRequest(new TimeSeriesPlotRequest(subsection, slice, type));
-		} catch (InvalidRangeException e1) {
-			Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries: " + e1.getMessage());
-		}
-	}
-
-	private void requestTimeSeries(Set<Point> points, String title) {
-		MultiTimeSeriesPlotRequest request = new MultiTimeSeriesPlotRequest(title);
-		for (Point point : points) {
+	private void requestTimeSeries(Set<CellInfo> cells, Formula.Type type) {
+		
+		int digits = MPASTilePlot.getDisplayPrecision(getCurrentWidthDeg());
+		plotFormat.setMaximumFractionDigits(digits);
+		plotFormat.setMinimumFractionDigits(digits);
+		String label = "(" + plotFormat.format(getCurrentLonMinDeg()) + " - " + plotFormat.format(getCurrentLonMaxDeg()) + ", " + plotFormat.format(getCurrentLatMinDeg()) + " - " + plotFormat.format(getCurrentLatMaxDeg()) + ") ";
+		TimeSeriesPlotRequest request = new TimeSeriesPlotRequest(null, null, type, label);
+		for (CellInfo cell : cells) {
 			Slice slice = new Slice();
 			// slice needs to be in terms of the actual array indices
 			// of the frame, but the axes ranges refer to the range
 			// of the original dataset. So, the origin will always
-			// be 0 and the exent is the frame's exent.
-			slice.setTimeRange(0, getDataFrame().getAxes().getTimeAxis().getExtent());
-			DataFrameAxis frameAxis = getDataFrame().getAxes().getZAxis();
-			if (frameAxis != null) slice.setLayerRange(0, frameAxis.getExtent());
-			slice.setXRange(point.x, 1);
-			slice.setYRange(point.y, 1);
+			// be 0 and the extent is the frame's extent.
+			slice.setTimeRange(0, timeAxis.getExtent());
+			if (layerAxis != null) slice.setLayerRange(0, layerAxis.getExtent());
+			slice.setCellRange(cell.getId(), 1);
+			
 			try {
-				DataFrame subsection = getDataFrame().slice(slice);
-				request.addItem(subsection);
+				DataFrame subsection = new MPASPlotDataFrame(label, renderVariable.getArray(), slice, dataFrame.getVariable(), dataFrame.getAxes(), dataFrame.getDataset().get(0));
+				request.addItem(subsection, true);
 			} catch (InvalidRangeException e1) {
 				Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries: " + e1.getMessage());
 			}
@@ -3642,16 +3712,31 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		eventProducer.firePlotRequest(request);
 	}
 
-	/**
-	 * Enables / disables the menu items that work with
-	 * the currently probed point.
-	 *
-	 * @param val true to enable
-	 */
-	protected void enableProbeItems(boolean val) {
-		for (JMenuItem item : probeItems) {
-			item.setEnabled(val);
+	private void requestTimeSeries(Set<CellInfo> cells, String title) {
+		MultiTimeSeriesPlotRequest request = new MultiTimeSeriesPlotRequest(title);
+		for (CellInfo cell : cells) {
+
+			Slice slice = new Slice();
+			// slice needs to be in terms of the actual array indices
+			// of the frame, but the axes ranges refer to the range
+			// of the original dataset. So, the origin will always
+			// be 0 and the exent is the frame's exent.
+			slice.setTimeRange(0, getDataFrame().getAxes().getTimeAxis().getExtent());
+			DataFrameAxis layerAxis = getDataFrame().getAxes().getZAxis();
+			if (layerAxis != null) slice.setLayerRange(0, layerAxis.getExtent());
+			slice.setCellRange(cell.getId(), 1);
+
+			try {
+				String label = formatLatLon(cell.getLon(), cell.getLat(), cell.getId(), false, 0, 0);
+				DataFrame subsection = new MPASPlotDataFrame(label, renderVariable.getArray(), slice, dataFrame.getVariable(), dataFrame.getAxes(), dataFrame.getDataset().get(0));
+
+			
+				request.addItem(subsection);
+			} catch (InvalidRangeException e1) {
+				Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries", e1);
+			}
 		}
+		eventProducer.firePlotRequest(request);
 	}
 
 	public Decidegrees getLatLonFor(int screenx,int screeny){
@@ -3713,7 +3798,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	
 	public static void debugMain(String[] args) {
-		System.out.println("Hello there");
 		//ARGB String: Color 1 -16777194 color 2 -1677717 from 22 / 44
 		//BufferedImage imgMap = new java.awt.image.BufferedImage(10, 10, java.awt.image.BufferedImage.TYPE_INT_ARGB);
 		//BufferedImage imgMap = new java.awt.image.BufferedImage(10, 10, java.awt.image.BufferedImage.TYPE_3BYTE_BGR);
@@ -3737,13 +3821,18 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private String formatPointLatLon(Point4i point) {
 		double lonCoord = ((point.x / compositeFactor) + panX) * RAD_TO_DEG + columnOrigin;
 		double latCoord = (dataHeight - ((point.y / compositeFactor)  + panY )) * RAD_TO_DEG + rowOrigin;
-		
+		int hoveredId = getCellIdByCoord(point.x, point.y);
+		return formatLatLon(lonCoord, latCoord, hoveredId, true, point.x, point.y);
+	}
+	
+	private String formatLatLon(double lonCoord, double latCoord, int hoveredId, boolean extendedFormat, int xCoord, int yCoord) {	
 
-		String ret = "(" + coordFormat.format(lonCoord) + ", " + coordFormat.format(latCoord); 
-		//ret += " xy " + point.x + "," + point.y;
+		String ret = "(" + coordFormat.format(lonCoord) + ", " + coordFormat.format(latCoord);
+		if (!extendedFormat)
+			return ret + ")";
+		ret += " xy " + xCoord + "," + yCoord;
 
 		try {
-			int hoveredId = getCellIdByCoord(point.x, point.y);
 			CellInfo cell = cellIdInfoMap.get(hoveredId);
 			if (cell == null) //Hovered over an unpainted space, where the model did not include a cell
 				return "";
@@ -3753,6 +3842,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			else
 				value = statisticsData[preStatIndex - 1][0][cell.cellId];
 			if (cell != null) {
+				ret += cell.getId() + " ";
 				ret += cell.getElevation() + ") " + variable + " " + valueFormat.format(value) + unitString;
 				//ret += ") " + cell.getId() + " " + " " + valueFormat.format(cell.getValue()) + " c " + coordFormat.format(cell.lon) + "," + coordFormat.format(cell.lat) + " " + point.x + "," + point.y;
 

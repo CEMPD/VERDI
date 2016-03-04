@@ -9,7 +9,7 @@ package anl.verdi.data;
  */
 public class Slice {
 
-	private Range timeRange, layerRange, xRange, yRange;
+	private Range timeRange, layerRange, xRange, yRange, cellRange;
 
 	/**
 	 * Sets the time range of this Slice.
@@ -96,6 +96,24 @@ public class Slice {
 	public void setYRange(int origin, int extent) {
 		yRange = new Range(origin, extent);
 	}
+	
+	/**
+	 * Sets the cell range of this Slice.
+	 *
+	 * @param range the cell range
+	 */
+	public void setCellRange(int origin, int extent) {
+		cellRange = new Range(origin, extent);
+	}
+	
+	/**
+	 * Sets the cell range of this Slice.
+	 *
+	 * @param range the cell range
+	 */
+	public void setCellRange(Range range) {
+		cellRange = new Range(range);
+	}
 
 
 	/**
@@ -132,5 +150,13 @@ public class Slice {
 	 */
 	public Range getYRange() {
 		return yRange;
+	}
+	/**
+	 * Gets the range of slice along the cell dimension.
+	 *
+	 * @return the range of slice along the cell dimension. May be null.
+	 */
+	public Range getCellRange() {
+		return cellRange;
 	}
 }

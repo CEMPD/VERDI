@@ -6,6 +6,8 @@ import ucar.ma2.ArrayFloat;
 
 public abstract class ArrayReader {
 	
+	protected Array array;
+	
 	public static ArrayReader getReader(Array array) {
 		if (array instanceof ArrayDouble)
 			return new ArrayDoubleReader((ArrayDouble)array);
@@ -19,4 +21,8 @@ public abstract class ArrayReader {
 	public abstract double get(int d1, int d2);
 	
 	public abstract double get(int d1, int d2, int d3);
+	
+	public Array getArray() {
+		return array;
+	}
 }

@@ -4,7 +4,6 @@ import ucar.ma2.ArrayFloat;
 
 public class ArrayFloatReader extends ArrayReader {
 	
-	ArrayFloat array;
 	int dimensions = 0;
 	
 	public ArrayFloatReader(ArrayFloat source) {

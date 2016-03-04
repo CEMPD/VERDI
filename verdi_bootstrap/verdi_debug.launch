@@ -32,6 +32,7 @@
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry internalArchive=&quot;/verdi_bootstrap/lib/jpf.jar&quot; path=&quot;3&quot; sourceAttachmentPath=&quot;/verdi_core/lib_src/jpf-1.5-sources.jar&quot; sourceRootPath=&quot;&quot; type=&quot;2&quot;/&gt;&#10;"/>
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry containerPath=&quot;org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1&quot; javaProject=&quot;verdi_core&quot; path=&quot;3&quot; type=&quot;4&quot;/&gt;&#10;"/>
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry internalArchive=&quot;/verdi_core/lib/visad.jar&quot; path=&quot;3&quot; sourceAttachmentPath=&quot;/verdi_core/lib_src/visad_src.jar&quot; sourceRootPath=&quot;&quot; type=&quot;2&quot;/&gt;&#10;"/>
+<listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry internalArchive=&quot;/verdi_core/lib/gt-shapefile-12.2.jar&quot; path=&quot;3&quot; type=&quot;2&quot;/&gt;&#10;"/>
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry internalArchive=&quot;/verdi_core/lib/sgt_v30.jar&quot; path=&quot;3&quot; sourceAttachmentPath=&quot;/verdi_core/lib_src/sgt_src_v30.jar&quot; sourceRootPath=&quot;&quot; type=&quot;2&quot;/&gt;&#10;"/>
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry internalArchive=&quot;/verdi_core/lib/jscience.jar&quot; path=&quot;3&quot; sourceAttachmentPath=&quot;/verdi_core/lib_src/jscience-4.3.1-src.zip&quot; sourceRootPath=&quot;&quot; type=&quot;2&quot;/&gt;&#10;"/>
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeClasspathEntry internalArchive=&quot;/verdi_core/lib/reference.jar&quot; path=&quot;3&quot; type=&quot;2&quot;/&gt;&#10;"/>
@@ -87,6 +88,6 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="saf.core.runtime.Boot"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="verdi_saf_core_runtime"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="verdi_bootstrap"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dlog4j2.debug"/>
 </launchConfiguration>

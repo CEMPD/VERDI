@@ -39,7 +39,7 @@ public class MPASSwingTest extends JFrame {
 	        int[] yPoints = new int[] { 10, 10, 20, 20 };
 	        g.drawPolygon(xPoints, yPoints, 4);
 	        */
-				panelSet.renderCells(g, getWidth(), getHeight());
+				//panelSet.renderCells(g, getWidth(), getHeight());
 		}
 	}
 	

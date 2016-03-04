@@ -113,7 +113,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 	public TimeSeriesBarPlot(DataFrame frame, PlotConfiguration config) {
 		this.frame = frame;
 		this.config = config;
-		dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		dataset = createDataset();
 		chart = createChart(dataset);

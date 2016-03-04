@@ -4,7 +4,6 @@ import ucar.ma2.ArrayDouble;
 
 public class ArrayDoubleReader extends ArrayReader {
 	
-	ArrayDouble array;
 	int dimensions = 0;
 
 	public ArrayDoubleReader(ArrayDouble source) {

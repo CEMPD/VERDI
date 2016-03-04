@@ -219,7 +219,7 @@ public class MPASTilePlot extends TilePlot {
 		return 52 + legendBoxWidth; //20 offset *2 + 6 space *2
 	}
 	
-	private int getDisplayPrecision(double range) {
+	public static int getDisplayPrecision(double range) {
 		if (range < 1) {
 			return countLeadingZeros(range) + 2;
 		}
@@ -230,7 +230,7 @@ public class MPASTilePlot extends TilePlot {
 		return 0;
 	}
 	
-	private int countLeadingZeros(double decimal) {
+	public static int countLeadingZeros(double decimal) {
 		if (decimal >= 1)
 			return 0;
 		int cnt = -1;

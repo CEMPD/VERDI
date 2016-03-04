@@ -68,7 +68,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.19.jar" sourcepath="lib_src/jfreechart-1.0.19-sources.zip"/>
 	<classpathentry kind="lib" path="lib/netcdfAll-4.5.5-SNAPSHOT.jar" sourcepath="lib_src/log4j-core-2.0-rc1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/bufr-4.3.16.jar"/>
-	<classpathentry kind="lib" path="lib/gt-api-12.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-api-12.2.jar"/>
 	<classpathentry kind="lib" path="lib/gt-brewer-12.2.jar"/>
 	<classpathentry kind="lib" path="lib/gt-coverage-12.2.jar"/>
 	<classpathentry kind="lib" path="lib/gt-coverage-api-12.2.jar"/>

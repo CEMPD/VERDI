@@ -17,8 +17,6 @@ import ucar.unidata.geoloc.Projection;
  */
 public class Axes<T extends CoordAxis> {
 	
-	public Exception e = new Exception();
-
 	public static final int TIME_STEP_NOT_FOUND = -1;
 
 	private T xAxis, yAxis, timeAxis, layerAxis, cellAxis;

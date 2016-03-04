@@ -71,14 +71,18 @@ public class MPASDataFrameIndex extends DataFrameIndex {
 			if ( cell != 0 ) {
 				throw new IllegalArgumentException( "Invalid call to DataFrameIndex.setCell( cell = " + cell + " ... )" );
 			}
-		} else {
+		}
+		int[] shape = index.getShape();
+		if (cell >= shape[cellIndex]) {
+			throw new ArrayIndexOutOfBoundsException("Accessed index " + cell + " on length " + shape[cellIndex]);
+		}
+		else {
 			indices[ cellIndex ] = cell;
 			updated = true;
 		}
 
-		if ( updated ) {
-			index.set( indices );			
-		}
+		if ( updated )
+			index.set( indices );		
 	}
 
 	/**
@@ -98,8 +102,7 @@ public class MPASDataFrameIndex extends DataFrameIndex {
 	 *
 	 * @param timeStep the time set p index
 	 * @param layer the layer index
-	 * @param x the x index
-	 * @param y the y index
+	 * @param cell the cell index
 	 */
 	public void set(int timeStep, int layer, int cell) {
 		setTime( timeStep );

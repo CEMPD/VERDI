@@ -41,6 +41,10 @@ public class MPASCellCoordAxis implements CoordAxis, MPASCellAxis {
 		this.length = length;
 		Logger.debug("in CSVCoordAxis constructor, unit = " + this.unit);
 	}
+	
+	public MPASCellCoordAxis clone() {
+		return new MPASCellCoordAxis(xAxis, yAxis, length, name, description);
+	}
 
 	/**
 	 * Gets the value at the specified index.

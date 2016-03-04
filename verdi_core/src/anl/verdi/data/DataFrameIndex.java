@@ -10,7 +10,7 @@ import ucar.ma2.Index;
  */
 public class DataFrameIndex {
 	
-	protected int xIndex, yIndex, tIndex, kIndex;
+	protected int xIndex, yIndex, tIndex, kIndex, cellIndex;
 	protected int[] indices;
 	/* private */ Index index;
 	
@@ -49,6 +49,13 @@ public class DataFrameIndex {
 			count++;
 		} else {
 			kIndex = -1;
+		}
+
+		if (axes.getCellAxis() != null) {
+			cellIndex = axes.getCellAxis().getArrayIndex();
+			count++;
+		} else {
+			cellIndex = -1;
 		}
 
 		indices = new int[count];
