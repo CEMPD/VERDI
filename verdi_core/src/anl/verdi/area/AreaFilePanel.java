@@ -241,7 +241,7 @@ public class AreaFilePanel extends JPanel {
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				//				Object[] objs = areaFileList.getSelectedValues();	// replacing getSelectedValues()
-				List objs = areaList.getSelectedValuesList();
+				List objs = areaFileList.getSelectedValuesList();
 				//				if (objs.length > 0) {
 				if (objs.size() > 0) {
 					for (Object obj : objs) {
