@@ -186,9 +186,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 	// 2D grid parameters:
 
-	protected final int startDate; // 2005241 (YYYYDDD).
-	protected final int startTime; // 0 (HHMMSS).
-	protected final int timestepSize; // 10000 (HHMMSS)
+	protected final GregorianCalendar startDate; //
+	protected final long timestepSize; // ms
 	protected final int timesteps; // 24.
 	protected final int layers; // 14.
 	protected final int rows; // 259.
@@ -1340,27 +1339,14 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 		// 2014 footer date/time for footer1
 		
-		GregorianCalendar firstDate = axes.getDate(firstTimestep);
-		final GregorianCalendar date0 = (firstDate == null) ? new GregorianCalendar() : firstDate;
-		Utilities.formatDate(date0);		// 2014 appears to fix starting date/time issue 
-		final int yyyy = date0.get(GregorianCalendar.YEAR);
-		final int ddd = date0.get(GregorianCalendar.DAY_OF_YEAR);
-		final int hh = date0.get(GregorianCalendar.HOUR_OF_DAY);
-		final int mm = date0.get(GregorianCalendar.MINUTE);
-		final int ss = date0.get(GregorianCalendar.SECOND);
-		startDate = yyyy * 1000 + ddd; // E.g., 2005241.
-		startTime = hh * 10000 + mm * 100 + ss; // HHMMSS, e.g., 10000.
+		GregorianCalendar dsDate = axes.getDate(firstTimestep);
+		startDate = dsDate == null ? new GregorianCalendar() : dsDate;
 
 		if (timesteps > 1) {
 			final GregorianCalendar date1 = axes.getDate(firstTimestep + 1);
-			long step = (date1.getTimeInMillis() - date0.getTimeInMillis()) / 1000l;	// 2014 must  use getTimeInMillis()
-			final int dhh = (int) (step / 3600);
-			final int dmm = (int) (step % 3600 / 60);
-			final int dss = (int) (step % 3600 % 60);
-			timestepSize = dhh * 10000 + dmm * 100 + dss; // HHMMSS, e.g.,	// 2014 correct timestepSize computed here 
-			// 10000.
+			timestepSize = date1.getTimeInMillis() - startDate.getTimeInMillis();
 		} else {
-			timestepSize = 10000;
+			timestepSize = 1 * 60 * 60;
 		}
 		
 		//populate legend colors and ranges on initiation
@@ -1418,7 +1404,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 		// Create EMVL TilePlot (but does not draw yet - see draw()):
 
-		tilePlot = new TilePlot(startDate, startTime, timestepSize);
+		tilePlot = new TilePlot(startDate, timestepSize);
 
 		// Create GUI.
 

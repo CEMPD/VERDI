@@ -71,7 +71,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 	public FastAreaTilePlot(VerdiApplication app,DataFrame dataFrame) {
 		super(app,dataFrame);
 		//app.getGui().setStatusOneText("Loading data. This may take a while please be patient...");
-		this.tilePlot=new AreaTilePlot(this,startDate,startTime,timestepSize,domain,gridBounds,projector);
+		this.tilePlot=new AreaTilePlot(this,startDate,timestepSize,domain,gridBounds,projector);
 //		calculateAverageLevels();
 //		minMax=null;
 	}

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.GregorianCalendar;
 
 import com.ibm.icu.text.NumberFormat;
 
@@ -23,8 +24,8 @@ public class MPASTilePlot extends TilePlot {
 	int firstColumn;
 	int lastColumn;
 	
-	public MPASTilePlot(int startDate, int startTime, int timestepSize) {
-		super(startDate, startTime, timestepSize);
+	public MPASTilePlot(GregorianCalendar startDate, long timestepSize) {
+		super(startDate, timestepSize);
 	}
 	
 	protected void drawAxis(final Graphics graphics, int xMinimum, int xMaximum,
@@ -52,6 +53,7 @@ public class MPASTilePlot extends TilePlot {
 		this.lastRow = lastRow;
 		this.firstColumn = firstColumn;
 		this.lastColumn = lastColumn;
+		this.steplapse = steplapse;
 		return;
 	}
 

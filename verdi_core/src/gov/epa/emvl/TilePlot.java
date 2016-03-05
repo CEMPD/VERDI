@@ -64,9 +64,8 @@ public class TilePlot {
 	private static final int MINIMUM = 0; // Index label.
 	private static final int MAXIMUM = 1; // Index label.
 
-	final private int startDate; // UTC date of first timestep, YYYYDDD.
-	final private int startTime; // UTC time of first timestep, HHMMSS.
-	final private int timestepSize; // Size of each timestep, HHMMSS.
+	final private GregorianCalendar startDate;
+	final private long timestepSize; // Size of each timestep, ms.
 
 	protected PlotConfiguration config;
 	protected NumberFormat numberFormat;
@@ -93,9 +92,8 @@ public class TilePlot {
 	 * @pre timestepSize > 0
 	 */
 
-	public TilePlot(int startDate, int startTime, int timestepSize) {
+	public TilePlot(GregorianCalendar startDate, long timestepSize) {
 		this.startDate = startDate;
-		this.startTime = startTime;
 		this.timestepSize = timestepSize;
 	}
 	
@@ -603,7 +601,7 @@ public class TilePlot {
 
 		// Timestamp label:
 		final Font timestampFont = new Font(gFont.getFontName(), Font.BOLD, gFont.getSize());
-		final String timestamp = dateTime(startDate, startTime, timestepSize, steplapse);
+		final String timestamp = dateTime(startDate, timestepSize, steplapse);
 		final int yTimestamp = yMaximum + footerYOffset;
 		
 		if (footer1AutoText == null || footer1 == null || footer1.trim().isEmpty()) footer1AutoText = true;
@@ -1182,146 +1180,13 @@ public class TilePlot {
 	 * @post return != null
 	 */
 
-	private static String dateTime(int startDate, int startTime,		// 2014 future version: replace this with GregorianCalendar functionality
-			int timestepSize, int steplapse) {
-		final int months = 12;
-		final int hoursPerDay = 24;
-		final int minutesPerHour = 60;
-		final int secondsPerMinute = 60;
-		final int yyyyddd = startDate;
-		final int yyyy = yyyyddd / 1000;
-		final int leap = ((yyyy % 4 == 0) && !(yyyy % 100 == 0 && yyyy % 400 != 0)) ? 1
-				: 0;
-		final int[] daysPerMonth = { 31, 28 + leap, 31, 30, 31, 30, 31, 31, 30,
-				31, 30, 31 };
-
-		// Compute year, month and dayOfMonth:
-
-		final int ddd = yyyyddd % 1000;
-		int dddRemaining = ddd;
-		int yearDays = 0;
-		int thisMonth = 0;
-		int month = 0;
-		int dayOfMonth = 0;
-		for (thisMonth = 0; thisMonth < months; ++thisMonth) {
-			final int daysThisMonth = daysPerMonth[thisMonth];
-			yearDays += daysThisMonth;
-
-			if (yearDays >= ddd) {
-				month = thisMonth + 1;
-				dayOfMonth = dddRemaining;
-				thisMonth = months;
-			}
-
-			dddRemaining -= daysThisMonth;
-		}
-
-		// Starting year, month, dayOfMonth, hour, minute, second:
-
-		final int year = startDate / 1000;
-		final int hour = startTime / 10000;
-		final int minute = startTime / 100 % 100;
-		final int second = startTime % 100;
-
-		// Additional days, hours, minutes, seconds:
-
-		final int totalSeconds = timestepSize % 100 * steplapse;
-		final int seconds = totalSeconds % secondsPerMinute;
-		final int extraMinutes = totalSeconds / secondsPerMinute;
-
-		final int totalMinutes = timestepSize / 100 % 100 * steplapse
-				+ extraMinutes;
-		final int minutes = totalMinutes % minutesPerHour;
-		final int extraHours = totalMinutes / minutesPerHour;
-
-		//NOTE: the following calculation is based on timestepSize being multiples of an hour
-		//      which could cause problems if the timestepSize is, say, 13000, which means 1.5hrs
-		final int totalHours = timestepSize / 10000 * steplapse + extraHours;
-		final int hours = totalHours % hoursPerDay;
-		final int extraDays = extraHours / hoursPerDay;
-
-		final int days = timestepSize / 10000 * steplapse / hoursPerDay	+ extraDays;
-
-		// Add (days, hours, minutes, seconds) to
-		// (year, month, dayOfMonth, hour, minute, second)
-		// to get result like "August 29, 2005 08:00:00 UTC":
-
-		final String result = endingDate(year, month, dayOfMonth, hour, minute,
-				second, days, hours, minutes, seconds);
-		return result;
-	}
-
-	/**
-	 * endingDate - create date-time string. "March 3, 2004 00:00:00 UTC" =
-	 * endingDate( 2004, 2, 27, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0 );
-	 * 
-	 * @pre year >= 1900
-	 * @pre year < 9999
-	 * @pre month >= 1
-	 * @pre month <= 12
-	 * @pre day >= 1
-	 * @pre day <= 31
-	 * @pre hour >= 0
-	 * @pre hour <= 23
-	 * @pre minute >= 0
-	 * @pre minute <= 59
-	 * @pre second >= 0
-	 * @pre second <= 59
-	 * @pre days >= 0
-	 * @pre days < 366
-	 * @pre hours >= 0
-	 * @pre hours <= 23
-	 * @pre minutes >= 0
-	 * @pre minutes <= 59
-	 * @pre seconds >= 0
-	 * @pre seconds <= 59
-	 * @post return != null
-	 */
-
-	private static String endingDate(int year, int month, int day, int hour,	// 2014 future version: replace this with GregorianCalendar functionality
-			int minute, int second, int days, int hours, int minutes,
-			int seconds) {
-
-		final int zero_based_offset = 1; // UGLY: Only month is zero-based!
-		final Calendar calendar = Calendar.getInstance();
-		final TimeZone timeZone = TimeZone.getTimeZone("GMT");
-		calendar.setTimeZone(timeZone);
-		calendar.set(Calendar.ZONE_OFFSET, 0);
-		calendar.set(year, month - zero_based_offset, day, hour, minute, second);
-
-//		final int unused = calendar.get(Calendar.HOUR_OF_DAY); // UGLY Java
-		// BUG:
-		// Must call get() so the previous set() takes effect before calling
-		// add()!
-		// Terrible design of java.util.Calendar! Violates CQSP and the primary
-		// design rule: make it easy to use correctly and hard to use
-		// incorrectly.
-
-		calendar.add(Calendar.DAY_OF_MONTH, days);
-		calendar.add(Calendar.HOUR_OF_DAY, hours);
-		calendar.add(Calendar.MINUTE, minutes);
-		calendar.add(Calendar.SECOND, seconds);
-
-		year = calendar.get(Calendar.YEAR);
-		month = calendar.get(Calendar.MONTH);
-		day = calendar.get(Calendar.DAY_OF_MONTH);
-		hour = calendar.get(Calendar.HOUR_OF_DAY);
-		minute = calendar.get(Calendar.MINUTE);
-		second = calendar.get(Calendar.SECOND);
-		// 2014 commented out next lines & replaced with GregorianCalendar & Utilities.formatDate
-//		final String[] monthNames = { "January", "February", "March", "April",
-//				"May", "June", "July", "August", "September", "October",
-//				"November", "December" };
-//		final String monthName = monthNames[month];
-//		final String h0 = hour < 10 ? "0" : "";
-//		final String m0 = minute < 10 ? "0" : "";
-//		final String s0 = second < 10 ? "0" : "";
-//		final String result = monthName + " " + day + ", " + year + " " + h0
-//				+ hour + ":" + m0 + minute + ":" + s0 + second + " UTC";
-//		return result;
-		GregorianCalendar aGregorianCalendar = new GregorianCalendar(year,month,day,hour,minute,second);
-		String result = Utilities.formatDate(aGregorianCalendar); 
-		return result;
+	private static String dateTime(GregorianCalendar startDate, long timestepSize, int steplapse) {
+		GregorianCalendar endDate = new GregorianCalendar();
+		endDate.setTime(startDate.getTime());
+		endDate.add(Calendar.MILLISECOND, (int)timestepSize * steplapse);
+		if (timestepSize % 1000 == 0)
+			return Utilities.formatDate(endDate); 
+		return Utilities.formatDateMS(endDate);
 	}
 
 	/**
