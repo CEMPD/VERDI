@@ -7,10 +7,12 @@
 package anl.verdi.plot.gui.action;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 import saf.core.ui.actions.AbstractSAFAction;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.data.DataFrame;
+import anl.verdi.data.Dataset;
 import anl.verdi.formula.Formula;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotPanel;
@@ -32,6 +34,12 @@ public void actionPerformed( ActionEvent unused ) {
         application.evaluateFormula( Formula.Type.TILE );
 
       if ( dataFrame != null ) {
+    	  List<Dataset> datasets = dataFrame.getDataset();
+    	  
+    	  if (datasets != null && datasets.size() > 0 && datasets.get(0).getClass().getName().toLowerCase().indexOf("mpas") != -1) {
+    		  MeshPlot.performAction(application, dataFrame);
+    		  return;
+    	  }
         final Plot plot = new anl.verdi.plot.gui.FastTilePlot(application, dataFrame );
 		final String variableName = dataFrame.getVariable().getName();
         final PlotPanel panel = new PlotPanel( plot, "Tile " + variableName);

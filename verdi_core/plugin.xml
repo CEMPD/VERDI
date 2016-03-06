@@ -505,14 +505,6 @@
         </parameter>
             
         <parameter id="actionSpec">
-             <parameter id="actionID" value="anl.verdi.plot.gui.action.MeshPlot"/>
-             <parameter id="label" value="Mesh Plot"/>
-             <parameter id="class" value="anl.verdi.plot.gui.action.MeshPlot"/>
-             <parameter id="groupID" value="runGraph"/>
-             <parameter id="tooltip" value="Mesh Plot"/>
-        </parameter>
-            
-        <parameter id="actionSpec">
              <parameter id="actionID" value="anl.verdi.plot.gui.action.ArealInterpolation"/>
              <parameter id="label" value="Areal Interp"/>
              <parameter id="class" value="anl.verdi.plot.gui.action.ArealInterpolation"/>
