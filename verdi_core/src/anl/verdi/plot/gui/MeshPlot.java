@@ -53,6 +53,7 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -238,11 +239,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	protected MPASTilePlot tilePlot; // EMVL TilePlot.
 
 	protected int timestep = 0; // 0..timesteps - 1.
-	private int previousTimestep = 0;
 	protected int firstTimestep = 0;
 	protected int lastTimestep = 0;
 	protected int layer = 0; // 0..layers - 1.
-	private int previousLayer = 0;
 	protected int firstLayer = 0;
 	protected int lastLayer = 0;
 	private int firstRow = 0; // 0..lastRow.
@@ -379,7 +378,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		private static final long serialVersionUID = -2940008125642497962L;
 
 		public void actionPerformed(ActionEvent e) {
-			requestTimeSeries(getVisibleCells(), Formula.Type.TIME_SERIES_LINE);
+			requestTimeSeries(allCells, Formula.Type.TIME_SERIES_LINE);
 		}
 	};
 
@@ -388,7 +387,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		private static final long serialVersionUID = 2455217937515200807L;
 
 		public void actionPerformed(ActionEvent e) {
-			requestTimeSeries(getVisibleCells(), Formula.Type.TIME_SERIES_BAR);
+			requestTimeSeries(allCells, Formula.Type.TIME_SERIES_BAR);
 		}
 	};
 
@@ -418,6 +417,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		private final RepaintManager repaintManager =
 			RepaintManager.currentManager(threadParent);
+		
+		boolean screenInitted = false;
 
 		public void run() {
 
@@ -531,16 +532,18 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					xOffset = 100;
 
 										
-					if (previousCanvasSize != canvasSize || zoomFactor != previousZoomFactor || previousClippedDataRatio != clippedDataRatio
-							|| timestep != previousTimestep || layer != previousLayer || panX != previousPanX || panY != previousPanY) {
-						transformCells(/*gr,*/ canvasSize, xOffset, yOffset);						
-						previousCanvasSize = canvasSize;
-						previousZoomFactor = zoomFactor;
+					if (locChanged) {
+						transformCells(/*gr,*/ canvasSize, xOffset, yOffset);	
 						previousClippedDataRatio = clippedDataRatio;
-						previousTimestep = timestep;
-						previousLayer = layer;
 						previousPanX = panX;
 						previousPanY = panY;
+						// on pan or zoom (locChanged), recalculate dimensions, visibility
+						locChanged = false;
+					}
+					if (dataChanged) {
+						// on layer or timestep change (dataChanged), recaluclate color
+						updateCellData();
+						dataChanged = false;
 					}
 
 
@@ -558,7 +561,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					assert graphics != null;
 
 					if (drawMode == DRAW_CONTINUOUS) {
-						previousTimestep = timestep;
+						dataChanged = true;
 						timestep = nextValue(1, timestep, firstTimestep, lastTimestep);
 						timeLayerPanel.setTime(timestep);
 						drawOverLays();
@@ -641,7 +644,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 							//debug
 							
-
 							Font defaultFont = offScreenGraphics.getFont();
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									screenWidth, screenHeight, stepsLapsed, MeshPlot.this.layer, aRow,
@@ -650,6 +652,14 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 									aPlotUnits, 
 									config, aNumberFormat, gridLineColor,
 									null);
+							//Cells are sized incorrectly during the first redraw, partially due to tilePlot.getLegendBoxWidth() being wrong before
+							//tilePlot.drawLegend() first called.  Quick workaround is to draw twice.
+							//TODO - fix this.  Low priority - drawn off screen, won't cause flash, only happens once
+							if (!screenInitted) {
+								screenInitted = true;
+								resetZooming();
+								continue;
+							}
 							
 							offScreenGraphics.setFont(defaultFont);
 							offScreenGraphics.setColor(axisColor);
@@ -668,7 +678,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						}
 						} //TAH finish rework if
 
-						renderCells(offScreenGraphics, xOffset, yOffset);
+						renderCells(offScreenGraphics, xOffset, yOffset, true);
 
 						dataArea.setRect(xOffset, yOffset, screenWidth, screenHeight);
 						
@@ -1274,22 +1284,23 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			previousPanX = panX;
 			previousPanY = panY;
 		}
+		dataChanged = true;
 		
 		if (popZoomIn) { // click to zoom in or popup menu zoom in
 			if (zoomFactor < MAX_ZOOM) {
-				previousZoomFactor = zoomFactor;
+				locChanged = true;
 				//zoomFactor += 0.5;
 				zoomFactor *= 4/3.0;
 			}
 		} else if (zoomOut) {  //zoom out
 			if (zoomFactor > MIN_ZOOM) {
-				previousZoomFactor = zoomFactor;
+				locChanged = true;
 				//zoomFactor -= 0.5;
 				zoomFactor /= 4/3.0;
 				if (zoomFactor < MIN_ZOOM)
 					zoomFactor = MIN_ZOOM;
 			} else {
-				previousZoomFactor = zoomFactor;
+				locChanged = true;
 				zoomFactor = MIN_ZOOM;
 				
 				if (clippedDataRatio < dataRatio) {
@@ -1315,7 +1326,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			clippedDataRatio = bounds.width / (double)bounds.height;
 			panX = bounds.x / compositeFactor + panX;
 			panY = bounds.y / compositeFactor + panY;
-			previousZoomFactor = zoomFactor;
+			locChanged = true;
 			zoomFactor *= screenWidth / (double)bounds.width;
 			popZoom = false;
 		}
@@ -1426,7 +1437,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	public void setTimestep(int timestep) {
 		if (timestep >= firstTimestep && timestep <= lastTimestep && timestep != this.timestep) {
-			previousTimestep = this.timestep;
+			dataChanged = true;
 			this.timestep = timestep;
 			copySubsetLayerData(this.log);
 			draw();
@@ -1436,7 +1447,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	public void setLayer(int layer) {
 		if (layer >= firstLayer && layer <= lastLayer && layer != this.layer) {
-			previousLayer = this.layer;
+			dataChanged = true;
 			this.layer = layer;
 			final int selection = statisticsMenu.getSelectedIndex();
 
@@ -1474,6 +1485,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		double[] lonCoords;
 		int[] latTransformed;
 		int[] lonTransformed;
+		boolean visible;
 		int cellId;
 		int colorIndex;
 		double lon = 0;
@@ -1589,7 +1601,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				lonTransformed[i] = (int)Math.round((lonCoords[i] - lonMin - panX) * factor) + xOffset;
 				latTransformed[i] = (int)Math.round((latCoords[i] * -1 - latMin - panY) * factor) + yOffset;
 			}
-			colorIndex = indexOfObsValue((float)getValue(), legendLevels);
+			visible = false;
 		}
 		
 		public void calculateCellBounds() {
@@ -1605,10 +1617,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			}	
 		}
 		
-		public CellInfo split(int index) {
-			lonMin = Math.PI * -1;
-			lonMax = Math.PI;
-			
+		public CellInfo split(int index) {			
 			CellInfo clone = new CellInfo(cellId, lonCoords.length);
 			clone.latCoords = Arrays.copyOf(latCoords, latCoords.length);
 			clone.lonCoords = Arrays.copyOf(lonCoords, lonCoords.length);
@@ -1649,6 +1658,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private Map<Integer, CellInfo> cellIdInfoMap;
 	private static final int CELL_NONE = 16777215;
 	private CellInfo[] cellsToRender = null;
+	private List<CellInfo> cellsToRenderList = null;
+	Collection<CellInfo> allCells = null;
 	private Map<CellInfo, Integer> splitCells = null;
 	
 	ArrayReader renderVariable = null;
@@ -1658,7 +1669,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	double lonMin = Double.MAX_VALUE;
 	double latMax = Double.MAX_VALUE * -1;
 	double lonMax = Double.MAX_VALUE * -1;
-	int previousCanvasSize = 0;
+	boolean locChanged = true;
+	boolean dataChanged = true;
 	double panX = 0;
 	double panY = 0;
 	double previousPanX = 0;
@@ -1667,7 +1679,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	final double MIN_ZOOM = 1.0;
 	double zoomFactor = 1;
 	double compositeFactor;
-	double previousZoomFactor = 1;
 	double dataWidth = 0;
 	double dataHeight = 0;
 	double visibleDataWidth = 0;
@@ -1733,8 +1744,37 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		int[] vertexShape = vertexList.getShape();
 
 		cellsToRender = new CellInfo[vertexShape[0]];
+		allCells = new HashSet<CellInfo>();
 		splitCells = new HashMap<CellInfo, Integer>();
 		cellIdInfoMap = new HashMap<Integer, CellInfo>();
+		
+		lonMin = columnAxis.getRange().getLowerBound() / RAD_TO_DEG;
+		latMin = rowAxis.getRange().getLowerBound() / RAD_TO_DEG;
+		dataWidth = (columnAxis.getRange().getExtent() - 1) / RAD_TO_DEG;
+		dataHeight = (rowAxis.getRange().getExtent() - 1) / RAD_TO_DEG;
+		lonMax = lonMin + dataWidth;
+		latMax = latMin + dataHeight;
+		
+		//If almost full globe, set to full
+		if (Math.PI * 1.9 < dataWidth) {
+			lonMin = Math.PI * -1;
+			lonMax = Math.PI;
+			dataWidth = Math.PI * 2;
+		}
+
+		if (Math.PI * .95 < dataHeight) {
+			latMin = Math.PI / -2;
+			latMax = Math.PI / 2;
+			dataHeight = Math.PI;
+		}
+		
+		visibleDataWidth = dataWidth;
+		visibleDataHeight = dataHeight;
+		dataRatio = dataWidth / dataHeight;
+		previousClippedDataRatio = clippedDataRatio;
+		clippedDataRatio = dataRatio;
+		locChanged = true;
+		
 		for (int i = 0; i < vertexShape[0]; ++i) { //for each cell
 			int vertices = cellVertices.getInt(i);
 			CellInfo cell = new CellInfo(i, vertices);
@@ -1748,7 +1788,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			}
 			
 			cell.calculateCellBounds();
-			
 			cell.setLat(normalizeLat(latCell.getDouble(i)) * RAD_TO_DEG);
 			cell.setLon(normalizeLon(lonCell.getDouble(i)) * RAD_TO_DEG);
 			//if (vertices != 6)
@@ -1757,18 +1796,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			if (cell.lonCoords[cell.maxX] - cell.lonCoords[cell.minX] > Math.PI * 1.5)
 				cell.split(i);
 		}
+		cellsToRenderList = Arrays.asList(cellsToRender);
+		allCells.addAll(cellsToRenderList);
+		allCells.addAll(splitCells.keySet());
 		
-		lonMin = columnAxis.getRange().getLowerBound() / RAD_TO_DEG;
-		latMin = rowAxis.getRange().getLowerBound() / RAD_TO_DEG;
-		dataWidth = (columnAxis.getRange().getExtent() - 1) / RAD_TO_DEG;
-		dataHeight = (rowAxis.getRange().getExtent() - 1) / RAD_TO_DEG;
-		lonMax = lonMin + dataWidth;
-		latMax = latMin + dataHeight;
-		visibleDataWidth = dataWidth;
-		visibleDataHeight = dataHeight;
-		dataRatio = dataWidth / dataHeight;
-		previousClippedDataRatio = clippedDataRatio;
-		clippedDataRatio = dataRatio;
 		renderVariable = ArrayReader.getReader(dataFrame.getArray());
 		var = ds.getVariable("verdi.avgCellDiam");
 		avgCellDiam = reader.getValues(ds, null, var).getDouble(null);
@@ -1787,11 +1818,13 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		transformedCellDiam = (int)Math.round(avgCellDiam * compositeFactor);
 		renderBorder = transformedCellDiam / screenWidth > borderDisplayCutoff;
 
-		for (int i = 0; i < cellsToRender.length; ++i)
-			cellsToRender[i].transformCell(compositeFactor, xOrigin, yOrigin);		
+		for (int i = 0; i < cellsToRender.length; ++i) {
+			cellsToRender[i].transformCell(compositeFactor, xOrigin, yOrigin);
+		}
 		
-		for (CellInfo cell : splitCells.keySet())
+		for (CellInfo cell : splitCells.keySet()) {
 			cell.transformCell(compositeFactor, xOrigin, yOrigin);
+		}
 		
 		gridBounds[X][MINIMUM] = westEdge + panX * RAD_TO_DEG;
 		gridBounds[X][MAXIMUM] = westEdge + (panX + visibleDataWidth) * RAD_TO_DEG;
@@ -1816,12 +1849,29 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			} catch (IOException e) {
 				e.printStackTrace();
 			}*/
+	        findVisibleCells();
 		}
         
 		System.out.println("Scaled cells in " + (System.currentTimeMillis() - start) + "ms");
 	}
+	
+	public void updateCellData() {
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < cellsToRender.length; ++i) {
+			cellsToRender[i].colorIndex = indexOfObsValue((float)cellsToRender[i].getValue(), legendLevels);
+		}
+		
+		for (CellInfo cell : splitCells.keySet()) {
+			cell.colorIndex = indexOfObsValue((float)cell.getValue(), legendLevels);
+		}
+		System.out.println("Updated cell data in " + (System.currentTimeMillis() - start) + "ms");
+
+	}
 
 	public void renderCells(Graphics gr, int xOffset, int yOffset) {
+		renderCells(gr, xOffset, yOffset, false);
+	}
+	public void renderCells(Graphics gr, int xOffset, int yOffset, boolean visibleOnly) {
 		
 		long renderStart = System.currentTimeMillis();
 		
@@ -1838,10 +1888,15 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
         */
 
 		for (int i = 0; i < cells; ++i) { //for each cell
+			if (visibleOnly && !cellsToRender[i].visible && i != 0)
+				continue;
 			renderCell(gr, xOffset, yOffset, cellsToRender[i], showGridLines, showCellBorder, i);
 		}
 		for (Map.Entry<CellInfo, Integer> cellMap : splitCells.entrySet()) {
-			renderCell(gr, xOffset, yOffset, cellMap.getKey(), showGridLines, showCellBorder, cellMap.getValue());
+			CellInfo cell = cellMap.getKey();
+			if (visibleOnly && !cell.visible)
+				continue;
+			renderCell(gr, xOffset, yOffset, cell, showGridLines, showCellBorder, cellMap.getValue());
 		}
 		
 		gr.setClip(null);
@@ -1873,7 +1928,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		 * Store the cell ID as the image's color.
 		 */
 		if (xOffset == 0)
-			gr.setColor(new Color(cell.cellId));
+			gr.setColor(new Color(cell.cellId + 1));
 		/*else if (SHOW_ZOOM_LOCATION && cell.cellClicked) {
 			gr.setColor(Color.BLACK);
 			System.err.println("Rendering clicked cell location " + cell.lon + ", " + cell.lat + " id " + cell.cellId);
@@ -2641,7 +2696,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	private void resetZooming() {
-		previousZoomFactor = zoomFactor;
+		locChanged = true;
+		dataChanged = true;
 		clippedDataRatio = dataRatio;
 		zoomFactor = 1;
 		compositeFactor = screenWidth / dataWidth;
@@ -3510,7 +3566,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	public void updateTimeStep(int step) {
 		processTimeChange = false;
 		drawMode = DRAW_ONCE;
-		previousTimestep = timestep;
+		dataChanged = true;
 		timestep = firstTimestep + step;
 		
 		try {
@@ -3532,26 +3588,25 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	/**
 	 * Gets the visible cells for this plot.
 	 *
-	 * @return the visible cells for this plot.
+	 * @return the visible 
+	 * cells for this plot.
 	 */
-	protected Set<CellInfo> getVisibleCells() {
-		Set<CellInfo> visibleCells = new HashSet<CellInfo>();	
-		
-		Set<Integer> cellIdList = new HashSet<Integer>();
+	Set<Integer> cellIdList = new HashSet<Integer>();
+	protected void findVisibleCells() {		
+		cellIdList.clear();
 		int width = cellIdMap.getWidth();
 		int height = cellIdMap.getHeight();
 		for (int i = 0; i < width; ++i)
 			for (int j = 0; j < height; ++j) {
 				cellIdList.add(getCellIdByCoord(i, j));
 			}
-		for (int hoveredId : cellIdList) {
-			CellInfo cell = cellIdInfoMap.get(hoveredId);
-			if (cell != null)
-				visibleCells.add(cell);
-			//else if (hoveredId != CELL_NONE)
-				//System.err.println("Could not find cell id " + hoveredId);
+		for (CellInfo cell : allCells) {
+			if (cellIdList.contains(cell.cellId))
+				cell.visible = true;
+			else if (cell.lonTransformed[cell.minX ]>= 0 && cell.lonTransformed[cell.maxX] <= width && 
+					cell.latTransformed[cell.minY] >=0 && cell.latTransformed[cell.maxY] <= height)
+				cell.visible = true;
 		}
-		return visibleCells;
 	}
 	
 	/**
@@ -3671,7 +3726,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 	}
 
-	private void requestTimeSeries(Set<CellInfo> cells, Formula.Type type) {
+	private void requestTimeSeries(Collection<CellInfo> cells, Formula.Type type) {
 		
 		int digits = MPASTilePlot.getDisplayPrecision(getCurrentWidthDeg());
 		plotFormat.setMaximumFractionDigits(digits);
@@ -3679,6 +3734,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		String label = "(" + plotFormat.format(getCurrentLonMinDeg()) + " - " + plotFormat.format(getCurrentLonMaxDeg()) + ", " + plotFormat.format(getCurrentLatMinDeg()) + " - " + plotFormat.format(getCurrentLatMaxDeg()) + ") ";
 		TimeSeriesPlotRequest request = new TimeSeriesPlotRequest(null, null, type, label);
 		for (CellInfo cell : cells) {
+			if (!cell.visible)
+				continue;
 			Slice slice = new Slice();
 			// slice needs to be in terms of the actual array indices
 			// of the frame, but the axes ranges refer to the range
@@ -3697,11 +3754,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 		eventProducer.firePlotRequest(request);
 	}
-
-	private void requestTimeSeries(Set<CellInfo> cells, String title) {
+	
+	private void requestTimeSeries(Collection<CellInfo> cells, String title) {
 		MultiTimeSeriesPlotRequest request = new MultiTimeSeriesPlotRequest(title);
 		for (CellInfo cell : cells) {
-
 			Slice slice = new Slice();
 			// slice needs to be in terms of the actual array indices
 			// of the frame, but the axes ranges refer to the range
@@ -3801,7 +3857,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	private int getCellIdByCoord(int x, int y) {
-		return cellIdMap.getRGB(x, y) + COLOR_BASE;
+		return cellIdMap.getRGB(x, y) + COLOR_BASE - 1;
 	}
 	
 	private String formatPointLatLon(Point4i point) {

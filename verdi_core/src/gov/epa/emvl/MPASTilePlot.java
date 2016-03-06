@@ -4,9 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.text.NumberFormat;
 import java.util.GregorianCalendar;
-
-import com.ibm.icu.text.NumberFormat;
 
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
