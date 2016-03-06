@@ -2547,7 +2547,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		menu = new JMenu("Controls");
 		bar.add(menu);
-		ButtonGroup grp = new ButtonGroup();
+		/*ButtonGroup grp = new ButtonGroup();
 		JMenuItem item = menu.add(new JRadioButtonMenuItem(new AbstractAction("Zoom") {
 			private static final long serialVersionUID = 5282480503103839989L;
 
@@ -2597,7 +2597,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		grp.add(item);
 		menu.add(item);
 		
-		menu.addSeparator();
+		menu.addSeparator();*/
 		
 		// item.setSelected(true);
 		JMenuItem menuItem = new JMenuItem(
@@ -2629,10 +2629,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		menu = new JMenu("Plot");
 		bar.add(menu);
-		item = menu.add(timeSeriesSelected);
-		item = menu.add(timeSeriesBarSelected);
-		item = menu.add(timeSeriesMin);
-		item = menu.add(timeSeriesMax);
+		menu.add(timeSeriesSelected);
+		menu.add(timeSeriesBarSelected);
+		menu.add(timeSeriesMin);
+		menu.add(timeSeriesMax);
 
 		menu.addSeparator();
 
