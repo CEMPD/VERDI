@@ -2,10 +2,17 @@ package anl.verdi.loaders;
 
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.unitsofmeasurement.unit.Unit;
 
+import ucar.nc2.Variable;
+import anl.verdi.data.Axes;
 import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.MPASCellAxis;
@@ -29,8 +36,9 @@ public class MPASCellCoordAxis implements CoordAxis, MPASCellAxis {
 	protected int length;
 	CoordAxis xAxis;
 	CoordAxis yAxis;
+	MPASDataset dataset;
 	
-	public MPASCellCoordAxis(CoordAxis xAxis, CoordAxis yAxis, int length, String name, String description) {
+	public MPASCellCoordAxis(CoordAxis xAxis, CoordAxis yAxis, int length, String name, String description, MPASDataset set) {
 		this.name = name;
 		this.description = description;
 		this.unit = VUnits.MISSING_UNIT;
@@ -39,11 +47,12 @@ public class MPASCellCoordAxis implements CoordAxis, MPASCellAxis {
 		this.yAxis = yAxis;
 		this.range = new Range(0, length);
 		this.length = length;
+		this.dataset = set;
 		Logger.debug("in CSVCoordAxis constructor, unit = " + this.unit);
 	}
 	
 	public MPASCellCoordAxis clone() {
-		return new MPASCellCoordAxis(xAxis, yAxis, length, name, description);
+		return new MPASCellCoordAxis(xAxis, yAxis, length, name, description, dataset);
 	}
 
 	/**
@@ -133,6 +142,18 @@ public class MPASCellCoordAxis implements CoordAxis, MPASCellAxis {
 	
 	public CoordAxis getYAxis() {
 		return yAxis;
+	}
+	
+	public CoordAxis getZAxis(String variable) {
+		List<CoordAxis> axisList = dataset.getCoordAxes().getAxes();
+		Variable var = dataset.getVariableDS(dataset.getVariable(variable));
+		Set<String> dimensions = new HashSet<String>();
+		dimensions.addAll(Arrays.asList(var.getDimensionsString().split("\\s+")));
+		for (CoordAxis axis : axisList) {
+			if (axis.getAxisType().equals(AxisType.LAYER) && dimensions.contains(axis.getName()))
+				return axis;
+		}
+		return dataset.getDefaultZAxis();
 	}
 	
 	

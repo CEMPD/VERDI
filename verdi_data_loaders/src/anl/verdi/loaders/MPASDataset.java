@@ -26,7 +26,6 @@ import org.unitsofmeasurement.unit.Unit;
 import java.awt.*;
 
 import ucar.ma2.Array;
-import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
@@ -38,10 +37,10 @@ import anl.verdi.data.AbstractDataset;
 import anl.verdi.data.Axes;
 import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
-import anl.verdi.data.DataUtilities;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.DatasetMetadata;
 import anl.verdi.data.DefaultVariable;
+import anl.verdi.data.MultiLayerDataset;
 import anl.verdi.data.Variable;
 import anl.verdi.plot.color.Palette;
 import anl.verdi.plot.color.PavePaletteCreator;
@@ -55,13 +54,14 @@ import anl.verdi.util.VUnits;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class MPASDataset extends AbstractDataset {
+public class MPASDataset extends AbstractDataset implements MultiLayerDataset {
 	static final Logger Logger = LogManager.getLogger(MPASDataset.class.getName());
 	
 	public static final String VAR_AVG_CELL_DIAM = "verdi.avgCellDiam";
 
 	private NetcdfDataset dataset;
 	private Axes<CoordAxis> coordAxes;
+	private CoordAxis defaultLayer = null;
 	private List<Variable> vars;
 	private List<Variable> verdiRenderVars;
 	private Map<String, ucar.nc2.Variable> renderVars;
@@ -125,6 +125,7 @@ public class MPASDataset extends AbstractDataset {
 		hiddenVars.add("cellsOnCell");
 		hiddenVars.add("verticesOnCell");
 		hiddenVars.add("meshDensity");
+		hiddenVars.add("zz");
 	}
 	
 	ucar.ma2.Array cellVertices = null;
@@ -424,7 +425,6 @@ public class MPASDataset extends AbstractDataset {
 		KNOWN_UNITS.put("xland", "-");		
 		KNOWN_UNITS.put("seaice", "-");		
 		KNOWN_UNITS.put("xice", "-");		
-		KNOWN_UNITS.put("zz", "-");		
 	}
 	
 	Map<String, Array> arrayCache = new HashMap<String, Array>();
@@ -737,12 +737,19 @@ public class MPASDataset extends AbstractDataset {
 	}
 	
 	private void addLayer(String layerName, List<CoordAxis> axisList) {
+		CoordAxis axis = null;
 		int numLevels = dataset.findDimension(layerName).getLength();
 		Double[] vertList = new Double[numLevels];
 		for (int i = 0; i < vertList.length; ++i)
 			vertList[i] = (double)i;
-		if (vertList.length > 0)
-			axisList.add(new CSVCoordAxis(vertList, layerName, layerName, AxisType.LAYER));
+		if (vertList.length > 0) {
+			axis =new CSVCoordAxis(vertList, layerName, layerName, AxisType.LAYER);
+			axisList.add(axis);
+			if (layerName.equals("nVertLevels"))
+				defaultLayer = axis;
+			else if (defaultLayer == null)
+				defaultLayer = axis;
+		}
 	}
 
 	/**
@@ -753,6 +760,22 @@ public class MPASDataset extends AbstractDataset {
 	@Override
 	public Axes<CoordAxis> getCoordAxes() {
 		return coordAxes;
+	}
+	
+	public CoordAxis getZAxis(String variable) {
+		List<CoordAxis> axisList = coordAxes.getAxes();
+		ucar.nc2.Variable var = getVariableDS(getVariable(variable));
+		Set<String> dimensions = new HashSet<String>();
+		dimensions.addAll(Arrays.asList(var.getDimensionsString().split("\\s+")));
+		for (CoordAxis axis : axisList) {
+			if (axis.getAxisType().equals(AxisType.LAYER) && dimensions.contains(axis.getName()))
+				return axis;
+		}
+		return null;
+	}
+	
+	public CoordAxis getDefaultZAxis() {
+		return defaultLayer;
 	}
 
 	@Override

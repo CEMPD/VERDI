@@ -1559,11 +1559,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		public double getValue() {
 			if (timeAxis == null)
-				return renderVariable.get(cellId, MeshPlot.this.layer);
+				return renderVariable.get(cellId, MeshPlot.this.layer - firstLayer);
 			else if (renderVariable.getRank() == 3)
-				return renderVariable.get(MeshPlot.this.timestep, cellId, MeshPlot.this.layer);
+				return renderVariable.get(MeshPlot.this.timestep - firstTimestep, cellId, MeshPlot.this.layer - firstLayer);
 			else
-				return renderVariable.get(MeshPlot.this.timestep, cellId);
+				return renderVariable.get(MeshPlot.this.timestep - firstTimestep, cellId);
 		}
 		
 		public double getMinX() {

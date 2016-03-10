@@ -1,6 +1,8 @@
 package anl.verdi.gui;
 
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -52,18 +54,34 @@ public class LayerPanel extends JPanel {
 	 * @param layerMax the max layer
 	 * @param isLayerUsed whether layer is used in evaluation or not
 	 */
-	public void reset(Axes<CoordAxis> axes, int layerMin, int layerMax, boolean isLayerUsed) {
-		CoordAxis layers = axes.getZAxis();
+	public void reset(CoordAxis layers, int layerMin, int layerMax, boolean isLayerUsed) {
 		int maxStep = (int) layers.getRange().getExtent() - 1;
 		SpinnerNumberModel model = (SpinnerNumberModel) minSpinner.getModel();
 		model.setMinimum(1);
 		model.setMaximum(maxStep + 1);
-		minSpinner.setValue(new Integer(layerMin + 1));
-
+		
+		String oldAxis = currentAxis;
+		currentAxis = layers.getName();
+		Integer oldMin = (Integer)minSpinner.getValue();
+		Integer oldMax = (Integer)maxSpinner.getValue();
+		if (oldAxis != null) {
+			axisValues.put(oldAxis + "min", oldMin);
+			axisValues.put(oldAxis + "max", oldMax);
+		}
+		Integer newVal = axisValues.get(currentAxis + "min");
+		if (newVal == null)
+			newVal = new Integer(layerMin + 1);
+		minSpinner.setValue(newVal);
+		
+		newVal = axisValues.get(currentAxis + "max");
+		if (newVal == null)
+			newVal = new Integer(layerMax + 1);
+		
 		model = (SpinnerNumberModel) maxSpinner.getModel();
 		model.setMinimum(1);
 		model.setMaximum(maxStep + 1);
-		maxSpinner.setValue(new Integer(layerMax + 1));
+		
+		maxSpinner.setValue(newVal);
 		chkEnable.setSelected(isLayerUsed);
 		setBorder(new TitledBorder("Layers (1 - " + (maxStep+1) + ")"));
 
@@ -73,6 +91,9 @@ public class LayerPanel extends JPanel {
 			chkEnable.setEnabled(false);
 		}
 	}
+	
+	String currentAxis = null;
+	Map<String, Integer> axisValues = new HashMap<String, Integer>();
 
 	public void setEnabled(boolean val) {
 		super.setEnabled(val);

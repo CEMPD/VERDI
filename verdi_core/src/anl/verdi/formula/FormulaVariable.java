@@ -3,15 +3,19 @@ package anl.verdi.formula;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
 
 import anl.verdi.data.AxisRange;
+import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataManager;
 import anl.verdi.data.DataReader;
 import anl.verdi.data.Dataset;
+import anl.verdi.data.MultiLayerDataset;
 import anl.verdi.data.Range;
 import anl.verdi.data.Variable;
 
@@ -97,5 +101,11 @@ public class FormulaVariable {
 
 	public Unit getUnit() {
 		return variable.getUnit();
+	}
+	
+	public CoordAxis getZAxis() {
+		if (dataset instanceof MultiLayerDataset)
+			return ((MultiLayerDataset)dataset).getZAxis(name);
+		return dataset.getCoordAxes().getZAxis();
 	}
 }

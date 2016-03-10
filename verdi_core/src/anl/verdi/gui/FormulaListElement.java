@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.Dataset;
+import anl.verdi.data.MPASCellAxis;
+import anl.verdi.data.MultiLayerDataset;
 import anl.verdi.formula.FormulaVariable;
 
 /**
@@ -22,6 +24,7 @@ public class FormulaListElement extends AbstractListElement {
 
 	private String formula;
 	private List<FormulaVariable> variables;
+	private CoordAxis zAxis;
 
 	public FormulaListElement(String formula) {
 		this(formula, new ArrayList<FormulaVariable>());
@@ -34,11 +37,17 @@ public class FormulaListElement extends AbstractListElement {
 		this.variables = variables;
 
 		if (variables.size() > 0) {
+			Dataset ds = variables.get(0).getDataset();
+			if (ds instanceof MultiLayerDataset) {
+				zAxis = ((MultiLayerDataset)ds).getZAxis(variables.get(0).getName());
+			}
+			else {
+				zAxis = getAxisForVariable(variables.get(0));
+			}
 			FormulaVariable var = variables.get(0);
-			CoordAxis axis = var.getDataset().getCoordAxes().getZAxis();
-			if (axis != null) {
-				layerMin = (int) axis.getRange().getOrigin();
-				layerMax = layerMin + (int) axis.getRange().getExtent() - 1;
+			if (zAxis != null) {
+				layerMin = (int) zAxis.getRange().getOrigin();
+				layerMax = layerMin + (int) zAxis.getRange().getExtent() - 1;
 			} else {
 				layerMin = NO_LAYER_VALUE;
 			}
@@ -62,6 +71,15 @@ public class FormulaListElement extends AbstractListElement {
 			}
 		}
 	}
+	
+	public CoordAxis getAxisForVariable(FormulaVariable var) {		
+		for (CoordAxis axis : var.getDataset().getCoordAxes().getAxes()) {
+			if (axis instanceof MPASCellAxis) {
+				return ((MPASCellAxis)axis).getZAxis(var.getName());
+			}
+		}
+		return null;
+	}
 
 	/**
 	 *
@@ -76,6 +94,10 @@ public class FormulaListElement extends AbstractListElement {
 		Logger.info("in FormulaListElement getAxes");
 		if (variables.size() > 0) return variables.get(0).getDataset().getCoordAxes();
 		return null;
+	}
+	
+	public CoordAxis getDefaultZAxis() {
+		return zAxis;
 	}
 
 	public String getFormula() {

@@ -68,12 +68,11 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 		for (CoordAxis axis : set.getCoordAxes().getAxes()) {
 			if (!dimSet.contains(axis.getName()))
 				continue;
-			System.err.println("Adding axis " + axis.getName());
 			if (axis.getAxisType().equals(AxisType.TIME))
 				builder.addAxis(DataFrameAxis.createDataFrameAxis(axis, indexMap.get(axis.getName())));
 			else if (axis.getAxisType().equals(AxisType.X_AXIS)) { //MPAS has "virtual"  x/y axes, which can't be referenced within the data.  Use cell index as axis, and include simulated x/y axes
 				CoordAxis yAxis = set.getCoordAxes().getYAxis();
-				CoordAxis cellAxis = new MPASCellCoordAxis(axis, yAxis, set.numCells, "nCells", "nCells");
+				CoordAxis cellAxis = new MPASCellCoordAxis(axis, yAxis, set.numCells, "nCells", "nCells", set);
 				builder.addAxis(DataFrameAxis.createDataFrameAxis(cellAxis, indexMap.get("nCells")));
 			}
 			else if (axis.getAxisType().equals(AxisType.LAYER)) {
@@ -248,8 +247,18 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 			Array array = null;
 			if (ranges != null) {
 				for (AxisRange axis : ranges) {
-					int dimIndex = varDS.findDimensionIndex(set.getNetDataset().
+					int dimIndex =  -1;
+					try {
+						dimIndex = varDS.findDimensionIndex(set.getNetDataset().
 								findCoordinateAxis(axis.getName()).getDimension(0).getShortName());	// getName() is deprecated
+					} catch (NullPointerException e) {
+						System.out.println("Could not find axis " + axis.getName() + " for var " + varDS.getName());
+						//Not available from NetDataset in MPAS files
+						dimIndex = varDS.findDimensionIndex(axis.getName());
+					}
+					if (dimIndex == -1) {
+						continue;
+					}
 					origin[dimIndex] = axis.getOrigin();
 					shape[dimIndex] = axis.getExtent();
 					DataFrameAxis frameAxis = DataFrameAxis.createDataFrameAxis(axis.getAxis(), axis.getOrigin(), axis.getExtent(), dimIndex);

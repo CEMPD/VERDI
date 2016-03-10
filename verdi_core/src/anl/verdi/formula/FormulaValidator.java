@@ -253,7 +253,7 @@ public class FormulaValidator {
 		if (variables.size() > 0) {
 			FormulaVariable formulaVariable = variables.get(0);
 			Axes<CoordAxis> axes = formulaVariable.getDataset().getCoordAxes();
-			CoordAxis layerAxis = axes.getZAxis();
+			CoordAxis layerAxis = formulaVariable.getZAxis();
 			CoordAxis xAxis = axes.getXAxis();
 			CoordAxis yAxis = axes.getYAxis();
 			
