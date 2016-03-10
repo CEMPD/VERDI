@@ -723,6 +723,8 @@ public class DataSetPanel extends JPanel {
 	public void setLayerValues(DatasetListElement element) {
 		if (element != null)
 			setLayerValues(element, element.getDefaultZAxis());
+		else
+			setLayerValues(element, null);
 	}
 
 	public void setLayerValues(DatasetListElement element, CoordAxis axis) {
