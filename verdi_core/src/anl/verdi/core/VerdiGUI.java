@@ -163,6 +163,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 		setStatusTwoText("");
 		String name = plotPanel.getName();
 		String viewId = replaceInvalidChars(name) + plotCount++;
+		plotPanel.setViewId(viewId);
 
 		if (plotPanel.getPlotType() == Formula.Type.CONTOUR) {
 			addContourPlot(viewId, name, plotPanel);

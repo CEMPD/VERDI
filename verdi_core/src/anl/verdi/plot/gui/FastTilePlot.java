@@ -3524,5 +3524,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	private int get_draw_once_requests() {
 		return draw_once_requests;
 	}
+	
+	public void setViewId(String id) {}
 
 }

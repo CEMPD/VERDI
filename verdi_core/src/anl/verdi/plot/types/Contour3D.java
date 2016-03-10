@@ -971,5 +971,8 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		isoMap = null;
 		timeLayerPanel = null;		
 		
-	}	
+	}
+	
+	public void setViewId(String id) {}
+
 }

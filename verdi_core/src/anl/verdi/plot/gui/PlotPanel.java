@@ -76,6 +76,10 @@ public class PlotPanel extends JPanel {
 	public Plot getPlot() {
 		return plot;
 	}
+	
+	public void setViewId(String id) {
+		plot.setViewId(id);
+	}
 
 	/**
 	 * Notifies Plot when its View has been closed. HACK!

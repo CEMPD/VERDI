@@ -88,6 +88,8 @@ public abstract class AbstractPlot implements Plot {
 	public PlotConfiguration getPlotConfiguration() {
 		return null;  //todo implement method
 	}
+	
+	public void setViewId(String id) {}
 
 	// customized chart panel for VerdiPlots
 	protected class VerdiChartPanel extends ChartPanel {
@@ -133,7 +135,7 @@ public abstract class AbstractPlot implements Plot {
 		public void setZoom(boolean zoom) {
 			this.zoom = zoom;
 		}
-
+		
 		/**
 		 * Displays a dialog that allows the user to edit the properties for the
 		 * current chart.

@@ -323,6 +323,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private final int DRAW_END = 3;
 	private int drawMode = DRAW_ONCE;
 	private int draw_once_requests = -1;
+	private String viewId = null;
 	private final String DELAY_LABEL = "Slow:";
 	private final JTextField delayField;
 	private final JTextField firstRowField;
@@ -421,6 +422,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		boolean screenInitted = false;
 
 		public void run() {
+			try {
 
 			do {
 				
@@ -674,7 +676,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 //									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
 //									subsetLayerData);
 						} catch (Exception e) {
-							Logger.error("FastTilePlot's run method", e);
+							Logger.error("MeshPlot run method", e);
 						}
 						} //TAH finish rework if
 
@@ -742,6 +744,13 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					} catch (Exception unused) {}
 				}
 			} while (drawMode != DRAW_END);
+		} catch (Throwable t) {
+			restoreCursor();
+			Logger.error("Error rendering MeshPlot", t);
+			String errInfo = t.getMessage() != null ? ": " + t.getMessage() + "  \n" : ".  ";
+			JOptionPane.showMessageDialog(app.getGui().getFrame(), "An error occured while rendering the plot" + errInfo + "Please see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);
+			app.getGui().getViewManager().getDockable(viewId).close();
+		}
 		}
 	};
 	
@@ -4314,6 +4323,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private int get_draw_once_requests() {
 		//System.err.println("Got " + draw_once_requests + " requests from " + Thread.currentThread().getStackTrace()[3]);
 		return draw_once_requests;
+	}
+	
+	public void setViewId(String id) {
+		viewId = id;
 	}
 
 }
