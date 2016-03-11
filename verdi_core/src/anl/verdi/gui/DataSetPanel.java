@@ -729,14 +729,21 @@ public class DataSetPanel extends JPanel {
 
 	public void setLayerValues(DatasetListElement element, CoordAxis axis) {
 		Logger.debug("in DataSetPanel setLayerValues");
-		if (element != null
+		if (element != null && axis != null
 				&& element.getLayerMin() != DatasetListElement.NO_LAYER_VALUE) {
 			layerPanel1.setEnabled(true);
 			layerPanel1.reset(axis, element
-					.getLayerMin(), element.getLayerMax(), element
-					.isLayerUsed());
+					.getLayerMin(), element.getLayerMax(), element.isLayerUsed());
+			element.setLayerMin(layerPanel1.getMin());
+			element.setLayerMax(layerPanel1.getMax());
+			element.setLayerUsed(layerPanel1.getLayerEnabled());
 		} else {
 			layerPanel1.setEnabled(false);
+			if (element != null) {
+				element.setLayerMin(DatasetListElement.NO_LAYER_VALUE);
+				element.setLayerMax(DatasetListElement.NO_LAYER_VALUE);
+				element.setLayerUsed(false);
+			}
 		}
 	}
 

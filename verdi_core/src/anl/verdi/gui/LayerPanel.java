@@ -12,7 +12,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeListener;
 
-import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.util.FocusClickFix;
 
@@ -64,10 +63,14 @@ public class LayerPanel extends JPanel {
 		currentAxis = layers.getName();
 		Integer oldMin = (Integer)minSpinner.getValue();
 		Integer oldMax = (Integer)maxSpinner.getValue();
+		boolean oldChecked = chkEnable.isSelected();
 		if (oldAxis != null) {
 			axisValues.put(oldAxis + "min", oldMin);
 			axisValues.put(oldAxis + "max", oldMax);
+			axisValues.put(oldAxis + "use", oldChecked ? 1 : 0);
 		}
+		if (axisValues.containsKey(currentAxis + "use"))
+			isLayerUsed = axisValues.get(currentAxis + "use").equals(1);
 		Integer newVal = axisValues.get(currentAxis + "min");
 		if (newVal == null)
 			newVal = new Integer(layerMin + 1);
@@ -172,4 +175,14 @@ public class LayerPanel extends JPanel {
 	private JLabel label2;
 	private JSpinner maxSpinner;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
+	
+	public int getMin() {
+		return ((SpinnerNumberModel) minSpinner.getModel()).getNumber().intValue() - 1;
+	}
+	public int getMax() {
+		return ((SpinnerNumberModel) maxSpinner.getModel()).getNumber().intValue() - 1;
+	}
+	public boolean getLayerEnabled() {
+		return chkEnable.isSelected();
+	}
 }

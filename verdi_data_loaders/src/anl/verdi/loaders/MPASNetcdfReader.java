@@ -252,7 +252,7 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 						dimIndex = varDS.findDimensionIndex(set.getNetDataset().
 								findCoordinateAxis(axis.getName()).getDimension(0).getShortName());	// getName() is deprecated
 					} catch (NullPointerException e) {
-						System.out.println("Could not find axis " + axis.getName() + " for var " + varDS.getName());
+						//System.out.println("Could not find axis " + axis.getName() + " for var " + varDS.getName());
 						//Not available from NetDataset in MPAS files
 						dimIndex = varDS.findDimensionIndex(axis.getName());
 					}

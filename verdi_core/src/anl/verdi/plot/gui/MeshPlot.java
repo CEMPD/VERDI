@@ -350,6 +350,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	protected JCheckBoxMenuItem showGridLines;
 	final JMenu mapLayersMenu = new JMenu("Add Map Layers");
 	
+	private boolean screenInitted = false;
+	
 	private int currentClickedCell = 0;
 	private int previousClickedCell = 0;
 	//private static final boolean SHOW_ZOOM_LOCATION = true;
@@ -419,8 +421,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		private final RepaintManager repaintManager =
 			RepaintManager.currentManager(threadParent);
 		
-		boolean screenInitted = false;
-
 		public void run() {
 			try {
 
@@ -659,7 +659,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							//TODO - fix this.  Low priority - drawn off screen, won't cause flash, only happens once
 							if (!screenInitted) {
 								screenInitted = true;
-								resetZooming();
+								locChanged = true;
 								continue;
 							}
 							
@@ -2581,7 +2581,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		item.setSelected(true);
 		grp.add(item);
 
-		activateRubberBand();
 
 		item = menu.add(new JRadioButtonMenuItem(new AbstractAction("Probe") {
 			private static final long serialVersionUID = 8777942675687929471L;
@@ -2609,6 +2608,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		menu.addSeparator();*/
 		
 		// item.setSelected(true);
+
+		activateRubberBand();
+
 		JMenuItem menuItem = new JMenuItem(
 				new AbstractAction("Set Longitude and Latitude Ranges") {
 					private static final long serialVersionUID = -4465758432397962782L;
@@ -3203,6 +3205,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			Logger.error("FastTilePlot's updateColorMap method "+ e.getMessage());
 			return;
 		}
+		screenInitted = false;
+		updateCellData();
 	}
 
 	/**
@@ -3872,8 +3876,16 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private String formatPointLatLon(Point4i point) {
 		double lonCoord = ((point.x / compositeFactor) + panX) * RAD_TO_DEG + columnOrigin;
 		double latCoord = (dataHeight - ((point.y / compositeFactor)  + panY )) * RAD_TO_DEG + rowOrigin;
-		int hoveredId = getCellIdByCoord(point.x, point.y);
-		return formatLatLon(lonCoord, latCoord, hoveredId, true, point.x, point.y);
+		try {
+			int hoveredId = getCellIdByCoord(point.x, point.y);
+			return formatLatLon(lonCoord, latCoord, hoveredId, true, point.x, point.y);
+		}
+		//This usually happens right after a zoom (screenHeight changes) and before the new dataArea.setRect() has been called.
+		//Either synchronize resizes (not ideal) or ignore the exception.  Doesn't indicate a real problem unless hovering over 
+		//the map produces a blank status area.
+		catch (ArrayIndexOutOfBoundsException e) {
+			return "";
+		}
 	}
 	
 	private String formatLatLon(double lonCoord, double latCoord, int hoveredId, boolean extendedFormat, int xCoord, int yCoord) {	
@@ -3881,7 +3893,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		String ret = "(" + coordFormat.format(lonCoord) + ", " + coordFormat.format(latCoord);
 		if (!extendedFormat)
 			return ret + ")";
-		ret += " xy " + xCoord + "," + yCoord;
+		//ret += " xy " + xCoord + "," + yCoord;
 
 		try {
 			CellInfo cell = cellIdInfoMap.get(hoveredId);
@@ -3893,7 +3905,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			else
 				value = statisticsData[preStatIndex - 1][0][cell.cellId];
 			if (cell != null) {
-				ret += cell.getId() + " ";
+				//ret += cell.getId() + " ";
 				ret += cell.getElevation() + ") " + variable + " " + valueFormat.format(value) + unitString;
 				//ret += ") " + cell.getId() + " " + " " + valueFormat.format(cell.getValue()) + " c " + coordFormat.format(cell.lon) + "," + coordFormat.format(cell.lat) + " " + point.x + "," + point.y;
 
