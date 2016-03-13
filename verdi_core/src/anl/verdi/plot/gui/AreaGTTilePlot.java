@@ -139,14 +139,14 @@ public class AreaGTTilePlot extends GTTilePlot {
 				minMax=new MinMax(minmax[0],minmax[1]);
 				// TODO: JIZHEN - need the old map?
 				//ColorMap map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
-				if ( map == null) {
-					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+				if ( aColorMap == null) {
+					aColorMap = new ColorMap(defaultPalette, minmax[0], minmax[1]);
 				} else {
-					map.setPalette(defaultPalette);
-					map.setMinMax( minmax[0], minmax[1]);
+					aColorMap.setPalette(defaultPalette);
+					aColorMap.setMinMax( minmax[0], minmax[1]);
 				}
-				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
-				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+				aColorMap.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+				config.putObject(TilePlotConfiguration.COLOR_MAP, aColorMap);
 
 
 				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
@@ -782,14 +782,14 @@ public class AreaGTTilePlot extends GTTilePlot {
 
 				// initialize colormap to these min max values
 				minMax=new MinMax(minmax[0],minmax[1]);
-				if ( map == null) {
-					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+				if ( aColorMap == null) {
+					aColorMap = new ColorMap(defaultPalette, minmax[0], minmax[1]);
 				} else {
-					map.setPalette(defaultPalette);
-					map.setMinMax( minmax[0], minmax[1]);
+					aColorMap.setPalette(defaultPalette);
+					aColorMap.setMinMax( minmax[0], minmax[1]);
 				}
-				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
-				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+				aColorMap.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+				config.putObject(TilePlotConfiguration.COLOR_MAP, aColorMap);
 
 				setLegendLevels(minMax);
 			}

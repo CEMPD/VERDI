@@ -61,7 +61,7 @@ public class GTTilePlotAction extends AbstractSAFAction<VerdiApplication> {
 				GTRenderer aRenderer = ((GTTilePlot)plot).getRenderer();
 				Logger.debug("aRenderer = " + aRenderer);
 				Logger.debug("ready to generate PlotPanel for a plot, variableName, and additional values");
-				final PlotPanel panel = new PlotPanel(plot, variableName, aJMapPane, aMapContent, aRenderingExecutor, aRenderer);
+				final PlotPanel panel = new PlotPanel(plot, variableName, aJMapPane, aMapContent, aRenderingExecutor, aRenderer);	// current failure point within this function call
 				Logger.debug("ready to call addPlot to add the new panel to application GUI");
 				application.getGui().addPlot( panel );
 				Logger.debug("ready to add plot listener");
