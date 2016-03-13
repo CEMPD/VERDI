@@ -81,8 +81,10 @@ import javax.vecmath.Point4i;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.geotools.geometry.DirectPosition2D;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
+import org.geotools.map.MapViewport;
 import org.geotools.swing.JMapPane;
 import org.geotools.swing.data.JFileDataStoreChooser;
 import org.geotools.swing.event.MapMouseAdapter;
@@ -90,9 +92,13 @@ import org.geotools.swing.event.MapMouseEvent;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import saf.core.ui.event.DockableFrameEvent;
+import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
+import ucar.unidata.geoloc.Projection;
+import ucar.unidata.geoloc.projection.LatLonProjection;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.data.Axes;
+import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataFrameIndex;
@@ -102,6 +108,7 @@ import anl.verdi.data.DataUtilities.MinMax;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.ObsEvaluator;
 import anl.verdi.data.Slice;
+import anl.verdi.data.Variable;
 import anl.verdi.data.VectorEvaluator;
 import anl.verdi.formula.Formula;
 import anl.verdi.formula.Formula.Type;
@@ -206,8 +213,8 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	protected PlotConfiguration config;
 
 	protected Palette defaultPalette;
-	private Color[] legendColors;
-	protected ColorMap map;
+	protected Color[] legendColors;
+	protected ColorMap aColorMap;
 
 	private Color axisColor = Color.darkGray;
 	private Color labelColor = Color.black;
@@ -232,6 +239,9 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 
 	protected double[][] gridBounds = { { 0.0, 0.0 }, { 0.0, 0.0 } };
 	protected double[][] domain = { { 0.0, 0.0 }, { 0.0, 0.0 } };
+	
+	private String variable;	// such as "PM25"	// removed "final"
+	protected String units;			// such as "ug/m3"
 
 	protected List<OverlayObject> obsData = new ArrayList<OverlayObject>();
 	protected List<ObsAnnotation> obsAnnotations;
@@ -298,10 +308,11 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	 * @param aDataFrame	DataFrame object; array-based data and metadata for one variable
 	 */
 	public GTTilePlot(VerdiApplication aVerdiApp, DataFrame aDataFrame) {
-		// TODO Auto-generated constructor stub
+		// TODO WIP constructor for GTTilePlot
 		super();										// call constructor of GTTilePlotPanel
 		app = aVerdiApp;								// copy the VerdiApplication object to data member
 		dataFrame = aDataFrame;							// copy the DataFrame object to data member
+		calculateDataFrameLog();						// calls member function calculateDataFrameLog (purpose unknown)
 		JToolBar theToolBar = createToolBar(dataFrame);	// create the tool bar here
 		super.setToolBar(theToolBar);					// and send it to the GTTilePlotPanel
 		JMenuBar theMenuBar = createMenuBar();			// create the menu bar here
@@ -314,7 +325,121 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 //		GTTilePlot.AreaFinder finder = this.new AreaFinder();	// TODO implement later
 //		this.addMouseListener(finder);
 //		this.addMouseMotionListener(finder);
-		super.repaint();								// force components to show ???
+		
+		// here check for existence of mapFileDirectory and pop up a file chooser if doesn't exist
+		Logger.debug("mapFileDirectory = " + mapFileDirectory);
+		File vFile = new File(mapFileDirectory);
+		if(!vFile.exists() || !vFile.canRead() || !vFile.isDirectory())	// must exist, be readable, and is a directory
+		{
+			vFile = JFileDataStoreChooser.showOpenFile("shp", null);
+			if(!vFile.exists() || !vFile.canRead() || !vFile.isDirectory())
+			{
+				Logger.error("Incorrect map file directory: " + vFile.getAbsolutePath());
+				return;
+			}
+			mapFileDirectory = vFile.getAbsolutePath();
+			Logger.debug("mapFileDirectory now set to: " + mapFileDirectory);
+		}
+
+		// initialize attributes from aDataFrame argument
+		final Variable dataFrameVariable = dataFrame.getVariable();
+		variable = dataFrameVariable.getName();
+		
+		Logger.debug("dataFrameVariable = " + dataFrameVariable);
+		Logger.debug("dataFrameVariable name = " + variable);
+		units = dataFrameVariable.getUnit().toString();
+		if(units == null || units.trim().equals(""))
+			units = "none";
+		Logger.debug("units of dataFrameVariable = " + units);		// test: ppmV
+
+		assert dataFrame.getAxes() != null : "No axes defined for dataFrame" ;
+		final Axes<DataFrameAxis> axes = dataFrame.getAxes();
+		
+		final Dataset dataset = dataFrame.getDataset().get(0);		// get 1st dataset
+		final Axes<CoordAxis> coordinateAxes = dataset.getCoordAxes();
+		final Projection projection = coordinateAxes.getProjection();	// ucar projection
+		Logger.debug("NOTE: in GTTilePlot using Projection = coordinateAxes.getProjection() = "
+				 + projection.getName());
+		Logger.debug("coordinateAxes.getProjection = " + projection);	// test: looks OK to here
+		
+		if(projection instanceof LatLonProjection)
+		{
+			Logger.debug("projector being set to null because it is an instance of LatLonProjection");
+			projector = null;
+		} else
+		{
+			projector = new Projector(projection);
+			Logger.debug("projector set to: " + projector.toString());	// test: get this message OK
+		}
+		
+		// here get the CRS for the grid (raster) dataset
+		final ReferencedEnvelope envelope = axes.getBoundingBox(dataFrame.getDataset().get(0).getNetcdfCovn());
+		getMapPane().setDisplayArea(envelope);
+		gridCRS = envelope.getCoordinateReferenceSystem();		// now have CRS for the gridded dataset
+		Logger.debug("gridCRS (as WKT) = " + gridCRS.toWKT());
+		
+		// set viewport so can set CRS into myMapContent
+		MapViewport myMapViewport = new MapViewport(envelope);
+		myMapViewport.setBounds(envelope);
+		myMapViewport.setCoordinateReferenceSystem(gridCRS);
+		myMapContent.setViewport(myMapViewport);
+		
+		// Initialize grid dimensions: timesteps, layers, rows, columns
+		
+		final DataFrameAxis timeAxis = axes.getTimeAxis();
+		if(timeAxis == null)
+		{
+			timesteps = 1;
+			firstTimestep = timestep = lastTimestep = 0;
+		} else
+		{
+			timesteps = timeAxis.getExtent();
+			firstTimestep = timestep = timeAxis.getOrigin();
+			lastTimestep = firstTimestep + timesteps - 1;
+		}
+		Logger.debug("number of timesteps = " + timesteps);
+		
+		final DataFrameAxis layerAxis = axes.getZAxis();
+		if(layerAxis == null)
+		{
+			layers = 1;
+			firstLayer = layer = lastLayer = 0;
+		} else
+		{
+			layers = layerAxis.getExtent();
+			firstLayer = layer = layerAxis.getOrigin();
+			lastLayer = firstLayer + layers - 1;
+		}
+		Logger.debug("number of layers = " + layers);
+		
+		final DataFrameAxis rowAxis = axes.getYAxis();
+		rows = rowAxis != null ? rowAxis.getExtent() : 1;
+		rowOrigin = rowAxis != null ? rowAxis.getOrigin() : 0;
+		firstRow = 0;
+		lastRow = firstRow + rows - 1;
+		Logger.debug("number of rows = " + rows);
+		
+		final DataFrameAxis columnAxis = axes.getXAxis();
+		columns = columnAxis != null ? columnAxis.getExtent() : 1;
+		columnOrigin = columnAxis != null ? columnAxis.getOrigin() : 0;
+		firstColumn = 0;
+		lastColumn = firstColumn + columns - 1;
+		Logger.debug("number of columns = " + columns);
+		
+		//TODO before draw legend need to get some information (min/max etc) about the dataset values
+		//TODO domain axis
+		//TODO domain axis label
+		//TODO range axis
+		//TODO range axis label
+		//TODO titles panel
+		//TODO footers panel
+		//TODO decide correct built-in shapefile to use as overlay
+		//TODO raster information to myMapContent
+		//TODO add shapefile information to myMapContent
+		//TODO add user-selected shapefiles to myMapContent
+		drawLegend();
+		
+		super.repaint();								// force components to show (end of constructor)
 
 	}	// end of GTTilePlot constructor
 
@@ -326,7 +451,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	public void setObsLegend(List<ObsAnnotation> obsAnnot, boolean showLegend) {
 		showObsLegend = showLegend;
 		obsAnnotations = obsAnnot;
-	}	// end setObsLebend with 2 arguments
+	}	// end setObsLegend with 2 arguments
 
 	/**
 	 * getPanel(): returns the largest JPanel container (contains all others)
@@ -688,10 +813,10 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		} catch ( Exception e) {
 			Logger.error("Error occurred during computing statistics: " + e.getMessage());
 			statError = true;
-			if ( map != null && map.getScaleType() == ColorMap.ScaleType.LOGARITHM) {
+			if ( aColorMap != null && aColorMap.getScaleType() == ColorMap.ScaleType.LOGARITHM) {
 				preLog = true;
 				log = false;
-				map.setScaleType( ColorMap.ScaleType.LINEAR);
+				aColorMap.setScaleType( ColorMap.ScaleType.LINEAR);
 				draw();	// draw() is here because just changed the ScaleType
 			}
 		}
@@ -1993,6 +2118,31 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	public String getTitle() {
 		return super.getTString();
 	}	// end getTitle with 0 arguments
+	
+	/**
+	 * calculateDataFrameLog member function; from FastTilePlot
+	 * edited to omit lines of code pertaining to a local variable doDebug manually set for recompile
+	 */
+	private void calculateDataFrameLog() {
+		if ( this.dataFrame == null) {
+			return;
+		}
+		
+		this.dataFrameLog = DataUtilities.createDataFrame(this.dataFrame);
+ 
+		IndexIterator iter2 = this.dataFrameLog.getArray().getIndexIterator();
+		IndexIterator iter1 = this.dataFrame.getArray().getIndexIterator();
+		float val1, val2;
+		while (iter2.hasNext()) {
+			val1 = iter1.getFloatNext(); 
+			val2 = iter2.getFloatNext(); 
+			val2 = (float)(Math.log(val1) / Math.log( this.logBase));
+			iter2.setFloatCurrent( (float)( val2));
+
+			val2 = iter2.getFloatCurrent();	// ???
+		}
+	}
+
 
 	/**
 	 * updateTimeStep: changes the value of the time step to the value specified
@@ -2169,7 +2319,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			for (OverlayObject obs : obsData) {
 				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
 				ObsAnnotation ann = new ObsAnnotation(eval, axs, initDate, layer);
-				ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
+				ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), aColorMap);
 				obsAnnotations.add(ann);
 				Dataset ds = eval.getVariable().getDataset();
 
@@ -2325,7 +2475,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		legendLevels = null;
 		defaultPalette = null;
 		legendColors = null;
-		map = null;
+		aColorMap = null;
 		gridBounds = null;
 		domain = null;
 
@@ -2499,20 +2649,22 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	/**
 	 * drawLegend member function originally from TilePlot, called by TilePlot.draw
 	 * Read and construct some original values and pass them to GTTilePlotPanel.setLegendPanel.
-	 * Remainder of TilePlot.drawLegend functionality in GTTilePlotPanel, legendPanel, paintComponent
-	 * @param xMaximum
-	 * @param yMinimum
-	 * @param yMaximum
-	 * @param legendLevels	array of double containing the break points for each change in color of legend and tiles
-	 * @param legendColors	array of Color containing the color for each tile and associated position in legend
-	 * @param units	string representing the unit of measure for displayed values in this tile plot
+	 * Remainder of TilePlot.drawLegend functionality in GTTilePlotPanel, legendPanel, paintComponent.
+	 * NOTE: No longer using parameters for max & min x & Y values
+	 *  legendLevels	array of double containing the break points for each change in color of legend and tiles
+	 *  legendColors	array of Color containing the color for each tile and associated position in legend
+	 *  units	string representing the unit of measure for displayed values in this tile plot
 	 */
-	protected void drawLegend(int xMaximum, int yMinimum, int yMaximum, final double[] legendLevels,
-			final Color[] legendColors, final String units)
+	protected void drawLegend()
 	{
 		final int colors = legendColors.length;
 		super.setLog(log); 	// set log value for GTTilePlotPanel
-		String unitStr = config.getProperty(PlotConfiguration.UNITS);	// get unit of measure from config
+		// first, find out if going to include a legend or not; default to true (draw the legend)
+		Boolean showLegend = (Boolean)config.getObject(TilePlotConfiguration.LEGEND_SHOW);
+		showLegend = (showLegend == null ? true : showLegend);
+		super.setShowLegend(showLegend);
+		
+		String unitStr = config.getProperty(TilePlotConfiguration.UNITS);	// get unit of measure from config
 		unitStr = (unitStr == null || unitStr.isEmpty() ? units : unitStr);	// must use units if grid cell statistics
 		config.putObject(PlotConfiguration.UNITS, unitStr);		// save updated unit of measure to config
 		String logStr = " (Log";
@@ -2546,9 +2698,9 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 				baseStr = logBase + "";
 			}
 		}
-		super.setLegendPanel(uShowTick, labelCnt, xMaximum, yMinimum, yMaximum, uTickColor, unitsClr,
+		super.setLegendPanel(uShowTick, labelCnt, uTickColor, unitsClr,
 				labelFont, unitsFont, baseStr, logStr, unitStr, legendLevels, legendColors);
-	}	// end drawLegend with 6 arguments
+	}	// end drawLegend with 3 arguments
 
 
 	/**
@@ -2578,5 +2730,295 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			
 		});	// end addMouseListener for 1 argument
 	}
+
+	//TODO inner class AreaFinder - redo for JMapPane instead of Rectangle2D
+//	/**
+//	 * Inner class AreaFinder taken from FastTilePlot
+//	 * @author 
+//	 *
+//	 */
+//	class AreaFinder extends MouseInputAdapter {
+//
+//		private Point start, end;
+//
+//		private Point mpStart, mpEnd;
+//
+//		// this rect measured axis coordinates
+//		private Rectangle rect;		// TODO no longer using Rectangle object
+//
+//		public void mousePressed(MouseEvent e) {// TODO no longer using Rectangle object
+//			if (isInDataArea(e)) {
+//				mpStart = e.getPoint();
+//				start = new Point(getCol(mpStart), getRow(mpStart));
+//				rect = new Rectangle(start, new Dimension(0, 0));
+//				eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, createAreaString(rect),
+//						false));
+//			} else {
+//				start = null;
+//			}
+//		}
+//
+//		public void mouseDragged(MouseEvent e) {// TODO no longer using Rectangle object
+//			if (start != null) {
+//				if (isInDataArea(e)) {
+//					mpEnd = e.getPoint();
+//					end = new Point(getCol(mpEnd), getRow(mpEnd));
+//					rect.width = end.x - rect.x;
+//					rect.height = rect.y - end.y;
+//
+//					boolean finished = rect.width < 0 || rect.height < 0;
+//					eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, createAreaString(rect),
+//							finished));
+//				} else {
+//					eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, true));
+//				}
+//			}
+//		}
+//
+//		public void mouseMoved(MouseEvent e) {// TODO no longer using Rectangle object
+//			if (isInDataArea(e)) {
+//				Point p = new Point(getCol(e.getPoint()), getRow(e.getPoint()));
+//				Rectangle rect = new Rectangle(p.x, p.y, 0, 0);
+//				if (!showLatLon) eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, createAreaString(rect), false));
+//			} else {
+//				eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(new Rectangle(0, 0, 0, 0), true));
+//			}
+//		}
+//
+//		public void mouseExited(MouseEvent e) {// TODO no longer using Rectangle object
+//			eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(new Rectangle(0, 0, 0, 0), true));
+//		}
+//
+//		public void mouseReleased(MouseEvent e) {// TODO no longer using Rectangle object
+//			if (start != null) {
+//				if (isInDataArea(e)) {
+//					mpEnd = e.getPoint();
+//					end = new Point(getCol(mpEnd), getRow(mpEnd));
+//					rect.width = end.x - rect.x;
+//					rect.height = rect.y - end.y;
+//
+//					if (probe)
+//						probe(rect);
+//					else {
+//						int mod = e.getModifiers();
+//						int mask = MouseEvent.BUTTON3_MASK;
+//						boolean rightclick = (mod & mask) != 0;
+//
+//						zoom(rightclick, !rightclick, false, mpEnd.x < mpStart.x || mpEnd.y < mpStart.y, false, rect);
+//					}
+//				}
+//
+//				eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, true));
+//			}
+//		}
+//
+//		private String createAreaString(Rectangle rect) {// TODO no longer using Rectangle object
+//			Point4i[] points = rectToPoints(rect);
+//			if (showLatLon) return createLonLatAreaString(points);
+//			else return createAxisCoordAreaString(points);
+//		}
+//
+//		private Point4i[] rectToPoints(Rectangle rect) {// TODO no longer using Rectangle object
+//			Point4i[] points = new Point4i[2];
+//			// rect is x,y
+//			Point4i point = new Point4i(rect.x, rect.y, NO_VAL, NO_VAL);
+//			points[0] = point;
+//
+//			if (rect.getWidth() > 0 || rect.getHeight() > 0) {
+//				point = new Point4i(rect.x + rect.width, rect.y - rect.height, NO_VAL, NO_VAL);
+//				points[1] = point;
+//			}
+//			return points;
+//		}
+//
+//		// rect is in axis coords
+//		private String createAxisCoordAreaString(Point4i[] points) {// TODO no longer using Rectangle object
+//			StringBuilder builder = new StringBuilder();
+//			builder.append(formatPoint(points[0]));
+//			if (points[1] != null) {
+//				builder.append(" - ");
+//				builder.append(formatPoint(points[1]));
+//			}
+//			return builder.toString();
+//		}
+//
+//		// rect is in axis coordinates
+//		private String createLonLatAreaString(Point4i[] points) {// TODO no longer using Rectangle object
+//			StringBuilder builder = new StringBuilder();
+//			builder.append(formatPointLatLon(points[0]));
+//			if (points[1] != null) {
+//				builder.append(" - ");
+//				builder.append(formatPointLatLon(points[1]));
+//			}
+//			return builder.toString();
+//		}
+//
+//		//		// TODO may be an easier way to do this
+//		////		protected boolean isInDataArea(MouseEvent me) {	// TODO JEB 2016 MAY NEED TO CHANGE THIS; no longer using Rectangle object
+//		//		protected boolean isInDataArea(MapMouseEvent me) {	// TODO JEB 2016 MAY NEED TO CHANGE THIS; no longer using Rectangle object
+//		//			// WANT WITHIN THE JMapPane DATA MEMBER OF OVERALL JPanel
+//		//		// dataArea is a Rectangle object, so those functions will not work as they are
+//		////		int x = me.getPoint().x;
+//		////		int y = me.getPoint().y;
+//		//			int x = me.getX();
+//		//			int y = me.getY();
+//		//			
+//		//		
+//		////		JMapPane myMapPane = topMapPanel;
+//		//		int topMapPanelWidth = topMapPanel.getWidth();	// width
+//		//		int topMapPanelHeight = topMapPanel.getHeight();	// height
+//		//		int topMapPanelX = topMapPanel.getX();		// X-coordinate of origin
+//		//		int topMapPanelY = topMapPanel.getY();		// Y-coordinate of origin
+//		//		
+//		////		if (x < dataArea.x || x > dataArea.x + dataArea.width)
+//		////			return false;
+//		////		if (y < dataArea.y || y > dataArea.y + dataArea.height)
+//		////			return false;
+//		//		if(x < topMapPanelX || x > (topMapPanelX + topMapPanelWidth)
+//		//				|| y < topMapPanelY || y < (y + topMapPanelHeight))
+//		//			return false;
+//		//		return true;
+//		//	}
+//
+//		protected int getRow(Point p) {	// TODO JEB 2016 NEED TO CHANGE THIS; no longer using Rectangle object
+//			// no longer working with a Rectangle object
+//			int dist = dataArea.y + dataArea.height - p.y;
+//			int div = dist * (lastRow - firstRow + 1);
+//			int den = dataArea.height;
+//
+//			return firstRow +  div/den;
+//		}
+//
+//		protected int getCol(Point p) {	// TODO JEB 2016 NEED TO CHANGE THIS; no longer using Rectangle object
+//			// no longer working with a Rectangle object
+//			int dist = p.x - dataArea.x;
+//			int div = dist * (lastColumn - firstColumn + 1);
+//			int den = dataArea.width;
+//
+//			return firstColumn +  div/den;
+//		}
+//
+//		private void zoom(boolean rightClick, boolean leftClick, boolean popZoomIn, boolean reset, 
+//				boolean zoomOut, Rectangle bounds) {	// TODO edit, no longer using Rectangle
+//			if (reset) {
+//				resetZooming();
+//				draw();
+//				return;
+//			}
+//
+//			if (rightClick)
+//				return;
+//
+//			int rowSpan = lastRow - firstRow;
+//			int colSpan = lastColumn - firstColumn;
+//			int inScale = 5;
+//			int rowInc = rowSpan < inScale * 2 ? rowSpan/2 - 1 : rowSpan / (inScale * 2);
+//			int colInc = colSpan < inScale * 2 ? colSpan/2 - 1 : colSpan / (inScale * 2);
+//
+//			if (popZoomIn) { // click to zoom in or popup menu zoom in
+//				if (rowSpan != 0) {
+//					firstRow = bounds.y - rowInc < 1 ? 1 : bounds.y - rowInc;
+//					lastRow = bounds.y + rowInc > rows ? rows : bounds.y + rowInc;
+//				}
+//
+//				if (colSpan != 0) {
+//					firstColumn = bounds.x - colInc < 1 ? 1 : bounds.x - colInc;
+//					lastColumn = bounds.x + colInc > columns ? columns : bounds.x + colInc;
+//				}
+//			} else if (zoomOut) {  //zoom out
+//				int outInc = 1 + colSpan  / 5;
+//				firstRow = firstRow - outInc < 1 ? 1 : firstRow - outInc;
+//				lastRow = lastRow + outInc > rows ? rows : lastRow + outInc;
+//				firstColumn = firstColumn - outInc < 1 ? 1 : firstColumn - outInc;
+//				lastColumn = lastColumn + outInc > columns ? columns : lastColumn + outInc;
+//			} else if (leftClick && bounds.height == 0 && bounds.width == 0) {
+//				return;
+//			} else { // regular zoom in
+//				firstRow = bounds.y - bounds.height;
+//				lastRow = bounds.y;
+//				firstColumn = bounds.x;
+//				lastColumn = bounds.x + bounds.width;
+//			}
+//
+//			lastRow = Numerics.clampInt(lastRow, firstRow, rows - 1);
+//			lastColumn = Numerics.clampInt(lastColumn, firstColumn, columns - 1);
+//			firstColumnField.setText(Integer.toString(firstColumn + 1));
+//			lastColumnField.setText(Integer.toString(lastColumn + 1));
+//			firstRowField.setText(Integer.toString(firstRow + 1));
+//			lastRowField.setText(Integer.toString(lastRow + 1));
+//			computeDerivedAttributes();
+//			draw();
+//		}
+//
+//	}	// end internal class AreaFinder
+
+//	private void probe(Rectangle axisRect) {	// TODO JEB 2016 REWRITE: no longer using Rectangle object
+//		synchronized (lock) {
+//			Slice slice = new Slice();
+//			slice.setTimeRange(timestep - firstTimestep, 1);
+//			if (!hasNoLayer) slice.setLayerRange(layer - firstLayer, 1);
+//			Axes<DataFrameAxis> axes = getDataFrame().getAxes();
+//			final int probeFirstColumn = axisRect.x - axes.getXAxis().getOrigin(); 
+//			final int probeColumns = axisRect.width + 1;
+//			final int probeFirstRow = axisRect.y - axisRect.height - axes.getYAxis().getOrigin();
+//			final int probeRows = axisRect.height + 1;
+//
+//			slice.setXRange( probeFirstColumn, probeColumns );
+//			slice.setYRange( probeFirstRow, probeRows );
+//
+//			try {
+//				DataFrame subsection = null;
+//
+//				//			boolean isLog = false;		// isLog is not used
+//				//				double logBase = 10.0;					// JEB 2015 already have logBase as class data member
+//				ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
+//				if (map != null) {
+//					// set log related info
+//					ColorMap.ScaleType iType = map.getScaleType();
+//					if ( iType == ColorMap.ScaleType.LOGARITHM ) {
+//						//					isLog = true;
+//						logBase = map.getLogBase();
+//					}
+//				}			
+//
+//				if ( statisticsMenu.getSelectedIndex() != 0 ) {
+//					// HACK: copy and overwrite subsection.array with subsetLayerData:
+//					subsection = getDataFrame().sliceCopy( slice );
+//					final int probeLastColumn = probeFirstColumn + probeColumns -1 ;
+//					final int probeLastRow = probeFirstRow + probeRows - 1 ;
+//					final ucar.ma2.Array array = subsection.getArray();
+//					final ucar.ma2.Index index = array.getIndex();
+//
+//					for ( int row = probeFirstRow; row <= probeLastRow; ++row ) {
+//						final int sliceRow = (probeFirstRow - firstRow) + (row - probeFirstRow) - 1;
+//						final int sliceRowIndex = (row - probeFirstRow);
+//						index.set2( sliceRowIndex );
+//
+//						for ( int column = probeFirstColumn; column <= probeLastColumn; ++column ) {
+//							final int sliceColumn = (probeFirstColumn - firstColumn) +  (column - probeFirstColumn) -1;
+//							final int sliceColumnIndex = (column - probeFirstColumn);
+//							index.set3( sliceColumnIndex );
+//							final float value = subsetLayerData[ sliceRow ][ sliceColumn ];
+//							array.setFloat( index, value );
+//						}
+//					}
+//
+//				} else {
+//					subsection = getDataFrame().slice(slice);
+//				}
+//
+//				probedSlice = slice;
+//				enableProbeItems(true);
+//				ProbeEvent ent = new ProbeEvent(this, subsection, slice, Formula.Type.TILE);	// 2014 fixed code not knowing what TILE meant
+//				ent.setIsLog( false); //isLog); // JIZHEN: always set to false, take log inside this class
+//				ent.setLogBase( logBase);
+//				eventProducer.fireProbeEvent(ent);//new ProbeEvent(this, subsection, slice, TILE));
+//			} catch (InvalidRangeException e) {
+//				Logger.error("Invalid Range Exception in FastTilePlot.Probe: " + e.getMessage());
+//			}
+//		}	// end synchonized lock
+//	}	// end probe
+
+	
 	
 }	// end class GTTilePlot

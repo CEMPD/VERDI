@@ -54,7 +54,7 @@ public class GTTilePlotPanel extends JPanel {
 	private GridBagLayout gbl_contentPane;	// overall layout manager
 	private GridBagConstraints c;
 	private BoxLayout titlesLayout;
-	private JMenuBar bar;				// bar at top of contentPane; plot-specific menu items
+	private JMenuBar menuBar;			// bar at top of contentPane; plot-specific menu items
 	private JToolBar toolBar;			// toolBar just below bar in contentPane; widgets for the
 											// user to define what to plot (time step, etc.)
 	private JPanel titlesPanel;			// titlesPanel just below toolBar in contentPane; title, subtitles 1 & 2
@@ -97,6 +97,7 @@ public class GTTilePlotPanel extends JPanel {
 	private String f1String, f2String;				// strings to print for footer1, footer2
 
 	// legend-related
+	private boolean showLegend = true;				// default to show the legend for the tiles
 	private String unitStr;							// unit of measure
 	private String logStr;							// " (Log"
 	private String baseStr;							// base of log string
@@ -106,9 +107,9 @@ public class GTTilePlotPanel extends JPanel {
 	private Font labelFont;							// Font for tick labels
 	private Font unitsFont;							// Font for units
 	private Color unitsClr;							// Color for units
-	private int xMaximum;							// ???
-	private int yMinimum;							// ???
-	private int yMaximum;							// ???
+	private int xMaximum;							// maximum X position for JPanel (xOffset + width)
+	private int yMinimum;							// minimum Y position for JPanel (yOffset)
+	private int yMaximum;							// maximum Y position for JPanel (yMinimum + height)
 	private double[] legendLevels;					// value associated with the break point between legend levels
 	private Color[] legendColors;					// Color for each range of values in legend and tile plot
 	
@@ -139,7 +140,7 @@ public class GTTilePlotPanel extends JPanel {
 
 		// first define components that go across the top of the frame
 
-		bar = new JMenuBar() {// bar menu strip at top of contentPane
+		menuBar = new JMenuBar() {// bar menu strip at top of contentPane
 			/**
 			 * 
 			 */
@@ -153,13 +154,13 @@ public class GTTilePlotPanel extends JPanel {
 			}
 		};	
 		// start upper-left corner of window, 1-cell height, lt. gray background
-		bar.setBackground(Color.LIGHT_GRAY ); 
+		menuBar.setBackground(Color.LIGHT_GRAY ); 
 		c.gridx = BORDER;
 		c.gridy = BORDER;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridheight = BAR_HT;
-		gbl_contentPane.setConstraints(bar, c);
-		add(bar);
+		gbl_contentPane.setConstraints(menuBar, c);
+		add(menuBar);
 
 		toolBar = new JToolBar() {	// contains time step, layer, stats, animation widgets
 			/**
@@ -403,6 +404,8 @@ public class GTTilePlotPanel extends JPanel {
 				super.paintComponent(g);
 				Graphics2D g2 = (Graphics2D) g;
 				Logger.debug("legendPanel paintComponent");
+				if(showLegend)
+				{
 				// parts originally from TilePlot.drawLegend
 				final int colors = legendColors.length;
 				String unitStrAll = unitStr;
@@ -411,7 +414,7 @@ public class GTTilePlotPanel extends JPanel {
 				final int binWidth = 20;	// of color bar in pixels
 				final int ticSize = 3;		// of level tick marks in pixels
 				int space = 6;				// space between 2 visual components
-				final int yRange = yMaximum = yMinimum;
+				final int yRange = yMaximum - yMinimum;
 				final int binHeight = yRange / colors;
 				final int xOffset = binWidth;
 				int subStart = 0, subEnd = 0;
@@ -511,7 +514,7 @@ public class GTTilePlotPanel extends JPanel {
 				g2.drawRect(legendBoxX, legendBoxY - halfCharHeight, legendBoxWidth, legendBoxHeight);
 				
 				g2.setColor(currentColor); // Restore original color.
-
+				}
 			}
 		};	
 		legendPanel.setBorder(new LineBorder(new Color(0, 0, 0)));		// black BORDER around legend area
@@ -582,7 +585,7 @@ public class GTTilePlotPanel extends JPanel {
 	 */
 	public void setMenuBar(JMenuBar aBar)
 	{
-		bar = aBar;
+		menuBar = aBar;
 	}
 	
 	/**
@@ -591,7 +594,7 @@ public class GTTilePlotPanel extends JPanel {
 	 */
 	public JMenuBar getMenuBar()
 	{
-		return bar;
+		return menuBar;
 	}
 	
 	/**
@@ -695,9 +698,9 @@ public class GTTilePlotPanel extends JPanel {
 	 * Originally from TilePlot.drawLegend.
 	 * @param uShowTick	true/false show tick for units
 	 * @param labelCnt	number of tick marks (1/label)
-	 * @param xMaximum
-	 * @param yMinimum
-	 * @param yMaximum
+//	 * @param xMaximum
+//	 * @param yMinimum
+//	 * @param yMaximum
 	 * @param uTickColor	color for tick marks
 	 * @param unitsClr	Color for units
 	 * @param labelFont	Font for tick labels
@@ -708,16 +711,16 @@ public class GTTilePlotPanel extends JPanel {
 	 * @param legendLevels	value associated with the break point between legend levels
 	 * @param legendColors	Color for each range of values in legend and tile plot
 	 */
-	public void setLegendPanel(Boolean uShowTick, Integer labelCnt, int xMaximum, int yMinimum, int yMaximum,
+	public void setLegendPanel(Boolean uShowTick, Integer labelCnt, // int xMaximum, int yMinimum, int yMaximum,
 			Color uTickColor, Color unitsClr, Font labelFont, Font unitsFont, 
 			String baseStr, String logStr, String unitStr, double[] legendLevels, Color[] legendColors)
 	{
 		// copy argument values into class data members
 		this.uShowTick = uShowTick;
 		this.labelCnt = labelCnt;
-		this.xMaximum = xMaximum;
-		this.yMinimum = yMinimum;
-		this.yMaximum = yMaximum;
+//		this.xMaximum = xMaximum;
+//		this.yMinimum = yMinimum;
+//		this.yMaximum = yMaximum;
 		this.uTickColor = uTickColor;
 		this.unitsClr = unitsClr;
 		this.labelFont = labelFont;
@@ -789,6 +792,25 @@ public class GTTilePlotPanel extends JPanel {
 
 	private String gFormat(double value) {
 		return numberFormat.format(value);
+	}
+	
+	/**
+	 * setShowLegend member function to set boolean value to show the legend for the tile plot true/false
+	 * @param aShowLegend	the boolean value to show the legend (true) or not (false)
+	 */
+	public void setShowLegend(boolean aShowLegend)
+	{
+		showLegend = aShowLegend;
+		Logger.debug("showLegend now set to " + showLegend);
+	}
+	
+	/**
+	 * getShowLegend member function to retrieve whether the legend for the tile plot is to be shown
+	 * @return	true = show the legend for the tile plot, false = leave the legend blank
+	 */
+	public boolean getShowLegend()
+	{
+		return showLegend;
 	}
 
 	/**

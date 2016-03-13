@@ -67,11 +67,13 @@ public class PlotPanel extends JPanel {
 		Logger.debug("in PlotPanel constructor for passed Plot plot, String name, MapContent content, RenderingExecutor executor, GTRenderer renderer");
 		isAMap = true;
 		JMenuBar bar = plot.getMenuBar();		// get the top menu from the plot
+		Logger.debug("got bar = " + bar);
 		((GTTilePlotPanel)plot).setMenuBar(bar);	// and put it in the GTTilePlotPanel
 		JToolBar toolBar = plot.getToolBar();			// get the JToolBar of time step, layer, etc. widgets
+		Logger.debug("got toolBar = " + toolBar);
 		((GTTilePlotPanel)plot).setToolBar(toolBar);	// and put it in the GTTilePlotPanel
 		if(content == null)		// if a MapContent was not passed in arg list, get the one from the plot
-			content = topMapPanel.getMapContent();
+			content = topMapPanel.getMapContent();	// current failure point with NullPointerException
 		else
 			topMapPanel.setMapContent(content);
 		Logger.debug("MapContent content = " + content);
