@@ -22,6 +22,7 @@ import com.bbn.openmap.util.DeepCopyUtil;
 public class PlotConfiguration {
 	static final Logger Logger = LogManager.getLogger(PlotConfiguration.class.getName());
 
+	public static final String PLOT_TYPE = PlotConfiguration.class.getName() + ".plot_type";
 	public static final String TITLE = PlotConfiguration.class.getName() + ".title";
 	public static final String TITLE_FONT = PlotConfiguration.class.getName() + ".title_font";
 	public static final String TITLE_COLOR = PlotConfiguration.class.getName() + ".title_color";
@@ -34,6 +35,8 @@ public class PlotConfiguration {
 	public static final String SUBTITLE_2_FONT = PlotConfiguration.class.getName() + ".subtitle2_font";
 	public static final String SUBTITLE_2_COLOR = PlotConfiguration.class.getName() + ".subtitle2_color";
 	public static final String SUBTITLE_2_SHOW_LINE = PlotConfiguration.class.getName() + ".subtitle2_show_line";
+
+	public static final String LEGEND_SHOW = PlotConfiguration.class.getName() + ".legend_show";
 	public static final String UNITS = PlotConfiguration.class.getName() + ".units";
 	public static final String UNITS_FONT = PlotConfiguration.class.getName() + ".units_font";
 	public static final String UNITS_COLOR = PlotConfiguration.class.getName() + ".units_color";
@@ -49,6 +52,9 @@ public class PlotConfiguration {
 	public static final String DOMAIN_TICK_COLOR = PlotConfiguration.class.getName() + ".domain_tick_color";
 	public static final String DOMAIN_TICK_FONT = PlotConfiguration.class.getName() + ".domain_tick_font";
 	public static final String DOMAIN_TICK_NUMBER = PlotConfiguration.class.getName() + ".domain_tick_number";
+	public static final String DOMAIN_TICK_LABEL_FORMAT = PlotConfiguration.class.getName() + ".domain_tick_label_format";
+	public static final String DOMAIN_TICK_LABEL_FORMAT_4CAT = PlotConfiguration.class.getName() + ".domain_tick_label_format_4cat";
+	public static final String DOMAIN_TICK_LABEL_ORIENTATION = PlotConfiguration.class.getName() + ".domain_tick_label_orientation";
 	
 	public static final String RANGE_LABEL = PlotConfiguration.class.getName() + ".range";
 	public static final String RANGE_FONT = PlotConfiguration.class.getName() + ".range_font";

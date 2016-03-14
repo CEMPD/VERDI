@@ -234,6 +234,11 @@ public class PlotConfigurationIO extends DefaultHandler2 {
 		} catch (SAXException e) {
 			throw new IOException("Error while loading configuration", e);
 		}
+		
+		// set defaults for new parameters that might not be in existing config files
+		if (config.getObject(PlotConfiguration.LEGEND_SHOW) == null) {
+			config.putObject(PlotConfiguration.LEGEND_SHOW, true);
+		}
 
 		return config;
 	}
