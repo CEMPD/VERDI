@@ -23,6 +23,8 @@ import org.unitsofmeasurement.unit.Unit;
 
 
 
+
+
 import java.awt.*;
 
 import ucar.ma2.Array;
@@ -37,6 +39,7 @@ import anl.verdi.data.AbstractDataset;
 import anl.verdi.data.Axes;
 import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
+import anl.verdi.data.DataFrame;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.DatasetMetadata;
 import anl.verdi.data.DefaultVariable;
@@ -44,6 +47,9 @@ import anl.verdi.data.MultiLayerDataset;
 import anl.verdi.data.Variable;
 import anl.verdi.plot.color.Palette;
 import anl.verdi.plot.color.PavePaletteCreator;
+import anl.verdi.plot.data.IMPASDataset;
+import anl.verdi.plot.data.MinMaxInfo;
+import anl.verdi.plot.data.MinMaxLevelListener;
 import anl.verdi.util.VUnits;
 
 /**
@@ -54,7 +60,7 @@ import anl.verdi.util.VUnits;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class MPASDataset extends AbstractDataset implements MultiLayerDataset {
+public class MPASDataset extends AbstractDataset implements MultiLayerDataset, IMPASDataset {
 	static final Logger Logger = LogManager.getLogger(MPASDataset.class.getName());
 	
 	public static final String VAR_AVG_CELL_DIAM = "verdi.avgCellDiam";
@@ -70,6 +76,7 @@ public class MPASDataset extends AbstractDataset implements MultiLayerDataset {
 	private Map<Integer, Integer> vertexPositionMap = new HashMap<Integer, Integer>();
 	int numCells;
 	int maxEdges = 0;
+	Map<String, MPASMinMaxCalculator> levelCalculators = new HashMap<String, MPASMinMaxCalculator>();
 
 	//double[] legendLevels = null;
 	
@@ -875,5 +882,35 @@ public class MPASDataset extends AbstractDataset implements MultiLayerDataset {
 	@Override
 	public void setNetcdfConv(int conv) {
 		this.conv = conv;
+	}
+	
+	private MPASMinMaxCalculator getLevelCalculator(DataFrame frame) {
+		String cacheKey = frame.getVariable().getName() + frame.getArray().getClass().getName();
+		MPASMinMaxCalculator calculator = null;
+		synchronized (levelCalculators) {
+			calculator = levelCalculators.get(cacheKey);
+			if (calculator == null) {
+				calculator = new MPASMinMaxCalculator(this, frame);
+				levelCalculators.put(cacheKey, calculator);
+			}
+			
+		}
+		return calculator;
+	}
+
+	@Override
+	public MinMaxInfo getPlotMinMax(DataFrame variable, MinMaxLevelListener listener) {
+		MPASMinMaxCalculator calculator = getLevelCalculator(variable);
+		if (calculator == null)
+			return null;
+		return calculator.getMinMaxInfo(listener);
+	}
+
+	@Override
+	public MinMaxInfo getLayerMinMax(DataFrame variable, int layer, MinMaxLevelListener listener) {
+		MPASMinMaxCalculator calculator = getLevelCalculator(variable);
+		if (calculator == null)
+			return null;
+		return calculator.getLayerInfo(layer, listener);
 	}
 }

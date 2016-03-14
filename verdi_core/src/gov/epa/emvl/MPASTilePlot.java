@@ -22,9 +22,11 @@ public class MPASTilePlot extends TilePlot {
 	int lastRow;
 	int firstColumn;
 	int lastColumn;
+	double[][] layerMinMaxValues;
 	
-	public MPASTilePlot(GregorianCalendar startDate, long timestepSize) {
+	public MPASTilePlot(GregorianCalendar startDate, long timestepSize, double[][] layerMinMaxValues) {
 		super(startDate, timestepSize);
+		this.layerMinMaxValues = layerMinMaxValues;
 	}
 	
 	protected void drawAxis(final Graphics graphics, int xMinimum, int xMaximum,
@@ -210,6 +212,24 @@ public class MPASTilePlot extends TilePlot {
 
 		super.drawLabels(graphics, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
 				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn, null);
+	}
+	
+	protected String getMinMaxLabel(int firstRow, int lastRow,
+			int firstColumn, int lastColumn, final float[][] data) {
+		return "";
+		/*
+		final int[] minimumCell = { 0, 0 };
+		final int[] maximumCell = { 0, 0 };
+		final float[] range = { 0.0f, 0.0f };
+
+		layerMinimumMaximum(firstRow, lastRow, firstColumn, lastColumn, data,
+				minimumCell, maximumCell, range);
+
+		return "Min (" + (1 + minimumCell[COLUMN]) + ", "
+				+ (1 + minimumCell[ROW]) + ") = " + gFormat(range[0]) + ", "
+				+ "Max (" + (1 + maximumCell[COLUMN]) + ", "
+				+ (1 + maximumCell[ROW]) + ") = " + gFormat(range[1]);
+		*/
 	}
 	
 	public int getFooterHeight() {

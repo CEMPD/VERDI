@@ -625,20 +625,8 @@ public class TilePlot {
 
 		// Range label:
 
-		String minMaxLabel = "";
-		if (data != null) {
-			final int[] minimumCell = { 0, 0 };
-			final int[] maximumCell = { 0, 0 };
-			final float[] range = { 0.0f, 0.0f };
-	
-			layerMinimumMaximum(firstRow, lastRow, firstColumn, lastColumn, data,
-					minimumCell, maximumCell, range);
-	
-			minMaxLabel = "Min (" + (1 + minimumCell[COLUMN]) + ", "
-					+ (1 + minimumCell[ROW]) + ") = " + gFormat(range[0]) + ", "
-					+ "Max (" + (1 + maximumCell[COLUMN]) + ", "
-					+ (1 + maximumCell[ROW]) + ") = " + gFormat(range[1]);
-		}
+		String minMaxLabel = getMinMaxLabel(firstRow, lastRow, firstColumn, lastColumn, data);
+		
 		final int yMinMax = yTimestamp + graphics.getFontMetrics().getHeight() + 5;
 		footerYOffset += graphics.getFontMetrics().getHeight() + 5;
 
@@ -697,6 +685,21 @@ public class TilePlot {
 		config.putObject(PlotConfiguration.OBS_LEGEND_FONT, (obsFont == null) ? gFont : obsFont);
 		
 		this.preLayer = layer;
+	}
+	
+	protected String getMinMaxLabel(int firstRow, int lastRow,
+			int firstColumn, int lastColumn, final float[][] data) {
+		final int[] minimumCell = { 0, 0 };
+		final int[] maximumCell = { 0, 0 };
+		final float[] range = { 0.0f, 0.0f };
+
+		layerMinimumMaximum(firstRow, lastRow, firstColumn, lastColumn, data,
+				minimumCell, maximumCell, range);
+
+		return "Min (" + (1 + minimumCell[COLUMN]) + ", "
+				+ (1 + minimumCell[ROW]) + ") = " + gFormat(range[0]) + ", "
+				+ "Max (" + (1 + maximumCell[COLUMN]) + ", "
+				+ (1 + maximumCell[ROW]) + ") = " + gFormat(range[1]);
 	}
 
 	private void drawObsLegend(Graphics g, int xmin, int xmax, int ymin, int ymax, int top) {

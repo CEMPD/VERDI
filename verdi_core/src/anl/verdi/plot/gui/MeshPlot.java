@@ -145,18 +145,20 @@ import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
 import anl.verdi.plot.config.SaveConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
+import anl.verdi.plot.data.IMPASDataset;
+import anl.verdi.plot.data.MinMaxInfo;
+import anl.verdi.plot.data.MinMaxLevelListener;
 import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.probe.ProbeEvent;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.util.PlotExporter;
 import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.util.Tools;
-import anl.verdi.util.Utilities;
 
 import com.vividsolutions.jts.geom.Envelope;
 
 public class MeshPlot extends JPanel implements ActionListener, Printable,
-		ChangeListener, ComponentListener, MouseListener,
+		ChangeListener, ComponentListener, MouseListener, MinMaxLevelListener,
 		TimeAnimatablePlot, Plot {
 	
 	static final Logger Logger = LogManager.getLogger(MeshPlot.class.getName());
@@ -201,7 +203,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	protected final GregorianCalendar startDate; 
 	protected final long timestepSize; // ms
 	protected final int timesteps; // 24.
-	protected final int layers; // 14.
+	protected int layers = 1; // 14.
 	protected final int rows; // 259.
 	protected final int cells;
 	protected final int columns; // 268.
@@ -221,6 +223,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private NumberFormat plotFormat;
 	private NumberFormat coordFormat;
 	private NumberFormat valueFormat;
+	
+	IMPASDataset dataset;
 
 	/** Cell id are stored as colors in an image to facilitate a quick mapping of
 	 *  pixels to cell id.  Retrieved values must be adjusted by COLOR_BASE to get cell id
@@ -315,7 +319,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private int preStatIndex = -1;
 	private final JTextField threshold;
 	private boolean recomputeStatistics = false;
-	private boolean recomputeLegend = false;
 
 	private final int DRAW_NONE = 0;
 	private final int DRAW_ONCE = 1;
@@ -361,9 +364,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private Plot.ConfigSoure configSource = Plot.ConfigSoure.GUI;
 
 	VerdiApplication app;
-	
-	double[] minmax = { 0.0, 0.0 };
-	double[] logminmax = { 0.0, 0.0 };
 	
 	// Create a Thread that contains the above Runnable:
 
@@ -1019,53 +1019,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				this.preStatIndex = statisticsMenu.getSelectedIndex();
 			}
 			
-			recomputeLegend = true;
+			updateLegendLevels();
 			
-			//populate legend colors and ranges on initiation
-			//default to not a log scale
-			double[] lminmax = { 0.0, 0.0 };
-			double[] llogminmax = { 0.0, 0.0 };
-			//calculate the non log min/max values, keep the code here
-			//first part of IF ELSE will use the min/max values
-			if (this.preStatIndex < 1) {
-				lminmax[0] = minmax[0];
-				lminmax[1] = minmax[1];
-			}
-			else
-				computeDataRange(lminmax, false);
-//			ColorMap.ScaleType sType = map.getScaleType();		// local variable sType not used
-			//computeDataRange function need this.log set correctly...
-			if (map.getPalette() == null)
-			{
-				Logger.debug("no palette so calling new PavePaletteCreator().createPalettes(8).get(0)");
-			}
-			defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPalettes(8).get(0);
-			map.setPalette(defaultPalette);
-			
-			//set min/max for both log and non log values...
-			map.setMinMax( lminmax[0], lminmax[1]);
-			if (this.preStatIndex < 1) {
-				llogminmax[0] = logminmax[0];
-				llogminmax[1] = logminmax[1];
-			}
-			else
-				computeDataRange(llogminmax, true);
-			map.setLogMinMax( llogminmax[0], llogminmax[1]);
-			//this final one is for the below legend value calculations
-			if (this.log)
-				lminmax = llogminmax;
-
-			legendColors = defaultPalette.getColors();
-			final double minimum = lminmax[0];
-			final double maximum = lminmax[1];
-			minMax = new DataUtilities.MinMax(minimum, maximum);
-			int count = legendColors.length + 1;
-			final double delta = (lminmax[1] - lminmax[0]) / (count - 1);
-			legendLevels = new double[count];
-			for (int level = 0; level < count; ++level) {
-				legendLevels[level] = lminmax[0] + level * delta;
-			}
-			config.setUnits("");
 	    } else if (source == playStopButton) {
 
 			if (playStopButton.getText().equals(PLAY)) {
@@ -1720,29 +1675,28 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	private void loadCellStructure() throws IOException {
-		Dataset ds = dataFrame.getDataset().get(0);
-		DataReader reader = app.getDataManager().getDataReader(ds);
-		Variable var = ds.getVariable("nEdgesOnCell");
-		cellVertices = reader.getValues(ds, null, var).getArray();
-		var = ds.getVariable("latVertex");
-		latVert = reader.getValues(ds, null, var).getArray();
-		var = ds.getVariable("lonVertex");
-		lonVert = reader.getValues(ds, null, var).getArray();
-		var = ds.getVariable("latCell");
-		latCell = reader.getValues(ds, null, var).getArray();
-		var = ds.getVariable("lonCell");
-		lonCell = reader.getValues(ds, null, var).getArray();
-		var = ds.getVariable("indexToVertexID");
-		indexToVertexId = reader.getValues(ds, null, var).getArray();
-		var = ds.getVariable("zgrid");
-		elevation = ArrayReader.getReader(reader.getValues(ds, null, var).getArray());
-		var = ds.getVariable("zs");
+		DataReader reader = app.getDataManager().getDataReader(dataset);
+		Variable var = dataset.getVariable("nEdgesOnCell");
+		cellVertices = reader.getValues(dataset, null, var).getArray();
+		var = dataset.getVariable("latVertex");
+		latVert = reader.getValues(dataset, null, var).getArray();
+		var = dataset.getVariable("lonVertex");
+		lonVert = reader.getValues(dataset, null, var).getArray();
+		var = dataset.getVariable("latCell");
+		latCell = reader.getValues(dataset, null, var).getArray();
+		var = dataset.getVariable("lonCell");
+		lonCell = reader.getValues(dataset, null, var).getArray();
+		var = dataset.getVariable("indexToVertexID");
+		indexToVertexId = reader.getValues(dataset, null, var).getArray();
+		var = dataset.getVariable("zgrid");
+		elevation = ArrayReader.getReader(reader.getValues(dataset, null, var).getArray());
+		var = dataset.getVariable("zs");
 		if (var != null)
-			depth = ArrayReader.getReader(reader.getValues(ds, null, var).getArray());
+			depth = ArrayReader.getReader(reader.getValues(dataset, null, var).getArray());
 		//var = ds.getVariable("indexToCellID");
 		//indexToCellId = reader.getValues(ds, null, var).getArray();
-		var = ds.getVariable("verticesOnCell");
-		vertexList = (ucar.ma2.ArrayInt.D2) reader.getValues(ds, null, var).getArray();
+		var = dataset.getVariable("verticesOnCell");
+		vertexList = (ucar.ma2.ArrayInt.D2) reader.getValues(dataset, null, var).getArray();
 		
 		vertexPositionMap = new HashMap<Integer, Integer>();
 			
@@ -1810,8 +1764,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		allCells.addAll(splitCells.keySet());
 		
 		renderVariable = ArrayReader.getReader(dataFrame.getArray());
-		var = ds.getVariable("verdi.avgCellDiam");
-		avgCellDiam = reader.getValues(ds, null, var).getDouble(null);
+		var = dataset.getVariable("verdi.avgCellDiam");
+		avgCellDiam = reader.getValues(dataset, null, var).getDouble(null);
 		//System.out.println("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
 	}
 	
@@ -2026,7 +1980,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		// Create cartographic projector (used by mapper.draw):
 
-		final Dataset dataset = dataFrame.getDataset().get(0);
+		dataset = (IMPASDataset)dataFrame.getDataset().get(0);
 		final Axes<CoordAxis> coordinateAxes = dataset.getCoordAxes();
 		mpasAxes = coordinateAxes;
 
@@ -2062,6 +2016,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			firstLayer = layer = layerAxis.getOrigin();
 			lastLayer = firstLayer + layers - 1;
 		}
+		layerMinMaxCache = new double[layers][3];
+		plotMinMaxCache = new double[3];
+		statMinMaxCache = new double[2];
+		logLayerMinMaxCache = new double[layers][3];
+		logPlotMinMaxCache = new double[3];
 		
 		//TAH
 		//TODO - remove unneccessary bits here
@@ -2110,12 +2069,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		//calculate the non log min/max values, keep the code here
 		//first part of IF ELSE will use the min/max values
 		System.err.println("Calculating data range " + new Date());
-		computeDataRange(minmax, false);
+		computeDataRange(false);
 		if ( this.map == null) {
 			
 			Logger.debug("in FastTilePlot, this.map == null so calling new PavePaletteCreator");
 			defaultPalette = new PavePaletteCreator().createPalettes(8).get(0);
-			map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+			map = new ColorMap(defaultPalette, plotMinMaxCache[0], plotMinMaxCache[1]);
 		} else {
 			ColorMap.ScaleType sType = map.getScaleType();
 			if ( sType != null && sType == ColorMap.ScaleType.LOGARITHM ) 
@@ -2129,26 +2088,27 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 
 		//set min/max for both log and non log values...
-		map.setMinMax( minmax[0], minmax[1]);
-		computeDataRange(logminmax, true);
+		map.setMinMax( plotMinMaxCache[0], plotMinMaxCache[1]);
+		computeDataRange(true);
 		System.err.println("Calculating log data range " + new Date());
-		map.setLogMinMax( logminmax[0], logminmax[1]);
+		map.setLogMinMax( logPlotMinMaxCache[0], logPlotMinMaxCache[1]);
 		//this final one is for the below legend value calculations
+		double[] localMinMax = plotMinMaxCache;
 		if (this.log)
-			minmax = logminmax;
+			localMinMax = logPlotMinMaxCache;
 		System.err.println("Data ranges calculated " + new Date());
 
 		//default to this type...
 		map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
 		legendColors = defaultPalette.getColors();
-		final double minimum = minmax[0];
-		final double maximum = minmax[1];
+		final double minimum = localMinMax[0];
+		final double maximum = localMinMax[1];
 		minMax = new DataUtilities.MinMax(minimum, maximum);
 		int count = legendColors.length + 1;
-		final double delta = (minmax[1] - minmax[0]) / (count - 1);
+		final double delta = (maximum - minimum) / (count - 1);
 		legendLevels = new double[count];
 		for (int level = 0; level < count; ++level) {
-			legendLevels[level] = minmax[0] + level * delta;
+			legendLevels[level] = minimum + level * delta;
 		}
 //		computeLegend();
 		config = new TilePlotConfiguration();
@@ -2162,7 +2122,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		// Create EMVL TilePlot (but does not draw yet - see draw()):
 
-		tilePlot = new MPASTilePlot(startDate, timestepSize);
+		tilePlot = new MPASTilePlot(startDate, timestepSize, layerMinMaxCache);
 
 		// Create GUI.
 
@@ -2442,77 +2402,42 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		}
 
-		if ( recomputeLegend ) {
-//			computeLegend();
-			recomputeLegend = false;
-		}
 	}
 
 	// Compute data range excluding BADVAL3 values:
 
-	public void computeDataRange(double[] minmax, boolean log) {
+	public void computeDataRange(boolean log) {
 		final int selection = statisticsMenu != null ? statisticsMenu.getSelectedIndex() : 0;
 		boolean initialized = false;
-		minmax[0] = minmax[1] = 0.0;
 		if ( selection < 1 ) {
 			DataFrame dataFrame = getDataFrame(log);
-			final MPASDataFrameIndex dataFrameIndex = new MPASDataFrameIndex(dataFrame);
-				
-			for (int timestep = 0; timestep < timesteps; ++timestep) {
-				for (int layer = 0; layer < layers; ++layer) {
-					for (int cell = 0; cell < cells; ++cell) {
-						dataFrameIndex.set(timestep, layer, cell);
-						final float value = 
-							dataFrame.getFloat(dataFrameIndex);
-	
-						if (value > MINIMUM_VALID_VALUE) {
-	
-							if (initialized) {
-	
-								if (value < minmax[0]) {
-									minmax[0] = value;
-								} else if (value > minmax[1]) {
-									minmax[1] = value;
-								}
-							} else {
-								minmax[0] = minmax[1] = value;
-								initialized = true;
-							}
-						}
-					}
-				}
+			MinMaxInfo minMaxInfo = dataset.getPlotMinMax(dataFrame, this);
+			if (log) {
+				logPlotMinMaxCache[0] = minMaxInfo.getMin();
+				logPlotMinMaxCache[1] = minMaxInfo.getMax();
+			} else {
+				plotMinMaxCache[0] = minMaxInfo.getMin();
+				plotMinMaxCache[1] = minMaxInfo.getMax();
 			}
 		} else {
 						
-			//if ( this.statisticsData == null || selection != this.preStatIndex //|| this.preLog != this.log 
-				//	) {
-				this.computeStatistics(log);					
-			//}
-			
+			this.computeStatistics(log);					
+						
 			final int statistic = selection - 1;
+			statMinMaxCache[0] = Double.MAX_VALUE;
+			statMinMaxCache[1] = Double.MAX_VALUE * -1;
 
 			for ( int cell = firstRow; cell < cellsToRender.length; ++cell ) {
 
 				final float value = statisticsData[ statistic ][0][ cell ];
-				
-				if (value > MINIMUM_VALID_VALUE) {
-					
-					if (initialized) {
-
-						if (value < minmax[0]) {
-							minmax[0] = value;
-						} else if (value > minmax[1]) {
-							minmax[1] = value;
-						}
-					} else {
-						minmax[0] = minmax[1] = value;
-						initialized = true;
-					}
-				}
+				if (value < statMinMaxCache[0])
+					statMinMaxCache[0] = value;
+				else if (value > statMinMaxCache[1])
+					statMinMaxCache[1] = value;
 			}
-			
-		}
+		}	
 	}
+	
 
 	/**
 	 * Gets the panel that contains the plot component.
@@ -2867,7 +2792,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			Style style = builder.createStyle(builder.createLineSymbolizer());
 //			DefaultQuery query = new DefaultQuery();
 			Query query = new Query();
-			query.setCoordinateSystemReproject(getDataFrame().getAxes().getBoundingBox(getDataFrame().getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());
+			query.setCoordinateSystemReproject(getDataFrame().getAxes().getBoundingBox(dataset.getNetcdfCovn()).getCoordinateReferenceSystem());
 //			controlLayer = new DefaultMapLayer(ds.getFeatureSource().getFeatures(query), style);
 			controlLayer = new FeatureLayer(ds.getFeatureSource().getFeatures(query), style);
 			controlLayer.setTitle("Control Layer");
@@ -3087,7 +3012,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				//we need to also populate the non log intervals to some default range...
 				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
 				//so we need to make sure and pre populate just in case user changes between linear and log scales
-				computeDataRange(minmax, false);
+				computeDataRange(false);
 				map.setMinMax( minmax[0], minmax[1]);
 
 			} else {
@@ -3098,7 +3023,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				//we need to also populate the log intervals to some default range...
 				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
 				//so we need to make sure and pre populate just in case user changes between linear and log scales
-				computeDataRange(minmax, true);
+				computeDataRange(true);
 				map.setLogMinMax( minmax[0], minmax[1]);
 			}
 			updateColorMap(map);
@@ -3144,7 +3069,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				//we need to also populate the non log intervals to some default range...
 				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
 				//so we need to make sure and pre populate just in case user changes between linear and log scales
-				map.setMinMax( minmax[0], minmax[1]);
+				map.setMinMax( plotMinMaxCache[0], plotMinMaxCache[1]);
 
 			} else {
 				this.log = false;
@@ -3154,14 +3079,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				//we need to also populate the log intervals to some default range...
 				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
 				//so we need to make sure and pre populate just in case user changes between linear and log scales
-				map.setLogMinMax( logminmax[0], logminmax[1]);
+				map.setLogMinMax( logPlotMinMaxCache[0], logPlotMinMaxCache[1]);
 			}
 			
 			updateColorMap(map);
 			recomputeStatistics = true;	
-			if ( source == Plot.ConfigSoure.FILE) {
-				this.recomputeLegend = true;
-			} 
 		}
 
 		this.config = new TilePlotConfiguration(config);
@@ -3759,7 +3681,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			slice.setCellRange(cell.getId(), 1);
 			
 			try {
-				DataFrame subsection = new MPASPlotDataFrame(label, renderVariable.getArray(), slice, dataFrame.getVariable(), dataFrame.getAxes(), dataFrame.getDataset().get(0));
+				DataFrame subsection = new MPASPlotDataFrame(label, renderVariable.getArray(), slice, dataFrame.getVariable(), dataFrame.getAxes(), dataset);
 				request.addItem(subsection, true);
 			} catch (InvalidRangeException e1) {
 				Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries: " + e1.getMessage());
@@ -3783,7 +3705,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 			try {
 				String label = formatLatLon(cell.getLon(), cell.getLat(), cell.getId(), false, 0, 0);
-				DataFrame subsection = new MPASPlotDataFrame(label, renderVariable.getArray(), slice, dataFrame.getVariable(), dataFrame.getAxes(), dataFrame.getDataset().get(0));
+				DataFrame subsection = new MPASPlotDataFrame(label, renderVariable.getArray(), slice, dataFrame.getVariable(), dataFrame.getAxes(), dataset);
 
 			
 				request.addItem(subsection);
@@ -4257,7 +4179,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	public DataFrame createLogDataFrame(DataFrame frame) {
 		DataFrameBuilder builder = new DataFrameBuilder();
-		builder.addDataset(frame.getDataset());
+		builder.addDataset(dataset);
 		builder.setVariable(frame.getVariable());
 		builder.setArray(ArrayLogFactory.getArray(frame.getArray(), this.logBase));
 		Axes<DataFrameAxis> axes = frame.getAxes();
@@ -4339,6 +4261,86 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	public void setViewId(String id) {
 		viewId = id;
+	}
+	
+	double[][] layerMinMaxCache = null;
+	double[] plotMinMaxCache = null;
+	double[] statMinMaxCache = null;
+	double[][] logLayerMinMaxCache = null;
+	double[] logPlotMinMaxCache = null;
+
+	@Override
+	public void datasetUpdated(double min, double max, double pctComplete, boolean isLog) {
+		double[] updatedInfo = plotMinMaxCache;
+		if (isLog)
+			updatedInfo = logPlotMinMaxCache;
+		updatedInfo[0] = min;
+		updatedInfo[1] = max;
+		updatedInfo[2] = pctComplete;
+		if (preStatIndex < 1) {
+			updateLegendLevels();
+			if (drawMode == DRAW_NONE) {
+				drawMode = DRAW_ONCE;
+			}
+			System.out.println("Legend " + pctComplete + "% complete, min " + min + " max " + max + " log " + isLog + " redrawn");
+		}
+	}
+	
+	private void updateLegendLevels() {
+		
+		//populate legend colors and ranges on initiation
+		//default to not a log scale
+		double[] localMinMax = { 0.0, 0.0 };
+		double[] localLogMinMax = { 0.0, 0.0 };
+		if (this.preStatIndex < 1) {
+			localMinMax[0] = plotMinMaxCache[0];
+			localMinMax[1] = plotMinMaxCache[1];
+		} else {
+			computeDataRange(false);
+			localMinMax[0] = statMinMaxCache[0];
+			localMinMax[1] = statMinMaxCache[1];
+		}
+		
+		
+		//set min/max for both log and non log values...
+		map.setMinMax( localMinMax[0], localMinMax[1]);
+		if (this.preStatIndex < 1) {
+			localLogMinMax[0] = logPlotMinMaxCache[0];
+			localLogMinMax[1] = logPlotMinMaxCache[1];
+		}
+		else {
+			computeDataRange(true);
+			localLogMinMax[0] = statMinMaxCache[0];
+			localLogMinMax[1] = statMinMaxCache[1];
+		}
+		map.setLogMinMax( localLogMinMax[0], localLogMinMax[1]);
+		//this final one is for the below legend value calculations
+		if (this.log)
+			localMinMax = localLogMinMax;
+
+		legendColors = defaultPalette.getColors();
+		final double minimum = localMinMax[0];
+		final double maximum = localMinMax[1];
+		minMax = new DataUtilities.MinMax(minimum, maximum);
+		int count = legendColors.length + 1;
+		final double delta = (maximum - minimum) / (count - 1);
+		legendLevels = new double[count];
+		for (int level = 0; level < count; ++level) {
+			legendLevels[level] = minimum + level * delta;
+		}
+		config.setUnits("");
+		dataChanged = true;
+	}
+
+	@Override
+	public void layerUpdated(int updLayer, double min, double max,
+			double percentComplete, boolean isLog) {
+		double[][] localCache = layerMinMaxCache;
+		if (isLog)
+			localCache = logLayerMinMaxCache;
+		localCache[updLayer][0] = min;
+		localCache[updLayer][1] = max;
+		localCache[updLayer][2] = percentComplete;		
 	}
 
 }
