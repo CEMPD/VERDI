@@ -46,13 +46,12 @@ public class JChartTitlesLabels {
 		title = new TextTitle();
 		title.setPosition(RectangleEdge.TOP);
 		chart.addSubtitle(title);
-		// 2 is first because titles are pushed "down" as they are added
-		subTitle2Index = index++;
+		subTitle1Index = index++;
 
 		title = new TextTitle();
 		title.setPosition(RectangleEdge.TOP);
 		chart.addSubtitle(title);
-		subTitle1Index = index++;
+		subTitle2Index = index++;
 	}
 
 	public void setTitle(String text) {
