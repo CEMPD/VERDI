@@ -34,7 +34,9 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import org.geotools.swing.JMapPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
+import org.jfree.chart.ChartTheme;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -50,9 +52,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-
-//import simphony.util.messages.MessageCenter;
-import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
@@ -61,11 +60,14 @@ import anl.verdi.data.DataUtilities;
 import anl.verdi.data.Range;
 import anl.verdi.data.Slice;
 import anl.verdi.formula.Formula;
+import anl.verdi.formula.Formula.Type;
 import anl.verdi.plot.config.JFreeChartConfigurator;
 import anl.verdi.plot.config.LoadConfiguration;
+import anl.verdi.plot.config.LoadTheme;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
 import anl.verdi.plot.config.SaveConfiguration;
+import anl.verdi.plot.config.SaveTheme;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 import anl.verdi.plot.config.UnitsConfigurator;
 import anl.verdi.plot.gui.AreaSelectionEvent;
@@ -76,8 +78,10 @@ import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.probe.ProbeEvent;
 import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.plot.util.PlotPrintAction;
+import anl.verdi.plot.util.PlotProperties;
 import anl.verdi.util.Tools;
 import anl.verdi.util.VUnits;
+import ucar.ma2.InvalidRangeException;
 
 /**
  * Class used to create time series line plot
@@ -88,7 +92,6 @@ import anl.verdi.util.VUnits;
 public class LinePlot extends AbstractPlot implements ChartProgressListener {
 
 	static final Logger Logger = LogManager.getLogger(LinePlot.class.getName());
-//	private static MessageCenter center = MessageCenter.getMessageCenter(LinePlot.class);
 	private TimeSeriesCollection dataset;
 
 	private java.util.List<DataFrame> frames;
@@ -115,7 +118,7 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		this.frames = frames;
 		this.config = config;
 		XYDataset dataset = createDataset();
-		chart = createChart(dataset);
+		chart = createChart(dataset, config);
 		panel = new VerdiChartPanel(chart, true);
 		AreaFinder finder = new AreaFinder();
 		panel.addMouseListener(finder);
@@ -128,6 +131,10 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		PlotConfiguration defaultConfig = getPlotConfiguration();
 		defaultConfig.merge(config);
 		configure(defaultConfig);
+		
+		/** Check if a chart theme has been loaded. */
+		ChartTheme theme = PlotProperties.getInstance().getCurrentTheme();
+		if (theme != null) theme.apply(chart);
 	}
 
 
@@ -196,6 +203,17 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		});
 		menu.add(new LoadConfiguration(this));
 		menu.add(new SaveConfiguration(this));
+		menu.add(new LoadTheme(this, chart));
+		
+		menu.add(new AbstractAction("Edit Chart Theme") {
+			private static final long serialVersionUID = 5016577781516485377L;
+
+			public void actionPerformed(ActionEvent e) {
+				panel.doEditChartTheme();
+			}
+		});
+		
+		menu.add(new SaveTheme(this));
 		bar.add(menu);
 
 		menu = new JMenu("Controls");
@@ -378,7 +396,7 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		return new DataUtilities.MinMax(min, max);
 	}
 
-	private JFreeChart createChart(XYDataset dataset) {
+	private JFreeChart createChart(XYDataset dataset, PlotConfiguration config) {
 		JFreeChart chart = ChartFactory.createTimeSeriesChart(
 						createTitle(),  // title
 						"Time Step",             // x-axis label
@@ -389,7 +407,7 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 						false               // generate URLs?
 		);
 
-		chart.setBackgroundPaint(Color.white);
+		chart.setBackgroundPaint(Color.WHITE);
 		chart.addProgressListener(this);
 
 		XYPlot plot = (XYPlot) chart.getPlot();
@@ -418,10 +436,11 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		DateAxis axis = (DateAxis) plot.getDomainAxis();
 		axis.setTimeZone(TimeZone.getTimeZone("UTC"));
 		// new SimpleDateFormat("MMMMM dd, yyyy HH:mm:ss z");
-		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+//		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, h a");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		axis.setDateFormatOverride(dateFormat);
-		axis.setVerticalTickLabels(true);
+		axis.setVerticalTickLabels(false);
 
 		return chart;
 	}
@@ -604,8 +623,9 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		}
 
 		UnitsConfigurator unitsConfig = new UnitsConfigurator() {
-			public void configureUnits(String text, Font font, Color color) {
+			public void configureUnits(Boolean showLegend, String text, Font font, Color color) {
 				LegendTitle legend = chart.getLegend();
+				legend.setVisible(showLegend);
 				if (!text.equals(dataset.getSeries(0).getKey())) {
 					dataset.getSeries(0).setKey(text);
 				}
@@ -635,6 +655,8 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 		PlotConfiguration config = new PlotConfiguration();
 		config = titlesLabels.getConfiguration(config);
 
+		config.putObject(PlotConfiguration.PLOT_TYPE, Type.TIME_SERIES_LINE); //NOTE: to differentiate plot types
+		config.putObject(PlotConfiguration.LEGEND_SHOW, chart.getLegend().isVisible());
 		config.putObject(PlotConfiguration.UNITS, dataset.getSeries(0).getKey());
 		config.putObject(PlotConfiguration.UNITS_FONT, chart.getLegend().getItemFont());
 		config.putObject(PlotConfiguration.UNITS_COLOR, chart.getLegend().getItemPaint());

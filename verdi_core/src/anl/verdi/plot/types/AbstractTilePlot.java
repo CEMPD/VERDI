@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,9 +63,13 @@ import org.geotools.styling.StyleBuilder;
 import org.geotools.swing.JMapPane;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.event.PlotChangeEvent;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.chart.title.PaintScaleLegend;
@@ -85,9 +90,11 @@ import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.color.PavePaletteCreator;
 import anl.verdi.plot.config.JFreeChartConfigurator;
 import anl.verdi.plot.config.LoadConfiguration;
+import anl.verdi.plot.config.LoadTheme;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
 import anl.verdi.plot.config.SaveConfiguration;
+import anl.verdi.plot.config.SaveTheme;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.config.TitleConfigurator;
 import anl.verdi.plot.config.UnitsConfigurator;
@@ -269,9 +276,10 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 
 		UnitsConfigurator unitsConfig = new UnitsConfigurator() {
 
-			public void configureUnits(String text, Font font, Color color) {
+			public void configureUnits(Boolean showLegend, String text, Font font, Color color) {
 				if (text == null) text = "";
 				PaintScaleLegend legend = (PaintScaleLegend) chart.getSubtitle(legendIndex);
+				legend.setVisible(showLegend);
 				ValueAxis axis = legend.getAxis();
 				axis.setLabel(text);
 				if (font != null) axis.setLabelFont(font);
@@ -837,6 +845,21 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		menu.add(new LoadConfiguration(this));
 		menu.add(new SaveConfiguration(this));
 
+		menu.add(new LoadTheme(this, chart));
+		
+		menu.add(new AbstractAction("Edit Chart Theme") {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 6259164410161552407L;
+
+			public void actionPerformed(ActionEvent e) {
+				panel.doEditChartTheme();
+			}
+		});
+		
+		menu.add(new SaveTheme(this));
+		
 		if (mapAnnotation != null) {
 			configureMapMenu(menu);
 		}
@@ -1186,6 +1209,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		XYPlot plot = (XYPlot) chart.getPlot();
 		PaintScaleLegend legend = (PaintScaleLegend) chart.getSubtitle(legendIndex);
 		ValueAxis axis = legend.getAxis();
+		config.putObject(PlotConfiguration.LEGEND_SHOW, legend.isVisible());
 		config.putObject(PlotConfiguration.UNITS, axis.getLabel());
 		config.putObject(PlotConfiguration.UNITS_FONT, axis.getLabelFont());
 		config.putObject(PlotConfiguration.UNITS_COLOR, axis.getLabelPaint());
@@ -1243,7 +1267,24 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, axis.isTickLabelsVisible());
 		config.putObject(PlotConfiguration.DOMAIN_TICK_COLOR, (Color) axis.getTickLabelPaint());
 		config.putObject(PlotConfiguration.DOMAIN_TICK_FONT, axis.getTickLabelFont());
+		
+		if (axis instanceof DateAxis) {
+			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT, ((SimpleDateFormat)((DateAxis)axis).getDateFormatOverride()).toPattern());
+			boolean vertical = ((DateAxis)axis).isVerticalTickLabels();
+			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION, (vertical) ? "VERTICAL" : "HORIZONTAL");
+		}
 
+		if (chart.getPlot() instanceof CategoryPlot) {
+			CategoryAxis cataxis = ((CategoryPlot)chart.getPlot()).getDomainAxis();
+			CategoryLabelPositions pos = cataxis.getCategoryLabelPositions();
+			String orient = "RIGHTSLANT";
+			if (pos.equals(CategoryLabelPositions.UP_90)) orient = "VERTICAL";
+			if (pos.equals(CategoryLabelPositions.UP_45)) orient = "LEFTSLANT";
+			if (pos.equals(CategoryLabelPositions.createUpRotationLabelPositions(0))) orient = "HORIZONTAL";
+			if (pos.equals(CategoryLabelPositions.createDownRotationLabelPositions(Math.PI / 4.0))) orient = "RIGHTSLANT";
+			
+			config.putObject(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION, orient);
+		}
 
 		axis = plot.getRangeAxis();
 		config.putObject(PlotConfiguration.RANGE_LABEL, axis.getLabel());

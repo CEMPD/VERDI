@@ -2,9 +2,14 @@ package anl.verdi.plot.config;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.Axis;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.XYPlot;
 
@@ -40,10 +45,11 @@ public class JFreeChartConfigurator {
 
 	private void configureUnits(PlotConfiguration config) {
 		if (unitsConfigurator != null) {
+			Boolean showLegend = (Boolean) config.getObject(PlotConfiguration.LEGEND_SHOW);
 			String label = config.getString(PlotConfiguration.UNITS);
 			Color color = config.getColor(PlotConfiguration.UNITS_COLOR);
 			Font font = config.getFont(PlotConfiguration.UNITS_FONT);
-			unitsConfigurator.configureUnits(label, font, color);
+			unitsConfigurator.configureUnits(showLegend, label, font, color);
 
 			Boolean show = (Boolean) config.getObject(PlotConfiguration.UNITS_SHOW_TICK);
 			color = config.getColor(PlotConfiguration.UNITS_TICK_COLOR);
@@ -59,10 +65,12 @@ public class JFreeChartConfigurator {
 			XYPlot plot = (XYPlot) chart.getPlot();
 			domainAxis = plot.getDomainAxis();
 			rangeAxis = plot.getRangeAxis();
+			configTickLabel(config, domainAxis);
 		} else if (chart.getPlot() instanceof CategoryPlot) {
 			CategoryPlot plot = (CategoryPlot) chart.getPlot();
 			domainAxis = plot.getDomainAxis();
 			rangeAxis = plot.getRangeAxis();
+			configTickLabel(config, domainAxis);
 		}
 
 		String label = config.getString(PlotConfiguration.DOMAIN_LABEL);
@@ -96,6 +104,48 @@ public class JFreeChartConfigurator {
 		if (font != null) rangeAxis.setTickLabelFont(font);
 	}
 
+	private void configTickLabel(PlotConfiguration config, Axis axis) {
+		String format = config.getString(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, h a");
+		String orient = config.getString(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION);
+		
+		try {
+			if (format != null && format.trim().length() != 0) dateFormat = new SimpleDateFormat(format);
+		} catch (Exception e) {
+			//NOTE: do noting. Better to throw error message to the front. Wait for the infrastructure is ready.
+		}
+
+		if (axis instanceof DateAxis) {
+			DateAxis dAxis = (DateAxis) axis;
+			dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+			dAxis.setDateFormatOverride(dateFormat);
+			if (orient != null && "VERTICAL".equals(orient))
+				dAxis.setVerticalTickLabels(true);
+			
+			if (orient != null && !"VERTICAL".equals(orient))
+				dAxis.setVerticalTickLabels(false);
+		}
+
+		if (axis instanceof CategoryAxis) {
+			CategoryAxis cAxis = (CategoryAxis) axis;
+			if (orient != null && "VERTICAL".equals(orient)) {
+				cAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
+			}
+
+			if (orient != null && "LEFTSLANT".equals(orient)) {
+				cAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+			}
+
+			if (orient != null && "HORIZONTAL".equals(orient)) {
+				cAxis.setCategoryLabelPositions(CategoryLabelPositions.createUpRotationLabelPositions(0));
+			}
+
+			if (orient != null && "RIGHTSLANT".equals(orient)) {
+				cAxis.setCategoryLabelPositions(CategoryLabelPositions.createDownRotationLabelPositions(Math.PI / 4.0));
+			}
+		}
+	}
+	
 	private void configureTitles(PlotConfiguration config) {
 		Boolean show = (config.getShowTitle().compareTo("FALSE") != 0);
 		String text = config.getTitle();

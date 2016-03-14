@@ -1,3 +1,4 @@
+
 package anl.verdi.plot.gui;
 
 import java.awt.Color;
@@ -6,14 +7,12 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
@@ -27,13 +26,11 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 import com.l2fprod.common.swing.JFontChooser;
 
-import anl.verdi.formula.Formula;
-
 
 /**
  * @author User #2
  */
-public class LabelPanel extends JPanel {
+public class LegendLabelPanel extends JPanel {
 
 	/**
 	 * 
@@ -41,7 +38,7 @@ public class LabelPanel extends JPanel {
 	private static final long serialVersionUID = -7581915584019023506L;
 	private Font selectedFont, selectedTickFont;
 
-	public LabelPanel() {
+	public LegendLabelPanel() {
 		initComponents();
 		addListeners();
 	}
@@ -99,6 +96,10 @@ public class LabelPanel extends JPanel {
 			tickColorFld.setBackground(color);
 		}
 	}
+	
+	public void initLegend(Boolean show) {
+		legendChk.setSelected(show);
+	}
 
 	public void initLabel(String title, Font font, Color color) {
 		if (title != null) textFld.setText(title);
@@ -120,25 +121,7 @@ public class LabelPanel extends JPanel {
 		tickColorLbl.setEnabled(false);
 	}
 
-	public void initTicks(Boolean show, Font font, Color color, Integer numOfTickLabels, String labelFormat, String labelOrientation, Formula.Type plottype) {
-		initNormalTickOptions(show, font, color, numOfTickLabels, labelFormat, labelOrientation);
-		
-		if (!plottype.equals(Formula.Type.TIME_SERIES_LINE) && !plottype.equals(Formula.Type.TIME_SERIES_BAR)) {
-			disableAllXTickLabelOptions();
-		}
-		
-		if (plottype.equals(Formula.Type.TIME_SERIES_LINE)) {
-			lsRadio.setEnabled(false);
-			rsRadio.setEnabled(false);
-		}
-	}
-	
 	public void initTicks(Boolean show, Font font, Color color, Integer numOfTickLabels) {
-		initNormalTickOptions(show, font, color, numOfTickLabels, null, null);
-		disableAllXTickLabelOptions();
-	}
-	
-	private void initNormalTickOptions(Boolean show, Font font, Color color, Integer numOfTickLabels, String labelFormat, String labelOrientation) {
 		if (show == null) {
 			disableTicks();
 			return;
@@ -156,21 +139,7 @@ public class LabelPanel extends JPanel {
 		if (color != null) tickColorFld.setBackground(color);
 		if (font != null) initTickFont(font);
 		if (numOfTickLabels != null) numberFld.setText(numOfTickLabels.toString());
-		if (labelFormat != null) formatFld.setText(labelFormat);
-		if (labelOrientation != null && labelOrientation.trim().length() != 0) {
-			if (labelOrientation.equals("VERTICAL")) {vRadio.setSelected(true);}
-			if (labelOrientation.equals("HORIZONTAL")) {hRadio.setSelected(true);}
-			if (labelOrientation.equals("LEFTSLANT")) {lsRadio.setSelected(true);}
-			if (labelOrientation.equals("RIGHTSLANT")) {rsRadio.setSelected(true);}
-		}
-	}
-	
-	private void disableAllXTickLabelOptions() {
-		formatFld.setEnabled(false);
-		hRadio.setEnabled(false);
-		vRadio.setEnabled(false);
-		lsRadio.setEnabled(false);
-		rsRadio.setEnabled(false);
+
 	}
 
 	private void initFont(Font font) {
@@ -198,6 +167,10 @@ public class LabelPanel extends JPanel {
 		}
 		tickFontFld.setText(font.getName() + ", " + strStyle + ", " + font.getSize());
 	}
+	
+	public boolean isShowLegend() {
+		return legendChk.isSelected();
+	}
 
 	public Font getSelectedFont() {
 		return selectedFont;
@@ -218,19 +191,6 @@ public class LabelPanel extends JPanel {
 			return null;
 		}
 	}
-	
-	public String getTickLabelFormat() {
-		return formatFld.getText();
-	}
-	
-	public String getTickLabelOrientation() {
-		if (vRadio.isSelected()) return "VERTICAL";
-		if (hRadio.isSelected()) return "HORIZONTAL";
-		if (lsRadio.isSelected()) return "LEFTSLANT";
-		if (rsRadio.isSelected()) return "RIGHTSLANT";
-		
-		return null;
-	}
 
 	public Font getSelectedTickFont() {
 		return selectedTickFont;
@@ -248,6 +208,7 @@ public class LabelPanel extends JPanel {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner non-commercial license
 		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
+		legendChk = new JCheckBox();
 		separator1 = compFactory.createSeparator("Label");
 		label1 = new JLabel();
 		textFld = new JTextField();
@@ -267,28 +228,6 @@ public class LabelPanel extends JPanel {
 		tickColorLbl = new JLabel();
 		tickColorFld = new JTextField();
 		tickColorBtn = new JButton();
-		
-		//====Added to configure domain axis labels
-		format = new JLabel();
-		formatFld = new JTextField();
-		orientation = new JLabel();
-		orientationOption = new JPanel();
-		vRadio = new JRadioButton("Vertical");
-		hRadio = new JRadioButton("Horizontal");
-		lsRadio = new JRadioButton("Left Slant");
-		rsRadio = new JRadioButton("Right Slant");
-		radioGroup = new ButtonGroup();
-		radioGroup.add(vRadio);
-		radioGroup.add(hRadio);
-		radioGroup.add(lsRadio);
-		radioGroup.add(rsRadio);
-		orientationOption.add(hRadio);
-		orientationOption.add(vRadio);
-		orientationOption.add(lsRadio);
-		orientationOption.add(rsRadio);
-		hRadio.setSelected(true);
-		formatFld.setToolTipText("Use date and time patterns such as: MM/dd/yyyy HH:mm:ss");
-		
 		CellConstraints cc = new CellConstraints();
 
 		//======== this ========
@@ -306,10 +245,8 @@ public class LabelPanel extends JPanel {
 										FormFactory.DEFAULT_COLSPEC
 						},
 						new RowSpec[]{
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
-										FormFactory.DEFAULT_ROWSPEC,
-										FormFactory.LINE_GAP_ROWSPEC,
+				         				FormFactory.DEFAULT_ROWSPEC,
+						        		FormFactory.LINE_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC,
 										FormFactory.LINE_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC,
@@ -357,87 +294,83 @@ public class LabelPanel extends JPanel {
 //								FormFactory.LINE_GAP_ROWSPEC,
 //								FormFactory.DEFAULT_ROWSPEC
 //				}));
-		add(separator1, cc.xywh(1, 1, 7, 1));
+		
+		//---- legendChk ----
+		legendChk.setText("Show Legend");
+		add(legendChk, cc.xywh(1, 1, 7, 1));
+
+		add(separator1, cc.xywh(1, 3, 7, 1));
 
 		//---- label1 ----
 		label1.setText("Text:");
-		add(label1, cc.xy(3, 3));
-		add(textFld, cc.xy(5, 3));
+		add(label1, cc.xy(3, 5));
+		add(textFld, cc.xy(5, 5));
 
 		//---- label2 ----
 		label2.setText("Font:");
-		add(label2, cc.xy(3, 5));
+		add(label2, cc.xy(3, 7));
 
 		//---- fontFld ----
 		fontFld.setEditable(false);
-		add(fontFld, cc.xy(5, 5));
+		add(fontFld, cc.xy(5, 7));
 
 		//---- fontBtn ----
 		fontBtn.setText("Select");
-		add(fontBtn, cc.xy(7, 5));
+		add(fontBtn, cc.xy(7, 7));
 
 		//---- label3 ----
 		label3.setText("Color:");
-		add(label3, cc.xy(3, 7));
+		add(label3, cc.xy(3, 9));
 
 		//---- colorFld ----
 		colorFld.setBackground(Color.black);
 		colorFld.setEditable(false);
-		add(colorFld, new CellConstraints(5, 7, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
+		add(colorFld, new CellConstraints(5, 9, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 
 		//---- colorBtn ----
 		colorBtn.setText("Select");
-		add(colorBtn, cc.xy(7, 7));
-		add(tickSep, cc.xywh(1, 9, 7, 1));
+		add(colorBtn, cc.xy(7, 9));
+		add(tickSep, cc.xywh(1, 11, 7, 1));
 
 		//---- tickChk ----
 		tickChk.setText("Show Tick Labels");
-		add(tickChk, cc.xywh(3, 11, 3, 1));
+		add(tickChk, cc.xywh(3, 13, 3, 1));
 		
 		//---- number ----
 		number.setText("Number:");
-		add(number, cc.xy(3, 13));
-		add(numberFld, cc.xy(5, 13));
+		add(number, cc.xy(3, 15));
+		add(numberFld, cc.xy(5, 15));
 
 		//---- tickFontLbl ----
 		tickFontLbl.setText("Font:");
-		add(tickFontLbl, cc.xy(3, 15));
+		add(tickFontLbl, cc.xy(3, 17));
 
 		//---- tickFontFld ----
 		tickFontFld.setEditable(false);
-		add(tickFontFld, cc.xy(5, 15));
+		add(tickFontFld, cc.xy(5, 17));
 
 		//---- tickFontBtn ----
 		tickFontBtn.setText("Select");
-		add(tickFontBtn, cc.xy(7, 15));
+		add(tickFontBtn, cc.xy(7, 17));
 
 		//---- tickColorLbl ----
 		tickColorLbl.setText("Color:");
-		add(tickColorLbl, cc.xy(3, 17));
+		add(tickColorLbl, cc.xy(3, 19));
 
 		//---- tickColorFld ----
 		tickColorFld.setBackground(Color.black);
 		tickColorFld.setEditable(false);
-		add(tickColorFld, cc.xy(5, 17));
+		add(tickColorFld, cc.xy(5, 19));
 
 		//---- tickColorBtn ----
 		tickColorBtn.setText("Select");
-		add(tickColorBtn, cc.xy(7, 17));
-		
-		//---- Format ----
-		format.setText("Format:");
-		add(format, cc.xy(3, 19));
-		add(formatFld, cc.xy(5, 19));
-		
-		//---- Orientation ----
-		orientation.setText("Orientation:");
-		add(orientation, cc.xy(3, 21));
-		add(orientationOption, cc.xy(5, 21));
+		add(tickColorBtn, cc.xy(7, 19));
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner non-commercial license
+	private JCheckBox legendChk;
 	private JComponent separator1;
 	private JLabel label1;
 	private JTextField textFld;
@@ -457,14 +390,6 @@ public class LabelPanel extends JPanel {
 	private JLabel tickColorLbl;
 	private JTextField tickColorFld;
 	private JButton tickColorBtn;
-	private JLabel format;
-	private JTextField formatFld;
-	private JLabel orientation;
-	private JPanel orientationOption;
-	private JRadioButton vRadio;
-	private JRadioButton hRadio;
-	private JRadioButton lsRadio;
-	private JRadioButton rsRadio;
-	private ButtonGroup radioGroup;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }
+

@@ -21,12 +21,14 @@ import javax.swing.WindowConstants;
 
 import anl.verdi.data.DataUtilities;
 import anl.verdi.data.DataUtilities.MinMax;
+import anl.verdi.formula.Formula;
+import anl.verdi.formula.Formula.Type;
 import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.color.PaletteSelectionPanel;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.gui.GTTilePlot;
-//import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
+import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 //import anl.verdi.plot.config.VectorPlotConfiguration;
 
 import com.jgoodies.forms.factories.Borders;
@@ -99,6 +101,7 @@ public class ConfigDialog extends JDialog {
 	// writes the plot configuration to the PlotConfiguration object (read and used by other parts of VERDI)
 	private void commit() throws Exception {
 		PlotConfiguration config = new PlotConfiguration();
+		config.putObject(PlotConfiguration.PLOT_TYPE, plot.getType()); //NOTE: to differentiate plot types
 		if (tabbedPanel.indexOfTab("Color Map") != -1) {
 			config.putObject(TilePlotConfiguration.COLOR_MAP, colorMapPanel.getColorMap());
 		}
@@ -195,12 +198,12 @@ public class ConfigDialog extends JDialog {
 //		} else {
 //			otherPanel.initVector(color);
 //		}
-//
-//		color = config.getColor(TimeSeriesPlotConfiguration.SERIES_COLOR);
-//		if (color == null)
-//			otherPanel.setSeriesColorEnabled(false);
-//		else
-//			otherPanel.initSeries(color);
+
+		Color color = config.getColor(TimeSeriesPlotConfiguration.SERIES_COLOR);
+		if (color == null)
+			otherPanel.setSeriesColorEnabled(false);
+		else
+			otherPanel.initSeries(color);
 	}
 
 	private void initLabels(PlotConfiguration config) {
@@ -208,11 +211,20 @@ public class ConfigDialog extends JDialog {
 				config.getString(PlotConfiguration.DOMAIN_LABEL), config
 						.getFont(PlotConfiguration.DOMAIN_FONT), config
 						.getColor(PlotConfiguration.DOMAIN_COLOR));
+		
+		Formula.Type plottype = (Formula.Type)config.getObject(PlotConfiguration.PLOT_TYPE); //NOTE: to differentiate time series plots
+		String domainLabelFormat = config.getString(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT);
+		
+		if (plottype != null && plottype == Formula.Type.TIME_SERIES_BAR) {
+			domainLabelFormat = config.getString(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT_4CAT);
+		}
+		
 		labelsPanel.initDomainTick((Boolean) config
 				.getObject(PlotConfiguration.DOMAIN_SHOW_TICK), config
 				.getFont(PlotConfiguration.DOMAIN_TICK_FONT), config
 				.getColor(PlotConfiguration.DOMAIN_TICK_COLOR), (Integer)config
-				.getObject(PlotConfiguration.DOMAIN_TICK_NUMBER));
+				.getObject(PlotConfiguration.DOMAIN_TICK_NUMBER), domainLabelFormat, config
+				.getString(PlotConfiguration.DOMAIN_TICK_LABEL_ORIENTATION), plot.getType());
 
 		labelsPanel.initRange(config.getString(PlotConfiguration.RANGE_LABEL),
 				config.getFont(PlotConfiguration.RANGE_FONT), config
@@ -223,6 +235,7 @@ public class ConfigDialog extends JDialog {
 				.getColor(PlotConfiguration.RANGE_TICK_COLOR), (Integer)config
 				.getObject(PlotConfiguration.RANGE_TICK_NUMBER));
 
+		labelsPanel.initLegend((Boolean) config.getObject(PlotConfiguration.LEGEND_SHOW));
 		labelsPanel.initUnits(config.getString(PlotConfiguration.UNITS), config
 				.getFont(PlotConfiguration.UNITS_FONT), config
 				.getColor(PlotConfiguration.UNITS_COLOR));
