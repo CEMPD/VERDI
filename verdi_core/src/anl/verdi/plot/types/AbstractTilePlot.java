@@ -248,18 +248,21 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		if (map != null) updateColorMap(map);
 
 		TitleConfigurator titleConfig = new TitleConfigurator() {
-			public void configureSubtitle1(String text, Font font, Color color) {
+			public void configureSubtitle1(Boolean show, String text, Font font, Color color) {
 				TextTitle title = (TextTitle) chart.getSubtitle(subTitle1Index);
+				title.setVisible(show);
 				updateTextTitle(title, text, color, font);
 			}
 
-			public void configureSubtitle2(String text, Font font, Color color) {
+			public void configureSubtitle2(Boolean show, String text, Font font, Color color) {
 				TextTitle title = (TextTitle) chart.getSubtitle(subTitle2Index);
+				title.setVisible(show);
 				updateTextTitle(title, text, color, font);
 			}
 
-			public void configureTitle(String text, Font font, Color color) {
+			public void configureTitle(Boolean show, String text, Font font, Color color) {
 				TextTitle title = chart.getTitle();
+				title.setVisible(show);
 				updateTextTitle(title, text, color, font);
 			}
 		};
@@ -1215,16 +1218,19 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 
 	protected PlotConfiguration getTitlesLabelsConfig(PlotConfiguration config) {
 		Logger.debug("in AbstractTilePlot.getTitlesLabelsConfig");
+		config.setShowTitle(chart.getTitle().isVisible() ? "TRUE" : "FALSE");
 		config.setTitle(chart.getTitle().getText());
 		config.putObject(PlotConfiguration.TITLE_FONT, chart.getTitle().getFont());
 		config.putObject(PlotConfiguration.TITLE_COLOR, (Color) chart.getTitle().getPaint());
 
 		TextTitle title = (TextTitle) chart.getSubtitle(subTitle1Index);
+		config.setShowSubtitle1(title.isVisible() ? "TRUE" : "FALSE");
 		config.setSubtitle1(title.getText());
 		config.putObject(PlotConfiguration.SUBTITLE_1_FONT, title.getFont());
 		config.putObject(PlotConfiguration.SUBTITLE_1_COLOR, (Color) title.getPaint());
 
 		title = (TextTitle) chart.getSubtitle(subTitle2Index);
+		config.setShowSubtitle2(title.isVisible() ? "TRUE" : "FALSE");
 		config.setSubtitle2(title.getText());
 		config.putObject(PlotConfiguration.SUBTITLE_2_FONT, title.getFont());
 		config.putObject(PlotConfiguration.SUBTITLE_2_COLOR, (Color) title.getPaint());
