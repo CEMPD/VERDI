@@ -414,7 +414,12 @@ public class GTTilePlotPanel extends JPanel {
 				final int binWidth = 20;	// of color bar in pixels
 				final int ticSize = 3;		// of level tick marks in pixels
 				int space = 6;				// space between 2 visual components
+				int height = legendPanel.getHeight();
 				final int yRange = yMaximum - yMinimum;
+				Logger.debug("in paintComponent for legendPanel; yMaximum = " + yMaximum + 
+						", yMinimum = " + yMinimum + ", height = " + height);
+				int width = legendPanel.getWidth();
+				Logger.debug("width = " + width);
 				final int binHeight = yRange / colors;
 				final int xOffset = binWidth;
 				int subStart = 0, subEnd = 0;

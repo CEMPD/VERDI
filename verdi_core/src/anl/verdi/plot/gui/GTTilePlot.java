@@ -51,6 +51,7 @@ import java.util.Set;
 
 import anl.verdi.plot.anim.AnimationPanel;
 import anl.verdi.plot.color.Palette;
+import anl.verdi.plot.color.PavePaletteCreator;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -169,6 +170,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	private static final int LONGITUDE = 0;
 	private static final int LATITUDE = 1;
 	private static final double MINIMUM_VALID_VALUE = -900.0;
+	private String blank = " ";
 
 	// Log related
 
@@ -210,10 +212,11 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	protected double[] legendLevels;
 	protected MinMax minMax;
 	private boolean processTimeChange = true;
-	protected PlotConfiguration config;
+	protected TilePlotConfiguration config;
 
 	protected Palette defaultPalette;
 	protected Color[] legendColors;
+	protected ColorMap lColorMap;		// ColorMap for legend
 	protected ColorMap aColorMap;
 
 	private Color axisColor = Color.darkGray;
@@ -310,6 +313,10 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	public GTTilePlot(VerdiApplication aVerdiApp, DataFrame aDataFrame) {
 		// TODO WIP constructor for GTTilePlot
 		super();										// call constructor of GTTilePlotPanel
+		config = new TilePlotConfiguration();				// instantiate the plot configuration container
+		config.initTilePlotConf();						// populate & initialize plot configuration with default values 
+		lColorMap = new ColorMap(new PavePaletteCreator().createPavePalette(), 0, 10);	// 0, 10 from main in LegendPanel
+		config.setColorMap(lColorMap);		// default color palette is PAVE's std colors
 		app = aVerdiApp;								// copy the VerdiApplication object to data member
 		dataFrame = aDataFrame;							// copy the DataFrame object to data member
 		calculateDataFrameLog();						// calls member function calculateDataFrameLog (purpose unknown)
@@ -437,6 +444,18 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		//TODO raster information to myMapContent
 		//TODO add shapefile information to myMapContent
 		//TODO add user-selected shapefiles to myMapContent
+
+		// need legend colors before calling drawLegend()
+		lColorMap = config.getColorMap();
+		int maxIndex = lColorMap.getColorCount();		// number of colors
+		legendColors = new Color[maxIndex];
+		Logger.debug("number of colors in color map = " + maxIndex);
+		for(int i=0; i<maxIndex; i++)
+		{
+			Logger.debug("i=" + i);
+			legendColors[i] = lColorMap.getColor(i);
+			Logger.debug("legendColors[i] = " + legendColors[i].toString());
+		}
 		drawLegend();
 		
 		super.repaint();								// force components to show (end of constructor)
@@ -581,12 +600,12 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	/**
 	 * Configure this Plot according to the specified PlotConfiguration.
 	 * 
-	 * @param config    the new plot configuration
+	 * @param aPlotConfig    the new plot configuration
 	 */
 	@Override
-	public void configure(PlotConfiguration config) {
+	public void configure(PlotConfiguration aPlotConfig) {
 		// TODO copied from FastTilePlot; may need some rewriting
-		String configFile = config.getConfigFileName();
+		String configFile = aPlotConfig.getConfigFileName();
 		double[] minmax = { 0.0, 0.0 };
 
 		if (configFile != null) {
@@ -603,7 +622,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			return;
 		}
 
-		ColorMap colorMap = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
+		ColorMap colorMap = (ColorMap) aPlotConfig.getObject(TilePlotConfiguration.COLOR_MAP);
 
 		if (colorMap != null) {
 
@@ -633,18 +652,18 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		}
 
 		draw();
-		config = new TilePlotConfiguration(config);
+		aPlotConfig = new TilePlotConfiguration(aPlotConfig);
 
 		if (showGridLines != null) {
-			Boolean gridlines = (Boolean)config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
+			Boolean gridlines = Boolean.parseBoolean(aPlotConfig.getProperty(TilePlotConfiguration.SHOW_GRID_LINES));
 			showGridLines.setSelected(gridlines == null ? false : gridlines);
 		}
 	}	// end Configure with 1 argument
 
 	@Override
-	public void configure(PlotConfiguration config, ConfigSource source) {
+	public void configure(PlotConfiguration bPlotConfig, ConfigSource source) {
 		// TODO copied from FastTilePlot; may need some rewriting
-		String configFile = config.getConfigFileName();
+		String configFile = bPlotConfig.getConfigFileName();
 		double[] minmax = { 0.0, 0.0 };
 
 		if (configFile != null) {
@@ -663,7 +682,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 
 		configSource = source;		// not used, but was not commented out in v1.4.1
 
-		ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
+		ColorMap map = (ColorMap) bPlotConfig.getObject(TilePlotConfiguration.COLOR_MAP);
 
 		if (map != null) {
 
@@ -696,11 +715,12 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			} 
 		}
 
-		config = new TilePlotConfiguration(config);
+		//TODO expect to change this next line
+		config = new TilePlotConfiguration(bPlotConfig);
 		draw();
 
 		if (showGridLines != null) {
-			Boolean gridlines = (Boolean)config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
+			Boolean gridlines = Boolean.parseBoolean(config.getProperty(TilePlotConfiguration.SHOW_GRID_LINES));
 			showGridLines.setSelected(gridlines == null ? false : gridlines);
 		}
 	} // end configure with 2 arguments
@@ -2083,7 +2103,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	 * @return this Plot's configuration data.
 	 */
 	@Override
-	public PlotConfiguration getPlotConfiguration() {
+	public TilePlotConfiguration getPlotConfiguration() {
 		return config;
 	}	// end getPlotConfiguration with 0 arguments
 
@@ -2311,7 +2331,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 
 		if (config != null) {
 			subtitle1 += (config.getSubtitle1() == null ? "" : config.getSubtitle1()).trim();
-			showST1 = !subtitle1.isEmpty();
+			showST1 = !(subtitle1.isEmpty() || subtitle1.compareTo(blank) == 0);
 			if (showST1) subtitles.add(subtitle1);
 		}
 
@@ -2657,21 +2677,25 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 	 */
 	protected void drawLegend()
 	{
-		final int colors = legendColors.length;
+		final int colors = legendColors.length;	
 		super.setLog(log); 	// set log value for GTTilePlotPanel
 		// first, find out if going to include a legend or not; default to true (draw the legend)
-		Boolean showLegend = (Boolean)config.getObject(TilePlotConfiguration.LEGEND_SHOW);
+		Boolean showLegend = Boolean.parseBoolean(config.getProperty(TilePlotConfiguration.LEGEND_SHOW));
 		showLegend = (showLegend == null ? true : showLegend);
 		super.setShowLegend(showLegend);
 		
 		String unitStr = config.getProperty(TilePlotConfiguration.UNITS);	// get unit of measure from config
-		unitStr = (unitStr == null || unitStr.isEmpty() ? units : unitStr);	// must use units if grid cell statistics
+		unitStr = (unitStr == null || unitStr.isEmpty() || unitStr.compareTo(blank) == 0
+				? units : unitStr);	// must use units if grid cell statistics
 		config.putObject(PlotConfiguration.UNITS, unitStr);		// save updated unit of measure to config
 		String logStr = " (Log";
 		String baseStr = null;		// base of log string
-		Boolean uShowTick = (Boolean) config.getObject(PlotConfiguration.UNITS_SHOW_TICK);
+		Boolean uShowTick = Boolean.parseBoolean(config.getProperty(PlotConfiguration.UNITS_SHOW_TICK));
 		uShowTick = (uShowTick == null ? true : uShowTick); 
 		config.putObject(PlotConfiguration.UNITS_SHOW_TICK, uShowTick); 	// save updated show tick for units to config
+		
+		//TODO FAILURE POINT: need to figure out how to convert from a String to a Color object
+		
 		Color uTickColor = (Color) config.getObject(PlotConfiguration.UNITS_TICK_COLOR);	// get color for tick marks
 		uTickColor = (uTickColor == null ? Color.black : uTickColor);	// if no color designated, default to black
 		config.putObject(PlotConfiguration.UNITS_TICK_COLOR, uTickColor); 	// save updated color for tick marks
