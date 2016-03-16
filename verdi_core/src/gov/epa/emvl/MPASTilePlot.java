@@ -9,6 +9,7 @@ import java.util.GregorianCalendar;
 
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
+import anl.verdi.plot.gui.MeshPlot;
 
 public class MPASTilePlot extends TilePlot {
 	
@@ -22,11 +23,28 @@ public class MPASTilePlot extends TilePlot {
 	int lastRow;
 	int firstColumn;
 	int lastColumn;
+	double[] plotMinMaxValues;
 	double[][] layerMinMaxValues;
+	double[] statMinMaxValues;
+	double[] currentMinMaxValues;
 	
-	public MPASTilePlot(GregorianCalendar startDate, long timestepSize, double[][] layerMinMaxValues) {
+	private static NumberFormat percentFormat = NumberFormat.getInstance();
+	static {
+		percentFormat.setMaximumFractionDigits(2);
+	}
+
+	
+	boolean useStats = false;
+	
+	public MPASTilePlot(GregorianCalendar startDate, long timestepSize, double[] plotMinMaxValues, double[][] layerMinMaxValues, double[] statMinMaxValues) {
 		super(startDate, timestepSize);
+		this.plotMinMaxValues = plotMinMaxValues;
 		this.layerMinMaxValues = layerMinMaxValues;
+		this.statMinMaxValues = statMinMaxValues;
+	}	
+	
+	public void setUseStats(boolean stats) {
+		useStats = stats;
 	}
 	
 	protected void drawAxis(final Graphics graphics, int xMinimum, int xMaximum,
@@ -216,20 +234,23 @@ public class MPASTilePlot extends TilePlot {
 	
 	protected String getMinMaxLabel(int firstRow, int lastRow,
 			int firstColumn, int lastColumn, final float[][] data) {
-		return "";
-		/*
-		final int[] minimumCell = { 0, 0 };
-		final int[] maximumCell = { 0, 0 };
-		final float[] range = { 0.0f, 0.0f };
+		
+		double[] minMaxValues = layerMinMaxValues[layer];
+		String suffix = "";
+		
+		if (useStats) {
+			minMaxValues = statMinMaxValues;
+		} else if (plotMinMaxValues[MeshPlot.PLOT_CACHE_PERCENT_COMPLETE] < 100) {
+			suffix = " (Loading, " + percentFormat.format(plotMinMaxValues[MeshPlot.PLOT_CACHE_PERCENT_COMPLETE]) + "% complete)";
+		}
 
-		layerMinimumMaximum(firstRow, lastRow, firstColumn, lastColumn, data,
-				minimumCell, maximumCell, range);
-
-		return "Min (" + (1 + minimumCell[COLUMN]) + ", "
-				+ (1 + minimumCell[ROW]) + ") = " + gFormat(range[0]) + ", "
-				+ "Max (" + (1 + maximumCell[COLUMN]) + ", "
-				+ (1 + maximumCell[ROW]) + ") = " + gFormat(range[1]);
-		*/
+		return "Min (" + gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_LON]) + ", "
+				+ gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_LAT]) + ") = "
+				+ gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_VALUE]) + ", "
+				+ "Max (" + gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_LON]) + ", "
+				+ gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_LAT]) + ") = " 
+				+ gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_VALUE]) + suffix;
+		
 	}
 	
 	public int getFooterHeight() {

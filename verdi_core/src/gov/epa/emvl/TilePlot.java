@@ -69,7 +69,7 @@ public class TilePlot {
 
 	protected PlotConfiguration config;
 	protected NumberFormat numberFormat;
-	private int preLayer = 0;
+	protected int layer = 0;
 	protected int legendBoxWidth = 100;
 	private List<ObsAnnotation> obsAnnotations;
 	private boolean showObsLegend = false;
@@ -146,6 +146,7 @@ public class TilePlot {
 		Logger.debug("in gov.epa.emvl.TilePlot.draw(lots of parameters), thread = " + Thread.currentThread().toString());
 		this.config = config;
 		this.numberFormat = format;
+		this.layer = layer;
 		this.plotWidth = width;
 		this.plotHeight = height;
 		final int xMinimum = xOffset;
@@ -683,8 +684,6 @@ public class TilePlot {
 		config.putObject(PlotConfiguration.OBS_SHOW_LEGEND, showObs);
 		config.putObject(PlotConfiguration.OBS_LEGEND_COLOR, (obsColor == null) ? labelColor : obsColor);
 		config.putObject(PlotConfiguration.OBS_LEGEND_FONT, (obsFont == null) ? gFont : obsFont);
-		
-		this.preLayer = layer;
 	}
 	
 	protected String getMinMaxLabel(int firstRow, int lastRow,
@@ -1272,7 +1271,7 @@ public class TilePlot {
 	 * @post return.length() <= 11
 	 */
 
-	private String gFormat(double value) {
+	protected String gFormat(double value) {
 		return numberFormat.format(value);
 	}
 

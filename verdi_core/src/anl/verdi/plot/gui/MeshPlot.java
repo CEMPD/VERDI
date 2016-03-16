@@ -254,6 +254,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private int lastColumn = 0; // firstColumn..columns - 1.
 
 	protected double[] legendLevels;
+	private Object legendLock = new Object();
 
 	protected Palette defaultPalette;
 	private Color[] legendColors;
@@ -268,6 +269,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	//private float[][][] layerDataLog = null;
 	private float[][][] statisticsData = null;
 	//private float[][][] statisticsDataLog = null;
+	
+	private long renderTime = 200;
 	
 	private BufferedImage cellIdMap = null;
 
@@ -434,9 +437,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							if (get_draw_once_requests() > 0) {
 								draw_once_requests = 0;
 							}
-							if ( get_draw_once_requests() >=0 ) {
+							/*if ( get_draw_once_requests() >=0 ) {
 								showBusyCursor();
-							}
+							}*/
 					}
 					
 					// When animating, pause based on user-set delay rate:
@@ -647,6 +650,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							//debug
 							
 							Font defaultFont = offScreenGraphics.getFont();
+							tilePlot.setUseStats(preStatIndex > 0);
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									screenWidth, screenHeight, stepsLapsed, MeshPlot.this.layer, aRow,
 									bRow, aCol, bCol, legendLevels,
@@ -746,10 +750,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			} while (drawMode != DRAW_END);
 		} catch (Throwable t) {
 			restoreCursor();
-			Logger.error("Error rendering MeshPlot", t);
-			String errInfo = t.getMessage() != null ? ": " + t.getMessage() + "  \n" : ".  ";
-			JOptionPane.showMessageDialog(app.getGui().getFrame(), "An error occured while rendering the plot" + errInfo + "Please see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);
-			app.getGui().getViewManager().getDockable(viewId).close();
+			if (dataFrame != null) { //Ignore errors if dataFrame is null - that means window is closing
+				Logger.error("Error rendering MeshPlot", t);
+				String errInfo = t.getMessage() != null ? ": " + t.getMessage() + "  \n" : ".  ";
+				JOptionPane.showMessageDialog(app.getGui().getFrame(), "An error occured while rendering the plot" + errInfo + "Please see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);
+				app.getGui().getViewManager().getDockable(viewId).close();
+			}
 		}
 		}
 	};
@@ -1820,12 +1826,14 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	public void updateCellData() {
 		long start = System.currentTimeMillis();
+		synchronized (legendLock) {
 		for (int i = 0; i < cellsToRender.length; ++i) {
 			cellsToRender[i].colorIndex = indexOfObsValue((float)cellsToRender[i].getValue(), legendLevels);
 		}
 		
 		for (CellInfo cell : splitCells.keySet()) {
 			cell.colorIndex = indexOfObsValue((float)cell.getValue(), legendLevels);
+		}
 		}
 		System.out.println("Updated cell data in " + (System.currentTimeMillis() - start) + "ms");
 
@@ -1850,6 +1858,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
         java.awt.Graphics2D g = img.createGraphics();
         */
 
+		synchronized (legendLock) {
 		for (int i = 0; i < cells; ++i) { //for each cell
 			if (visibleOnly && !cellsToRender[i].visible && i != 0)
 				continue;
@@ -1861,10 +1870,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				continue;
 			renderCell(gr, xOffset, yOffset, cell, showGridLines, showCellBorder, cellMap.getValue());
 		}
+		}
 		
 		gr.setClip(null);
 		//gr.translate(0,  0);
-		long renderTime = System.currentTimeMillis() - renderStart;
+		renderTime = System.currentTimeMillis() - renderStart;
 		//TODO - consider only doing this once, scaling mouseover coordinates on the fly
 		System.out.println("Finished drawing image " + new Date() + " image in " + renderTime + "ms");
 		//System.out.println("Var min " + varMin + " max " + varMax);
@@ -2016,11 +2026,15 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			firstLayer = layer = layerAxis.getOrigin();
 			lastLayer = firstLayer + layers - 1;
 		}
-		layerMinMaxCache = new double[layers][3];
+		//min/max, lon/lat, pct complete
+		layerMinMaxCache = new double[layers][7];
+		logLayerMinMaxCache = new double[layers][7];
+		//min/max, lon/lat
+		statMinMaxCache = new double[6];
+		//min/max
 		plotMinMaxCache = new double[3];
-		statMinMaxCache = new double[2];
-		logLayerMinMaxCache = new double[layers][3];
 		logPlotMinMaxCache = new double[3];
+
 		
 		//TAH
 		//TODO - remove unneccessary bits here
@@ -2122,7 +2136,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		// Create EMVL TilePlot (but does not draw yet - see draw()):
 
-		tilePlot = new MPASTilePlot(startDate, timestepSize, layerMinMaxCache);
+		tilePlot = new MPASTilePlot(startDate, timestepSize, plotMinMaxCache, layerMinMaxCache, statMinMaxCache);
 
 		// Create GUI.
 
@@ -2209,10 +2223,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		try {
 			loadCellStructure();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			return;
 		}
+		
+		initLayerCache(layers);
 
 		// add(toolBar);
 		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
@@ -2415,25 +2430,33 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			if (log) {
 				logPlotMinMaxCache[0] = minMaxInfo.getMin();
 				logPlotMinMaxCache[1] = minMaxInfo.getMax();
+				logPlotMinMaxCache[2] = minMaxInfo.getCompletion();
 			} else {
 				plotMinMaxCache[0] = minMaxInfo.getMin();
 				plotMinMaxCache[1] = minMaxInfo.getMax();
+				plotMinMaxCache[2] = minMaxInfo.getCompletion();
 			}
 		} else {
 						
 			this.computeStatistics(log);					
 						
 			final int statistic = selection - 1;
-			statMinMaxCache[0] = Double.MAX_VALUE;
-			statMinMaxCache[1] = Double.MAX_VALUE * -1;
+			statMinMaxCache[LEVELS_CACHE_MIN_VALUE] = Double.MAX_VALUE;
+			statMinMaxCache[LEVELS_CACHE_MAX_VALUE] = Double.MAX_VALUE * -1;
 
 			for ( int cell = firstRow; cell < cellsToRender.length; ++cell ) {
 
 				final float value = statisticsData[ statistic ][0][ cell ];
-				if (value < statMinMaxCache[0])
-					statMinMaxCache[0] = value;
-				else if (value > statMinMaxCache[1])
-					statMinMaxCache[1] = value;
+				if (value < statMinMaxCache[0]) {
+					statMinMaxCache[LEVELS_CACHE_MIN_VALUE] = value;
+					statMinMaxCache[LEVELS_CACHE_MIN_LON] = cellsToRender[cell].getLon();
+					statMinMaxCache[LEVELS_CACHE_MIN_LAT] = cellsToRender[cell].getLat();
+				}
+				else if (value > statMinMaxCache[1]) {
+					statMinMaxCache[LEVELS_CACHE_MAX_VALUE] = value;
+					statMinMaxCache[LEVELS_CACHE_MAX_LON] = cellsToRender[cell].getLon();
+					statMinMaxCache[LEVELS_CACHE_MAX_LAT] = cellsToRender[cell].getLat();
+				}
 			}
 		}	
 	}
@@ -4234,6 +4257,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	public void restoreCursor() {
+		if (app != null)
 		//   cursor restored
 		//synchronized(this) {
 			app.getGui().defaultCursor(); 
@@ -4268,26 +4292,42 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	double[] statMinMaxCache = null;
 	double[][] logLayerMinMaxCache = null;
 	double[] logPlotMinMaxCache = null;
+	
+	boolean layerCacheInitted = false;
+	
+	public static final int LEVELS_CACHE_MIN_VALUE = 0;
+	public static final int LEVELS_CACHE_MIN_LON = 1;
+	public static final int LEVELS_CACHE_MIN_LAT = 2;
+	public static final int LEVELS_CACHE_MAX_VALUE = 3;
+	public static final int LEVELS_CACHE_MAX_LON = 4;
+	public static final int LEVELS_CACHE_MAX_LAT = 5;
+	public static final int LEVELS_CACHE_PERCENT_COMPLETE = 6;
+	public static final int PLOT_CACHE_PERCENT_COMPLETE = 2;
 
 	@Override
-	public void datasetUpdated(double min, double max, double pctComplete, boolean isLog) {
+	public void datasetUpdated(double min, int minIndex, double max, int maxIndex, double pctComplete, boolean isLog) {
 		double[] updatedInfo = plotMinMaxCache;
 		if (isLog)
 			updatedInfo = logPlotMinMaxCache;
 		updatedInfo[0] = min;
 		updatedInfo[1] = max;
 		updatedInfo[2] = pctComplete;
-		if (preStatIndex < 1) {
+		//if (preStatIndex < 1) {
+		if (isLog == log) {
 			updateLegendLevels();
 			if (drawMode == DRAW_NONE) {
 				drawMode = DRAW_ONCE;
 			}
-			System.out.println("Legend " + pctComplete + "% complete, min " + min + " max " + max + " log " + isLog + " redrawn");
+			//System.out.println("Legend " + pctComplete + "% complete, min " + min + " max " + max + " log " + isLog + " redrawn");
 		}
 	}
 	
 	private void updateLegendLevels() {
+		ColorMap colorMap = map;
+		if (colorMap == null)
+			return;
 		
+		synchronized (legendLock) {
 		//populate legend colors and ranges on initiation
 		//default to not a log scale
 		double[] localMinMax = { 0.0, 0.0 };
@@ -4328,19 +4368,53 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		for (int level = 0; level < count; ++level) {
 			legendLevels[level] = minimum + level * delta;
 		}
+		drawMode = DRAW_ONCE;
+		draw_once_requests = 1;
+		}
 		config.setUnits("");
 		dataChanged = true;
 	}
+	
+	private void initLayerCache(int maxLayer) {
+		for (int i = 0; i < maxLayer; ++i) {
+			MinMaxInfo info = dataset.getLayerMinMax(dataFrame, i, this);
+			int minIndex = info.getMinIndex();
+			if (minIndex < 0) //Has not been calculated yet - break and wait for notifications
+				break;
+			CellInfo cell = cellsToRender[info.getMinIndex()];
+			layerMinMaxCache[i][LEVELS_CACHE_MIN_VALUE] = info.getMin();
+			layerMinMaxCache[i][LEVELS_CACHE_MIN_LON] = cell.getLon();
+			layerMinMaxCache[i][LEVELS_CACHE_MIN_LAT] = cell.getLat();
+			cell = cellsToRender[info.getMaxIndex()];
+			layerMinMaxCache[i][LEVELS_CACHE_MAX_VALUE] = info.getMax();
+			layerMinMaxCache[i][LEVELS_CACHE_MAX_LON] = cell.getLon();
+			layerMinMaxCache[i][LEVELS_CACHE_MAX_LAT] = cell.getLat();
+		}	}
 
 	@Override
-	public void layerUpdated(int updLayer, double min, double max,
+	public void layerUpdated(int updLayer, double min, int minIndex, double max, int maxIndex,
 			double percentComplete, boolean isLog) {
 		double[][] localCache = layerMinMaxCache;
 		if (isLog)
 			localCache = logLayerMinMaxCache;
-		localCache[updLayer][0] = min;
-		localCache[updLayer][1] = max;
-		localCache[updLayer][2] = percentComplete;		
+		localCache[updLayer][LEVELS_CACHE_MIN_VALUE] = min;
+		localCache[updLayer][LEVELS_CACHE_MAX_VALUE] = max;
+		localCache[updLayer][LEVELS_CACHE_PERCENT_COMPLETE] = percentComplete;
+		if (cellsToRender == null || cellsToRender[cellsToRender.length - 1] == null) //not until a few ms after this is 1st called
+			return;
+		localCache[updLayer][LEVELS_CACHE_MIN_LON] = cellsToRender[minIndex].getLon();
+		localCache[updLayer][LEVELS_CACHE_MIN_LAT] = cellsToRender[minIndex].getLat();
+		localCache[updLayer][LEVELS_CACHE_MAX_LON] = cellsToRender[maxIndex].getLon();
+		localCache[updLayer][LEVELS_CACHE_MAX_LAT] = cellsToRender[maxIndex].getLat();
+		if (!layerCacheInitted) { //Updates any layers that were modified between initial opening and first update notification - this happens when opening, closing, and re-opening a plot
+			initLayerCache(updLayer);
+			layerCacheInitted = true;
+		}
+	}
+
+	@Override
+	public long getRenderTime() {
+		return renderTime;
 	}
 
 }

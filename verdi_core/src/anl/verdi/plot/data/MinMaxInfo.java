@@ -4,6 +4,8 @@ public class MinMaxInfo {
 
 	double max = Double.MAX_VALUE * -1;
 	double min = Double.MAX_VALUE;
+	int minIndex = -1;
+	int maxIndex = -1;
 	//double sum = 0;
 	//double average = 0;
 	int count = 0;
@@ -22,12 +24,24 @@ public class MinMaxInfo {
 		//average = sum / count;
 	}
 	
-	public void visitValue(double value) {
-		if (value < min)
+	public void visitValue(double value, int index) {
+		if (value < min) {
 			min = value;
-		if (value > max)
+			minIndex = index;
+		}
+		if (value > max) {
 			max = value;
+			maxIndex = index;
+		}
 		//incrementSum(value);
+	}
+	
+	public int getMinIndex() {
+		return minIndex;
+	}
+	
+	public int getMaxIndex() {
+		return maxIndex;
 	}
 	
 	public double getMin() {

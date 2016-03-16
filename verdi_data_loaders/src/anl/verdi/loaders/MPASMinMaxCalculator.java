@@ -12,9 +12,7 @@ import anl.verdi.plot.data.MinMaxInfo;
 import anl.verdi.plot.data.MinMaxLevelListener;
 
 public class MPASMinMaxCalculator implements Runnable {
-	
-	static final long UPDATE_SPAN = 3000;
-	
+		
 	IMPASDataset ds = null;
 	
 	int timeOrigin = 0;
@@ -132,20 +130,20 @@ public class MPASMinMaxCalculator implements Runnable {
 		if (stepInfo.getCount() == numCells) //Already calculated
 			return false;
 		for (int i = 0; i < numCells; ++i) {
-			stepInfo.visitValue(getValue(index, layer, step, i));
+			stepInfo.visitValue(getValue(index, layer, step, i), i);
 		}
 		stepInfo.incrementCount(numCells);
 		
-		layerInfo.visitValue(stepInfo.getMin());
-		layerInfo.visitValue(stepInfo.getMax());
+		layerInfo.visitValue(stepInfo.getMin(), stepInfo.getMinIndex());
+		layerInfo.visitValue(stepInfo.getMax(), stepInfo.getMaxIndex());
 		layerInfo.incrementCount(numCells);
 		
-		plotInfo.visitValue(layerInfo.getMin());
-		plotInfo.visitValue(layerInfo.getMax());
+		plotInfo.visitValue(layerInfo.getMin(), layerInfo.getMinIndex());
+		plotInfo.visitValue(layerInfo.getMax(), layerInfo.getMaxIndex());
 		plotInfo.incrementCount(numCells);
 
-		fireLayerUpdated(layer, layerInfo.getMin(), layerInfo.getMax(), layerInfo.getCompletion());
-		fireDatasetUpdated(plotInfo.getMin(), plotInfo.getMax(), plotInfo.getCompletion());
+		fireLayerUpdated(layer, layerInfo);
+		fireDatasetUpdated(plotInfo);
 		return true;
 	}
 	
@@ -163,25 +161,30 @@ public class MPASMinMaxCalculator implements Runnable {
 			listeners.add(listener);
 	}
 	
-	private void fireLayerUpdated(int layer, double min, double max, double percentCompleted) {
-		if (System.currentTimeMillis() - layerUpdate < UPDATE_SPAN && percentCompleted < 100)
+	private void fireLayerUpdated(int layer, MinMaxInfo info) {
+		if (listeners.isEmpty())
+			return;
+		if (System.currentTimeMillis() - layerUpdate < listeners.get(0).getRenderTime() * 3 && info.getCompletion() < 100)
 			return;
 		for (int i = 0; i < listeners.size(); ++i) {
-			listeners.get(i).layerUpdated(layer, min, max, percentCompleted, isLog);
+			listeners.get(i).layerUpdated(layer, info.getMin(), info.getMinIndex(), info.getMax(), info.getMaxIndex(), info.getCompletion(), isLog);
 		}
 		layerUpdate = System.currentTimeMillis();
 	}
 	
-	private void fireDatasetUpdated(double min, double max, double percentCompleted) {
-		if (System.currentTimeMillis() - plotUpdate < UPDATE_SPAN && percentCompleted < 100)
+	private void fireDatasetUpdated(MinMaxInfo info) {
+		if (listeners.isEmpty())
+			return;
+
+		if (System.currentTimeMillis() - plotUpdate < listeners.get(0).getRenderTime() * 1.5 && info.getCompletion() < 100)
 			return;
 		for (int i = 0; i < listeners.size(); ++i) {
-			listeners.get(i).datasetUpdated(min, max, percentCompleted, isLog);
+			listeners.get(i).datasetUpdated(info.getMin(), info.getMinIndex(), info.getMax(), info.getMaxIndex(), info.getCompletion(), isLog);
 		}
 		plotUpdate = System.currentTimeMillis();
-		if (percentCompleted == 100)
+		if (info.getCompletion() == 100)
 			listeners.clear();
-		else if (percentCompleted > 100)
+		else if (info.getCompletion() > 100)
 			System.out.println("How???");
 	}
 
