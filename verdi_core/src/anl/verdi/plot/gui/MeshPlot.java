@@ -503,8 +503,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					String sTitle2 = config.getSubtitle2();
 					Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
 					if (tFont == null) {
-						config.putObject(PlotConfiguration.TITLE_FONT, offScreenGraphics.getFont());
-						tFont = config.getFont(PlotConfiguration.TITLE_FONT);
+						tFont = offScreenGraphics.getFont();
+						tFont = new Font(tFont.getFontName(), Font.BOLD, tFont.getSize() * 2);
+						config.putObject(PlotConfiguration.TITLE_FONT, tFont);
 					}
 					Font sFont1 = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
 					if (sFont1 == null) {

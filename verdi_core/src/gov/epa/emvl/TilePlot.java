@@ -675,12 +675,12 @@ public class TilePlot {
 		config.putObject(PlotConfiguration.FOOTER1_SHOW_LINE, showFooter1);
 		config.putObject(PlotConfiguration.FOOTER1_AUTO_TEXT, footer1AutoText);
 		config.putObject(PlotConfiguration.FOOTER1_COLOR, (f1Color == null) ? labelColor : f1Color);
-		config.putObject(PlotConfiguration.FOOTER1_FONT, (f1Font == null) ? gFont : f1Font);
+		config.putObject(PlotConfiguration.FOOTER1_FONT, (f1Font == null) ? timestampFont : f1Font);
 		config.putObject(PlotConfiguration.FOOTER2, footer2);
 		config.putObject(PlotConfiguration.FOOTER2_SHOW_LINE, showFooter2);
 		config.putObject(PlotConfiguration.FOOTER2_AUTO_TEXT, footer2AutoText);
 		config.putObject(PlotConfiguration.FOOTER2_COLOR, (f2Color == null) ? labelColor : f2Color);
-		config.putObject(PlotConfiguration.FOOTER2_FONT, (f2Font == null) ? gFont : f2Font);
+		config.putObject(PlotConfiguration.FOOTER2_FONT, (f2Font == null) ? timestampFont : f2Font);
 		config.putObject(PlotConfiguration.OBS_SHOW_LEGEND, showObs);
 		config.putObject(PlotConfiguration.OBS_LEGEND_COLOR, (obsColor == null) ? labelColor : obsColor);
 		config.putObject(PlotConfiguration.OBS_LEGEND_FONT, (obsFont == null) ? gFont : obsFont);
