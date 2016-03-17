@@ -320,6 +320,8 @@ public class DataSetPanel extends JPanel {
 					return;
 				
 				index = variableList.getSelectedIndex();
+				if (index < 0)
+					return;
 				Variable variable = (Variable) variableList
 						.getModel().getElementAt(index);
 				
