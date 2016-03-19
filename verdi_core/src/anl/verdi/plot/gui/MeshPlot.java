@@ -414,6 +414,37 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			requestTimeSeries(getMaxCells(), "Max. cells ");
 		}
 	};
+	
+	String sTitle1 = null;
+	String sTitle2 = null;
+	Font tFont = null;
+	Font sFont1 = null;
+	Font sFont2 = null;
+	int fontSize =0;
+	
+	private void updateConfigVariables() {
+		sTitle1 = config.getSubtitle1();
+		sTitle2 = config.getSubtitle2();
+		tFont = config.getFont(PlotConfiguration.TITLE_FONT);
+		sFont1 = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
+		sFont2 = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
+		fontSize = (tFont == null) ? 20 : tFont.getSize();
+		yOffset = 20 + fontSize;
+		if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
+			fontSize = (sFont1 == null) ? 20 : sFont1.getSize();
+			yOffset += fontSize + 6;
+		}
+		if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
+			fontSize = (sFont2 == null) ? 20 : sFont2.getSize();
+
+			if (sTitle1 == null || sTitle1.trim().isEmpty()) {
+				yOffset += 26;
+			}
+
+			yOffset += fontSize + 6;
+		}
+		xOffset = 100;
+	}
 
 	// Declare a Runnable attribute which will create and run a thread
 	// whose run method draws double-buffered to a graphics iff graphics
@@ -427,6 +458,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		public void run() {
 			try {
 
+			updateConfigVariables();
 			do {
 				
 				if ( drawMode != DRAW_NONE &&
@@ -498,44 +530,40 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							restoreCursor();
 						continue;// graphics system is not ready
 					}
-					
-					String sTitle1 = config.getSubtitle1();
-					String sTitle2 = config.getSubtitle2();
-					Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
+
 					if (tFont == null) {
 						tFont = offScreenGraphics.getFont();
 						tFont = new Font(tFont.getFontName(), Font.BOLD, tFont.getSize() * 2);
 						config.putObject(PlotConfiguration.TITLE_FONT, tFont);
+						fontSize = (tFont == null) ? 20 : tFont.getSize();
+						yOffset = 20 + fontSize;
 					}
-					Font sFont1 = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
 					if (sFont1 == null) {
 						config.putObject(PlotConfiguration.SUBTITLE_1_FONT, offScreenGraphics.getFont());
 						sFont1 = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
+						if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
+							fontSize = (sFont1 == null) ? 20 : sFont1.getSize();
+							yOffset += fontSize + 6;
+						}
 					}
-					Font sFont2 = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
 					if (sFont2 == null) {
 						config.putObject(PlotConfiguration.SUBTITLE_2_FONT, offScreenGraphics.getFont());
 						sFont2 = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
-					}
-					int fontSize = (tFont == null) ? 20 : tFont.getSize();
-					yOffset = 20 + fontSize;
+						if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
+							fontSize = (sFont2 == null) ? 20 : sFont2.getSize();
 
-					if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
-						fontSize = (sFont1 == null) ? 20 : sFont1.getSize();
-						yOffset += fontSize + 6;
-					}
+							if (sTitle1 == null || sTitle1.trim().isEmpty()) {
+								yOffset += 26;
+							}
 
-					if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
-						fontSize = (sFont2 == null) ? 20 : sFont2.getSize();
-
-						if (sTitle1 == null || sTitle1.trim().isEmpty()) {
-							yOffset += 26;
+							yOffset += fontSize + 6;
 						}
-
-						yOffset += fontSize + 6;
 					}
 
-					xOffset = 100;
+
+
+
+
 
 										
 					if (locChanged) {
@@ -591,11 +619,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 						offScreenGraphics.setColor(Color.white);
 						offScreenGraphics.fillRect(0, 0, canvasWidth,
-								canvasHeight);
-						boolean finishedRework = false;
-						finishedRework = true;
-												
-						if (finishedRework) {
+								canvasHeight);						
 
 						// Draw legend-colored grid cells, axis, text labels and
 						// legend:
@@ -683,7 +707,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						} catch (Exception e) {
 							Logger.error("MeshPlot run method", e);
 						}
-						} //TAH finish rework if
 
 						renderCells(offScreenGraphics, xOffset, yOffset, true);
 
@@ -1860,24 +1883,23 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
         */
 
 		synchronized (legendLock) {
-		for (int i = 0; i < cells; ++i) { //for each cell
-			if (visibleOnly && !cellsToRender[i].visible && i != 0)
-				continue;
-			renderCell(gr, xOffset, yOffset, cellsToRender[i], showGridLines, showCellBorder, i);
-		}
-		for (Map.Entry<CellInfo, Integer> cellMap : splitCells.entrySet()) {
-			CellInfo cell = cellMap.getKey();
-			if (visibleOnly && !cell.visible)
-				continue;
-			renderCell(gr, xOffset, yOffset, cell, showGridLines, showCellBorder, cellMap.getValue());
-		}
+			for (int i = 0; i < cells; ++i) { //for each cell
+				if (visibleOnly && !cellsToRender[i].visible && i != 0)
+					continue;
+				renderCell(gr, xOffset, yOffset, cellsToRender[i], showGridLines, showCellBorder, i);
+			}
+			for (Map.Entry<CellInfo, Integer> cellMap : splitCells.entrySet()) {
+				CellInfo cell = cellMap.getKey();
+				if (visibleOnly && !cell.visible)
+					continue;
+				renderCell(gr, xOffset, yOffset, cell, showGridLines, showCellBorder, cellMap.getValue());
+			}
 		}
 		
 		gr.setClip(null);
-		//gr.translate(0,  0);
 		renderTime = System.currentTimeMillis() - renderStart;
-		//TODO - consider only doing this once, scaling mouseover coordinates on the fly
-		System.out.println("Finished drawing image " + new Date() + " image in " + renderTime + "ms");
+		
+		System.out.println("Finished drawing image in " + renderTime + "ms");
 		//System.out.println("Var min " + varMin + " max " + varMax);
 		/*
 		java.io.File outputFile = new java.io.File("/tmp/mpasout.png");
@@ -3058,6 +3080,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			recomputeStatistics = true;
 		}
 
+		updateConfigVariables();
 		this.draw();
 		this.config = new TilePlotConfiguration(config);
 		
@@ -3115,6 +3138,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 
 		this.config = new TilePlotConfiguration(config);
+		updateConfigVariables();
 		this.draw();
 		
 		if (this.showGridLines != null) {
