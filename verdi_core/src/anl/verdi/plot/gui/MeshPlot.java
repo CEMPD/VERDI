@@ -236,6 +236,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private int screenHeight;
 	private int xOffset = 0;
 	private int yOffset = 0;
+	private int xTranslation = 0;
+	private boolean translateX = true;
 	
 	private int canvasSize = 0;
 	// For legend-colored grid cells and annotations:
@@ -255,6 +257,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	protected double[] legendLevels;
 	private Object legendLock = new Object();
+	private Object waitObject = new Object();
 
 	protected Palette defaultPalette;
 	private Color[] legendColors;
@@ -488,18 +491,23 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					int width;
 					int height;
 					
+					xTranslation = 0;
 					if (clippedDataRatio > 1) {
 						width = Math.round(canvasWidth - (tilePlot.getLegendBoxWidth() + xOffset));
 						height = (int)Math.round(width / clippedDataRatio);
 						int minHeight = canvasHeight - tilePlot.getFooterHeight() * 2;
 						if (minHeight < height) {
 							height = minHeight;
+							int fullWidth = width;
 							width = (int)Math.round(height * clippedDataRatio);
+							xTranslation = (fullWidth - width) / 2;
 						}
 					}
 					else {
 						height = Math.round(canvasHeight - tilePlot.getFooterHeight() * 2);
 						width = (int)Math.round(height * clippedDataRatio);
+						int fullWidth = Math.round(canvasWidth - (tilePlot.getLegendBoxWidth() + xOffset));
+						xTranslation = (fullWidth - width) / 2;
 					}
 					canvasSize = width;					
 
@@ -676,13 +684,15 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							
 							Font defaultFont = offScreenGraphics.getFont();
 							tilePlot.setUseStats(preStatIndex > 0);
-							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
+							if (xTranslation != 0) {
+								offScreenGraphics.translate(xTranslation,  0);
+							}						tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									screenWidth, screenHeight, stepsLapsed, MeshPlot.this.layer, aRow,
 									bRow, aCol, bCol, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
 									aPlotUnits, 
 									config, aNumberFormat, gridLineColor,
-									null);
+									null, xTranslation);
 							//Cells are sized incorrectly during the first redraw, partially due to tilePlot.getLegendBoxWidth() being wrong before
 							//tilePlot.drawLegend() first called.  Quick workaround is to draw twice.
 							//TODO - fix this.  Low priority - drawn off screen, won't cause flash, only happens once
@@ -710,7 +720,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 						renderCells(offScreenGraphics, xOffset, yOffset, true);
 
-						dataArea.setRect(xOffset, yOffset, screenWidth, screenHeight);
+						dataArea.setRect(xOffset + xTranslation, yOffset, screenWidth, screenHeight);
 						
 
 						// Draw projected/clipped map border lines over grid
@@ -768,7 +778,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					
 				} else {
 					try {
-						Thread.sleep(100); /* ms. */
+						synchronized (waitObject) {
+							waitObject.wait();
+						}
 					} catch (Exception unused) {}
 				}
 			} while (drawMode != DRAW_END);
@@ -1029,6 +1041,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		if (drawMode == DRAW_ONCE) {
 			increase_draw_once_requests();
+		}
+		synchronized (waitObject) {
+			waitObject.notifyAll();
 		}
 	}
 

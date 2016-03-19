@@ -75,12 +75,15 @@ public class TilePlot {
 	private boolean showObsLegend = false;
 	private String plotTitle;
 	protected int footerYOffset = 0;
+	protected int titleOffset = 0;
+	protected int xMinimum = 0;
 	
 	private int plotWidth = 0;
 	private int plotHeight = 0;
 	
 	private boolean log = false;
 	private int logBase = 10; //Math.E;
+	protected int xTranslation = 0;
 	
 	static int callInx = 1;
 
@@ -141,7 +144,7 @@ public class TilePlot {
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data) 
+			final Color gridLineColor, final float[][] data, int xTranslation) 
 	{
 		Logger.debug("in gov.epa.emvl.TilePlot.draw(lots of parameters), thread = " + Thread.currentThread().toString());
 		this.config = config;
@@ -149,7 +152,8 @@ public class TilePlot {
 		this.layer = layer;
 		this.plotWidth = width;
 		this.plotHeight = height;
-		final int xMinimum = xOffset;
+		this.xTranslation = xTranslation;
+		xMinimum = xOffset;
 		final int xMaximum = xOffset + width;
 		final int yMinimum = yOffset;
 		final int yHeightOffset = yMinimum + height;
@@ -589,6 +593,7 @@ public class TilePlot {
 			graphics.setColor(sColor1);
 			FontMetrics sMetrx1 = graphics.getFontMetrics(sFont1);
 			int xsTitle = xCenter - sMetrx1.stringWidth(sTitle1) / 2;
+			titleOffset = sMetrx1.stringWidth(sTitle1) / 2;
 			graphics.drawString(sTitle1, xsTitle, yTitle + space + sFont1.getSize() / 2);
 		}
 
@@ -597,6 +602,9 @@ public class TilePlot {
 			graphics.setColor(sColor2);
 			FontMetrics sMetrx2 = graphics.getFontMetrics(sFont2);
 			int xsTitle = xCenter - sMetrx2.stringWidth(sTitle2) / 2;
+			int title2Offset = xsTitle + sMetrx2.stringWidth(sTitle2);
+			if (title2Offset > titleOffset)
+				titleOffset = title2Offset;
 			graphics.drawString(sTitle2, xsTitle, yTitle + space * 2 + sFont2.getSize() / 2);
 		}
 
@@ -619,6 +627,7 @@ public class TilePlot {
 			else graphics.setFont(f1Font);
 			
 			int xTimestamp = xCenter - graphics.getFontMetrics().stringWidth(footer1) / 2;
+
 			graphics.drawString(footer1, xTimestamp, yTimestamp);
 			graphics.setColor(gColor);
 			graphics.setFont(gFont);
@@ -645,7 +654,7 @@ public class TilePlot {
 			else graphics.setFont(f2Font);
 			
 			int xMinMax = xCenter - graphics.getFontMetrics().stringWidth(footer2) / 2;
-			if (xMinMax < xMinimum/2) xMinMax = xMinimum/2;
+			if (xMinMax + xTranslation < xMinimum/2) xMinMax = xMinimum/2;
 			graphics.drawString(footer2, xMinMax, yMinMax);
 			graphics.setColor(gColor);
 			graphics.setFont(gFont);
@@ -863,6 +872,11 @@ public class TilePlot {
 		
 		int maxLabelLen = graphics.getFontMetrics(labelFont == null ? gFont : labelFont).stringWidth(maxLenLabel);
 		
+		final int xRange = xMaximum - xMinimum;
+		final int xCenter = xMinimum + xRange / 2;
+		if (titleOffset != 0 && xMaximum < xCenter + titleOffset)
+			xMaximum = titleOffset + xCenter;
+		
 		final int x = xMaximum + xOffset;
 		int legendBoxX = x, legendBoxY = yMinimum - space;
 
@@ -938,6 +952,7 @@ public class TilePlot {
 		
 		// Draw legend box
 		graphics.setColor(Color.BLACK);
+
 		graphics.drawRect(legendBoxX, legendBoxY - halfCharHeight, legendBoxWidth, legendBoxHeight);
 		
 		graphics.setColor(currentColor); // Restore original color.
