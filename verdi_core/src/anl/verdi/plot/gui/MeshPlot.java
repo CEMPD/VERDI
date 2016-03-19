@@ -2162,15 +2162,19 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		playStopButton = new JButton(PLAY);
 		playStopButton.setToolTipText(PLAY_TIP);
 		playStopButton.addActionListener(this);
+		playStopButton.setEnabled(timesteps > 1);
 		leftStepButton = new JButton(LEFT);
 		leftStepButton.addActionListener(this);
 		leftStepButton.setToolTipText(LEFT_TIP);
+		leftStepButton.setEnabled(timesteps > 1);
 		rightStepButton = new JButton(RIGHT);
 		rightStepButton.addActionListener(this);
 		rightStepButton.setToolTipText(RIGHT_TIP);
+		rightStepButton.setEnabled(timesteps > 1);
 		delayField = new JTextField("50", 4);
 		delayField.addActionListener(this);						// 2014 needed to handle user changing delay in an animation
 		delayField.setToolTipText("Set animation delay (ms)");	// 2014
+		delayField.setEnabled(timesteps > 1);
 		firstRowField = new JTextField("1", 4);
 		firstRowField.addActionListener(this);
 		lastRowField = new JTextField(rows + "", 4);

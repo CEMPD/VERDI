@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,19 +21,14 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
 
-
-
-
-
-
 import java.awt.*;
 
 import ucar.ma2.Array;
+import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
-import ucar.nc2.Dimension;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.NetcdfDataset;
 import anl.verdi.data.AbstractDataset;
@@ -120,6 +116,7 @@ public class MPASDataset extends AbstractDataset implements MultiLayerDataset, I
 		renderVarList.add("lonCell");
 		renderVarList.add("zgrid");
 		renderVarList.add("zs");
+		renderVarList.add("xtime");
 	}
 	
 	static {
@@ -543,18 +540,75 @@ public class MPASDataset extends AbstractDataset implements MultiLayerDataset, I
 		if (arr.length > 6)
 			cal.set(Calendar.MILLISECOND, Integer.parseInt(arr[6]));	
 	}
+	
+	public long getTimestepDuration() {
+		int strLen = dataset.findDimension("StrLen").getLength();
+		int timeSteps = dataset.findDimension("Time").getLength();
+		ucar.nc2.Variable var = getVariableDS(getVariable("xtime"));
+		ArrayChar.D2 xtime = null;
+		
+		try {
+			xtime = (ArrayChar.D2)read("xtime");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return 0;
+		}
+
+		if (timeSteps < 2)
+			return 0;
+		StringBuffer buf = new StringBuffer();
+		for (int j = 0; j < strLen; ++j)
+			buf.append(xtime.get(0, j));
+		Calendar startTime = stringToCal(buf.toString());
+		buf = new StringBuffer();
+		for (int j = 0; j < strLen; ++j)
+			buf.append(xtime.get(1, j));
+		Calendar stopTime = stringToCal(buf.toString());
+		return stopTime.getTimeInMillis() - startTime.getTimeInMillis();
+	}
+	
+	private Calendar stringToCal(String timeStr) {
+		timeStr = timeStr.trim();
+		Calendar cal = new GregorianCalendar();
+		cal.clear();
+		String[] arr = timeStr.split("\\.");
+		if (arr.length > 1) {
+			cal.set(Calendar.MILLISECOND, Integer.parseInt(arr[1]));
+		}
+		arr = timeStr.split("_");
+		int i = 0;
+		if (arr.length > 1) {
+			String[] date = arr[i++].split("-");
+			int j = date.length - 1;
+			if (j >= 0)
+				cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date[j--]));
+			if (j >= 0)
+				cal.set(Calendar.MONTH, Integer.parseInt(date[j--]) - 1);
+			if (j >= 0)
+				cal.set(Calendar.YEAR, Integer.parseInt(date[j]) - 1);
+		}
+		String[] time = arr[i].split(":");
+		int j = time.length - 1;
+		if (j >= 0)
+			cal.set(Calendar.SECOND, Integer.parseInt(time[j--]));
+		if (j >= 0)
+			cal.set(Calendar.MINUTE, Integer.parseInt(time[j--]));
+		if (j >= 0)
+			cal.set(Calendar.HOUR, Integer.parseInt(time[j--]));
+		return cal;
+	}
 		
 	private CoordAxis makeTimeCoordAxis(String timeName) {
 		//TODO - come up with exception handling strategy
 		String start_str = findAttributeStr("config_start_time");
 		String stop_str = findAttributeStr("config_stop_time");
-		String duration_str = findAttributeStr("config_run_duration");
-		double duration = 0;
+		//String duration_str = findAttributeStr("config_run_duration");
+		//double duration = 0;
 
 		Calendar startCal = new GregorianCalendar(new SimpleTimeZone(0, "GMT"));
 		setCalendar(start_str, startCal);
 		
-		Calendar endCal = new GregorianCalendar(new SimpleTimeZone(0, "GMT"));
+		/*Calendar endCal = new GregorianCalendar(new SimpleTimeZone(0, "GMT"));
 		endCal.setTimeInMillis(0);
 
 		
@@ -576,19 +630,15 @@ public class MPASDataset extends AbstractDataset implements MultiLayerDataset, I
 		else {
 			setCalendar(stop_str, endCal);
 			duration = (endCal.getTimeInMillis() - startCal.getTimeInMillis()) / 1000;
-		}
+		} */
 
 		String units = null; //TODO - seconds since " + dateFormatOut.format(cal.getTime()) + " UTC";
 
-		int time_step = (int) findAttributeInt("config_dt");
-		int steps = (int)(duration / time_step);
+		int time_step = (int) getTimestepDuration();
+		int steps = dataset.findDimension(timeName).getLength();
 
 
-		Dimension dimt = dataset.findDimension(timeName);
-		int nt = dimt.getLength();
-		if (nt < steps)
-			steps = nt;
-		ArrayInt.D1 data = new ArrayInt.D1(nt);
+		ArrayInt.D1 data = new ArrayInt.D1(steps);
 		Double[] timeVals = new Double[steps];
 		for (int i = 0; i < steps; i++) {
 			data.set(i, i * time_step);
