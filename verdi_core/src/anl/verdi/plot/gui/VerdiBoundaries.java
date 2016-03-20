@@ -11,6 +11,8 @@ package anl.verdi.plot.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 
@@ -22,10 +24,13 @@ import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.geometry.jts.JTS;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.referencing.CRS;
+import org.geotools.renderer.GTRenderer;
+import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
 import org.opengis.feature.simple.SimpleFeature;
 //import org.opengis.geometry.Geometry;
@@ -187,6 +192,11 @@ public class VerdiBoundaries {
 //		}
 		// TODO - create a map layer and add it to the vMap object
 		vMap.layers().add(aVerdiStyle.getLayer());	// FIGURE THIS ONE OUT BECAUSE TRANSFORM IS HERE
+		GTRenderer renderer = new StreamingRenderer();
+		renderer.setMapContent(vMap);
+		Rectangle outputArea = new Rectangle(xOffset, yOffset, width, height);
+		ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], gridCRS);
+		renderer.paint((Graphics2D)graphics, outputArea, displayBounds);
 	}	// end of draw function
 	
 	public MapContent getMap()	// send vMap back to calling program
