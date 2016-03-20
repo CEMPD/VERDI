@@ -3,6 +3,7 @@ package anl.verdi.data;
 import java.awt.geom.Point2D;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import ucar.unidata.geoloc.Projection;
 
@@ -53,4 +54,6 @@ public interface BoundingBoxer {
 	Point2D CRSPointToAxis(double x, double y);
 
 	Point2D latLonToAxisPoint(double lat, double lon);
+	
+	public CoordinateReferenceSystem getCRS();
 }
