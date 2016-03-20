@@ -611,13 +611,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						}
 						
 						// NOTE: mapper.draw calls VerdiBoundaries.draw
-//						mapper.draw(domain, gridBounds, gridCRS,	// NOTE: JEB
+						mapper.draw(domain, gridBounds, gridCRS,	// NOTE: JEB
 																	// 1st time here gridCRS is baseCRS: DefaultGeographicCRS
 																	// conversionFromBase: DefaultConicProjection
 																	// coordinateSystem: DefaultCartesianCS
 																	// datum: DefaultGeodeticDatum
-//								offScreenGraphics, xOffset, yOffset, width,
-//								height, withHucs, withRivers, withRoads);
+								offScreenGraphics, xOffset, yOffset, width,
+								height, withHucs, withRivers, withRoads);
 						Logger.debug("back from mapper.draw, ready to check for ObsAnnotation");
 						
 						if (obsAnnotations != null) {
@@ -769,9 +769,9 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		// Draw projected/clipped map border lines over grid cells:
 		// NOTE: mapper.draw calls VerdiBoundaries.draw
 		Logger.debug("in FastTilePlot (797); getting ready to call mapper.draw");
-//		mapper.draw(domain, gridBounds, gridCRS,
-//				offScreenGraphics, xOffset, yOffset, tilePlot.getPlotWidth(),
-//				tilePlot.getPlotHeight(), withHucs, withRivers, withRoads);
+		mapper.draw(domain, gridBounds, gridCRS,
+				offScreenGraphics, xOffset, yOffset, tilePlot.getPlotWidth(),
+				tilePlot.getPlotHeight(), withHucs, withRivers, withRoads);
 
 		try {
 			bImage = (BufferedImage) offScreenImage;
@@ -1345,6 +1345,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			projector = new Projector(projection);
 			Logger.debug("projector set to: " + projector.toString());
 		}
+		gridCRS = coordinateAxes.getBoundingBoxer().getCRS();
 
 		// Initialize grid dimensions: timesteps, layers, rows, columns:
 
@@ -3433,9 +3434,9 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			// Draw projected/clipped map border lines over grid cells:
 			// NOTE: mapper.draw calls VerdiBoundaries.draw
 			Logger.debug("in FastTilePlot (3457) getting ready to call mapper.draw");
-//			mapper.draw(domain, gridBounds, gridCRS,
-//						g, xOffset, yOffset, tilePlot.getPlotWidth(),
-//						tilePlot.getPlotHeight(), withHucs, withRivers, withRoads);
+			mapper.draw(domain, gridBounds, gridCRS,
+						g, xOffset, yOffset, tilePlot.getPlotWidth(),
+						tilePlot.getPlotHeight(), withHucs, withRivers, withRoads);
 			
 			if (obsAnnotations != null) {
 				for (ObsAnnotation ann : obsAnnotations)
