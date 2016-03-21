@@ -23,7 +23,7 @@ public interface VerdiConstants {
 	String FORMULA_LABEL = "anl.verdi.core.bar.formula_label";
 
 	String TILE_BUTTON_ID = "anl.verdi.plot.gui.action.TilePlot";
-//	String FAST_TILE_BUTTON_ID = "anl.verdi.plot.gui.action.GTTilePlotAction";
+	String FAST_TILE_BUTTON_ID = "anl.verdi.plot.gui.action.FastTilePlot";
 	String GT_TILE_BUTTON_ID = "anl.verdi.plot.gui.action.GTTilePlotAction";
 	String VERT_CROSS_BUTTON_ID = "anl.verdi.plot.gui.action.VerticalCrossSection";
 	String TIME_SERIES_LINE_BUTTON_ID = "anl.verdi.plot.gui.action.TimeSeriesPlot";
@@ -31,7 +31,7 @@ public interface VerdiConstants {
 	String SCATTER_BUTTON_ID = "anl.verdi.plot.gui.action.ScatterPlot";
 //	String VECTOR_BUTTON_ID = "anl.verdi.plot.gui.action.VectorPlot";	// 2014 removed old Vector Plot
 	String CONTOUR_BUTTON_ID = "anl.verdi.plot.gui.action.Contour3DPlot";
-	String AREAL_INTERPOLATION_BUTTON_ID = "anl.verdi.plot.gui.action.AreaGTTilePlotAction";
+	String AREAL_INTERPOLATION_BUTTON_ID = "anl.verdi.plot.gui.action.ArealInterpolation";
 
 	String SAVE_ID = "anl.verdi.core.action.SaveAction";
 	String SAVE_AS_ID = "anl.verdi.core.action.SaveAsAction";

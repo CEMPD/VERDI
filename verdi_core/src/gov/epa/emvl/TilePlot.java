@@ -28,7 +28,6 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import anl.verdi.data.DataUtilities;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
-import anl.verdi.plot.gui.FastTilePlotPanel;
 import anl.verdi.plot.gui.ObsAnnotation;
 import anl.verdi.plot.gui.ObsAnnotation.Symbol;
 import anl.verdi.util.Tools;
@@ -136,8 +135,7 @@ public class TilePlot {
 	 *      lastColumn-firstColumn)
 	 */
 	
-	public synchronized void draw(final Graphics graphics, FastTilePlotPanel overallPanel,
-			int xOffset, int yOffset,
+	public synchronized void draw(final Graphics graphics, int xOffset, int yOffset,
 			int width, int height, int steplapse, int layer, int firstRow,
 			int lastRow, int firstColumn, int lastColumn,
 			final double[] legendLevels, final Color[] legendColors,
@@ -173,7 +171,7 @@ public class TilePlot {
 		Logger.debug("ready to call graphics.setColor");
 		graphics.setColor(labelColor);
 		Logger.debug("ready to call drawLabels");
-		drawLabels(graphics, overallPanel, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
+		drawLabels(graphics, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
 				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn,
 				data);	// anl.verdi.gui.DatasetListModel - in DatasetListModel getElementAt
 
@@ -194,8 +192,7 @@ public class TilePlot {
 		Logger.debug("all done with TilePlot.draw");	// 2015 OK to here
 	}
 	
-	public synchronized void drawBatchImage(final Graphics graphics, FastTilePlotPanel overallPanel, 
-			int xOffset, int yOffset,
+	public synchronized void drawBatchImage(final Graphics graphics, int xOffset, int yOffset,
 			int canvasWidth, int canvasHeight, int steplapse, int layer, int firstRow,
 			int lastRow, int firstColumn, int lastColumn,
 			final double[] legendLevels, final Color[] legendColors,
@@ -244,7 +241,7 @@ public class TilePlot {
 
 		graphics.setColor(labelColor);
 
-		drawLabels(graphics, overallPanel, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
+		drawLabels(graphics, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
 				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn,
 				data);
 
@@ -520,8 +517,7 @@ public class TilePlot {
 	 *      lastColumn-firstColumn)
 	 */
 
-	protected void drawLabels(final Graphics graphics, FastTilePlotPanel overallPanel, 
-			Color labelColor, int xMinimum,
+	protected void drawLabels(final Graphics graphics, Color labelColor, int xMinimum,
 			int xMaximum, int yMinimum, int yMaximum, final String variable,
 			int steplapse, int layer, int firstRow, int lastRow,
 			int firstColumn, int lastColumn, final float[][] data) {
@@ -530,7 +526,7 @@ public class TilePlot {
 
 		final int xRange = xMaximum - xMinimum;
 		final int xCenter = xMinimum + xRange / 2;
-//		final int space = 20; // Space between visual components
+		final int space = 20; // Space between visual components
 		final Font gFont = graphics.getFont();
 		final Color gColor = graphics.getColor();
 		String title;
@@ -539,6 +535,7 @@ public class TilePlot {
 		String TITLE = config.getProperty(PlotConfiguration.TITLE);
 //		final String titleStr = "Layer " + (layer + 1) + " " + variable;	// do NOT want to recalculate title here
 																			// part of bug where user blanks title and it shows up again
+		String defaultTitle = "Layer " + (layer + 1) + " " + variable;
 		Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
 		Color tColor = config.getColor(PlotConfiguration.TITLE_COLOR);
 		tColor = (tColor == null) ? labelColor : tColor;
@@ -557,15 +554,15 @@ public class TilePlot {
 		//look for Layer 1, if present keep with the same trend but update with current the Layer Number
 //		final String title = (TITLE == null || TITLE.isEmpty() ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
 		if(TITLE == null || TITLE.length()<2)	// rest of fix for allowing user to blank out a title
-			title = null;
+			title = defaultTitle; // TODO: needs more work
 		else
 			title = TITLE.replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
 		
 		Font currentFont = new Font(gFont.getFontName(), Font.BOLD, gFont.getSize() * 2);
 		tFont = (tFont == null ? currentFont : tFont);
-//		FontMetrics tMetrx = graphics.getFontMetrics(tFont);
-//		final int xTitle = xCenter - tMetrx.stringWidth(title) / 2;
-//		int yTitle = space - 5 + tFont.getSize() / 2;
+		FontMetrics tMetrx = graphics.getFontMetrics(tFont);
+		final int xTitle = xCenter - tMetrx.stringWidth(title) / 2;
+		int yTitle = space - 5 + tFont.getSize() / 2;
 		plotTitle = title;
 		
 		// Footer configurations:
@@ -586,28 +583,26 @@ public class TilePlot {
 		if (showObs == null || !(showObsLegend || showObs) || obsAnnotations == null || obsAnnotations.size() == 0) 
 			showObs = false;
 		
-//		graphics.setFont(tFont);
-//		graphics.setColor(tColor);
-//		graphics.drawString(title, xTitle, yTitle);
-//		
-//		if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
-//			graphics.setFont(sFont1);
-//			graphics.setColor(sColor1);
-//			FontMetrics sMetrx1 = graphics.getFontMetrics(sFont1);
-//			int xsTitle = xCenter - sMetrx1.stringWidth(sTitle1) / 2;
-//			graphics.drawString(sTitle1, xsTitle, yTitle + space + sFont1.getSize() / 2);
-//		}
-//
-//		if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
-//			graphics.setFont(sFont2);
-//			graphics.setColor(sColor2);
-//			FontMetrics sMetrx2 = graphics.getFontMetrics(sFont2);
-//			int xsTitle = xCenter - sMetrx2.stringWidth(sTitle2) / 2;
-//			graphics.drawString(sTitle2, xsTitle, yTitle + space * 2 + sFont2.getSize() / 2);
-//		}
-		overallPanel.setTitlesPanel(tFont, tColor, plotTitle,
-				sFont1, sColor1, sTitle1,
-				sFont2, sColor2, sTitle2);
+		graphics.setFont(tFont);
+		graphics.setColor(tColor);
+		graphics.drawString(title, xTitle, yTitle);
+		
+		if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
+			graphics.setFont(sFont1);
+			graphics.setColor(sColor1);
+			FontMetrics sMetrx1 = graphics.getFontMetrics(sFont1);
+			int xsTitle = xCenter - sMetrx1.stringWidth(sTitle1) / 2;
+			graphics.drawString(sTitle1, xsTitle, yTitle + space + sFont1.getSize() / 2);
+		}
+
+		if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
+			graphics.setFont(sFont2);
+			graphics.setColor(sColor2);
+			FontMetrics sMetrx2 = graphics.getFontMetrics(sFont2);
+			int xsTitle = xCenter - sMetrx2.stringWidth(sTitle2) / 2;
+			graphics.drawString(sTitle2, xsTitle, yTitle + space * 2 + sFont2.getSize() / 2);
+		}
+
 		// Timestamp label:
 		final Font timestampFont = new Font(gFont.getFontName(), Font.BOLD, gFont.getSize());
 		final String timestamp = dateTime(startDate, startTime, timestepSize, steplapse);
@@ -678,13 +673,16 @@ public class TilePlot {
 
 		graphics.setFont(currentFont); // Restore original font.
 
+		config.setShowTitle("TRUE");
 		config.putObject(PlotConfiguration.TITLE, title);
 //		config.putObject(PlotConfiguration.TITLE, (!title.equals(titleStr) && preLayer == layer) ? title : "");
 		config.putObject(PlotConfiguration.TITLE_FONT, tFont);
 		config.putObject(PlotConfiguration.TITLE_COLOR, tColor);
+		config.setShowSubtitle1("TRUE");
 		config.putObject(PlotConfiguration.SUBTITLE_1, (sTitle1 == null) ? "" : sTitle1);
 		config.putObject(PlotConfiguration.SUBTITLE_1_COLOR, sColor1);
 		config.putObject(PlotConfiguration.SUBTITLE_1_FONT, sFont1);
+		config.setShowSubtitle2("TRUE");
 		config.putObject(PlotConfiguration.SUBTITLE_2, (sTitle2 == null) ? "" : sTitle2);
 		config.putObject(PlotConfiguration.SUBTITLE_2_COLOR, sColor2);
 		config.putObject(PlotConfiguration.SUBTITLE_2_FONT, sFont2);

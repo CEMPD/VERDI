@@ -2681,6 +2681,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		super.setLog(log); 	// set log value for GTTilePlotPanel
 		// first, find out if going to include a legend or not; default to true (draw the legend)
 		Boolean showLegend = Boolean.parseBoolean(config.getProperty(TilePlotConfiguration.LEGEND_SHOW));
+//		Boolean showLegend = (Boolean) config.getObject(PlotConfiguration.LEGEND_SHOW);
 		showLegend = (showLegend == null ? true : showLegend);
 		super.setShowLegend(showLegend);
 		
