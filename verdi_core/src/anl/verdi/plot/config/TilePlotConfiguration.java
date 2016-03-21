@@ -17,7 +17,6 @@ public class TilePlotConfiguration extends PlotConfiguration {
 	public static final String GRID_LINE_COLOR = TilePlotConfiguration.class.getName() + "_grid_line_color";
 	public static final String OBS_SHAPE_SIZE = TilePlotConfiguration.class.getName() + "_obs_shape_size";
 	public static final String OBS_STROKE_SIZE = TilePlotConfiguration.class.getName() + "_obs_stroke_size";
-	public static final String LEGEND_SHOW = TilePlotConfiguration.class.getName() + "_legend_show";	// key in config file for show tile legend true/false
 
 	public TilePlotConfiguration() {
 	}

@@ -24,6 +24,7 @@ import anl.verdi.gui.FormulaListElement;
 import anl.verdi.gui.FormulaListModel;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 /**
  * Saves elements of the application to disk so they can be loaded later.
@@ -137,7 +138,8 @@ public class IO {
 	 */
 	public void load(File file, Project project, DataManager manager, FormulaElementCreator creator) throws IOException {
 		Logger.debug("in IO.load, ready to instantiate xstream");
-		XStream xstream = new XStream();
+		XStream xstream = new XStream(new StaxDriver());
+		xstream.setClassLoader(ProjectDescriptor.class.getClassLoader());
 		Logger.debug("ready to set alias values in xstream");
 		xstream.alias(DATASET_ELEMENT_ALIAS, DatasetElementDescriptor.class);
 		xstream.alias(FORMULA_ELEMENT_ALIAS, FormulaElementDescriptor.class);

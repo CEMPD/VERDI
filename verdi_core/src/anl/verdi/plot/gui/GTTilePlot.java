@@ -383,7 +383,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		final ReferencedEnvelope envelope = axes.getBoundingBox(dataFrame.getDataset().get(0).getNetcdfCovn());
 		getMapPane().setDisplayArea(envelope);
 		gridCRS = envelope.getCoordinateReferenceSystem();		// now have CRS for the gridded dataset
-		Logger.debug("gridCRS (as WKT) = " + gridCRS.toWKT());
+		Logger.debug("gridCRS (as WKT) = " + gridCRS.toWKT());		// looks good to here
 		
 		// set viewport so can set CRS into myMapContent
 		MapViewport myMapViewport = new MapViewport(envelope);
@@ -404,7 +404,7 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			firstTimestep = timestep = timeAxis.getOrigin();
 			lastTimestep = firstTimestep + timesteps - 1;
 		}
-		Logger.debug("number of timesteps = " + timesteps);
+		Logger.debug("number of timesteps = " + timesteps);		// test 25
 		
 		final DataFrameAxis layerAxis = axes.getZAxis();
 		if(layerAxis == null)
@@ -417,21 +417,21 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 			firstLayer = layer = layerAxis.getOrigin();
 			lastLayer = firstLayer + layers - 1;
 		}
-		Logger.debug("number of layers = " + layers);
+		Logger.debug("number of layers = " + layers);		// test 3
 		
 		final DataFrameAxis rowAxis = axes.getYAxis();
 		rows = rowAxis != null ? rowAxis.getExtent() : 1;
 		rowOrigin = rowAxis != null ? rowAxis.getOrigin() : 0;
 		firstRow = 0;
 		lastRow = firstRow + rows - 1;
-		Logger.debug("number of rows = " + rows);
+		Logger.debug("number of rows = " + rows);			// test 102
 		
 		final DataFrameAxis columnAxis = axes.getXAxis();
 		columns = columnAxis != null ? columnAxis.getExtent() : 1;
 		columnOrigin = columnAxis != null ? columnAxis.getOrigin() : 0;
 		firstColumn = 0;
 		lastColumn = firstColumn + columns - 1;
-		Logger.debug("number of columns = " + columns);
+		Logger.debug("number of columns = " + columns);		// test 145
 		
 		//TODO before draw legend need to get some information (min/max etc) about the dataset values
 		//TODO domain axis
@@ -449,12 +449,12 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		lColorMap = config.getColorMap();
 		int maxIndex = lColorMap.getColorCount();		// number of colors
 		legendColors = new Color[maxIndex];
-		Logger.debug("number of colors in color map = " + maxIndex);
+		Logger.debug("number of colors in color map = " + maxIndex);	// test 8
 		for(int i=0; i<maxIndex; i++)
 		{
-			Logger.debug("i=" + i);
+			Logger.debug("i=" + i);						// OK 0 to 7
 			legendColors[i] = lColorMap.getColor(i);
-			Logger.debug("legendColors[i] = " + legendColors[i].toString());
+			Logger.debug("legendColors[i] = " + legendColors[i].toString());	// OK 0 to 7
 		}
 		drawLegend();
 		
@@ -2696,7 +2696,8 @@ implements ActionListener, Printable, ChangeListener, ComponentListener, MouseLi
 		
 		//TODO FAILURE POINT: need to figure out how to convert from a String to a Color object
 		
-		Color uTickColor = (Color) config.getObject(PlotConfiguration.UNITS_TICK_COLOR);	// get color for tick marks
+//		Color uTickColor = (Color) config.getObject(PlotConfiguration.UNITS_TICK_COLOR);	// get color for tick marks
+		Color uTickColor = config.getColor(PlotConfiguration.UNITS_TICK_COLOR);
 		uTickColor = (uTickColor == null ? Color.black : uTickColor);	// if no color designated, default to black
 		config.putObject(PlotConfiguration.UNITS_TICK_COLOR, uTickColor); 	// save updated color for tick marks
 		Integer labelCnt = (Integer) config.getObject(TilePlotConfiguration.UNITS_TICK_NUMBER);	// number of tick marks
