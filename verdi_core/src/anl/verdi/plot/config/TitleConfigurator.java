@@ -18,7 +18,7 @@ public interface TitleConfigurator {
 	 * @param font the title font
 	 * @param color the title color
 	 */
-	void configureTitle(String text, Font font, Color color);
+	void configureTitle(Boolean show, String text, Font font, Color color);
 
 	/**
 	 * Configure the subtitle 1 of a chart with the specified text, font, and color.
@@ -27,7 +27,7 @@ public interface TitleConfigurator {
 	 * @param font the subtitle 1 font
 	 * @param color the subtitle 1 color
 	 */
-	void configureSubtitle1(String text, Font font, Color color);
+	void configureSubtitle1(Boolean show, String text, Font font, Color color);
 	
 	/**
 	 * Configure the subtitle 2 of a chart with the specified text, font, and color.
@@ -36,5 +36,5 @@ public interface TitleConfigurator {
 	 * @param font the subtitle 2 font
 	 * @param color the subtitle 2 color
 	 */
-	void configureSubtitle2(String text, Font font, Color color);
+	void configureSubtitle2(Boolean show, String text, Font font, Color color);
 }

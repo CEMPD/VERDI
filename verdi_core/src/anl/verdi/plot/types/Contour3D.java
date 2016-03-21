@@ -73,6 +73,7 @@ import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataFrameIndex;
 import anl.verdi.data.DataUtilities;
 import anl.verdi.formula.Formula;
+import anl.verdi.formula.Formula.Type;
 import anl.verdi.plot.anim.AnimationPanelContour3D;	// 2014 copy of AnimationPanel specifically for Contour3D
 import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.color.PavePaletteCreator;
@@ -806,13 +807,16 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 			Logger.error("Error setting color map " + e.getMessage());
 		}
 
-		configureTitle(canvas.getTitle(), config.getTitle(),
+		Boolean show = (config.getShowTitle().compareTo("FALSE") != 0);
+		configureTitle(canvas.getTitle(), show, config.getTitle(),
 						config.getColor(PlotConfiguration.TITLE_COLOR),
 						config.getFont(PlotConfiguration.TITLE_FONT));
-		configureTitle(canvas.getSub1(), config.getSubtitle1(),
+		show = (config.getSubtitle1().compareTo("FALSE") != 0);
+		configureTitle(canvas.getSub1(), show, config.getSubtitle1(),
 						config.getColor(PlotConfiguration.SUBTITLE_1_COLOR),
 						config.getFont(PlotConfiguration.SUBTITLE_1_FONT));
-		configureTitle(canvas.getSub2(), config.getSubtitle2(),
+		show = (config.getSubtitle2().compareTo("FALSE") != 0);
+		configureTitle(canvas.getSub2(), show, config.getSubtitle2(),
 						config.getColor(PlotConfiguration.SUBTITLE_2_COLOR),
 						config.getFont(PlotConfiguration.SUBTITLE_2_FONT));
 
@@ -824,7 +828,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		if (font != null) axis.setFont(font);
 		Color color = config.getColor(PlotConfiguration.DOMAIN_COLOR);
 		if (color != null) axis.setColor(color);
-		Boolean show = (Boolean) config.getObject(PlotConfiguration.DOMAIN_SHOW_TICK);
+		show = (Boolean) config.getObject(PlotConfiguration.DOMAIN_SHOW_TICK);
 		if (show != null) axis.setTicksVisible(show);
 
 		axis = yMap.getAxisScale();
@@ -847,6 +851,8 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		show = (Boolean) config.getObject(PlotConfiguration.Z_SHOW_TICK);
 		if (show != null) axis.setTicksVisible(show);
 
+		show = (Boolean) config.getObject(PlotConfiguration.LEGEND_SHOW);
+		legend.setVisible(show);
 		String units = config.getString(PlotConfiguration.UNITS);
 		if (units == null) units = "";
 		ValueAxis legendAxis = legend.getLegend().getAxis();
@@ -872,7 +878,8 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		this.config = config;
 	}
 
-	private void configureTitle(Title title, String text, Color color, Font font) {
+	private void configureTitle(Title title, Boolean show, String text, Color color, Font font) {
+		title.setShow(show);
 		if (text == null) text = "";
 		title.setText(text);
 		title.setColor(color);
@@ -889,7 +896,9 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		config.setColorMap(map);
 
 		config = (TilePlotConfiguration) getTitlesLabelsConfig(config);
+		config.putObject(PlotConfiguration.PLOT_TYPE, Type.CONTOUR); //NOTE: to differentiate plot types
 
+		config.putObject(PlotConfiguration.LEGEND_SHOW, legend.isVisible());
 		ValueAxis axis = legend.getLegend().getAxis();
 		config.putObject(PlotConfiguration.UNITS, axis.getLabel());
 		Font font = axis.getLabelFont();
@@ -917,16 +926,19 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 
 	protected PlotConfiguration getTitlesLabelsConfig(PlotConfiguration config) {
 		Title title = canvas.getTitle();
+		config.setShowTitle(title.getShow() ? "TRUE" : "FALSE");
 		config.setTitle(title.getText());
 		config.putObject(PlotConfiguration.TITLE_FONT, title.getFont());
 		config.putObject(PlotConfiguration.TITLE_COLOR, title.getColor());
 
 		title = canvas.getSub1();
+		config.setShowSubtitle1(title.getShow() ? "TRUE" : "FALSE");
 		config.setSubtitle1(title.getText());
 		config.putObject(PlotConfiguration.SUBTITLE_1_FONT, title.getFont());
 		config.putObject(PlotConfiguration.SUBTITLE_1_COLOR, (Color) title.getColor());
 
 		title = canvas.getSub2();
+		config.setShowSubtitle2(title.getShow() ? "TRUE" : "FALSE");
 		config.setSubtitle2(title.getText());
 		config.putObject(PlotConfiguration.SUBTITLE_2_FONT, title.getFont());
 		config.putObject(PlotConfiguration.SUBTITLE_2_COLOR, (Color) title.getColor());

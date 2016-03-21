@@ -49,7 +49,7 @@ public class GTTilePlotPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 4854488557959521575L;
-	static final Logger Logger = LogManager.getLogger(GTTilePlot.class.getName());
+	static final Logger Logger = LogManager.getLogger(GTTilePlotPanel.class.getName());
 	// pull declaration of all other components from constructor to here as class-level data members
 	private GridBagLayout gbl_contentPane;	// overall layout manager
 	private GridBagConstraints c;
@@ -806,7 +806,7 @@ public class GTTilePlotPanel extends JPanel {
 	public void setShowLegend(boolean aShowLegend)
 	{
 		showLegend = aShowLegend;
-		Logger.debug("showLegend now set to " + showLegend);
+		Logger.debug("showLegend now set to " + showLegend);		// test true
 	}
 	
 	/**

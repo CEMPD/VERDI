@@ -44,6 +44,7 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.swing.JMapPane;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartTheme;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
@@ -63,17 +64,21 @@ import anl.verdi.data.DataUtilities;
 import anl.verdi.formula.Formula;
 import anl.verdi.plot.config.JFreeChartConfigurator;
 import anl.verdi.plot.config.LoadConfiguration;
+import anl.verdi.plot.config.LoadTheme;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
 import anl.verdi.plot.config.SaveConfiguration;
+import anl.verdi.plot.config.SaveTheme;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 import anl.verdi.plot.config.UnitsConfigurator;
 import anl.verdi.plot.data.ScatterXYDataset;
+import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotListener;
 import anl.verdi.plot.gui.TimeLayerPanel;
 import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.plot.util.PlotPrintAction;
+import anl.verdi.plot.util.PlotProperties;
 import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;
 import anl.verdi.util.VUnits;
@@ -140,6 +145,10 @@ public class ScatterPlot extends AbstractPlot {
 		PlotConfiguration defaultConfig = getPlotConfiguration();
 		defaultConfig.merge(config);
 		configure(defaultConfig);
+		
+		/** Check if a chart theme has been loaded. */
+		ChartTheme theme = PlotProperties.getInstance().getCurrentTheme();
+		if (theme != null) theme.apply(chart);
 	}
 
 	/**
@@ -234,6 +243,22 @@ public class ScatterPlot extends AbstractPlot {
 		});
 		menu.add(new LoadConfiguration(this));
 		menu.add(new SaveConfiguration(this));
+		
+		menu.add(new LoadTheme(this, chart));
+		
+		menu.add(new AbstractAction("Edit Chart Theme") {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -2596112858319312136L;
+
+			public void actionPerformed(ActionEvent e) {
+				panel.doEditChartTheme();
+			}
+		});
+		
+		menu.add(new SaveTheme(this));
+		
 		bar.add(menu);
 
 		menu = new JMenu("Controls");
@@ -440,8 +465,10 @@ public class ScatterPlot extends AbstractPlot {
 		}
 
 		UnitsConfigurator unitsConfig = new UnitsConfigurator() {
-			public void configureUnits(String text, Font font, Color color) {
+
+			public void configureUnits(Boolean showLegend, String text, Font font, Color color) {
 				LegendTitle legend = chart.getLegend();
+				legend.setVisible(showLegend);
 				if (!text.equals(dataset.getSeriesKey(0))) {
 					dataset.setSeriesKey(0, text);
 				}
@@ -479,6 +506,7 @@ public class ScatterPlot extends AbstractPlot {
 		PlotConfiguration config = new PlotConfiguration();
 		config = titlesLabels.getConfiguration(config);
 
+		config.putObject(PlotConfiguration.LEGEND_SHOW, chart.getLegend().isVisible());
 		config.putObject(PlotConfiguration.UNITS, dataset.getSeriesKey(0));
 		config.putObject(PlotConfiguration.UNITS_FONT, chart.getLegend()
 				.getItemFont());
