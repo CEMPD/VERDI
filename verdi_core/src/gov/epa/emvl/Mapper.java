@@ -77,8 +77,7 @@ public class Mapper {
 	public void draw(final double[][] domain, final double[][] gridBounds,
 			final CoordinateReferenceSystem gridCRS, final Graphics graphics, int xOffset,
 			int yOffset, int width, int height, boolean withHucs,
-			boolean withRivers, boolean withRoads,
-			JMapPane myMapPane, MapContent myMapContent) {
+			boolean withRivers, boolean withRoads) {
 		// 2015 get to this upon completion of gov.epa.emvl.TilePlot - all done with TilePlot.draw
 		// gov.epa.emvl.Projector projector: projection of the overall map to be drawn
 		// java.awt.Graphics graphics
@@ -92,25 +91,6 @@ public class Mapper {
 		// myMapPane: trying for reference to the JMapPane of the calling FastTilePlot
 		// myMapContent: current MapContent for all of the shapefiles to be drawn on the FastTilePlot
 		Logger.debug("in Mapper.draw function; number of layers = " + layers.size());
-
-		// BEGIN SECTION FOR TESTING
-		// HERE USE myMapPane
-		Logger.debug("in Mapper.draw; existing JMapPane = " + myMapPane.toString());
-		ReferencedEnvelope bMPReferencedEnvelope = myMapPane.getDisplayArea();
-		ReferencedEnvelope aMCRefEnv = myMapContent.getMaxBounds();
-		double bminX = bMPReferencedEnvelope.getMinX();
-		double bminY = bMPReferencedEnvelope.getMinY();
-		double bmaxX = bMPReferencedEnvelope.getMaxX();
-		double bmaxY = bMPReferencedEnvelope.getMaxY();
-		Logger.debug("and its ReferencedEnvelope = (" + bminX + ", " + bmaxX + ", " + bminY + ", " + bmaxY + ")");
-		Logger.debug("and its current CRS = " + bMPReferencedEnvelope.getCoordinateReferenceSystem());
-		double cminX = aMCRefEnv.getMinX();
-		double cminY = aMCRefEnv.getMinY();
-		double cmaxX = aMCRefEnv.getMaxX();
-		double cmaxY = aMCRefEnv.getMaxY();
-		Logger.debug("myMapContent has current ReferencedEnvelope = (" + cminX + ", " + cmaxX + ", " + cminY + ", " + cmaxY + ")");
-		Logger.debug("and its current CRS = " + aMCRefEnv.getCoordinateReferenceSystem());
-		// END SECTION FOR TESTING
 
 		VerdiBoundaries aVerdiBoundaries = new VerdiBoundaries();
 		aVerdiBoundaries = chooseMap(domain); // based on map range assigns base map as
@@ -127,7 +107,6 @@ public class Mapper {
 			// List<VerdiBoundaries> does not yet include this shapefile
 			Logger.debug("have to add base map to layers");	// OK to here
 			layers.add(aVerdiBoundaries);	// do not need call to addLayer - already has a VerdiBoundaries object for List
-			myMapContent.addLayers(aVerdiBoundaries.getMap().layers());
 			Logger.debug("number of layers now = " + layers.size());	// now = 1
 			initialDraw = false;
 		}
@@ -135,49 +114,18 @@ public class Mapper {
 		if (layers.contains(hucsMap) && !withHucs)	// if have HUCs layer and don't want it
 		{
 			layers.remove(hucsMap);
-			myMapContent.removeLayer(hucsMap.getMap().layers().get(0));
 		}
 
 		if (layers.contains(riversMap) && !withRivers)	// if have Rivers layer and don't want it
 		{
 			layers.remove(riversMap);
-			myMapContent.removeLayer(riversMap.getMap().layers().get(0));
 		}
 
 		if (layers.contains(roadsMap) && !withRoads)	// if have Roads layer and don't want it
 		{
 			layers.remove(roadsMap);
-			myMapContent.removeLayer(roadsMap.getMap().layers().get(0));
 		}
 		Logger.debug("number of layers now = " + layers.size());	// now = 1
-
-		// BEGIN SECTION FOR TESTING
-		// HERE USE myMapPane
-		Logger.debug("in Mapper.draw; existing JMapPane = " + myMapPane.toString());
-		ReferencedEnvelope bMPReferencedEnvelope1 = myMapPane.getDisplayArea();
-		bminX = bMPReferencedEnvelope1.getMinX();
-		bminY = bMPReferencedEnvelope1.getMinY();
-		bmaxX = bMPReferencedEnvelope1.getMaxX();
-		bmaxY = bMPReferencedEnvelope1.getMaxY();
-		Logger.debug("and its ReferencedEnvelope = (" + bminX + ", " + bmaxX + ", " + bminY + ", " + bmaxY + ")");
-		Logger.debug("and its current CRS = " + bMPReferencedEnvelope1.getCoordinateReferenceSystem());
-		Logger.debug("prior to setting myMapPane to myMapContent, myMapContent = " + myMapContent);
-		// END SECTION FOR TESTING
-		
-		myMapPane.setMapContent(myMapContent); 		// update JMapPane to new MapContent // LOSE VALUES OF DISPLAY AREA HERE !!!
-//		myMapPane.drawLayers(true);					// can't get drawLayers to be visible
-
-		// BEGIN SECTION FOR TESTING
-		// HERE USE myMapPane
-		Logger.debug("in Mapper.draw prior to looping through VerdiBoundaries; existing JMapPane = " + myMapPane.toString());
-		ReferencedEnvelope bMPReferencedEnvelope11 = myMapPane.getDisplayArea();
-		bminX = bMPReferencedEnvelope11.getMinX();
-		bminY = bMPReferencedEnvelope11.getMinY();
-		bmaxX = bMPReferencedEnvelope11.getMaxX();
-		bmaxY = bMPReferencedEnvelope11.getMaxY();
-		Logger.debug("and its ReferencedEnvelope = (" + bminX + ", " + bmaxX + ", " + bminY + ", " + bmaxY + ")");
-		Logger.debug("and its current CRS = " + bMPReferencedEnvelope11.getCoordinateReferenceSystem());
-		// END SECTION FOR TESTING
 
 		// start looping through the VerdiBoundaries
 		for (VerdiBoundaries layer : layers) {
@@ -210,17 +158,6 @@ public class Mapper {
 			graphics.setColor(mapColor); // to reset graphics color
 			Logger.debug("just reset graphics color to: " + mapColor);	// OK here
 		}
-		// BEGIN SECTION FOR TESTING
-		// HERE USE myMapPane
-		Logger.debug("in Mapper.draw after finished with VerdiBoundaries loop; existing JMapPane = " + myMapPane.toString());
-		ReferencedEnvelope bMPReferencedEnvelope111 = myMapPane.getDisplayArea();
-		bminX = bMPReferencedEnvelope111.getMinX();
-		bminY = bMPReferencedEnvelope111.getMinY();
-		bmaxX = bMPReferencedEnvelope111.getMaxX();
-		bmaxY = bMPReferencedEnvelope111.getMaxY();
-		Logger.debug("and its ReferencedEnvelope = (" + bminX + ", " + bmaxX + ", " + bminY + ", " + bmaxY + ")");
-		Logger.debug("and its current CRS = " + bMPReferencedEnvelope111.getCoordinateReferenceSystem());
-		// END SECTION FOR TESTING
 	}
 
 	// Choose a map based on a domain.

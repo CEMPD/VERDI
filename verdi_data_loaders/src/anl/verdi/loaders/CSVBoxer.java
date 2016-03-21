@@ -86,6 +86,10 @@ public class CSVBoxer implements BoundingBoxer {
 	public Projection getProjection() {
 		return null;
 	}
+	
+	public CoordinateReferenceSystem getCRS() {
+		return crs;
+	}
 
 	private CoordinateReferenceSystem getLambert() {
 		try {

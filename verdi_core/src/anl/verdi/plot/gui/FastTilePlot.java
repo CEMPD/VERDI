@@ -150,9 +150,9 @@ import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;
 
-//import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Envelope;
 
-public class FastTilePlot extends FastTilePlotPanel implements ActionListener, Printable,	// had been JPanel
+public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		ChangeListener, ComponentListener, MouseListener,
 		TimeAnimatablePlot, Plot {
 	private final MapContent myMapContent = new MapContent();	// JEB Nov 2015
@@ -589,12 +589,12 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 //									aPlotUnits, 
 //									config, aNumberFormat, gridLineColor,
 //									subsetLayerData);
-//							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
-//									width, height, stepsLapsed, layer, firstRow + rowOrigin,
-//									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
-//									legendColors, axisColor, labelColor, plotVariable,
-//									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
-//									subsetLayerData);
+							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
+									width, height, stepsLapsed, layer, firstRow + rowOrigin,
+									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
+									legendColors, axisColor, labelColor, plotVariable,
+									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
+									subsetLayerData);
 						} catch (Exception e) {
 							Logger.error("FastTilePlot's run method " + e.getMessage());
 						}
@@ -610,29 +610,14 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							continue;		// goes to while drawMode != DRAW_END
 						}
 						
-						
-						// BEGIN SECTION FOR TESTING
-						Logger.debug("in FastTilePlot (617); preparing to call mapper.draw; existing JMapPane = " + getMapPane().toString());
-						ReferencedEnvelope aMPReferencedEnvelope = getMapPane().getDisplayArea();
-						double minX = aMPReferencedEnvelope.getMinX();
-						double minY = aMPReferencedEnvelope.getMinY();
-						double maxX = aMPReferencedEnvelope.getMaxX();
-						double maxY = aMPReferencedEnvelope.getMaxY();
-						Logger.debug("and its ReferencedEnvelope = (" + minX + ", " + maxX + ", " + minY + ", " + maxY + ")");
-						Logger.debug("and its current CRS = " + aMPReferencedEnvelope.getCoordinateReferenceSystem());
-						// END SECTION FOR TESTING
-
-						
 						// NOTE: mapper.draw calls VerdiBoundaries.draw
-						mapper.draw(domain, gridBounds, gridCRS,	// NOTE: JEB 
+						mapper.draw(domain, gridBounds, gridCRS,	// NOTE: JEB
 																	// 1st time here gridCRS is baseCRS: DefaultGeographicCRS
 																	// conversionFromBase: DefaultConicProjection
 																	// coordinateSystem: DefaultCartesianCS
 																	// datum: DefaultGeodeticDatum
 								offScreenGraphics, xOffset, yOffset, width,
-								height, withHucs, withRivers, withRoads,
-								getMapPane(), myMapContent);
-
+								height, withHucs, withRivers, withRoads);
 						Logger.debug("back from mapper.draw, ready to check for ObsAnnotation");
 						
 						if (obsAnnotations != null) {
@@ -658,18 +643,6 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							Logger.debug("back from toBufferedImage, ready to call graphics.drawImage");
 							graphics.drawImage(offScreenImage, 0, 0,threadParent);
 							Logger.debug("back from graphics.drawImage");
-				
-							// BEGIN SECTION FOR TESTING
-							Logger.debug("in FastTilePlot; existing JMapPane = " + getMapPane().toString());
-							ReferencedEnvelope bMPReferencedEnvelope = getMapPane().getDisplayArea();
-							double bminX = bMPReferencedEnvelope.getMinX();
-							double bminY = bMPReferencedEnvelope.getMinY();
-							double bmaxX = bMPReferencedEnvelope.getMaxX();
-							double bmaxY = bMPReferencedEnvelope.getMaxY();
-							Logger.debug("and its ReferencedEnvelope = (" + bminX + ", " + bmaxX + ", " + bminY + ", " + bmaxY + ")");
-							Logger.debug("and its current CRS = " + bMPReferencedEnvelope.getCoordinateReferenceSystem());
-							// END SECTION FOR TESTING
-
 						} finally {
 							graphics.dispose();
 							Logger.debug("just did graphics.dispose in finally block");
@@ -778,7 +751,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		Logger.debug("plotUnits = " + plotUnits);
 		final int stepsLapsed = timestep - firstTimestep;
 		try {
-			tilePlot.drawBatchImage(offScreenGraphics,(FastTilePlotPanel)this, 
+			tilePlot.drawBatchImage(offScreenGraphics,
 					xOffset, yOffset,
 					canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
 					lastRow, firstColumn, lastColumn, legendLevels,
@@ -798,8 +771,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		Logger.debug("in FastTilePlot (797); getting ready to call mapper.draw");
 		mapper.draw(domain, gridBounds, gridCRS,
 				offScreenGraphics, xOffset, yOffset, tilePlot.getPlotWidth(),
-				tilePlot.getPlotHeight(), withHucs, withRivers, withRoads,
-				getMapPane(), myMapContent);
+				tilePlot.getPlotHeight(), withHucs, withRivers, withRoads);
 
 		try {
 			bImage = (BufferedImage) offScreenImage;
@@ -1308,10 +1280,10 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	// Construct but do not draw yet.
 
 	public FastTilePlot(VerdiApplication app, DataFrame dataFrame) {
-		super();		// calls constructor of FastTilePlotPanel
+		super(true);
 //		this.setRenderer(new StreamingRenderer());
 		this.app=app;
-		setDoubleBuffered(false);	// JEB Sept 2015  had been set to true
+		setDoubleBuffered(true);
 		assert dataFrame != null;
 		this.dataFrame = dataFrame;
 		
@@ -1373,6 +1345,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			projector = new Projector(projection);
 			Logger.debug("projector set to: " + projector.toString());
 		}
+		gridCRS = coordinateAxes.getBoundingBoxer().getCRS();
 
 		// Initialize grid dimensions: timesteps, layers, rows, columns:
 
@@ -1409,14 +1382,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		columnOrigin = columnAxis != null ? columnAxis.getOrigin() : 0;
 		firstColumn = 0;
 		lastColumn = firstColumn + columns - 1;
-		final ReferencedEnvelope envelope = axes.getBoundingBox(dataFrame.getDataset().get(0).getNetcdfCovn());
-		getMapPane().setDisplayArea(envelope);	// 2015 sets Referenced Envelope and CRS in the JMapPane
-		gridCRS = envelope.getCoordinateReferenceSystem();
-		MapViewport myMapViewport = new MapViewport(envelope);	// not actually setting the bounds this way
-		myMapViewport.setBounds(envelope);	// so try it this way
-		myMapViewport.setCoordinateReferenceSystem(gridCRS);
-		myMapContent.setViewport(myMapViewport); 	// sets the MapContent with the MapViewport based on the axes
-		
+		final Envelope envelope = axes.getBoundingBox(dataFrame.getDataset().get(0).getNetcdfCovn());
+
 		westEdge = envelope.getMinX(); // E.g., -420000.0.
 		southEdge = envelope.getMinY(); // E.g., -1716000.0.
 //		cellWidth = Numerics.round1(envelope.getWidth() / columns); // 12000.0.
@@ -1913,8 +1880,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	 * @return the panel that contains the plot component.
 	 */
 
-	public JPanel getPane() {	
-		return (JPanel)this;
+	public JPanel getPanel() {
+		return this;
 	}
 
 	/**
@@ -2092,7 +2059,6 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		// change cursor for initial zoom state
 		setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 		
-		super.setBar(bar);	// update the JMenuBar bar in FastTilePlotPanel
 		return bar;
 	}
 	
@@ -2306,88 +2272,67 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		try {
 			if (show && layerKey.equals(STATES_LAYER)) {
 				VerdiBoundaries map2Add = mapper.getUsaStatesMap();
-				myMapContent.addLayers(map2Add.getMap().layers());
 				mapper.getLayers().add(map2Add);
 			}
 
 			if (!show && layerKey.equals(STATES_LAYER)) {
-				VerdiBoundaries map2Remove = mapper.getUsaStatesMap();
-				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));	// assume 1st layer
 				mapper.removeUsaStates();
 			}
 			
 			if (show && layerKey.equals(COUNTIES_LAYER)) {
 				VerdiBoundaries map2Add = mapper.getUsaCountiesMap();
-				myMapContent.addLayers(map2Add.getMap().layers());
 				mapper.getLayers().add(map2Add);
 			}
 
 			if (!show && layerKey.equals(COUNTIES_LAYER)) {
-				VerdiBoundaries map2Remove = mapper.getUsaCountiesMap();
-				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));
 				mapper.removeUsaCounties();
 			}
 
 			if (show && layerKey.equals(WORLD_LAYER)) {
 				VerdiBoundaries map2Add = mapper.getWorldMap();
-				myMapContent.addLayers(map2Add.getMap().layers());
 				mapper.getLayers().add(map2Add);
 			}
 
 			if (!show && layerKey.equals(WORLD_LAYER)) {
-				VerdiBoundaries map2Remove = mapper.getWorldMap();
-				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));
 				mapper.removeWorld();
 			}
 
 			if (show && layerKey.equals(NA_LAYER)) {
 				VerdiBoundaries map2Add = mapper.getNorthAmericaMap();
-				myMapContent.addLayers(map2Add.getMap().layers());
 				mapper.getLayers().add(map2Add);
 			}
 
 			if (!show && layerKey.equals(NA_LAYER)) {
-				VerdiBoundaries map2Remove = mapper.getNorthAmericaMap();
-				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));
 				mapper.removeNorthAmerica();
 			}
 
 			if (show && layerKey.equals(HUCS)) {
 				withHucs = show;
-				myMapContent.addLayers(mapper.getUSHucMap().getMap().layers());
 				mapper.getLayers().add(mapper.getUSHucMap());
 			}
 			
 			if (!show && layerKey.equals(HUCS)) {
 				withHucs = show;
-				VerdiBoundaries map2Remove = mapper.getUSHucMap();
-				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));
 				mapper.removeUSHucMap();
 			}
 
 			if (show && layerKey.equals(RIVERS)) {
 				withRivers = show;
-				myMapContent.addLayers(mapper.getUSRiversMap().getMap().layers());
 				mapper.getLayers().add(mapper.getUSRiversMap());
 			}
 			
 			if (!show && layerKey.equals(RIVERS)) {
 				withRivers = show;
-				VerdiBoundaries map2Remove = mapper.getUSRiversMap();
-				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));
 				mapper.removeUSRiversMap();
 			}
 
 			if (show && layerKey.equals(ROADS)) {
 				withRoads = show;
-				myMapContent.addLayers(mapper.getUSRoadsMap().getMap().layers());
 				mapper.getLayers().add(mapper.getUSRoadsMap());
 			}
 			
 			if (!show && layerKey.equals(ROADS)) {
 				withRoads = show;
-				VerdiBoundaries map2Remove = mapper.getUSRoadsMap();
-				myMapContent.removeLayer(map2Remove.getMap().layers().get(0));
 				mapper.removeUSRoadsMap();
 			}
 			
@@ -2397,7 +2342,6 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				VerdiBoundaries aVerdiBoundaries = new VerdiBoundaries();
 				aVerdiBoundaries.setFileName(selectFile.getAbsolutePath());
 				mapper.getLayers().add(aVerdiBoundaries);
-				myMapContent.addLayers(aVerdiBoundaries.getMap().layers());
 			}
 			draw();
 		} catch (Exception e) {
@@ -2431,7 +2375,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	 */
 
 	public JToolBar getToolBar() {
-		return super.getToolBar();	// in anl.verdi.plot.gui.FastTilePlotPanel
+		return toolBar;
 	}
 
 	/**
@@ -3347,7 +3291,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		}
 		
 	}
-
+	
 //	public void exportShapefileOld( String baseFileName ) throws IOException {		// 2014 appears to not be used
 //		final int subsetLayerRows = 1 + lastRow - firstRow;
 //		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
@@ -3360,7 +3304,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 //									cellWidth, cellHeight,
 //									filteredVariableName, subsetLayerData, projector );
 //	}
-	
+
 //	2014 called from anl.verdi.plot.util.PlotExporter; disabling exporting of Shapefiles for VERDI v1.5.0
 	//	public void exportShapefile( String baseFileName ) throws IOException {
 //		final int subsetLayerRows = 1 + lastRow - firstRow;
@@ -3474,26 +3418,25 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 					: config.getObject( TilePlotConfiguration.GRID_LINE_COLOR ) );
 				
 			final int stepsLapsed = timestep - firstTimestep;
-//			try {tilePlot.drawBatchImage(g, (FastTilePlotPanel) this,
-//						xOffset, yOffset,
-//							canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
-//							lastRow, firstColumn, lastColumn, legendLevels,
-//							legendColors, axisColor, labelColor, variable,
-//							((units==null || units.trim().equals("")) ? "none" : units), config, map.getNumberFormat(), gridLineColor,
-//							subsetLayerData);
-//			} catch (Exception e) {
-//				Logger.error("Exception in FastTilePlot.Draw (EpsRenderer's draw method): " + e.getMessage());
-//				e.printStackTrace();
-//				return;
-//			}
+			try {tilePlot.drawBatchImage(g,
+						xOffset, yOffset,
+							canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
+							lastRow, firstColumn, lastColumn, legendLevels,
+							legendColors, axisColor, labelColor, variable,
+							((units==null || units.trim().equals("")) ? "none" : units), config, map.getNumberFormat(), gridLineColor,
+							subsetLayerData);
+			} catch (Exception e) {
+				Logger.error("Exception in FastTilePlot.Draw (EpsRenderer's draw method): " + e.getMessage());
+				e.printStackTrace();
+				return;
+			}
 				
 			// Draw projected/clipped map border lines over grid cells:
 			// NOTE: mapper.draw calls VerdiBoundaries.draw
 			Logger.debug("in FastTilePlot (3457) getting ready to call mapper.draw");
 			mapper.draw(domain, gridBounds, gridCRS,
 						g, xOffset, yOffset, tilePlot.getPlotWidth(),
-						tilePlot.getPlotHeight(), withHucs, withRivers, withRoads,
-						getMapPane(), myMapContent);
+						tilePlot.getPlotHeight(), withHucs, withRivers, withRoads);
 			
 			if (obsAnnotations != null) {
 				for (ObsAnnotation ann : obsAnnotations)
@@ -3511,13 +3454,6 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	// get the JMapPane portion (the mapping rectangle containing the raster and shapefiles) of the FastTilePlot
 	public JMapPane getMapPane()
 	{
-		return getMap(); 
-	}
-	
-	// get the JPanel portion (the entire panel) of the FastTilePlot
-	public JPanel getEntirePane()
-	{
-//		return getContentPane(); 
 		return null;
 	}
 
@@ -3689,8 +3625,4 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		return draw_once_requests;
 	}
 
-	@Override
-	public JPanel getPanel() {
-		return getEntirePane();
-	}
 }
