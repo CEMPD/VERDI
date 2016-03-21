@@ -454,22 +454,12 @@
 			<parameter id="class" value=""/>
 		</parameter>
 
-        <!--
 		<parameter id="actionSpec">
-			<parameter id="actionID" value="anl.verdi.plot.gui.action.TilePlot"/>
-			<parameter id="label" value="Tile Plot"/>
-			<parameter id="class" value="anl.verdi.plot.gui.action.TilePlot"/>
-			<parameter id="groupID" value="runGraph"/>
-			<parameter id="tooltip" value="Tile Plot"/>
-		</parameter>
-		-->
-		
-		<parameter id="actionSpec">
-          	<parameter id="actionID" value="anl.verdi.plot.gui.action.GTTilePlotAction"/>
+          	<parameter id="actionID" value="anl.verdi.plot.gui.action.FastTilePlot"/>
             <parameter id="label" value="Tile Plot"/>
-            <parameter id="class" value="anl.verdi.plot.gui.action.GTTilePlotAction"/>
+            <parameter id="class" value="anl.verdi.plot.gui.action.FastTilePlot"/>
             <parameter id="groupID" value="runGraph"/>
-            <parameter id="tooltip" value="GeoTools Tile Plot"/>
+            <parameter id="tooltip" value="Tile Plot"/>
         </parameter>
         
         <parameter id="actionSpec">
