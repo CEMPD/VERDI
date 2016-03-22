@@ -420,7 +420,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 		barManager.getToolBarComponent(VerdiConstants.TIME_SERIES_LINE_BUTTON_ID).setEnabled(enabled);
 		barManager.getToolBarComponent(VerdiConstants.TIME_SERIES_BAR_BUTTON_ID).setEnabled(enabled);
 		barManager.getToolBarComponent(VerdiConstants.CONTOUR_BUTTON_ID).setEnabled(enabled);
-		Logger.debug("VerdiConstants.GT_TILE_BUTTON_ID = " + VerdiConstants.GT_TILE_BUTTON_ID);
+//		Logger.debug("VerdiConstants.GT_TILE_BUTTON_ID = " + VerdiConstants.GT_TILE_BUTTON_ID);
 		barManager.getToolBarComponent(VerdiConstants.FAST_TILE_BUTTON_ID).setEnabled(enabled);
 	}
 
