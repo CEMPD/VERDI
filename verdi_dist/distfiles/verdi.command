@@ -1,10 +1,12 @@
 #! /bin/sh
-export VERDI_HOME=${PWD}
-DIR=`pwd`
+
+export VERDI_HOME=$(cd "$(dirname "$0")"; pwd)
+
+DIR=$VERDI_HOME
 cd $VERDI_HOME/plugins/bootstrap
 
 
-JAVA=../../jre/Commands/java
+JAVA=../../jre/Contents/Home/bin/java
 JAVAMAXMEM="-Xmx1024M"
 
 

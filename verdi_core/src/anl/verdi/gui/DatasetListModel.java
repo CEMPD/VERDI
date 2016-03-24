@@ -90,6 +90,7 @@ public class DatasetListModel extends AbstractListModel {
 		datasets.remove(index);
 		fireIntervalRemoved(this, index, index);
 		fireDatasetRemoved(item.getDataset());
+		item.close();
 	}
 
 	public void removeDatasetAt(int index) {

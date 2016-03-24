@@ -50,4 +50,8 @@ public class LoadConfiguration extends AbstractAction {
 		}
 	}
 	
+	public void close() {
+		plot = null;
+	}
+	
 }

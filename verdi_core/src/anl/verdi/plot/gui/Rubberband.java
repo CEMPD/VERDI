@@ -54,6 +54,11 @@ public class Rubberband {
     public void setActive(boolean b) {
         active = b;
     }
+    
+    public void close() {
+    	setActive(false);
+    	component = null;
+    }
 
     public void setComponent(Component c) {
         component = c;

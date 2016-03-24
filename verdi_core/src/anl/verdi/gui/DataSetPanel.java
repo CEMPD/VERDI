@@ -322,6 +322,7 @@ public class DataSetPanel extends JPanel {
 				Variable variable = (Variable) variableList
 						.getModel().getElementAt(index);
 				
+<<<<<<< HEAD
 				CoordAxis timeAxis = ((MultiAxisDataset)ds).getTimeAxis(variable.getName());
 				if (timeAxis != null) {
 					element.setTimeMin((int)timeAxis.getRange().getOrigin());
@@ -330,6 +331,8 @@ public class DataSetPanel extends JPanel {
 					element.setTimeMin(DatasetListElement.NO_TIME_VALUE);
 					element.setTimeMax(DatasetListElement.NO_TIME_VALUE);
 				}
+=======
+>>>>>>> branch 'verdi_mpas' of https://github.com/CEMPD/VERDI
 				CoordAxis zAxis = ((MultiAxisDataset)ds).getZAxis(variable.getName());
 				if (zAxis != null) {
 					element.setLayerMin((int)zAxis.getRange().getOrigin());
