@@ -10,7 +10,7 @@ import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.MPASCellAxis;
-import anl.verdi.data.MultiLayerDataset;
+import anl.verdi.data.MultiAxisDataset;
 import anl.verdi.formula.FormulaVariable;
 
 /**
@@ -38,8 +38,8 @@ public class FormulaListElement extends AbstractListElement {
 
 		if (variables.size() > 0) {
 			Dataset ds = variables.get(0).getDataset();
-			if (ds instanceof MultiLayerDataset) {
-				zAxis = ((MultiLayerDataset)ds).getZAxis(variables.get(0).getName());
+			if (ds instanceof MultiAxisDataset) {
+				zAxis = ((MultiAxisDataset)ds).getZAxis(variables.get(0).getName());
 			}
 			else {
 				zAxis = getAxisForVariable(variables.get(0));

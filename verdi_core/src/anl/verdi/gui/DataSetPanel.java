@@ -13,10 +13,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -59,8 +57,7 @@ import anl.verdi.core.Project;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.Dataset;
-import anl.verdi.data.MPASCellAxis;
-import anl.verdi.data.MultiLayerDataset;
+import anl.verdi.data.MultiAxisDataset;
 import anl.verdi.data.Variable;
 import anl.verdi.util.FocusClickFix;
 import anl.verdi.util.Tools;
@@ -316,7 +313,7 @@ public class DataSetPanel extends JPanel {
 				DatasetListElement element = (DatasetListElement) dataList
 							.getModel().getElementAt(index);
 				Dataset ds = element.getDataset();
-				if (!(ds instanceof MultiLayerDataset))
+				if (!(ds instanceof MultiAxisDataset))
 					return;
 				
 				index = variableList.getSelectedIndex();
@@ -325,7 +322,7 @@ public class DataSetPanel extends JPanel {
 				Variable variable = (Variable) variableList
 						.getModel().getElementAt(index);
 				
-				CoordAxis zAxis = ((MultiLayerDataset)ds).getZAxis(variable.getName());
+				CoordAxis zAxis = ((MultiAxisDataset)ds).getZAxis(variable.getName());
 				if (zAxis != null) {
 					element.setLayerMin((int)zAxis.getRange().getOrigin());
 					element.setLayerMax((int)zAxis.getRange().getExtent() - 1);
@@ -333,6 +330,7 @@ public class DataSetPanel extends JPanel {
 					element.setLayerMin(DatasetListElement.NO_LAYER_VALUE);
 					element.setLayerMax(DatasetListElement.NO_LAYER_VALUE);
 				}
+				setTimeValues(element);
 				setLayerValues(element, zAxis);
 			}
 
@@ -405,7 +403,6 @@ public class DataSetPanel extends JPanel {
 							if (result == JOptionPane.NO_OPTION)
 								continue;
 						}
-
 						listModel.removeDataset(item);
 						project.removeFormulas(formulas);
 					}
