@@ -14,6 +14,10 @@ public class ArrayDoubleReader extends ArrayReader {
 			dimensions = 2;
 	}
 	
+	public double get(int d1) {
+		return ((ArrayDouble.D1)array).get(d1);
+	}
+	
 	public double get(int d1, int d2) {
 		return ((ArrayDouble.D2)array).get(d1, d2);
 	}

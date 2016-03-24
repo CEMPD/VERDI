@@ -1022,6 +1022,15 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		config = null;
 		controlLayer = null;
 		
+		//TODO - re-enable to fix memory leaks
+		/*
+		renderVariable = null;
+		
+		loadConfig.close();
+		saveConfig.close();
+		rubberband.close();
+		*/
+		
 	}
 	public void viewFloated(DockableFrameEvent unused_ ) { }
 	public void viewRestored(DockableFrameEvent unused_ ) { }		
@@ -1567,8 +1576,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 		
 		public double getValue() {
-			if (timeAxis == null)
-				return renderVariable.get(cellId, MeshPlot.this.layer - firstLayer);
+			if (timeAxis == null) {
+				if (layerAxis != null)
+					return renderVariable.get(cellId, MeshPlot.this.layer - firstLayer);
+				return renderVariable.get(cellId);
+			}
 			else if (renderVariable.getRank() == 3)
 				return renderVariable.get(MeshPlot.this.timestep - firstTimestep, cellId, MeshPlot.this.layer - firstLayer);
 			else
@@ -1672,6 +1684,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private Map<CellInfo, Integer> splitCells = null;
 	
 	ArrayReader renderVariable = null;
+	
+	LoadConfiguration loadConfig = null;
+	SaveConfiguration saveConfig = null;
 	
 	ucar.ma2.ArrayInt.D2 vertexList;
 	double latMin = Double.MAX_VALUE;
@@ -2539,8 +2554,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				editChartProperties();
 			}
 		});
-		menu.add(new LoadConfiguration(this));
-		menu.add(new SaveConfiguration(this));
+		loadConfig = new LoadConfiguration(this);
+		saveConfig = new SaveConfiguration(this);
+		menu.add(loadConfig);
+		menu.add(saveConfig);
 		//configureMapMenu(menu);
 		bar.add(menu);
 

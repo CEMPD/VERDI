@@ -126,9 +126,9 @@ public class Axes<T extends CoordAxis> {
 	 *         the time axis units.
 	 */
 	public GregorianCalendar getDate(long timestep) {
-		GregorianCalendar aGregorianCalendar = ((TimeCoordAxis)timeAxis).getDate((int) timestep);
-		if (timeAxis != null) return aGregorianCalendar; // ((TimeCoordAxis)timeAxis).getDate((int) timestep);
-		return null;
+		if (timeAxis == null)
+			return null;
+		return ((TimeCoordAxis)timeAxis).getDate((int) timestep);
 	}
 
 	/**

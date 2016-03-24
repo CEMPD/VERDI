@@ -18,6 +18,8 @@ public abstract class ArrayReader {
 	
 	public abstract int getRank();
 	
+	public abstract double get(int d1);
+	
 	public abstract double get(int d1, int d2);
 	
 	public abstract double get(int d1, int d2, int d3);
