@@ -322,6 +322,14 @@ public class DataSetPanel extends JPanel {
 				Variable variable = (Variable) variableList
 						.getModel().getElementAt(index);
 				
+				CoordAxis timeAxis = ((MultiAxisDataset)ds).getTimeAxis(variable.getName());
+				if (timeAxis != null) {
+					element.setTimeMin((int)timeAxis.getRange().getOrigin());
+					element.setTimeMax((int)timeAxis.getRange().getExtent() - 1);
+				} else {
+					element.setTimeMin(DatasetListElement.NO_TIME_VALUE);
+					element.setTimeMax(DatasetListElement.NO_TIME_VALUE);
+				}
 				CoordAxis zAxis = ((MultiAxisDataset)ds).getZAxis(variable.getName());
 				if (zAxis != null) {
 					element.setLayerMin((int)zAxis.getRange().getOrigin());
