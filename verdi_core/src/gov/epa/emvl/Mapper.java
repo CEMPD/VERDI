@@ -33,12 +33,12 @@ public class Mapper {
 	private static final int MAXIMUM = 1;
 	// 2015 removed ".bin" from hard-coded file names & replaced with ".shp"
 	private static final String worldMapFileName = "map_world.shp";		// OK as Shapefile	
-	private static final String northAmericaMapFileName = "map_na.shp";	// OK as Shapefile
-	private static final String stateMapFileName = "ne_50m_admin_1_states_provinces_lakes/ne_50m_admin_1_states_provinces_lakes.shp";
-	private static final String countyMapFileName = "map_counties.shp";	// OK as Shapefile
+	private static final String northAmericaMapFileName = "ne_50m_admin_1_states_provinces_lakes/ne_50m_admin_1_states_provinces_lakes.shp";	// OK as Shapefile
+	private static final String stateMapFileName = "map_state/tl_2015_us_state.shp";
+	private static final String countyMapFileName = "map_county/tl_2015_us_county.shp";	// OK as Shapefile
 	private static final String hucsMapFileName = "huc250k_shp/huc250k.shp";
 	private static final String riversMapFileName = "ne_10m_rivers_lake_centerlines/ne_10m_rivers_lake_centerlines.shp";
-	private static final String roadsMapFileName = "ne_10m_roads/ne_10m_roads.shp";
+	private static final String roadsMapFileName = "map_roads/tl_2015_us_primaryroads.shp";
 	private static final Color mapColor = Color.black;
 	private final String mapFileDirectory; // URL/dir containing above files.
 	private VerdiBoundaries worldMap = null;
