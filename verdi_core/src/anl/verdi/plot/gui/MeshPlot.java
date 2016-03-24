@@ -686,13 +686,15 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							tilePlot.setUseStats(preStatIndex > 0);
 							if (xTranslation != 0) {
 								offScreenGraphics.translate(xTranslation,  0);
-							}						tilePlot.draw(offScreenGraphics, xOffset, yOffset,
+							}
+							tilePlot.setTranslation(xTranslation);
+							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									screenWidth, screenHeight, stepsLapsed, MeshPlot.this.layer, aRow,
 									bRow, aCol, bCol, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
 									aPlotUnits, 
 									config, aNumberFormat, gridLineColor,
-									null, xTranslation);
+									null);
 							//Cells are sized incorrectly during the first redraw, partially due to tilePlot.getLegendBoxWidth() being wrong before
 							//tilePlot.drawLegend() first called.  Quick workaround is to draw twice.
 							//TODO - fix this.  Low priority - drawn off screen, won't cause flash, only happens once

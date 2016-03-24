@@ -105,6 +105,10 @@ public class TilePlot {
 		obsAnnotations = obsAnnot;
 	}
 	
+	public void setTranslation(int offset) {
+		xTranslation = offset;
+	}
+	
 	/**
 	 * draw - Draw a tile plot: colored rectangles with labels and legend.
 	 * @param numberFormat 
@@ -144,7 +148,7 @@ public class TilePlot {
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data, int xTranslation) 
+			final Color gridLineColor, final float[][] data) 
 	{
 		Logger.debug("in gov.epa.emvl.TilePlot.draw(lots of parameters), thread = " + Thread.currentThread().toString());
 		this.config = config;
@@ -152,7 +156,6 @@ public class TilePlot {
 		this.layer = layer;
 		this.plotWidth = width;
 		this.plotHeight = height;
-		this.xTranslation = xTranslation;
 		xMinimum = xOffset;
 		final int xMaximum = xOffset + width;
 		final int yMinimum = yOffset;
