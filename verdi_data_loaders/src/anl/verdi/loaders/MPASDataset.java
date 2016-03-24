@@ -39,7 +39,7 @@ import anl.verdi.data.DataFrame;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.DatasetMetadata;
 import anl.verdi.data.DefaultVariable;
-import anl.verdi.data.MultiLayerDataset;
+import anl.verdi.data.MultiAxisDataset;
 import anl.verdi.data.Variable;
 import anl.verdi.plot.color.Palette;
 import anl.verdi.plot.color.PavePaletteCreator;
@@ -56,7 +56,7 @@ import anl.verdi.util.VUnits;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class MPASDataset extends AbstractDataset implements MultiLayerDataset, IMPASDataset {
+public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IMPASDataset {
 	static final Logger Logger = LogManager.getLogger(MPASDataset.class.getName());
 	
 	public static final String VAR_AVG_CELL_DIAM = "verdi.avgCellDiam";
@@ -907,6 +907,7 @@ public class MPASDataset extends AbstractDataset implements MultiLayerDataset, I
 	 * Closes this dataset. It will have to be recreated to be used again.
 	 */
 	public void close() throws IOException {
+		arrayCache.clear();
 		// BUG: since gridDataset can be shared among several GridNetcdfDataset objects,
 		// it needs a reference count to avoid closing the Netcdf file when the user deletes
 		// one of the Datasets.
@@ -962,5 +963,18 @@ public class MPASDataset extends AbstractDataset implements MultiLayerDataset, I
 		if (calculator == null)
 			return null;
 		return calculator.getLayerInfo(layer, listener);
+	}
+
+	@Override
+	public CoordAxis getTimeAxis(String variable) {
+		List<CoordAxis> axisList = coordAxes.getAxes();
+		ucar.nc2.Variable var = getVariableDS(getVariable(variable));
+		Set<String> dimensions = new HashSet<String>();
+		dimensions.addAll(Arrays.asList(var.getDimensionsString().split("\\s+")));
+		for (CoordAxis axis : axisList) {
+			if (axis.getAxisType().equals(AxisType.TIME) && dimensions.contains(axis.getName()))
+				return axis;
+		}
+		return null;
 	}
 }

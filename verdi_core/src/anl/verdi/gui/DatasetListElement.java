@@ -3,7 +3,7 @@ package anl.verdi.gui;
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.Dataset;
-import anl.verdi.data.MultiLayerDataset;
+import anl.verdi.data.MultiAxisDataset;
 
 /**
  * Element in the dataset list model. Stores info about the dataset and its current ranges.
@@ -27,8 +27,8 @@ public class DatasetListElement extends AbstractListElement {
 		}
 
 		CoordAxis layer = null;
-		if (dataset instanceof MultiLayerDataset)
-			layer = ((MultiLayerDataset)dataset).getDefaultZAxis();
+		if (dataset instanceof MultiAxisDataset)
+			layer = ((MultiAxisDataset)dataset).getDefaultZAxis();
 		else
 			layer = axes.getZAxis();
 		if (layer == null) layerMin = layerMax = NO_LAYER_VALUE;
@@ -55,16 +55,27 @@ public class DatasetListElement extends AbstractListElement {
 	}
 	
 	public CoordAxis getDefaultZAxis() {
-		if (dataset instanceof MultiLayerDataset) {
-			return ((MultiLayerDataset)dataset).getDefaultZAxis();
+		if (dataset instanceof MultiAxisDataset) {
+			return ((MultiAxisDataset)dataset).getDefaultZAxis();
 		}
 		return getAxes().getZAxis();
 	}
 	
+	public CoordAxis getTimeAxisForVariable(String variable) {
+		if (dataset instanceof MultiAxisDataset) {
+			return ((MultiAxisDataset)dataset).getTimeAxis(variable);
+		}
+		return getAxes().getTimeAxis();
+	}
+	
 	public CoordAxis getZAxisForVariable(String variable) {
-		if (dataset instanceof MultiLayerDataset) {
-			return ((MultiLayerDataset)dataset).getZAxis(variable);
+		if (dataset instanceof MultiAxisDataset) {
+			return ((MultiAxisDataset)dataset).getZAxis(variable);
 		}
 		return getAxes().getZAxis();
+	}
+	
+	public void close() {
+		dataset = null;
 	}
 }

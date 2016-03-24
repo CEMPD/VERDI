@@ -259,8 +259,7 @@ public class Project {
 				int extent = max - min + 1;
 				if (timeRange == null) {
 					tAxes = axes;
-					CoordAxis timeAxis = axes.getTimeAxis();
-					timeRange = new AxisRange(timeAxis, min, extent);
+					timeRange = new AxisRange(item.getTimeAxisForVariable(var.getName()), min, extent);
 					long endIndex = timeRange.getOrigin() + (timeRange.getExtent() - 1);
 					currRange = new DateRange(axes.getDate(timeRange.getOrigin()), axes.getDate((int) endIndex));
 				} else {
