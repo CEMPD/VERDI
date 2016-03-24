@@ -23,7 +23,7 @@ import org.geotools.data.shapefile.dbf.DbaseFileWriter;
 import anl.verdi.plot.gui.MeshPlot;
 
 public final class MPASShapefileWriter {
-	static final Logger Logger = LogManager.getLogger(GridShapefileWriter.class.getName());
+	static final Logger Logger = LogManager.getLogger(MPASShapefileWriter.class.getName());
 
   private MPASShapefileWriter() {} // Non-instantiable.
 
