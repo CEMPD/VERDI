@@ -39,7 +39,6 @@ public class Mapper {
 	private static final String hucsMapFileName = "huc250k_shp/huc250k.shp";
 	private static final String riversMapFileName = "ne_10m_rivers_lake_centerlines/ne_10m_rivers_lake_centerlines.shp";
 	private static final String roadsMapFileName = "map_roads/tl_2015_us_primaryroads.shp";
->>>>>>> 0551aee78058e98a6ad47b85fd1c7fba76991a16
 	private static final Color mapColor = Color.black;
 	private final String mapFileDirectory; // URL/dir containing above files.
 	private VerdiBoundaries worldMap = null;
