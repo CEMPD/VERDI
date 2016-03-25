@@ -2727,6 +2727,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				lastColumn = Integer.valueOf(lColumnField.getText());
 				plot.resetRowsNColumns(firstRow, lastRow, firstColumn,
 						lastColumn);
+				plot.draw();
 				return YES_OPTION;
 			} catch (NumberFormatException e) {
 				Logger.error("Number Format Exception in FastTilePlot.showDialog: Set Rows and Columns: " + e.getMessage());
