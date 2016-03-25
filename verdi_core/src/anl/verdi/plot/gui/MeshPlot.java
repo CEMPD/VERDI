@@ -687,7 +687,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							if (xTranslation != 0) {
 								offScreenGraphics.translate(xTranslation,  0);
 							}
-							tilePlot.setTranslation(xTranslation);
+							tilePlot.setRenderVars(xTranslation, coordFormat);
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									screenWidth, screenHeight, stepsLapsed, MeshPlot.this.layer, aRow,
 									bRow, aCol, bCol, legendLevels,
@@ -2024,11 +2024,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		plotFormat = NumberFormat.getInstance();
 		
 		coordFormat = NumberFormat.getInstance();
-		coordFormat.setMaximumFractionDigits(5);
-
-		valueFormat = NumberFormat.getInstance();
-		valueFormat.setGroupingUsed(false);
-		valueFormat.setMaximumFractionDigits(3);
+		coordFormat.setMaximumFractionDigits(3);
 
 		AreaFinder finder = new AreaFinder();
 		this.addMouseListener(finder);
@@ -2169,6 +2165,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		//set min/max for both log and non log values...
 		map.setMinMax( plotMinMaxCache[0], plotMinMaxCache[1]);
+		try {
+			valueFormat = map.getNumberFormat();
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
 		computeDataRange(true);
 		System.err.println("Calculating log data range " + new Date());
 		map.setLogMinMax( logPlotMinMaxCache[0], logPlotMinMaxCache[1]);
@@ -3109,6 +3110,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				//so we need to make sure and pre populate just in case user changes between linear and log scales
 				computeDataRange(false);
 				map.setMinMax( minmax[0], minmax[1]);
+				try {
+					valueFormat = map.getNumberFormat();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
 			} else {
 				this.log = false;
@@ -3166,6 +3172,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
 				//so we need to make sure and pre populate just in case user changes between linear and log scales
 				map.setMinMax( plotMinMaxCache[0], plotMinMaxCache[1]);
+				try {
+					valueFormat = map.getNumberFormat();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
 			} else {
 				this.log = false;
@@ -3176,6 +3187,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
 				//so we need to make sure and pre populate just in case user changes between linear and log scales
 				map.setLogMinMax( logPlotMinMaxCache[0], logPlotMinMaxCache[1]);
+				try {
+					valueFormat = map.getNumberFormat();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			
 			updateColorMap(map);
@@ -4428,6 +4444,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			localLogMinMax[1] = statMinMaxCache[1];
 		}
 		map.setLogMinMax( localLogMinMax[0], localLogMinMax[1]);
+		try {
+			valueFormat = map.getNumberFormat();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		//this final one is for the below legend value calculations
 		if (this.log)
 			localMinMax = localLogMinMax;

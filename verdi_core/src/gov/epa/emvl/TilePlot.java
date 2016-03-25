@@ -105,10 +105,6 @@ public class TilePlot {
 		obsAnnotations = obsAnnot;
 	}
 	
-	public void setTranslation(int offset) {
-		xTranslation = offset;
-	}
-	
 	/**
 	 * draw - Draw a tile plot: colored rectangles with labels and legend.
 	 * @param numberFormat 

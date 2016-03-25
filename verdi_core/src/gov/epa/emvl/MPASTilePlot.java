@@ -28,6 +28,8 @@ public class MPASTilePlot extends TilePlot {
 	double[] statMinMaxValues;
 	double[] currentMinMaxValues;
 	
+	NumberFormat plotFormat;
+	
 	private static NumberFormat percentFormat = NumberFormat.getInstance();
 	static {
 		percentFormat.setMaximumFractionDigits(2);
@@ -244,13 +246,18 @@ public class MPASTilePlot extends TilePlot {
 			suffix = " (Loading, " + percentFormat.format(plotMinMaxValues[MeshPlot.PLOT_CACHE_PERCENT_COMPLETE]) + "% complete)";
 		}
 
-		return "Min (" + gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_LON]) + ", "
-				+ gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_LAT]) + ") = "
+		return "Min (" + plotFormat.format(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_LON]) + ", "
+				+ plotFormat.format(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_LAT]) + ") = "
 				+ gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_VALUE]) + ", "
-				+ "Max (" + gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_LON]) + ", "
-				+ gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_LAT]) + ") = " 
+				+ "Max (" + plotFormat.format(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_LON]) + ", "
+				+ plotFormat.format(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_LAT]) + ") = " 
 				+ gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_VALUE]) + suffix;
 		
+	}
+	
+	public void setRenderVars(int xTranslation, NumberFormat plotFormat) {
+		this.xTranslation = xTranslation;
+		this.plotFormat = plotFormat;
 	}
 	
 	public int getFooterHeight() {
