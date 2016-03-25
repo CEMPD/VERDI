@@ -224,4 +224,9 @@ public class TimeLayerPanel extends JPanel {
 	private boolean noTimeSteps = false;
 	private boolean noLayers = false;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
+	
+	public void close() {
+		removeAll();
+		axes = null;
+	}
 }

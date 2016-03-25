@@ -453,7 +453,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	// whose run method draws double-buffered to a graphics iff graphics
 	// is not null:
 
-	public final Runnable doubleBufferedRenderer = new Runnable() {
+	public Runnable doubleBufferedRenderer = new Runnable() {
 
 		private final RepaintManager repaintManager =
 			RepaintManager.currentManager(threadParent);
@@ -979,7 +979,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	public void mouseClicked( MouseEvent unused_ ) { }
 
 	public void viewClosed() { 
-		// 
+		stopThread();
+		try {
+			Thread.sleep(500);
+		} catch( Exception e) {
+		}
+			
 		mapper = null;
 		dataFrameLog = null;
 		dataFrame = null;
@@ -1011,6 +1016,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		gridBounds = null;
 		domain = null;
 
+		timeLayerPanel.close();
 		timeLayerPanel = null;
 		popup = null;
 		dataArea = null;
@@ -1019,19 +1025,24 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		showGridLines = null;
 		dialog = null;
 		app = null;
+		doubleBufferedRenderer = null;
 		doubleBufferedRendererThread = null;
 		minMax = null;
 		config = null;
 		controlLayer = null;
 		
-		//TODO - re-enable to fix memory leaks
-		/*
 		renderVariable = null;
+		
+		cellIdInfoMap = null;;
+		cellsToRender = null;
+		cellsToRenderList = null;
+		allCells = null;
+		splitCells = null;
+		dataset = null;
 		
 		loadConfig.close();
 		saveConfig.close();
 		rubberband.close();
-		*/
 		
 	}
 	public void viewFloated(DockableFrameEvent unused_ ) { }

@@ -97,6 +97,7 @@ public class PlotPanel extends JPanel {
 		}
 		if ( plot != null) {
 			plot.viewClosed();
+			this.removeAll();
 			plot = null;
 		}
 

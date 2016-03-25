@@ -515,7 +515,6 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 		}
 		
 		manager.getPerspective().removeDockable(view);
-		System.gc();
 		
 		JPanel sPanel = scriptPanels.get(view.getID());
 		

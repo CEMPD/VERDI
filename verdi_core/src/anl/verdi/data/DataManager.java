@@ -239,9 +239,12 @@ public class DataManager {
 	 * @param alias the alias of the dataset to close
 	 * @throws IOException if there is an error closing the dataset.
 	 */
-	public void closeDataset(String alias) throws IOException {
+	public void closeDataset(String alias) throws IOException {	
 		Dataset set = datasets.remove(alias);
-		if (set != null) set.close();
+		if (set != null) {
+			setLoaderMap.remove(set);
+			set.close();		
+		}
 		if (datasets.size() == 0) aliasGenerator.clearAlias();
 	}
 
