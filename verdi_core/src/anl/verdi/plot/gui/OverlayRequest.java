@@ -1,9 +1,5 @@
-/**
- * Altered to change from FastTilePlot to GTTilePlot January 2016
- */
 package anl.verdi.plot.gui;
 
-import anl.verdi.plot.gui.GTTilePlot;
 import anl.verdi.plot.types.TilePlot;
 
 /**
@@ -16,24 +12,24 @@ public class OverlayRequest<T> {
 
 	private Type type;
 	private TilePlot plot;
-	private GTTilePlot gtTilePlot;
+	private FastTilePlot fastPlot;
 
 	public OverlayRequest(Type type, TilePlot plot) {
 		this.type = type;
 		this.plot = plot;
 	}
 	
-	public OverlayRequest(Type type, GTTilePlot plot) {
+	public OverlayRequest(Type type, FastTilePlot plot) {
 		this.type = type;
-		this.gtTilePlot = plot;
+		this.fastPlot = plot;
 	}
 
 	public TilePlot getPlot() {
 		return plot;
 	}
 	
-	public GTTilePlot getGTTilePlot() {
-		return gtTilePlot;
+	public FastTilePlot getFastTilePlot() {
+		return fastPlot;
 	}
 
 	public Type getType() {

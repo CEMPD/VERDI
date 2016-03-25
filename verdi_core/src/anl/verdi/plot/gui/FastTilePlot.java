@@ -2063,13 +2063,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	}
 	
 	protected void addObsOverlay() {
-//		OverlayRequest<ObsEvaluator> request = new OverlayRequest<ObsEvaluator>(OverlayRequest.Type.OBS, this);
-//		eventProducer.fireOverlayRequest(request);
+		OverlayRequest<ObsEvaluator> request = new OverlayRequest<ObsEvaluator>(OverlayRequest.Type.OBS, this);
+		eventProducer.fireOverlayRequest(request);
 	}
 	
 	protected void addVectorOverlay() {
-//		OverlayRequest<VectorEvaluator> request = new OverlayRequest<VectorEvaluator>(OverlayRequest.Type.VECTOR, this);
-//		eventProducer.fireOverlayRequest(request);
+		OverlayRequest<VectorEvaluator> request = new OverlayRequest<VectorEvaluator>(OverlayRequest.Type.VECTOR, this);
+		eventProducer.fireOverlayRequest(request);
 	}
 
 	protected void activateRubberBand() {
