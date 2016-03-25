@@ -3460,6 +3460,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	public void addVectorAnnotation(VectorEvaluator eval) {
 		vectAnnotation = new VectorAnnotation(eval, timestep, getDataFrame().getAxes().getBoundingBoxer());
+		draw();
 	}
 
 	public void addObservationData(DataManager manager, boolean showLegend) {
