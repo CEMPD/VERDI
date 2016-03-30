@@ -15,10 +15,8 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
-import org.geotools.referencing.ReferencingFactoryFinder;
 import org.jfree.chart.annotations.AbstractXYAnnotation;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotRenderingInfo;
@@ -357,10 +355,9 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	
 	private double[] lonlat2Point(double lon, double lat, CoordinateReferenceSystem gridCRS)
 	{	// convert lon/lat to point
-		double[] aPoint = {0.0};
+		double[] aPoint = {0.0, 0.0};
 		try{
-		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-		CRSAuthorityFactory crsFactory = ReferencingFactoryFinder.getCRSAuthorityFactory("EPSG", hints);
+		CRSAuthorityFactory crsFactory = CRS.getAuthorityFactory(true);
 		CoordinateReferenceSystem crs = crsFactory.createCoordinateReferenceSystem("EPSG:4326");
 		boolean lenient = true;
 		MathTransform transform = CRS.findMathTransform(crs, gridCRS, lenient);

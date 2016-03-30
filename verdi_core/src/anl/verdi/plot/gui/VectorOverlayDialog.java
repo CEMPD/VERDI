@@ -104,15 +104,18 @@ public class VectorOverlayDialog extends JDialog implements PropertyChangeListen
 
 		btnY.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				String val = formulaList.getSelectedValue().toString();
-				fldY.setText(val);
-				if (fldX.getText().length() > 0) {
-					if (checkCompatibility()) {
-						okButton.setEnabled(true);
-						statusLbl.setText("");
-					}
-					else {
-						statusLbl.setText("Components time and layer range must be compatible with the tile plot.");
+				FormulaListElement item = (FormulaListElement) formulaList.getSelectedValue();
+				if (item != null) {
+					String val = item.toString();
+					fldY.setText(val);
+					if (fldX.getText().length() > 0) {
+						if (checkCompatibility()) {
+							okButton.setEnabled(true);
+							statusLbl.setText("");
+						}
+						else {
+							statusLbl.setText("Components time and layer range must be compatible with the tile plot.");
+						}
 					}
 				}
 			}
@@ -153,11 +156,11 @@ public class VectorOverlayDialog extends JDialog implements PropertyChangeListen
 		yElement = null;
 		for (int i = 0; i < model.size(); i++) {
 			FormulaListElement element = (FormulaListElement) model.getElementAt(i);
-			if (element.getFormula().equals(fldX.getText())) {
+			if (element.toString().equals(fldX.getText())) {
 				xElement = element;
 			}
 
-			if (element.getFormula().equals(fldY.getText())) {
+			if (element.toString().equals(fldY.getText())) {
 				yElement = element;
 			}
 		}

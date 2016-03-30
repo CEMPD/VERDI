@@ -13,8 +13,7 @@ import org.unitsofmeasurement.unit.Unit;
 
 import ucar.unidata.geoloc.Projection;
 import ucar.unidata.geoloc.projection.LatLonProjection;
-import anl.verdi.area.AreaGTTilePlot;
-//import anl.verdi.area.AreaTilePlot;
+import anl.verdi.area.AreaTilePlot;
 import anl.verdi.area.LongTask;
 import anl.verdi.area.Units;
 import anl.verdi.data.Axes;
@@ -83,13 +82,13 @@ public class TargetCalculator extends LongTask {
 		}
 	}
 	
-  public boolean calculateIntersections(ArrayList targets,DataFrame dataFrame,AreaGTTilePlot areaGTTilePlot) {
+  public boolean calculateIntersections(ArrayList targets,DataFrame dataFrame,AreaTilePlot plot) {
 	  
 	    statMessage = "Calculating Intersections...";
 	    Logger.debug("TargetCalculator.calculateIntersections for multiple args " + statMessage);
 	    Logger.debug("targets = " + targets);
 	    Logger.debug("dataFrame = " + dataFrame);
-	    Logger.debug("plot = " + areaGTTilePlot);
+	    Logger.debug("plot = " + plot);
 	    // change to busy cursor
 	    boolean didCalcs = false;
 	    try {
@@ -158,9 +157,9 @@ public class TargetCalculator extends LongTask {
 //			double[] t = { 0.0, 1.0 }; 
 			
 			// only do this if new plot
-			if(areaGTTilePlot!=null){
-				Target.setCurrentTilePlot(areaGTTilePlot);
-				Target.setCurrentGridInfo(areaGTTilePlot.getGridInfo());
+			if(plot!=null){
+				Target.setCurrentTilePlot(plot);
+				Target.setCurrentGridInfo(plot.getGridInfo());
 			}
 			int num=Target.getCurrentGridNum();
 			

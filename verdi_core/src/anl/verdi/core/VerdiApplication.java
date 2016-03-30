@@ -59,7 +59,7 @@ import anl.verdi.plot.anim.MultPlotAnimationDialog;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.gui.AreaSelectionEvent;
 import anl.verdi.plot.gui.FastObsOverlayDialog;
-import anl.verdi.plot.gui.GTTilePlot;
+import anl.verdi.plot.gui.FastTilePlot;
 import anl.verdi.plot.gui.ObsOverlayDialog;
 import anl.verdi.plot.gui.OverlayRequest;
 import anl.verdi.plot.gui.Plot;
@@ -511,8 +511,8 @@ FormulaElementCreator, ListDataListener {
 
 			String status = "";
 
-			if (plot instanceof GTTilePlot)
-				status = ((GTTilePlot)plot).createAreaString(p);
+			if (plot instanceof FastTilePlot)
+				status = ((FastTilePlot)plot).createAreaString(p);
 			else
 				status = ((TilePlot)plot).createAreaString(p);
 
@@ -768,7 +768,7 @@ FormulaElementCreator, ListDataListener {
 	 */
 	public void overlayRequested(OverlayRequest request) {
 		Logger.debug("in VerdiApplication.overlayRequested");
-			// 2015 called from GTTilePlot drop-down menu to select obs/vectors
+			// 2015 called from FastTilePlot drop-down menu to select obs/vectors
 		if (request.getType() == OverlayRequest.Type.OBS) {
 			Logger.debug("in VerdiApplication. OverlayRequest.Type.OBS");
 			List<Variable> vars = new ArrayList<Variable>();
@@ -779,7 +779,7 @@ FormulaElementCreator, ListDataListener {
 			}
 
 			TilePlot plot = request.getPlot();
-			GTTilePlot fastPlot = request.getGTTilePlot();
+			FastTilePlot fastPlot = request.getFastTilePlot();
 
 			ObsOverlayDialog dialog = null;
 			DataFrame data = null;
@@ -814,7 +814,7 @@ FormulaElementCreator, ListDataListener {
 			}
 		} else if (request.getType() == OverlayRequest.Type.VECTOR) {
 			Logger.debug("in VerdiApplication. OverlayRequest.Type.VECTOR");
-			GTTilePlot fastPlot = request.getGTTilePlot();
+			FastTilePlot fastPlot = request.getFastTilePlot();
 			VectorOverlayDialog dialog = new VectorOverlayDialog(gui.getFrame());
 			Logger.debug("instantiated VectorOverlayDialog");
 

@@ -56,19 +56,15 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 				// calculate the areas 
 				TargetCalculator calc = new TargetCalculator();
 				Logger.debug("ready to call TargetCalculator.calculateIntersections");
-//				boolean retValue = calc.calculateIntersections(Target.getTargets(),dataFrame,(AreaTilePlot)plot.getTilePlot());
-//				Logger.debug("back from calculateIntersections, retValue = " + retValue);
-//				if(!retValue)
-//				{
-//					// 2014 added in message dialog to show message to user
-//					String aMessage = "Problem with areal interpolation calculations. Check if polygons intersect grid cells.";
-//					JOptionPane.showMessageDialog(null, aMessage, "Areal Interpolation Issue", JOptionPane.WARNING_MESSAGE);
-//				}
-				
-// WIP			// 2015 changing PlotPanel to MapPlotPanel
-				// need different constructor in MapPlotPanel
-				// need to set up types of objects for drawing with Shapefiles included
-				final PlotPanel panel = new PlotPanel( plot, "ArealInterpolation", null, null, null, null);
+				boolean retValue = calc.calculateIntersections(Target.getTargets(),dataFrame,(AreaTilePlot)plot.getTilePlot());
+				Logger.debug("back from calculateIntersections, retValue = " + retValue);
+				if(!retValue)
+				{
+					// 2014 added in message dialog to show message to user
+					String aMessage = "Problem with areal interpolation calculations. Check if polygons intersect grid cells.";
+					JOptionPane.showMessageDialog(null, aMessage, "Areal Interpolation Issue", JOptionPane.WARNING_MESSAGE);
+				}
+				final PlotPanel panel = new PlotPanel( plot, "ArealInterpolation" );
 				application.getGui().addPlot( panel );
 				panel.addPlotListener( application );
 		        new Thread(

@@ -2063,13 +2063,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	}
 	
 	protected void addObsOverlay() {
-//		OverlayRequest<ObsEvaluator> request = new OverlayRequest<ObsEvaluator>(OverlayRequest.Type.OBS, this);
-//		eventProducer.fireOverlayRequest(request);
+		OverlayRequest<ObsEvaluator> request = new OverlayRequest<ObsEvaluator>(OverlayRequest.Type.OBS, this);
+		eventProducer.fireOverlayRequest(request);
 	}
 	
 	protected void addVectorOverlay() {
-//		OverlayRequest<VectorEvaluator> request = new OverlayRequest<VectorEvaluator>(OverlayRequest.Type.VECTOR, this);
-//		eventProducer.fireOverlayRequest(request);
+		OverlayRequest<VectorEvaluator> request = new OverlayRequest<VectorEvaluator>(OverlayRequest.Type.VECTOR, this);
+		eventProducer.fireOverlayRequest(request);
 	}
 
 	protected void activateRubberBand() {
@@ -2727,6 +2727,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				lastColumn = Integer.valueOf(lColumnField.getText());
 				plot.resetRowsNColumns(firstRow, lastRow, firstColumn,
 						lastColumn);
+				plot.draw();
 				return YES_OPTION;
 			} catch (NumberFormatException e) {
 				Logger.error("Number Format Exception in FastTilePlot.showDialog: Set Rows and Columns: " + e.getMessage());
@@ -3459,6 +3460,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	public void addVectorAnnotation(VectorEvaluator eval) {
 		vectAnnotation = new VectorAnnotation(eval, timestep, getDataFrame().getAxes().getBoundingBoxer());
+		draw();
 	}
 
 	public void addObservationData(DataManager manager, boolean showLegend) {
