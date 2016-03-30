@@ -1,8 +1,12 @@
 package anl.verdi.plot.data;
 
+import java.util.Collection;
+import java.util.Map;
+
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.Dataset;
+import anl.verdi.data.MeshCellInfo;
 
 public interface IMPASDataset extends Dataset {
 		
@@ -23,6 +27,31 @@ public interface IMPASDataset extends Dataset {
 	 * @return - min max values for the given variable within the layer
 	 */
 	public MinMaxInfo getLayerMinMax(DataFrame variable, int layer, MinMaxLevelListener listener);
+	
+	public double getAvgCellDiam();
+	
+	public Collection<MeshCellInfo> getAllCells();
+
+	public MeshCellInfo getCellInfo(int id);
+	
+	public double getDataWidth();
+	
+	public double getDataHeight();
+	
+	public double getDataRatio();
+	
+	public double getLonMin();
+	
+	public double getLonMax();
+	
+	public double getLatMin();
+	
+	public double getLatMax();
+	
+	public MeshCellInfo[] getCellsToRender();
+	
+	public Map<MeshCellInfo, Integer> getSplitCells();
+
 
 
 }

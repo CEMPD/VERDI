@@ -9,6 +9,8 @@ public abstract class ArrayReader {
 	protected Array array;
 	
 	public static ArrayReader getReader(Array array) {
+		if (array == null)
+			return null;
 		if (array instanceof ArrayDouble)
 			return new ArrayDoubleReader((ArrayDouble)array);
 		if (array instanceof ArrayFloat)

@@ -20,6 +20,8 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import org.geotools.data.shapefile.dbf.DbaseFileHeader;
 import org.geotools.data.shapefile.dbf.DbaseFileWriter;
 
+import anl.verdi.data.ArrayReader;
+import anl.verdi.data.MeshCellInfo;
 import anl.verdi.plot.gui.MeshPlot;
 
 public final class MPASShapefileWriter {
@@ -74,8 +76,10 @@ public final class MPASShapefileWriter {
   public static void write( final String fileName,
 		  					double minLon, double maxLon,
 		  					double minLat, double maxLat,
-                            final String variable,
-                            MeshPlot.CellInfo[] cells ) throws IOException {
+                            final String variable, final ArrayReader renderVariable,
+                            final int timestep, final int firstTimestep,
+                            final int layer, final int firstLayer,
+                            MeshCellInfo[] cells ) throws IOException {
 
     // What it is NOT:  Many Java users and developers assume that a 64-bit implementation
     // means that many of the built-in Java types are doubled in size from 32 to 64.  
@@ -87,7 +91,7 @@ public final class MPASShapefileWriter {
     // would continue running just as they do under a 32-bit VM.
     
 	//Debug - export subset
-	ArrayList<MeshPlot.CellInfo> newCells = new ArrayList<MeshPlot.CellInfo>();
+	ArrayList<MeshCellInfo> newCells = new ArrayList<MeshCellInfo>();
 	for (int i = 0; i < cells.length; ++i) {
 		if (cells[i].getMinX() >= minLon &&
 				cells[i].getMaxX() <= maxLon &&
@@ -96,7 +100,7 @@ public final class MPASShapefileWriter {
 			newCells.add(cells[i]);
 	}
 	
-	cells = newCells.toArray(new MeshPlot.CellInfo[0]);
+	cells = newCells.toArray(new MeshCellInfo[0]);
 	int numVertices = 0;
 	minLon = Double.MAX_VALUE;
 	maxLon = -1 * Double.MAX_VALUE;
@@ -255,13 +259,14 @@ public final class MPASShapefileWriter {
     }
 
     if ( variable != null && cells != null ) {
-      writeDBF( fileName, variable, cells );
+      writeDBF( fileName, variable, renderVariable, timestep, firstTimestep, layer, firstLayer, cells );
       writePRJ( fileName );
     }
   }
   
-  private static void writeDBF( final String fileName, final String variable,
-          MeshPlot.CellInfo[] cells ) throws IOException {
+  
+  private static void writeDBF( final String fileName, final String variable, final ArrayReader renderVariable,
+          final int timestep, final int firstTimestep, final int layer, final int firstLayer, MeshCellInfo[] cells ) throws IOException {
 	  DbaseFileHeader header = new DbaseFileHeader();
 	  header.addColumn("ID", 'N', 10, 0);
       header.addColumn(variable, 'F', 20, 6);
@@ -272,7 +277,7 @@ public final class MPASShapefileWriter {
       for (int i = 0; i < cells.length; ++i) {
     	  Object[] row = new Object[2];
     	  row[0] = new Double(cells[i].getId());
-    	  row[1] = new Double(cells[i].getValue());
+    	  row[1] = new Double(cells[i].getValue(renderVariable, timestep, firstTimestep, layer, firstLayer));
        	  dbf.write(row);
       }
       dbf.close();  
