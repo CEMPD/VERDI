@@ -89,6 +89,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.vecmath.Point4i;
 
 import net.sf.epsgraphics.ColorMode;
@@ -159,7 +161,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 public class MeshPlot extends JPanel implements ActionListener, Printable,
 		ChangeListener, ComponentListener, MouseListener, MinMaxLevelListener,
-		TimeAnimatablePlot, Plot {
+		TimeAnimatablePlot, Plot, PopupMenuListener {
 	
 	static final Logger Logger = LogManager.getLogger(MeshPlot.class.getName());
 	private static final long serialVersionUID = 5835232088528761729L;
@@ -796,7 +798,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				Logger.error("Error rendering MeshPlot", t);
 				String errInfo = t.getMessage() != null ? ": " + t.getMessage() + "  \n" : ".  ";
 				JOptionPane.showMessageDialog(app.getGui().getFrame(), "An error occured while rendering the plot" + errInfo + "Please see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);
-				app.getGui().getViewManager().getDockable(viewId).close();
+				try {
+					app.getGui().getViewManager().getDockable(viewId).close();
+				} catch (Throwable tr) {}
 			}
 		}
 		}
@@ -966,7 +970,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	// Mouse callbacks:
 
 	protected void showPopup( MouseEvent me ) {
-		popup = createPopupMenu(true, true, true, zoom);
+		popupShown = true;
+		rubberband.setActive(false);
 
 		int mod = me.getModifiers();
 		int mask = MouseEvent.BUTTON3_MASK;
@@ -1301,7 +1306,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			return;
 		}
 		
-		if (rightClick)
+		if (rightClick || bounds.width == 0 || bounds.height == 0)
 			return;
 		
 
@@ -2259,6 +2264,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 		
 		initLayerCache(layers);
+		
+		popup = createPopupMenu(true, true, true, zoom);
+		popup.addPopupMenuListener(this);
 
 		// add(toolBar);
 		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
@@ -3927,6 +3935,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		return getDataFrame().getAxes().getBoundingBoxer().axisPointToLatLonPoint(axisPoint.x, axisPoint.y); //NOTE: the shift has been considered for in the netcdf boxer!!!
 	}
 	
+	boolean popupShown = false;
+	boolean popupHiding = false;
+	
 	class AreaFinder extends MouseInputAdapter {
 		
 		private Point mpStart, mpEnd;
@@ -3935,6 +3946,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		private Rectangle rect;
 
 		public void mousePressed(MouseEvent e) {
+			if (popupShown) {
+				return;
+			}
+
 			if (isInDataArea(e)) {
 				mpStart = new Point(getCol(e.getPoint()), getRow(e.getPoint()));
 				rect = new Rectangle(mpStart, new Dimension(0, 0));
@@ -3962,6 +3977,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 
 		public void mouseMoved(MouseEvent e) {
+			if (popupHiding) {
+				popupHiding = false;
+				popupShown = false;
+				rubberband.setActive(true);
+				return;
+			}
 			if (isInDataArea(e)) {
 				Point p = new Point(getCol(e.getPoint()), getRow(e.getPoint()));
 				Rectangle rect = new Rectangle(p.x, p.y, 0, 0);
@@ -3976,6 +3997,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 
 		public void mouseReleased(MouseEvent e) {
+			if (popupHiding) {
+				popupHiding = false;
+				popupShown = false;
+				rubberband.setActive(true);
+				return;
+			}
 			if (mpStart != null) {
 				if (isInDataArea(e)) {
 					mpEnd = new Point(getCol(e.getPoint()), getRow(e.getPoint()));
@@ -4480,6 +4507,19 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	@Override
 	public long getRenderTime() {
 		return renderTime;
+	}
+
+	@Override
+	public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+	}
+
+	@Override
+	public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+		popupHiding = true;		
+	}
+
+	@Override
+	public void popupMenuCanceled(PopupMenuEvent e) {		
 	}
 
 }

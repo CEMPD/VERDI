@@ -73,15 +73,12 @@ public class MPASLoader implements DataLoader {
 	private boolean hasDimensions(NetcdfFile file) {
 		List<Dimension> dims = file.getDimensions();
 		boolean hasCells = false;
-		boolean hasVertLevels = false;
+		boolean hasMaxEdges = false;
 		for (Dimension dim : dims) {
-//			if (dim.getName().equals("ROW")) hasRow = true;			// getName() is deprecated & no replacement suggested
-//			else if (dim.getName().equals("COL")) hasCol = true;	// Based on code examples selected getShortName()
 			if (dim.getShortName().equals("nCells")) hasCells = true;
-			else if (dim.getShortName().equals("nVertLevels")) hasVertLevels = true;
+			else if (dim.getShortName().equals("maxEdges")) hasMaxEdges = true;
 		}
-
-		return hasCells && hasVertLevels;
+		return hasCells && hasMaxEdges;
 	}
 
 	/**

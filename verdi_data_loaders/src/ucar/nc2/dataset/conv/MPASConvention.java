@@ -74,16 +74,15 @@ public class MPASConvention extends CoordSysBuilder {
 	  boolean supported = false;
 //	  System.out.println("in M3IOConvention isMine: earthRadius= " + earthRadius);
 	  List<Variable> vars = ncfile.getVariables();
-	  System.out.println("\nMPAS Variables:");
+	  /*System.out.println("\nMPAS Variables:");
 	  for (Variable var : vars) {
 		  System.out.println("Variable " + var.getFullName() + ": " + var.getDescription() + " dim " + var.getDimensionsString());
 		  if (var.getUnitsString() != null)
 			  System.out.println("Found a var with units");
-	  }
+	  }*/
 	  List<Attribute> attrs = ncfile.getGlobalAttributes();
-	  System.out.println("Got to start over now");
 	  for (Attribute attr : attrs) {
-		  System.out.println("Attribute " + attr.getFullName() + ": " + attr.getStringValue());
+		  //System.out.println("Attribute " + attr.getFullName() + ": " + attr.getStringValue());
 		  if ( (attr.getFullName().equalsIgnoreCase("model_name") || attr.getFullName().equalsIgnoreCase("Conventions")) &&
 				  "mpas".equalsIgnoreCase(attr.getStringValue()))
 			  supported = true;

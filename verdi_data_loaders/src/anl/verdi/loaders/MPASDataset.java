@@ -860,12 +860,18 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			lonVert = read("lonVertex");
 			latCell = read("lonCell");
 			lonCell = read("lonCell");
+			elevation = ArrayReader.getReader(read("zgrid"));
+			depth = ArrayReader.getReader(read("zs"));
 			vertexList = (ucar.ma2.ArrayInt.D2) read("verticesOnCell");
 			
 			indexToVertexId = read("indexToVertexID");
-			int numVertices = indexToVertexId.getShape()[0];
-			for (int i = 0; i < numVertices; ++i)
-				vertexPositionMap.put(indexToVertexId.getInt(i), i);
+			int numVertices = dataset.findDimension("nVertices").getLength();
+			for (int i = 0; i < numVertices; ++i) {
+				if (indexToVertexId != null)
+					vertexPositionMap.put(indexToVertexId.getInt(i), i);
+				else
+					vertexPositionMap.put(i, i);
+			}
 			
 			loadCellStructure();
 						
@@ -888,26 +894,9 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		
 	}
 	
-	private void loadCellStructure() throws IOException {
-		cellVertices = read("nEdgesOnCell");
-		latVert = read("latVertex");
-		lonVert = read("lonVertex");
-		latCell = read("latCell");
-		lonCell = read("lonCell");
-		indexToVertexId = read("indexToVertexID");
-		elevation = ArrayReader.getReader(read("zgrid"));
-		depth = ArrayReader.getReader(read("zs"));
-		vertexList = (ucar.ma2.ArrayInt.D2) read("verticesOnCell");
-		
-		vertexPositionMap = new HashMap<Integer, Integer>();
-			
-		int numVertices = indexToVertexId.getShape()[0];
-		for (int i = 0; i < numVertices; ++i)
-			vertexPositionMap.put(indexToVertexId.getInt(i), i);
-			
-		int[] vertexShape = vertexList.getShape();
-
-		cellsToRender = new CellInfo[vertexShape[0]];
+	private void loadCellStructure() throws IOException {		
+		int numCells =  dataset.findDimension("nCells").getLength();
+		cellsToRender = new CellInfo[numCells];
 		allCells = new HashSet<MeshCellInfo>();
 		splitCells = new HashMap<MeshCellInfo, Integer>();
 		cellIdInfoMap = new HashMap<Integer, CellInfo>();
@@ -917,7 +906,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		double cellDiamSum = 0;
 		avgCellDiam = 0;		
 		
-		for (int i = 0; i < vertexShape[0]; ++i) { //for each cell
+		for (int i = 0; i < numCells; ++i) { //for each cell
 			int vertices = cellVertices.getInt(i);
 			CellInfo cell = new CellInfo(i, vertices);
 			cellsToRender[i] = cell;
