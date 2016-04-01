@@ -20,8 +20,8 @@ import org.geotools.swing.RenderingExecutor;
 
 import saf.core.ui.event.DockableFrameEvent;
 import anl.verdi.formula.Formula;
-import anl.verdi.plot.gui.GTTilePlotPanel;
-import anl.verdi.plot.gui.GTTilePlot;
+//import anl.verdi.plot.gui.GTTilePlotPanel;
+//import anl.verdi.plot.gui.GTTilePlot;
 
 public class PlotPanel extends JPanel {
 
@@ -60,39 +60,39 @@ public class PlotPanel extends JPanel {
 		this.name = name;
 	}
 
-	// use this constructor for a GTTilePlotPanel instead of a JPanel object
-	// used for GTTilePlot and AreaGTTilePlot
-	public PlotPanel(Plot plot, String name, JMapPane aJMapPane, MapContent content, RenderingExecutor executor,
-			GTRenderer renderer) {
-		Logger.debug("in PlotPanel constructor for passed Plot plot, String name, MapContent content, RenderingExecutor executor, GTRenderer renderer");
-		isAMap = true;
-		JMenuBar bar = plot.getMenuBar();		// get the top menu from the plot
-		Logger.debug("got bar = " + bar);
-		((GTTilePlotPanel)plot).setMenuBar(bar);	// and put it in the GTTilePlotPanel
-		JToolBar toolBar = plot.getToolBar();			// get the JToolBar of time step, layer, etc. widgets
-		Logger.debug("got toolBar = " + toolBar);
-		((GTTilePlotPanel)plot).setToolBar(toolBar);	// and put it in the GTTilePlotPanel
-		if(content == null)		// if a MapContent was not passed in arg list, get the one from the plot
-			content = topMapPanel.getMapContent();	// current failure point with NullPointerException
-		else
-			topMapPanel.setMapContent(content);
-		Logger.debug("MapContent content = " + content);
-		if(executor == null)	// if a RenderingExecutor was not passed in arg list, get the one from the plot
-			executor = topMapPanel.getRenderingExecutor();
-		else
-			topMapPanel.setRenderingExecutor(executor);
-		if(renderer == null)	// if a GTRenderer was not passed in arg list, get the one from the plot
-			renderer = topMapPanel.getRenderer();
-		else 
-			topMapPanel.setRenderer(renderer);
-		Logger.debug("topMapPanel = " + topMapPanel);
-		this.plot = plot;
-		Logger.debug("plot = " + plot.toString());
-		this.name = name;
-		Logger.debug("name = " + name);
-		Logger.debug("PlotPanel = " + this.toString());
-		Logger.debug("done with PlotPanel constructor");
-	}
+//	// use this constructor for a GTTilePlotPanel instead of a JPanel object
+//	// used for GTTilePlot and AreaGTTilePlot
+//	public PlotPanel(Plot plot, String name, JMapPane aJMapPane, MapContent content, RenderingExecutor executor,
+//			GTRenderer renderer) {
+//		Logger.debug("in PlotPanel constructor for passed Plot plot, String name, MapContent content, RenderingExecutor executor, GTRenderer renderer");
+//		isAMap = true;
+//		JMenuBar bar = plot.getMenuBar();		// get the top menu from the plot
+//		Logger.debug("got bar = " + bar);
+//		((GTTilePlotPanel)plot).setMenuBar(bar);	// and put it in the GTTilePlotPanel
+//		JToolBar toolBar = plot.getToolBar();			// get the JToolBar of time step, layer, etc. widgets
+//		Logger.debug("got toolBar = " + toolBar);
+//		((GTTilePlotPanel)plot).setToolBar(toolBar);	// and put it in the GTTilePlotPanel
+//		if(content == null)		// if a MapContent was not passed in arg list, get the one from the plot
+//			content = topMapPanel.getMapContent();	// current failure point with NullPointerException
+//		else
+//			topMapPanel.setMapContent(content);
+//		Logger.debug("MapContent content = " + content);
+//		if(executor == null)	// if a RenderingExecutor was not passed in arg list, get the one from the plot
+//			executor = topMapPanel.getRenderingExecutor();
+//		else
+//			topMapPanel.setRenderingExecutor(executor);
+//		if(renderer == null)	// if a GTRenderer was not passed in arg list, get the one from the plot
+//			renderer = topMapPanel.getRenderer();
+//		else 
+//			topMapPanel.setRenderer(renderer);
+//		Logger.debug("topMapPanel = " + topMapPanel);
+//		this.plot = plot;
+//		Logger.debug("plot = " + plot.toString());
+//		this.name = name;
+//		Logger.debug("name = " + name);
+//		Logger.debug("PlotPanel = " + this.toString());
+//		Logger.debug("done with PlotPanel constructor");
+//	}
 
 	public String getName() {
 		Logger.debug("returning " + name);
@@ -152,13 +152,31 @@ public class PlotPanel extends JPanel {
 		this.plot = aPlot;
 	}
 
+//	/**
+//	 * Notifies Plot when its View has been closed. HACK!
+//	 */
+//	public void viewClosed() {
+//		Logger.debug("in viewClosed()");
+//		if ( plot instanceof GTTilePlot ) {
+//			( (GTTilePlot) plot).stopThread();
+//			try {
+//				Thread.sleep(500);
+//			} catch( Exception e) {
+//
+//			}
+//		}
+//		if ( plot != null) {
+//			plot.viewClosed();
+//			plot = null;
+//		}
+//	}
 	/**
 	 * Notifies Plot when its View has been closed. HACK!
 	 */
 	public void viewClosed() {
 		Logger.debug("in viewClosed()");
-		if ( plot instanceof GTTilePlot ) {
-			( (GTTilePlot) plot).stopThread();
+		if ( plot instanceof FastTilePlot ) {
+			( (FastTilePlot) plot).stopThread();
 			try {
 				Thread.sleep(500);
 			} catch( Exception e) {
@@ -171,25 +189,45 @@ public class PlotPanel extends JPanel {
 		}
 	}
 
+//	/**
+//	 * Change the view of this window to floating
+//	 * @param evt
+//	 */
+//	public void viewFloated(DockableFrameEvent evt){
+//		if ( plot instanceof anl.verdi.plot.gui.GTTilePlot ) {
+//			Logger.debug("Changing a GTTilePlot to viewFloated");
+//			( (anl.verdi.plot.gui.GTTilePlot) plot).viewFloated(evt);
+//		}
+//	}
 	/**
 	 * Change the view of this window to floating
 	 * @param evt
 	 */
 	public void viewFloated(DockableFrameEvent evt){
-		if ( plot instanceof anl.verdi.plot.gui.GTTilePlot ) {
+		if ( plot instanceof anl.verdi.plot.gui.FastTilePlot ) {
 			Logger.debug("Changing a GTTilePlot to viewFloated");
-			( (anl.verdi.plot.gui.GTTilePlot) plot).viewFloated(evt);
+			( (anl.verdi.plot.gui.FastTilePlot) plot).viewFloated(evt);
 		}
 	}
 
+//	/**
+//	 * Change the view of this window to docked
+//	 * @param evt
+//	 */
+//	public void viewRestored(DockableFrameEvent evt){		
+//		if ( plot instanceof anl.verdi.plot.gui.GTTilePlot ) {
+//			Logger.debug("Changing a GTTilePlot to viewRestored");
+//			( (anl.verdi.plot.gui.GTTilePlot) plot).viewRestored(evt);
+//		}
+//	}
 	/**
 	 * Change the view of this window to docked
 	 * @param evt
 	 */
 	public void viewRestored(DockableFrameEvent evt){		
-		if ( plot instanceof anl.verdi.plot.gui.GTTilePlot ) {
+		if ( plot instanceof anl.verdi.plot.gui.FastTilePlot ) {
 			Logger.debug("Changing a GTTilePlot to viewRestored");
-			( (anl.verdi.plot.gui.GTTilePlot) plot).viewRestored(evt);
+			( (anl.verdi.plot.gui.FastTilePlot) plot).viewRestored(evt);
 		}
 	}
 

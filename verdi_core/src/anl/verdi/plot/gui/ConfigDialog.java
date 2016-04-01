@@ -27,7 +27,7 @@ import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.color.PaletteSelectionPanel;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
-import anl.verdi.plot.gui.GTTilePlot;
+//import anl.verdi.plot.gui.GTTilePlot;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 //import anl.verdi.plot.config.VectorPlotConfiguration;
 
@@ -165,7 +165,7 @@ public class ConfigDialog extends JDialog {
 			initOverlays(config);
 		}
 
-		if ( plot instanceof GTTilePlot && colorMapPanel != null ){
+		if ( plot instanceof FastTilePlot && colorMapPanel != null ){	// GTTilePlot
 			colorMapPanel.setForFastTitle( true);
 		} else {
 			colorMapPanel.setForFastTitle( false);
