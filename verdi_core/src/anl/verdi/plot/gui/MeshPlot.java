@@ -346,6 +346,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	protected boolean zoom = true;
 	protected boolean probe = false;
 	private boolean hasNoLayer = false;
+	private boolean hasNoTime = false;
 	private int delay = 50; // In milliseconds.
 	private final int MAXIMUM_DELAY = 3000; // 3 seconds per frame.
 
@@ -644,7 +645,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							( ( showGridLines == null || showGridLines == false ) ? null
 								: config.getObject( TilePlotConfiguration.GRID_LINE_COLOR ) );
 
-						final int stepsLapsed = timestep - firstTimestep;
+						final int stepsLapsed = timestep - (firstTimestep >= 0 ? firstTimestep : 0);
 						final int statisticsSelection = statisticsMenu.getSelectedIndex();
 						Logger.debug("statisticsSelection = " + statisticsSelection);
 						final String statisticsUnits =
@@ -906,7 +907,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				Logger.debug("plotVariable = " + plotVariable);
 				final String plotUnits = statisticsUnits != null ? statisticsUnits : units;
 				Logger.debug("plotUnits = " + plotUnits);
-				final int stepsLapsed = timestep - firstTimestep;
+				final int stepsLapsed = timestep - (firstTimestep >= 0 ? firstTimestep : 0);
 				try {
 					tilePlot.drawBatchImage(offScreenGraphics, xOffset, yOffset,
 							canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
@@ -1537,7 +1538,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 		
 		public double getValue() {
-			return source.getValue(renderVariable, timestep, firstTimestep, layer, firstLayer);
+			return source.getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
 		}
 		
 		public int getId() {
@@ -1960,8 +1961,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					(double)firstRow + rowOrigin,
 					(double)lastRow + rowOrigin,
 					variable, renderVariable,
-					timestep, firstTimestep,
-					layer, firstLayer,
+					timestep,
+					layer,
 					cellsToRender);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -2035,6 +2036,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		if (timeAxis == null) {
 			timesteps = 1;
 			firstTimestep = timestep = lastTimestep  = 0;
+			hasNoTime = true;
 		} else {
 			timesteps = timeAxis.getExtent();
 			firstTimestep = timestep = timeAxis.getOrigin();
@@ -2173,11 +2175,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		timeLayerPanel = new TimeLayerPanel();
 		final DataFrameAxis lAxis = dataFrame.getAxes().getZAxis();
-		if (hasNoLayer) {
-			timeLayerPanel.init(dataFrame.getAxes(), firstTimestep, 0, false);
-		} else {
-			timeLayerPanel.init(dataFrame.getAxes(), firstTimestep, firstLayer, lAxis.getExtent() > 1);
-		}
+		timeLayerPanel.init(dataFrame.getAxes(), hasNoTime ? 0 : firstTimestep, hasNoLayer ? 0 : firstLayer, !hasNoLayer);
 		
 		ChangeListener timeStepListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -2266,6 +2264,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		popup = createPopupMenu(true, true, true, zoom);
 		popup.addPopupMenuListener(this);
+		if (hasNoTime)
+			firstTimestep = 1;
+		if (hasNoLayer)
+			firstLayer = 1;
 
 		// add(toolBar);
 		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
@@ -3643,12 +3645,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		Set<MeshCellInfo> minCells = new HashSet<MeshCellInfo>();
 		double min = Double.MAX_VALUE;
 		double value = 0;
-		int time = timestep - firstTimestep;
 		for (MeshCellInfo cell : cellsToRender) {
-			if (hasNoLayer)
-				value = cell.getValue(renderVariable, time, firstTimestep, -1, firstLayer);
-			else
-				value = cell.getValue(renderVariable, time, firstTimestep, layer, firstLayer);
+			value = cell.getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
 			if (value == min)
 				minCells.add(cell);
 			else if (value < min) {
@@ -3664,12 +3662,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		Set<MeshCellInfo> maxCells = new HashSet<MeshCellInfo>();
 		double max = Double.MAX_VALUE * -1;
 		double value;
-		int time = timestep - firstTimestep;
 		for (MeshCellInfo cell : cellsToRender) {
-			if (hasNoLayer)
-				value = cell.getValue(renderVariable, time, firstTimestep, -1, firstLayer);
-			else
-				value = cell.getValue(renderVariable, time, firstTimestep, layer, firstLayer);
+			value = cell.getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
 			if (value == max)
 				maxCells.add(cell);
 			else if (value > max) {
@@ -3913,7 +3907,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				return "";
 			double value;
 			if (preStatIndex < 1)
-				value = cell.getValue(renderVariable, timestep, firstTimestep, layer, firstLayer);
+				value = cell.getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
 			else
 				value = statisticsData[preStatIndex - 1][0][cell.getId()];
 			if (cell != null) {
@@ -4088,7 +4082,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		float[][] exportCellData = new float[1][cellsToRender.length];
 		
 		for ( int cell = 0; cell < cellsToRender.length; ++cell ) {
-			exportCellData[0][cell] = (float)cellsToRender[cell].getValue(renderVariable, timestep, firstTimestep, layer, firstLayer);
+			exportCellData[0][cell] = (float)cellsToRender[cell].getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
 		}
 		ASCIIGridWriter.write( baseFileName + ".asc",
 		1, cellsToRender.length,
@@ -4166,7 +4160,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				( ( showGridLines == null || showGridLines == false ) ? null
 					: config.getObject( TilePlotConfiguration.GRID_LINE_COLOR ) );
 				
-			final int stepsLapsed = timestep - firstTimestep;
+			final int stepsLapsed = timestep - (firstTimestep >= 0 ? firstTimestep : 0);
 			try {
 				tilePlot.drawBatchImage(g, xOffset, yOffset,
 							canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,

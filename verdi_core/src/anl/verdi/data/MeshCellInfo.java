@@ -4,7 +4,7 @@ public interface MeshCellInfo {
 	
 	public int getId();
 	
-	public double getValue(ArrayReader renderVariable, int timestep, int firstTimestep, int layer, int firstLayer);
+	public double getValue(ArrayReader renderVariable, int timestep, int layer);
 	
 	public int getNumVertices();
 	

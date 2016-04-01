@@ -77,8 +77,8 @@ public final class MPASShapefileWriter {
 		  					double minLon, double maxLon,
 		  					double minLat, double maxLat,
                             final String variable, final ArrayReader renderVariable,
-                            final int timestep, final int firstTimestep,
-                            final int layer, final int firstLayer,
+                            final int timestep,
+                            final int layer,
                             MeshCellInfo[] cells ) throws IOException {
 
     // What it is NOT:  Many Java users and developers assume that a 64-bit implementation
@@ -259,14 +259,14 @@ public final class MPASShapefileWriter {
     }
 
     if ( variable != null && cells != null ) {
-      writeDBF( fileName, variable, renderVariable, timestep, firstTimestep, layer, firstLayer, cells );
+      writeDBF( fileName, variable, renderVariable, timestep, layer, cells );
       writePRJ( fileName );
     }
   }
   
   
   private static void writeDBF( final String fileName, final String variable, final ArrayReader renderVariable,
-          final int timestep, final int firstTimestep, final int layer, final int firstLayer, MeshCellInfo[] cells ) throws IOException {
+          final int timestep, final int layer, MeshCellInfo[] cells ) throws IOException {
 	  DbaseFileHeader header = new DbaseFileHeader();
 	  header.addColumn("ID", 'N', 10, 0);
       header.addColumn(variable, 'F', 20, 6);
@@ -277,7 +277,7 @@ public final class MPASShapefileWriter {
       for (int i = 0; i < cells.length; ++i) {
     	  Object[] row = new Object[2];
     	  row[0] = new Double(cells[i].getId());
-    	  row[1] = new Double(cells[i].getValue(renderVariable, timestep, firstTimestep, layer, firstLayer));
+    	  row[1] = new Double(cells[i].getValue(renderVariable, timestep, layer));
        	  dbf.write(row);
       }
       dbf.close();  

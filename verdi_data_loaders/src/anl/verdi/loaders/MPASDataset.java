@@ -196,16 +196,16 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			return "";
 		}
 		
-		public double getValue(ArrayReader renderVariable, int timestep, int firstTimestep, int layer, int firstLayer) {
+		public double getValue(ArrayReader renderVariable, int timestep, int layer) {
 			if (timestep == -1) {
 				if (layer != -1)
-					return renderVariable.get(cellId, layer - firstLayer);
+					return renderVariable.get(cellId, layer);
 				return renderVariable.get(cellId);
 			}
 			else if (renderVariable.getRank() == 3)
-				return renderVariable.get(timestep - firstTimestep, cellId, layer - firstLayer);
+				return renderVariable.get(timestep, cellId, layer);
 			else
-				return renderVariable.get(timestep - firstTimestep, cellId);
+				return renderVariable.get(timestep, cellId);
 		}
 		
 		public double getMinX() {
@@ -238,19 +238,6 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		
 		public double getMaxLat() {
 			return latCoords[maxY];
-		}
-		
-		
-		
-		public double getValue(ArrayReader renderVariable, int time, int level) {
-
-			if (time == -1)
-				return renderVariable.get(cellId, level);
-			else if (renderVariable.getRank() == 3)
-				return renderVariable.get(time, cellId, level);
-			else
-				return renderVariable.get(time, cellId);
-
 		}
 		
 		public void calculateCellBounds() {
