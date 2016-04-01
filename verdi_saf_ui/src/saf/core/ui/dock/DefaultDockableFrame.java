@@ -101,7 +101,7 @@ public class DefaultDockableFrame implements DockableFrame {
    * @return true if this DockableFrame is minimized, otherwise false.
    */
   public boolean isMinimized() {
-    return dockable.getExtendedMode().equals(ExtendedMode.MINIMIZED);
+    return dockable.getExtendedMode() != null && dockable.getExtendedMode().equals(ExtendedMode.MINIMIZED);
   }
 
   /**
@@ -110,7 +110,7 @@ public class DefaultDockableFrame implements DockableFrame {
    * @return true if this DockableFrame is maximized, otherwise false.
    */
   public boolean isMaximized() {
-    return  dockable.getExtendedMode().equals(ExtendedMode.MAXIMIZED);
+    return  dockable.getExtendedMode() != null && dockable.getExtendedMode().equals(ExtendedMode.MAXIMIZED);
   }
 
   /**
@@ -119,7 +119,7 @@ public class DefaultDockableFrame implements DockableFrame {
    * @return true if this DockableFrame is floating, otherwise false.
    */
   public boolean isFloating() {
-    return dockable.getExtendedMode().equals(ExtendedMode.EXTERNALIZED);
+    return dockable.getExtendedMode() != null && dockable.getExtendedMode().equals(ExtendedMode.EXTERNALIZED);
   }
 
   /**
