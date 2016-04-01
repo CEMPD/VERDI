@@ -61,7 +61,6 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 			dimSet.add(dim.getShortName());
 			indexMap.put(dim.getShortName(), i++);
 		}
-		System.err.println("Dim string " + variableDS.getDimensionsString());
 		//Workaround for the nCells -> x/y mapping
 		if (dimSet.contains("nCells"))
 			dimSet.add("x");

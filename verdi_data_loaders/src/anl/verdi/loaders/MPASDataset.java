@@ -410,7 +410,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Dataset loaded in " + (System.currentTimeMillis() - start) + "ms");
+		Logger.info("Dataset loaded in " + (System.currentTimeMillis() - start) + "ms");
 	}
 
 	/**
@@ -875,7 +875,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			
 			loadCellStructure();
 						
-			System.out.println("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
+			Logger.info("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
 			
 			addLayer("nVertLevels", list);
 			addLayer("nVertLevelsP1", list);

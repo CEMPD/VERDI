@@ -1848,7 +1848,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	        findVisibleCells();
 		}
         
-		System.out.println("Scaled cells in " + (System.currentTimeMillis() - start) + "ms");
+		Logger.info("Scaled cells in " + (System.currentTimeMillis() - start) + "ms");
 	}
 	
 	public void updateCellData() {
@@ -1863,7 +1863,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			cell.colorIndex = indexOfObsValue((float)cell.getValue(), legendLevels);
 		}
 		}
-		System.out.println("Updated cell data in " + (System.currentTimeMillis() - start) + "ms");
+		Logger.info("Updated cell data in " + (System.currentTimeMillis() - start) + "ms");
 
 	}
 
@@ -1903,7 +1903,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		gr.setClip(null);
 		renderTime = System.currentTimeMillis() - renderStart;
 		
-		System.out.println("Finished drawing image in " + renderTime + "ms");
+		Logger.info("Finished drawing image in " + renderTime + "ms");
 		//System.out.println("Var min " + varMin + " max " + varMax);
 		/*
 		java.io.File outputFile = new java.io.File("/tmp/mpasout.png");
@@ -2108,7 +2108,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		this.log = false;
 		//calculate the non log min/max values, keep the code here
 		//first part of IF ELSE will use the min/max values
-		System.err.println("Calculating data range " + new Date());
+		Logger.info("Calculating data range " + new Date());
 		computeDataRange(false);
 		if ( this.map == null) {
 			
@@ -2135,13 +2135,13 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			e2.printStackTrace();
 		}
 		computeDataRange(true);
-		System.err.println("Calculating log data range " + new Date());
+		Logger.info("Calculating log data range " + new Date());
 		map.setLogMinMax( logPlotMinMaxCache[0], logPlotMinMaxCache[1]);
 		//this final one is for the below legend value calculations
 		double[] localMinMax = plotMinMaxCache;
 		if (this.log)
 			localMinMax = logPlotMinMaxCache;
-		System.err.println("Data ranges calculated " + new Date());
+		Logger.info("Data ranges calculated " + new Date());
 
 		//default to this type...
 		map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
