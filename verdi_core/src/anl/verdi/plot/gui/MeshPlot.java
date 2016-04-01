@@ -1063,7 +1063,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 
 	public void draw() {
-
 		if (drawMode == DRAW_NONE) {
 			drawMode = DRAW_ONCE;
 		}
@@ -4461,8 +4460,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		for (int level = 0; level < count; ++level) {
 			legendLevels[level] = minimum + level * delta;
 		}
-		drawMode = DRAW_ONCE;
-		draw_once_requests = 1;
+		if (drawMode == DRAW_NONE) {
+			drawMode = DRAW_ONCE;
+			draw_once_requests = 1;
+		}
 		}
 		config.setUnits("");
 		dataChanged = true;
