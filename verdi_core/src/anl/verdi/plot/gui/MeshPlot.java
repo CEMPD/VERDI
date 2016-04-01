@@ -3599,6 +3599,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		} catch (InterruptedException e) {
 			Logger.error("Interrupted Exception in FastTilePlot.updateTimeStep: " + e.getMessage());
 		}
+		draw();
 	}
 	
 	/**
