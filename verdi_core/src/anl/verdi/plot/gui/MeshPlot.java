@@ -471,7 +471,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			updateConfigVariables();
 			do {
 				
-				if ( drawMode != DRAW_NONE &&
+				if ( drawMode != DRAW_NONE && drawMode != DRAW_END &&
 					 ! VerdiGUI.isHidden( (Plot) threadParent ) ) {
 					
 					if (drawMode == DRAW_ONCE) {
@@ -519,30 +519,40 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					canvasSize = width;					
 
 					if (canvasSize < 1) {
+						/*
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
+							*/
 						continue;
 					}
 
 					// Use off-screen graphics for double-buffering:
 					// don't start processing until graphics system is ready!
 
-					final Image offScreenImage =
+					Image offScreenImage = null;
+					
+					try {
+					offScreenImage =
 						repaintManager.getOffscreenBuffer(threadParent, canvasWidth, canvasHeight);
+					} catch (NullPointerException e) {}
 
 					// offScreenImage = (Image) (offScreenImage.clone());
 
 					if (offScreenImage == null) {
+						/*
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
+							*/
 						continue;// graphics system is not ready
 					}
 
 					final Graphics offScreenGraphics = offScreenImage.getGraphics();
 
 					if (offScreenGraphics == null) {
+						/*
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
+							*/
 						continue;// graphics system is not ready
 					}
 
@@ -599,8 +609,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					final Graphics graphics = threadParent.getGraphics();
 
 					if (graphics == null) {
+						/*
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
+							*/
 						continue;// graphics system is not ready
 					}
 
@@ -619,8 +631,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 //					synchronized (lock) {
 						if (get_draw_once_requests() > 0) {
 							draw_once_requests = 0;
+							/*
 							if ( get_draw_once_requests() < 0) 
 								restoreCursor();
+								*/
 							continue;
 						}
 //					}
@@ -661,8 +675,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						if (get_draw_once_requests() > 0) {
 							draw_once_requests = 0;
 							//System.err.println("Resetting 3 draw once requests");
+							/*
 							if ( get_draw_once_requests() < 0) 
 								restoreCursor();
+								*/
 							continue;
 						}
 						
@@ -737,9 +753,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 						if (get_draw_once_requests() > 0) {
 							draw_once_requests = 0;
-							//System.err.println("Resetting 4 draw once requests " + getWidth() + "x" + getHeight());
+							/*
 							if ( get_draw_once_requests() < 0)
 								restoreCursor();
+								*/
 							continue;
 						}
 						
@@ -779,7 +796,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						draw_once_requests = -1;
 						if (get_draw_once_requests() < 0) {
 							drawMode = DRAW_NONE;
-							restoreCursor();
+							//restoreCursor();
 						}
 					} else {
 						//drawMode = DRAW_NONE;
@@ -1975,7 +1992,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	public MeshPlot(VerdiApplication app, DataFrame dataFrame) {
 		super(true);
-		long start = System.currentTimeMillis();
 		this.app=app;
 		setDoubleBuffered(true);
 		assert dataFrame != null;
@@ -2274,7 +2290,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		doubleBufferedRendererThread.start(); // Calls
 		
 		draw();
-		long total = (System.currentTimeMillis() - start) / 1000;
 	}
 	
 	private boolean statError = false;
@@ -4337,6 +4352,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	public void restoreCursor() {
+		System.out.println("MeshPlot restoring cursor");
 		if (app != null)
 		//   cursor restored
 		//synchronized(this) {
@@ -4477,7 +4493,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			layerMinMaxCache[i][LEVELS_CACHE_MAX_VALUE] = info.getMax();
 			layerMinMaxCache[i][LEVELS_CACHE_MAX_LON] = cell.getLon();
 			layerMinMaxCache[i][LEVELS_CACHE_MAX_LAT] = cell.getLat();
-		}	}
+		}
+	}
 
 	@Override
 	public void layerUpdated(int updLayer, double min, int minIndex, double max, int maxIndex,

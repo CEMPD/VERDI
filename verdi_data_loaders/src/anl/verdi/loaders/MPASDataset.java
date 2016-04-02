@@ -2,12 +2,10 @@ package anl.verdi.loaders;
 
 import java.io.IOException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -436,10 +434,6 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		return null;
 	}
 	
-	private ucar.nc2.Variable getRenderVariable(String name) {
-		return renderVars.get(name);
-	}
-	
 	private static HashMap<String, String> KNOWN_UNITS = new HashMap<String, String>();
 	
 	static {
@@ -727,21 +721,6 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	
 	Palette defaultPalette =  new PavePaletteCreator().createPalettes(8).get(0);
 	Color[] legendColors = defaultPalette.getColors();
-	
-	private void setCalendar(String timeStr, Calendar cal) {
-		String[] arr = timeStr.split("[-_:.]");
-		cal.clear();
-		cal.set(Calendar.YEAR, Integer.parseInt(arr[0]));
-		cal.set(Calendar.MONTH, Integer.parseInt(arr[1]) - 1);
-		cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(arr[2]));
-		if (arr.length > 3) {
-			cal.set(Calendar.HOUR, Integer.parseInt(arr[3]));
-			cal.set(Calendar.MINUTE, Integer.parseInt(arr[4]));
-			cal.set(Calendar.SECOND, Integer.parseInt(arr[5]));	
-		}
-		if (arr.length > 6)
-			cal.set(Calendar.MILLISECOND, Integer.parseInt(arr[6]));	
-	}
 	
 	public long getTimestepDuration(ArrayChar.D2 xtime, Calendar startCal) {
 		int strLen = dataset.findDimension("StrLen").getLength();

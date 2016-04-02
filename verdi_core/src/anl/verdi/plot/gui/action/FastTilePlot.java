@@ -6,6 +6,7 @@
 
 package anl.verdi.plot.gui.action;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class FastTilePlot extends AbstractSAFAction<VerdiApplication> {
 
 public void actionPerformed( ActionEvent unused ) {
     final VerdiApplication application = workspace.getApplicationMediator();
+    application.getGui().busyCursor();
 
     if ( application.getProject().getSelectedFormula() != null ) {
       final DataFrame dataFrame =
@@ -38,6 +40,7 @@ public void actionPerformed( ActionEvent unused ) {
     	  
     	  if (datasets != null && datasets.size() > 0 && datasets.get(0).getClass().getName().toLowerCase().indexOf("mpas") != -1) {
     		  MeshPlot.performAction(application, dataFrame);
+    		  application.getGui().defaultCursor();
     		  return;
     	  }
         final Plot plot = new anl.verdi.plot.gui.FastTilePlot(application, dataFrame );
@@ -47,6 +50,7 @@ public void actionPerformed( ActionEvent unused ) {
         panel.addPlotListener( application );
       }
     }
+    application.getGui().defaultCursor();
   }
 
 }
