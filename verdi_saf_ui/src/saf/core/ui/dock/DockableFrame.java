@@ -58,6 +58,14 @@ public interface DockableFrame {
    * @return true if this DockableFrame is minimized, otherwise false.
    */
   boolean isMinimized();
+  
+  /**
+   * Gets whether or not this DockableFrame is hidden - possibly by another tab.
+   *
+   * @return true if this DockableFrame is minimized, otherwise false.
+   */
+ 
+  boolean isHidden();
 
   /**
    * Gets whether or not this DockableFrame is maximized.

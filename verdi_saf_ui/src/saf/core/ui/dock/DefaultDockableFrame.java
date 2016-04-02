@@ -10,6 +10,10 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
+import bibliothek.gui.dock.common.CStation;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.intern.DefaultCDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
@@ -102,6 +106,24 @@ public class DefaultDockableFrame implements DockableFrame {
    */
   public boolean isMinimized() {
     return ExtendedMode.MINIMIZED.equals(dockable.getExtendedMode());
+  }
+  
+  /**
+   * Gets whether or not this DockableFrame is hidden - possibly by another tab.
+   *
+   * @return true if this DockableFrame is minimized, otherwise false.
+   */
+ 
+  public boolean isHidden() {
+	  boolean hidden = false;
+	  Object station = dockable.getWorkingArea().getStation();
+	  if (station instanceof DockStation) {
+		  Dockable front = ((DockStation)station).getFrontDockable();
+		  if (front instanceof StackDockStation) {
+			  hidden = !((StackDockStation)front).isVisible(dockable.intern());
+		  }
+	  }
+	  return hidden;
   }
 
   /**
