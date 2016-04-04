@@ -237,7 +237,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 			if ( view == null ) {
 				result = false;
 			} else {
-				result = view.isMinimized();
+				result = view.isMinimized() || view.isHidden();
 			}
 		}
 
