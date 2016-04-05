@@ -65,14 +65,13 @@ public class MPASConvention extends CoordSysBuilder {
 
 
   /**
-   * Do we think this is a M3IO file.
+   * Do we think this is an MPAS file.
    *
    * @param ncfile the NetcdfFile to test
-   * @return true if we think this is a M3IO file.
+   * @return true if we think this is a MPAS file.
    */
   public static boolean isMine(NetcdfFile ncfile) {
 	  boolean supported = false;
-//	  System.out.println("in M3IOConvention isMine: earthRadius= " + earthRadius);
 	  List<Variable> vars = ncfile.getVariables();
 	  /*System.out.println("\nMPAS Variables:");
 	  for (Variable var : vars) {
@@ -91,7 +90,7 @@ public class MPASConvention extends CoordSysBuilder {
   }
 
   public MPASConvention() {
-    this.conventionName = "M3IO";
+    this.conventionName = "MPAS";
   }
 
   public void augmentDataset(NetcdfDataset ncd, CancelTask cancelTask) {
