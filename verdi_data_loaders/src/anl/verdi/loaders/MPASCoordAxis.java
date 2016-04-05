@@ -1,22 +1,18 @@
 package anl.verdi.loaders;
 
-//import javax.measure.units.Unit;		// JScience changed its hierarchy
-//import javax.measure.unit.Unit;
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.unitsofmeasurement.unit.Unit;
 
 import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
-import anl.verdi.data.MPASCellAxis;
 import anl.verdi.data.Range;
 import anl.verdi.util.VUnits;
 
 /**
  * CoordAxis that can be built from net cdf specific variables.
  *
- * @author Nick Collier
- * @author Eric Tatara
+ * @author Tony Howard
  * @version $Revision$ $Date$
  */
 public class MPASCoordAxis implements CoordAxis {
@@ -27,7 +23,6 @@ public class MPASCoordAxis implements CoordAxis {
 	private Unit unit;
 	protected String name, description;
 	private double minValue;
-	private double maxValue;
 	private int length;
 	
 	public MPASCoordAxis(String name, String description, double min, double max, AxisType type) {
@@ -37,16 +32,13 @@ public class MPASCoordAxis implements CoordAxis {
 		this.type = type;
 		
 		this.minValue = min;
-		this.maxValue = max;
 		
 		if (type == AxisType.X_AXIS) {
 			this.minValue = -180;
-			this.maxValue = 180;
 			length = 361;
 		}
 		else if (type == AxisType.Y_AXIS) {
 			this.minValue = -90;
-			this.maxValue = 90;
 			length = 181;
 		}
 		

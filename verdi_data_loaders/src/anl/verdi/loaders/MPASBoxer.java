@@ -31,15 +31,12 @@ import anl.verdi.data.BoundingBoxer;
 /**
  * Bounding boxer that creates simple bounding box for CVS data.
  *
- * @author Nick Collier
- * @author Eric Tatara
+ * @author Tony Howard
  * @version $Revision$ $Date$
  */
 public class MPASBoxer implements BoundingBoxer {
 
-//	MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
 	MathTransformFactory mtFactory = ReferencingFactoryFinder.getMathTransformFactory(null);
-//	FactoryGroup factories = new FactoryGroup(null);
 	ReferencingFactoryContainer factories = new ReferencingFactoryContainer(null);
 
 	private CoordinateReferenceSystem crs;

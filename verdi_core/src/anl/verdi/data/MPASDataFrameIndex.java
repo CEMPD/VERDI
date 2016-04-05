@@ -5,7 +5,7 @@ import ucar.ma2.Index;
 /**
  * Encapsulates an index into a DataFrame data array.
  *
- * @author Nick Collier
+ * @author Tony Howard
  * @version $Revision$ $Date$
  */
 public class MPASDataFrameIndex extends DataFrameIndex {

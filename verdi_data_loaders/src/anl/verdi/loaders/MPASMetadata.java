@@ -1,23 +1,18 @@
 package anl.verdi.loaders;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.dt.GridDatatype;
-import ucar.nc2.dt.grid.GridDataset;
-import ucar.unidata.util.Parameter;
 import anl.verdi.data.DatasetMetadata;
 
 /**
  * Dataset meta data implementation for those datasets that are read using the netcdf library.
  *
- * @author Qun He
+ * @author Tony Howard
  * @version $Revision$ $Date$
  */
 
@@ -26,8 +21,6 @@ public class MPASMetadata implements DatasetMetadata {
 		
 	private List<String> names = new ArrayList<String>();
 	
-	private Map<String, GridDatatype> gridMap = new HashMap<String, GridDatatype>();
-
 	public MPASMetadata(NetcdfDataset dataset) {
 		this.dataset = dataset;
 	}

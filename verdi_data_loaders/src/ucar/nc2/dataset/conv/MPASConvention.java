@@ -45,18 +45,8 @@ import ucar.unidata.geoloc.ProjectionRect;
 import java.util.*;
 
 /**
- * Models-3/EDSS Input/Output netcf format.
- * <p/>
- * The Models-3/EDSS Input/Output Applications Programming Interface (I/O API)
- * is the standard data access library for both NCSC's EDSS project and EPA's Models-3.
- * <p/>
- * 6/24/09: Modified to support multiple projection types of data by Qun He <qunhe@unc.edu> and Alexis Zubrow <azubrow@unc.edu>
- * added makePolarStereographicProjection, UTM, and modified latlon
- * <p/>
- * 09/2010 plessel.todd@epa.gov add projections 7,8,9,10
  *
- * @author plessel.todd@epa.gov
- * @author caron
+ * @author Tony Howard
  * @see <a href="http://www.baronams.com/products/ioapi/index.html">http://www.baronams.com/products/ioapi/index.html</a>
  */
 
@@ -291,19 +281,14 @@ public class MPASConvention extends CoordSysBuilder {
     return new ProjectionCT("LambertConformalProjection", "FGDC", lc);
   }
   
-  
-
-  @SuppressWarnings("deprecation")
-private CoordinateTransform makePolarStereographicProjection(NetcdfDataset ds) {
+  private CoordinateTransform makePolarStereographicProjection(NetcdfDataset ds) {
     double central_meridian = findAttributeDouble(ds, "P_GAM");
     double xcent = findAttributeDouble(ds, "XCENT");
     double ycent = findAttributeDouble(ds, "YCENT");
-    double par1 = findAttributeDouble(ds, "P_ALP");
     double par2 = findAttributeDouble(ds, "P_BET");
 
     Stereographic sg_tmp = new Stereographic(ycent, xcent, 1.0, 0, 0, earthRadius);
    sg_tmp.setCentralMeridian(central_meridian);
-   double calc_scale = sg_tmp.getScale();
    
    double scale2 = (1.0 + Math.sin(Math.toRadians(par2))) / 2.0;
 //   System.out.println("in Stereographic: calculated scale2 " + scale2);

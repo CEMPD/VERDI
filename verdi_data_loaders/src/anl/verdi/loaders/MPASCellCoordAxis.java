@@ -1,7 +1,5 @@
 package anl.verdi.loaders;
 
-//import javax.measure.units.Unit;		// JScience changed its hierarchy
-//import javax.measure.unit.Unit;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +10,6 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import org.unitsofmeasurement.unit.Unit;
 
 import ucar.nc2.Variable;
-import anl.verdi.data.Axes;
 import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.MPASCellAxis;
@@ -22,8 +19,7 @@ import anl.verdi.util.VUnits;
 /**
  * CoordAxis that can be built from net cdf specific variables.
  *
- * @author Nick Collier
- * @author Eric Tatara
+ * @author Tony Howard
  * @version $Revision$ $Date$
  */
 public class MPASCellCoordAxis implements CoordAxis, MPASCellAxis {

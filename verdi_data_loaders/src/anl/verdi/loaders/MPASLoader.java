@@ -18,8 +18,7 @@ import anl.verdi.data.DataReader;
 import anl.verdi.data.Dataset;
 
 /**
- * @author Nick Collier
- * @author Mary Ann Bitz
+ * @author Tony Howard
  * @version $Revision$ $Date$
  */
 public class MPASLoader implements DataLoader {

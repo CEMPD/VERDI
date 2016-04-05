@@ -14,10 +14,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SimpleTimeZone;
 
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-//import javax.measure.units.Unit;		// JScience changed its hierarchy
-//import javax.measure.unit.Unit;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.unitsofmeasurement.unit.Unit;
 
 import java.awt.*;
@@ -36,7 +34,6 @@ import anl.verdi.data.Axes;
 import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
-import anl.verdi.data.DataReader;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.DatasetMetadata;
 import anl.verdi.data.DefaultVariable;
@@ -48,7 +45,6 @@ import anl.verdi.plot.color.PavePaletteCreator;
 import anl.verdi.plot.data.IMPASDataset;
 import anl.verdi.plot.data.MinMaxInfo;
 import anl.verdi.plot.data.MinMaxLevelListener;
-import anl.verdi.plot.gui.MeshPlot;
 import anl.verdi.util.VUnits;
 
 /**
@@ -56,7 +52,7 @@ import anl.verdi.util.VUnits;
  * library and represent a collection of GridDatatypes having the same
  * coordindate system.
  * 
- * @author Nick Collier
+ * @author Tony Howard
  * @version $Revision$ $Date$
  */
 public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IMPASDataset {
@@ -337,9 +333,6 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		hiddenVars.add("zz");
 	}
 	
-	
-	
-	//TODO = get these from ranges instead of storing here
 	double minX = Double.MAX_VALUE;
 	double minY = Double.MAX_VALUE;
 	double maxX = Double.MAX_VALUE * -1;
@@ -655,9 +648,6 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		return ret;
 	}
 	
-	private Set<String> elevationVars = new HashSet<String>();
-	private Set<String> depthVars = new HashSet<String>();
-
 	private void initVariables() {
 		List<ucar.nc2.Variable> vars = dataset.getVariables();
 		this.vars = new ArrayList<Variable>();
@@ -707,16 +697,6 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		}
 		this.verdiRenderVars.add(new DefaultVariable(VAR_AVG_CELL_DIAM, VAR_AVG_CELL_DIAM, VUnits.MISSING_UNIT, this));
 		numCells = dataset.findDimension("nCells").getLength();
-	}
-	
-	private int findAttributeInt(String attname) {
-		Attribute att = dataset.findGlobalAttributeIgnoreCase(attname);
-		return att.getNumericValue().intValue();
-	}
-	
-	private String findAttributeStr(String attname) {
-		Attribute att = dataset.findGlobalAttributeIgnoreCase(attname);
-		return att.getStringValue();
 	}
 	
 	Palette defaultPalette =  new PavePaletteCreator().createPalettes(8).get(0);
@@ -783,7 +763,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		
 		Calendar startCal = new GregorianCalendar(new SimpleTimeZone(0, "GMT"));
 
-		String units = null; //TODO - seconds since " + dateFormatOut.format(cal.getTime()) + " UTC";
+		String units = null;
 		
 		int time_step = 0;
 

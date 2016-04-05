@@ -16,7 +16,7 @@ import ucar.unidata.geoloc.Projection;
 /**
  * Builds a DataFrame from the pieces added in the add methods.
  * 
- * @author Nick Collier
+ * @author Tony Howard
  * @version $Revision$ $Date$
  */
 public class MPASDataFrameBuilder extends DataFrameBuilder {

@@ -34,7 +34,7 @@ import anl.verdi.data.Variable;
  * datasets.  This data could be originally from a file
  * or from a model or other source.
  *
- * @author Mary Ann Bitz
+ * @author Tony Howard
  * @version $Revision$ $Date$
  * @see anl.verdi.data.Dataset , DataLoader
  */
