@@ -2478,7 +2478,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	public void computeDataRange(boolean log) {
 		final int selection = statisticsMenu != null ? statisticsMenu.getSelectedIndex() : 0;
-		boolean initialized = false;
 		if ( selection < 1 ) {
 			DataFrame dataFrame = getDataFrame(log);
 			MinMaxInfo minMaxInfo = dataset.getPlotMinMax(dataFrame, this);
@@ -2502,12 +2501,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			for ( int cell = firstRow; cell < cellsToRender.length; ++cell ) {
 
 				final float value = statisticsData[ statistic ][0][ cell ];
-				if (value < statMinMaxCache[0]) {
+				if (value < statMinMaxCache[LEVELS_CACHE_MIN_VALUE]) {
 					statMinMaxCache[LEVELS_CACHE_MIN_VALUE] = value;
 					statMinMaxCache[LEVELS_CACHE_MIN_LON] = cellsToRender[cell].getLon();
 					statMinMaxCache[LEVELS_CACHE_MIN_LAT] = cellsToRender[cell].getLat();
 				}
-				else if (value > statMinMaxCache[1]) {
+				else if (value > statMinMaxCache[LEVELS_CACHE_MAX_VALUE]) {
 					statMinMaxCache[LEVELS_CACHE_MAX_VALUE] = value;
 					statMinMaxCache[LEVELS_CACHE_MAX_LON] = cellsToRender[cell].getLon();
 					statMinMaxCache[LEVELS_CACHE_MAX_LAT] = cellsToRender[cell].getLat();

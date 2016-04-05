@@ -824,7 +824,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			cellVertices = read("nEdgesOnCell");
 			latVert = read("latVertex");
 			lonVert = read("lonVertex");
-			latCell = read("lonCell");
+			latCell = read("latCell");
 			lonCell = read("lonCell");
 			elevation = ArrayReader.getReader(read("zgrid"));
 			depth = ArrayReader.getReader(read("zs"));
