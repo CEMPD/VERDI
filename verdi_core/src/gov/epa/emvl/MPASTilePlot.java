@@ -24,7 +24,7 @@ public class MPASTilePlot extends TilePlot {
 	int firstColumn;
 	int lastColumn;
 	double[] plotMinMaxValues;
-	double[][] layerMinMaxValues;
+	double[] layerMinMaxValues;
 	double[] statMinMaxValues;
 	double[] currentMinMaxValues;
 	
@@ -38,10 +38,9 @@ public class MPASTilePlot extends TilePlot {
 	
 	boolean useStats = false;
 	
-	public MPASTilePlot(GregorianCalendar startDate, long timestepSize, double[] plotMinMaxValues, double[][] layerMinMaxValues, double[] statMinMaxValues) {
+	public MPASTilePlot(GregorianCalendar startDate, long timestepSize, double[] plotMinMaxValues, double[] statMinMaxValues) {
 		super(startDate, timestepSize);
 		this.plotMinMaxValues = plotMinMaxValues;
-		this.layerMinMaxValues = layerMinMaxValues;
 		this.statMinMaxValues = statMinMaxValues;
 	}	
 	
@@ -234,10 +233,14 @@ public class MPASTilePlot extends TilePlot {
 				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn, null);
 	}
 	
+	public void setMinMax(double[] values) {
+		layerMinMaxValues = values;
+	}
+	
 	protected String getMinMaxLabel(int firstRow, int lastRow,
 			int firstColumn, int lastColumn, final float[][] data) {
 		
-		double[] minMaxValues = layerMinMaxValues[layer];
+		double[] minMaxValues = layerMinMaxValues;
 		String suffix = "";
 		
 		if (useStats) {
@@ -255,9 +258,10 @@ public class MPASTilePlot extends TilePlot {
 		
 	}
 	
-	public void setRenderVars(int xTranslation, NumberFormat plotFormat) {
+	public void setRenderVars(int xTranslation, NumberFormat plotFormat, double[] minMax) {
 		this.xTranslation = xTranslation;
 		this.plotFormat = plotFormat;
+		this.layerMinMaxValues = minMax;
 	}
 	
 	public int getFooterHeight() {

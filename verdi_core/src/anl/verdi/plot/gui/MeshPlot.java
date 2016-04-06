@@ -257,6 +257,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private int lastRow = 0; // firstRow..rows - 1.
 	private int firstColumn = 0; // 0..lastColumn.
 	private int lastColumn = 0; // firstColumn..columns - 1.
+	double minLon = 0;
+	double minLat = 0;
+	double maxLon = 0;
+	double maxLat = 0;
 
 	protected double[] legendLevels;
 	private Object legendLock = new Object();
@@ -710,7 +714,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							if (xTranslation != 0) {
 								offScreenGraphics.translate(xTranslation,  0);
 							}
-							tilePlot.setRenderVars(xTranslation, coordFormat);
+							/*if (zoomFactor == 1)
+								tilePlot.setRenderVars(xTranslation, coordFormat, layerMinMaxCache[layer]);
+							else*/
+								tilePlot.setRenderVars(xTranslation, coordFormat, currentMinMaxCache);
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									screenWidth, screenHeight, stepsLapsed, MeshPlot.this.layer, aRow,
 									bRow, aCol, bCol, legendLevels,
@@ -1323,7 +1330,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			return;
 		}
 		
-		if (rightClick || bounds.width == 0 || bounds.height == 0)
+		if (rightClick || ((bounds.width == 0 || bounds.height == 0) && !popZoomIn && !zoomOut))
 			return;
 		
 
@@ -1416,10 +1423,18 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		if (panY > dataHeight - visibleDataHeight)
 			panY = dataHeight - visibleDataHeight;
 				
-		firstRow = (int)Math.round((dataHeight - panY - visibleDataHeight) * RAD_TO_DEG);
-		lastRow = (int)Math.round((dataHeight - panY) * RAD_TO_DEG);
-		firstColumn = (int)Math.round(panX * RAD_TO_DEG);
-		lastColumn = (int)Math.round((panX + visibleDataWidth) * RAD_TO_DEG);
+		minLat = (dataHeight - panY - visibleDataHeight) * RAD_TO_DEG;
+		firstRow = (int)Math.round(minLat);
+		maxLat = (dataHeight - panY) * RAD_TO_DEG;
+		lastRow = (int)Math.round(maxLat);
+		minLon = panX * RAD_TO_DEG;
+		firstColumn = (int)Math.round(minLon);
+		maxLon = (panX + visibleDataWidth) * RAD_TO_DEG;
+		lastColumn = (int)Math.round(maxLon);
+		minLat += rowOrigin;
+		maxLat += rowOrigin;
+		minLon += columnOrigin;
+		maxLon += columnOrigin;
 
 		//computeDerivedAttributes();
 		draw();
@@ -1431,7 +1446,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		LocalCellInfo cell = getCellInfo(previousClickedCell);
 		if (cell != null)
 			cell.cellClicked = false;
+		try {
 		cell = getCellInfo(currentClickedCell);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("Could not render " + currentClickedCell);
+			throw e;
+		}
 		if (cell != null)
 			cell.cellClicked = true;
 	}
@@ -2072,6 +2092,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 		//min/max, lon/lat, pct complete
 		layerMinMaxCache = new double[layers][7];
+		currentMinMaxCache = new double[7];
 		logLayerMinMaxCache = new double[layers][7];
 		//min/max, lon/lat
 		statMinMaxCache = new double[6];
@@ -2098,6 +2119,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		columnOrigin = columnAxis != null ? (int)columnAxis.getRange().getOrigin() : 0;
 		firstColumn = 0;
 		lastColumn = firstColumn + columns - 1;
+		
+		minLat = rowAxis.getRange().getOrigin();
+		maxLat = minLat + rowAxis.getRange().getExtent() - 1;
+		minLon = columnAxis.getRange().getOrigin();
+		maxLon = minLon + columnAxis.getRange().getExtent() - 1;
+		
 		final Envelope envelope = mpasAxes.getBoundingBox(dataFrame.getDataset().get(0).getNetcdfCovn());
 
 		westEdge = envelope.getMinX(); // E.g., -420000.0.
@@ -2185,7 +2212,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		// Create EMVL TilePlot (but does not draw yet - see draw()):
 
-		tilePlot = new MPASTilePlot(startDate, timestepSize, plotMinMaxCache, layerMinMaxCache, statMinMaxCache);
+		tilePlot = new MPASTilePlot(startDate, timestepSize, plotMinMaxCache, statMinMaxCache);
 
 		// Create GUI.
 
@@ -3626,6 +3653,13 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	Set<Integer> cellIdList = new HashSet<Integer>();
 	protected void findVisibleCells() {		
 		cellIdList.clear();
+		currentMinMaxCache[LEVELS_CACHE_MIN_LON] = Double.MAX_VALUE;
+		currentMinMaxCache[LEVELS_CACHE_MAX_LON] = Double.MAX_VALUE * -1;
+		currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = Double.MAX_VALUE;
+		currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = Double.MAX_VALUE * -1;
+		currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = Double.MAX_VALUE * -1;
+		currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = Double.MAX_VALUE;
+		currentMinMaxCache[LEVELS_CACHE_PERCENT_COMPLETE] = layerMinMaxCache[layer][LEVELS_CACHE_PERCENT_COMPLETE];
 		int width = cellIdMap.getWidth();
 		int height = cellIdMap.getHeight();
 		for (int i = 0; i < width; ++i)
@@ -3639,6 +3673,18 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			else if (cell.lonTransformed[meshCell.getMinXPosition() ]>= 0 && cell.lonTransformed[meshCell.getMaxXPosition()] <= width && 
 					cell.latTransformed[meshCell.getMinYPosition()] >=0 && cell.latTransformed[meshCell.getMaxYPosition()] <= height)
 				cell.visible = true;
+			if (cell.visible && meshCell.getLon() >= minLon && meshCell.getLon() <= maxLon && meshCell.getLat() <= maxLat && meshCell.getLat() >= minLat) { //&& zoomFactor != 1) {
+				double value = cell.getValue();
+				if (value < currentMinMaxCache[LEVELS_CACHE_MIN_VALUE]) {
+					currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = value;
+					currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = meshCell.getLat();
+					currentMinMaxCache[LEVELS_CACHE_MIN_LON] = meshCell.getLon();
+				} else if (value > currentMinMaxCache[LEVELS_CACHE_MAX_VALUE]) {
+					currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = value;
+					currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = meshCell.getLat();
+					currentMinMaxCache[LEVELS_CACHE_MAX_LON] = meshCell.getLon();					
+				}
+			}
 		}
 		for (LocalCellInfo cell : splitCellInfo.keySet()) {
 			MeshCellInfo meshCell = cell.getSource();
@@ -4383,6 +4429,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	double[][] layerMinMaxCache = null;
+	double[] currentMinMaxCache = null;
 	double[] plotMinMaxCache = null;
 	double[] statMinMaxCache = null;
 	double[][] logLayerMinMaxCache = null;
@@ -4504,6 +4551,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		localCache[updLayer][LEVELS_CACHE_MIN_VALUE] = min;
 		localCache[updLayer][LEVELS_CACHE_MAX_VALUE] = max;
 		localCache[updLayer][LEVELS_CACHE_PERCENT_COMPLETE] = percentComplete;
+		currentMinMaxCache[LEVELS_CACHE_PERCENT_COMPLETE] = percentComplete;
 		if (cellsToRender == null || cellsToRender[cellsToRender.length - 1] == null) //not until a few ms after this is 1st called
 			return;
 		localCache[updLayer][LEVELS_CACHE_MIN_LON] = cellsToRender[minIndex].getLon();
