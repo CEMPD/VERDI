@@ -1,7 +1,5 @@
 package anl.verdi.data;
 
-import ucar.ma2.Index;
-
 /**
  * Encapsulates an index into a DataFrame data array.
  *

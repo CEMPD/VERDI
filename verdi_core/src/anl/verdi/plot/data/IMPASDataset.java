@@ -1,9 +1,14 @@
+/**
+ * IMPASDataset - Dataset that contains information from an unstructured grid
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
 package anl.verdi.plot.data;
 
 import java.util.Collection;
 import java.util.Map;
 
-import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.MeshCellInfo;

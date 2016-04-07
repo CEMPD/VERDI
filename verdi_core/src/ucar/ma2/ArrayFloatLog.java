@@ -1,3 +1,9 @@
+/**
+ * ArrayFloatLog - Subclass of ArrayFloat used to return log of each value
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
 package ucar.ma2;
 
 public class ArrayFloatLog extends ArrayFloat {

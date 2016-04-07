@@ -1,3 +1,11 @@
+/**
+ * MPASMinMaxCalculator - Calculates minimum and maximum values of an unstructured grid in a background thread
+ * 			and notifies listeners as min/max values are updated
+ *
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ */
+
 package anl.verdi.loaders;
 
 import java.util.HashMap;

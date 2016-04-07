@@ -1,3 +1,9 @@
+/**
+ * ArrayDoubleReader - ArrayReader to return data from double arrays as double values
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
 package anl.verdi.data;
 
 import ucar.ma2.ArrayDouble;

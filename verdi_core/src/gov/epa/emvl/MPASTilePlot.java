@@ -1,3 +1,9 @@
+/**
+ * MPASTilePlot - Subclass of TilePlot used to customize behavior for unstructured grid plots
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
 package gov.epa.emvl;
 
 import java.awt.Color;
@@ -51,14 +57,12 @@ public class MPASTilePlot extends TilePlot {
 	protected void drawAxis(final Graphics graphics, int xMinimum, int xMaximum,
 			int yMinimum, int yMaximum, int firstRow, int lastRow,
 			int firstColumn, int lastColumn) {
-		return;
 	}
 	
 	public void drawGridLines(final Graphics graphics, int xMinimum,
 			int xMaximum, int yMinimum, int yMaximum, int firstRow,
 			int lastRow, int firstColumn, int lastColumn,
 			final Color gridLineColor ) {
-		return;
 	}
 	
 	//This needs to run after MeshPlot.drawAxis() so footerYOffset will be available, not within TilePlot.draw()
@@ -74,12 +78,11 @@ public class MPASTilePlot extends TilePlot {
 		this.firstColumn = firstColumn;
 		this.lastColumn = lastColumn;
 		this.steplapse = steplapse;
-		return;
 	}
 
 	public void drawAxis(final Graphics graphics, int xMinimum, int xMaximum,
 			int yMinimum, int yMaximum, double panX, double visibleWidth,
-			double panY, double visibleHeight, AxisLabelCreator rowLabels, AxisLabelCreator columnLabels) {
+			double panY, double visibleHeight) {
 		final int xAxisOffset = 5; // Pixel offset left of west edge of grid.
 		final int yAxisOffset = 5; // Pixel offset below south edge of grid.
 		final int xTicLength = 5; // Pixel legth of tic mark on X-axis.

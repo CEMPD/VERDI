@@ -1,12 +1,12 @@
-
-/******************************************************************************
-PURPOSE: GridShapefileWriter.java - Write 2D grid cells and data as 2D polygon
+/**
+ * MPASShapefileWriter - Write 2D grid cells and data as 2D polygon
          Shapefiles (creates .shp, .shx and .dbf).
 NOTES:   See 1998 ESRI Shapefile Specification pages 2, 4, 5, 16, 23, 24.
          http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf
          http://www.clicketyclick.dk/databases/xbase/format/dbf.html#DBF_STRUCT
-HISTORY: 2010-08-23 plessel.todd@epa.gov Created.
-******************************************************************************/
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
 
 package gov.epa.emvl;
 
@@ -22,7 +22,6 @@ import org.geotools.data.shapefile.dbf.DbaseFileWriter;
 
 import anl.verdi.data.ArrayReader;
 import anl.verdi.data.MeshCellInfo;
-import anl.verdi.plot.gui.MeshPlot;
 
 public final class MPASShapefileWriter {
 	static final Logger Logger = LogManager.getLogger(MPASShapefileWriter.class.getName());
@@ -272,7 +271,8 @@ public final class MPASShapefileWriter {
       header.addColumn(variable, 'F', 20, 6);
       header.setNumRecords(cells.length);
       File f = new File(fileName + ".dbf");
-      FileOutputStream fout = new FileOutputStream(f);
+      @SuppressWarnings("resource")
+	  FileOutputStream fout = new FileOutputStream(f);
       DbaseFileWriter dbf = new DbaseFileWriter(header, fout.getChannel());
       for (int i = 0; i < cells.length; ++i) {
     	  Object[] row = new Object[2];

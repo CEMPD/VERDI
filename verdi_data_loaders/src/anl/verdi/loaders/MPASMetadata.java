@@ -1,3 +1,10 @@
+/**
+ * Dataset meta data implementation for those datasets that are read using the netcdf library.
+ *
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ */
+
 package anl.verdi.loaders;
 
 import java.util.ArrayList;
@@ -9,12 +16,6 @@ import ucar.nc2.Dimension;
 import ucar.nc2.dataset.NetcdfDataset;
 import anl.verdi.data.DatasetMetadata;
 
-/**
- * Dataset meta data implementation for those datasets that are read using the netcdf library.
- *
- * @author Tony Howard
- * @version $Revision$ $Date$
- */
 
 public class MPASMetadata implements DatasetMetadata {
 	private NetcdfDataset dataset;

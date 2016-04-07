@@ -1,3 +1,11 @@
+/**
+ * Dataset implementation for those datasets that are read using the netcdf
+ * library and represent a collection of unstructured grid cells using the MPAS convention
+ * 
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ */
+
 package anl.verdi.loaders;
 
 import java.io.IOException;
@@ -47,14 +55,7 @@ import anl.verdi.plot.data.MinMaxInfo;
 import anl.verdi.plot.data.MinMaxLevelListener;
 import anl.verdi.util.VUnits;
 
-/**
- * Dataset implementation for those datasets that are read using the netcdf
- * library and represent a collection of GridDatatypes having the same
- * coordindate system.
- * 
- * @author Tony Howard
- * @version $Revision$ $Date$
- */
+@SuppressWarnings("rawtypes")
 public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IMPASDataset {
 	static final Logger Logger = LogManager.getLogger(MPASDataset.class.getName());
 	
@@ -829,8 +830,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			
 			//Construct axes for latitude and longitude, using average diameter as spacing
 			
-			list.add(new MPASCoordAxis("x", "x", lonMin, lonMax, AxisType.X_AXIS));
-			list.add(new MPASCoordAxis("y", "y", latMin, latMax, AxisType.Y_AXIS));
+			list.add(new MPASCoordAxis("x", "x", lonMin, AxisType.X_AXIS));
+			list.add(new MPASCoordAxis("y", "y", latMin, AxisType.Y_AXIS));
 						
 		} catch (IOException e) {
 			e.printStackTrace();

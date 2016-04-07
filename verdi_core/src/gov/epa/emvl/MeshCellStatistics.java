@@ -1,12 +1,10 @@
-
-/******************************************************************************
-PURPOSE: GridCellStatistics.java - Computes a set of statistics
+/**
+ * MeshCellStatistics - Computes a set of statistics
          e.g., mean, hours-of-non-compliance, etc. for a data variable on a
          layer over various timesteps.
-NOTES:   
-HISTORY: 2010-06-18 plessel.todd@epa.gov, Created.
-STATUS: unreviewed, tested.
-*****************************************************************************/
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
 
 package gov.epa.emvl;
 

@@ -1,3 +1,9 @@
+/**
+ * MPASSwingTest - Debugging class used to test MPASDataset
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
 package anl.verdi.loaders;
 
 import java.awt.*;
@@ -10,17 +16,15 @@ import javax.swing.*;
 
 import ucar.nc2.dataset.NetcdfDataset;
 
+@SuppressWarnings("serial")
 public class MPASSwingTest extends JFrame {
 	
 	MPASDataset ds;
 	
 	private class MPASPanel extends JPanel {
 		
-		MPASDataset panelSet;
-
 		
 		public MPASPanel(MPASDataset set) {
-			panelSet = set;
 		}
 				
 		public void paintComponent(Graphics g) {

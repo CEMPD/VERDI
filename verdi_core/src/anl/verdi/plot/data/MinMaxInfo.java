@@ -1,3 +1,10 @@
+/**
+ * MinMaxInfo - Used to calculate min/max values across levels and timesteps
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
+
 package anl.verdi.plot.data;
 
 public class MinMaxInfo {
@@ -6,22 +13,15 @@ public class MinMaxInfo {
 	double min = Double.MAX_VALUE;
 	int minIndex = -1;
 	int maxIndex = -1;
-	//double sum = 0;
-	//double average = 0;
 	int count = 0;
 	int totalCount = 0;
 	
 	public MinMaxInfo(int totalCount) {
 		this.totalCount = totalCount;
 	}
-		
-	/*public synchronized void incrementSum(double amount) {
-		sum += amount;
-	}*/
 	
 	public synchronized void incrementCount(int amount) {
 		count += amount;
-		//average = sum / count;
 	}
 	
 	public void visitValue(double value, int index) {
@@ -33,7 +33,6 @@ public class MinMaxInfo {
 			max = value;
 			maxIndex = index;
 		}
-		//incrementSum(value);
 	}
 	
 	public int getMinIndex() {
@@ -58,10 +57,6 @@ public class MinMaxInfo {
 	public int getCount() {
 		return count;
 	}
-	
-	/*public double getSum() {
-		return sum;
-	}*/
 	
 	public double getCompletion() {
 		return count / (double)totalCount * 100;

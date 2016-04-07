@@ -1,3 +1,11 @@
+/**
+ * MPASNetcdfReader - reads MPAS data from netcdf files
+ *
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ * @see anl.verdi.data.Dataset , DataLoader
+ */
+
 package anl.verdi.loaders;
 
 import java.io.IOException;
@@ -29,15 +37,7 @@ import anl.verdi.data.MPASDataFrameBuilder;
 import anl.verdi.data.Slice;
 import anl.verdi.data.Variable;
 
-/**
- * Interface for classes that handle reading data from
- * datasets.  This data could be originally from a file
- * or from a model or other source.
- *
- * @author Tony Howard
- * @version $Revision$ $Date$
- * @see anl.verdi.data.Dataset , DataLoader
- */
+@SuppressWarnings("rawtypes")
 public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 	static final Logger Logger = LogManager.getLogger(MPASNetcdfReader.class.getName());
 
@@ -235,7 +235,6 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 		try {
 			DataFrameBuilder builder = new MPASDataFrameBuilder();
 			builder.addDataset(set).setVariable(variable);
-			//TODO - figure out if / how createDefaultAxes applies
 			createDefaultAxes(builder, set, varDS);
 			int rank = varDS.getRank();
 			int[] origin = new int[rank];

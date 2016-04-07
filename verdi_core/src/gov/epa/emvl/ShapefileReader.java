@@ -1,10 +1,14 @@
+/**
+ * ShapefileReader - Debugging class used to inspect and verify structure of shapefiles
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
 package gov.epa.emvl;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
@@ -78,14 +82,10 @@ public class ShapefileReader {
 			}
 			System.out.println((menu.length + 1) + ".  Quit");
 			System.out.println(prefix);
-			try {
-				resp = console.readLine();
-				if (Integer.toString(menu.length + 1).equals("resp"))
-					return;
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
+			resp = console.readLine();
+			if (Integer.toString(menu.length + 1).equals("resp"))
+				return;
+	
 			if (state == State.CHOOSE_FILE) {
 				System.out.println("Enter Filename> ");
 				resp = console.readLine();
@@ -271,7 +271,6 @@ public class ShapefileReader {
 	}
 	
 	private int getRecordLength(int offset) {
-		int count = 0;
 		if (offset + 8 > inputFile.length())
 			return 0;
 		

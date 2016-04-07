@@ -1,3 +1,10 @@
+/**
+ * MPASLoader - data loader used to identify files containing MPAS data
+ * 
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ */
+
 package anl.verdi.loaders;
 
 import java.io.IOException;
@@ -8,6 +15,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.Dimension;
@@ -97,6 +105,7 @@ public class MPASLoader implements DataLoader {
 	 * @param set the data set
 	 * @return a DataReader created for the dataset.
 	 */
+	@SuppressWarnings("rawtypes")
 	public DataReader createReader(Dataset set) {
 		return new MPASNetcdfReader((MPASDataset)set);
 	}

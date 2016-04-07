@@ -1,3 +1,10 @@
+/**
+ * CoordAxis that can be built from net cdf specific variables.
+ *
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ */
+
 package anl.verdi.loaders;
 
 import java.util.Arrays;
@@ -16,12 +23,7 @@ import anl.verdi.data.MPASCellAxis;
 import anl.verdi.data.Range;
 import anl.verdi.util.VUnits;
 
-/**
- * CoordAxis that can be built from net cdf specific variables.
- *
- * @author Tony Howard
- * @version $Revision$ $Date$
- */
+@SuppressWarnings("rawtypes")
 public class MPASCellCoordAxis implements CoordAxis, MPASCellAxis {
 
 	static final Logger Logger = LogManager.getLogger(MPASCellCoordAxis.class.getName());
@@ -45,10 +47,6 @@ public class MPASCellCoordAxis implements CoordAxis, MPASCellAxis {
 		this.length = length;
 		this.dataset = set;
 		Logger.debug("in CSVCoordAxis constructor, unit = " + this.unit);
-	}
-	
-	public MPASCellCoordAxis clone() {
-		return new MPASCellCoordAxis(xAxis, yAxis, length, name, description, dataset);
 	}
 
 	/**

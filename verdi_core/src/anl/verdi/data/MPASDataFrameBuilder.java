@@ -1,24 +1,19 @@
+/**
+ * Builds a DataFrame from the pieces added in the add methods.
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
 package anl.verdi.data;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
-import anl.verdi.data.DataFrameBuilder.AxesBuilder;
-import ucar.ma2.Array;
 import ucar.unidata.geoloc.Projection;
 
-/**
- * Builds a DataFrame from the pieces added in the add methods.
- * 
- * @author Tony Howard
- * @version $Revision$ $Date$
- */
 public class MPASDataFrameBuilder extends DataFrameBuilder {
 
 

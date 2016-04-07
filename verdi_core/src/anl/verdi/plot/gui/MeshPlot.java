@@ -1,13 +1,12 @@
 /**
- * FastTilePlot - Fast alternative to the original VERDI TilePlot.
- * @author plessel.todd@epa.gov cathey.tommy@epa.gov 2008-09-16
+ * MeshPlot - Plot to display unstructured grid data
+ * @author Tony Howard
  * @version $Revision$ $Date$
  **/
 
 package anl.verdi.plot.gui;
 
 import gov.epa.emvl.ASCIIGridWriter;
-import gov.epa.emvl.AxisLabelCreator;
 import gov.epa.emvl.GridCellStatistics;
 import gov.epa.emvl.MPASShapefileWriter;
 import gov.epa.emvl.MPASTilePlot;
@@ -52,7 +51,6 @@ import java.io.Serializable;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -68,7 +66,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -81,7 +78,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.RepaintManager;
@@ -110,7 +106,6 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 
 import saf.core.ui.event.DockableFrameEvent;
-import ucar.ma2.Array;
 import ucar.ma2.ArrayLogFactory;
 import ucar.ma2.InvalidRangeException;
 import anl.map.coordinates.Decidegrees;
@@ -123,9 +118,7 @@ import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataFrameBuilder;
 import anl.verdi.data.DataManager;
-import anl.verdi.data.DataReader;
 import anl.verdi.data.DataUtilities;
-import anl.verdi.data.MPASAxisLabelCreator;
 import anl.verdi.data.DataUtilities.MinMax;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.MPASDataFrameIndex;
@@ -189,7 +182,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private static final int MAXIMUM = 1;
 	private static final int LONGITUDE = 0;
 	private static final int LATITUDE = 1;
-	private static final double MINIMUM_VALID_VALUE = -900.0;
 	
 	public static final double RAD_TO_DEG = 180 / Math.PI;
 	
@@ -214,14 +206,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	protected final DataFrameAxis timeAxis;
 	protected String layerAxisName = null;
 	protected final DataFrameAxis layerAxis;
-	protected final AxisLabelCreator rowLabels;
-	protected final AxisLabelCreator columnLabels;
 	protected final int rowOrigin;
 	protected final int columnOrigin;
 	private final double westEdge; // -420000.0 meters from projection center
 	private final double southEdge; // -1716000.0 meters from projection center
 	private final double cellWidth; // 12000.0 meters.
-	private final double cellHeight; // 12000.0 meters.
 	private NumberFormat format;
 	private NumberFormat plotFormat;
 	private NumberFormat coordFormat;
@@ -240,7 +229,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private int xOffset = 0;
 	private int yOffset = 0;
 	private int xTranslation = 0;
-	private boolean translateX = true;
 	
 	private int canvasSize = 0;
 	// For legend-colored grid cells and annotations:
@@ -328,6 +316,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private final String PLAY_TIP = "Play/Stop";
 	private TimeLayerPanel timeLayerPanel;
 	private final JToolBar toolBar = new JToolBar();
+	@SuppressWarnings("rawtypes")
 	private final JComboBox statisticsMenu;
 	private int preStatIndex = -1;
 	private final JTextField threshold;
@@ -480,7 +469,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					
 					if (drawMode == DRAW_ONCE) {
 //						synchronized (lock) {
-							if (get_draw_once_requests() > 0) {
+							if (getDrawOnceRequests() > 0) {
 								draw_once_requests = 0;
 							}
 							/*if ( get_draw_once_requests() >=0 ) {
@@ -633,7 +622,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					}
 					
 //					synchronized (lock) {
-						if (get_draw_once_requests() > 0) {
+						if (getDrawOnceRequests() > 0) {
 							draw_once_requests = 0;
 							/*
 							if ( get_draw_once_requests() < 0) 
@@ -676,7 +665,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							statisticsUnits != null ? statisticsUnits : units;
 						Logger.debug("units = " + units);
 						
-						if (get_draw_once_requests() > 0) {
+						if (getDrawOnceRequests() > 0) {
 							draw_once_requests = 0;
 							//System.err.println("Resetting 3 draw once requests");
 							/*
@@ -727,7 +716,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 									null);
 							//Cells are sized incorrectly during the first redraw, partially due to tilePlot.getLegendBoxWidth() being wrong before
 							//tilePlot.drawLegend() first called.  Quick workaround is to draw twice.
-							//TODO - fix this.  Low priority - drawn off screen, won't cause flash, only happens once
 							if (!screenInitted) {
 								screenInitted = true;
 								locChanged = true;
@@ -737,7 +725,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							offScreenGraphics.setFont(defaultFont);
 							offScreenGraphics.setColor(axisColor);
 							tilePlot.drawAxis(offScreenGraphics, xOffset, xOffset + screenWidth, yOffset, yOffset + screenHeight, panX * RAD_TO_DEG + columnOrigin, visibleDataWidth * RAD_TO_DEG,
-									panY * RAD_TO_DEG + rowOrigin, visibleDataHeight * RAD_TO_DEG, rowLabels, columnLabels);
+									panY * RAD_TO_DEG + rowOrigin, visibleDataHeight * RAD_TO_DEG);
 
 
 //							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
@@ -758,7 +746,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						// Draw projected/clipped map border lines over grid
 						// cells:
 
-						if (get_draw_once_requests() > 0) {
+						if (getDrawOnceRequests() > 0) {
 							draw_once_requests = 0;
 							/*
 							if ( get_draw_once_requests() < 0)
@@ -799,9 +787,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					
 					} // End of synchronized block.
 					if (drawMode == DRAW_ONCE ) {
-						decrease_draw_once_requests();
+						decreaseDrawOnceRequests();
 						draw_once_requests = -1;
-						if (get_draw_once_requests() < 0) {
+						if (getDrawOnceRequests() < 0) {
 							drawMode = DRAW_NONE;
 							//restoreCursor();
 						}
@@ -833,10 +821,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	private double getCurrentWidthDeg() {
 		return visibleDataWidth * RAD_TO_DEG;
-	}
-	
-	private double getCurrentHeightDeg() {
-		return visibleDataHeight * RAD_TO_DEG;
 	}
 	
 	private double getCurrentLonMaxDeg() {
@@ -1093,7 +1077,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		}
 		
 		if (drawMode == DRAW_ONCE) {
-			increase_draw_once_requests();
+			increaseDrawOnceRequests();
 		}
 		synchronized (waitObject) {
 			waitObject.notifyAll();
@@ -2010,6 +1994,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	// Construct but do not draw yet.
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public MeshPlot(VerdiApplication app, DataFrame dataFrame) {
 		super(true);
 		this.app=app;
@@ -2101,20 +2086,16 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		logPlotMinMaxCache = new double[3];
 
 		
-		//TAH
-		//TODO - remove unneccessary bits here
 		final CoordAxis cellAxis = axes.getCellAxis();
 		cells = (int)cellAxis.getRange().getExtent();
 		
 		rowAxis = mpasAxes.getYAxis();
-		rowLabels = rowAxis != null ? new MPASAxisLabelCreator(null) : null;
 		rows = rowAxis != null ? (int)rowAxis.getRange().getExtent() : 1;
 		rowOrigin = rowAxis != null ? (int)rowAxis.getRange().getOrigin() : 0;
 		firstRow = 0;
 		lastRow = firstRow + rows - 1;
 
 		columnAxis = mpasAxes.getXAxis();
-		columnLabels = columnAxis != null ? new MPASAxisLabelCreator(null) : null;
 		columns = columnAxis != null ? (int)columnAxis.getRange().getExtent() : 1;
 		columnOrigin = columnAxis != null ? (int)columnAxis.getRange().getOrigin() : 0;
 		firstColumn = 0;
@@ -2129,13 +2110,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		westEdge = envelope.getMinX(); // E.g., -420000.0.
 		southEdge = envelope.getMinY(); // E.g., -1716000.0.
-//		cellWidth = Numerics.round1(envelope.getWidth() / columns); // 12000.0.
-//		cellHeight = Numerics.round1(envelope.getHeight() / rows); // 12000.0.
 		
 		cellWidth = envelope.getWidth() / columns; // 12000.0.
-		cellHeight = envelope.getHeight() / rows; // 12000.0.
-
-		// 2014 footer date/time for footer1
 		
 		GregorianCalendar dsDate = axes.getDate(firstTimestep);
 		startDate = dsDate == null ? new GregorianCalendar() : dsDate;
@@ -2217,7 +2193,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		// Create GUI.
 
 		timeLayerPanel = new TimeLayerPanel();
-		final DataFrameAxis lAxis = dataFrame.getAxes().getZAxis();
 		timeLayerPanel.init(dataFrame.getAxes(), hasNoTime ? 0 : firstTimestep, hasNoLayer ? 0 : firstLayer, !hasNoLayer);
 		
 		ChangeListener timeStepListener = new ChangeListener() {
@@ -2320,7 +2295,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	private boolean statError = false;
-	private String statErrMsg = "";
 
 	private void computeStatistics(boolean log) {
 
@@ -2359,12 +2333,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			//		threshold, hoursPerTimestep,
 			//		statisticsDataLog, this.statisticsMenu.getSelectedIndex()-1 );
 			this.statError = false;
-			this.statErrMsg = "";
 		} catch ( Exception e) {
 			e.printStackTrace();
 			Logger.error("Error occurred during computing statistics: " + e.getMessage());
 			this.statError = true;
-			this.statErrMsg = "Error occurred during computing statistics: " + e.getMessage();
 			if ( map != null && map.getScaleType() == ColorMap.ScaleType.LOGARITHM) {
 				this.preLog = true;
 				this.log = false;
@@ -3765,32 +3737,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				}			
 
 				
-				if ( statisticsMenu.getSelectedIndex() != 0 ) {
-					// HACK: copy and overwrite subsection.array with subsetLayerData:
-					//TODO - implement this for mesh plots
-					/*
-					subsection = getDataFrame().sliceCopy( slice );
-					final int probeLastColumn = probeFirstColumn + probeColumns -1 ;
-					final int probeLastRow = probeFirstRow + probeRows - 1 ;
-					final ucar.ma2.Array array = subsection.getArray();
-					final ucar.ma2.Index index = array.getIndex();
-
-					for ( int row = probeFirstRow; row <= probeLastRow; ++row ) {
-						final int sliceRow = (probeFirstRow - firstRow) + (row - probeFirstRow) - 1;
-						final int sliceRowIndex = (row - probeFirstRow);
-						index.set2( sliceRowIndex );
-
-						for ( int column = probeFirstColumn; column <= probeLastColumn; ++column ) {
-							final int sliceColumn = (probeFirstColumn - firstColumn) +  (column - probeFirstColumn) -1;
-							final int sliceColumnIndex = (column - probeFirstColumn);
-							index.set3( sliceColumnIndex );
-							final float value = subsetLayerData[ sliceRow ][ sliceColumn ];
-							array.setFloat( index, value );
-						}
-					}
-					*/
-
-				} else {
+				if ( statisticsMenu.getSelectedIndex() == 0 ) {
 					subsection = getDataFrame().slice(slice);
 				}
 
@@ -4409,17 +4356,17 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			setCursor(Cursor.getDefaultCursor());
 	}
 	
-	private void increase_draw_once_requests() {
+	private void increaseDrawOnceRequests() {
 		draw_once_requests ++;
 		//System.err.println("Increased requests to " + draw_once_requests + " from " + Thread.currentThread().getStackTrace()[3]);
 	}
 	
-	private void decrease_draw_once_requests() {
+	private void decreaseDrawOnceRequests() {
 		draw_once_requests --;
 		//System.err.println("Decreased requests to " + draw_once_requests);
 	}
 	
-	private int get_draw_once_requests() {
+	private int getDrawOnceRequests() {
 		//System.err.println("Got " + draw_once_requests + " requests from " + Thread.currentThread().getStackTrace()[3]);
 		return draw_once_requests;
 	}

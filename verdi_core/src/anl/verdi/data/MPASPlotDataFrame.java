@@ -1,3 +1,11 @@
+/**
+ * MPASPlotDataFrame - This class is used for plotting charts based on MPAS data.  Convenient because 
+ * MPAS data is not structured along X Y coordinates
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
+
 package anl.verdi.data;
 
 import java.util.ArrayList;
@@ -6,9 +14,8 @@ import java.util.List;
 import ucar.ma2.Array;
 import ucar.ma2.InvalidRangeException;
 
-/* This class is used for plotting charts based on MPAS data.  Convenient because MPAS 
- * data is not structured along X Y coordinates
- */
+
+@SuppressWarnings("rawtypes")
 public class MPASPlotDataFrame implements DataFrame {
 
 	MeshCellInfo cellInfo;
@@ -23,7 +30,6 @@ public class MPASPlotDataFrame implements DataFrame {
 	
 	String title;
 	
-	//Label = (lon, lat)
 	public MPASPlotDataFrame(String label, Array source, Slice slice, Variable var, Axes<DataFrameAxis> srcAxes, Dataset set) throws InvalidRangeException {
 		title = label;
 		variable = var;
@@ -131,7 +137,6 @@ public class MPASPlotDataFrame implements DataFrame {
 	
 	@Override
 	public DataFrame slice(Slice slice) throws InvalidRangeException {
-		//TODO - figure out how to calculate new label
 		Array newArray = sliceArray(slice, array, axes);
 		Axes<DataFrameAxis> newAxes = sliceAxes(slice, axes);
 		return new MPASPlotDataFrame(title, newArray, null, variable, newAxes,datasets.get(0));
@@ -139,9 +144,7 @@ public class MPASPlotDataFrame implements DataFrame {
 
 	@Override
 	public DataFrame sliceCopy(Slice slice) throws InvalidRangeException {
-		//TODO - figure out how to calculate new label
 		Array newArray = sliceArray(slice, array, axes).copy();
-		//TODO = ensure newAxes is copied also (not referenced);
 		Axes<DataFrameAxis> newAxes = sliceAxes(slice, axes);
 		return new MPASPlotDataFrame(title, newArray, null, variable, newAxes,datasets.get(0));	
 	}

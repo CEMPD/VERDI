@@ -16,10 +16,7 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.Attribute;
-import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
-import ucar.nc2.Variable;
-import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.conv.M3IOConvention;
 import ucar.nc2.dataset.conv.MPASConvention;
@@ -101,8 +98,8 @@ public class NetcdfDatasetFactory {
 			netcdfDataset = NetcdfDataset.openDataset(urlString);
 			Logger.debug("in NetcdfDatasetFactory.createModels3Datasets, back from openNetcdfGridDataset");
 			if (!MPASConvention.isMine(netcdfDataset)) {
-				Logger.debug("M3IOConvention.isMine == false");
-				throw new IOException("Loading non-models3 file into Models3Dataset");
+				Logger.debug("MPASConvention.isMine == false");
+				throw new IOException("Loading non-mpas file into MPASDataset");
 			}
 			// if here then ok.
 			Logger.debug("isMine == true, returning createDatasets for url = " + url);
@@ -172,7 +169,6 @@ public class NetcdfDatasetFactory {
 //				public void setError(String msg) {}
 //				@Override
 //				public void setProgress(String arg0, int arg1) {
-//					// TODO Auto-generated method stub
 //					
 //				}
 //			});

@@ -1,3 +1,9 @@
+/**
+ * ArrayFloatReader - ArrayReader to return data from float arrays as double values
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
 package anl.verdi.data;
 
 import ucar.ma2.ArrayFloat;

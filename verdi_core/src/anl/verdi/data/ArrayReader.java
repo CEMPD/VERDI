@@ -1,3 +1,10 @@
+/**
+ * ArrayReader - Interface to allow callers to read numeric array data without needing to account for
+ * underlying data type of the array
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
 package anl.verdi.data;
 
 import ucar.ma2.Array;

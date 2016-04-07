@@ -1,3 +1,9 @@
+/**
+ * MeshCellInfo - encapsulates individual cells that compose unstructured grids
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
 package anl.verdi.data;
 
 public interface MeshCellInfo {

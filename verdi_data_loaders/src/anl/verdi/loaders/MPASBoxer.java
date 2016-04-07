@@ -1,3 +1,10 @@
+/**
+ * Bounding boxer that creates simple bounding box for CVS data.
+ *
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ */
+
 package anl.verdi.loaders;
 
 import java.awt.geom.Point2D;
@@ -28,12 +35,6 @@ import ucar.unidata.geoloc.ProjectionPointImpl;
 import ucar.unidata.geoloc.projection.LambertConformal;
 import anl.verdi.data.BoundingBoxer;
 
-/**
- * Bounding boxer that creates simple bounding box for CVS data.
- *
- * @author Tony Howard
- * @version $Revision$ $Date$
- */
 public class MPASBoxer implements BoundingBoxer {
 
 	MathTransformFactory mtFactory = ReferencingFactoryFinder.getMathTransformFactory(null);

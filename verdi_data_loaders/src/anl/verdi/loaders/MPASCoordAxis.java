@@ -1,3 +1,10 @@
+/**
+ * CoordAxis that can be built from net cdf specific variables.
+ *
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ */
+
 package anl.verdi.loaders;
 
 import org.apache.logging.log4j.LogManager;
@@ -9,23 +16,19 @@ import anl.verdi.data.CoordAxis;
 import anl.verdi.data.Range;
 import anl.verdi.util.VUnits;
 
-/**
- * CoordAxis that can be built from net cdf specific variables.
- *
- * @author Tony Howard
- * @version $Revision$ $Date$
- */
+
 public class MPASCoordAxis implements CoordAxis {
 
 	static final Logger Logger = LogManager.getLogger(MPASCoordAxis.class.getName());
 	private Range range;
 	private AxisType type;
+	@SuppressWarnings("rawtypes")
 	private Unit unit;
 	protected String name, description;
 	private double minValue;
 	private int length;
 	
-	public MPASCoordAxis(String name, String description, double min, double max, AxisType type) {
+	public MPASCoordAxis(String name, String description, double min, AxisType type) {
 		this.name = name;
 		this.description = description;
 		this.unit = VUnits.MISSING_UNIT;
@@ -64,6 +67,7 @@ public class MPASCoordAxis implements CoordAxis {
 	 *
 	 * @return the unit of measurement for this coordinate axis.
 	 */
+	@SuppressWarnings("rawtypes")
 	public Unit getUnits() {
 		Logger.debug("in CSVCoordAxis.getUnits, unit = " + unit);
 		return unit;

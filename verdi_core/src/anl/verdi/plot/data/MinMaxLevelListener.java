@@ -1,3 +1,9 @@
+/**
+ * MinMaxLevelListener - Used to notify callers of updates to min/max level calculations
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
 package anl.verdi.plot.data;
 
 public interface MinMaxLevelListener {

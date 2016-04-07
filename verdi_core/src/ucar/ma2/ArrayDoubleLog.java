@@ -1,3 +1,10 @@
+/**
+ * ArrayDoubleLog - Subclass of ArrayDouble used to return log of each value
+ * @author Tony Howard
+ * @version $Revision$ $Date$
+ **/
+
+
 package ucar.ma2;
 
 public class ArrayDoubleLog extends ArrayDouble {
