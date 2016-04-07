@@ -587,11 +587,13 @@ public class PalettePanel extends JPanel {
 					}
 					Palette palette = (Palette) paletteList.getSelectedValue();
 					ColorMap oldMap = model.getColorMap();
-					ColorMap map = null; //new ColorMap(palette, sType, min, max);					
+					ColorMap map = null; //new ColorMap(palette, sType, min, max);	
+					boolean chgColorMap = false;	// default is to not change the color map
 					if ( oldMap != null) {
 						map = oldMap;
 					} else {
 						map = new ColorMap();
+						chgColorMap = true;
 					}
 					map.setPalette(palette);
 					map.setPaletteType(getPaletteType());					
@@ -612,7 +614,8 @@ public class PalettePanel extends JPanel {
 						e.printStackTrace(); //let it be a best effort method.
 					}
 
-					model.resetColorMap(map);
+					if(chgColorMap)		// don't want to always reset the color map
+						model.resetColorMap(map);
 					model.setIntervalEditEnabled( intervalType.getSelectedIndex());	
 					paletteTable.revalidate();
 				} else {
