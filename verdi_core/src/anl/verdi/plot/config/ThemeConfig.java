@@ -26,8 +26,8 @@ public class ThemeConfig {
 	public static final String SMALL_FONT = ThemeConfig.class.getName() + ".small_font";
 	public static final String TITLE_PAINT = ThemeConfig.class.getName() + ".title_paint";
 	public static final String SUBTITLE_PAINT = ThemeConfig.class.getName() + ".subtitle_paint";
-	public static final String LEGENT_PAINT = ThemeConfig.class.getName() + ".legent_paint";
-	public static final String LEGENT_BG_PAINT = ThemeConfig.class.getName() + ".legent_background_paint";
+	public static final String LEGEND_PAINT = ThemeConfig.class.getName() + ".legend_paint";
+	public static final String LEGEND_BG_PAINT = ThemeConfig.class.getName() + ".legend_background_paint";
 	public static final String AXIS_LABEL_PAINT = ThemeConfig.class.getName() + ".axis_label_paint";
 	public static final String TICK_LABEL_PAINT = ThemeConfig.class.getName() + ".tick_label_paint";
 	public static final String CHART_BG_PAINT = ThemeConfig.class.getName() + ".chart_background_paint";
@@ -182,8 +182,8 @@ public class ThemeConfig {
 		if (getObject(SMALL_FONT) != null) theme.setSmallFont((Font)getObject(SMALL_FONT));
 		if (getObject(TITLE_PAINT) != null) theme.setTitlePaint((Color)getObject(TITLE_PAINT));
 		if (getObject(SUBTITLE_PAINT) != null) theme.setSubtitlePaint((Color)getObject(SUBTITLE_PAINT));
-		if (getObject(LEGENT_PAINT) != null) theme.setLegendItemPaint((Color)getObject(LEGENT_PAINT));
-		if (getObject(LEGENT_BG_PAINT) != null) theme.setLegendBackgroundPaint((Color)getObject(LEGENT_BG_PAINT));
+		if (getObject(LEGEND_PAINT) != null) theme.setLegendItemPaint((Color)getObject(LEGEND_PAINT));
+		if (getObject(LEGEND_BG_PAINT) != null) theme.setLegendBackgroundPaint((Color)getObject(LEGEND_BG_PAINT));
 		if (getObject(AXIS_LABEL_PAINT) != null) theme.setAxisLabelPaint((Color)getObject(AXIS_LABEL_PAINT));
 		if (getObject(TICK_LABEL_PAINT) != null) theme.setTickLabelPaint((Color)getObject(TICK_LABEL_PAINT));
 		if (getObject(CHART_BG_PAINT) != null) theme.setChartBackgroundPaint((Color)getObject(CHART_BG_PAINT));
