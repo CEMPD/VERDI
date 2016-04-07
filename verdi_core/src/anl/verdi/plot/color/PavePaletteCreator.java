@@ -145,6 +145,7 @@ public class PavePaletteCreator {
 		list.add(createPalette(newtonmap, classes, "Newton RGB (AVS)"));
 		list.add(createPalette(jetmap, classes, "Newton RGB (InkJet)"));
 		list.add(createPalette(greymap, classes, "Grey Scale (AVS)"));
+		list.add(createPavePalette());
 		return list;
 	}
 
@@ -177,7 +178,7 @@ public class PavePaletteCreator {
 		colors[5] = new Color(218,255,0);
 		colors[6] = new Color(255,147,0);
 		colors[7] = new Color(255,0,0);
-		return new Palette(colors,"PAVE colors",false);
+		return new Palette(colors,"Tile Plot default",false);
 		
 	}
 	

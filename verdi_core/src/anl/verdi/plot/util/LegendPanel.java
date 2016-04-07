@@ -106,6 +106,7 @@ public class LegendPanel extends JComponent {
 			}
 		} else {
 			// use the values directly from the color map itself
+			Logger.debug("interval type is not AUTOMATIC; reading Colors from map and adding to paintScale");
 			for (int i = 0; i < colorCount; i++) {
 				try {
 //					paintScale.add(new Double(map.getIntervalStart(i)), map.getColor(i));	// 2014 old add deprecated
