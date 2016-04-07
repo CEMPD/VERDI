@@ -1440,11 +1440,11 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		delayField.setToolTipText("Set animation delay (ms)");	// 2014
 		firstRowField = new JTextField("1", 4);
 		firstRowField.addActionListener(this);
-		lastRowField = new JTextField(rows + "", 4);
+		lastRowField = new JTextField(Integer.toString(rows), 4);
 		lastRowField.addActionListener(this);
 		firstColumnField = new JTextField("1", 4);
 		firstColumnField.addActionListener(this);
-		lastColumnField = new JTextField(columns + "", 4);
+		lastColumnField = new JTextField(Integer.toString(columns), 4);
 		lastColumnField.addActionListener(this);
 
 		GridBagLayout gridbag = new GridBagLayout();
@@ -2686,10 +2686,10 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			JLabel rowLabel = new JLabel("Rows:");
 			JPanel rowPanel = new JPanel();
 			rowPanel.add(fRowField, BorderLayout.LINE_START);
-			fRowField.setText(this.firstRow + "");
+			fRowField.setText(Integer.toString(this.firstRow));
 			rowPanel.add(new JLabel("..."));
 			rowPanel.add(lRowField, BorderLayout.LINE_END);
-			lRowField.setText(this.lastRow + "");
+			lRowField.setText(Integer.toString(this.lastRow));
 			JLabel holder1 = new JLabel();
 
 			gridbag.setConstraints(rowLabel, c);
@@ -2705,10 +2705,10 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			JLabel colLabel = new JLabel("Columns:");
 			JPanel columnPanel = new JPanel();
 			columnPanel.add(fColumnField, BorderLayout.LINE_START);
-			fColumnField.setText(this.firstColumn + "");
+			fColumnField.setText(Integer.toString(this.firstColumn));
 			columnPanel.add(new JLabel("..."));
 			columnPanel.add(lColumnField, BorderLayout.LINE_END);
-			lColumnField.setText(this.lastColumn + "");
+			lColumnField.setText(Integer.toString(this.lastColumn));
 			JLabel holder2 = new JLabel();
 
 			gridbag.setConstraints(colLabel, c);

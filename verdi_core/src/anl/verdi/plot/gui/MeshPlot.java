@@ -1522,7 +1522,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	private static int indexOfObsValue(float value, final double[] values) {
-		if (new Float(value).toString().equals("NaN"))
+		if (Float.isNaN(value))
 			return -1;
 		
 		if (value <= DataUtilities.BADVAL3 || value <= DataUtilities.AMISS3) 	// 2014 changed AMISS3 comparison from == to <=
@@ -2225,11 +2225,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		delayField.setEnabled(timesteps > 1);
 		firstRowField = new JTextField("1", 4);
 		firstRowField.addActionListener(this);
-		lastRowField = new JTextField(rows + "", 4);
+		lastRowField = new JTextField(Integer.toString(rows), 4);
 		lastRowField.addActionListener(this);
 		firstColumnField = new JTextField("1", 4);
 		firstColumnField.addActionListener(this);
-		lastColumnField = new JTextField(columns + "", 4);
+		lastColumnField = new JTextField(Integer.toString(columns), 4);
 		lastColumnField.addActionListener(this);
 
 		GridBagLayout gridbag = new GridBagLayout();
@@ -3428,10 +3428,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			JLabel lonLabel = new JLabel("Longitude:");
 			JPanel lonPanel = new JPanel();
 			lonPanel.add(fLonField, BorderLayout.LINE_START);
-			fLonField.setText(this.lonLow + "");
+			fLonField.setText(Integer.toString(this.lonLow));
 			lonPanel.add(new JLabel("..."));
 			lonPanel.add(lLonField, BorderLayout.LINE_END);
-			lLonField.setText(this.lonHigh + "");
+			lLonField.setText(Integer.toString(this.lonHigh));
 			JLabel holder1 = new JLabel();
 
 			gridbag.setConstraints(lonLabel, c);
@@ -3447,10 +3447,10 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			JLabel latLabel = new JLabel("Latitude:");
 			JPanel latPanel = new JPanel();
 			latPanel.add(fLatField, BorderLayout.LINE_START);
-			fLatField.setText(this.latLow + "");
+			fLatField.setText(Integer.toString(this.latLow));
 			latPanel.add(new JLabel("..."));
 			latPanel.add(lLatField, BorderLayout.LINE_END);
-			lLatField.setText(this.latHigh + "");
+			lLatField.setText(Integer.toString(this.latHigh));
 			JLabel holder2 = new JLabel();
 
 			gridbag.setConstraints(latLabel, c);

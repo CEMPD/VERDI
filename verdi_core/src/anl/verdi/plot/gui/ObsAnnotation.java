@@ -277,7 +277,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	 */
 
 	private static int indexOfObsValue(float value, final double[] values) {
-		if (new Float(value).toString().equals("NaN"))
+		if (Float.isNaN(value))
 			return -1;
 		
 		if (value <= DataUtilities.BADVAL3 || value <= DataUtilities.AMISS3) 	// 2014 changed AMISS3 comparison from == to <=
