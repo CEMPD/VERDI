@@ -215,6 +215,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private NumberFormat plotFormat;
 	private NumberFormat coordFormat;
 	private NumberFormat valueFormat;
+	private AreaFinder finder;
 	
 	IMPASDataset dataset;
 
@@ -1055,6 +1056,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		cellInfo = null;
 		splitCellInfo = null;
 		dataset = null;
+		finder = null;
 		
 		loadConfig.close();
 		saveConfig.close();
@@ -2011,7 +2013,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		coordFormat = NumberFormat.getInstance();
 		coordFormat.setMaximumFractionDigits(3);
 
-		AreaFinder finder = new AreaFinder();
+		finder = new AreaFinder();
 		this.addMouseListener(finder);
 		this.addMouseMotionListener(finder);
 		// Initialize attributes from dataFrame argument:
@@ -3942,23 +3944,36 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	class AreaFinder extends MouseInputAdapter {
 		
 		private Point mpStart, mpEnd;
+		boolean drawDeferred = false;
 
 		// this rect measured axis coordinates
 		private Rectangle rect;
 
 		public void mousePressed(MouseEvent e) {
-			if (popupShown) {
-				return;
+			synchronized (this) {
+				if (popupShown) {
+					return;
+				}
+	
+				if (isInDataArea(e)) {
+					mpStart = new Point(getCol(e.getPoint()), getRow(e.getPoint()));
+					rect = new Rectangle(mpStart, new Dimension(0, 0));
+					eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, createAreaString(rect),
+									false));
+				} else {
+					mpStart = null;
+				}
 			}
-
-			if (isInDataArea(e)) {
-				mpStart = new Point(getCol(e.getPoint()), getRow(e.getPoint()));
-				rect = new Rectangle(mpStart, new Dimension(0, 0));
-				eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, createAreaString(rect),
-								false));
-			} else {
-				mpStart = null;
-			}
+		}
+		
+		/* 
+		 * Rendering errors occur if draw happens while mouse drag is happening.  If mouse is down, set
+		 * drawDeferred to true, callers will know not to draw, and draw will happen when exiting data area
+		 * or selection is made
+		*/
+		public boolean deferredDraw() {
+			drawDeferred = mpStart != null;
+			return drawDeferred;
 		}
 
 		public void mouseDragged(MouseEvent e) {
@@ -3995,6 +4010,9 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 		public void mouseExited(MouseEvent e) {
 			eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(new Rectangle(0, 0, 0, 0), true));
+			mpStart = null;
+			if (drawDeferred)
+				draw();
 		}
 
 		public void mouseReleased(MouseEvent e) {
@@ -4020,7 +4038,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						zoom(rightclick, !rightclick, false, mpEnd.x < mpStart.x || mpEnd.y < mpStart.y, false, rect);
 					}
 				}
-				
+				mpStart = null;
 				eventProducer.fireAreaSelectionEvent(new AreaSelectionEvent(rect, true));
 			}
 		}
@@ -4409,7 +4427,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			}
 			//System.out.println("Legend " + pctComplete + "% complete, min " + min + " max " + max + " log " + isLog + " redrawn");
 		}
-		draw();
+		synchronized (finder) {
+			if (!finder.deferredDraw()) {
+				draw();
+			}
+		}
 	}
 	
 	private void updateLegendLevels() {
