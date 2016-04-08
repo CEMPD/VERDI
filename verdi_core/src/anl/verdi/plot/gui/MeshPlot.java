@@ -1887,6 +1887,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			cell.colorIndex = indexOfObsValue((float)cell.getValue(), legendLevels);
 		}
 		}
+		calculateVisibleMinMax();
 		Logger.info("Updated cell data in " + (System.currentTimeMillis() - start) + "ms");
 
 	}
@@ -3619,7 +3620,54 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	/**
-	 * Gets the visible cells for this plot.
+	 * 
+	 * Calculates min/max for visible cells
+	 */
+	protected void calculateVisibleMinMax() {
+		// If not zoomed use default zoom
+		if (zoomFactor == 1) {
+			MinMaxInfo info = dataset.getTimestepMinMax(dataFrame, layer, timestep);
+			if (info != null && info.getCompletion() == 100) {
+				MeshCellInfo cell = cellsToRender[info.getMinIndex()];
+				currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = info.getMin();
+				currentMinMaxCache[LEVELS_CACHE_MIN_LON] = cell.getLon();
+				currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = cell.getLat();
+				cell = cellsToRender[info.getMaxIndex()];
+				currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = info.getMax();
+				currentMinMaxCache[LEVELS_CACHE_MAX_LON] = cell.getLon();
+				currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = cell.getLat();
+				//System.out.println("Updated min layer " + layer + " step " + timestep + " value " + currentMinMaxCache[LEVELS_CACHE_MIN_VALUE]);
+				return;
+			}
+		}
+		currentMinMaxCache[LEVELS_CACHE_MIN_LON] = Double.MAX_VALUE;
+		currentMinMaxCache[LEVELS_CACHE_MAX_LON] = Double.MAX_VALUE * -1;
+		currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = Double.MAX_VALUE;
+		currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = Double.MAX_VALUE * -1;
+		currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = Double.MAX_VALUE * -1;
+		currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = Double.MAX_VALUE;
+		currentMinMaxCache[LEVELS_CACHE_PERCENT_COMPLETE] = layerMinMaxCache[layer][LEVELS_CACHE_PERCENT_COMPLETE];
+
+		for (LocalCellInfo cell : cellInfo) {
+			if (cell.visible){
+				MeshCellInfo meshCell = cell.getSource();
+				double value = cell.getValue();
+				if (value < currentMinMaxCache[LEVELS_CACHE_MIN_VALUE]) {
+					currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = value;
+					currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = meshCell.getLat();
+					currentMinMaxCache[LEVELS_CACHE_MIN_LON] = meshCell.getLon();
+				} else if (value > currentMinMaxCache[LEVELS_CACHE_MAX_VALUE]) {
+					currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = value;
+					currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = meshCell.getLat();
+					currentMinMaxCache[LEVELS_CACHE_MAX_LON] = meshCell.getLon();					
+				}
+
+			}
+		}
+	}
+	
+	/**
+	 * Gets the visible cells for this plot, and calculates min/max.
 	 *
 	 * @return the visible 
 	 * cells for this plot.
@@ -4427,6 +4475,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			}
 			//System.out.println("Legend " + pctComplete + "% complete, min " + min + " max " + max + " log " + isLog + " redrawn");
 		}
+		if (finder == null)
+			return;
 		synchronized (finder) {
 			if (!finder.deferredDraw()) {
 				draw();

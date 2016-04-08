@@ -31,7 +31,15 @@ public interface IMPASDataset extends Dataset {
 	 * @param listener - listener to be notified as min/max is updated over the entire layer
 	 * @return - min max values for the given variable within the layer
 	 */
-	public MinMaxInfo getLayerMinMax(DataFrame variable, int layer, MinMaxLevelListener listener);
+	public MinMaxInfo getLayerMinMax(DataFrame variable, int layer, MinMaxLevelListener listener);	
+	
+	/**
+	 * Returns min / max values for the given variable within the given layer and timetep.  Returns null
+	 * if the min/max for the timestep hasn't been calculated yet.
+	 *  
+	 * @return - min max values for the given variable within the layer and timestep
+	 */
+	public MinMaxInfo getTimestepMinMax(DataFrame variable, int layer, int timestep);
 	
 	public double getAvgCellDiam();
 	

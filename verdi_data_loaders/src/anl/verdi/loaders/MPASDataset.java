@@ -1122,6 +1122,14 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	}
 
 	@Override
+	public MinMaxInfo getTimestepMinMax(DataFrame variable, int layer, int timestep) {
+		MPASMinMaxCalculator calculator = getLevelCalculator(variable);
+		if (calculator == null)
+			return null;
+		return calculator.getTimestepMinMax(layer, timestep);
+	}
+
+	@Override
 	public CoordAxis getTimeAxis(String variable) {
 		List<CoordAxis> axisList = coordAxes.getAxes();
 		ucar.nc2.Variable var = getVariableDS(getVariable(variable));

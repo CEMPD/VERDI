@@ -109,6 +109,27 @@ public class MPASMinMaxCalculator implements Runnable {
 		return;
 	}
 	
+	//Possibly return null if timestep hasn't been calculated yet
+	public MinMaxInfo getTimestepMinMax(int layer, int timestep) {
+		MinMaxInfo layerInfo = null;
+		MinMaxInfo stepInfo = null;
+		synchronized (layerCache) {
+			layerInfo = layerCache.get(layer);
+			if (layerInfo != null) {
+				synchronized (timestepCache) {
+					Map<Integer, MinMaxInfo> layerMap = timestepCache.get(layer);
+					if (layerMap != null) {
+						synchronized (layerMap) {
+							stepInfo = layerMap.get(timestep);
+						}
+					}
+				}
+			}
+		}
+		return stepInfo;
+	}
+
+	
 	private MinMaxInfo getTimestep(MPASDataFrameIndex index, int layer, int timestep) {
 		Map<Integer, MinMaxInfo> layerMap = null;
 		MinMaxInfo layerInfo = resolveLayerInfo(layer);
