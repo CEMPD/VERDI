@@ -3198,6 +3198,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		
 		try {
 			minMax = new DataUtilities.MinMax(map.getMin(), map.getMax());
+			valueFormat = map.getNumberFormat();
 		} catch (Exception e) {
 			Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
 			e.printStackTrace();

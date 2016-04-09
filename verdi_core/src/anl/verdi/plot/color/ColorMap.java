@@ -444,7 +444,8 @@ public class ColorMap implements Serializable {
 	public void setLogMinMax(double min, double max) {
 		this.logMin = min;
 		this.logMax = max;
-		this.format = null;
+		//TAH - setting this to null throws away what was set and forces recalculation with default values
+		//this.format = null;
 		calcLogIntervals(palette, logMin, logMax);
 	}
 
