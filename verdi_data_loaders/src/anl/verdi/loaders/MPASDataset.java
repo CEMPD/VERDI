@@ -45,6 +45,7 @@ import anl.verdi.data.DataFrame;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.DatasetMetadata;
 import anl.verdi.data.DefaultVariable;
+import anl.verdi.data.MPASPlotDataFrame;
 import anl.verdi.data.MeshCellInfo;
 import anl.verdi.data.MultiAxisDataset;
 import anl.verdi.data.Variable;
@@ -1170,5 +1171,17 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		return splitCells;
 	}
 
+	/** 
+	 * 
+	 * DataFrames built by VERDI to not contain all attributes necessary for rendering.  They contain cell axis,
+	 * are missing x/y axis, and have other issues.  This replaces the standard DataFrame with an updated version
+	 * that can be used in rendering.  Alternate approaches may involve overriding CoordSysBuilder's
+	 * augmentDataset method and manipulating the underlying dataset.
+	 */
+	public DataFrame augmentFrame(DataFrame frame) {
+		if (frame instanceof MPASPlotDataFrame)
+			return frame;
+		return new MPASPlotDataFrame(frame);
+	}
 
 }

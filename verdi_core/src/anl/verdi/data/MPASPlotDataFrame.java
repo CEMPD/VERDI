@@ -23,12 +23,20 @@ public class MPASPlotDataFrame implements DataFrame {
 	Array array;
 	
 	Variable variable;
-	
 	Axes<DataFrameAxis> axes;
 	
 	List<Dataset> datasets = new ArrayList<Dataset>();
 	
 	String title;
+	
+	public MPASPlotDataFrame(DataFrame frame) {
+		variable = frame.getVariable();
+		title = variable.getName();
+		datasets.addAll(frame.getDataset());
+		array = frame.getArray();
+		axes = sliceAxes(null, frame.getAxes());
+		
+	}
 	
 	public MPASPlotDataFrame(String label, Array source, Slice slice, Variable var, Axes<DataFrameAxis> srcAxes, Dataset set) throws InvalidRangeException {
 		title = label;
@@ -99,33 +107,29 @@ public class MPASPlotDataFrame implements DataFrame {
 	}
 	
 	private Array sliceArray(Slice slice, Array srcArray, Axes<DataFrameAxis> fullAxes) throws InvalidRangeException {
-		if (slice == null)
-			return srcArray;
 		int[] origin = AbstractDataFrame.createOrigins(slice, fullAxes);
 		int[] extents = AbstractDataFrame.createExtents(slice, fullAxes);
 		return srcArray.sectionNoReduce(origin, extents, null);
 	}
 	
 	private Axes<DataFrameAxis> sliceAxes(Slice slice, Axes<DataFrameAxis> srcAxes) {
-		if (slice == null)
-			return srcAxes;
 		List<DataFrameAxis> axisList = new ArrayList<DataFrameAxis>();
 		
-		if (slice.getCellRange() == null || slice.getCellRange().getExtent() == srcAxes.getCellAxis().getRange().getExtent())
+		if (slice == null || slice.getCellRange() == null || slice.getCellRange().getExtent() == srcAxes.getCellAxis().getRange().getExtent())
 			axisList.add(srcAxes.getCellAxis());
 		else {
 			DataFrameAxis cellAxis = DataFrameAxis.createDataFrameAxis(srcAxes.getCellAxis().getAxis(), (int)slice.getCellRange().getOrigin(), (int)slice.getCellRange().getExtent(), srcAxes.getCellAxis().getArrayIndex());
 			axisList.add(cellAxis);
 		}
 
-		if (slice.getTimeRange() == null || slice.getTimeRange().getExtent() == srcAxes.getTimeAxis().getRange().getExtent())
+		if (slice == null || slice.getTimeRange() == null || slice.getTimeRange().getExtent() == srcAxes.getTimeAxis().getRange().getExtent())
 			axisList.add(srcAxes.getTimeAxis());
 		else {
 			DataFrameAxis newAxis = DataFrameAxis.createDataFrameAxis(srcAxes.getTimeAxis().getAxis(), (int)slice.getTimeRange().getOrigin(), (int)slice.getTimeRange().getExtent(), srcAxes.getTimeAxis().getArrayIndex());
 			axisList.add(newAxis);
 		}
 
-		if (slice.getLayerRange() == null || slice.getLayerRange().getExtent() == srcAxes.getZAxis().getRange().getExtent())
+		if (slice == null || slice.getLayerRange() == null || slice.getLayerRange().getExtent() == srcAxes.getZAxis().getRange().getExtent())
 			axisList.add(srcAxes.getZAxis());
 		else {
 			DataFrameAxis newAxis = DataFrameAxis.createDataFrameAxis(srcAxes.getZAxis().getAxis(), (int)slice.getLayerRange().getOrigin(), (int)slice.getLayerRange().getExtent(), srcAxes.getZAxis().getArrayIndex());

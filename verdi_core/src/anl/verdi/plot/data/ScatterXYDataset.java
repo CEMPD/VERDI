@@ -10,6 +10,7 @@ import org.jfree.data.xy.XYDataset;
 
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameIndex;
+import anl.verdi.data.MPASDataFrameIndex;
 
 /**
  * Dataset appropriate for a scatter plot. Each series has two frames. The xValue is
@@ -37,16 +38,28 @@ public class ScatterXYDataset extends AbstractDataset implements XYDataset {
 			if (frame.getAxes().getZAxis() == null) {
 				index.setTime(timeStep);
 			} else {
-				index.set(timeStep, layer, 0, 0);
+				if (index instanceof MPASDataFrameIndex) {
+					((MPASDataFrameIndex)index).set(timeStep,  layer,  0);
+					xExtent = frame.getAxes().getCellAxis().getExtent();
+					yExtent = 1;
+					return;
+				}
+				else
+					index.set(timeStep, layer, 0, 0);
 			}
 			xExtent = frame.getAxes().getXAxis().getExtent();
 			yExtent = frame.getAxes().getYAxis().getExtent();
 		}
 
 		public double getValue(int item) {
-			int x = item % xExtent;
-			int y = (item - x) / xExtent;
-			index.setXY(x, y);
+			if (index instanceof MPASDataFrameIndex) {
+				((MPASDataFrameIndex)index).setCell(item);
+			}
+			else {
+				int x = item % xExtent;
+				int y = (item - x) / xExtent;
+				index.setXY(x, y);
+			}
 			return frame.getDouble(index);
 		}
 

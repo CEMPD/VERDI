@@ -15,6 +15,7 @@ import ucar.ma2.Index4D;
 import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.core.VerdiConstants;
+import anl.verdi.plot.data.IMPASDataset;
 import anl.verdi.util.ArrayFactory;
 
 /**
@@ -171,8 +172,23 @@ public class DataUtilities {
 		Array array = frame.getArray().section(Arrays.asList(ranges));
 		return minMax(array);
 	}
+	
+	private static MinMax mpasMinMax(DataFrame frame, int timeStep, int layer) throws InvalidRangeException {
+		if (frame.getShape().length != 3) throw new InvalidRangeException("Frame rank does not equal 3");
+		Axes<DataFrameAxis> axes = frame.getAxes();
+		ucar.ma2.Range[] ranges = new ucar.ma2.Range[3];
+		ranges[axes.getTimeAxis().getArrayIndex()] = new ucar.ma2.Range(timeStep, timeStep);
+		ranges[axes.getZAxis().getArrayIndex()] = new ucar.ma2.Range(layer, layer);
+		DataFrameAxis cellAxis = axes.getCellAxis();
+		ranges[cellAxis.getArrayIndex()] = new ucar.ma2.Range(0, cellAxis.getExtent() - 1);
+		Array array = frame.getArray().section(Arrays.asList(ranges));
+		return minMax(array);	
+	}
 
 	public static MinMax minMax(DataFrame frame, int timeStep, int layer) throws InvalidRangeException {
+		if (frame.getDataset().get(0) instanceof IMPASDataset) {
+			return mpasMinMax(frame, timeStep, layer);
+		}
 		if (frame.getShape().length != 4) throw new InvalidRangeException("Frame rank does not equal 4");
 		Axes<DataFrameAxis> axes = frame.getAxes();
 		ucar.ma2.Range[] ranges = new ucar.ma2.Range[4];

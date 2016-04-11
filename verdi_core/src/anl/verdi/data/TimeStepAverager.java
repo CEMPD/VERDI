@@ -2,6 +2,7 @@ package anl.verdi.data;
 
 import java.util.List;
 
+import anl.verdi.plot.data.IMPASDataset;
 import anl.verdi.util.ArrayFactory;
 import ucar.ma2.Array;
 import ucar.ma2.Index;
@@ -215,6 +216,8 @@ public class TimeStepAverager implements DataTransformer {
 	 */
 	public DataFrame transform(DataFrame frame) {
 		DataTransformer transformer;
+		if (frame.getDataset().get(0) instanceof IMPASDataset)
+			frame = ((IMPASDataset)frame.getDataset().get(0)).augmentFrame(frame);
 		boolean hasLayer = frame.getAxes().getZAxis() != null;
 		if (frame instanceof MPASPlotDataFrame) {
 			if (hasLayer)

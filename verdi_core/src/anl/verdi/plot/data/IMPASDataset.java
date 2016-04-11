@@ -64,7 +64,14 @@ public interface IMPASDataset extends Dataset {
 	public MeshCellInfo[] getCellsToRender();
 	
 	public Map<MeshCellInfo, Integer> getSplitCells();
-
-
+	
+	/** 
+	 * 
+	 * DataFrames built by VERDI to not contain all attributes necessary for rendering.  They contain cell axis,
+	 * are missing x/y axis, and have other issues.  This replaces the standard DataFrame with an updated version
+	 * that can be used in rendering.  Alternate approaches may involve overriding CoordSysBuilder's
+	 * augmentDataset method and manipulating the underlying dataset.
+	 */
+	public DataFrame augmentFrame(DataFrame frame);
 
 }
