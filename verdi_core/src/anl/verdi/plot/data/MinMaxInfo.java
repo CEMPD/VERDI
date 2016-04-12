@@ -9,8 +9,8 @@ package anl.verdi.plot.data;
 
 public class MinMaxInfo {
 
-	double max = Double.MAX_VALUE * -1;
-	double min = Double.MAX_VALUE;
+	double max = Double.NEGATIVE_INFINITY;
+	double min = Double.POSITIVE_INFINITY;
 	int minIndex = -1;
 	int maxIndex = -1;
 	int count = 0;
@@ -25,11 +25,11 @@ public class MinMaxInfo {
 	}
 	
 	public void visitValue(double value, int index) {
-		if (value < min) {
+		if (value <= min) {
 			min = value;
 			minIndex = index;
 		}
-		if (value > max) {
+		if (value >= max) {
 			max = value;
 			maxIndex = index;
 		}
