@@ -725,7 +725,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	
 	private Calendar stringToCal(String timeStr) {
 		timeStr = timeStr.trim();
-		Calendar cal = new GregorianCalendar();
+		Calendar cal = new GregorianCalendar(new SimpleTimeZone(0, "UTC"));
 		cal.clear();
 		String[] arr = timeStr.split("\\.");
 		if (arr.length > 1) {
@@ -763,7 +763,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			e.printStackTrace();
 		}
 		
-		Calendar startCal = new GregorianCalendar(new SimpleTimeZone(0, "GMT"));
+		Calendar startCal = new GregorianCalendar(new SimpleTimeZone(0, "UTC"));
 
 		String units = null;
 		
