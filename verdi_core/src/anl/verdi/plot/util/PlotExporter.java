@@ -33,7 +33,7 @@ public class PlotExporter {
 	public final static String PNG = "png";
 	public final static String BMP = "bmp";
 	public final static String EPS = "eps";
-//	public final static String SHP = "shp";		// 2014 disabling shapefile export in VERDI 1.5.0
+	public final static String SHP = "shp";
 	public final static String ASC = "asc";
 
 	private Plot plot;
@@ -90,7 +90,7 @@ public class PlotExporter {
 		chooser.addChoosableFileFilter(new ImageFileFilter("EPS Image (*.eps)", EPS));
 		final FileFilter pngFileFilter = new ImageFileFilter("PNG Image (*.png)", PNG);
 		chooser.addChoosableFileFilter(pngFileFilter);
-//		chooser.addChoosableFileFilter(new ImageFileFilter("Shapefile (*.shp, *.shx, *.dbf)", SHP));
+		chooser.addChoosableFileFilter(new ImageFileFilter("Shapefile (*.shp, *.shx, *.dbf)", SHP));
 		chooser.addChoosableFileFilter(new ImageFileFilter("ASCII Grid (*.asc)", ASC));
 		chooser.setFileFilter(pngFileFilter);
 
@@ -136,7 +136,7 @@ public class PlotExporter {
 
 		if ( plot instanceof FastTilePlot &&
 				( currentExt.equalsIgnoreCase(EPS) ||
-//				  currentExt.equals( SHP )  ||  
+				  currentExt.equals( SHP )  ||  
 				  currentExt.equals( ASC ) ) ) {
 			String filename = file.getAbsolutePath();
 			int extPos = filename.indexOf("." + currentExt);
@@ -146,8 +146,8 @@ public class PlotExporter {
 
 			if ( currentExt.equalsIgnoreCase(EPS) ) {
 				((FastTilePlot)plot).exportEPSImage(filename);
-//			} else if ( currentExt.equals( SHP ) ) {
-//				((FastTilePlot)plot).exportShapefile(filename);
+			} else if ( currentExt.equals( SHP ) ) {
+				((FastTilePlot)plot).exportShapefile(filename);
 			} else {
 				((FastTilePlot)plot).exportASCIIGrid(filename);				
 			}
@@ -195,7 +195,7 @@ public class PlotExporter {
 			  ext.equalsIgnoreCase(PNG) ||
 			  ext.equalsIgnoreCase(BMP) ||
 			  ext.equalsIgnoreCase(EPS) ||
-//			  ext.equalsIgnoreCase(SHP) ||
+			  ext.equalsIgnoreCase(SHP) ||
 			  ext.equalsIgnoreCase(ASC) )
 		{
 			currentExt = ext;

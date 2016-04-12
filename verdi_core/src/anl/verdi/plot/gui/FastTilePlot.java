@@ -8,7 +8,7 @@ package anl.verdi.plot.gui;
 
 import gov.epa.emvl.ASCIIGridWriter;
 import gov.epa.emvl.GridCellStatistics;
-//import gov.epa.emvl.GridShapefileWriter;		// 2014 disable write shapefile VERDI 1.5.0
+import gov.epa.emvl.GridShapefileWriter;
 import gov.epa.emvl.Mapper;
 import gov.epa.emvl.Numerics;
 import gov.epa.emvl.Projector;
@@ -3306,28 +3306,27 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 //									filteredVariableName, subsetLayerData, projector );
 //	}
 
-//	2014 called from anl.verdi.plot.util.PlotExporter; disabling exporting of Shapefiles for VERDI v1.5.0
-	//	public void exportShapefile( String baseFileName ) throws IOException {
-//		final int subsetLayerRows = 1 + lastRow - firstRow;
-//		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
-//		// Filter variable name/expression so operators aren't a problem in Excel:
-//		
-//		// changed to this in v. 529
-//		final int end = variable.indexOf( '[' );
-//		final String filteredVariableName = variable.substring( 0, end );
-//		
-//		// change back now 2012-06-14
-////		final String filteredVariableName =
-////			variable.replaceAll( "[\\[\\d\\]]", "" ).replaceAll( "\\W", "" );
-//		
-//		final double subsetWestEdge = westEdge + firstColumn * cellWidth;
-//		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
-//		GridShapefileWriter.write( baseFileName,
-//				subsetLayerRows, subsetLayerColumns,
-//				subsetWestEdge, subsetSouthEdge,
-//				cellWidth, cellHeight,
-//				filteredVariableName, subsetLayerData, projector );
-//	}
+	public void exportShapefile( String baseFileName ) throws IOException {
+		final int subsetLayerRows = 1 + lastRow - firstRow;
+		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
+		// Filter variable name/expression so operators aren't a problem in Excel:
+		
+		// changed to this in v. 529
+		final int end = variable.indexOf( '[' );
+		final String filteredVariableName = variable.substring( 0, end );
+		
+		// change back now 2012-06-14
+//		final String filteredVariableName =
+//			variable.replaceAll( "[\\[\\d\\]]", "" ).replaceAll( "\\W", "" );
+		
+		final double subsetWestEdge = westEdge + firstColumn * cellWidth;
+		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
+		GridShapefileWriter.write( baseFileName,
+				subsetLayerRows, subsetLayerColumns,
+				subsetWestEdge, subsetSouthEdge,
+				cellWidth, cellHeight,
+				filteredVariableName, subsetLayerData, gridCRS );
+	}
 	
 	public void exportASCIIGrid( String baseFileName ) {
 		Logger.debug("in FastTilePlot.exportASCIIGrid");
