@@ -150,7 +150,7 @@ public class PavePaletteCreator {
 	}
 
 	private Palette createPalette(int[] map, int classes, String description) {
-		Logger.debug("in PavePaletteCreator.createPalette, classes = " + classes + ", description = " + description);
+//		Logger.debug("in PavePaletteCreator.createPalette, classes = " + classes + ", description = " + description);
 		Color[] colors = new Color[classes];
 		for (int i = 0; i < classes; i++) {
 			int index = 0;
@@ -159,8 +159,8 @@ public class PavePaletteCreator {
 			else index = i * (map.length / (classes - 1));
 			Color color = new Color(map[index]);
 			colors[i] = color;
-			Logger.debug("colors[" + i + "] = " + color.getRGB() + " : " + color.getRed()
-					+ ", " + color.getGreen() + ", " + color.getBlue());
+//			Logger.debug("colors[" + i + "] = " + color.getRGB() + " : " + color.getRed()
+//					+ ", " + color.getGreen() + ", " + color.getBlue());
 		}
 
 		return new Palette(colors, description, false);

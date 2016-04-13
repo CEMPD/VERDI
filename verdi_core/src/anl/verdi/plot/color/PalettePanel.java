@@ -8,7 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -706,7 +708,7 @@ public class PalettePanel extends JPanel {
 		} else if ( iType == ColorMap.IntervalType.CUSTOM) {
 			intervalType.setSelectedItem("Custom");
 		} else {
-			// TODO: report error
+			Logger.error("Error type of color map " + colorMap.getIntervalType().toString() + "is not recognized.");
 		}
 		
 		scaleType.setVisible( true);
@@ -763,10 +765,14 @@ public class PalettePanel extends JPanel {
 			}
 		});
 		
-		formatFld.setText("%.3f");
+		formatFld.setText("%5.3f");
+		Logger.debug("formatFld just set to %5.3f");
 		
 		if (minConv.equals("e") || maxConv.equals("e"))
-			formatFld.setText("%.3e");
+		{
+			formatFld.setText("%5.3e");
+			Logger.debug("formatFld just set to %5.3e");
+		}
 		
 		try {
 			if (colorMap.getNumberFormat() != null)
@@ -795,51 +801,173 @@ public class PalettePanel extends JPanel {
 		return map;
 	}
 
+	/**
+	 * Take the format string input by the user, check the construction, create a proper Java pattern,
+	 * and apply it to the breakpoint values on the tile plot legend
+	 * @param map	the current ColorMap
+	 * @param format	the String entered by the user
+	 * @return
+	 * @throws Exception
+	 */
 	private ColorMap resetNumberFormat(ColorMap map, String format) throws Exception {
-		Logger.debug("in PalettePanel.resetNumberFormat");
+		Logger.debug("in PalettePanel.resetNumberFormat, format = " + format);
 		if (format == null)
+		{
+			Logger.debug("format is null; returning map without changes");
 			return map;
+		}
+
+		// 2016: declare & initialize parts of format string
+		String cPattern = format.trim();   // trimmed input format that should be a subset of a C printf format
+		boolean haveDot = true;		// expect a . in the cPattern
+		boolean lead0 = false;		// integer (base) has all 0's (not #0) in pattern
+		int fieldWidth = 0;			// input field width (entire field width)
+		int fieldDecimal = 0;		// input decimal width
+		int baseWidth = 1;			// input integer (base) width
+		int cModifierLength = 0;	// width of any modifier at end of cPattern
+		String cModifier = "";		// default to not having a modifier
+		int i = 0;					// loop counter
 		
-		String temp = format.trim();
-		Pattern p = Pattern.compile("^%\\d*\\.\\d*[eEfFgGdD]\\d*$");
-		Matcher m = p.matcher(temp);
+		// pattern match check from old code
+//		Pattern p = Pattern.compile("^%\\d*\\.\\d*[eEfFgGdD]\\d*$");	// need to change this to what VERDI allows/recognizes
+//		Matcher m = p.matcher(cPattern);
 		
-		if (!m.matches())
-			throw new Exception("Number format '" + temp + "'is not valid.\n" +
-					"Example: 0.00123456 formatted with \"%2.3E\" yields \"12.345E-4\"");
+		Logger.debug("cPattern = " + cPattern);
+		i = 0;
+		while(!Character.isDigit(cPattern.charAt(i)) && cPattern.charAt(i) != '.')
+			i++;
+
+		int startWidth = i;		// position of starting digit or . in cPattern
+		int strLength = cPattern.length();		// length of entire trimmed string
+		Logger.debug("length of cPattern = " + strLength + "; startWidth = " + startWidth);
 		
-		int exponent = temp.toUpperCase().indexOf("E");
-		int start = 0;
+		// does cPattern have a . ?
+		int dot = cPattern.indexOf('.');	// look for . and get its position in cPattern
+		Logger.debug("dot = " + dot);
+		if(dot < 0)
+		{
+			haveDot = false;
+			Logger.debug("haveDot = " + haveDot);
+		}
+		else if(dot > startWidth)
+		{
+			String width = cPattern.substring(startWidth, dot);	// substring(begIndex, endIndex+1)
+			fieldWidth = Integer.valueOf(width);		// size of width portion of cPattern
+			haveDot = true;
+			String leadingChar = width.substring(0,1);
+			if(leadingChar.compareTo("0") == 0)
+			{
+				lead0 = true;
+			}
+			Logger.debug("haveDot = " + haveDot + ", width = " + width + ", fieldWidth = " + fieldWidth);
+		}	// else keep fieldWidth = 0 (initialized value)
 		
-		while (!Character.isDigit(temp.charAt(start)) && temp.charAt(start) != '.')
-			start++;
+		// now start parsing the decimal portion of the pattern
+		int startDecimal = dot + 1;
+		int endDecimal = startDecimal;
+		while (endDecimal < strLength && Character.isDigit(cPattern.charAt(endDecimal)))
+			endDecimal ++;
+		endDecimal--;		// position of last digit in decimal portion of cPattern
 		
-		int dot = temp.indexOf(".");
-		int end = (dot == -1 ? start + 1 : dot + 1);
+		if(startDecimal < strLength && endDecimal < strLength)
+		{
+			String decimal = cPattern.substring(startDecimal, endDecimal + 1);
+			fieldDecimal = Integer.valueOf(decimal);	// size of decimal portion of cPattern
+			Logger.debug("startDecimal = " + startDecimal + ", endDecimal = " + endDecimal + 
+					", decimal = " + decimal + ", fieldDecimal = " + fieldDecimal);
+		}
 		
-		while (Character.isDigit(temp.charAt(end)))
-			end++;
+		// parse any modifier at the end of the pattern
+		if(endDecimal < strLength)
+		{
+			cModifier = cPattern.substring(endDecimal + 1, strLength).toUpperCase();
+			cModifierLength = cModifier.length();
+			Logger.debug("cModifier = " + cModifier + ", cModifierLength = " + cModifierLength);
+		}		// else cModifierLength remains 0
 		
-		String intStr = temp.substring(start, dot);
-		String decStr = temp.substring(dot+1, end);
-		int integer = Integer.valueOf(intStr == null || intStr.isEmpty()? 0+"" : intStr);
-		int decimal = Integer.valueOf(decStr == null || decStr.isEmpty()? 0+"" : decStr);
+		int nonBase = (haveDot ? 1 : 0) + fieldDecimal;		// sum of dot and decimal portion of cPattern
+		Logger.debug("nonBase = " + nonBase);
+		if(fieldWidth <= nonBase && haveDot)				// overall width too small; fieldWidth does not include modifierLength
+		{
+			baseWidth = 1;									// mandatory 1 char before .
+			fieldWidth = nonBase + 1;						// overall width is nonBase + the 1 char
+			Logger.debug("overall width too small: baseWidth = " + baseWidth + ", fieldWidth = " + fieldWidth);
+		}
+		else if(fieldWidth <= nonBase && !haveDot)			// have a fieldDecimal but not a base & no .
+		{
+			baseWidth = fieldDecimal;						// transfer fieldDecimal value to baseWidth
+			fieldDecimal = 0;								// and have 0 for fieldDecimal
+			Logger.debug("have fieldDecimal but no base and no .: baseWidth = " + baseWidth + ", fieldDecimal = " + fieldDecimal);
+		}
+		else if (fieldWidth > nonBase)						// fieldWidth is mathematically OK
+		{
+			baseWidth = fieldWidth - nonBase;				// baseWidth is overall width - nonBase
+			Logger.debug("fieldWidth > nonBase: baseWidth = " + baseWidth);
+		}
 		
-		String fmtStr = "";
+		// construct using StringBuffer to build a pattern here instead of via DecimalFormat function calls
 		
-		for (int i = 0; i < integer-1; i++)
-			fmtStr += "#";
+		StringBuffer myPattern = new StringBuffer();
+		i = baseWidth;
+		while(i > 1)						// leading pattern for base (integer) 
+		{
+			if(lead0)
+				myPattern.append("0");		// pattern lead with 0
+			else
+				myPattern.append("#");		// pattern did not lead with 0
+			i--;
+		}
+		if(i>0)
+		{
+			myPattern.append("0");			// last character of base pattern is 0
+		}
+		if(haveDot)
+		{
+			myPattern.append(".");			// add the .
+		}
+		if(fieldDecimal >= 1)				// if have a decimal portion, start with a 0
+		{
+			myPattern.append("0");		
+		}
+		i=2;								// remainder of decimal places are optional (#)
+		while(i <= fieldDecimal)
+		{
+			myPattern.append("#");
+			i++;			
+		}
+		if(cModifierLength > 0)				// anything after the decimal pattern is appended
+		{
+			myPattern.append(cModifier);
+			if(!cModifier.endsWith("0"))
+			{
+				myPattern.append(0);
+			}
+		}
+		// ready to define the DecimalFormat
+		Logger.debug("myPattern before conversion = " + myPattern.toString());
+		DecimalFormat myDecimalFormat = new DecimalFormat(myPattern.toString());
+		myDecimalFormat.setRoundingMode(RoundingMode.HALF_UP);	// default is HALF-EVEN
 		
-		fmtStr += "0.";
+		// 2016 this method not working as expected in VERDI 1.6, Java 7; may want to try again in future
+//		if(haveDot)
+//		{
+//			myDecimalFormat.setMaximumFractionDigits(fieldDecimal);	// size fraction digits are 1 - fieldDecimal
+//			myDecimalFormat.setMinimumFractionDigits(1);
+//		}
+//		else
+//		{
+//			myDecimalFormat.setMaximumFractionDigits(0);		// size fraction digits are 0 (no .)
+//			myDecimalFormat.setMinimumFractionDigits(0);
+//		}
+//		myDecimalFormat.setMinimumIntegerDigits(1);
+//		myDecimalFormat.setMaximumIntegerDigits(baseWidth); 	// size base is 1 = baseWidth
+//		Logger.debug("myDecimalFormat before DecimalFormatSymbols = " + myDecimalFormat.toPattern());
+//		DecimalFormatSymbols newSymbols = new DecimalFormatSymbols(); // need way to pass in the modifier
+//		newSymbols.setExponentSeparator(cModifier);
+//		myDecimalFormat.setDecimalFormatSymbols(newSymbols); 	 
+		Logger.debug("myDecimalFormat = " + myDecimalFormat.toPattern());
 		
-		for (int i = 0; i < decimal; i++)
-			fmtStr += "0";
-		
-		if (exponent > 0)
-			fmtStr += "E0";
-		
-		map.setNumberFormat(new DecimalFormat(fmtStr));
-		
+		map.setNumberFormat(myDecimalFormat); 					// assign this format to the color map
 		return map;
 	}
 	
@@ -849,15 +977,18 @@ public class PalettePanel extends JPanel {
 			return " %.3f";
 		
 		String format = ((DecimalFormat)numberFormat).toPattern().toUpperCase();
+		Logger.debug("in getFormat, format = " + format);
 		int exp = format.indexOf("E");
 		int dot = format.indexOf(".");
-		String forStr = "%" + dot + ".";
+//		String forStr = "%" + dot + ".";
+		String forStr = "%" + (exp - dot + 1) + ".";		// 2016 trying to fix patterns
 		
 		if (exp > 0)
 			forStr += (exp - dot - 1) + "E";
 		else
 			forStr += (format.length() - 1 - dot) + "f";
 		
+		Logger.debug("in getFormat, forStr = " + forStr);
 		return  forStr;
 	}
 

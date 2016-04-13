@@ -99,11 +99,11 @@ public class PaletteSelectionPanel extends JPanel {
 		for (BrewerPalette pal : pals) {
 			Color[] colors = pal.getColors(tileCount);
 			palettes.add(new Palette(colors, pal.getDescription(), false));
-			Logger.debug("for each BrewerPalette, palettes.add " + pal.getDescription());
+//			Logger.debug("for each BrewerPalette, palettes.add " + pal.getDescription());
 		}
 
 		if (paletteType.equals(ColorBrewer.SEQUENTIAL)) {
-			Logger.debug("ColorBrewer is SEQUENTIAL, doing palettes.addAll for tileCount = " + tileCount);
+//			Logger.debug("ColorBrewer is SEQUENTIAL, doing palettes.addAll for tileCount = " + tileCount);
 			palettes.addAll(palBrewer.createPalettes(tileCount));
 		}
 
@@ -127,10 +127,10 @@ public class PaletteSelectionPanel extends JPanel {
 		palettePanel.initMap(map, minMax);
 	}
 	
-	public void setForFastTitle(boolean isForFastTitle) {
+	public void setForFastTitle(boolean isForFastTile) {
 		Logger.debug("in PaletteSelectionPanel.setForFastTitle");
 		if ( palettePanel != null) {
-			palettePanel.setForFastTitle( isForFastTitle );
+			palettePanel.setForFastTitle( isForFastTile );
 		}
 	}	
 	

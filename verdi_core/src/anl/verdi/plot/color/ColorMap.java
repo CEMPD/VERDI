@@ -421,12 +421,31 @@ public class ColorMap implements Serializable {
 
 	public void setNumberFormat(NumberFormat format) throws Exception {
 		if (!(format instanceof DecimalFormat))
+		{
+			Logger.debug("Number format: " + format.toString() + " is not supported.");
 			throw new Exception("Number format: " + format.toString()
 					+ " is not supported.");
-
+		}
 		this.format = (DecimalFormat) format;
 	}
-
+	
+	/**
+	 * setNumberFormat	set the DecimalFormat in the colorMap to what the user entered
+	 * @param aNumberFormat
+	 */
+	public void setNumberFormat(DecimalFormat myFormat)
+	{
+		format = myFormat;
+		Logger.debug("minimumIntegerDigits = " + format.getMinimumIntegerDigits() + 
+				", maximumIntegerDigits = " + format.getMaximumIntegerDigits());
+		Logger.debug("minimumFractionDigits = " + format.getMinimumFractionDigits() + 
+				", maximumFractionDigits = " + format.getMaximumFractionDigits());
+		Logger.debug("Currency = " + format.getCurrency());
+		Logger.debug("decimalSeparator = " + format.getDecimalFormatSymbols().getDecimalSeparator() + 
+				", groupingSeparator = " + format.getDecimalFormatSymbols().getGroupingSeparator() + 
+				", exponentSeparator = " + format.getDecimalFormatSymbols().getExponentSeparator());
+	}
+	
 	public void setPlotType(PlotType plotType) {
 		this.plotType = plotType;
 	}

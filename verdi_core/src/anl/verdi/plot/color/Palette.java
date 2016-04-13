@@ -62,28 +62,28 @@ public class Palette implements Serializable {
 	}
 
 	public void setColor(int index, Color color) {
-		Logger.debug("in Palette.setColor for index = " + index);
+//		Logger.debug("in Palette.setColor for index = " + index);
 		this.colors[index] = color;
 	}
 
 	public int getColorCount() {
-		Logger.debug("in Palette.getColorCount() = " + colors.length);
+//		Logger.debug("in Palette.getColorCount() = " + colors.length);
 		return colors.length;
 	}
 
 	public Color getColor(int index) {
-		Logger.debug("in Palette.getColor for index = " + index);
+//		Logger.debug("in Palette.getColor for index = " + index);
 		return colors[(!reverseColors ? index : getColorCount() - 1 - index)];
 	}
 
 	public static Palette getDefaultPalette() {
-		Logger.debug("in Palette.getDefaultPalette");
+//		Logger.debug("in Palette.getDefaultPalette");
 		ColorBrewer brewer = new ColorBrewer();	// calls to GeoTools library
-		Logger.debug("just completed call to GeoTools ColorBrewer default constructor");
+//		Logger.debug("just completed call to GeoTools ColorBrewer default constructor");
 		brewer.loadPalettes();
-		Logger.debug("finished loading palettes");
+//		Logger.debug("finished loading palettes");
 		BrewerPalette palette = brewer.getPalettes(ColorBrewer.QUALITATIVE)[0];
-		Logger.debug("back from call to GeoTools .getPalettes to set BrewerPalette object");
+//		Logger.debug("back from call to GeoTools .getPalettes to set BrewerPalette object");
 		// 2014 to get the identifiers of the 8 default colors
 		for(int i=0; i<8; i++)
 		{
