@@ -3032,6 +3032,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		result.add(getDataFrame());
 		return result;
 	}
+	
+	public void paint(Graphics g) {
+		super.paint(g);
+		draw();
+	}
 
 	/**
 	 * Exports an image of this Plot to the specified file in the specified
