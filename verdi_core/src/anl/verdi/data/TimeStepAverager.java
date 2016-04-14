@@ -1,5 +1,6 @@
 package anl.verdi.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import anl.verdi.plot.data.IMPASDataset;
@@ -240,7 +241,6 @@ public class TimeStepAverager implements DataTransformer {
 		Axes<DataFrameAxis> axes = frame.getAxes();
 		DataFrameAxis timeAxis = axes.getTimeAxis();
 		DataFrameAxis layerAxis = axes.getZAxis();
-		DataFrameAxis cellAxis = axes.getCellAxis();
 		int cellExtent = frames.size();
 		int layerExtent = 1;
 		if (layerAxis != null)
@@ -252,23 +252,33 @@ public class TimeStepAverager implements DataTransformer {
 		else
 			array = ArrayFactory.createDoubleArray(new int[]{timeAxis.getExtent()});
 		Index index = array.getIndex();
-		MPASDataFrameIndex frameIndex = (MPASDataFrameIndex)frame.getIndex();
+		MPASDataFrameIndex frameIndex = null;
+		List<MPASDataFrameIndex> frameIndices = new ArrayList<MPASDataFrameIndex>();
+		for (int i = 0; i < frames.size(); ++i)
+			frameIndices.add((MPASDataFrameIndex)frames.get(i).getIndex());
 
 		for (int time = 0; time < timeAxis.getExtent(); time++) {
 			double avg = 0;
 
 			for (int layer = 0; layer < layerExtent; layer++) {
 				double cellSum = 0;
-				if (layerAxis != null)
-					frameIndex.set(time, layer, 0);
-				else
-					frameIndex.set(time, -1, 0);
 
 				for (int cell = 0; cell < cellExtent; cell++) {
-					cellSum += frames.get(cell).getDouble(frameIndex);
+					frameIndex = frameIndices.get(cell);
+					if (layerAxis != null)
+						frameIndex.set(time, layer, 0);
+					else
+						frameIndex.set(time, -1, 0);
+					
+					DataFrame cellFrame = frames.get(cell);
+					double cellVal = cellFrame.getDouble(frameIndex);
+					cellSum += cellVal;
 				}
 				avg = cellSum / cellExtent;
-				index.set(time, layer);
+				if (layerAxis != null)
+					index.set(time, layer);
+				else
+					index.set(time);
 				array.setDouble(index, avg);
 			}
 		}
