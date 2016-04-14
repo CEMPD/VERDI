@@ -938,7 +938,7 @@ public class PalettePanel extends JPanel {
 		if(cModifierLength > 0)				// anything after the decimal pattern is appended
 		{
 			myPattern.append(cModifier);
-			if(!cModifier.endsWith("0"))
+			if(!cModifier.endsWith("0") && (cModifier.endsWith("E")))
 			{
 				myPattern.append(0);
 			}
