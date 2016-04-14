@@ -335,14 +335,14 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		hiddenVars.add("zz");
 	}
 	
-	double minX = Double.MAX_VALUE;
-	double minY = Double.MAX_VALUE;
-	double maxX = Double.MAX_VALUE * -1;
-	double maxY = Double.MAX_VALUE * -1;
-	double latMin = Double.MAX_VALUE;
-	double lonMin = Double.MAX_VALUE;
-	double latMax = Double.MAX_VALUE * -1;
-	double lonMax = Double.MAX_VALUE * -1;
+	double minX = Double.POSITIVE_INFINITY;
+	double minY = Double.POSITIVE_INFINITY;
+	double maxX = Double.NEGATIVE_INFINITY;
+	double maxY = Double.NEGATIVE_INFINITY;
+	double latMin = Double.POSITIVE_INFINITY;
+	double lonMin = Double.POSITIVE_INFINITY;
+	double latMax = Double.NEGATIVE_INFINITY;
+	double lonMax = Double.NEGATIVE_INFINITY;
 
 	double dataWidth = 0;
 	double dataHeight = 0;

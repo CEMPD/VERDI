@@ -101,10 +101,10 @@ public final class MPASShapefileWriter {
 	
 	cells = newCells.toArray(new MeshCellInfo[0]);
 	int numVertices = 0;
-	minLon = Double.MAX_VALUE;
-	maxLon = -1 * Double.MAX_VALUE;
-	minLat = Double.MAX_VALUE;
-	maxLat = -1 *Double.MAX_VALUE;
+	minLon = Double.POSITIVE_INFINITY;
+	maxLon = Double.NEGATIVE_INFINITY;
+	minLat = Double.POSITIVE_INFINITY;
+	maxLat = Double.NEGATIVE_INFINITY;
 	for (int i = 0; i < cells.length; ++i) {
 		numVertices = numVertices + cells[i].getNumVertices() + 1;
 		if (cells[i].getMinX() < minLon)

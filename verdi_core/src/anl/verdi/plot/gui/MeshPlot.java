@@ -1763,17 +1763,17 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	SaveConfiguration saveConfig = null;
 	
 	ucar.ma2.ArrayInt.D2 vertexList;
-	double latMin = Double.MAX_VALUE;
-	double lonMin = Double.MAX_VALUE;
-	double latMax = Double.MAX_VALUE * -1;
-	double lonMax = Double.MAX_VALUE * -1;
+	double latMin = Double.POSITIVE_INFINITY;
+	double lonMin = Double.POSITIVE_INFINITY;
+	double latMax = Double.NEGATIVE_INFINITY;
+	double lonMax = Double.NEGATIVE_INFINITY;
 	boolean locChanged = true;
 	boolean dataChanged = true;
 	double panX = 0;
 	double panY = 0;
 	double previousPanX = 0;
 	double previousPanY = 0;
-	final double MAX_ZOOM = Double.MAX_VALUE;
+	final double MAX_ZOOM = Double.POSITIVE_INFINITY;
 	final double MIN_ZOOM = 1.0;
 	double zoomFactor = 1;
 	double compositeFactor;
@@ -2497,8 +2497,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			this.computeStatistics(log);					
 						
 			final int statistic = selection - 1;
-			statMinMaxCache[LEVELS_CACHE_MIN_VALUE] = Double.MAX_VALUE;
-			statMinMaxCache[LEVELS_CACHE_MAX_VALUE] = Double.MAX_VALUE * -1;
+			statMinMaxCache[LEVELS_CACHE_MIN_VALUE] = Double.POSITIVE_INFINITY;
+			statMinMaxCache[LEVELS_CACHE_MAX_VALUE] = Double.NEGATIVE_INFINITY;
 
 			for ( int cell = firstRow; cell < cellsToRender.length; ++cell ) {
 
@@ -3646,12 +3646,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 				return;
 			}
 		}
-		currentMinMaxCache[LEVELS_CACHE_MIN_LON] = Double.MAX_VALUE;
-		currentMinMaxCache[LEVELS_CACHE_MAX_LON] = Double.MAX_VALUE * -1;
-		currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = Double.MAX_VALUE;
-		currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = Double.MAX_VALUE * -1;
-		currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = Double.MAX_VALUE * -1;
-		currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = Double.MAX_VALUE;
+		currentMinMaxCache[LEVELS_CACHE_MIN_LON] = Double.POSITIVE_INFINITY;
+		currentMinMaxCache[LEVELS_CACHE_MAX_LON] = Double.NEGATIVE_INFINITY;
+		currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = Double.POSITIVE_INFINITY;
+		currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = Double.NEGATIVE_INFINITY;
+		currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = Double.NEGATIVE_INFINITY;
+		currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = Double.POSITIVE_INFINITY;
 		currentMinMaxCache[LEVELS_CACHE_PERCENT_COMPLETE] = layerMinMaxCache[layer][LEVELS_CACHE_PERCENT_COMPLETE];
 
 		for (LocalCellInfo cell : cellInfo) {
@@ -3662,7 +3662,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = value;
 					currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = meshCell.getLat();
 					currentMinMaxCache[LEVELS_CACHE_MIN_LON] = meshCell.getLon();
-				} else if (value > currentMinMaxCache[LEVELS_CACHE_MAX_VALUE]) {
+				}
+				if (value > currentMinMaxCache[LEVELS_CACHE_MAX_VALUE]) {
 					currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = value;
 					currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = meshCell.getLat();
 					currentMinMaxCache[LEVELS_CACHE_MAX_LON] = meshCell.getLon();					
@@ -3681,12 +3682,12 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	Set<Integer> cellIdList = new HashSet<Integer>();
 	protected void findVisibleCells() {		
 		cellIdList.clear();
-		currentMinMaxCache[LEVELS_CACHE_MIN_LON] = Double.MAX_VALUE;
-		currentMinMaxCache[LEVELS_CACHE_MAX_LON] = Double.MAX_VALUE * -1;
-		currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = Double.MAX_VALUE;
-		currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = Double.MAX_VALUE * -1;
-		currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = Double.MAX_VALUE * -1;
-		currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = Double.MAX_VALUE;
+		currentMinMaxCache[LEVELS_CACHE_MIN_LON] = Double.POSITIVE_INFINITY;
+		currentMinMaxCache[LEVELS_CACHE_MAX_LON] = Double.NEGATIVE_INFINITY;
+		currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = Double.POSITIVE_INFINITY;
+		currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = Double.NEGATIVE_INFINITY;
+		currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = Double.NEGATIVE_INFINITY;
+		currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = Double.POSITIVE_INFINITY;
 		currentMinMaxCache[LEVELS_CACHE_PERCENT_COMPLETE] = layerMinMaxCache[layer][LEVELS_CACHE_PERCENT_COMPLETE];
 		int width = cellIdMap.getWidth();
 		int height = cellIdMap.getHeight();
@@ -3731,7 +3732,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	 */
 	protected Set<MeshCellInfo> getMinCells() {
 		Set<MeshCellInfo> minCells = new HashSet<MeshCellInfo>();
-		double min = Double.MAX_VALUE;
+		double min = Double.POSITIVE_INFINITY;
 		double value = 0;
 		for (MeshCellInfo cell : cellsToRender) {
 			value = cell.getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
@@ -3748,7 +3749,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	
 	protected Set<MeshCellInfo> getMaxCells() {
 		Set<MeshCellInfo> maxCells = new HashSet<MeshCellInfo>();
-		double max = Double.MAX_VALUE * -1;
+		double max = Double.NEGATIVE_INFINITY;
 		double value;
 		for (MeshCellInfo cell : cellsToRender) {
 			value = cell.getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
