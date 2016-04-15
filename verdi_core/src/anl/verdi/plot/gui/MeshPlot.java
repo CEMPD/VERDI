@@ -579,11 +579,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						}
 					}
 
-
-
-
-
-
 										
 					if (locChanged) {
 						transformCells(/*gr,*/ canvasSize, xOffset, yOffset);	
@@ -777,7 +772,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 						try {
 							if (canvasWidth > 0 && canvasHeight > 0) {
 								bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
-								graphics.drawImage(offScreenImage, 0, 0,threadParent);
+								if (!VerdiGUI.isHidden((Plot) threadParent))
+									graphics.drawImage(offScreenImage, 0, 0,threadParent);
 							}
 						} finally {
 							graphics.dispose();
@@ -969,13 +965,16 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	// Window resized callback:
 
+	//Force redraw to adapt to new screen size
 	public void componentResized(ComponentEvent unused) {
+		screenInitted = false;
+		locChanged = true;
 		draw();
 	}
 
 	// Window moved callback:
 
-	public void componentMoved(ComponentEvent unused) { }
+	public void componentMoved(ComponentEvent unused) {	}
 
 	// Mouse callbacks:
 
@@ -1057,6 +1056,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		splitCellInfo = null;
 		dataset = null;
 		finder = null;
+		removeComponentListener(this);
 		
 		loadConfig.close();
 		saveConfig.close();
@@ -1070,10 +1070,29 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 	public void paintComponent(final Graphics graphics) {
 		super.paintComponent(graphics);
+		/*
+		 * paintComponent gets called when switching from one tab to another.  Although VerdiGUI.isHidden() return false
+		 * immediately, drawing too soon results in a gray screen.  As a workaround, draw continuously for the first half
+		 * second after rendering
+		 * 
+		 */
 		draw();
+		new Thread(new Runnable() { public void run() {
+			try {
+				for (int i = 0; i < 5; ++i) {
+					Thread.sleep(100);
+					draw();
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			draw();
+		}}).start();
 	}
 
 	public void draw() {
+		//StackTraceElement elem = Thread.currentThread().getStackTrace()[2];
+		//System.out.println("MeshPlot draw: " + elem.getFileName() + " " + elem.getMethodName() + ": " + elem.getLineNumber());
 		if (drawMode == DRAW_NONE) {
 			drawMode = DRAW_ONCE;
 		}
@@ -1429,9 +1448,14 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	private void setCellClicked(int cellId) {
 		previousClickedCell = currentClickedCell;
 		currentClickedCell = cellId;
-		LocalCellInfo cell = getCellInfo(previousClickedCell);
+		LocalCellInfo cell = null;
+		if (previousClickedCell < 0 || previousClickedCell >= cellInfo.length)
+			cell = getCellInfo(previousClickedCell);
 		if (cell != null)
 			cell.cellClicked = false;
+		if (currentClickedCell < 0 || currentClickedCell >= cellInfo.length)
+			return;
+		
 		try {
 		cell = getCellInfo(currentClickedCell);
 		} catch (ArrayIndexOutOfBoundsException e) {
@@ -2289,6 +2313,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			firstTimestep = 1;
 		if (hasNoLayer)
 			firstLayer = 1;
+		
+		addComponentListener(this);
 
 		// add(toolBar);
 		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
@@ -3031,11 +3057,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		final List<DataFrame> result = new ArrayList<DataFrame>();
 		result.add(getDataFrame());
 		return result;
-	}
-	
-	public void paint(Graphics g) {
-		super.paint(g);
-		draw();
 	}
 
 	/**
