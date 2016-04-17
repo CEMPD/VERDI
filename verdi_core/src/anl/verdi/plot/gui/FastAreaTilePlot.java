@@ -696,7 +696,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 	}
 	private int plotCount = 0;
 	public void addProbe(final JTable table, String name, String rangeAxisName) {
-		String viewId = name + plotCount++;
+		String viewId = replaceInvalidChars(name) + plotCount++;
 		JPanel panel = new JPanel(new BorderLayout());
 		JScrollPane pane = new JScrollPane(table);
 		// if (rowHeader != null) pane.setRowHeaderView(rowHeader);
@@ -718,6 +718,20 @@ public class FastAreaTilePlot extends FastTilePlot {
 		view.setTitle(name);
 		viewManager.addDockableToGroup(VerdiConstants.PERSPECTIVE_ID, VerdiConstants.MAIN_GROUP_ID, view);
 		view.toFront();
+	}
+	
+	// copied from VerdiGUI for creating valid Dockable identifiers
+	private String replaceInvalidChars(String name) {
+		if (name == null || name.trim().isEmpty())
+			return "";
+		
+		for (int i = 0; i < name.length(); i++) {
+			if (!Character.isLetterOrDigit(name.charAt(i))) {
+				String random = Math.random() + "";
+				name = name.replace(name.charAt(i), random.charAt(random.length() - 1));
+			}
+		}
+		return name;
 	}
 
 	/*
