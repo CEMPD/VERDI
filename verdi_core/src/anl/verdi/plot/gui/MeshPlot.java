@@ -771,9 +771,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 						try {
 							if (canvasWidth > 0 && canvasHeight > 0) {
-								bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
-								if (!VerdiGUI.isHidden((Plot) threadParent))
-									graphics.drawImage(offScreenImage, 0, 0,threadParent);
+								//bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
+								VerdiGUI.showIfVisible(threadParent, graphics, offScreenImage);
 							}
 						} finally {
 							graphics.dispose();

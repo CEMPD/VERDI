@@ -3,6 +3,8 @@ package anl.verdi.core;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -72,6 +74,8 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	private HashMap<String, JPanel> scriptPanels = new HashMap<String, JPanel>();
 	private static HashMap<Plot, DockableFrame> views = new HashMap<Plot, DockableFrame>();
 	private static boolean windowIsIconified = false;
+	
+	public static final Object VISIBLE_LOCK = new Object();
 
 //	private FormulasPanel formulasPanel;
 
@@ -211,19 +215,28 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	// Is this plot either an unselected tab or is the GUI iconified?
 
 	public static boolean isHidden( Plot plot ) {
-		boolean result = windowIsIconified;
-		
-		if ( ! result ) {
-			final DockableFrame view = views.get( plot );
+		synchronized (VISIBLE_LOCK) {
+			boolean result = windowIsIconified;
 			
-			if ( view == null ) {
-				result = false;
-			} else {
-				result = view.isMinimized() || view.isHidden();
+			if ( ! result ) {
+				final DockableFrame view = views.get( plot );
+				
+				if ( view == null ) {
+					result = false;
+				} else {
+					result = view.isMinimized() || view.isHidden();
+				}
 			}
+	
+			return result;
 		}
-
-		return result;
+	}
+	
+	public static void showIfVisible(JPanel panel, Graphics graphics, Image offScreenImage) {
+		synchronized (VISIBLE_LOCK) {
+			if (!VerdiGUI.isHidden((Plot) panel))
+				graphics.drawImage(offScreenImage, 0, 0,panel);
+		}
 	}
 
 	public void addScriptPane(JPanel scriptPanel) {
