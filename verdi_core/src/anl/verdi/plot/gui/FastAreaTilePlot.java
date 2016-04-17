@@ -274,11 +274,10 @@ public class FastAreaTilePlot extends FastTilePlot {
 		if(vars.length<2)builder.append(vars[0].getName());
 		else builder.append("Formulas");
 		builder.append(" (");
-		int time = axes.getTimeAxis().getOrigin();
-		builder.append(time);
+		builder.append(timestep + 1);
 		builder.append(", ");
 		if (layer != -1) {
-			builder.append(layer);
+			builder.append(layer + 1);
 		}
 		builder.append(")"); 
 		return builder.toString();
@@ -296,7 +295,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 		ArrayList targets= selectedOnly ? Target.getSelectedTargets() : Target.getTargets();
 
 		// create the table
-		JXTable table = new JXTable(new AreaDataFrameTableModel(dataFrames,targets,vars));
+		JXTable table = new JXTable(new AreaDataFrameTableModel(dataFrames,targets,vars,timestep,layer));
 		table.setColumnControlVisible(true);
 		table.setHorizontalScrollEnabled(true);
 		table.setRolloverEnabled(true);
