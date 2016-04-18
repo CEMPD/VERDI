@@ -154,6 +154,8 @@ public class VerdiBoundaries {
 		vMap.addLayer(aLayer);
 		vMap.getViewport().setCoordinateReferenceSystem(gridCRS);
 		Logger.debug("set CRS of Viewport to gridCRS: " + gridCRS.toString());
+		ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], gridCRS);
+		vMap.getViewport().setBounds(displayBounds);
 		aVerdiStyle.getLayer().setVisible(true);
 		
 		// set of math transform
@@ -195,8 +197,7 @@ public class VerdiBoundaries {
 		GTRenderer renderer = new StreamingRenderer();
 		renderer.setMapContent(vMap);
 		Rectangle outputArea = new Rectangle(xOffset, yOffset, width, height);
-		ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], gridCRS);
-		renderer.paint((Graphics2D)graphics, outputArea, displayBounds);
+		renderer.paint((Graphics2D)graphics, outputArea, vMap.getViewport().getBounds());
 	}	// end of draw function
 	
 	public MapContent getMap()	// send vMap back to calling program
