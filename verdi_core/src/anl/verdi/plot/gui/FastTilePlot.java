@@ -145,8 +145,8 @@ import anl.verdi.util.Utilities;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-public class FastTilePlot extends JPanel implements ActionListener, Printable,
-		ChangeListener, ComponentListener, MouseListener,
+public class FastTilePlot extends AbstractPlotPanel implements ActionListener, Printable,
+		ChangeListener, MouseListener,
 		TimeAnimatablePlot, Plot {
 	
 	static final Logger Logger = LogManager.getLogger(FastTilePlot.class.getName());
@@ -386,10 +386,11 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		public void run() {
 
 			do {
-
+				VerdiGUI.unlock();
 				
 				if ( drawMode != DRAW_NONE &&
 					 ! VerdiGUI.isHidden( (Plot) threadParent ) ) {
+					VerdiGUI.lock();
 					
 					if (drawMode == DRAW_ONCE) {
 //						synchronized (lock) {
@@ -473,6 +474,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 						continue;// graphics system is not ready
 					}
 
+
 					final Graphics offScreenGraphics = offScreenImage.getGraphics();
 
 					if (offScreenGraphics == null) {
@@ -493,7 +495,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 					assert offScreenImage != null;
 					assert offScreenGraphics != null;
 					assert graphics != null;
-
+					
 					if (drawMode == DRAW_CONTINUOUS) {
 						timestep = nextValue(1, timestep, firstTimestep, lastTimestep);
 						timeLayerPanel.setTime(timestep);
@@ -621,7 +623,9 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 						try {
 							bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
-							graphics.drawImage(offScreenImage, 0, 0,threadParent);
+							VerdiGUI.showIfVisible(threadParent, graphics, bImage);
+							//graphics.drawImage(offScreenImage, 0, 0,threadParent);
+							
 						} finally {
 							graphics.dispose();
 							offScreenGraphics.dispose();
@@ -639,7 +643,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 					} else {
 						//drawMode = DRAW_NONE;
 					}
-					
+					VerdiGUI.unlock();
 				} else {
 					try {
 						Thread.sleep(100); /* ms. */
@@ -758,26 +762,6 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		draw();
 	}
 
-	// Window hidden callback:
-
-	public void componentHidden(ComponentEvent unused) { }
-
-	// Window shown callback:
-
-	public void componentShown(ComponentEvent unused) {
-		draw();
-	}
-
-	// Window resized callback:
-
-	public void componentResized(ComponentEvent unused) {
-		draw();
-	}
-
-	// Window moved callback:
-
-	public void componentMoved(ComponentEvent unused) { }
-
 	// Mouse callbacks:
 
 	protected void showPopup( MouseEvent me ) {
@@ -848,13 +832,6 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	}
 	public void viewFloated(DockableFrameEvent unused_ ) { }
 	public void viewRestored(DockableFrameEvent unused_ ) { }		
-
-	// Paint/draw:
-
-	public void paintComponent(final Graphics graphics) {
-		super.paintComponent(graphics);
-		draw();
-	}
 
 	public void draw() {
 

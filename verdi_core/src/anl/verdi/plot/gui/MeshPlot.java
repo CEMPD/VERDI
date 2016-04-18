@@ -152,8 +152,8 @@ import anl.verdi.util.Tools;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-public class MeshPlot extends JPanel implements ActionListener, Printable,
-		ChangeListener, ComponentListener, MouseListener, MinMaxLevelListener,
+public class MeshPlot extends AbstractPlotPanel implements ActionListener, Printable,
+		ChangeListener, MouseListener, MinMaxLevelListener,
 		TimeAnimatablePlot, Plot, PopupMenuListener {
 	
 	static final Logger Logger = LogManager.getLogger(MeshPlot.class.getName());
@@ -464,9 +464,11 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 
 			updateConfigVariables();
 			do {
+				VerdiGUI.unlock();
 				
 				if ( drawMode != DRAW_NONE && drawMode != DRAW_END &&
 					 ! VerdiGUI.isHidden( (Plot) threadParent ) ) {
+					VerdiGUI.lock();
 					
 					if (drawMode == DRAW_ONCE) {
 //						synchronized (lock) {
@@ -549,6 +551,7 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 							*/
 						continue;// graphics system is not ready
 					}
+
 
 					if (tFont == null) {
 						tFont = offScreenGraphics.getFont();
@@ -792,13 +795,17 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 					} else {
 						//drawMode = DRAW_NONE;
 					}
+					VerdiGUI.unlock();
 					
 				} else {
 					try {
+						Thread.sleep(100); /* ms. */
+					} catch (Exception unused) {}
+					/*try {
 						synchronized (waitObject) {
 							waitObject.wait();
 						}
-					} catch (Exception unused) {}
+					} catch (Exception unused) {}*/
 				}
 			} while (drawMode != DRAW_END);
 		} catch (Throwable t) {
@@ -951,31 +958,13 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		drawMode = DRAW_END;
 		draw();
 	}
-
-	// Window hidden callback:
-
-	public void componentHidden(ComponentEvent unused) { }
-
-	// Window shown callback:
-
-	public void componentShown(ComponentEvent unused) {
-		draw();
-	}
-
-	// Window resized callback:
-
-	//Force redraw to adapt to new screen size
-	public void componentResized(ComponentEvent unused) {
+	
+	public void markDirty() {
 		screenInitted = false;
 		locChanged = true;
 		draw();
 	}
 
-	// Window moved callback:
-
-	public void componentMoved(ComponentEvent unused) {	}
-
-	// Mouse callbacks:
 
 	protected void showPopup( MouseEvent me ) {
 		popupShown = true;
@@ -988,6 +977,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 			popup.show(this, me.getPoint().x, me.getPoint().y);
 		}
 	}
+	
+	// Mouse callbacks:
 
 	public void mousePressed( MouseEvent unused_ ) { }
 	public void mouseEntered( MouseEvent unused_ ) { }
@@ -995,7 +986,8 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	public void mouseReleased( MouseEvent unused_ ) { }
 	public void mouseClicked( MouseEvent unused_ ) { }
 
-	public void viewClosed() { 
+	public void viewClosed() {
+		super.viewClosed();
 		stopThread();
 		try {
 			Thread.sleep(500);
@@ -1055,7 +1047,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		splitCellInfo = null;
 		dataset = null;
 		finder = null;
-		removeComponentListener(this);
 		
 		loadConfig.close();
 		saveConfig.close();
@@ -1064,30 +1055,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 	}
 	public void viewFloated(DockableFrameEvent unused_ ) { }
 	public void viewRestored(DockableFrameEvent unused_ ) { }		
-
-	// Paint/draw:
-
-	public void paintComponent(final Graphics graphics) {
-		super.paintComponent(graphics);
-		/*
-		 * paintComponent gets called when switching from one tab to another.  Although VerdiGUI.isHidden() return false
-		 * immediately, drawing too soon results in a gray screen.  As a workaround, draw continuously for the first half
-		 * second after rendering
-		 * 
-		 */
-		draw();
-		new Thread(new Runnable() { public void run() {
-			try {
-				for (int i = 0; i < 5; ++i) {
-					Thread.sleep(100);
-					draw();
-				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			draw();
-		}}).start();
-	}
 
 	public void draw() {
 		//StackTraceElement elem = Thread.currentThread().getStackTrace()[2];
@@ -2313,8 +2280,6 @@ public class MeshPlot extends JPanel implements ActionListener, Printable,
 		if (hasNoLayer)
 			firstLayer = 1;
 		
-		addComponentListener(this);
-
 		// add(toolBar);
 		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
 		doubleBufferedRendererThread.start(); // Calls

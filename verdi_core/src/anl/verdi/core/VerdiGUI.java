@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -75,7 +76,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	private static HashMap<Plot, DockableFrame> views = new HashMap<Plot, DockableFrame>();
 	private static boolean windowIsIconified = false;
 	
-	public static final Object VISIBLE_LOCK = new Object();
+	public static final ReentrantLock VISIBLE_LOCK = new ReentrantLock(true);
 
 //	private FormulasPanel formulasPanel;
 
@@ -237,6 +238,16 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 			if (!VerdiGUI.isHidden((Plot) panel))
 				graphics.drawImage(offScreenImage, 0, 0,panel);
 		}
+	}
+	
+	public static boolean lock() {
+		VISIBLE_LOCK.lock();
+		return true;
+	}
+	
+	public static void unlock() {
+		if (VISIBLE_LOCK.isHeldByCurrentThread())
+			VISIBLE_LOCK.unlock();
 	}
 
 	public void addScriptPane(JPanel scriptPanel) {
