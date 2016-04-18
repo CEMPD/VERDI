@@ -798,14 +798,14 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					VerdiGUI.unlock();
 					
 				} else {
+					//try {
+					//	Thread.sleep(100); /* ms. */
+					//} catch (Exception unused) {}
 					try {
-						Thread.sleep(100); /* ms. */
-					} catch (Exception unused) {}
-					/*try {
 						synchronized (waitObject) {
 							waitObject.wait();
 						}
-					} catch (Exception unused) {}*/
+					} catch (Exception unused) {}
 				}
 			} while (drawMode != DRAW_END);
 		} catch (Throwable t) {
