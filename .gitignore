@@ -22,5 +22,5 @@ verdi_core/lib_src/gt-shapefile-12.2-sources.jar
 verdi_core/lib_src/gt-swing-12.2-sources.jar
 verdi_core/lib_src/jcommon-1.0.23-sources.jar
 verdi_core/lib_src/thredds_4.5.5.zip
-
+*.qix
 
