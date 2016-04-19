@@ -42,6 +42,7 @@ import anl.verdi.data.Axes;
 import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
+import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.DatasetMetadata;
 import anl.verdi.data.DefaultVariable;
@@ -1093,7 +1094,11 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	}
 	
 	private MPASMinMaxCalculator getLevelCalculator(DataFrame frame) {
-		String cacheKey = frame.getVariable().getName() + frame.getArray().getClass().getName();
+		DataFrameAxis timeAxis = frame.getAxes().getTimeAxis();
+		DataFrameAxis layerAxis = frame.getAxes().getZAxis();
+		String timeStr = timeAxis != null ? timeAxis.getRange().toString() : "nt";
+		String layerStr = layerAxis != null ? layerAxis.getRange().toString() : "nl";
+		String cacheKey = frame.getVariable().getName() + frame.getArray().getClass().getName() + layerStr + timeStr;
 		MPASMinMaxCalculator calculator = null;
 		synchronized (levelCalculators) {
 			calculator = levelCalculators.get(cacheKey);
