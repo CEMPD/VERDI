@@ -469,6 +469,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				if ( drawMode != DRAW_NONE && drawMode != DRAW_END &&
 					 ! VerdiGUI.isHidden( (Plot) threadParent ) ) {
 					VerdiGUI.lock();
+					if (VerdiGUI.isHidden( (Plot) threadParent ))
+						continue;
 					
 					if (drawMode == DRAW_ONCE) {
 //						synchronized (lock) {
@@ -3637,7 +3639,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = Double.NEGATIVE_INFINITY;
 		currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = Double.NEGATIVE_INFINITY;
 		currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = Double.POSITIVE_INFINITY;
-		currentMinMaxCache[LEVELS_CACHE_PERCENT_COMPLETE] = layerMinMaxCache[layer][LEVELS_CACHE_PERCENT_COMPLETE];
+		currentMinMaxCache[LEVELS_CACHE_PERCENT_COMPLETE] = layerMinMaxCache[layer - firstLayer][LEVELS_CACHE_PERCENT_COMPLETE];
 
 		for (LocalCellInfo cell : cellInfo) {
 			if (cell.visible){
@@ -3673,7 +3675,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = Double.NEGATIVE_INFINITY;
 		currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = Double.NEGATIVE_INFINITY;
 		currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = Double.POSITIVE_INFINITY;
-		currentMinMaxCache[LEVELS_CACHE_PERCENT_COMPLETE] = layerMinMaxCache[layer][LEVELS_CACHE_PERCENT_COMPLETE];
+		currentMinMaxCache[LEVELS_CACHE_PERCENT_COMPLETE] = layerMinMaxCache[layer - firstLayer][LEVELS_CACHE_PERCENT_COMPLETE];
 		int width = cellIdMap.getWidth();
 		int height = cellIdMap.getHeight();
 		for (int i = 0; i < width; ++i)
