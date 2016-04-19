@@ -294,10 +294,10 @@ public class FastTileLayerPanel extends JPanel {
 
 	private void layerListValueChanged(ListSelectionEvent e) {
 		if (layerList.getSelectedValue() != null)
-			editLayerButton.setEnabled(true);
+			//editLayerButton.setEnabled(true);
 		
 		if (layerList.isSelectionEmpty())
-			editLayerButton.setEnabled(false);
+			//editLayerButton.setEnabled(false);
 		
 		if (layerList.getSelectedIndex() == 0) {
 			moveUpButton.setEnabled(false);
@@ -397,6 +397,7 @@ public class FastTileLayerPanel extends JPanel {
 				addBtnActionPerformed(e);
 			}
 		});
+		addBtn.setEnabled(false);
 		add(addBtn, cc.xy(3, 3));
 
 		//---- moveUpButton ----
@@ -434,6 +435,7 @@ public class FastTileLayerPanel extends JPanel {
 				editLayerButtonPerformed(e);
 			}
 		});
+		editLayerButton.setEnabled(false);
 		add(editLayerButton, cc.xy(3, 11));
 		editLayerButton.setEnabled(false);
 		
