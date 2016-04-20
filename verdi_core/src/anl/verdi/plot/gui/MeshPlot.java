@@ -4454,13 +4454,13 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	public static final int PLOT_CACHE_PERCENT_COMPLETE = 2;
 
 	@Override
-	public void datasetUpdated(double min, int minIndex, double max, int maxIndex, double pctComplete, boolean isLog) {
+	public void datasetUpdated(double min, int minIndex, double max, int maxIndex, double percentComplete, boolean isLog) {
 		double[] updatedInfo = plotMinMaxCache;
 		if (isLog)
 			updatedInfo = logPlotMinMaxCache;
 		updatedInfo[0] = min;
 		updatedInfo[1] = max;
-		updatedInfo[2] = pctComplete;
+		updatedInfo[2] = percentComplete;
 		//if (preStatIndex < 1) {
 		if (isLog == log) {
 			updateLegendLevels();

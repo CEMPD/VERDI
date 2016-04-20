@@ -51,12 +51,12 @@ public class MPASMinMaxCalculator implements Runnable {
 		CoordAxis axis = frame.getAxes().getTimeAxis();
 		if (axis != null) {
 			timeOrigin = (int)axis.getRange().getOrigin();
-			numTimesteps = (int)axis.getRange().getExtent() - timeOrigin;
+			numTimesteps = (int)axis.getRange().getExtent();
 		}
 		axis = frame.getAxes().getZAxis();
 		if (axis != null) {
 			layerOrigin = (int)axis.getRange().getOrigin();
-			numLayers = (int)axis.getRange().getExtent() - layerOrigin;
+			numLayers = (int)axis.getRange().getExtent();
 		}
 		axis = frame.getAxes().getCellAxis();
 		numCells = (int)axis.getRange().getExtent();
