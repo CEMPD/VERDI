@@ -1,10 +1,10 @@
-﻿------------------------------
-RELEASE NOTES FOR VERDI V1.6a
+------------------------------
+RELEASE NOTES FOR VERDI V1.6 alpha
 ------------------------------
 
 These notes describe the differences between the VERDI 1.6 alpha release and the previous public release v1.5.
 
-NEW FEATURES IN V1.6a:
+NEW FEATURES IN V1.6 alpha:
 GIS Layers in the Tile Plot now use shapefiles directly. The shape2bin conversion program is no longer needed.
 Additional GIS layers can be added via user-provided shapefiles.
 The default GIS layers (i.e. World, North America, USA States, etc.) have been updated with new shapefiles.
@@ -14,13 +14,13 @@ Many plots now support themes, with new font and color options.
 New plot configuration options have been added, including disabling the legend.
 The Tile Plot has a new default color palette.
 
-BUG FIXES IN V1.6a:
+BUG FIXES IN V1.6 alpha:
 Fixed handling of blank plot titles.
 Fixed a problem removing files from the Area Files panel.
 Fixed a problem reading saved project files.
 Changed the assumed Earth radius to 6,370 km for data files in Lambert, Mercator, or UTM projections.
 
-KNOWN ISSUES IN V1.6a:
+KNOWN ISSUES IN V1.6 alpha:
 GIS layer customization is not supported.
 GIS layers don't display properly for polar stereographic projections.
 Shapefiles for areal interpolation must use units of degrees (not meters) and should use the following datum:
