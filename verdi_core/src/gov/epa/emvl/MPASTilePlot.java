@@ -33,6 +33,10 @@ public class MPASTilePlot extends TilePlot {
 	double[] layerMinMaxValues;
 	double[] statMinMaxValues;
 	double[] currentMinMaxValues;
+	double clipYMin;
+	double clipYMax;
+	double clipXMin;
+	double clipXMax;
 	
 	NumberFormat plotFormat;
 	
@@ -140,6 +144,8 @@ public class MPASTilePlot extends TilePlot {
 		int digits = getDisplayPrecision(visibleHeight);
 		format.setMaximumFractionDigits(digits);
 		format.setMinimumFractionDigits(digits);
+		clipYMax = -1 * panY;
+		clipYMin = -1 * (visibleHeight + panY);
 		
 		for (int tick = 0; tick <= yTics; ++tick) {
 			double pct = tick / (double)yTics;
@@ -182,6 +188,9 @@ public class MPASTilePlot extends TilePlot {
 		digits = getDisplayPrecision(visibleWidth);
 		format.setMaximumFractionDigits(digits);
 		format.setMinimumFractionDigits(digits);
+		
+		clipXMin = panX;
+		clipXMax = visibleWidth + panX;
      
 		for (int tick = 0; tick <= xTics; ++tick) {
 			double pct = tick / (double)xTics;
@@ -240,11 +249,20 @@ public class MPASTilePlot extends TilePlot {
 		layerMinMaxValues = values;
 	}
 	
+	protected double clip(double value, double min, double max) {
+		if (value < min)
+			value = min;
+		if (value > max)
+			value = max;
+		return value;
+	}
+	
 	protected String getMinMaxLabel(int firstRow, int lastRow,
 			int firstColumn, int lastColumn, final float[][] data) {
 		
 		double[] minMaxValues = layerMinMaxValues;
 		String suffix = "";
+		
 		
 		if (useStats) {
 			minMaxValues = statMinMaxValues;
@@ -252,11 +270,11 @@ public class MPASTilePlot extends TilePlot {
 			suffix = " (Loading, " + percentFormat.format(plotMinMaxValues[MeshPlot.PLOT_CACHE_PERCENT_COMPLETE]) + "% complete)";
 		}
 
-		return "Min (" + plotFormat.format(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_LON]) + ", "
-				+ plotFormat.format(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_LAT]) + ") = "
+		return "Min (" + plotFormat.format(clip(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_LON], clipXMin, clipXMax)) + ", "
+				+ plotFormat.format(clip(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_LAT], clipYMin, clipYMax)) + ") = "
 				+ gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MIN_VALUE]) + ", "
-				+ "Max (" + plotFormat.format(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_LON]) + ", "
-				+ plotFormat.format(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_LAT]) + ") = " 
+				+ "Max (" + plotFormat.format(clip(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_LON], clipXMin, clipXMax)) + ", "
+				+ plotFormat.format(clip(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_LAT], clipYMin, clipYMax)) + ") = " 
 				+ gFormat(minMaxValues[MeshPlot.LEVELS_CACHE_MAX_VALUE]) + suffix;
 		
 	}
