@@ -1,1 +1,1 @@
-GEOGCS["Normal Sphere (r=6371007",   DATUM["unknown",     SPHEROID["SPHERE", 6371007.0, 0.0]],   PRIMEM["Greenwich", 0.0],   UNIT["degree", 0.017453292519943295],   AXIS["Geodetic longitude", EAST],   AXIS["Geodetic latitude", NORTH]]
+GEOGCS["SPHERE",DATUM["WGS84",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]]
