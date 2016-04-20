@@ -1417,19 +1417,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		previousClickedCell = currentClickedCell;
 		currentClickedCell = cellId;
 		LocalCellInfo cell = null;
-		if (previousClickedCell < 0 || previousClickedCell >= cellInfo.length)
-			cell = getCellInfo(previousClickedCell);
+		cell = getCellInfo(previousClickedCell);
 		if (cell != null)
 			cell.cellClicked = false;
-		if (currentClickedCell < 0 || currentClickedCell >= cellInfo.length)
-			return;
 		
-		try {
 		cell = getCellInfo(currentClickedCell);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println("Could not render " + currentClickedCell);
-			throw e;
-		}
 		if (cell != null)
 			cell.cellClicked = true;
 	}
@@ -1534,7 +1526,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	}
 	
 	public LocalCellInfo getCellInfo(int id) {
-		return cellInfo[id];
+		if (id >= 0 && id < cellInfo.length)
+			return cellInfo[id];
+		return null;
 	}
 	
 	public class LocalCellInfo {
@@ -1854,7 +1848,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	        g.setColor(new Color(COLOR_BASE * -1 - 1));
 	        g.fillRect(0,  0,  screenWidth+1, screenHeight + 1);
 	        g.translate(xOffset * -1,  yOffset * -1);
+	        forceHideBorders = true;
 	        renderCells(g, 0, 0);
+	        forceHideBorders = false;
 	       /* File outputfile = new File("/tmp/data.bmp");
 	        try {
 				ImageIO.write(cellIdMap,  "bmp", outputfile);
@@ -1866,6 +1862,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
         
 		Logger.info("Scaled cells in " + (System.currentTimeMillis() - start) + "ms");
 	}
+	
+	//Prevents overwriting cell id values when drawing to id map
+	boolean forceHideBorders = false;
 	
 	public void updateCellData() {
 		long start = System.currentTimeMillis();
@@ -1896,7 +1895,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 		final Boolean showGridLines = (Boolean)
 				config.getObject( TilePlotConfiguration.SHOW_GRID_LINES );
-		final boolean showCellBorder = showGridLines != null && showGridLines.booleanValue();
+		final boolean showCellBorder = showGridLines != null && showGridLines.booleanValue() && !forceHideBorders;
 		
 		/*
 		BufferedImage img = new java.awt.image.BufferedImage(imageWidth, imageHeight, java.awt.image.BufferedImage.TYPE_3BYTE_BGR);
@@ -1908,12 +1907,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				LocalCellInfo cell = getCellInfo(i);
 				if (visibleOnly && !cell.visible && i != 0)
 					continue;
-				renderCell(gr, xOffset, yOffset, cell, showGridLines, showCellBorder, i);
+				renderCell(gr, xOffset, yOffset, cell, showCellBorder, i);
 			}
 			for (LocalCellInfo cell : splitCellInfo.keySet()) {
 				if (visibleOnly && !cell.visible)
 					continue;
-				renderCell(gr, xOffset, yOffset, cell, showGridLines, showCellBorder, cell.getId());
+				renderCell(gr, xOffset, yOffset, cell, showCellBorder, cell.getId());
 			}
 		}
 		
@@ -1936,7 +1935,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 	}
 	
-	private void renderCell(Graphics gr, int xOffset, int yOffset, LocalCellInfo cell, boolean showGridLines, boolean showCellBorder, int index) {
+	private void renderCell(Graphics gr, int xOffset, int yOffset, LocalCellInfo cell, boolean showCellBorder, int index) {
 		if (cell.colorIndex == -1)
 			return;
 
@@ -2063,7 +2062,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		if (layerAxis == null) {
 			layers = 1;
-			firstLayer = layer = lastLayer = 0;
+			firstLayer = layer = lastLayer = 1;
 		} else {
 			layers = layerAxis.getExtent();
 			firstLayer = layer = layerAxis.getOrigin();
@@ -3953,9 +3952,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		//ret += " xy " + xCoord + "," + yCoord;
 
 		try {
-			MeshCellInfo cell = getCellInfo(hoveredId).getSource();
-			if (cell == null) //Hovered over an unpainted space, where the model did not include a cell
+			LocalCellInfo localCell = getCellInfo(hoveredId);
+			if (localCell == null) //Hovered over an unpainted space, where the model did not include a cell
 				return "";
+			MeshCellInfo cell = localCell.getSource();
 			double value;
 			if (preStatIndex < 1)
 				value = cell.getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
