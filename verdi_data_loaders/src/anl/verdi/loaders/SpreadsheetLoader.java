@@ -11,11 +11,16 @@ import java.util.ArrayList;
 import java.io.RandomAccessFile;
 import java.net.URL;
 import java.net.URI;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import anl.verdi.data.DataLoader;
 import anl.verdi.data.DataReader;
 import anl.verdi.data.Dataset;
 
 public class SpreadsheetLoader implements DataLoader {
+	static final Logger Logger = LogManager.getLogger(SpreadsheetLoader.class.getName());
 
 	/**
 	 * Returns whether or not this DataLoader can read the data at the url.
@@ -38,10 +43,8 @@ public class SpreadsheetLoader implements DataLoader {
 				SpreadsheetReader.validateHeaderAndGetTimezone(firstLine);
 				result = true;
 			}
-		} catch ( Exception e ) {
-			throw e;
 		} catch (Throwable t) {
-			t.printStackTrace();
+			Logger.debug("Could not load data file", t);
 		}
 		finally {
 			try { if ( file != null ) file.close(); } catch ( Exception e ) {}
