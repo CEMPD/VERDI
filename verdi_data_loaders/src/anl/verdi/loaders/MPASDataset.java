@@ -379,18 +379,16 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	 *            the source of the data
 	 * @param urlIndex
 	 *            the cardinality of this Dataset inside the specified URL.
+	 * @throws IOException 
 	 */
 	protected MPASDataset(URL url, 
-			NetcdfDataset netcdfDataset) {
+			NetcdfDataset netcdfDataset) throws IOException {
 		super(url);
 		long start = System.currentTimeMillis();
 		this.dataset = netcdfDataset;
 		initVariables();
-		try {
-			initAxes();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		initAxes();
+
 		Logger.info("Dataset loaded in " + (System.currentTimeMillis() - start) + "ms");
 	}
 
@@ -803,41 +801,36 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 				
 		MPASBoxer boxer = new MPASBoxer();
 		
-		try {
-			cellVertices = read("nEdgesOnCell");
-			latVert = read("latVertex");
-			lonVert = read("lonVertex");
-			latCell = read("latCell");
-			lonCell = read("lonCell");
-			elevation = ArrayReader.getReader(read("zgrid"));
-			depth = ArrayReader.getReader(read("zs"));
-			vertexList = (ucar.ma2.ArrayInt.D2) read("verticesOnCell");
-			
-			indexToVertexId = read("indexToVertexID");
-			int numVertices = dataset.findDimension("nVertices").getLength();
-			for (int i = 0; i < numVertices; ++i) {
-				if (indexToVertexId != null)
-					vertexPositionMap.put(indexToVertexId.getInt(i), i);
-				else
-					vertexPositionMap.put(i, i);
-			}
-			
-			loadCellStructure();
-						
-			Logger.info("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
-			
-			addLayer("nVertLevels", list);
-			addLayer("nVertLevelsP1", list);
-			addLayer("nSoilLevels", list);
-			
-			//Construct axes for latitude and longitude, using average diameter as spacing
-			
-			list.add(new MPASCoordAxis("x", "x", lonMin, AxisType.X_AXIS));
-			list.add(new MPASCoordAxis("y", "y", latMin, AxisType.Y_AXIS));
-						
-		} catch (IOException e) {
-			e.printStackTrace();
+		cellVertices = read("nEdgesOnCell");
+		latVert = read("latVertex");
+		lonVert = read("lonVertex");
+		latCell = read("latCell");
+		lonCell = read("lonCell");
+		elevation = ArrayReader.getReader(read("zgrid"));
+		depth = ArrayReader.getReader(read("zs"));
+		vertexList = (ucar.ma2.ArrayInt.D2) read("verticesOnCell");
+		
+		indexToVertexId = read("indexToVertexID");
+		int numVertices = dataset.findDimension("nVertices").getLength();
+		for (int i = 0; i < numVertices; ++i) {
+			if (indexToVertexId != null)
+				vertexPositionMap.put(indexToVertexId.getInt(i), i);
+			else
+				vertexPositionMap.put(i, i);
 		}
+		
+		loadCellStructure();
+					
+		Logger.info("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
+		
+		addLayer("nVertLevels", list);
+		addLayer("nVertLevelsP1", list);
+		addLayer("nSoilLevels", list);
+		
+		//Construct axes for latitude and longitude, using average diameter as spacing
+		
+		list.add(new MPASCoordAxis("x", "x", lonMin, AxisType.X_AXIS));
+		list.add(new MPASCoordAxis("y", "y", latMin, AxisType.Y_AXIS));
 
 		coordAxes = new Axes<CoordAxis>(list, boxer);
 		

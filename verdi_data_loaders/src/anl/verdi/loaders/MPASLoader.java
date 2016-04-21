@@ -53,31 +53,15 @@ public class MPASLoader implements DataLoader {
 			}
 			file = NetcdfFile.open(urlString);
 			return MPASConvention.isMine(file) && hasDimensions(file);
-
-		} catch (IOException io) {
-			//io.printStackTrace();
-			// just warn here because it be correct that
-			// this is not a netcdf file
-			Logger.warn("Error reading netcdf file " + io.getMessage());
-			throw io;
-		} catch (URISyntaxException e) {
-			//e.printStackTrace();
-			Logger.warn("Error reading netcdf file " + e.getMessage());
-			throw e;
-		} catch (Exception e) {
-			throw e;
-		} catch (Throwable t) {
-			t.printStackTrace();
 		}
 		finally {
 			try {
 				if (file != null) file.close();
 			} catch (IOException e) {}
 		}
-		return false;
 	}
 
-	private boolean hasDimensions(NetcdfFile file) {
+	private boolean hasDimensions(NetcdfFile file) throws IOException {
 		List<Dimension> dims = file.getDimensions();
 		boolean hasCells = false;
 		boolean hasMaxEdges = false;
@@ -85,7 +69,9 @@ public class MPASLoader implements DataLoader {
 			if (dim.getShortName().equals("nCells")) hasCells = true;
 			else if (dim.getShortName().equals("maxEdges")) hasMaxEdges = true;
 		}
-		return hasCells && hasMaxEdges;
+		if (!hasCells || !hasMaxEdges)
+			throw new IOException("Invalid MPAS file, nCells: " + hasCells + " maxEdges: " + hasMaxEdges);
+		return true;
 	}
 
 	/**
@@ -93,8 +79,9 @@ public class MPASLoader implements DataLoader {
 	 *
 	 * @param url the url of the data
 	 * @return a Dataset created from the data at the specified URL.
+	 * @throws IOException 
 	 */
-	public List<Dataset> createDatasets(URL url) {
+	public List<Dataset> createDatasets(URL url) throws IOException {
 		NetcdfDatasetFactory factory = new NetcdfDatasetFactory();
 		return factory.createMPASDatasets(url);
 	}

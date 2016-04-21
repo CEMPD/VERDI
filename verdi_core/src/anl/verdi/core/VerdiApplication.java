@@ -611,23 +611,22 @@ FormulaElementCreator, ListDataListener {
 					"' is already loaded");
 				} else {
 					List<Dataset> datasets = DataManager.NULL_DATASETS;
-					try {
-						datasets = manager.createDatasets(url); // JIZHEN-JIZHEN
-					} catch (Exception e) {
-						gui.showMessage("Dataset Loading Error", "No dataset handler registered for '"
-								+ file.getAbsolutePath() + "':\n " + e.getMessage());
-					}
+					datasets = manager.createDatasets(url); // JIZHEN-JIZHEN
 					if (datasets.equals(DataManager.NULL_DATASETS)) {
-						//gui.showMessage("Dataset Loading Error", "No dataset handler registered for '"
-						//				+ file.getAbsolutePath() + "'");
+						gui.showMessage("Dataset Loading Error", "No dataset handler registered for '"
+										+ file.getAbsolutePath() + "'");
 					} else {
 						for (Dataset dataset : datasets) {
 							gui.loadDataset(dataset);
 						}
 					}
 				}
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
+			} catch (Throwable e) {
+				while (e.getCause() != null)
+					e = e.getCause();
+				Logger.error("Could not open '" + file.getAbsolutePath() + "'", e);
+				gui.showMessage("Dataset Loading Error", "Could not open '"
+						+ file.getAbsolutePath() + "':\n " + (e.getMessage() != null ? e.getMessage() : e.getClass().getName()));
 			}
 		}
 	}

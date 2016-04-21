@@ -87,8 +87,9 @@ public class NetcdfDatasetFactory {
 	 * @param url a url that points to a netcdf file conforming to the
 	 *            Models-3 convention.
 	 * @return a list of Datasets from the specified URL
+	 * @throws IOException 
 	 */
-	public List<Dataset> createMPASDatasets(URL url) {
+	public List<Dataset> createMPASDatasets(URL url) throws IOException {
 		Logger.debug("in NetcdfDatasetFactory.createModels3Datasets, url = " + url);
 		NetcdfDataset netcdfDataset = null;
 		List<Dataset> setList = new ArrayList<Dataset>();
@@ -104,9 +105,7 @@ public class NetcdfDatasetFactory {
 			// if here then ok.
 			Logger.debug("isMine == true, returning createDatasets for url = " + url);
 			setList.add(new MPASDataset(url, netcdfDataset));
-		} catch (Exception io) {
-			io.printStackTrace();
-			Logger.error("Error reading netcdf file " + io.getMessage());
+		} finally {
 			try {
 				if (netcdfDataset != null)
 					netcdfDataset.close();
