@@ -60,23 +60,25 @@ public class LayerPanel extends JPanel {
 		model.setMaximum(maxStep + 1);
 		
 		String oldAxis = currentAxis;
+		String oldRange = currentRange;
+		currentRange = layers.getRange().toString();
 		currentAxis = layers.getName();
 		Integer oldMin = (Integer)minSpinner.getValue();
 		Integer oldMax = (Integer)maxSpinner.getValue();
 		boolean oldChecked = chkEnable.isSelected();
 		if (oldAxis != null) {
-			axisValues.put(oldAxis + "min", oldMin);
-			axisValues.put(oldAxis + "max", oldMax);
-			axisValues.put(oldAxis + "use", oldChecked ? 1 : 0);
+			axisValues.put(oldRange + oldAxis + "min", oldMin);
+			axisValues.put(oldRange + oldAxis + "max", oldMax);
+			axisValues.put(oldRange + oldAxis + "use", oldChecked ? 1 : 0);
 		}
-		if (axisValues.containsKey(currentAxis + "use"))
-			isLayerUsed = axisValues.get(currentAxis + "use").equals(1);
-		Integer newVal = axisValues.get(currentAxis + "min");
+		if (axisValues.containsKey(currentRange + currentAxis + "use"))
+			isLayerUsed = axisValues.get(currentRange + currentAxis + "use").equals(1);
+		Integer newVal = axisValues.get(currentRange + currentAxis + "min");
 		if (newVal == null)
 			newVal = new Integer(layerMin + 1);
 		minSpinner.setValue(newVal);
 		
-		newVal = axisValues.get(currentAxis + "max");
+		newVal = axisValues.get(currentRange + currentAxis + "max");
 		if (newVal == null)
 			newVal = new Integer(layerMax + 1);
 		
@@ -96,6 +98,7 @@ public class LayerPanel extends JPanel {
 	}
 	
 	String currentAxis = null;
+	String currentRange = null;
 	Map<String, Integer> axisValues = new HashMap<String, Integer>();
 
 	public void setEnabled(boolean val) {

@@ -10,6 +10,8 @@ public interface MultiAxisDataset {
 	
 	public CoordAxis getTimeAxis(String variable);
 	
+	public CoordAxis getDefaultTimeAxis();
+	
 	public CoordAxis getZAxis(String variable);
 	
 	public CoordAxis getDefaultZAxis();

@@ -3,6 +3,8 @@ package anl.verdi.gui;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -18,6 +20,7 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
+import anl.verdi.data.TimeCoordAxis;
 import anl.verdi.util.FocusClickFix;
 import anl.verdi.util.Utilities;
 
@@ -52,15 +55,19 @@ public class TimePanel extends JPanel {
 			JSpinner source = (JSpinner)e.getSource();
 			if (slidersOn) {
 				int val = ((Number)source.getValue()).intValue() - 1;
-				if (axes != null) {
-					GregorianCalendar date = axes.getDate(val);
+				if (timeAxis != null) {
+					GregorianCalendar date = getDate(val);
 					label.setText(Utilities.formatShortDate(date));
 				}
 			}
 		}
 	}
+	
+	private GregorianCalendar getDate(int val) {
+		return ((TimeCoordAxis)timeAxis).getDate(val);
+	}
 
-	private Axes<CoordAxis> axes;
+	CoordAxis timeAxis;
 	private boolean slidersOn = false;
 
 	public TimePanel() {
@@ -79,6 +86,10 @@ public class TimePanel extends JPanel {
 		chkEnable.addActionListener(useListener);
 	}
 
+	String currentAxis = null;
+	String currentRange = null;
+	Map<String, Integer> timeValues = new HashMap<String, Integer>();
+
 	/**
 	 * Resets the spinners according to the time axis,
 	 * and sets their values to the specified min and max.
@@ -87,23 +98,44 @@ public class TimePanel extends JPanel {
 	 * @param timeMin the min time
 	 * @param timeMax the max time
 	 */
-	public void reset(Axes<CoordAxis> axes, int timeMin, int timeMax, boolean isUsed) {
-		slidersOn = false;
-		CoordAxis time = axes.getTimeAxis();
-		this.axes = axes;
+	public void reset(CoordAxis time, int timeMin, int timeMax, boolean isUsed) {
 		int maxStep = (int) time.getRange().getExtent() - 1;
 		SpinnerNumberModel model = (SpinnerNumberModel) minSpinner.getModel();
 		model.setMinimum(1);
 		model.setMaximum(maxStep + 1);
+		
+		String oldAxis = currentAxis;
+		currentAxis = time.getName();
+		String oldRange = currentRange;
+		currentRange = time.getRange().toString();
+		Integer oldMin = (Integer)minSpinner.getValue();
+		Integer oldMax = (Integer)maxSpinner.getValue();
+		boolean oldChecked = chkEnable.isSelected();
+		if (oldAxis != null) {
+			timeValues.put(oldRange + oldAxis + "min", oldMin);
+			timeValues.put(oldRange + oldAxis + "max", oldMax);
+			timeValues.put(oldRange + oldAxis + "use", oldChecked ? 1 : 0);
+		}
+		if (timeValues.containsKey(currentRange + currentAxis + "use"))
+			isUsed = timeValues.get(currentRange + currentAxis + "use").equals(1);
+		
+		
+		Integer newVal = timeValues.get(currentRange + currentAxis + "min");
+		if (newVal == null)
+			newVal = new Integer(timeMin + 1);
+		minSpinner.setValue(newVal);
+		
+		newVal = timeValues.get(currentRange + currentAxis + "max");
+		if (newVal == null)
+			newVal = new Integer(timeMax + 1);
+		
 		model = (SpinnerNumberModel) maxSpinner.getModel();
 		model.setMinimum(1);
 		model.setMaximum(maxStep + 1);
-		minSpinner.setValue(new Integer(timeMin + 1));
-		maxSpinner.setValue(new Integer(timeMax + 1));
-		maxDate.setText(Utilities.formatShortDate(axes.getDate(timeMax)));
-		minDate.setText(Utilities.formatShortDate(axes.getDate(timeMin)));
+		
+		maxSpinner.setValue(newVal);
 		chkEnable.setSelected(isUsed);
-		slidersOn = true;
+		slidersOn = isUsed;
 
 		if (timeMin == timeMax) {
 			minSpinner.setEnabled(false);
@@ -189,4 +221,14 @@ public class TimePanel extends JPanel {
 	private JSpinner maxSpinner;
 	private JLabel maxDate;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
+	
+	public int getMin() {
+		return ((SpinnerNumberModel) minSpinner.getModel()).getNumber().intValue() - 1;
+	}
+	public int getMax() {
+		return ((SpinnerNumberModel) maxSpinner.getModel()).getNumber().intValue() - 1;
+	}
+	public boolean getTimeEnabled() {
+		return chkEnable.isSelected();
+	}
 }

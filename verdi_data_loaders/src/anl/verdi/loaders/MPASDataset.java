@@ -66,6 +66,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	private NetcdfDataset dataset;
 	private Axes<CoordAxis> coordAxes;
 	private CoordAxis defaultLayer = null;
+	private CoordAxis defaultTime = null;
 	private List<Variable> vars;
 	private List<Variable> verdiRenderVars;
 	private Map<String, ucar.nc2.Variable> renderVars;
@@ -797,8 +798,9 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 
 		List<CoordAxis> list = new ArrayList<CoordAxis>();
 		
-		list.add(makeTimeCoordAxis("Time"));
-				
+		addTime("Time", list);
+		addTime("nMonths", list);
+		
 		MPASBoxer boxer = new MPASBoxer();
 		
 		cellVertices = read("nEdgesOnCell");
@@ -939,6 +941,16 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		return latMax;
 	}
 	
+	private void addTime(String axisName, List<CoordAxis> axisList) {
+		CoordAxis axis = makeTimeCoordAxis(axisName);
+		axisList.add(axis);
+
+		if (axisName.equals("Time"))
+			defaultTime = axis;
+		else if (defaultTime == null)
+			defaultTime = axis;
+	}
+	
 	private void addLayer(String layerName, List<CoordAxis> axisList) {
 		CoordAxis axis = null;
 		int numLevels = dataset.findDimension(layerName).getLength();
@@ -975,6 +987,10 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 				return axis;
 		}
 		return null;
+	}
+	
+	public CoordAxis getDefaultTimeAxis() {
+		return defaultTime;
 	}
 	
 	public CoordAxis getDefaultZAxis() {

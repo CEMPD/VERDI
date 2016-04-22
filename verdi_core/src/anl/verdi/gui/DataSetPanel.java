@@ -714,24 +714,40 @@ public class DataSetPanel extends JPanel {
 			}
 		}
 	}
-
+	
 	private void setTimeValues(DatasetListElement element) {
+		if (element != null)
+			setTimeValues(element, element.getDefaultTimeAxis());
+		else
+			setTimeValues(element, null);
+	}
+
+	private void setTimeValues(DatasetListElement element, CoordAxis axis) {
 		Logger.debug("in DataSetPanel setTimeValues");
 		if (element != null
 				&& element.getTimeMin() != DatasetListElement.NO_TIME_VALUE) {
 			timePanel.setEnabled(true);
-			timePanel.reset(element.getDataset().getCoordAxes(), element
+			timePanel.reset(element.getDefaultTimeAxis(), element
 					.getTimeMin(), element.getTimeMax(), element.isTimeUsed());
+			element.setTimeMin(timePanel.getMin());
+			element.setTimeMax(timePanel.getMax());
+			element.setTimeUsed(timePanel.getTimeEnabled());
 		} else {
 			timePanel.setEnabled(false);
+			if (element != null) {
+				element.setTimeMin(DatasetListElement.NO_LAYER_VALUE);
+				element.setTimeMax(DatasetListElement.NO_LAYER_VALUE);
+				element.setTimeUsed(false);
+			}
 		}
 	}
 	
 	public void setLayerValues(DatasetListElement element) {
 		if (element != null)
 			setLayerValues(element, element.getDefaultZAxis());
-		else
+		else {
 			setLayerValues(element, null);
+		}
 	}
 
 	public void setLayerValues(DatasetListElement element, CoordAxis axis) {

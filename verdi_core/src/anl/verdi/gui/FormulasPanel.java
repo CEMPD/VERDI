@@ -136,7 +136,7 @@ public class FormulasPanel extends JPanel {
 		Logger.debug("in FormulasPanel setTimeValues");
 		if (element != null && element.getTimeMin() != FormulaListElement.NO_TIME_VALUE) {
 			timePanel1.setEnabled(true);
-			timePanel1.reset(element.getAxes(), element.getTimeMin(), element.getTimeMax(), element.isTimeUsed());
+			timePanel1.reset(element.getDefaultTimeAxis(), element.getTimeMin(), element.getTimeMax(), element.isTimeUsed());
 		} else {
 			timePanel1.setEnabled(false);
 		}

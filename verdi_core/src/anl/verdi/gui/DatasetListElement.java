@@ -19,7 +19,11 @@ public class DatasetListElement extends AbstractListElement {
 		this.dataset = dataset;
 
 		Axes<CoordAxis> axes = dataset.getCoordAxes();
-		CoordAxis time = axes.getTimeAxis();
+		CoordAxis time = null;
+		if (dataset instanceof MultiAxisDataset)
+			time = ((MultiAxisDataset)dataset).getDefaultTimeAxis();
+		else
+			time = axes.getTimeAxis();
 		if (time == null) timeMin = timeMax = NO_TIME_VALUE;
 		else {
 			timeMin = (int) time.getRange().getOrigin();
@@ -52,6 +56,13 @@ public class DatasetListElement extends AbstractListElement {
 	
 	public Axes<CoordAxis> getAxes(){
 		return dataset.getCoordAxes();
+	}
+	
+	public CoordAxis getDefaultTimeAxis() {
+		if (dataset instanceof MultiAxisDataset) {
+			return ((MultiAxisDataset)dataset).getDefaultTimeAxis();
+		}
+		return getAxes().getTimeAxis();
 	}
 	
 	public CoordAxis getDefaultZAxis() {

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 import anl.verdi.data.Axes;
+import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.MPASCellAxis;
@@ -25,6 +26,7 @@ public class FormulaListElement extends AbstractListElement {
 	private String formula;
 	private List<FormulaVariable> variables;
 	private CoordAxis zAxis;
+	private CoordAxis timeAxis;
 
 	public FormulaListElement(String formula) {
 		this(formula, new ArrayList<FormulaVariable>());
@@ -40,9 +42,11 @@ public class FormulaListElement extends AbstractListElement {
 			Dataset ds = variables.get(0).getDataset();
 			if (ds instanceof MultiAxisDataset) {
 				zAxis = ((MultiAxisDataset)ds).getZAxis(variables.get(0).getName());
+				timeAxis = ((MultiAxisDataset)ds).getTimeAxis(variables.get(0).getName());
 			}
 			else {
-				zAxis = getAxisForVariable(variables.get(0));
+				zAxis = getZAxisForVariable(variables.get(0));
+				timeAxis = getTimeAxisForVariable(variables.get(0));
 			}
 			FormulaVariable var = variables.get(0);
 			if (zAxis != null) {
@@ -72,11 +76,19 @@ public class FormulaListElement extends AbstractListElement {
 		}
 	}
 	
-	public CoordAxis getAxisForVariable(FormulaVariable var) {		
+	public CoordAxis getZAxisForVariable(FormulaVariable var) {		
 		for (CoordAxis axis : var.getDataset().getCoordAxes().getAxes()) {
 			if (axis instanceof MPASCellAxis) {
 				return ((MPASCellAxis)axis).getZAxis(var.getName());
 			}
+		}
+		return null;
+	}
+
+	public CoordAxis getTimeAxisForVariable(FormulaVariable var) {		
+		for (CoordAxis axis : var.getDataset().getCoordAxes().getAxes()) {
+			if (AxisType.TIME.equals(axis.getAxisType()))
+				return axis;
 		}
 		return null;
 	}
@@ -96,6 +108,10 @@ public class FormulaListElement extends AbstractListElement {
 		return null;
 	}
 	
+	public CoordAxis getDefaultTimeAxis() {
+		return timeAxis;
+	}
+
 	public CoordAxis getDefaultZAxis() {
 		return zAxis;
 	}
