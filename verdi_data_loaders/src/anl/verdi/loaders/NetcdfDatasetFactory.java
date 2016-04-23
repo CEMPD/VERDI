@@ -105,13 +105,14 @@ public class NetcdfDatasetFactory {
 			// if here then ok.
 			Logger.debug("isMine == true, returning createDatasets for url = " + url);
 			setList.add(new MPASDataset(url, netcdfDataset));
-		} finally {
+		} catch (IOException ex) {
 			try {
 				if (netcdfDataset != null)
 					netcdfDataset.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			throw ex;
 		}
 		return setList;
 	}
