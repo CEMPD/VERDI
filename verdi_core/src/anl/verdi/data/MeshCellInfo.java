@@ -9,8 +9,8 @@ package anl.verdi.data;
 public interface MeshCellInfo {
 	
 	public int getId();
-	
-	public double getValue(ArrayReader renderVariable, int timestep, int layer);
+
+	public double getValue(ArrayReader renderVariable, DataFrame frame, MPASDataFrameIndex index, int timestep, int layer);
 	
 	public int getNumVertices();
 	

@@ -381,6 +381,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 //	private MapLayer controlLayer;
 	private FeatureLayer controlLayer;
 	
+	MPASDataFrameIndex cellIndex = null;
+	MPASDataFrameIndex hoverCellIndex = null;
 
 	
 	protected Action timeSeriesSelected = new AbstractAction(
@@ -999,6 +1001,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		mapper = null;
 		dataFrameLog = null;
 		dataFrame = null;
+		cellIndex = null;
+		hoverCellIndex = null;
 		
 		obsData = null;
 		obsAnnotations = null;
@@ -1547,7 +1551,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}
 		
 		public double getValue() {
-			return source.getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
+			return source.getValue(renderVariable, dataFrame, cellIndex, timestep - firstTimestep, layer - firstLayer);
 		}
 		
 		public int getId() {
@@ -1976,6 +1980,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					(double)firstRow + rowOrigin,
 					(double)lastRow + rowOrigin,
 					variable, renderVariable,
+					dataFrame,
 					timestep,
 					layer,
 					cellsToRender);
@@ -1996,6 +2001,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		assert dataFrame != null;
 		this.dataFrame = dataFrame;
 		this.calculateDataFrameLog();
+		cellIndex = new MPASDataFrameIndex(dataFrame);
+		hoverCellIndex = new MPASDataFrameIndex(dataFrame);
 		hasNoLayer = (dataFrame.getAxes().getZAxis() == null);
 		format = NumberFormat.getInstance();
 		format.setMaximumFractionDigits(4);
@@ -3218,7 +3225,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			return;
 		}
 		screenInitted = false;
-		updateCellData();
+		dataChanged = true;
+		draw();
 	}
 
 	/**
@@ -3720,8 +3728,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		Set<MeshCellInfo> minCells = new HashSet<MeshCellInfo>();
 		double min = Double.POSITIVE_INFINITY;
 		double value = 0;
+		MPASDataFrameIndex index = new MPASDataFrameIndex(dataFrame);
 		for (MeshCellInfo cell : cellsToRender) {
-			value = cell.getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
+			value = cell.getValue(renderVariable, dataFrame, index, timestep - firstTimestep, layer - firstLayer);
 			if (value == min)
 				minCells.add(cell);
 			else if (value < min) {
@@ -3737,8 +3746,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		Set<MeshCellInfo> maxCells = new HashSet<MeshCellInfo>();
 		double max = Double.NEGATIVE_INFINITY;
 		double value;
+		MPASDataFrameIndex index = new MPASDataFrameIndex(dataFrame);
 		for (MeshCellInfo cell : cellsToRender) {
-			value = cell.getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
+			value = cell.getValue(renderVariable, dataFrame, index, timestep - firstTimestep, layer - firstLayer);
 			if (value == max)
 				maxCells.add(cell);
 			else if (value > max) {
@@ -3958,7 +3968,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			MeshCellInfo cell = localCell.getSource();
 			double value;
 			if (preStatIndex < 1)
-				value = cell.getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
+				value = cell.getValue(renderVariable, dataFrame, hoverCellIndex, timestep - firstTimestep, layer - firstLayer);
 			else
 				value = statisticsData[preStatIndex - 1][0][cell.getId()];
 			if (cell != null) {
@@ -4148,8 +4158,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
 		float[][] exportCellData = new float[1][cellsToRender.length];
 		
+		MPASDataFrameIndex index = new MPASDataFrameIndex(dataFrame);
 		for ( int cell = 0; cell < cellsToRender.length; ++cell ) {
-			exportCellData[0][cell] = (float)cellsToRender[cell].getValue(renderVariable, timestep - firstTimestep, layer - firstLayer);
+			exportCellData[0][cell] = (float)cellsToRender[cell].getValue(renderVariable, dataFrame, index, timestep - firstTimestep, layer - firstLayer);
 		}
 		ASCIIGridWriter.write( baseFileName + ".asc",
 		1, cellsToRender.length,

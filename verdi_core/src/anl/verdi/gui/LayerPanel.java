@@ -88,7 +88,7 @@ public class LayerPanel extends JPanel {
 		
 		maxSpinner.setValue(newVal);
 		chkEnable.setSelected(isLayerUsed);
-		setBorder(new TitledBorder("Layers (1 - " + (maxStep+1) + ")"));
+		setBorder(new TitledBorder("Layers (" + currentAxis + " 1 - " + (maxStep+1) + ")"));
 
 		if (layerMin == layerMax) {
 			minSpinner.setEnabled(false);

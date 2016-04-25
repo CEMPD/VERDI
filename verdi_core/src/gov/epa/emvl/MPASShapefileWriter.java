@@ -21,6 +21,8 @@ import org.geotools.data.shapefile.dbf.DbaseFileHeader;
 import org.geotools.data.shapefile.dbf.DbaseFileWriter;
 
 import anl.verdi.data.ArrayReader;
+import anl.verdi.data.DataFrame;
+import anl.verdi.data.MPASDataFrameIndex;
 import anl.verdi.data.MeshCellInfo;
 
 public final class MPASShapefileWriter {
@@ -75,7 +77,7 @@ public final class MPASShapefileWriter {
   public static void write( final String fileName,
 		  					double minLon, double maxLon,
 		  					double minLat, double maxLat,
-                            final String variable, final ArrayReader renderVariable,
+                            final String variable, final ArrayReader renderVariable, DataFrame dataFrame,
                             final int timestep,
                             final int layer,
                             MeshCellInfo[] cells ) throws IOException {
@@ -258,13 +260,13 @@ public final class MPASShapefileWriter {
     }
 
     if ( variable != null && cells != null ) {
-      writeDBF( fileName, variable, renderVariable, timestep, layer, cells );
+      writeDBF( fileName, variable, renderVariable, dataFrame, timestep, layer, cells );
       writePRJ( fileName );
     }
   }
   
   
-  private static void writeDBF( final String fileName, final String variable, final ArrayReader renderVariable,
+  private static void writeDBF( final String fileName, final String variable, final ArrayReader renderVariable, final DataFrame dataFrame,
           final int timestep, final int layer, MeshCellInfo[] cells ) throws IOException {
 	  DbaseFileHeader header = new DbaseFileHeader();
 	  header.addColumn("ID", 'N', 10, 0);
@@ -274,10 +276,12 @@ public final class MPASShapefileWriter {
       @SuppressWarnings("resource")
 	  FileOutputStream fout = new FileOutputStream(f);
       DbaseFileWriter dbf = new DbaseFileWriter(header, fout.getChannel());
+      
+      MPASDataFrameIndex index = new MPASDataFrameIndex(dataFrame);
       for (int i = 0; i < cells.length; ++i) {
     	  Object[] row = new Object[2];
     	  row[0] = new Double(cells[i].getId());
-    	  row[1] = new Double(cells[i].getValue(renderVariable, timestep, layer));
+    	  row[1] = new Double(cells[i].getValue(renderVariable, dataFrame, index, timestep, layer));
        	  dbf.write(row);
       }
       dbf.close();  

@@ -33,6 +33,8 @@ public abstract class ArrayReader {
 	
 	public abstract double get(int d1, int d2, int d3);
 	
+	public abstract double get(DataFrame frame, DataFrameIndex idx);
+	
 	public Array getArray() {
 		return array;
 	}

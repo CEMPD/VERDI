@@ -36,4 +36,9 @@ public class ArrayFloatReader extends ArrayReader {
 		return dimensions;
 	}
 
+	@Override
+	public double get(DataFrame frame, DataFrameIndex idx) {
+		return frame.getDouble(idx);
+	}
+
 }

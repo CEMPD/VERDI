@@ -8,6 +8,7 @@
 
 package anl.verdi.loaders;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -26,14 +27,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.unitsofmeasurement.unit.Unit;
 
-import java.awt.*;
-
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
+import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.NetcdfDataset;
 import anl.verdi.data.AbstractDataset;
@@ -46,6 +47,7 @@ import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.DatasetMetadata;
 import anl.verdi.data.DefaultVariable;
+import anl.verdi.data.MPASDataFrameIndex;
 import anl.verdi.data.MPASPlotDataFrame;
 import anl.verdi.data.MeshCellInfo;
 import anl.verdi.data.MultiAxisDataset;
@@ -73,6 +75,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	private String name = "";
 	private int conv = -1;
 	int numCells;
+	GregorianCalendar startCal = null;
 	Map<String, MPASMinMaxCalculator> levelCalculators = new HashMap<String, MPASMinMaxCalculator>();
 	
 	public static final double RAD_TO_DEG = 180 / Math.PI;
@@ -96,6 +99,21 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	private static Set<String> hiddenVars = new HashSet<String>();
 	
 	private static Set<String> renderVarList = new HashSet<String>();
+	
+	private static Set<String> TIME_DIMENSIONS = new HashSet<String>();
+	private static Set<String> LAYER_DIMENSIONS = new HashSet<String>();
+	
+	static {
+		TIME_DIMENSIONS.add("Time");
+		TIME_DIMENSIONS.add("nMonths");
+		LAYER_DIMENSIONS.add("nVertLevels");
+		LAYER_DIMENSIONS.add("nVertLevelsP1");
+		LAYER_DIMENSIONS.add("nSoilLevels");
+		LAYER_DIMENSIONS.add("nFGSoilLevels");
+		LAYER_DIMENSIONS.add("nFGLevels");
+		LAYER_DIMENSIONS.add("nOznLevels,");
+	}
+
 	
 	public class CellInfo implements MeshCellInfo { 
 		double[] latCoords;
@@ -193,17 +211,10 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			}
 			return "";
 		}
-		
-		public double getValue(ArrayReader renderVariable, int timestep, int layer) {
-			if (timestep == -1) {
-				if (layer != -1)
-					return renderVariable.get(cellId, layer);
-				return renderVariable.get(cellId);
-			}
-			else if (renderVariable.getRank() == 3)
-				return renderVariable.get(timestep, cellId, layer);
-			else
-				return renderVariable.get(timestep, cellId);
+				
+		public double getValue(ArrayReader renderVariable, DataFrame frame, MPASDataFrameIndex index, int timestep, int layer) {			
+			index.set(timestep, layer, cellId);
+			return renderVariable.get(frame, index);
 		}
 		
 		public double getMinX() {
@@ -650,13 +661,33 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		return ret;
 	}
 	
+
+	
 	private void initVariables() {
 		List<ucar.nc2.Variable> vars = dataset.getVariables();
+		String nCells = "nCells";
 		this.vars = new ArrayList<Variable>();
 		this.verdiRenderVars = new ArrayList<Variable>();
 		this.renderVars = new HashMap<String, ucar.nc2.Variable>();
 		for (ucar.nc2.Variable var : vars) {
 			String name = var.getShortName();	// getName replaced by either getShortName or getFullName (with escapes)
+			boolean valid = true;
+			
+			if (!renderVarList.contains(name)) {
+				if (!var.getDimensionsString().contains(nCells))
+					valid = false;
+				String[] dimensions = var.getDimensionsString().split(" ");
+				//Hide any variable with dimensions we don't know about
+				for (String dim : dimensions) {
+					if ( !dim.equals(nCells) &&
+							!TIME_DIMENSIONS.contains(dim) &&
+							!LAYER_DIMENSIONS.contains(dim))
+						valid = false;
+				}
+				if (!valid)
+					continue;
+			}
+					
 			//System.out.println("Got variable " + name + " dim " + var.getDimensionsString());
 			Unit unit = null;
 
@@ -763,7 +794,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			e.printStackTrace();
 		}
 		
-		Calendar startCal = new GregorianCalendar(new SimpleTimeZone(0, "UTC"));
+		startCal = new GregorianCalendar(new SimpleTimeZone(0, "UTC"));
 
 		String units = null;
 		
@@ -790,7 +821,37 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		timeCoord.addAttribute(new Attribute(ucar.nc2.constants._Coordinate.AxisType, ucar.nc2.constants.AxisType.Time.toString()));
 
 		dataset.addCoordinateAxis(timeCoord);
+		defaultTime = timeAxis;
 		return timeAxis;
+	}
+
+	private void addMonths(List<CoordAxis> axisList) {
+		String nMonths = "nMonths";
+		Dimension dim = dataset.findDimension(nMonths);
+		if (dim == null || startCal == null)
+			return;
+		
+		int steps = dim.getLength();
+		
+		ArrayDouble.D1 data = new ArrayDouble.D1(steps);
+		Double[] timeVals = new Double[steps];
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.setTimeInMillis(startCal.getTimeInMillis());
+		for (int i = 0; i < steps; i++) {
+			cal.add(GregorianCalendar.MONTH, 1);
+			data.set(i, cal.getTimeInMillis());
+			timeVals[i] = new Double((double)cal.getTimeInMillis());
+		}
+
+		// create the coord axis
+		CSVTimeAxis timeAxis = new CSVTimeAxis(timeVals, nMonths, nMonths);
+		CoordinateAxis1D timeCoord = new CoordinateAxis1D(dataset, null, "time", DataType.DOUBLE, nMonths, null,
+						"synthesized time coordinate from nMonths dimension");
+		timeCoord.setCachedData(data, true);
+		timeCoord.addAttribute(new Attribute(ucar.nc2.constants._Coordinate.AxisType, ucar.nc2.constants.AxisType.Time.toString()));
+
+		dataset.addCoordinateAxis(timeCoord);
+		axisList.add(timeAxis);
 	}
 
 
@@ -798,8 +859,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 
 		List<CoordAxis> list = new ArrayList<CoordAxis>();
 		
-		addTime("Time", list);
-		addTime("nMonths", list);
+		list.add(makeTimeCoordAxis("Time"));
+		addMonths(list);
 		
 		MPASBoxer boxer = new MPASBoxer();
 		
@@ -825,9 +886,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 					
 		Logger.info("Lat min " + latMin + " max " + latMax + " lon min " + lonMin + " max " + lonMax);
 		
-		addLayer("nVertLevels", list);
-		addLayer("nVertLevelsP1", list);
-		addLayer("nSoilLevels", list);
+		for (String layer : LAYER_DIMENSIONS)
+			addLayer(layer, list);
 		
 		//Construct axes for latitude and longitude, using average diameter as spacing
 		
@@ -941,19 +1001,12 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		return latMax;
 	}
 	
-	private void addTime(String axisName, List<CoordAxis> axisList) {
-		CoordAxis axis = makeTimeCoordAxis(axisName);
-		axisList.add(axis);
-
-		if (axisName.equals("Time"))
-			defaultTime = axis;
-		else if (defaultTime == null)
-			defaultTime = axis;
-	}
-	
 	private void addLayer(String layerName, List<CoordAxis> axisList) {
 		CoordAxis axis = null;
-		int numLevels = dataset.findDimension(layerName).getLength();
+		Dimension dim = dataset.findDimension(layerName);
+		if (dim == null)
+			return;
+		int numLevels = dim.getLength();
 		Double[] vertList = new Double[numLevels];
 		for (int i = 0; i < vertList.length; ++i)
 			vertList[i] = (double)i;

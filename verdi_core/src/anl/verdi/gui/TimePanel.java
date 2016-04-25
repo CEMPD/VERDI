@@ -18,7 +18,6 @@ import javax.swing.event.ChangeListener;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
-import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.TimeCoordAxis;
 import anl.verdi.util.FocusClickFix;
@@ -143,7 +142,8 @@ public class TimePanel extends JPanel {
 			chkEnable.setEnabled(false);
 		}
 
-		setBorder(new TitledBorder("Time Steps (1 - "+ (maxStep + 1) + ")"));
+		String display = currentAxis.equals("Time") ? "" : currentAxis + " ";
+		setBorder(new TitledBorder("Time Steps ( " + display + "1 - "+ (maxStep + 1) + ")"));
 	}
 
 	public void setEnabled(boolean val) {

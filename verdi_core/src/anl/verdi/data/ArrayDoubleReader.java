@@ -36,4 +36,8 @@ public class ArrayDoubleReader extends ArrayReader {
 		return dimensions;
 	}
 
+	public double get(DataFrame frame, DataFrameIndex idx) {
+		return frame.getDouble(idx);
+	}
+
 }
