@@ -214,17 +214,17 @@ public class ChartThemePanel extends JPanel {
 		contentPanel.add(regFontBtn, cc.xy(5, 7));
 
 		//---- Small font theme ----
-//		smallFontLbl.setText("Small Font:");
-//		contentPanel.add(smallFontLbl, cc.xy(1, 9));
-//		contentPanel.add(smallFontFld, cc.xy(3, 9));
-//		smallFont = setFontField(smallFontFld, ThemeConfig.SMALL_FONT);
-//		samllFontBtn.setText("Select");
-//		samllFontBtn.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent evt) {
-//				smallFont = selectFont(smallFontFld);
-//			}
-//		});
-//		contentPanel.add(samllFontBtn, cc.xy(5, 9));
+		smallFontLbl.setText("Small Font:");
+		contentPanel.add(smallFontLbl, cc.xy(1, 9));
+		contentPanel.add(smallFontFld, cc.xy(3, 9));
+		smallFont = setFontField(smallFontFld, ThemeConfig.SMALL_FONT);
+		samllFontBtn.setText("Select");
+		samllFontBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				smallFont = selectFont(smallFontFld);
+			}
+		});
+		contentPanel.add(samllFontBtn, cc.xy(5, 9));
 		
 		return contentPanel;
 	}

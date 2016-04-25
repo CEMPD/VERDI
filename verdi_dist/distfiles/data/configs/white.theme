@@ -1,0 +1,22 @@
+<PlotConfig>
+					<property type="java.awt.Font" key="anl.verdi.plot.config.ThemeConfig.large_font" value="Arial Black-plain-11" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.subtitle_paint" value="-16777216" />
+							<property type="javax.swing.plaf.ColorUIResource" key="anl.verdi.plot.config.ThemeConfig.plot_background_paint" value="javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]" />
+							<property type="javax.swing.plaf.ColorUIResource" key="anl.verdi.plot.config.ThemeConfig.chart_background_paint" value="javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]" />
+							<property type="java.lang.Boolean" key="anl.verdi.plot.config.ThemeConfig.show_shadow" value="true" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.plot_outline_paint" value="-16777216" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.domain_gridline_paint" value="-16777216" />
+							<property type="java.awt.Font" key="anl.verdi.plot.config.ThemeConfig.regular_font" value="Arial-plain-11" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.title_paint" value="-16777216" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.range_gridline_paint" value="-16777216" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.shadow_paint" value="-16777216" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.tick_label_paint" value="-16777216" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.item_label_paint" value="-16777216" />
+							<property type="javax.swing.plaf.ColorUIResource" key="anl.verdi.plot.config.ThemeConfig.legend_background_paint" value="javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.crosshair_paint" value="-16777216" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.legend_paint" value="-16777216" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.axis_label_paint" value="-16777216" />
+							<property type="java.awt.Font" key="anl.verdi.plot.config.ThemeConfig.small_font" value="Arial-plain-11" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.baseline_paint" value="-16777216" />
+							<property type="java.awt.Font" key="anl.verdi.plot.config.ThemeConfig.extra_large_font" value="Arial Black-plain-11" />
+		</PlotConfig>

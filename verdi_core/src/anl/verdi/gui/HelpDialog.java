@@ -8,6 +8,7 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,6 +22,7 @@ import javax.swing.WindowConstants;
 
 import org.jdesktop.swingx.JXHeader;
 
+import anl.verdi.util.Tools;
 import anl.verdi.util.VersionInfo;
 
 import com.jgoodies.forms.factories.Borders;
@@ -95,10 +97,10 @@ public class HelpDialog extends JDialog {
 
 				//======== scrollPane1 ========
 				{
-
-				    final URI uri = new URI("https://www.cmascenter.org/verdi/documentation/1.5/VerdiUserManual1.5.htm");	// 2014 VERDI 1.5 documentation
+					String verdiHome = System.getenv("VERDI_HOME");
+				    final URI uri = new URI("file://" + verdiHome + File.separator + "plugins" + File.separator + "core" + File.separator + "help" + File.separator + "VerdiUserManual1.6alpha.pdf");
 				    // old URI was: "http://www.verdi-tool.org/verdiUserManual_URI_uri.htm"
-				    final URI uri2 = new URI("http://www.cmascenter.org/verdi/documentation/1.5/VerdiUserManual1.5.pdf");	// 2014 VERDI 1.5 documentation
+				    final URI uri2 = new URI("file://" + verdiHome + File.separator + "plugins" + File.separator + "core" + File.separator + "help" + File.separator + "VerdiDevInstructions1.6alpha.pdf");
 				    // old URI was: "http://www.cmascenter.org/help/model_docs/verdi/1.4/VerdiUserManual_URI_uri2.pdf"
 				    class OpenUrlAction implements ActionListener {
 				      @Override public void actionPerformed(ActionEvent e) {
@@ -111,7 +113,7 @@ public class HelpDialog extends JDialog {
 					      }
 					    }
 				    JButton htmlLinkButton = new JButton();
-				    htmlLinkButton.setText("<HTML><FONT color=\"#000099\"><U>HTML Version</U></FONT></HTML>");
+				    htmlLinkButton.setText("<HTML><FONT color=\"#000099\"><U>User Manual</U></FONT></HTML>");
 				    htmlLinkButton.setHorizontalAlignment(SwingConstants.LEFT);
 				    htmlLinkButton.setBorderPainted(false);
 				    htmlLinkButton.setOpaque(false);
@@ -121,7 +123,7 @@ public class HelpDialog extends JDialog {
 					
 					
 				    JButton pdfLinkButton = new JButton();
-				    pdfLinkButton.setText("<HTML><FONT color=\"#000099\"><U>PDF Version</U></FONT></HTML>");
+				    pdfLinkButton.setText("<HTML><FONT color=\"#000099\"><U>Developer Instructions</U></FONT></HTML>");
 				    pdfLinkButton.setHorizontalAlignment(SwingConstants.LEFT);
 				    pdfLinkButton.setBorderPainted(false);
 				    pdfLinkButton.setOpaque(false);
