@@ -129,11 +129,13 @@ public class MPASPlotDataFrame implements DataFrame {
 			axisList.add(newAxis);
 		}
 
-		if (slice == null || slice.getLayerRange() == null || slice.getLayerRange().getExtent() == srcAxes.getZAxis().getRange().getExtent())
-			axisList.add(srcAxes.getZAxis());
-		else {
-			DataFrameAxis newAxis = DataFrameAxis.createDataFrameAxis(srcAxes.getZAxis().getAxis(), (int)slice.getLayerRange().getOrigin(), (int)slice.getLayerRange().getExtent(), srcAxes.getZAxis().getArrayIndex());
-			axisList.add(newAxis);
+		if (srcAxes.getZAxis() != null) {
+			if (slice == null || slice.getLayerRange() == null || slice.getLayerRange().getExtent() == srcAxes.getZAxis().getRange().getExtent())
+				axisList.add(srcAxes.getZAxis());
+			else if (slice != null) {
+				DataFrameAxis newAxis = DataFrameAxis.createDataFrameAxis(srcAxes.getZAxis().getAxis(), (int)slice.getLayerRange().getOrigin(), (int)slice.getLayerRange().getExtent(), srcAxes.getZAxis().getArrayIndex());
+				axisList.add(newAxis);
+			}
 		}
 
 		return new Axes<DataFrameAxis>(axisList);

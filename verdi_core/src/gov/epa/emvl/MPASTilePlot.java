@@ -11,11 +11,13 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.text.NumberFormat;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.gui.MeshPlot;
+import anl.verdi.util.Utilities;
 
 public class MPASTilePlot extends TilePlot {
 	
@@ -243,6 +245,22 @@ public class MPASTilePlot extends TilePlot {
 
 		super.drawLabels(graphics, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
 				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn, null);
+	}
+	
+	int stepUnits = Calendar.MILLISECOND;
+	
+	public void setTimestepUnits(int units) {
+		stepUnits = units;
+	}
+	
+	protected String dateTime(GregorianCalendar startDate, long timestepSize, int steplapse) {
+		if (stepUnits == Calendar.MONTH){
+			GregorianCalendar endDate = new GregorianCalendar();
+			endDate.setTime(startDate.getTime());
+			endDate.add(Calendar.MONTH, steplapse);
+			return Utilities.formatDate(endDate);
+		}
+		return super.dateTime(startDate, timestepSize, steplapse);
 	}
 	
 	public void setMinMax(double[] values) {

@@ -813,6 +813,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				}
 			} while (drawMode != DRAW_END);
 		} catch (Throwable t) {
+			VerdiGUI.unlock();
 			restoreCursor();
 			if (dataFrame != null) { //Ignore errors if dataFrame is null - that means window is closing
 				Logger.error("Error rendering MeshPlot", t);
@@ -2069,7 +2070,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		if (layerAxis == null) {
 			layers = 1;
-			firstLayer = layer = lastLayer = 1;
+			firstLayer = layer = lastLayer = 0;
 		} else {
 			layers = layerAxis.getExtent();
 			firstLayer = layer = layerAxis.getOrigin();
@@ -2190,6 +2191,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		// Create EMVL TilePlot (but does not draw yet - see draw()):
 
 		tilePlot = new MPASTilePlot(startDate, timestepSize, plotMinMaxCache, statMinMaxCache);
+		
+		if (timeAxis != null && timeAxis.getName().equals("nMonths"))
+			tilePlot.setTimestepUnits(GregorianCalendar.MONTH);
+
 
 		// Create GUI.
 
@@ -2284,9 +2289,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		popup = createPopupMenu(true, true, true, zoom);
 		popup.addPopupMenuListener(this);
 		if (hasNoTime)
-			firstTimestep = 1;
+			firstTimestep = 0;
 		if (hasNoLayer)
-			firstLayer = 1;
+			firstLayer = 0;
 		
 		// add(toolBar);
 		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);

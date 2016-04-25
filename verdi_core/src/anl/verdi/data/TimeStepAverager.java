@@ -267,8 +267,10 @@ public class TimeStepAverager implements DataTransformer {
 					frameIndex = frameIndices.get(cell);
 					if (layerAxis != null)
 						frameIndex.set(time, layer, 0);
-					else
-						frameIndex.set(time, -1, 0);
+					else {
+						frameIndex.setTime(time);
+						frameIndex.setCell(0);
+					}
 					
 					DataFrame cellFrame = frames.get(cell);
 					double cellVal = cellFrame.getDouble(frameIndex);
@@ -286,7 +288,8 @@ public class TimeStepAverager implements DataTransformer {
 		DataFrameBuilder builder = new DataFrameBuilder();
 		builder.addDataset(frame.getDataset()).setArray(array).setVariable(frame.getVariable());
 		builder.addAxis(DataFrameAxis.createDataFrameAxis(timeAxis, 0));
-		builder.addAxis(DataFrameAxis.createDataFrameAxis(layerAxis, 1));
+		if (layerAxis != null)
+			builder.addAxis(DataFrameAxis.createDataFrameAxis(layerAxis, 1));
 		return builder.createDataFrame();
 	}
 

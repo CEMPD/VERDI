@@ -1196,7 +1196,7 @@ public class TilePlot {
 	 * @post return != null
 	 */
 
-	private static String dateTime(GregorianCalendar startDate, long timestepSize, int steplapse) {
+	protected String dateTime(GregorianCalendar startDate, long timestepSize, int steplapse) {
 		GregorianCalendar endDate = new GregorianCalendar();
 		endDate.setTime(startDate.getTime());
 		endDate.add(Calendar.MILLISECOND, (int)timestepSize * steplapse);
