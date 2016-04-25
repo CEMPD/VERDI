@@ -33,7 +33,7 @@ public class Mapper {
 	private static final int MAXIMUM = 1;
 	// 2015 removed ".bin" from hard-coded file names & replaced with ".shp"
 	private static final String worldMapFileName = "map_world.shp";		// OK as Shapefile	
-	private static final String northAmericaMapFileName = "ne_50m_admin_1_states_provinces_lakes/ne_50m_admin_1_states_provinces_lakes.shp";	// OK as Shapefile
+	private static final String northAmericaMapFileName = "ne_50m_admin_1_states_provinces_lakes/states_us_mexico.shp";	// OK as Shapefile
 	private static final String stateMapFileName = "map_state/tl_2015_us_state.shp";
 	private static final String countyMapFileName = "map_county/cb_2014_us_county_500k.shp";	// OK as Shapefile
 	private static final String hucsMapFileName = "huc250k_shp/huc250k.shp";
