@@ -1,9 +1,9 @@
 <PlotConfig>
 					<property type="java.awt.Font" key="anl.verdi.plot.config.ThemeConfig.regular_font" value="Apple Symbols-plain-14" />
-							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.title_paint" value="-3355393" />
-							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.subtitle_paint" value="-39322" />
-							<property type="javax.swing.plaf.ColorUIResource" key="anl.verdi.plot.config.ThemeConfig.plot_background_paint" value="javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]" />
-							<property type="javax.swing.plaf.ColorUIResource" key="anl.verdi.plot.config.ThemeConfig.chart_background_paint" value="javax.swing.plaf.ColorUIResource[r=255,g=255,b=255]" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.title_paint" value="-16777216" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.subtitle_paint" value="-16777216" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.plot_background_paint" value="-1" />
+							<property type="java.awt.Color" key="anl.verdi.plot.config.ThemeConfig.chart_background_paint" value="-1" />
 							<property type="java.lang.Boolean" key="anl.verdi.plot.config.ThemeConfig.show_shadow" value="true" />
 							<property type="java.awt.Font" key="anl.verdi.plot.config.ThemeConfig.small_font" value="SansSerif-plain-72" />
 							<property type="java.awt.Font" key="anl.verdi.plot.config.ThemeConfig.extra_large_font" value="SansSerif-plain-48" />
