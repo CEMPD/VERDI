@@ -48,6 +48,9 @@ public void actionPerformed( ActionEvent unused ) {
         final PlotPanel panel = new PlotPanel( plot, "Tile " + variableName);
         application.getGui().addPlot( panel );
         panel.addPlotListener( application );
+      } 
+      else {
+    	application.getGui().showError("Error", "An error occurred while rendering the plot");
       }
     }
     application.getGui().defaultCursor();

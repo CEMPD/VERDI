@@ -269,11 +269,9 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 			builder.setArray(array);
 			return builder.createDataFrame();
 		} catch (IOException ie) {
-			Logger.error("IOException " + ie.getMessage());
-			ie.printStackTrace();
+			Logger.error((String)null, ie);
 		} catch (InvalidRangeException e) {
-			Logger.error("InvalidRangeException " + e.getMessage());
-			e.printStackTrace();
+			Logger.error((String)null, e);
 		}
 		return null;
 	}

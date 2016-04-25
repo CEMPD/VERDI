@@ -338,7 +338,7 @@ public class DataSetPanel extends JPanel {
 					element.setLayerMin(DatasetListElement.NO_LAYER_VALUE);
 					element.setLayerMax(DatasetListElement.NO_LAYER_VALUE);
 				}
-				setTimeValues(element);
+				setTimeValues(element, timeAxis);
 				setLayerValues(element, zAxis);
 			}
 
@@ -727,7 +727,7 @@ public class DataSetPanel extends JPanel {
 		if (element != null
 				&& element.getTimeMin() != DatasetListElement.NO_TIME_VALUE) {
 			timePanel.setEnabled(true);
-			timePanel.reset(element.getDefaultTimeAxis(), element
+			timePanel.reset(axis, element
 					.getTimeMin(), element.getTimeMax(), element.isTimeUsed());
 			element.setTimeMin(timePanel.getMin());
 			element.setTimeMax(timePanel.getMax());

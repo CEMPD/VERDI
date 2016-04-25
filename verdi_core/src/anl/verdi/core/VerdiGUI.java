@@ -451,6 +451,20 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 	
+
+	/**
+	 * Displays an error message to the user.
+	 * 
+	 * @param title
+	 *            the title of the message
+	 * @param message
+	 *            the content of the message
+	 */
+	public void showError(String title, String message) {
+		JOptionPane.showMessageDialog(frame, message, title,
+				JOptionPane.ERROR_MESSAGE);
+	}
+	
 	private Cursor oldCursor = null;
 	public void showBusyCursor() {
 		setStatusOneText("Loading data. This may take awhile; please be patient...");
