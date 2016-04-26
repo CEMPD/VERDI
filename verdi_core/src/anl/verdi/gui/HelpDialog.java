@@ -98,9 +98,9 @@ public class HelpDialog extends JDialog {
 				//======== scrollPane1 ========
 				{
 					String verdiHome = System.getenv("VERDI_HOME");
-				    final URI uri = new URI("file://" + verdiHome + File.separator + "plugins" + File.separator + "core" + File.separator + "help" + File.separator + "VerdiUserManual1.6alpha.pdf");
+				    final URI uri = new URI("file://" + verdiHome + File.separator + "plugins" + File.separator + "bootstrap" + File.separator + "help" + File.separator + "VerdiUserManual1.6alpha.pdf");
 				    // old URI was: "http://www.verdi-tool.org/verdiUserManual_URI_uri.htm"
-				    final URI uri2 = new URI("file://" + verdiHome + File.separator + "plugins" + File.separator + "core" + File.separator + "help" + File.separator + "VerdiDevInstructions1.6alpha.pdf");
+				    final URI uri2 = new URI("file://" + verdiHome + File.separator + "plugins" + File.separator + "bootstrap" + File.separator + "help" + File.separator + "VerdiDevInstructions1.6alpha.pdf");
 				    // old URI was: "http://www.cmascenter.org/help/model_docs/verdi/1.4/VerdiUserManual_URI_uri2.pdf"
 				    class OpenUrlAction implements ActionListener {
 				      @Override public void actionPerformed(ActionEvent e) {
