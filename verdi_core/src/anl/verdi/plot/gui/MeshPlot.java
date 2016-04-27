@@ -778,7 +778,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 						try {
 							if (canvasWidth > 0 && canvasHeight > 0) {
-								//bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
+								//bImage needed for animated gif support
+								bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
 								VerdiGUI.showIfVisible(threadParent, graphics, offScreenImage);
 							}
 						} finally {
