@@ -14,6 +14,8 @@ import javax.swing.Timer;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
+
+import anl.verdi.plot.data.MinMaxLevelListener;
 //import simphony.util.messages.MessageCenter;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.util.AnimationListener;
@@ -87,10 +89,20 @@ public class PlotAnimator {
 	 * @param delay delay between frames in milliseconds
 	 */
 	public void start(int start, int end, int delay) {
-		action = new UpdatePlotAction(start, end);
-		timer = new Timer(0, action);
-		timer.setDelay(delay);
-		timer.start();
+		//MinMaxLevelListeners animate asynchronously, and must be drawn through callbacks, not through timers.  Also, since
+		//The plot is updated, THEN the image is stored, increase start so the 1st frame isn't duplicated and increase end
+		//so the animator doesn't stop before saving the last frame
+		if (plot instanceof MinMaxLevelListener) {
+			action = new UpdatePlotAction(start + 1, end + 1);
+			((MinMaxLevelListener)plot).setAnimationHandler(action);
+			plot.updateTimeStep(start);
+		}
+		else {
+			action = new UpdatePlotAction(start, end);
+			timer = new Timer(0, action);
+			timer.setDelay(delay);
+			timer.start();
+		}
 	}
 
 	/**
@@ -164,7 +176,10 @@ public class PlotAnimator {
 		}
 
 		public void stop() {
-			timer.stop();
+			if (timer != null)
+				timer.stop();
+			else
+				((MinMaxLevelListener)plot).setAnimationHandler(null);
 			if (maker != null) maker.cleanUp();
 			if (writeAnimatedGif != null) {
 //			if (gifEncoder != null) {
@@ -185,7 +200,8 @@ public class PlotAnimator {
 			if (current > end) {
 				stop();
 			} else {
-				plot.updateTimeStep(current++);
+				if (timer != null)
+					plot.updateTimeStep(current++);
 				try {
 					if (maker != null || writeAnimatedGif/*gifEncoder*/ != null || videoMaker != null) {
 						BufferedImage bufferedImage = null;
@@ -207,6 +223,12 @@ public class PlotAnimator {
 					maker = null;
 					videoMaker = null;
 					Logger.error("Error while making movie " + ex.getMessage());
+				}
+				if (timer == null) {
+					if (current == end)
+						stop();
+					else
+						plot.updateTimeStep(current++);
 				}
 			}
 		}

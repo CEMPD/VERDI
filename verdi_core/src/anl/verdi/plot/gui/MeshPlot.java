@@ -347,7 +347,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	protected boolean showObsLegend = false;
 
 	private final JPanel threadParent = this;
-	private BufferedImage bImage;
+	private BufferedImage bImage = null;
+	private ActionListener animationHandler = null;
 	private static final Object lock = new Object();
 	private JPopupMenu popup;
 	protected Rectangle dataArea = new Rectangle();
@@ -779,7 +780,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						try {
 							if (canvasWidth > 0 && canvasHeight > 0) {
 								//bImage needed for animated gif support
-								bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
+								if (animationHandler != null) {
+									bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
+									ActionEvent e = new ActionEvent(this, this.hashCode(), "");
+									animationHandler.actionPerformed(e);
+								}
 								VerdiGUI.showIfVisible(threadParent, graphics, offScreenImage);
 							}
 						} finally {
@@ -793,7 +798,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					if (drawMode == DRAW_ONCE ) {
 						decreaseDrawOnceRequests();
 						draw_once_requests = -1;
-						if (getDrawOnceRequests() < 0) {
+						if (getDrawOnceRequests() < 0 && animationHandler == null) {
 							drawMode = DRAW_NONE;
 							//restoreCursor();
 						}
@@ -1055,6 +1060,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		splitCellInfo = null;
 		dataset = null;
 		finder = null;
+		animationHandler = null;
 		
 		loadConfig.close();
 		saveConfig.close();
@@ -1065,8 +1071,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	public void viewRestored(DockableFrameEvent unused_ ) { }		
 
 	public void draw() {
-		//StackTraceElement elem = Thread.currentThread().getStackTrace()[2];
-		//System.out.println("MeshPlot draw: " + elem.getFileName() + " " + elem.getMethodName() + ": " + elem.getLineNumber());
+		/*StackTraceElement elem = Thread.currentThread().getStackTrace()[2];
+		System.out.println("MeshPlot draw: " + elem.getFileName() + " " + elem.getMethodName() + ": " + elem.getLineNumber());*/
 		if (drawMode == DRAW_NONE) {
 			drawMode = DRAW_ONCE;
 		}
@@ -3253,6 +3259,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 	public BufferedImage getBufferedImage() {
 		return getBufferedImage(getWidth(), getHeight());
+	}
+	
+	public void setAnimationHandler(ActionListener listener) {
+		animationHandler = listener;
 	}
 
 	/**

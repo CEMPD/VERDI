@@ -6,6 +6,8 @@
 
 package anl.verdi.plot.data;
 
+import java.awt.event.ActionListener;
+
 public interface MinMaxLevelListener {
 
 	public void layerUpdated(int level, double min, int minIndex, double max, int maxIndex, double percentComplete, boolean isLog);
@@ -13,4 +15,6 @@ public interface MinMaxLevelListener {
 	public void datasetUpdated(double min, int minIndex, double max, int maxIndex, double percentComplete, boolean isLog);
 	
 	public long getRenderTime();
+	
+	public void setAnimationHandler(ActionListener listener);
 }
