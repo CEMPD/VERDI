@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry excluding="org/geotools/verdi/referencing/" kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/verdi_bootstrap"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/verdi_saf_ui"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
