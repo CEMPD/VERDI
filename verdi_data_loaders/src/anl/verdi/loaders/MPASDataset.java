@@ -772,7 +772,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			if (j >= 0)
 				cal.set(Calendar.MONTH, Integer.parseInt(date[j--]) - 1);
 			if (j >= 0)
-				cal.set(Calendar.YEAR, Integer.parseInt(date[j]) - 1);
+				cal.set(Calendar.YEAR, Integer.parseInt(date[j]));
 		}
 		String[] time = arr[i].split(":");
 		int j = time.length - 1;
