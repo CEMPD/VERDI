@@ -98,18 +98,20 @@ public class HelpDialog extends JDialog {
 				//======== scrollPane1 ========
 				{
 					String verdiHome = System.getenv("VERDI_HOME");
-				    final URI uri = new URI("file://" + verdiHome + File.separator + "plugins" + File.separator + "bootstrap" + File.separator + "help" + File.separator + "VerdiUserManual1.6alpha.pdf");
+					String path = verdiHome + File.separator + "plugins" + File.separator + "bootstrap" + File.separator + "help" + File.separator;
+					// changed from using URI to File
 				    // old URI was: "http://www.verdi-tool.org/verdiUserManual_URI_uri.htm"
-				    final URI uri2 = new URI("file://" + verdiHome + File.separator + "plugins" + File.separator + "bootstrap" + File.separator + "help" + File.separator + "VerdiDevInstructions1.6alpha.pdf");
+					final File file1 = new File(path + "VerdiUserManual1.6alpha.pdf");
 				    // old URI was: "http://www.cmascenter.org/help/model_docs/verdi/1.4/VerdiUserManual_URI_uri2.pdf"
-				    class OpenUrlAction implements ActionListener {
+					final File file2 = new File(path + "VerdiDevInstructions1.6alpha.pdf");
+					class OpenUrlAction implements ActionListener {
 				      @Override public void actionPerformed(ActionEvent e) {
-				        open(uri);
+				        open(file1);
 				      }
 				    }
 				    class OpenUrlAction2 implements ActionListener {
 					      @Override public void actionPerformed(ActionEvent e) {
-					        open(uri2);
+					        open(file2);
 					      }
 					    }
 				    JButton htmlLinkButton = new JButton();
@@ -118,7 +120,7 @@ public class HelpDialog extends JDialog {
 				    htmlLinkButton.setBorderPainted(false);
 				    htmlLinkButton.setOpaque(false);
 				    htmlLinkButton.setBackground(Color.WHITE);
-				    htmlLinkButton.setToolTipText(uri.toString());
+				    htmlLinkButton.setToolTipText(file1.toString());
 				    htmlLinkButton.addActionListener(new OpenUrlAction());
 					
 					
@@ -128,7 +130,7 @@ public class HelpDialog extends JDialog {
 				    pdfLinkButton.setBorderPainted(false);
 				    pdfLinkButton.setOpaque(false);
 				    pdfLinkButton.setBackground(Color.WHITE);
-				    pdfLinkButton.setToolTipText(uri.toString());
+				    pdfLinkButton.setToolTipText(file1.toString());
 				    pdfLinkButton.addActionListener(new OpenUrlAction2());
 					
 					
@@ -186,10 +188,10 @@ public class HelpDialog extends JDialog {
 	private JButton okButton;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 
-	  private static void open(URI uri) {
+	  private static void open(File file) {
 	    if (Desktop.isDesktopSupported()) {
 	      try {
-	        Desktop.getDesktop().browse(uri);
+	        Desktop.getDesktop().open(file);
 	      } catch (IOException e) { /* TODO: error handling */ }
 	    } else { /* TODO: error handling */ }
 	  }
