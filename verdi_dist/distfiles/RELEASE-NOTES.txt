@@ -12,7 +12,7 @@ These notes describe the differences between current version MPAS and the previo
 NEW FEATURES IN VMPAS:
 Support for displaying data from MPAS files has been added
 Allow export of MPAS data to shapefiles
-
+Windows run.bat no longer requires edits before running
 
 BUG FIXES IN VMPAS:
 Prevented animated plots in background tabs from drawing over foreground tabs
