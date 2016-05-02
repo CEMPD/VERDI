@@ -9,12 +9,13 @@ REM      Refer to your VERDI User's Guide for more information.
 SET USER_HOME=%USERPROFILE%
 set VERDI_USER=c:\users\ellenjo
 
-REM Instructions: Set the following path to the location where you installed VERDI.
-SET VERDI_HOME=C:\\VERDI_test\\VERDI_1.5.2_test05112015
+
 
 REM Do not edit below this line
 REM ************************************************************************
-CD .\plugins\bootstrap
+set VERDI_HOME=%~dp0
+set PREVDIR=%CD%
+CD %VERDI_HOME%\plugins\bootstrap
 set JAVADIR=%VERDI_HOME%\jre1.7.0
 SET JAVA=%JAVADIR%\bin\java
 set CLASSPATH=%JAVADIR%/bin/*;%JAVADIR%/lib/*;%VERDI_HOME%/plugins/bootstrap/bootstrap.jar;%VERDI_HOME%/plugins/bootstrap/lib/;%VERDI_HOME%/plugins/bootstrap/lib/saf.core.runtime.jar;%VERDI_HOME%/plugins/bootstrap/lib/*;%VERDI_HOME%/plugins/core/lib/org.apache.xalan_2.7.1.v201005080400.jar;%VERDI_HOME%/plugins/core/lib/org.apache.xml.serializer_2.7.1.v201005080400.jar;%VERDI_HOME%/plugins/core/lib/*
@@ -49,4 +50,4 @@ GOTO end
 %JAVACMD% %1 %BATCHFILE%
 
 :end
-CD ..\..\
+CD %PREVDIR%
