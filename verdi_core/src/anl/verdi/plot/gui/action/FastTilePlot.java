@@ -43,11 +43,15 @@ public void actionPerformed( ActionEvent unused ) {
     		  application.getGui().defaultCursor();
     		  return;
     	  }
-        final Plot plot = new anl.verdi.plot.gui.FastTilePlot(application, dataFrame );
-		final String variableName = dataFrame.getVariable().getName();
-        final PlotPanel panel = new PlotPanel( plot, "Tile " + variableName);
-        application.getGui().addPlot( panel );
-        panel.addPlotListener( application );
+    	  try {
+	        final Plot plot = new anl.verdi.plot.gui.FastTilePlot(application, dataFrame );
+			final String variableName = dataFrame.getVariable().getName();
+	        final PlotPanel panel = new PlotPanel( plot, "Tile " + variableName);
+	        application.getGui().addPlot( panel );
+	        panel.addPlotListener( application );
+    	  } catch (Throwable t) {
+    	    application.getGui().showError("Error", "An error occurred while rendering the plot");
+    	  }
       } 
       else {
     	application.getGui().showError("Error", "An error occurred while rendering the plot");
