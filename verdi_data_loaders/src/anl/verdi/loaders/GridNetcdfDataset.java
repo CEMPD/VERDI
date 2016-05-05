@@ -55,6 +55,7 @@ public class GridNetcdfDataset extends AbstractDataset {
 		types.put(ucar.nc2.constants.AxisType.Lat, AxisType.Y_AXIS);
 		types.put(ucar.nc2.constants.AxisType.GeoZ, AxisType.LAYER);
 		types.put(ucar.nc2.constants.AxisType.Height, AxisType.LAYER);
+		types.put(ucar.nc2.constants.AxisType.Pressure, AxisType.LAYER);
 		types.put(ucar.nc2.constants.AxisType.Time, AxisType.TIME);
 	}
 
