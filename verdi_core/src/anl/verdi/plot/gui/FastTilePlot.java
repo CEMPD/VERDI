@@ -215,6 +215,13 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	private int lastRow = 0; // firstRow..rows - 1.
 	private int firstColumn = 0; // 0..lastColumn.
 	private int lastColumn = 0; // firstColumn..columns - 1.
+	
+	private int prevFirstRow = -1;
+	private int prevLastRow = -1;
+	private int prevFirstColumn = -1;
+	private int prevLastColumn = -1;
+	private int prevSelection = -1;
+	private boolean prevLog = false;
 
 	protected double[] legendLevels;
 
@@ -229,6 +236,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	// subsetLayerData[ 1 + lastRow - firstRow ][ 1 + lastColumn - firstColumn ]
 	// at current timestep and layer.
 	private float[][] subsetLayerData = null;
+	private byte[][] colorIndexCache = null;
 
 	// layerData[ rows ][ columns ][ timesteps ]
 	private float[][][] layerData = null;
@@ -580,7 +588,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 									legendColors, axisColor, labelColor, plotVariable,
 									aPlotUnits, 
 									config, aNumberFormat, gridLineColor,
-									subsetLayerData);
+									subsetLayerData, colorIndexCache);
 //							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 //									width, height, stepsLapsed, layer, firstRow + rowOrigin,
 //									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
@@ -1672,7 +1680,16 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	// into subsetlayerdata[][]:
 
 	private void copySubsetLayerData(boolean log) {
+		
+		final int selection = statisticsMenu.getSelectedIndex();
 
+		if (prevFirstRow == firstRow &&
+				prevLastRow == lastRow &&
+				prevFirstColumn == firstColumn &&
+				prevLastColumn == lastColumn &&
+				prevSelection == selection &&
+				prevLog == log)
+			return;
 		// Reallocate the subsetLayerData[][] only if needed:
 
 		final int subsetLayerRows = 1 + lastRow - firstRow;
@@ -1684,7 +1701,6 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 			subsetLayerData = new float[subsetLayerRows][subsetLayerColumns];
 		}
 
-		final int selection = statisticsMenu.getSelectedIndex();
 		
 		if ( selection == 0 ) {
 
@@ -1724,6 +1740,13 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 //			computeLegend();
 			recomputeLegend = false;
 		}
+		colorIndexCache = tilePlot.calculateColorIndices(subsetLayerData, legendLevels);
+		prevFirstRow = firstRow;
+		prevLastRow = lastRow;
+		prevFirstColumn = firstColumn;
+		prevLastColumn = lastColumn;
+		prevSelection = selection;
+		prevLog = log;
 	}
 
 	// Compute data range excluding BADVAL3 values:

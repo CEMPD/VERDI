@@ -144,7 +144,20 @@ public class TilePlot {
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data) 
+			final Color gridLineColor, final float[][] data) {
+		draw(graphics, xOffset, yOffset, width, height, steplapse, layer, firstRow,
+				lastRow, firstColumn, lastColumn, legendLevels, legendColors, axisColor,
+				labelColor, variable, units, config, format, gridLineColor, data, null);
+	}
+	
+	public synchronized void draw(final Graphics graphics, int xOffset, int yOffset,
+			int width, int height, int steplapse, int layer, int firstRow,
+			int lastRow, int firstColumn, int lastColumn,
+			final double[] legendLevels, final Color[] legendColors,
+			final Color axisColor, final Color labelColor,
+			final String variable, final String units,
+			PlotConfiguration config, NumberFormat format,
+			final Color gridLineColor, final float[][] data, final byte[][] colorIndexCache) 
 	{
 		Logger.debug("in gov.epa.emvl.TilePlot.draw(lots of parameters), thread = " + Thread.currentThread().toString());
 		this.config = config;
@@ -182,7 +195,7 @@ public class TilePlot {
 		Logger.debug("ready to call drawGridCells");
 		drawGridCells(graphics, xMinimum, xMaximum, yMinimum, yMaximum,
 				firstRow, lastRow, firstColumn, lastColumn, legendLevels,
-				legendColors, data);
+				legendColors, data, colorIndexCache);
 		
 		// Draw grid lines:
 
@@ -1007,12 +1020,22 @@ public class TilePlot {
 	 * @pre data.length == (1 + lastRow - firstRow) * (1 +
 	 *      lastColumn-firstColumn)
 	 */
-
+	
 	public void drawGridCells(final Graphics graphics, int xMinimum,
 			int xMaximum, int yMinimum, int yMaximum, int firstRow,
 			int lastRow, int firstColumn, int lastColumn,
 			final double[] legendLevels, final Color[] legendColors,
 			final float[][] data) {
+		drawGridCells(graphics, xMinimum, xMaximum, yMinimum, yMaximum,
+				firstRow, lastRow, firstColumn, lastColumn, legendLevels,
+				legendColors, data, null);
+	}
+
+	public void drawGridCells(final Graphics graphics, int xMinimum,
+			int xMaximum, int yMinimum, int yMaximum, int firstRow,
+			int lastRow, int firstColumn, int lastColumn,
+			final double[] legendLevels, final Color[] legendColors,
+			final float[][] data, final byte[][] colorIndexCache) {
 		if (data == null)
 			return;
 
@@ -1037,7 +1060,7 @@ public class TilePlot {
 		
 		if (rows == 1 && columns == 1) {
 			float dat = data[0][0];
-			int index = indexOfValue(dat, legendLevels);
+			int index = colorIndexCache == null ? indexOfValue(dat, legendLevels) : colorIndexCache[0][0];
 			graphics.setColor(index == -1 ? Color.WHITE : legendColors[index]);
 		}
 		
@@ -1047,10 +1070,13 @@ public class TilePlot {
 		// Draw cells as rectangles whose width is extended to cover consecutive
 		// cells with the same color along a row so fewer rectangles are drawn.
 		
+		float yMaxAdj = yMaximum + 0.5f;
+		float xMinAdj = xMinimum + 0.5f;
+		float xDeltaAdj = xDelta + 0.5f;
+		final int lastRectangleWidth =replaceRound(xDeltaAdj);
 		for (int row = firstRow; row <= lastRow; ++row) {
 			final int dataRow = row - firstRow;
-			final int y = replaceRound(yMaximum - (1 + row - firstRow) * yDelta
-					+ 0.5f);
+			final int y = replaceRound(yMaxAdj - (1 + dataRow) * yDelta);
 			float x = xMinimum;
 			previousCellColor = null;
 
@@ -1059,12 +1085,12 @@ public class TilePlot {
 				//final 
 				float datum = data[dataRow][dataColumn];
 				
-				final int colorIndex = indexOfValue(datum, legendLevels);
+				final int colorIndex = colorIndexCache == null ? indexOfValue(datum, legendLevels) : colorIndexCache[dataRow][dataColumn];
+
 				final Color cellColor = (colorIndex == -1 ? Color.WHITE : legendColors[colorIndex]);
 				
 				if (column == lastColumn && cellColor != backgroundColor) { //draw the last cell of row
-					final int lastRectangleWidth = replaceRound(xDelta + 0.5f);
-					final int lastX = replaceRound(xMinimum + (column - firstColumn) * xDelta + 0.5f);
+					final int lastX = replaceRound(xMinAdj + dataColumn * xDelta);
 					graphics.setColor(cellColor);
 					graphics.fillRect(lastX, y, lastRectangleWidth, rectangleHeight);
 				}
@@ -1092,7 +1118,7 @@ public class TilePlot {
 
 					rectangleWidth = xDelta;
 					previousCellColor = cellColor;
-					x = xMinimum + (column - firstColumn) * xDelta;
+					x = xMinimum + dataColumn * xDelta;
 				} else {
 					rectangleWidth += xDelta; // Widen rectangle to draw later.
 				}
@@ -1102,6 +1128,14 @@ public class TilePlot {
 		graphics.setColor(Color.LIGHT_GRAY);
 		graphics.drawRect(xMinimum, yMinimum, (int) width, (int) height);
 		graphics.setColor(gColor);
+	}
+	
+	public byte[][] calculateColorIndices(final float[][] data, final double[] legendLevels) {
+		byte[][] indices = new byte[data.length][data[0].length];
+		for (int i = 0; i < data.length; ++i)
+			for (int j = 0; j < data[i].length; ++j)
+				indices[i][j] = indexOfValue(data[i][j], legendLevels);
+		return indices;
 	}
 	
 	/**
@@ -1169,7 +1203,7 @@ public class TilePlot {
 	 * @post value <= values[ return ]
 	 */
 
-	private static int indexOfValue(float value, final double[] values) { // TODO: log color legend: take log on value
+	private static byte indexOfValue(float value, final double[] values) { // TODO: log color legend: take log on value
 		if (new Float(value).toString().equals("NaN") || value <= DataUtilities.AMISS3 || value <= DataUtilities.BADVAL3)
 			return -1;
 		
@@ -1180,10 +1214,10 @@ public class TilePlot {
 
 		for (int index = 1; index < count; index++) {
 			if (values[index] > value)
-				return index - 1;
+				return (byte)(index - 1);
 		}
 
-		return count - 2;
+		return (byte)(count - 2);
 	}
 	
 	/**
