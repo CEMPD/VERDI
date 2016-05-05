@@ -469,8 +469,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			do {
 				VerdiGUI.unlock();
 				
+				boolean iconified = VerdiGUI.isIconified();
+				boolean hidden = VerdiGUI.isHidden((Plot)threadParent);
+
 				if ( drawMode != DRAW_NONE && drawMode != DRAW_END &&
-					 ! VerdiGUI.isHidden( (Plot) threadParent ) ) {
+						! hidden) {
+					 //! VerdiGUI.isHidden( (Plot) threadParent ) ) {
 					VerdiGUI.lock();
 					if (VerdiGUI.isHidden( (Plot) threadParent ))
 						continue;
@@ -808,9 +812,16 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					VerdiGUI.unlock();
 					
 				} else {
-					//try {
-					//	Thread.sleep(100); /* ms. */
-					//} catch (Exception unused) {}
+					//paint() gets called before windowDeiconified(), so if we're iconified, sleep long enough to see if 
+					//windowDeiconified gets called later
+					if (iconified && drawMode != DRAW_NONE && drawMode != DRAW_END) {
+						try {
+							Thread.sleep(50); /* ms. */
+							//We were in the process of being deiconified, try to paint again
+							if (!VerdiGUI.isHidden((Plot)threadParent))
+								continue;
+						} catch (Exception unused) {}
+					}
 					try {
 						synchronized (waitObject) {
 							waitObject.wait();
@@ -1517,24 +1528,24 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}
 	}
 	
-	private static int indexOfObsValue(float value, final double[] values) {
+	private static byte indexOfObsValue(float value, final double[] values) {
 		if (Float.isNaN(value))
 			return -1;
 		
 		if (value <= DataUtilities.BADVAL3 || value <= DataUtilities.AMISS3) 	// 2014 changed AMISS3 comparison from == to <=
 			return -1;
 
-		final int count = values.length;
+		final byte count = (byte)values.length;
 
 		if (values[0] == values[values.length - 1])
 			return 0;
 
-		for (int index = 1; index < count; index++) {
+		for (byte index = 1; index < count; index++) {
 			if (values[index] > value)
-				return index - 1;
+				return (byte)(index - 1);
 		}
 
-		return count - 2;
+		return (byte)(count - 2);
 	}
 	
 	public LocalCellInfo getCellInfo(int id) {
@@ -1548,7 +1559,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		boolean cellClicked;
 		int[] lonTransformed;
 		int[] latTransformed;
-		int colorIndex;
+		byte colorIndex;
 		
 		MeshCellInfo source;
 		
@@ -4431,7 +4442,6 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	}
 	
 	public void restoreCursor() {
-		System.out.println("MeshPlot restoring cursor");
 		if (app != null)
 		//   cursor restored
 		//synchronized(this) {
