@@ -596,7 +596,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 //									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
 //									subsetLayerData);
 						} catch (Exception e) {
-							Logger.error("FastTilePlot's run method " + e.getMessage());
+							Logger.error("FastTilePlot's run method", e);
 						}
 
 						dataArea.setRect(xOffset, yOffset, width, height);
@@ -738,7 +738,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 							((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
 							subsetLayerData);
 				} catch (Exception e) {
-					Logger.error("FastTilePlot's drawBatch method" + e.getMessage());
+					Logger.error("FastTilePlot's drawBatch method", e);
 					e.printStackTrace();
 				}
 				
@@ -977,7 +977,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 				PlotExporterAction save = new PlotExporterAction(this);
 				save.actionPerformed(event);
 			} catch (Exception e) {
-				Logger.error("Error exporting image " + e.getMessage());
+				Logger.error("Error exporting image", e);
 			}
 		} else if (command.equals(PRINT_COMMAND)) {
 			FastTilePlotPrintAction print = new FastTilePlotPrintAction(this);
@@ -1564,7 +1564,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 			this.statError = false;
 			this.statErrMsg = "";
 		} catch ( Exception e) {
-			Logger.error("Error occurred during computing statistics: " + e.getMessage());
+			Logger.error("Error occurred during computing statistics", e);
 			this.statError = true;
 			this.statErrMsg = "Error occurred during computing statistics: " + e.getMessage();
 			if ( map != null && map.getScaleType() == ColorMap.ScaleType.LOGARITHM) {
@@ -2180,7 +2180,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 			controlLayer = new FeatureLayer(ds.getFeatureSource().getFeatures(query), style);
 			controlLayer.setTitle("Control Layer");
 		} catch (Exception e) {
-			Logger.error("Exception in FastTilePlot.createControlLayer: " + e.getMessage());
+			Logger.error("Exception in FastTilePlot.createControlLayer", e);
 		}
 		
 		return controlLayer;
@@ -2270,7 +2270,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 			}
 			draw();
 		} catch (Exception e) {
-			Logger.error("Error adding layer " + e.getMessage());
+			Logger.error("Error adding layer", e);
 		}
 	}
 
@@ -2374,7 +2374,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)));
 			} catch (IOException ex) {
-				Logger.error("IOException in FastTilePlot.configure: loading configuration: " + ex.getMessage());
+				Logger.error("IOException in FastTilePlot.configure: loading configuration", ex);
 			}
 		}
 
@@ -2430,7 +2430,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)), source);
 			} catch (IOException ex) {
-				Logger.error("IOException in FastTilePlot.configure: loading configuration: " + ex.getMessage());
+				Logger.error("IOException in FastTilePlot.configure: loading configuration", ex);
 			}
 		}
 		
@@ -2490,7 +2490,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 		try {
 			minMax = new DataUtilities.MinMax(map.getMin(), map.getMax());
 		} catch (Exception e) {
-			Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
+			Logger.error("Exception in FastTilePlot.updateColorMap", e);
 			e.printStackTrace();
 			return;
 		}
@@ -2504,16 +2504,16 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 			try {
 				legendLevels[i] = map.getIntervalStart(i);
 			} catch (Exception e) {
-				Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
+				Logger.error("Exception in FastTilePlot.updateColorMap", e);
 				e.printStackTrace();
 			}
 
 		try {
 			legendLevels[count] = map.getMax();
 		} catch (Exception e) {
-			Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
+			Logger.error("Exception in FastTilePlot.updateColorMap", e);
 			e.printStackTrace();
-			Logger.error("FastTilePlot's updateColorMap method "+ e.getMessage());
+			Logger.error("FastTilePlot's updateColorMap method", e);
 			return;
 		}
 	}
@@ -2657,7 +2657,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 						lastColumn);
 				return YES_OPTION;
 			} catch (NumberFormatException e) {
-				Logger.error("Number Format Exception in FastTilePlot.showDialog: Set Rows and Columns: " + e.getMessage());
+				Logger.error("Number Format Exception in FastTilePlot.showDialog: Set Rows and Columns", e);
 			}
 
 			return ERROR;
@@ -2861,7 +2861,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 		try {
 			timeLayerPanel.setTime(timestep);
 		} catch (Exception e) {
-			Logger.error("Exception setting time step. Time step = " + timestep + ". Is this 1-based? " + e.getMessage());
+			Logger.error("Exception setting time step. Time step = " + timestep + ". Is this 1-based?", e);
 		}
 		
 		drawOverLays();
@@ -2870,7 +2870,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 		try {
 			Thread.sleep(500); //wait for the drawing thread to finish drawing
 		} catch (InterruptedException e) {
-			Logger.error("Interrupted Exception in FastTilePlot.updateTimeStep: " + e.getMessage());
+			Logger.error("Interrupted Exception in FastTilePlot.updateTimeStep", e);
 		}
 	}
 	
@@ -2884,7 +2884,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 			if (hasNoLayer) return DataUtilities.minMaxPoint(getDataFrame(), timestep - firstTimestep);
 			return DataUtilities.minMaxTLPoint(getDataFrame(), timestep - firstTimestep, layer - firstLayer);
 		} catch (InvalidRangeException e) {
-			Logger.error("Invalid Range Exception in FastTilePlot getMinMaxPoints: " + e.getMessage());
+			Logger.error("Invalid Range Exception in FastTilePlot getMinMaxPoints", e);
 		}
 		return null;
 	}
@@ -2951,7 +2951,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 				ent.setLogBase( logBase);
 				eventProducer.fireProbeEvent(ent);//new ProbeEvent(this, subsection, slice, TILE));
 			} catch (InvalidRangeException e) {
-				Logger.error("Invalid Range Exception in FastTilePlot.Probe: " + e.getMessage());
+				Logger.error("Invalid Range Exception in FastTilePlot.Probe", e);
 			}
 		}
 	}
@@ -2972,7 +2972,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 			DataFrame subsection = getDataFrame().slice(slice);
 			eventProducer.firePlotRequest(new TimeSeriesPlotRequest(subsection, slice, type));
 		} catch (InvalidRangeException e1) {
-			Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries: " + e1.getMessage());
+			Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries", e1);
 		}
 	}
 
@@ -2993,7 +2993,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 				DataFrame subsection = getDataFrame().slice(slice);
 				request.addItem(subsection);
 			} catch (InvalidRangeException e1) {
-				Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries: " + e1.getMessage());
+				Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries", e1);
 			}
 		}
 		eventProducer.firePlotRequest(request);
@@ -3332,7 +3332,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 							((units==null || units.trim().equals("")) ? "none" : units), config, map.getNumberFormat(), gridLineColor,
 							subsetLayerData);
 			} catch (Exception e) {
-				Logger.error("Exception in FastTilePlot.Draw (EpsRenderer's draw method): " + e.getMessage());
+				Logger.error("Exception in FastTilePlot.Draw (EpsRenderer's draw method)", e);
 				e.printStackTrace();
 				return;
 			}
