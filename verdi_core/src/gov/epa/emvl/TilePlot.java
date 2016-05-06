@@ -1229,11 +1229,33 @@ public class TilePlot {
 	 * @pre timestep >= 0
 	 * @post return != null
 	 */
+	
+	private static final int MS_IN_SECONDS = 1000;
+	private static final int SEC_IN_MIN = 60;
+	private static final int MIN_IN_HOUR = 60;
 
 	protected String dateTime(GregorianCalendar startDate, long timestepSize, int steplapse) {
 		GregorianCalendar endDate = new GregorianCalendar();
 		endDate.setTime(startDate.getTime());
-		endDate.add(Calendar.MILLISECOND, (int)timestepSize * steplapse);
+		if (timestepSize * timestepSize > Integer.MAX_VALUE) {
+			//prevent integer overflow
+			int ms = (int)(timestepSize % MS_IN_SECONDS);
+			long totalSec = timestepSize / MS_IN_SECONDS;
+			int sec = (int)totalSec % SEC_IN_MIN;
+			long totalMin = totalSec / SEC_IN_MIN;
+			int min = (int)totalMin % MIN_IN_HOUR;
+			int hour = (int)totalMin / MIN_IN_HOUR;
+			ms *= steplapse;
+			sec *= steplapse;
+			min *= steplapse;
+			hour *= steplapse;
+			endDate.add(Calendar.MILLISECOND, ms);
+			endDate.add(Calendar.SECOND, sec);
+			endDate.add(Calendar.MINUTE, min);
+			endDate.add(Calendar.HOUR, hour);
+		}
+		else
+			endDate.add(Calendar.MILLISECOND, (int)timestepSize * steplapse);
 		if (timestepSize % 1000 == 0)
 			return Utilities.formatDate(endDate); 
 		return Utilities.formatDateMS(endDate);
