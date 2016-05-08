@@ -349,6 +349,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private final JPanel threadParent = this;
 	private BufferedImage bImage = null;
 	private ActionListener animationHandler = null;
+	private boolean forceBufferedImage = false;
 	private static final Object lock = new Object();
 	private JPopupMenu popup;
 	protected Rectangle dataArea = new Rectangle();
@@ -784,10 +785,14 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						try {
 							if (canvasWidth > 0 && canvasHeight > 0) {
 								//bImage needed for animated gif support
-								if (animationHandler != null) {
+								if (forceBufferedImage) {
 									bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
-									ActionEvent e = new ActionEvent(this, this.hashCode(), "");
-									animationHandler.actionPerformed(e);
+									if (animationHandler != null) {
+										ActionEvent e = new ActionEvent(this, this.hashCode(), "");
+										animationHandler.actionPerformed(e);
+									}
+									else
+										forceBufferedImage = false;
 								}
 								VerdiGUI.showIfVisible(threadParent, graphics, offScreenImage);
 							}
@@ -3274,6 +3279,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	
 	public void setAnimationHandler(ActionListener listener) {
 		animationHandler = listener;
+		forceBufferedImage = true;
 	}
 
 	/**
@@ -3287,6 +3293,17 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	 */
 
 	public BufferedImage getBufferedImage(int width, int height) {
+		bImage = null;
+		forceBufferedImage = true;
+		draw();
+		long start = System.currentTimeMillis();
+		while (System.currentTimeMillis() - start < 2000 && bImage == null )
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				Logger.error("Caught exception waiting for buffered image", e);
+				break;
+			}
 		return bImage;
 	}
 
