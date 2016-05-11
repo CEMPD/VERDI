@@ -16,11 +16,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.java.plugin.JpfException;
 import org.java.plugin.ObjectFactory;
 import org.java.plugin.Plugin;
@@ -64,10 +63,10 @@ public class Boot {
   public PluginManager init(String[] args) {
 
     // load properties
-    if (args.length > 1)
-    {
-    //  RUNTIME_DIR_ROOT = args[1];
-    }
+//    if (args.length > 1)		// commented out a do-nothing block
+//    {
+//    //  RUNTIME_DIR_ROOT = args[1];
+//    }
     System.setProperty("applicationRoot", RUNTIME_DIR_ROOT);
     center = MessageCenter.getMessageCenter(Boot.class);
     try {
@@ -161,13 +160,14 @@ public class Boot {
 
     } catch (InvocationTargetException itEx)
     {
-    	System.out.println("caught an InvocationTargetException in Boot.run; printing .getCause()");
-    	System.out.println(itEx.getCause().toString() + ", " + itEx.toString());
-    	System.out.println(itEx.getTargetException().getMessage());
+    	
+    	Logger.error("caught an InvocationTargetException in Boot.run; printing .getCause()");
+    	Logger.error(itEx.getCause().toString() + ", " + itEx.toString());
+    	Logger.error(itEx.getTargetException().getMessage());
 //    	center.error(itEx.getCause(), itEx);
     }
     catch (Exception ex) {
-    	System.out.println("Caught an Exception in Boot.java");
+    	Logger.error("Caught an Exception in Boot.java");
       center.error(ex.getMessage(), ex);
     }
   }
@@ -326,7 +326,7 @@ Map<java.lang.String, Identity> map = pluginManager.publishPlugins(myLocations);
     PluginManager manager = boot.init(args);
     if(manager == null)
     {
-    	System.out.println(" boot.init returned null. Ending with exit(1)");
+    	System.err.println(" boot.init returned null. Ending with exit(1)");
     	System.exit(1);
     }
     boot.run(manager, args);

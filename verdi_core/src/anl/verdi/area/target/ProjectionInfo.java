@@ -171,7 +171,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 					return CRS.parseWKT(coordString);
 				} catch (Exception ex) {
 					Logger.error("Error returning CRS: " + getClass().getName()+">>getProjection() "+projectionClass);
-					ex.printStackTrace(System.err);
+					Logger.error(ex.getStackTrace());
 				}
 				
 				return null;
@@ -326,9 +326,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 					
 					return CRS.parseWKT(coordString);
 				} catch (Exception ex) {
-					System.err.println(getClass().getName()+">>getProjection() "+projectionClass);
 					Logger.error("Error getting CRS: " + getClass().getName()+">>getProjection() "+projectionClass);
-					ex.printStackTrace(System.err);
 				}
 				//return d.getProjection(GeoLambertCCProjection.class,getArgs(d));
 				return null;
@@ -476,9 +474,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 					
 					return CRS.parseWKT(coordString);
 				} catch (Exception ex) {
-					System.err.println(getClass().getName()+">>getProjection() "+projectionClass);
 					Logger.error("Error getting CRS: " + getClass().getName()+">>getProjection() "+projectionClass);
-					ex.printStackTrace(System.err);
+					Logger.error(ex.getStackTrace());
 				}
 				//return d.getProjection(GeoLambertCCProjection.class,getArgs(d));
 				return null;
@@ -637,9 +634,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 					
 					return CRS.parseWKT(coordString);
 				} catch (Exception ex) {
-					System.err.println(getClass().getName()+">>getProjection() "+projectionClass);
 					Logger.error("Error getting CRS: " + getClass().getName()+">>getProjection() "+projectionClass);
-					ex.printStackTrace(System.err);
+					Logger.error(ex.getStackTrace());
 				}
 				//return d.getProjection(GeoLambertCCProjection.class,getArgs(d));
 				return null;
@@ -757,9 +753,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 					
 					return CRS.parseWKT(coordString);
 				} catch (Exception ex) {
-					System.err.println(getClass().getName()+">>getProjection() "+projectionClass);
 					Logger.error("Error getting CRS: " + getClass().getName()+">>getProjection() "+projectionClass);
-					ex.printStackTrace(System.err);
+					Logger.error(ex.getStackTrace());
 				}
 				//return d.getProjection(GeoLambertCCProjection.class,getArgs(d));
 				return null;
@@ -1714,8 +1709,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 	private void handleException(java.lang.Throwable exception) {
 
 		Logger.error("--------- EXCEPTION in anl.verdi.area.target.ProjectInfo ---------");
-		exception.printStackTrace(); 				// 2014 sends to stderr (normal)
-		exception.printStackTrace(System.out);
+		Logger.error(exception.getStackTrace());
 	}
 
 
@@ -1941,9 +1935,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 			frame.setSize(frame.getWidth() + insets.left + insets.right, frame.getHeight() + insets.top + insets.bottom);
 			frame.setVisible(true);
 		} catch (Throwable exception) {
-			System.err.println("Exception occurred in main() of javax.swing.JPanel");
 			Logger.error("Exception occurred in main() of javax.swing.JPanel.");
-			exception.printStackTrace(System.out);
+			Logger.error(exception.getStackTrace());
 		}
 	}
 
@@ -2249,7 +2242,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 	       	
 	    }catch (Exception e){//Catch exception if any
 	    	Logger.error("Error: " + e.getMessage());
-	      System.err.println("Error: " + e.getMessage());
 	    }
 	}
 }

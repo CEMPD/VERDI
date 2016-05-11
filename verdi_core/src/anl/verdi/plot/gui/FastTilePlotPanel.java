@@ -1,37 +1,35 @@
 package anl.verdi.plot.gui;
 
+import java.awt.Color;
 import java.awt.ComponentOrientation;
-import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.FontMetrics;
 
-import javax.swing.JFrame;
 import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JMenuBar;
+import javax.swing.border.LineBorder;
 
-import java.awt.Color;
-
-import javax.swing.SwingConstants;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.map.MapContent;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.swing.JMapPane;
 import org.geotools.swing.RenderingExecutor;
 
-import javax.swing.border.LineBorder;
-
-import java.awt.Graphics2D;
-
 // class forms the basis for the VERDI panel that displays the entire FastTilePlot
 // title, subtitle1, subtitle2, axes, axis ticks and labels, footers, legend, JMapPane for geographic content
 public class FastTilePlotPanel extends JPanel {
 
+	private static final long serialVersionUID = 8618186918284538434L;
+	static final Logger Logger = LogManager.getLogger(FastTilePlotPanel.class.getName());
 	private JPanel contentPane;	// overall pane
 	// pull declaration of all other components from constructor to here as class-level data members
 	private GridBagLayout gbl_contentPane;	// overall layout manager
@@ -203,9 +201,10 @@ public class FastTilePlotPanel extends JPanel {
 		c.weighty = 1.0;
 		gbl_contentPane.setConstraints(topMapPanel, c);
 		contentPane.add(topMapPanel);
-		System.out.println("all done with constructing contentPane");
-		System.out.println("contentPane = " + contentPane.toString());
-		System.out.println("titlesPanel = " + titlesPanel.toString());
+		
+		Logger.debug("all done with constructing contentPane");
+		Logger.debug("contentPane = " + contentPane.toString());
+		Logger.debug("titlesPanel = " + titlesPanel.toString());
 	}
 	
 	/**
@@ -241,8 +240,8 @@ public class FastTilePlotPanel extends JPanel {
 	
 	public Graphics getTitlesPanelGraphics()
 	{
-		System.out.println("in getTitlesPanelGraphics()");
-		System.out.println("returning: " + titlesPanel.getGraphics());
+		Logger.debug("in getTitlesPanelGraphics()");
+		Logger.debug("returning: " + titlesPanel.getGraphics());
 		return titlesPanel.getGraphics();
 	}
 
@@ -286,21 +285,15 @@ public class FastTilePlotPanel extends JPanel {
 	}
 	
 	public void paintComponent(Graphics g) {
-		System.out.println("in setTitlesPanel, ready to get graphics for titlesPanel");
 		Graphics2D g2 = // new Graphics();	// want to have g reference titlesPanel.getGraphics() reference to draw onto that Graphics object
 		(Graphics2D) g;			// titlesPanel.getGraphics();
-		System.out.println("g = " + g2.toString());
 		int yTitle = 0;
 		int ys1String = 0;
 		int ys2String = 0;
 		int width = titlesPanel.getWidth();
 		
-		System.out.println("tFont = " + tFont + ", tColor = " + tColor + "tString = " + tString);
-		System.out.println("width = " + width);
-		
 		if(tString != null && !tString.trim().isEmpty())	// draw title if not null or empty
 		{
-			System.out.println("tString not empty, proceeding, g = " + g2.toString());
 			g2.setFont(tFont);
 			g2.setColor(tColor);
 			FontMetrics tMetrx = g2.getFontMetrics(tFont);
@@ -354,15 +347,12 @@ public class FastTilePlotPanel extends JPanel {
 
 				FastTilePlotPanel frame = new FastTilePlotPanel();
 				try {
-					System.out.println("FastTilePlotPanel frame = " + frame);
 					frame.setVisible(true);
-					System.out.println("made frame visible, ready to call setTitlesPanel");
 					frame.setTitlesPanel(new Font(Font.DIALOG, 1, 5),Color.BLACK,"Here is my TITLE string",
 							new Font(Font.SANS_SERIF, 1, 4), Color.BLUE, "Here is a blue subtitle1 string",
 							new Font(Font.SERIF,2,3), Color.RED, "Here is a red subtitle2 STRING");
 				} catch (Exception e) {
-					System.out.println("here I caught an exception");
-					e.printStackTrace();
+					Logger.debug(e.getMessage());
 				}
 							
 				mainFrame.getContentPane().add(frame);

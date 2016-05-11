@@ -81,7 +81,7 @@ public class VideoMaker implements ControllerListener, DataSinkListener {
 		// on the processor
 		p.configure();
 		if (!waitForState(p, Processor.Configured)) {
-			System.err.println("Failed to configure the processor");
+			Logger.error("Failed to configure the processor");
 			return false;
 		}
 
@@ -154,7 +154,7 @@ public class VideoMaker implements ControllerListener, DataSinkListener {
 		if (!init) {
 			boolean result = init((RGBFormat) b.getFormat());
 			if (!result) {
-				System.err.println("Failed to setup video capture");
+				Logger.error("Failed to setup video capture");
 			}
 			init = true;
 		}

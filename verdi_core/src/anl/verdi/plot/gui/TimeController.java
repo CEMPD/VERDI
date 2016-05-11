@@ -21,6 +21,11 @@ import javax.swing.event.ChangeListener;
 import anl.gui.panel.layout.SpringUtilities;
 import anl.verdi.plot.types.AbstractTilePlot;
 import anl.verdi.plot.types.TilePlot;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 /**
  * Class for controlling time inputs to animate plots
  * @author Mark Altaweel
@@ -31,6 +36,7 @@ public class TimeController extends JPanel implements ChangeListener, ActionList
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	static final Logger Logger = LogManager.getLogger(TimeController.class.getName());
 	private AbstractTilePlot plot;
 	private SpinnerNumberModel begModel;
 	private SpinnerNumberModel endModel;
@@ -123,7 +129,7 @@ public class TimeController extends JPanel implements ChangeListener, ActionList
         if (editor instanceof JSpinner.DefaultEditor) {
             return ((JSpinner.DefaultEditor)editor).getTextField();
         } else {
-            System.err.println("Unexpected editor type: "
+        	Logger.error("Unexpected editor type: "
                                + spinner.getEditor().getClass()
                                + " isn't a descendant of DefaultEditor");
             return null;

@@ -79,7 +79,6 @@ public class VerdiBoundaries {
 		if(last3Chars.compareToIgnoreCase("shp") != 0)
 		{
 			Logger.error("File name must have extension shp - select a different file.");
-			System.err.println("File name must have extension shp - select a different file.");
 			reset();
 			return false;
 		}
@@ -91,7 +90,6 @@ public class VerdiBoundaries {
 		if(!vFile.exists() || !vFile.canRead() || vFile.isDirectory())
 		{
 			Logger.error("File " + vFileName + " does not exist, cannot be read, or is a directory");
-			System.err.println("File " + vFileName + " does not exist, cannot be read, or is a directory");
 			reset();
 			return false;
 		}

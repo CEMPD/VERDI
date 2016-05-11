@@ -408,13 +408,14 @@ public class DomainPanel extends JPanel {
 				return cursor;
 			} catch (IOException e)
 			{
-				System.err.println("Failure reading graphics file: " + imageInputFile.toString());
-				e.printStackTrace();
+				Logger.error("Failure reading graphics file: " + imageInputFile.toString());
+				Logger.error(e.getMessage());
+				Logger.error(e.getStackTrace());
 			}
 			catch(Exception ex)
 			{
-				System.err.println("Failure processing graphics file: " + imageInputFile.toString());
-				ex.printStackTrace();
+				Logger.error("Failure processing graphics file: " + imageInputFile.toString());
+				Logger.error(ex.getStackTrace());
 			}
 		}
 		return Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);	// default return for null image file or failure processing graphics input file

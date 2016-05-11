@@ -14,6 +14,10 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.w3c.dom.Node;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import anl.verdi.plot.gui.FastTilePlotPanel;
 
 /**
  * Creates an animated GIF from GIF frames. A thin wrapper to code written by
@@ -25,7 +29,7 @@ import org.w3c.dom.Node;
  */
 public class WriteAnimatedGif {
 	
-	
+	static final Logger Logger = LogManager.getLogger(WriteAnimatedGif.class.getName());
 	private ImageWriter iw;
 	private ImageOutputStream ios;
 	private int frameCount = 0;
@@ -201,15 +205,11 @@ public class WriteAnimatedGif {
 		try {
 			int val = Integer.parseInt(delay);
 			if (val < 1) {
-				System.err.println("Animation frame delay '" + val
-						+ "' is < 1!");
-//				printUsage();
+				Logger.error("Animation frame delay '" + val + "' is < 1!");
 				System.exit(1);
 			}
 		} catch (NumberFormatException nfe) {
-			System.err
-					.println("Could not parse '" + delay + "' as an integer.");
-//			printUsage();
+			Logger.error("Could not parse '" + delay + "' as an integer.");
 			System.exit(1);
 		}
 		return delay;
