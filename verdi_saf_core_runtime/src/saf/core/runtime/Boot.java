@@ -16,6 +16,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.java.plugin.JpfException;
@@ -40,6 +43,10 @@ import simphony.util.messages.MessageCenter;
  * @version $Revision: 1.11 $ $Date: 2006/06/01 16:31:11 $
  */
 public class Boot {
+	
+	static final Logger Logger = LogManager.getLogger(Boot.class.getName());
+//	protected static final MessageCenter msgCenter = MessageCenter.getMessageCenter(NetcdfDatasetFactory.class);
+
 
   private static final String PLUGIN_FOLDER_PROP = "pluginFolders";
   private static final String PLUGIN_DESCRIPTOR_PROP = "plugin.descriptors";
@@ -124,7 +131,7 @@ public class Boot {
 //      corePlugin.getClass().getMethod("run", String[].class).invoke(corePlugin, (Object) args);
    	// 2014 breaking up above statement; 1st get name of class at run-time for predetermined instantiated object
       Class<? extends Plugin> pClass = corePlugin.getClass();
-      System.out.println("just did corePlugin.getClass: " + corePlugin.getClass().toString());
+//      System.out.println("just did corePlugin.getClass: " + corePlugin.getClass().toString());
 //      Method[] someMethods = pClass.getDeclaredMethods();
 //      System.out.println("Now try to list the methods");
 //      for (Method aMethod : someMethods)
@@ -140,12 +147,16 @@ public class Boot {
 //      }
       // 2nd get name of method at run-time that belongs to class
       Method aMethod = pClass.getMethod((String) "run", String[].class);
-      System.out.println("just did Method aMethod for " + String[].class);
-      System.out.println("aMethod: " + aMethod);
-      System.out.println("aMethod = " + aMethod.toGenericString());
+//      System.out.println("just did Method aMethod for " + String[].class);
+      Logger.debug("just did Method aMethod for " + String[].class);
+//      System.out.println("aMethod: " + aMethod);
+      Logger.debug("aMethod: " + aMethod);
+//      System.out.println("aMethod = " + aMethod.toGenericString());
+      Logger.debug("aMethod = " + aMethod.toGenericString());
       // 3rd invoke actual method of that class on an object
-      System.out.println("ready to aMethod.invoke, args = " + args);
-      System.out.println("args = " + args.toString());
+//      System.out.println("ready to aMethod.invoke, args = " + args);
+//      System.out.println("args = " + args.toString());
+      Logger.debug("args = " + args.toString());
       aMethod.invoke(corePlugin, new java.lang.Object[] {args});
 
     } catch (InvocationTargetException itEx)
