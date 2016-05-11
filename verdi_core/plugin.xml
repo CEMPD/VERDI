@@ -532,7 +532,7 @@
 
 		<parameter id="actionSpec">
 			<parameter id="actionID" value="anl.verdi.core.action.Help"/>
-			<parameter id="label" value="VERDI Help Docs"/>
+			<parameter id="label" value="VERDI Help Documents"/>
 			<parameter id="class" value="anl.verdi.core.action.Help"/>
 			<parameter id="menuID" value="help"/>
 		</parameter>
