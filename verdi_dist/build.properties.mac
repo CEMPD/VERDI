@@ -9,7 +9,7 @@ jdk.home=/System/Library/Frameworks/JavaVM.framework/Versions/Current/
 
 # app
 app.name=VERDI
-app.version=1.5.0
+app.version=1.6.0_alpha
   
 # basic settings - use '/' as a separator
 
