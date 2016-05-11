@@ -1,0 +1,5 @@
+<map id="saf.core.ui.dock.AbstractGroup" name="saf.core.ui.dock.AbstractGroup">
+<area shape="rect" id="node3" href="$classsaf_1_1core_1_1ui_1_1dock_1_1_non_root_group.html" title="saf.core.ui.dock.NonRoot\lGroup" alt="" coords="5,169,173,211"/>
+<area shape="rect" id="node4" href="$classsaf_1_1core_1_1ui_1_1dock_1_1_root_group.html" title="saf.core.ui.dock.RootGroup" alt="" coords="198,177,378,203"/>
+<area shape="rect" id="node2" href="$interfacesaf_1_1core_1_1ui_1_1dock_1_1_group.html" title="saf.core.ui.dock.Group" alt="" coords="111,5,265,32"/>
+</map>

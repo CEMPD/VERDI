@@ -1,0 +1,5 @@
+<map id="saf.core.ui.dock.StateChanger.restoreDockable" name="saf.core.ui.dock.StateChanger.restoreDockable">
+<area shape="rect" id="node2" href="$classsaf_1_1core_1_1ui_1_1dock_1_1_state_changer.html#af6be3b442433b129686b93e24c1353c0" title="saf.core.ui.dock.StateChanger.fix\lFocusPolicy" alt="" coords="295,5,509,47"/>
+<area shape="rect" id="node3" href="$classsaf_1_1core_1_1ui_1_1event_1_1_dockable_frame_event.html#ad8c08b926b40c005ef7e2e33a88e2897" title="saf.core.ui.event.Dockable\lFrameEvent.getDockable" alt="" coords="315,71,489,112"/>
+<area shape="rect" id="node4" href="$classsaf_1_1core_1_1ui_1_1event_1_1_dockable_frame_event.html#a0302c296832ad3f031d2e168969cffb8" title="saf.core.ui.event.Dockable\lFrameEvent.isHandled" alt="" coords="315,136,489,177"/>
+</map>

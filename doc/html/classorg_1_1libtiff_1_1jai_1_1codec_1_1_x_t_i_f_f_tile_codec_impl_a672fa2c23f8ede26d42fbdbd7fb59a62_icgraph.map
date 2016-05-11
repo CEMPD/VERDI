@@ -1,0 +1,5 @@
+<map id="org.libtiff.jai.codec.XTIFFTileCodecImpl.unpackShorts" name="org.libtiff.jai.codec.XTIFFTileCodecImpl.unpackShorts">
+<area shape="rect" id="node2" href="$classorg_1_1libtiff_1_1jai_1_1codecimpl_1_1_x_t_i_f_f_pack_tile_codec.html#a23c9b192d363b3781eabe77fa7b85022" title="org.libtiff.jai.codecimpl.\lXTIFFPackTileCodec.decodeTilePixels" alt="" coords="236,5,480,47"/>
+<area shape="rect" id="node3" href="$classorg_1_1libtiff_1_1jai_1_1codecimpl_1_1_x_t_i_f_f_l_z_w_tile_codec.html#a8fd756ce15bf12b5c4552d95070b98a7" title="org.libtiff.jai.codecimpl.\lXTIFFLZWTileCodec.decodeTilePixels" alt="" coords="237,71,479,112"/>
+<area shape="rect" id="node4" href="$classorg_1_1libtiff_1_1jai_1_1codecimpl_1_1_x_t_i_f_f_uncomp_tile_codec.html#a20af5cb9b72cf8714568ea5fe6fe7b9a" title="org.libtiff.jai.codecimpl.\lXTIFFUncompTileCodec.decodeTile\lPixels" alt="" coords="245,137,471,193"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="saf.core.ui.GUIBarManager.createPerspectiveMenu" name="saf.core.ui.GUIBarManager.createPerspectiveMenu">
+<area shape="rect" id="node2" href="$classsaf_1_1core_1_1ui_1_1_g_u_i_bar_manager.html#a32df9141e8170310df4b89364216c02b" title="saf.core.ui.GUIBarManager.addMenu" alt="" coords="273,5,507,32"/>
+<area shape="rect" id="node3" href="$classsaf_1_1core_1_1ui_1_1_g_u_i_bar_manager.html#a98cf4069b2e05fbc12f2d925f12d0dc1" title="saf.core.ui.GUIBarManager.add\lMenuItem" alt="" coords="289,57,491,98"/>
+<area shape="rect" id="node4" href="$interfacesaf_1_1core_1_1ui_1_1dock_1_1_perspective.html#aff147aa8199a675476aa44e21655a509" title="saf.core.ui.dock.Perspective.getID" alt="" coords="281,123,499,149"/>
+<area shape="rect" id="node5" href="$classsaf_1_1core_1_1ui_1_1_g_u_i_bar_manager.html#ac924ab74794b36d0d66c9ada94382ac8" title="saf.core.ui.GUIBarManager.getMenu" alt="" coords="556,265,788,292"/>
+<area shape="rect" id="node6" href="$interfacesaf_1_1core_1_1ui_1_1dock_1_1_docking_manager.html#a13ff25f6336768abc826564bb4e6cd1c" title="saf.core.ui.dock.Docking\lManager.getPerspective" alt="" coords="307,225,473,266"/>
+<area shape="rect" id="node7" href="$interfacesaf_1_1core_1_1ui_1_1dock_1_1_docking_manager.html#a3b9b3e41d0ed40d380d69d8075dbca8f" title="saf.core.ui.dock.Docking\lManager.getPerspectiveIDs" alt="" coords="300,290,480,331"/>
+<area shape="rect" id="node8" href="$classsaf_1_1core_1_1ui_1_1_g_u_i_bar_manager.html#ab85e3c37cfdcd4cebf5740b0318e101d" title="saf.core.ui.GUIBarManager.sortMenu" alt="" coords="272,356,508,383"/>
+</map>

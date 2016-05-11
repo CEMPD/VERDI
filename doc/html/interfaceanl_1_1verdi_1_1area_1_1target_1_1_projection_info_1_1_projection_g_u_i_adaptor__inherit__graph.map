@@ -1,0 +1,7 @@
+<map id="anl.verdi.area.target.ProjectionInfo.ProjectionGUIAdaptor" name="anl.verdi.area.target.ProjectionInfo.ProjectionGUIAdaptor">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info_1_1_lambert_c_c_projection_g_u_i_adaptor.html" title="anl.verdi.area.target.Projection\lInfo.LambertCCProjectionGUIAdaptor" alt="" coords="275,5,511,47"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info_1_1_mercator_projection_g_u_i_adaptor.html" title="anl.verdi.area.target.Projection\lInfo.MercatorProjectionGUIAdaptor" alt="" coords="281,71,504,112"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info_1_1_p_s_projection_g_u_i_adaptor.html" title="anl.verdi.area.target.Projection\lInfo.PSProjectionGUIAdaptor" alt="" coords="294,136,491,177"/>
+<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info_1_1_transverse_mercator_projection_g_u_i_adaptor.html" title="anl.verdi.area.target.Projection\lInfo.TransverseMercatorProjectionGUIAdaptor" alt="" coords="251,201,535,243"/>
+<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info_1_1_x_y_projection_g_u_i_adaptor.html" title="anl.verdi.area.target.Projection\lInfo.XYProjectionGUIAdaptor" alt="" coords="294,267,491,308"/>
+</map>

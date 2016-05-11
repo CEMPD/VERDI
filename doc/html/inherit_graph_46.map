@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$interfaceanl_1_1verdi_1_1data_1_1_dataset.html" title="anl.verdi.data.Dataset" alt="" coords="5,159,152,186"/>
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1data_1_1_abstract_dataset.html" title="anl.verdi.data.AbstractDataset" alt="" coords="200,130,396,157"/>
+<area shape="rect" id="node9" href="$classanl_1_1verdi_1_1loaders_1_1_spreadsheet_dataset.html" title="anl.verdi.loaders.Spreadsheet\lDataset" alt="" coords="202,181,394,223"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1loaders_1_1_abstract_netcdf_dataset.html" title="anl.verdi.loaders.Abstract\lNetcdfDataset" alt="" coords="455,35,623,76"/>
+<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1loaders_1_1_c_s_v_dataset.html" title="anl.verdi.loaders.CSVDataset" alt="" coords="444,101,635,127"/>
+<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1loaders_1_1_grid_netcdf_dataset.html" title="anl.verdi.loaders.GridNetcdf\lDataset" alt="" coords="449,152,629,193"/>
+<area shape="rect" id="node8" href="$classanl_1_1verdi_1_1loaders_1_1_models3_obs_dataset.html" title="anl.verdi.loaders.Models3\lObsDataset" alt="" coords="455,217,623,259"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1loaders_1_1_models3_dataset.html" title="anl.verdi.loaders.Models3\lDataset" alt="" coords="696,5,864,47"/>
+<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1loaders_1_1_w_r_f_dataset.html" title="anl.verdi.loaders.WRFDataset" alt="" coords="683,71,877,98"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="anl.verdi.data.BoundingBoxer" name="anl.verdi.data.BoundingBoxer">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1loaders_1_1_c_s_v_boxer.html" title="anl.verdi.loaders.CSVBoxer" alt="" coords="5,87,185,114"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1loaders_1_1_netcdf_boxer.html" title="anl.verdi.loaders.Netcdf\lBoxer" alt="" coords="209,80,365,121"/>
+</map>

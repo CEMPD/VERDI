@@ -1,0 +1,5 @@
+<map id="saf.core.ui.actions.ExitAction.actionPerformed" name="saf.core.ui.actions.ExitAction.actionPerformed">
+<area shape="rect" id="node2" href="$interfacesaf_1_1core_1_1ui_1_1_i_app_configurator.html#a3b455585017e2c2766ffdffe33f6939c" title="saf.core.ui.IAppConfigurator.pre\lWindowClose" alt="" coords="216,5,419,47"/>
+<area shape="rect" id="node3" href="$classsaf_1_1core_1_1ui_1_1_app_preferences.html#a30f640e73609445d183d0960727f3562" title="saf.core.ui.AppPreferences.save\lViewLayout" alt="" coords="213,71,421,112"/>
+<area shape="rect" id="node4" href="$classsaf_1_1core_1_1ui_1_1_app_preferences.html#a56537067cfbe16a0fde32f64100f0885" title="saf.core.ui.AppPreferences.using\lSavedViewLayout" alt="" coords="211,136,424,177"/>
+</map>

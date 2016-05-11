@@ -1,0 +1,5 @@
+<map id="simphony.util.messages.StackTaskMessageListener.messageReceived" name="simphony.util.messages.StackTaskMessageListener.messageReceived">
+<area shape="rect" id="node2" href="$classsimphony_1_1util_1_1messages_1_1_message_event.html#a83350442266b8544e35e770ab5ea9b69" title="simphony.util.messages.Message\lEvent.getMessage" alt="" coords="315,5,535,47"/>
+<area shape="rect" id="node3" href="$classsimphony_1_1util_1_1messages_1_1_stack_task_message_listener.html#aae31360cc6c96e8e6c8cae54fb175e76" title="simphony.util.messages.Stack\lTaskMessageListener.processTask\lMessage" alt="" coords="312,71,539,127"/>
+<area shape="rect" id="node4" href="$classsimphony_1_1util_1_1messages_1_1_task_message.html#ae0c16eb669ba1a80387afdf9e255aeaa" title="simphony.util.messages.Task\lMessage.getStatus" alt="" coords="587,79,781,120"/>
+</map>

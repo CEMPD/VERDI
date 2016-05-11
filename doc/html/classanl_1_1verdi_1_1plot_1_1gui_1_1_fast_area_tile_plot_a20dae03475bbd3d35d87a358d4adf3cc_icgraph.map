@@ -1,0 +1,10 @@
+<map id="anl.verdi.plot.gui.FastAreaTilePlot.setLegendLevels" name="anl.verdi.plot.gui.FastAreaTilePlot.setLegendLevels">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#a5247ccd46742e4570bbc5d11802368c2" title="anl.verdi.plot.gui.FastArea\lTilePlot.calculateAverageLevels" alt="" coords="225,5,428,47"/>
+<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#aa95877ec68c6edccbc30499dcabea91c" title="anl.verdi.plot.gui.FastArea\lTilePlot.calculateGridLevels" alt="" coords="236,71,417,112"/>
+<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#a805e8f5c75790750e91e88ce0a8c71e3" title="anl.verdi.plot.gui.FastArea\lTilePlot.calculateTotalLevels" alt="" coords="234,136,419,177"/>
+<area shape="rect" id="node9" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#a584ea49a61a0dcd83de6bfca375a2a87" title="anl.verdi.plot.gui.FastArea\lTilePlot.init" alt="" coords="241,201,413,243"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#aa4edb42c03939b3b2cec05dbcb8736df" title="anl.verdi.plot.gui.FastArea\lTilePlot.showAverages" alt="" coords="476,5,648,47"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#a20c481fef9838049e60f8edb06390c10" title="anl.verdi.plot.gui.FastArea\lTilePlot.getMenuBar" alt="" coords="696,71,868,112"/>
+<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#ac26447dcc12867f16cfc9271c8aeae63" title="anl.verdi.plot.gui.FastArea\lTilePlot.showGrid" alt="" coords="476,71,648,112"/>
+<area shape="rect" id="node8" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#a8f1cc407e119db69abfd8161dddc5742" title="anl.verdi.plot.gui.FastArea\lTilePlot.showTotals" alt="" coords="476,136,648,177"/>
+</map>

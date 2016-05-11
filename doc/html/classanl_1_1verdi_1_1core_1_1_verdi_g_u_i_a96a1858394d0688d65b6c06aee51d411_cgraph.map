@@ -1,0 +1,5 @@
+<map id="anl.verdi.core.VerdiGUI.addPlot" name="anl.verdi.core.VerdiGUI.addPlot">
+<area shape="rect" id="node2" href="$interfacesaf_1_1core_1_1ui_1_1dock_1_1_dockable_frame.html#ab1f23f45b833cb18086a507afcb8db8d" title="saf.core.ui.dock.Dockable\lFrame.getID" alt="" coords="269,5,441,47"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_plot_panel.html#a7326af0d6f06157b21f16c88a4b529a0" title="anl.verdi.plot.gui.PlotPanel.get\lPlotType" alt="" coords="256,71,453,112"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1core_1_1_verdi_g_u_i.html#a7c0fa4b12835fd88695d74b5f9330d60" title="anl.verdi.core.VerdiGUI.set\lStatusTwoText" alt="" coords="267,136,443,177"/>
+</map>

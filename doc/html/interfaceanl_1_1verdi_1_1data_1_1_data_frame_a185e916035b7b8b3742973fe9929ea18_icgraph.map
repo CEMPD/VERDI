@@ -1,0 +1,5 @@
+<map id="anl.verdi.data.DataFrame.getDouble" name="anl.verdi.data.DataFrame.getDouble">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1data_1_1_t_l_data_frame_table_model.html#a4be2281c11c94afad24a8388bc052a46" title="anl.verdi.data.TLDataFrame\lTableModel.getValueAt" alt="" coords="246,5,426,47"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1data_1_1_x_y_data_frame_table_model.html#a07406d7e28e1687e5b8b8a0bf844dce4" title="anl.verdi.data.XYDataFrame\lTableModel.getValueAt" alt="" coords="245,71,427,112"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1data_1_1_x_y_l_data_frame_table_model.html#a59e5039f37417119805f2ba01a5b6a23" title="anl.verdi.data.XYLDataFrame\lTableModel.getValueAt" alt="" coords="241,136,431,177"/>
+</map>

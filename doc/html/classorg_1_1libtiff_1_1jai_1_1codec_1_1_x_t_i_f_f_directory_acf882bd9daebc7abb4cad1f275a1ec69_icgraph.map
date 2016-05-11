@@ -1,0 +1,12 @@
+<map id="org.libtiff.jai.codec.XTIFFDirectory.getField" name="org.libtiff.jai.codec.XTIFFDirectory.getField">
+<area shape="rect" id="node2" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#aae02a3ff7cb34d04dcc8256fc9f3263b" title="org.libtiff.jai.codec.XTIFFDirectory.get\lFieldAsByte" alt="" coords="291,5,528,47"/>
+<area shape="rect" id="node4" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#ab8036d65b66da799491cedb19aa44d91" title="org.libtiff.jai.codec.XTIFFDirectory.get\lFieldAsDouble" alt="" coords="291,71,528,112"/>
+<area shape="rect" id="node6" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#aab9def1a50856aeb0c72ba4153f1f74f" title="org.libtiff.jai.codec.XTIFFDirectory.get\lFieldAsFloat" alt="" coords="291,136,528,177"/>
+<area shape="rect" id="node8" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#a473c7d454df0e49d9bbbdbdce29d0348" title="org.libtiff.jai.codec.XTIFFDirectory.get\lFieldAsLong" alt="" coords="291,201,528,243"/>
+<area shape="rect" id="node10" href="$classorg_1_1libtiff_1_1jai_1_1codecimpl_1_1_x_t_i_f_f_image.html#a2fe8f5c0cf31da97181c0002c9a6acb3" title="org.libtiff.jai.codecimpl.\lXTIFFImage.setupImageParameters" alt="" coords="581,267,809,308"/>
+<area shape="rect" id="node3" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#aeb7f90e6a536a4ecbe59784e350652f2" title="org.libtiff.jai.codec.XTIFFDirectory.get\lFieldAsByte" alt="" coords="576,5,813,47"/>
+<area shape="rect" id="node5" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#afa1751f4ba4c0a4027c9a02a97198b67" title="org.libtiff.jai.codec.XTIFFDirectory.get\lFieldAsDouble" alt="" coords="576,71,813,112"/>
+<area shape="rect" id="node7" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#a59d869de4f64d6a7f0fb73e4e57a8290" title="org.libtiff.jai.codec.XTIFFDirectory.get\lFieldAsFloat" alt="" coords="576,136,813,177"/>
+<area shape="rect" id="node9" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#a444e3f6e579156d4b2ff057ab3ea3db3" title="org.libtiff.jai.codec.XTIFFDirectory.get\lFieldAsLong" alt="" coords="576,201,813,243"/>
+<area shape="rect" id="node11" href="$classorg_1_1libtiff_1_1jai_1_1codecimpl_1_1_x_t_i_f_f_image.html#a09d2f332ee00b8c3d28d37d67abd08af" title="org.libtiff.jai.codecimpl.\lXTIFFImage.XTIFFImage" alt="" coords="861,267,1024,308"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="ucar.unidata.geoloc.projection.Stereographic.constructCopy" name="ucar.unidata.geoloc.projection.Stereographic.constructCopy">
+<area shape="rect" id="node2" href="$classucar_1_1unidata_1_1geoloc_1_1projection_1_1_stereographic.html#a4fb7c57e39369a892801f53d8ddabf0f" title="ucar.unidata.geoloc.projection.\lStereographic.getEarthRadius" alt="" coords="255,5,453,47"/>
+<area shape="rect" id="node3" href="$classucar_1_1unidata_1_1geoloc_1_1projection_1_1_stereographic.html#a369b5a8659a46b5958e7436830adce75" title="ucar.unidata.geoloc.projection.\lStereographic.getFalseEasting" alt="" coords="254,71,454,112"/>
+<area shape="rect" id="node4" href="$classucar_1_1unidata_1_1geoloc_1_1projection_1_1_stereographic.html#a36d4d879839eb25d6aa18ef2e8da6338" title="ucar.unidata.geoloc.projection.\lStereographic.getFalseNorthing" alt="" coords="252,136,456,177"/>
+<area shape="rect" id="node5" href="$classucar_1_1unidata_1_1geoloc_1_1projection_1_1_stereographic.html#a90ef2bd5c7510c0e4164e0a085ddab1d" title="ucar.unidata.geoloc.projection.\lStereographic.getScale" alt="" coords="255,201,453,243"/>
+<area shape="rect" id="node6" href="$classucar_1_1unidata_1_1geoloc_1_1projection_1_1_stereographic.html#ad66c7fa8a6eb916a3e58de9a6fb6bcff" title="ucar.unidata.geoloc.projection.\lStereographic.getTangentLat" alt="" coords="255,267,453,308"/>
+<area shape="rect" id="node7" href="$classucar_1_1unidata_1_1geoloc_1_1projection_1_1_stereographic.html#afa152419527401a87af4449f4e593287" title="ucar.unidata.geoloc.projection.\lStereographic.getTangentLon" alt="" coords="255,332,453,373"/>
+<area shape="rect" id="node8" href="$classucar_1_1unidata_1_1geoloc_1_1projection_1_1_stereographic.html#a5d11847e7af5ec43a626007ef5a727be" title="ucar.unidata.geoloc.projection.\lStereographic.Stereographic" alt="" coords="255,397,453,439"/>
+</map>
