@@ -10,6 +10,7 @@ package anl.verdi.data;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayFloat;
+import ucar.ma2.ArrayInt;
 
 public abstract class ArrayReader {
 	
@@ -22,6 +23,8 @@ public abstract class ArrayReader {
 			return new ArrayDoubleReader((ArrayDouble)array);
 		if (array instanceof ArrayFloat)
 			return new ArrayFloatReader((ArrayFloat)array);
+		if (array instanceof ArrayInt)
+			return new ArrayIntReader((ArrayInt)array);
 		return null;
 	}
 	

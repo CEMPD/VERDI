@@ -71,7 +71,7 @@ public class DataFrameIndex {
 
 		if ( tIndex == -1 ) {
 
-			if ( timeStep != 0 ) {
+			if ( timeStep > 0 ) {
 				throw new IllegalArgumentException( "Invalid call to DataFrameIndex.setTime( timeStep = " + timeStep + ")" );
 			}
 		} else {
@@ -89,7 +89,7 @@ public class DataFrameIndex {
 
 		if ( kIndex == -1 ) {
 
-			if ( layer != 0 ) {
+			if ( layer > 0 ) {
 				throw new IllegalArgumentException( "Invalid call to DataFrameIndex.setLayer( layer = " + layer + ")" );
 			}
 		} else {
