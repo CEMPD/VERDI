@@ -348,7 +348,6 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 	private final JPanel threadParent = this;
 	private BufferedImage bImage = null;
-	private ActionListener animationHandler = null;
 	private boolean forceBufferedImage = false;
 	private static final Object lock = new Object();
 	private JPopupMenu popup;
@@ -786,9 +785,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 							if (canvasWidth > 0 && canvasHeight > 0) {
 								//bImage needed for animated gif support
 								if (forceBufferedImage) {
-									bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
+									BufferedImage copiedImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
+									bImage = copiedImage;
 									if (animationHandler != null) {
-										ActionEvent e = new ActionEvent(this, this.hashCode(), "");
+										ActionEvent e = new ActionEvent(copiedImage, this.hashCode(), "");
 										animationHandler.actionPerformed(e);
 									}
 									else
@@ -3278,7 +3278,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	}
 	
 	public void setAnimationHandler(ActionListener listener) {
-		animationHandler = listener;
+		super.setAnimationHandler(listener);
 		forceBufferedImage = true;
 	}
 

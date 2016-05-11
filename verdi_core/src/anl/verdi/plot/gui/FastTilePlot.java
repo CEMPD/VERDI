@@ -205,9 +205,11 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 
 	protected TilePlot tilePlot; // EMVL TilePlot.
 
+	protected int prevTimestep = -1;
 	protected int timestep = 0; // 0..timesteps - 1.
 	protected int firstTimestep = 0;
 	protected int lastTimestep = 0;
+	protected int prevLayer = -1;
 	protected int layer = 0; // 0..layers - 1.
 	protected int firstLayer = 0;
 	protected int lastLayer = 0;
@@ -317,6 +319,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 
 	private final JPanel threadParent = this;
 	private BufferedImage bImage;
+	private boolean forceBufferedImage = false;
 	private static final Object lock = new Object();
 	protected java.util.List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
 	private JPopupMenu popup;
@@ -505,6 +508,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 					assert graphics != null;
 					
 					if (drawMode == DRAW_CONTINUOUS) {
+						prevTimestep = timestep;
 						timestep = nextValue(1, timestep, firstTimestep, lastTimestep);
 						timeLayerPanel.setTime(timestep);
 						drawOverLays();
@@ -632,6 +636,10 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 						try {
 							bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
 							VerdiGUI.showIfVisible(threadParent, graphics, bImage);
+							if (animationHandler != null) {
+								ActionEvent e = new ActionEvent(bImage, this.hashCode(), "");
+								animationHandler.actionPerformed(e);
+							}
 							//graphics.drawImage(offScreenImage, 0, 0,threadParent);
 							
 						} finally {
@@ -1206,6 +1214,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 
 	public void setTimestep(int timestep) {
 		if (timestep >= firstTimestep && timestep <= lastTimestep && timestep != this.timestep) {
+			prevTimestep = this.timestep;
 			this.timestep = timestep;
 			copySubsetLayerData(this.log);
 			draw();
@@ -1215,6 +1224,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 
 	public void setLayer(int layer) {
 		if (layer >= firstLayer && layer <= lastLayer && layer != this.layer) {
+			prevLayer = this.layer;
 			this.layer = layer;
 			final int selection = statisticsMenu.getSelectedIndex();
 
@@ -1688,6 +1698,8 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 				prevFirstColumn == firstColumn &&
 				prevLastColumn == lastColumn &&
 				prevSelection == selection &&
+				prevTimestep == timestep &&
+				prevLayer == layer &&
 				prevLog == log)
 			return;
 		// Reallocate the subsetLayerData[][] only if needed:
@@ -1746,6 +1758,8 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 		prevFirstColumn = firstColumn;
 		prevLastColumn = lastColumn;
 		prevSelection = selection;
+		prevTimestep = timestep;
+		prevLayer = layer;
 		prevLog = log;
 	}
 
@@ -2856,6 +2870,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	public void updateTimeStep(int step) {
 		processTimeChange = false;
 		drawMode = DRAW_ONCE;
+		prevTimestep = timestep;
 		timestep = firstTimestep + step;
 		
 		try {
@@ -2865,6 +2880,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 		}
 		
 		drawOverLays();
+		draw();
 		processTimeChange = true;
 
 		try {

@@ -1,12 +1,15 @@
 package anl.verdi.plot.gui;
 
 import java.awt.Graphics;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
 import javax.swing.JPanel;
 
 public abstract class AbstractPlotPanel extends JPanel implements ComponentListener {
+	
+	protected ActionListener animationHandler = null;
 	
 	/**
 	 * 
@@ -52,6 +55,10 @@ public abstract class AbstractPlotPanel extends JPanel implements ComponentListe
 	public void paintComponent(final Graphics graphics) {
 		super.paintComponent(graphics);
 		draw();
+	}
+	
+	public void setAnimationHandler(ActionListener listener) {
+		animationHandler = listener;
 	}
 
 

@@ -15,7 +15,9 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 
+
 import anl.verdi.plot.data.MinMaxLevelListener;
+import anl.verdi.plot.gui.AbstractPlotPanel;
 //import simphony.util.messages.MessageCenter;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.util.AnimationListener;
@@ -92,9 +94,9 @@ public class PlotAnimator {
 		//MinMaxLevelListeners animate asynchronously, and must be drawn through callbacks, not through timers.  Also, since
 		//The plot is updated, THEN the image is stored, increase start so the 1st frame isn't duplicated and increase end
 		//so the animator doesn't stop before saving the last frame
-		if (plot instanceof MinMaxLevelListener) {
+		if (plot instanceof AbstractPlotPanel) {
 			action = new UpdatePlotAction(start + 1, end + 1);
-			((MinMaxLevelListener)plot).setAnimationHandler(action);
+			((AbstractPlotPanel)plot).setAnimationHandler(action);
 			plot.updateTimeStep(start);
 		}
 		else {
@@ -179,7 +181,7 @@ public class PlotAnimator {
 			if (timer != null)
 				timer.stop();
 			else
-				((MinMaxLevelListener)plot).setAnimationHandler(null);
+				((AbstractPlotPanel)plot).setAnimationHandler(null);
 			if (maker != null) maker.cleanUp();
 			if (writeAnimatedGif != null) {
 //			if (gifEncoder != null) {
@@ -204,9 +206,7 @@ public class PlotAnimator {
 					plot.updateTimeStep(current++);
 				try {
 					if (maker != null || writeAnimatedGif/*gifEncoder*/ != null || videoMaker != null) {
-						BufferedImage bufferedImage = null;
-						if (width == 0) bufferedImage = plot.getBufferedImage();
-						else bufferedImage = plot.getBufferedImage(width, height);
+						BufferedImage bufferedImage = (BufferedImage)e.getSource();
 						if (maker != null) maker.addImageAsFrame(bufferedImage);
 						if (writeAnimatedGif/*gifEncoder*/ != null) {
 //							bufferedImages[current - 1] = bufferedImage;
