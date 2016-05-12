@@ -466,6 +466,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			try {
 
 			updateConfigVariables();
+			int prevLegendBoxWidth = 0;
+			int legendBoxWidth = 0;
+			
 			do {
 				VerdiGUI.unlock();
 				
@@ -504,6 +507,13 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					int height;
 					
 					xTranslation = 0;
+					prevLegendBoxWidth = legendBoxWidth;
+					legendBoxWidth = tilePlot.getLegendBoxWidth();
+					if (prevLegendBoxWidth != legendBoxWidth) {
+						//This changes as large data sets are being incrementally loaded and the values with differing string width
+						//are used in the legend.  When that happens, force recalculation for the new width.
+						screenInitted = false;
+					}
 					if (clippedDataRatio > 1) {
 						width = Math.round(canvasWidth - (tilePlot.getLegendBoxWidth() + xOffset));
 						height = (int)Math.round(width / clippedDataRatio);
