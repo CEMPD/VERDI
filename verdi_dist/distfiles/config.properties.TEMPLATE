@@ -1,35 +1,27 @@
 # This file should be put in $USER_HOME/verdi/ subdirectory
-# Please use double backslash for windows platform or slash for UNIX like platforms as file 
+# Please use double backslash for Windows platform or slash for UNIX-like platforms 
 # Please uncomment the following lines and modify them to suit your local settings
 
 
-# Windows example format for absolute path
-# verdi.project.home=C:\\Users\\yourusername\\VERDI_1.6.0\\project
-# Linux example settings format; also used for Windows relative path
-# verdi.project.home=/user/local/bin/verdi/verdi1_6/project
+# Windows example settings format
+# verdi.project.home=C:\\Users\\yourusername\\VERDI_1.6_alpha\\project
 
-
-#	VerdiApplication.java, used as project location
+# Linux example settings format
+#
 verdi.project.home=../../data/project
-#	Tools.java, folder with configuration files, if null uses {user.home}
 verdi.config.home=../../data/configs
-# 	VerdiApplication.java, used as initial location of datasets
 verdi.dataset.home=../../data/model
-#	VerdiApplication.java, used as initial location of VERDI batch scripts
 verdi.script.home=../../data/scripts
-#	Tools.java, used as VERDI_HOME if environment variable is not set
-verdi.install.home=C:\\Users\\yourusername\\VERDI_1.6.0
-# WDT default area file folder
-#	TargetFileCard.java, used as default location of HUC (area) datasets
+
+# Watershed Deposition Tool (WDT) default area file folder
+#	used as default location of HUC (area) datasets
 verdi.hucData=../../data/hucRegion/
 
-# For VERDI to access remote NetCDF files; DataSetPanel.java, if exists used as location returned from readRemoteHosts()
+# For VERDI to access remote, big NetCDF files
 # verdi.remote.hosts=terrae.nesc.epa.gov,vortex.rtpnc.epa.gov,garnet01.rtpnc.epa.gov,tulip.rtpnc.epa.gov
-#	RemoteFileReader.java, if exists used as initial path on remote system
 # remote.file.util=/usr/local/bin/RemoteFileUtility
-#	RemoteFileReader.java, if exists used as secure shell command on remote system
 # verdi.remote.ssh=/usr/bin/ssh
 
-#	RemoteFileReader.java, if exists used as location on local machine for downloaded files
-verdi.temporary.dir=C:\\tmp
+# on local machine where VERDI is running. Used to hold temporary data file downloaded from a remote machine
+verdi.temporary.dir=C:\\temp
  

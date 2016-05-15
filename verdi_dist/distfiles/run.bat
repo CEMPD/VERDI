@@ -10,12 +10,13 @@ SET USER_HOME=%USERPROFILE%
 set VERDI_USER=c:\users\ellenjo
 
 REM Instructions: Set the following path to the location where you installed VERDI.
-SET VERDI_HOME=C:\\VERDI_test\\VERDI_1.6.0_test04182016
+SET VERDI_HOME=C:\\VERDI\\VERDI_1.6alpha
+REM Change the following path if you are not using the version of Java installed with VERDI
+set JAVADIR=%VERDI_HOME%\jre1.7.0
 
 REM Do not edit below this line
 REM ************************************************************************
 CD .\plugins\bootstrap
-set JAVADIR=%VERDI_HOME%\jre1.7.0
 SET JAVA=%JAVADIR%\bin\java
 set CLASSPATH=%JAVADIR%/bin/*;%JAVADIR%/lib/*;%VERDI_HOME%/plugins/bootstrap/bootstrap.jar;%VERDI_HOME%/plugins/bootstrap/lib/;%VERDI_HOME%/plugins/bootstrap/lib/saf.core.runtime.jar;%VERDI_HOME%/plugins/bootstrap/lib/*;%VERDI_HOME%/plugins/core/lib/*
 
