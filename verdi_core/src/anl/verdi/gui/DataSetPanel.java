@@ -13,10 +13,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -41,6 +39,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+
+
+
 //import org.geotools.map.DefaultMapContext;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -54,7 +55,9 @@ import org.geotools.styling.StyleBuilder;
 
 import anl.verdi.core.Project;
 import anl.verdi.core.VerdiApplication;
+import anl.verdi.data.CoordAxis;
 import anl.verdi.data.Dataset;
+import anl.verdi.data.MultiAxisDataset;
 import anl.verdi.data.Variable;
 import anl.verdi.util.FocusClickFix;
 import anl.verdi.util.Tools;
@@ -295,8 +298,51 @@ public class DataSetPanel extends JPanel {
 	private void initListeners() {
 		Logger.debug("in DataSetPanel initListeners");
 		ListSelectionListener listSelectionListener = new ListSelectionListener() {
-
+			
 			public void valueChanged(ListSelectionEvent arg0) {
+				if (arg0.getSource().equals(dataList))
+					datasetChanged(arg0);
+				else if (arg0.getSource().equals(variableList))
+					variableChanged(arg0);
+			}
+			
+			public void variableChanged(ListSelectionEvent arg0) {
+				int index = dataList.getSelectedIndex();
+				if (index < 0)
+					return;
+				DatasetListElement element = (DatasetListElement) dataList
+							.getModel().getElementAt(index);
+				Dataset ds = element.getDataset();
+				if (!(ds instanceof MultiAxisDataset))
+					return;
+				
+				index = variableList.getSelectedIndex();
+				if (index < 0)
+					return;
+				Variable variable = (Variable) variableList
+						.getModel().getElementAt(index);
+				
+				CoordAxis timeAxis = ((MultiAxisDataset)ds).getTimeAxis(variable.getName());
+				if (timeAxis != null) {
+					element.setTimeMin((int)timeAxis.getRange().getOrigin());
+					element.setTimeMax((int)timeAxis.getRange().getExtent() - 1);
+				} else {
+					element.setTimeMin(DatasetListElement.NO_TIME_VALUE);
+					element.setTimeMax(DatasetListElement.NO_TIME_VALUE);
+				}
+				CoordAxis zAxis = ((MultiAxisDataset)ds).getZAxis(variable.getName());
+				if (zAxis != null) {
+					element.setLayerMin((int)zAxis.getRange().getOrigin());
+					element.setLayerMax((int)zAxis.getRange().getExtent() - 1);
+				} else {
+					element.setLayerMin(DatasetListElement.NO_LAYER_VALUE);
+					element.setLayerMax(DatasetListElement.NO_LAYER_VALUE);
+				}
+				setTimeValues(element, timeAxis);
+				setLayerValues(element, zAxis);
+			}
+
+			public void datasetChanged(ListSelectionEvent arg0) {
 				int index = dataList.getSelectedIndex();
 				if (index >= 0) {
 					DatasetListElement element = (DatasetListElement) dataList
@@ -319,6 +365,7 @@ public class DataSetPanel extends JPanel {
 
 		addPanelListeners();
 		dataList.addListSelectionListener(listSelectionListener);
+		variableList.addListSelectionListener(listSelectionListener);
 	}
 
 	private void initializeButtons() {
@@ -364,7 +411,6 @@ public class DataSetPanel extends JPanel {
 							if (result == JOptionPane.NO_OPTION)
 								continue;
 						}
-
 						listModel.removeDataset(item);
 						project.removeFormulas(formulas);
 					}
@@ -668,29 +714,59 @@ public class DataSetPanel extends JPanel {
 			}
 		}
 	}
-
+	
 	private void setTimeValues(DatasetListElement element) {
+		if (element != null)
+			setTimeValues(element, element.getDefaultTimeAxis());
+		else
+			setTimeValues(element, null);
+	}
+
+	private void setTimeValues(DatasetListElement element, CoordAxis axis) {
 		Logger.debug("in DataSetPanel setTimeValues");
 		if (element != null
 				&& element.getTimeMin() != DatasetListElement.NO_TIME_VALUE) {
 			timePanel.setEnabled(true);
-			timePanel.reset(element.getDataset().getCoordAxes(), element
+			timePanel.reset(axis, element
 					.getTimeMin(), element.getTimeMax(), element.isTimeUsed());
+			element.setTimeMin(timePanel.getMin());
+			element.setTimeMax(timePanel.getMax());
+			element.setTimeUsed(timePanel.getTimeEnabled());
 		} else {
 			timePanel.setEnabled(false);
+			if (element != null) {
+				element.setTimeMin(DatasetListElement.NO_LAYER_VALUE);
+				element.setTimeMax(DatasetListElement.NO_LAYER_VALUE);
+				element.setTimeUsed(false);
+			}
+		}
+	}
+	
+	public void setLayerValues(DatasetListElement element) {
+		if (element != null)
+			setLayerValues(element, element.getDefaultZAxis());
+		else {
+			setLayerValues(element, null);
 		}
 	}
 
-	public void setLayerValues(DatasetListElement element) {
+	public void setLayerValues(DatasetListElement element, CoordAxis axis) {
 		Logger.debug("in DataSetPanel setLayerValues");
-		if (element != null
+		if (element != null && axis != null
 				&& element.getLayerMin() != DatasetListElement.NO_LAYER_VALUE) {
 			layerPanel1.setEnabled(true);
-			layerPanel1.reset(element.getDataset().getCoordAxes(), element
-					.getLayerMin(), element.getLayerMax(), element
-					.isLayerUsed());
+			layerPanel1.reset(axis, element
+					.getLayerMin(), element.getLayerMax(), element.isLayerUsed());
+			element.setLayerMin(layerPanel1.getMin());
+			element.setLayerMax(layerPanel1.getMax());
+			element.setLayerUsed(layerPanel1.getLayerEnabled());
 		} else {
 			layerPanel1.setEnabled(false);
+			if (element != null) {
+				element.setLayerMin(DatasetListElement.NO_LAYER_VALUE);
+				element.setLayerMax(DatasetListElement.NO_LAYER_VALUE);
+				element.setLayerUsed(false);
+			}
 		}
 	}
 

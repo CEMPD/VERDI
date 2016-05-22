@@ -152,10 +152,10 @@ import anl.verdi.util.Utilities;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-public class FastTilePlot extends JPanel implements ActionListener, Printable,
+public class FastTilePlot extends AbstractPlotPanel implements ActionListener, Printable,
 		ChangeListener, ComponentListener, MouseListener,
 		TimeAnimatablePlot, Plot {
-	private final MapContent myMapContent = new MapContent();	// JEB Nov 2015
+	//private final MapContent myMapContent = new MapContent();	// JEB Nov 2015
 	static final Logger Logger = LogManager.getLogger(FastTilePlot.class.getName());
 	private static final long serialVersionUID = 5835232088528761729L;
 	public static final int NO_VAL = Integer.MIN_VALUE;
@@ -191,9 +191,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 	// 2D grid parameters:
 
-	protected int startDate; 		// (YYYYDDD).
-	protected int startTime; 		// 0 (HHMMSS).
-	protected int timestepSize; 	// 10000 (HHMMSS)
+	protected GregorianCalendar startDate;
+	protected long timestepSize;
 	protected int timesteps; 
 	protected int layers; 
 	protected int rows;
@@ -211,9 +210,11 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 	protected TilePlot tilePlot; // EMVL TilePlot.
 
+	protected int prevTimestep = -1;
 	protected int timestep = 0; // 0..timesteps - 1.
 	protected int firstTimestep = 0;
 	protected int lastTimestep = 0;
+	protected int prevLayer = -1;
 	protected int layer = 0; // 0..layers - 1.
 	protected int firstLayer = 0;
 	protected int lastLayer = 0;
@@ -221,6 +222,13 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	private int lastRow = 0; // firstRow..rows - 1.
 	private int firstColumn = 0; // 0..lastColumn.
 	private int lastColumn = 0; // firstColumn..columns - 1.
+	
+	private int prevFirstRow = -1;
+	private int prevLastRow = -1;
+	private int prevFirstColumn = -1;
+	private int prevLastColumn = -1;
+	private int prevSelection = -1;
+	private boolean prevLog = false;
 
 	protected double[] legendLevels;
 
@@ -235,6 +243,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	// subsetLayerData[ 1 + lastRow - firstRow ][ 1 + lastColumn - firstColumn ]
 	// at current timestep and layer.
 	private float[][] subsetLayerData = null;
+	private byte[][] colorIndexCache = null;
 
 	// layerData[ rows ][ columns ][ timesteps ]
 	private float[][][] layerData = null;
@@ -245,7 +254,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 	// For clipped/projected/clipped map lines:
 
-	private String mapFileDirectory = System.getenv("VERDI_HOME") + "/plugins/bootstrap/data";	// nov 2015
+	private String mapFileDirectory = Mapper.getDefaultMapFileDirectory();
 
 	private //final 
 	Mapper mapper = new Mapper(mapFileDirectory);
@@ -314,6 +323,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 	private final JPanel threadParent = this;
 	private BufferedImage bImage;
+	private boolean forceBufferedImage = false;
 	private static final Object lock = new Object();
 	protected java.util.List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
 	private JPopupMenu popup;
@@ -391,9 +401,12 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			Logger.debug("391: mapFileDirectory = " + mapFileDirectory);
 
 			do {
+				
+				VerdiGUI.unlock();
 				if ( drawMode != DRAW_NONE &&
 					 ! VerdiGUI.isHidden( (Plot) threadParent ) ) {
 Logger.debug("within drawMode != DRAW_NONE && !VerdiGUI.isHidden((Plot) threadParent)");
+					VerdiGUI.lock();
 					if (drawMode == DRAW_ONCE) {
 //						synchronized (lock) {
 							if (get_draw_once_requests() > 0) {
@@ -501,6 +514,7 @@ Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
 					assert graphics != null;
 
 					if (drawMode == DRAW_CONTINUOUS) {
+						prevTimestep = timestep;
 						timestep = nextValue(1, timestep, firstTimestep, lastTimestep);
 						Logger.debug("in DRAW_CONTINUOUS for timestep = " + timestep);
 						timeLayerPanel.setTime(timestep);
@@ -594,9 +608,9 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
 									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
-									subsetLayerData);
+									subsetLayerData, colorIndexCache);
 						} catch (Exception e) {
-							Logger.error("FastTilePlot's run method " + e.getMessage());
+							Logger.error("FastTilePlot's run method", e);
 						}
 // by this point drew panel, panel title (O3[1]), panel menu, and panel bar (time step, layer, etc.)
 						dataArea.setRect(xOffset, yOffset, width, height);	// same 4 values sent to tilePlot.draw(...)
@@ -640,9 +654,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						try {
 							Logger.debug("ready to call toBufferedImage");
 							bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
-							Logger.debug("back from toBufferedImage, ready to call graphics.drawImage");
-							graphics.drawImage(offScreenImage, 0, 0,threadParent);
-							Logger.debug("back from graphics.drawImage");
+							Logger.debug("back from toBufferedImage, ready to call VerdiGUI.showIfVisible");
+							VerdiGUI.showIfVisible(threadParent, graphics, bImage);
+							Logger.debug("back from VerdiGUI.showIfVisible");
+							if (animationHandler != null) {
+								ActionEvent e = new ActionEvent(bImage, this.hashCode(), "");
+								animationHandler.actionPerformed(e);
+							}
 						} finally {
 							graphics.dispose();
 							Logger.debug("just did graphics.dispose in finally block");
@@ -664,6 +682,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							drawMode = DRAW_NONE;
 							restoreCursor();
 						}
+						VerdiGUI.unlock();
 					} else {
 						//drawMode = DRAW_NONE;			// commented out in 2/2014 version
 					}
@@ -760,7 +779,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 					map.getNumberFormat(), gridLineColor,
 					subsetLayerData);
 		} catch (Exception e) {
-			Logger.error("FastTilePlot's drawBatch method" + e.getMessage());
+			Logger.error("FastTilePlot's drawBatch method", e);
 			e.printStackTrace();
 		}
 
@@ -794,26 +813,6 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		drawMode = DRAW_END;
 		draw();
 	}
-
-	// Window hidden callback:
-
-	public void componentHidden(ComponentEvent unused) { }
-
-	// Window shown callback:
-
-	public void componentShown(ComponentEvent unused) {
-		draw();
-	}
-
-	// Window resized callback:
-
-	public void componentResized(ComponentEvent unused) {
-		draw();
-	}
-
-	// Window moved callback:
-
-	public void componentMoved(ComponentEvent unused) { }
 
 	// Mouse callbacks:
 
@@ -877,14 +876,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		minMax = null;
 	}
 	public void viewFloated(DockableFrameEvent unused_ ) { }
-	public void viewRestored(DockableFrameEvent unused_ ) { }		
-
-	// Paint/draw:
-
-	public void paintComponent(final Graphics graphics) {	// REDO - NOW HAVE SEPARATE Graphics objects
-		super.paintComponent(graphics);
-		draw();
-	}
+	public void viewRestored(DockableFrameEvent unused_ ) { }
 
 	public void draw() {
 
@@ -934,10 +926,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			
 			//set min/max for both log and non log values...
 			map.setMinMax( minmax[0], minmax[1]);
-			computeDataRange(minmax, true);
-			map.setLogMinMax( minmax[0], minmax[1]);
+			double[] logminmax = { 0.0, 0.0 };
+			computeDataRange(logminmax, true);
+			map.setLogMinMax( logminmax[0], logminmax[1]);
 			//this final one is for the below legend value calculations
 			computeDataRange(minmax, this.log);
+			if (this.log)
+				minmax = logminmax;
 
 			legendColors = defaultPalette.getColors();
 			final double minimum = minmax[0];
@@ -1021,7 +1016,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				PlotExporterAction save = new PlotExporterAction(this);
 				save.actionPerformed(event);
 			} catch (Exception e) {
-				Logger.error("Error exporting image " + e.getMessage());
+				Logger.error("Error exporting image", e);
 			}
 		} else if (command.equals(PRINT_COMMAND)) {
 			FastTilePlotPrintAction print = new FastTilePlotPrintAction(this);
@@ -1254,6 +1249,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	public void setTimestep(int timestep) {
 		if (timestep >= firstTimestep && timestep <= lastTimestep && timestep != this.timestep) {
+			prevTimestep = this.timestep;
 			this.timestep = timestep;
 			Logger.debug("ready to call copySubsetLayerData from setTimestep");
 			copySubsetLayerData(this.log);
@@ -1264,6 +1260,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	public void setLayer(int layer) {
 		if (layer >= firstLayer && layer <= lastLayer && layer != this.layer) {
+			prevLayer = this.layer;
 			this.layer = layer;
 			final int selection = statisticsMenu.getSelectedIndex();
 
@@ -1401,27 +1398,14 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		// 2014 footer date/time for footer1
 		
-		GregorianCalendar firstDate = axes.getDate(firstTimestep);
-		final GregorianCalendar date0 = (firstDate == null) ? new GregorianCalendar() : firstDate;
-		Utilities.formatDate(date0);		// 2014 appears to fix starting date/time issue 
-		final int yyyy = date0.get(GregorianCalendar.YEAR);
-		final int ddd = date0.get(GregorianCalendar.DAY_OF_YEAR);
-		final int hh = date0.get(GregorianCalendar.HOUR_OF_DAY);
-		final int mm = date0.get(GregorianCalendar.MINUTE);
-		final int ss = date0.get(GregorianCalendar.SECOND);
-		startDate = yyyy * 1000 + ddd; // E.g., 2005241.
-		startTime = hh * 10000 + mm * 100 + ss; // HHMMSS, e.g., 10000.
-
+		GregorianCalendar dsDate = axes.getDate(firstTimestep);
+		startDate = dsDate == null ? new GregorianCalendar() : dsDate;
+		
 		if (timesteps > 1) {
 			final GregorianCalendar date1 = axes.getDate(firstTimestep + 1);
-			long step = (date1.getTimeInMillis() - date0.getTimeInMillis()) / 1000l;	// 2014 must use getTimeInMillis()
-			final int dhh = (int) (step / 3600);
-			final int dmm = (int) (step % 3600 / 60);
-			final int dss = (int) (step % 3600 % 60);
-			timestepSize = dhh * 10000 + dmm * 100 + dss; // HHMMSS, e.g.,	// 2014 correct timestepSize computed here 
-			// 10000.
+			timestepSize = date1.getTimeInMillis() - startDate.getTimeInMillis();			
 		} else {
-			timestepSize = 10000;
+			timestepSize = 1 * 60 * 60;
 		}
 		
 		//populate legend colors and ranges on initiation
@@ -1479,7 +1463,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		// Create EMVL TilePlot (but does not draw yet - see draw()):
 
-		tilePlot = new TilePlot(startDate, startTime, timestepSize);
+		tilePlot = new TilePlot(startDate, timestepSize);
 
 		// Create GUI.
 
@@ -1516,11 +1500,11 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		delayField.setToolTipText("Set animation delay (ms)");	// 2014
 		firstRowField = new JTextField("1", 4);
 		firstRowField.addActionListener(this);
-		lastRowField = new JTextField(rows + "", 4);
+		lastRowField = new JTextField(Integer.toString(rows), 4);
 		lastRowField.addActionListener(this);
 		firstColumnField = new JTextField("1", 4);
 		firstColumnField.addActionListener(this);
-		lastColumnField = new JTextField(columns + "", 4);
+		lastColumnField = new JTextField(Integer.toString(columns), 4);
 		lastColumnField.addActionListener(this);
 
 		GridBagLayout gridbag = new GridBagLayout();
@@ -1644,7 +1628,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 					statisticsData, this.statisticsMenu.getSelectedIndex()-1 );
 			this.statError = false;
 		} catch ( Exception e) {
-			Logger.error("Error occurred during computing statistics: " + e.getMessage());
+			Logger.error("Error occurred during computing statistics", e);
 			this.statError = true;
 			if ( map != null && map.getScaleType() == ColorMap.ScaleType.LOGARITHM) {
 				this.preLog = true;
@@ -1751,6 +1735,18 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	// into subsetlayerdata[][]:
 
 	private void copySubsetLayerData(boolean log) {
+		
+		final int selection = statisticsMenu.getSelectedIndex();
+
+		if (prevFirstRow == firstRow &&
+				prevLastRow == lastRow &&
+				prevFirstColumn == firstColumn &&
+				prevLastColumn == lastColumn &&
+				prevSelection == selection &&
+				prevTimestep == timestep &&
+				prevLayer == layer &&
+				prevLog == log)
+			return;
 
 		// Reallocate the subsetLayerData[][] only if needed:
 
@@ -1764,8 +1760,6 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				|| subsetLayerData[0].length != subsetLayerColumns) {
 			subsetLayerData = new float[subsetLayerRows][subsetLayerColumns];
 		}
-
-		final int selection = statisticsMenu.getSelectedIndex();
 		
 		if ( selection == 0 ) {
 
@@ -1805,6 +1799,16 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 //			computeLegend();
 			recomputeLegend = false;
 		}
+		
+		colorIndexCache = tilePlot.calculateColorIndices(subsetLayerData, legendLevels);
+		prevFirstRow = firstRow;
+		prevLastRow = lastRow;
+		prevFirstColumn = firstColumn;
+		prevLastColumn = lastColumn;
+		prevSelection = selection;
+		prevTimestep = timestep;
+		prevLayer = layer;
+		prevLog = log;
 	}
 
 	// Compute data range excluding BADVAL3 values:
@@ -2258,7 +2262,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			controlLayer = new FeatureLayer(ds.getFeatureSource().getFeatures(query), style);
 			Logger.debug("assigned to controlLayer");
 		} catch (Exception e) {
-			Logger.error("Exception in FastTilePlot.createControlLayer: " + e.getMessage());
+			Logger.error("Exception in FastTilePlot.createControlLayer", e);
 		}
 		
 		return controlLayer;
@@ -2345,7 +2349,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			}
 			draw();
 		} catch (Exception e) {
-			Logger.error("Error adding layer " + e.getMessage());
+			Logger.error("Error adding layer", e);
 		}
 	}
 
@@ -2437,7 +2441,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)));
 			} catch (IOException ex) {
-				Logger.error("IOException in FastTilePlot.configure: loading configuration: " + ex.getMessage());
+				Logger.error("IOException in FastTilePlot.configure: loading configuration", ex);
 			}
 		}
 
@@ -2493,7 +2497,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			try {
 				configure(new PlotConfigurationIO().loadConfiguration(new File(configFile)), source);
 			} catch (IOException ex) {
-				Logger.error("IOException in FastTilePlot.configure: loading configuration: " + ex.getMessage());
+				Logger.error("IOException in FastTilePlot.configure: loading configuration", ex);
 			}
 		}
 		
@@ -2553,7 +2557,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		try {
 			minMax = new DataUtilities.MinMax(map.getMin(), map.getMax());
 		} catch (Exception e) {
-			Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
+			Logger.error("Exception in FastTilePlot.updateColorMap", e);
 			e.printStackTrace();
 			return;
 		}
@@ -2567,16 +2571,14 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			try {
 				legendLevels[i] = map.getIntervalStart(i);
 			} catch (Exception e) {
-				Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
+				Logger.error("Exception in FastTilePlot.updateColorMap", e);
 				e.printStackTrace();
 			}
 
 		try {
 			legendLevels[count] = map.getMax();
 		} catch (Exception e) {
-			Logger.error("Exception in FastTilePlot.updateColorMap: " + e.getMessage());
-			e.printStackTrace();
-			Logger.error("FastTilePlot's updateColorMap method "+ e.getMessage());
+			Logger.error("Exception in FastTilePlot.updateColorMap", e);
 			return;
 		}
 	}
@@ -2730,7 +2732,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				plot.draw();
 				return YES_OPTION;
 			} catch (NumberFormatException e) {
-				Logger.error("Number Format Exception in FastTilePlot.showDialog: Set Rows and Columns: " + e.getMessage());
+				Logger.error("Number Format Exception in FastTilePlot.showDialog: Set Rows and Columns", e);
 			}
 
 			return ERROR;
@@ -2759,10 +2761,10 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			JLabel rowLabel = new JLabel("Rows:");
 			JPanel rowPanel = new JPanel();
 			rowPanel.add(fRowField, BorderLayout.LINE_START);
-			fRowField.setText(this.firstRow + "");
+			fRowField.setText(Integer.toString(this.firstRow));
 			rowPanel.add(new JLabel("..."));
 			rowPanel.add(lRowField, BorderLayout.LINE_END);
-			lRowField.setText(this.lastRow + "");
+			lRowField.setText(Integer.toString(this.lastRow));
 			JLabel holder1 = new JLabel();
 
 			gridbag.setConstraints(rowLabel, c);
@@ -2778,10 +2780,10 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			JLabel colLabel = new JLabel("Columns:");
 			JPanel columnPanel = new JPanel();
 			columnPanel.add(fColumnField, BorderLayout.LINE_START);
-			fColumnField.setText(this.firstColumn + "");
+			fColumnField.setText(Integer.toString(this.firstColumn));
 			columnPanel.add(new JLabel("..."));
 			columnPanel.add(lColumnField, BorderLayout.LINE_END);
-			lColumnField.setText(this.lastColumn + "");
+			lColumnField.setText(Integer.toString(this.lastColumn));
 			JLabel holder2 = new JLabel();
 
 			gridbag.setConstraints(colLabel, c);
@@ -2929,21 +2931,23 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	public void updateTimeStep(int step) {
 		processTimeChange = false;
 		drawMode = DRAW_ONCE;
+		prevTimestep = timestep;
 		timestep = firstTimestep + step;
 		
 		try {
 			timeLayerPanel.setTime(timestep);
 		} catch (Exception e) {
-			Logger.error("Exception setting time step. Time step = " + timestep + ". Is this 1-based? " + e.getMessage());
+			Logger.error("Exception setting time step. Time step = " + timestep + ". Is this 1-based?", e);
 		}
 		
 		drawOverLays();
+		draw();
 		processTimeChange = true;
 
 		try {
 			Thread.sleep(500); //wait for the drawing thread to finish drawing
 		} catch (InterruptedException e) {
-			Logger.error("Interrupted Exception in FastTilePlot.updateTimeStep: " + e.getMessage());
+			Logger.error("Interrupted Exception in FastTilePlot.updateTimeStep", e);
 		}
 	}
 	
@@ -2957,7 +2961,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			if (hasNoLayer) return DataUtilities.minMaxPoint(getDataFrame(), timestep - firstTimestep);
 			return DataUtilities.minMaxTLPoint(getDataFrame(), timestep - firstTimestep, layer - firstLayer);
 		} catch (InvalidRangeException e) {
-			Logger.error("Invalid Range Exception in FastTilePlot getMinMaxPoints: " + e.getMessage());
+			Logger.error("Invalid Range Exception in FastTilePlot getMinMaxPoints", e);
 		}
 		return null;
 	}
@@ -3024,7 +3028,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				ent.setLogBase( logBase);
 				eventProducer.fireProbeEvent(ent);//new ProbeEvent(this, subsection, slice, TILE));
 			} catch (InvalidRangeException e) {
-				Logger.error("Invalid Range Exception in FastTilePlot.Probe: " + e.getMessage());
+				Logger.error("Invalid Range Exception in FastTilePlot.Probe", e);
 			}
 		}
 	}
@@ -3045,7 +3049,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			DataFrame subsection = getDataFrame().slice(slice);
 			eventProducer.firePlotRequest(new TimeSeriesPlotRequest(subsection, slice, type));
 		} catch (InvalidRangeException e1) {
-			Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries: " + e1.getMessage());
+			Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries", e1);
 		}
 	}
 
@@ -3066,7 +3070,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				DataFrame subsection = getDataFrame().slice(slice);
 				request.addItem(subsection);
 			} catch (InvalidRangeException e1) {
-				Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries: " + e1.getMessage());
+				Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries", e1);
 			}
 		}
 		eventProducer.firePlotRequest(request);
@@ -3426,7 +3430,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							((units==null || units.trim().equals("")) ? "none" : units), config, map.getNumberFormat(), gridLineColor,
 							subsetLayerData);
 			} catch (Exception e) {
-				Logger.error("Exception in FastTilePlot.Draw (EpsRenderer's draw method): " + e.getMessage());
+				Logger.error("Exception in FastTilePlot.Draw (EpsRenderer's draw method)", e);
 				e.printStackTrace();
 				return;
 			}
@@ -3509,7 +3513,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		
 			draw();
 		} catch (Exception e) {
-			setOverlayErrorMsg(e.getMessage());
+			app.getGui().showError("Error", e.getMessage());
+			Logger.error("", e);
 			drawMode = DRAW_NONE;
 		}
 	}
@@ -3529,12 +3534,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				vectAnnotation.update(timestep);
 			}
 		} catch (Exception e) {
-			setOverlayErrorMsg(e.getMessage());
+			app.getGui().showError("Error", e.getMessage());
+			Logger.error("", e);
 			drawMode = DRAW_NONE;
 		}
 	}
 	
-	private void setOverlayErrorMsg(String msg) {
+	private void setOverlayErrorMsgg(String msg) {
 		if (msg == null) msg = "";
 		JOptionPane.showMessageDialog(app.getGui().getFrame(), "Please check if the overlay time steps match the underlying data.\n" + msg, "Overlay Error", JOptionPane.ERROR_MESSAGE, null);
 	}
@@ -3562,12 +3568,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		if ( doDebug) 
 			Logger.debug( "debug print 2:");
 		float val1, val2;
+		double currentLogBase = Math.log(this.logBase);
 		while (iter2.hasNext()) {
 			val1 = iter1.getFloatNext(); 
 			val2 = iter2.getFloatNext(); 
 			if ( doDebug && count<100) 
-				Logger.debug( "" + val1 + " " + val2);
-			val2 = (float)(Math.log(val1) / Math.log( this.logBase));
+				Logger.debug(val1 + " " + val2);
+			val2 = (float)(Math.log(val1) / currentLogBase);
 			iter2.setFloatCurrent( (float)( val2));
 
 			val2 = iter2.getFloatCurrent();
@@ -3626,4 +3633,5 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		return draw_once_requests;
 	}
 
+	public void setViewId(String id) {};
 }

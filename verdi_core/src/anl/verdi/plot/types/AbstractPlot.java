@@ -88,6 +88,8 @@ public abstract class AbstractPlot implements Plot {
 		Logger.debug("in AbstractPlot.configure#2, not yet written");
 		configure(config);
 	}
+	
+	public void setViewId(String id) {}
 
 	/**
 	 * Gets this Plot's configuration data.

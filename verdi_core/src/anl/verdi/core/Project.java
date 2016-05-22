@@ -230,7 +230,7 @@ public class Project {
 				int max = Math.max(item.getLayerMin(), item.getLayerMax());
 				int min = Math.min(item.getLayerMin(), item.getLayerMax());
 				int extent = max - min + 1;
-				if (layerRange == null) layerRange = new AxisRange(axes.getZAxis(), min, extent);
+				if (layerRange == null) layerRange = new AxisRange(item.getZAxisForVariable(var.getName()), min, extent);
 				else if (layerRange.getOrigin() != min || layerRange.getExtent() != extent)
 					throw new IllegalFormulaException("Dataset layer ranges are incompatible");
 			}
@@ -259,8 +259,7 @@ public class Project {
 				int extent = max - min + 1;
 				if (timeRange == null) {
 					tAxes = axes;
-					CoordAxis timeAxis = axes.getTimeAxis();
-					timeRange = new AxisRange(timeAxis, min, extent);
+					timeRange = new AxisRange(item.getTimeAxisForVariable(var.getName()), min, extent);
 					long endIndex = timeRange.getOrigin() + (timeRange.getExtent() - 1);
 					currRange = new DateRange(axes.getDate(timeRange.getOrigin()), axes.getDate((int) endIndex));
 				} else {

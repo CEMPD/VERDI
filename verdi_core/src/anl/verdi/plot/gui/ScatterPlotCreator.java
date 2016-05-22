@@ -6,6 +6,7 @@ import anl.verdi.core.VerdiGUI;
 import anl.verdi.data.DataFrame;
 import anl.verdi.formula.Formula;
 import anl.verdi.gui.FormulaListElement;
+import anl.verdi.plot.data.IMPASDataset;
 
 /**
  * Creator for scatter plots.
@@ -47,6 +48,12 @@ public class ScatterPlotCreator extends AbstractPlotCreator {
 			project.setSelectedFormula(oldElement);
 			if (xFrame != null && yFrame != null) {
 				PlotFactory factory = new PlotFactory();
+				if (xFrame.getDataset().get(0) instanceof IMPASDataset)
+					xFrame = ((IMPASDataset)xFrame.getDataset().get(0)).augmentFrame(xFrame);
+					
+				if (yFrame.getDataset().get(0) instanceof IMPASDataset)
+					yFrame = ((IMPASDataset)yFrame.getDataset().get(0)).augmentFrame(yFrame);
+				
 				final PlotPanel panel = factory.getScatterPlot(xElement.getFormula(), yElement.getFormula(),
 								xFrame, yFrame);
 				gui.addPlot(panel);

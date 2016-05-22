@@ -95,11 +95,9 @@ public class DataManager {
 	 * @throws Exception 
 	 */
 	public List<Dataset> createDatasets(URL url) throws IOException {
-		int count = 0;
-		String exceptionMsgs = "";
+		Exception wrapper = null;
 		for (DataLoader loader : dataLoaders) {
 			//System.err.println( "DataManager.java:createDatasets() trying loader = " + loader );
-			count++;
 			try {
 				if (loader.canHandle(url)) {
 					try {
@@ -115,22 +113,25 @@ public class DataManager {
 						}
 						return data;
 					} catch (IOException e) {
+						if (wrapper == null)
+							wrapper = e;
+						else
+							wrapper = new IOException(e);
 						//e.printStackTrace();
-						Logger.warn("Error while creating a Dataset " + e.getMessage());
-						exceptionMsgs += loader.getClass().getName() + ":\n " + e.getMessage() + "\n";
+						Logger.warn("Error while creating a Dataset", e);
 					}
 				} 
 			} catch (Exception e) {
 				//e.printStackTrace();
-				exceptionMsgs += loader.getClass().getName() + ":\n " + e.getMessage() + "\n";
-				if ( count >= dataLoaders.size() ){	
-					Logger.warn("Error while creating a Dataset " + e.getMessage());
-				}
+				if (wrapper == null)
+					wrapper = e;
+				else
+					wrapper = new Exception(e);
 			}
 		}
 
-		if ( count >= dataLoaders.size() ){	
-			throw new IOException(exceptionMsgs);
+		if ( wrapper != null ){	
+			throw new IOException(wrapper);
 		}
 
 		return NULL_DATASETS;
@@ -241,7 +242,10 @@ public class DataManager {
 	 */
 	public void closeDataset(String alias) throws IOException {
 		Dataset set = datasets.remove(alias);
-		if (set != null) set.close();
+		if (set != null) {
+			setLoaderMap.remove(set);
+			set.close();
+		}
 		if (datasets.size() == 0) aliasGenerator.clearAlias();
 	}
 

@@ -19,7 +19,7 @@ public class Axes<T extends CoordAxis> {
 
 	public static final int TIME_STEP_NOT_FOUND = -1;
 
-	private T xAxis, yAxis, timeAxis, layerAxis;
+	private T xAxis, yAxis, timeAxis, layerAxis, cellAxis;
 	private List<T> axes = new ArrayList<T>();
 	private ReferencedEnvelope boundingBox;
 	private BoundingBoxer boxer;
@@ -42,6 +42,7 @@ public class Axes<T extends CoordAxis> {
 			else if (axis.getAxisType() == AxisType.Y_AXIS) this.yAxis = axis;
 			else if (axis.getAxisType() == AxisType.TIME) this.timeAxis = axis;
 			else if (axis.getAxisType() == AxisType.LAYER) this.layerAxis = axis;
+			else if (axis.getAxisType() == AxisType.CELL_AXIS) this.cellAxis = axis;
 		}
 	}
 
@@ -59,12 +60,19 @@ public class Axes<T extends CoordAxis> {
 	 * define a bounding box.
 	 */
 	public ReferencedEnvelope getBoundingBox(int netcdfConv) {
-		if (boundingBox == null && xAxis != null && yAxis != null) {
-			Range xRange = xAxis.getRange();
-			Range yRange = yAxis.getRange();
+		Range xRange = null;
+		Range yRange = null;
+		if (boundingBox == null && (xAxis != null && yAxis != null) || (cellAxis != null)) {
+			if (cellAxis != null) {
+				xAxis = (T) ((MPASCellAxis)cellAxis).getXAxis();
+				yAxis = (T) ((MPASCellAxis)cellAxis).getYAxis();			
+			}
+			xRange = xAxis.getRange();
+			yRange = yAxis.getRange();
 			boundingBox = boxer.createBoundingBox(xRange.getLowerBound(), xRange.getUpperBound(),
 						yRange.getLowerBound(), yRange.getUpperBound(), netcdfConv);
 		}
+		
 
 		return boundingBox;
 	}
@@ -118,9 +126,10 @@ public class Axes<T extends CoordAxis> {
 	 *         the time axis units.
 	 */
 	public GregorianCalendar getDate(long timestep) {
+		if (timeAxis == null)
+			return null;
 		GregorianCalendar aGregorianCalendar = ((TimeCoordAxis)timeAxis).getDate((int) timestep);
-		if (timeAxis != null) return aGregorianCalendar; // ((TimeCoordAxis)timeAxis).getDate((int) timestep);
-		return null;
+		return aGregorianCalendar; // ((TimeCoordAxis)timeAxis).getDate((int) timestep);
 	}
 
 	/**
@@ -202,6 +211,10 @@ public class Axes<T extends CoordAxis> {
 	 */
 	public T getYAxis() {
 		return yAxis;
+	}
+
+	public T getCellAxis() {
+		return cellAxis;
 	}
 
 	public int getTimeStep(Date aDate) {

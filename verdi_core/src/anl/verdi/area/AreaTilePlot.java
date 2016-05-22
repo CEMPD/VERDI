@@ -13,6 +13,7 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.text.NumberFormat;
+import java.util.GregorianCalendar;
 
 import anl.verdi.area.target.GridInfo;
 import anl.verdi.area.target.Target;
@@ -63,9 +64,9 @@ public class AreaTilePlot extends TilePlot{
 	 * @pre timestepSize > 0
 	 */
 
-	public AreaTilePlot(FastAreaTilePlot tilePlotPanel,int startDate, int startTime, int timestepSize, double[][] domain, double[][] gridBounds,
+	public AreaTilePlot(FastAreaTilePlot tilePlotPanel, GregorianCalendar startDate, long timestepSize, double[][] domain, double[][] gridBounds,
 			Projector projector) {
-		super(startDate,startTime,timestepSize);
+		super(startDate,timestepSize);
 		this.tilePlotPanel=tilePlotPanel;
 		this.domain=domain;
 		this.gridBounds=gridBounds;

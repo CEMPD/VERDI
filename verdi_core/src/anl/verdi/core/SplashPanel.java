@@ -38,6 +38,8 @@ public class SplashPanel extends JPanel {
 	String pathName = verdiHome + File.separator + "plugins" + File.separator + "core" + File.separator + "icons"
 			 + File.separator + "splash.jpg";
 	File imageInputFile = new File(pathName);
+	if (!imageInputFile.exists())
+		imageInputFile = new File(".." + File.separator + "verdi_core" + File.separator + "icons" + File.separator + "splash.jpg" );
 	try {
 		BufferedImage aBufferedImage = ImageIO.read(imageInputFile);
 		g2d.drawImage(aBufferedImage, null, 0, 0);

@@ -141,8 +141,7 @@ FormulaElementCreator, ListDataListener {
 				if (messageEvent != null) {
 					Logger.debug("Msg: " + messageEvent.getMessage());
 					if (messageEvent.getThrowable()!=null) {
-						Logger.error(" : throwable - "
-								+ messageEvent.getThrowable().getMessage());
+						Logger.error("Message throwable",  messageEvent.getThrowable());
 					}
 				}
 				if (messageEvent != null && messageEvent.getLevel().equals(Level.ERROR) &&
@@ -227,7 +226,7 @@ FormulaElementCreator, ListDataListener {
 		try {
 			manager.closeAllDatasets();			
 		} catch (IOException e) {
-			Logger.error("Error closing datasets " + e.getMessage());
+			Logger.error("Error closing datasets", e);
 		}
 		return true;
 	}
@@ -266,7 +265,7 @@ FormulaElementCreator, ListDataListener {
 				io.load(file, project, manager, this);
 				currentFile = file;
 			} catch (IOException e) {
-				Logger.error("Error while loading project " + e.getMessage());
+				Logger.error("Error while loading project", e);
 			}
 		}
 	}
@@ -291,7 +290,7 @@ FormulaElementCreator, ListDataListener {
 				io.save(file, project);
 				currentFile = file;
 			} catch (IOException e) {
-				Logger.error("Error while saving project " + e.getMessage());
+				Logger.error("Error while saving project", e);
 			}
 		}
 	}
@@ -374,7 +373,7 @@ FormulaElementCreator, ListDataListener {
 				Exception ex = result.getException();
 				if (ex == null)
 					ex = new RuntimeException(result.getMessage());
-				Logger.error("Formula '" + strFormula + "' is invalid " + ex.getMessage());
+				Logger.error("Formula '" + strFormula + "' is invalid ", ex);
 				success = false;
 			} else if (status == ValidationResult.Status.WARN) {
 				Logger.warn(result.getMessage());
@@ -388,9 +387,9 @@ FormulaElementCreator, ListDataListener {
 			}
 
 		} catch (IllegalFormulaException e) {
-			Logger.error("Error while evaluating formula " + e.getMessage());
+			Logger.error("Error while evaluating formula", e);
 		} catch (Throwable e) {
-			Logger.error(e.toString(), new Exception("Error while evaluating formula."));
+			Logger.error("Error while evaluating formula", e);
 		}
 
 		return frame;
@@ -424,7 +423,7 @@ FormulaElementCreator, ListDataListener {
 				Exception ex = result.getException();
 				if (ex == null)
 					ex = new RuntimeException(result.getMessage());
-				Logger.error("Formula '" + strFormula + "' is invalid " + ex.getMessage());
+				Logger.error("Formula '" + strFormula + "' is invalid", ex);
 				success = false;
 			} else if (status == ValidationResult.Status.WARN) {
 				Logger.warn(result.getMessage());
@@ -438,7 +437,7 @@ FormulaElementCreator, ListDataListener {
 			}
 
 		} catch (IllegalFormulaException e) {
-			Logger.error("Error while evaluating formula " + e.getMessage());
+			Logger.error("Error while evaluating formula", e);
 		}
 		return frame;
 	}
@@ -697,7 +696,7 @@ FormulaElementCreator, ListDataListener {
 		try {
 			manager.closeDataset(set.getAlias());
 		} catch (IOException e) {
-			Logger.error("Error while closing dataset '" + set.getName() + "'" + e.getMessage());
+			Logger.error("Error while closing dataset '" + set.getName() + "'", e);
 		}
 	}
 
@@ -734,7 +733,7 @@ FormulaElementCreator, ListDataListener {
 			Exception ex = result.getException();
 			if (ex == null)
 				ex = new RuntimeException(result.getMessage());
-			Logger.error("Formula '" + strFormula + "' is invalid " + ex.getMessage());
+			Logger.error("Formula '" + strFormula + "' is invalid", ex);
 			ok = false;
 		} else if (status == ValidationResult.Status.WARN) {
 			Logger.warn(result.getMessage());

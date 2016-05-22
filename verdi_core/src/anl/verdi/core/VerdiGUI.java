@@ -3,6 +3,8 @@ package anl.verdi.core;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -75,6 +78,8 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	private HashMap<String, JPanel> scriptPanels = new HashMap<String, JPanel>();
 	private static HashMap<Plot, DockableFrame> views = new HashMap<Plot, DockableFrame>();
 	private static boolean windowIsIconified = false;
+	
+	public static final ReentrantLock VISIBLE_LOCK = new ReentrantLock(true);
 
 //	private FormulasPanel formulasPanel;
 
@@ -182,6 +187,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 		// END SECTION FOR TESTING
 		
 		String viewId = replaceInvalidChars(name) + plotCount++;
+		plotPanel.setViewId(viewId);
 
 		if (plotPanel.getPlotType() == Formula.Type.CONTOUR) {
 			addContourPlot(viewId, name, plotPanel);
@@ -229,19 +235,38 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	// Is this plot either an unselected tab or is the GUI iconified?
 
 	public static boolean isHidden( Plot plot ) {
-		boolean result = windowIsIconified;
-		
-		if ( ! result ) {
-			final DockableFrame view = views.get( plot );
+		synchronized (VISIBLE_LOCK) {
+			boolean result = windowIsIconified;
 			
-			if ( view == null ) {
-				result = false;
-			} else {
-				result = view.isMinimized() || view.isHidden();
+			if ( ! result ) {
+				final DockableFrame view = views.get( plot );
+				
+				if ( view == null ) {
+					result = false;
+				} else {
+					result = view.isMinimized() || view.isHidden();
+				}
 			}
+	
+			return result;
 		}
-
-		return result;
+	}
+	
+	public static void showIfVisible(JPanel panel, Graphics graphics, Image offScreenImage) {
+		synchronized (VISIBLE_LOCK) {
+			if (!VerdiGUI.isHidden((Plot) panel))
+				graphics.drawImage(offScreenImage, 0, 0,panel);
+		}
+	}
+	
+	public static boolean lock() {
+		VISIBLE_LOCK.lock();
+		return true;
+	}
+	
+	public static void unlock() {
+		if (VISIBLE_LOCK.isHeldByCurrentThread())
+			VISIBLE_LOCK.unlock();
 	}
 
 	public void addScriptPane(JPanel scriptPanel) {
@@ -454,6 +479,19 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	public void showMessage(String title, String message) {
 		JOptionPane.showMessageDialog(frame, message, title,
 				JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	/**
+	 * Displays an error message to the user.
+	 * 
+	 * @param title
+	 *            the title of the message
+	 * @param message
+	 *            the content of the message
+	 */
+	public void showError(String title, String message) {
+		JOptionPane.showMessageDialog(frame, message, title,
+				JOptionPane.ERROR_MESSAGE);
 	}
 	
 	private Cursor oldCursor = null;

@@ -3,6 +3,7 @@ package anl.verdi.plot.gui;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
+import anl.verdi.data.MPASCellAxis;
 import anl.verdi.data.TimeStepAverager;
 import anl.verdi.formula.Formula;
 import anl.verdi.plot.config.PlotConfiguration;
@@ -61,10 +62,20 @@ public class MultiTimeSeriesPlotRequest extends AbstractPlotRequest {
 
 	private String getXY(DataFrame frame) {
 		Axes<DataFrameAxis> axes = frame.getAxes();
+		long xOrigin;
+		long yOrigin;
+		if (axes.getXAxis() == null && axes.getCellAxis() != null) {
+			xOrigin = ((MPASCellAxis)axes.getCellAxis().getAxis()).getXAxis().getRange().getOrigin() + 1;
+			yOrigin = ((MPASCellAxis)axes.getCellAxis().getAxis()).getYAxis().getRange().getOrigin() + 1;
+		}
+		else {
+			xOrigin = axes.getXAxis().getOrigin() + 1;
+			yOrigin = axes.getYAxis().getOrigin() + 1;
+		}
 		StringBuilder builder = new StringBuilder("(");
-		builder.append(axes.getXAxis().getOrigin() + 1);
+		builder.append(xOrigin);
 		builder.append(", ");
-		builder.append(axes.getYAxis().getOrigin() + 1);
+		builder.append(yOrigin);
 		builder.append(")");
 		return builder.toString();
 	}

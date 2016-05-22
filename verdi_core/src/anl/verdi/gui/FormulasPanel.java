@@ -134,9 +134,9 @@ public class FormulasPanel extends JPanel {
 
 	private void setTimeValues(FormulaListElement element) {
 		Logger.debug("in FormulasPanel setTimeValues");
-		if (element != null && element.getTimeMin() != FormulaListElement.NO_TIME_VALUE) {
+		if (element != null && element.getTimeMin() != FormulaListElement.NO_TIME_VALUE && element.getDefaultTimeAxis() != null) {
 			timePanel1.setEnabled(true);
-			timePanel1.reset(element.getAxes(), element.getTimeMin(), element.getTimeMax(), element.isTimeUsed());
+			timePanel1.reset(element.getDefaultTimeAxis(), element.getTimeMin(), element.getTimeMax(), element.isTimeUsed());
 		} else {
 			timePanel1.setEnabled(false);
 		}
@@ -144,9 +144,9 @@ public class FormulasPanel extends JPanel {
 
 	public void setLayerValues(FormulaListElement element) {
 		Logger.debug("in FormulasPanel setLayerValue");
-		if (element != null && element.getLayerMin() != FormulaListElement.NO_LAYER_VALUE) {
+		if (element != null && element.getLayerMin() != FormulaListElement.NO_LAYER_VALUE && element.getDefaultZAxis() != null) {
 			layerPanel1.setEnabled(true);
-			layerPanel1.reset(element.getAxes(),
+			layerPanel1.reset(element.getDefaultZAxis(),
 							element.getLayerMin(), element.getLayerMax(), element.isLayerUsed());
 		} else {
 			layerPanel1.setEnabled(false);

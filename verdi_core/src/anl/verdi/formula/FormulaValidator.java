@@ -19,6 +19,7 @@ import anl.verdi.data.Axes;
 import anl.verdi.data.AxisRange;
 import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
+import anl.verdi.data.MultiAxisDataset;
 import anl.verdi.data.Range;
 import anl.verdi.data.Variable;
 import anl.verdi.util.DateRange;
@@ -204,7 +205,7 @@ public class FormulaValidator {
 
 	private void testLayer(CoordAxis layerAxis, FormulaVariable formulaVariable, FormulaVariable var)
 					throws IllegalFormulaException {
-		CoordAxis other = var.getDataset().getCoordAxes().getZAxis();
+		CoordAxis other = var.getZAxis();
 		
 		if (layerAxis == null && other == null)
 			return;
@@ -253,7 +254,7 @@ public class FormulaValidator {
 		if (variables.size() > 0) {
 			FormulaVariable formulaVariable = variables.get(0);
 			Axes<CoordAxis> axes = formulaVariable.getDataset().getCoordAxes();
-			CoordAxis layerAxis = axes.getZAxis();
+			CoordAxis layerAxis = formulaVariable.getZAxis();
 			CoordAxis xAxis = axes.getXAxis();
 			CoordAxis yAxis = axes.getYAxis();
 			

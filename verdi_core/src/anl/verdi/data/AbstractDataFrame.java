@@ -158,8 +158,8 @@ public abstract class AbstractDataFrame implements DataFrame {
 	 * of this DataFrame's dimensions.
 	 */
 	public DataFrame slice(Slice slice) throws InvalidRangeException {
-		int[] origin = createOrigins(slice);
-		int[] extents = createExtents(slice);
+		int[] origin = createOrigins(slice, axes);
+		int[] extents = createExtents(slice, axes);
 		Array newArray = array.sectionNoReduce(origin, extents, null);
 		DataFrameBuilder builder = new DataFrameBuilder();
 		builder.addDataset(datasets);
@@ -188,8 +188,8 @@ public abstract class AbstractDataFrame implements DataFrame {
 	 * of this DataFrame's dimensions.
 	 */
 	public DataFrame sliceCopy(Slice slice) throws InvalidRangeException {
-		int[] origin = createOrigins(slice);
-		int[] extents = createExtents(slice);
+		int[] origin = createOrigins(slice, axes);
+		int[] extents = createExtents(slice, axes);
 		Array newArray = array.sectionNoReduce(origin, extents, null).copy();
 		DataFrameBuilder builder = new DataFrameBuilder();
 		builder.addDataset(datasets);
@@ -204,7 +204,7 @@ public abstract class AbstractDataFrame implements DataFrame {
 		return builder.createDataFrame();
 	}
 
-	private int[] createExtents(Slice slice) {
+	public static int[] createExtents(Slice slice, Axes<DataFrameAxis> axes) {
 		int size = axes.getAxes().size();
 		int[] extents = new int[size];
 		if (axes.getTimeAxis() != null) {
@@ -227,10 +227,15 @@ public abstract class AbstractDataFrame implements DataFrame {
 			fillExtents(extents, slice.getYRange(), y);
 		}
 
+		if (axes.getCellAxis() != null) {
+			DataFrameAxis cell = axes.getCellAxis();
+			fillExtents(extents, slice.getCellRange(), cell);
+		}
+
 		return extents;
 	}
 
-	private void fillExtents(int[] extents, Range range, DataFrameAxis axis) {
+	private static void fillExtents(int[] extents, Range range, DataFrameAxis axis) {
 		if (range == null) {
 			extents[axis.getArrayIndex()] = (int)(axis.getRange().getExtent());
 		} else {
@@ -238,7 +243,7 @@ public abstract class AbstractDataFrame implements DataFrame {
 		}
 	}
 
-	private void fillOrigin(int[] origins, Range range, DataFrameAxis axis) {
+	private static void fillOrigin(int[] origins, Range range, DataFrameAxis axis) {
 		if (range == null) {
 			origins[axis.getArrayIndex()] = 0;
 		} else {
@@ -246,7 +251,7 @@ public abstract class AbstractDataFrame implements DataFrame {
 		}
 	}
 
-	private int[] createOrigins(Slice slice) {
+	public static int[] createOrigins(Slice slice, Axes<DataFrameAxis> axes) {
 		int size = axes.getAxes().size();
 		int[] origins = new int[size];
 		if (axes.getTimeAxis() != null) {
@@ -269,6 +274,10 @@ public abstract class AbstractDataFrame implements DataFrame {
 			fillOrigin(origins, slice.getYRange(), y);
 		}
 
+		if (axes.getCellAxis() != null) {
+			DataFrameAxis cell = axes.getCellAxis();
+			fillOrigin(origins, slice.getCellRange(), cell);
+		}
+
 		return origins;
-	}
-}
+	}}

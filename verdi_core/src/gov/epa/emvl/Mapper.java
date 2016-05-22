@@ -9,6 +9,7 @@ package gov.epa.emvl;
 //import org.geotools.referencing.CRS;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +51,8 @@ public class Mapper {
 	private VerdiBoundaries roadsMap = null;
 	private List<VerdiBoundaries> layers = new ArrayList<VerdiBoundaries>();
 	private boolean initialDraw = true;
-
+	private static String defaultMapFileDirectory = null;
+	
 	// Construct with URL or directory containing the map files.
 	public Mapper(String directoryName) {
 		Logger.debug("in constructor for Mapper, directoryName = " + directoryName);
@@ -71,6 +73,18 @@ public class Mapper {
 			Logger.debug("continuing");
 		}
 	}
+		
+	public static String getDefaultMapFileDirectory() {
+		if (defaultMapFileDirectory != null )
+			return defaultMapFileDirectory;
+		
+		defaultMapFileDirectory = System.getenv("VERDI_HOME") + "/plugins/bootstrap/data";
+		if (new File(defaultMapFileDirectory).exists())
+			return defaultMapFileDirectory;
+		defaultMapFileDirectory = ".." + "/verdi_bootstrap/data";	
+		return defaultMapFileDirectory;			
+	}
+
 
 	// Draw a domain-clipped, projected, grid-clipped map to graphics screen.
 	// E.g., domain[ 2 ][ 2 ] = { { -90.0, -88.0 }, { 28.0, 33.0 } }.

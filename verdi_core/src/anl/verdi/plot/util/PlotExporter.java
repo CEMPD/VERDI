@@ -15,6 +15,7 @@ import javax.swing.filechooser.FileFilter;
 import org.apache.commons.io.FilenameUtils;
 
 import anl.verdi.plot.gui.FastTilePlot;
+import anl.verdi.plot.gui.MeshPlot;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.io.TIFConvertImage;
 import anl.verdi.util.Utilities;
@@ -134,6 +135,12 @@ public class PlotExporter {
 			file = new File(file.getAbsolutePath() + "." + currentExt);
 		}
 
+		if( plot instanceof MeshPlot && currentExt.equals(SHP)){
+			String filename = file.getAbsolutePath();
+			filename = filename.substring(0, filename.length() - (SHP.length() + 1));
+			((MeshPlot)plot).exportShapeFile(filename);
+		}
+		
 		if ( plot instanceof FastTilePlot &&
 				( currentExt.equalsIgnoreCase(EPS) ||
 				  currentExt.equals( SHP )  ||  

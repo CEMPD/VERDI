@@ -1,6 +1,8 @@
 package anl.verdi.gui;
 
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -10,7 +12,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeListener;
 
-import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.util.FocusClickFix;
 
@@ -52,20 +53,42 @@ public class LayerPanel extends JPanel {
 	 * @param layerMax the max layer
 	 * @param isLayerUsed whether layer is used in evaluation or not
 	 */
-	public void reset(Axes<CoordAxis> axes, int layerMin, int layerMax, boolean isLayerUsed) {
-		CoordAxis layers = axes.getZAxis();
+	public void reset(CoordAxis layers, int layerMin, int layerMax, boolean isLayerUsed) {
 		int maxStep = (int) layers.getRange().getExtent() - 1;
 		SpinnerNumberModel model = (SpinnerNumberModel) minSpinner.getModel();
 		model.setMinimum(1);
 		model.setMaximum(maxStep + 1);
-		minSpinner.setValue(new Integer(layerMin + 1));
-
+		
+		String oldAxis = currentAxis;
+		String oldRange = currentRange;
+		currentRange = layers.getRange().toString();
+		currentAxis = layers.getName();
+		Integer oldMin = (Integer)minSpinner.getValue();
+		Integer oldMax = (Integer)maxSpinner.getValue();
+		boolean oldChecked = chkEnable.isSelected();
+		if (oldAxis != null) {
+			axisValues.put(oldRange + oldAxis + "min", oldMin);
+			axisValues.put(oldRange + oldAxis + "max", oldMax);
+			axisValues.put(oldRange + oldAxis + "use", oldChecked ? 1 : 0);
+		}
+		if (axisValues.containsKey(currentRange + currentAxis + "use"))
+			isLayerUsed = axisValues.get(currentRange + currentAxis + "use").equals(1);
+		Integer newVal = axisValues.get(currentRange + currentAxis + "min");
+		if (newVal == null)
+			newVal = new Integer(layerMin + 1);
+		minSpinner.setValue(newVal);
+		
+		newVal = axisValues.get(currentRange + currentAxis + "max");
+		if (newVal == null)
+			newVal = new Integer(layerMax + 1);
+		
 		model = (SpinnerNumberModel) maxSpinner.getModel();
 		model.setMinimum(1);
 		model.setMaximum(maxStep + 1);
-		maxSpinner.setValue(new Integer(layerMax + 1));
+		
+		maxSpinner.setValue(newVal);
 		chkEnable.setSelected(isLayerUsed);
-		setBorder(new TitledBorder("Layers (1 - " + (maxStep+1) + ")"));
+		setBorder(new TitledBorder("Layers (" + currentAxis + " 1 - " + (maxStep+1) + ")"));
 
 		if (layerMin == layerMax) {
 			minSpinner.setEnabled(false);
@@ -73,6 +96,10 @@ public class LayerPanel extends JPanel {
 			chkEnable.setEnabled(false);
 		}
 	}
+	
+	String currentAxis = null;
+	String currentRange = null;
+	Map<String, Integer> axisValues = new HashMap<String, Integer>();
 
 	public void setEnabled(boolean val) {
 		super.setEnabled(val);
@@ -151,4 +178,14 @@ public class LayerPanel extends JPanel {
 	private JLabel label2;
 	private JSpinner maxSpinner;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
+	
+	public int getMin() {
+		return ((SpinnerNumberModel) minSpinner.getModel()).getNumber().intValue() - 1;
+	}
+	public int getMax() {
+		return ((SpinnerNumberModel) maxSpinner.getModel()).getNumber().intValue() - 1;
+	}
+	public boolean getLayerEnabled() {
+		return chkEnable.isSelected();
+	}
 }

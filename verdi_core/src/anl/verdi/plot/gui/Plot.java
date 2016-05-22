@@ -134,5 +134,11 @@ public interface Plot {
 	 */
 	String getTitle();
 	
+	/**
+	 * Instances may use this to get access to the DockingManager's view backing this panel
+	 * @param id
+	 */
+	public void setViewId(String id);
+	
 	void viewClosed();
 	}

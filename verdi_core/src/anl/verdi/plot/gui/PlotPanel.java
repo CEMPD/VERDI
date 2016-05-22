@@ -140,6 +140,10 @@ public class PlotPanel extends JPanel {
 		Logger.debug("getting Plot");
 		return plot;
 	}
+	
+	public void setViewId(String id) {
+		plot.setViewId(id);
+	}
 
 	/**
 	 * Sets the plot this PlotPanel contains.
@@ -185,6 +189,7 @@ public class PlotPanel extends JPanel {
 		}
 		if ( plot != null) {
 			plot.viewClosed();
+			this.removeAll();
 			plot = null;
 		}
 	}
