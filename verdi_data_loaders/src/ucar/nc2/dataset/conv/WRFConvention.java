@@ -36,6 +36,7 @@ package ucar.nc2.dataset.conv;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -82,12 +83,12 @@ import ucar.unidata.util.StringUtil2;
 public class WRFConvention extends CoordSysBuilder {
 //	static final Logger Logger = LogManager.getLogger(WRFConvention.class.getName());
 
-//  static private java.text.SimpleDateFormat dateFormat;
+  static private java.text.SimpleDateFormat dateFormat;
 //
-//  static {
-//    dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+  static {
+    dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 //    dateFormat.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
-//  }
+  }
 
   public static boolean isMine(NetcdfFile ncfile) {
     if (null == ncfile.findDimension("south_north")) return false;
@@ -621,6 +622,11 @@ map_proj =  1: Lambert Conformal
             } catch (IllegalArgumentException e2) {
               parseInfo.format("ERROR: can't parse global attribute START_DATE = <%s> err=%s\n", startAtt, e2.getMessage());
             }
+          } else {
+        	  try {
+				Date date = dateFormat.parse(dateS);
+	            values.set(count++, (double) date.getTime() / 1000);
+			} catch (ParseException e1) {}
           }
         }
       }
