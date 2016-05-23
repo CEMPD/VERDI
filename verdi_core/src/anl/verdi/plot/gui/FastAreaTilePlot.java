@@ -678,7 +678,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 		private JTable table;
 
 		public ProbeExportShapeAction(JTable table) {
-			super("Export Shape Files");
+			super("Export Shapefiles");
 			this.table = table;
 		}
 
