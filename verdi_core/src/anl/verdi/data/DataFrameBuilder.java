@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import ucar.ma2.Array;
 import ucar.unidata.geoloc.Projection;
@@ -79,6 +80,10 @@ public class DataFrameBuilder {
 
 					public Point2D latLonToAxisPoint(double lat, double lon) {
 						return null;  //todo implement method
+					}
+					
+					public CoordinateReferenceSystem getCRS() {
+						return null;
 					}
 				};
 			}

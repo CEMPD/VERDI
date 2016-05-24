@@ -1,11 +1,8 @@
 package anl.verdi.commandline;
 
-import gov.epa.emvl.MapLines;
-
 import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,13 +39,13 @@ import anl.verdi.plot.gui.DefaultPlotCreator;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotPanel;
 import anl.verdi.plot.gui.ScatterPlotCreator;
+import anl.verdi.plot.gui.VerdiBoundaries;
 //import anl.verdi.plot.gui.VectorPlotCreator;
 import anl.verdi.plot.gui.VerticalCrossPlotCreator;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.types.VerticalCrossSectionPlot;
 import anl.verdi.util.Save2Ascii;
 import anl.verdi.util.VersionInfo;
-
 
 /**Class whose main purpose is to handle and carry out the commands received 
  * from the command line
@@ -73,7 +70,7 @@ public class ScriptHandler {
 
 	private static String curView = "";
 	private static HashMap<String, Plot> plotMap = new HashMap<String, Plot>();
-	private static List<String> mapNames = new ArrayList<String>();	//stores list of map layer bin file locations
+	private static List<String> mapNames = new ArrayList<String>();	//stores list of map layer file locations
 
 
 	private static PlotConfiguration config = new PlotConfiguration();
@@ -100,7 +97,7 @@ public class ScriptHandler {
 	private static ColorMap cmap = null;
 
 	private static int selectedTimeStep = 1; //Default to 1-based first step
-	private static String aliasFileName = System.getProperty("user.home") +  '/' + "verdi" + File.separatorChar + "verdi.alias";
+	private static String aliasFileName = System.getProperty("user.home") +  File.separatorChar + "verdi" + File.separatorChar + "verdi.alias";
 	private static int layerMin = -1;	// minimum layer not set
 	private static int layerMax = -1;	// maximum layer not set
 
@@ -576,7 +573,7 @@ public class ScriptHandler {
 								//timestep 1-based
 								Axes<DataFrameAxis> axes = dataFrame.getAxes();
 								((anl.verdi.plot.gui.FastTilePlot)plot).updateTimeStep(selectedTimeStep - 1 - axes.getTimeAxis().getOrigin());
-								plot.configure(new TilePlotConfiguration(config), Plot.ConfigSoure.FILE);
+								plot.configure(new TilePlotConfiguration(config), Plot.ConfigSource.FILE);
 
 								PlotPanel panel = new PlotPanel( plot, "Tile: " + verdiApp.getProject().getSelectedFormula());
 								verdiApp.getGui().addPlot( panel );
@@ -671,7 +668,7 @@ public class ScriptHandler {
 								//timestep 1-based
 								Axes<DataFrameAxis> axes = dataFrame.getAxes();
 								((anl.verdi.plot.gui.FastTilePlot)plot).updateTimeStep(selectedTimeStep - 1 - axes.getTimeAxis().getOrigin());
-								plot.configure(new TilePlotConfiguration(config), Plot.ConfigSoure.FILE);
+								plot.configure(new TilePlotConfiguration(config), Plot.ConfigSource.FILE);
 
 								PlotPanel panel = new PlotPanel( plot, "Tile: " + verdiApp.getProject().getSelectedFormula());
 								verdiApp.getGui().addPlot( panel );
@@ -1579,18 +1576,21 @@ public class ScriptHandler {
 				Formula.Type type = plot.getType();
 
 				if (type == Formula.Type.TILE && mapNames.size() > 0) {
-
-					MapLines mapLine = null;
+					VerdiBoundaries mapLine = null;
 					try {
 						for (String mapNameFileURL : mapNames) {
-							mapLine = new MapLines(mapNameFileURL);
+							mapLine = new VerdiBoundaries();
+							mapLine.setFileName(mapNameFileURL);
 							((anl.verdi.plot.gui.FastTilePlot)plot).setLayerMapLine(mapLine);
 						}
 						//suppress all issues (i.e., wrong file path or wrong format)
-					} catch (FileNotFoundException e) {
-						Logger.error("File Not Found Exception in ScriptHandler.handleOptions: " + e.getMessage());
-					} catch (IOException e) {
-						Logger.error("IOException in ScriptHandler.handleOptions: " + e.getMessage());
+//					} catch (FileNotFoundException e) {
+//						Logger.error("File Not Found Exception in ScriptHandler.handleOptions: " + e.getMessage());
+//					} catch (IOException e) {
+//						Logger.error("IOException in ScriptHandler.handleOptions: " + e.getMessage());
+					} catch(Exception ex)
+					{
+						Logger.error("Exception in ScriptHandler.handleOptions: " + ex.getMessage());
 					}
 				}
 			}

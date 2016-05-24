@@ -1,0 +1,6 @@
+<map id="anl.verdi.plot.types.AbstractTilePlot.updateColorMap" name="anl.verdi.plot.types.AbstractTilePlot.updateColorMap">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_abstract_tile_plot.html#a8ba57e0cde9570c9a54d244aba330473" title="anl.verdi.plot.types.Abstract\lTilePlot.updateScaleAxis" alt="" coords="236,39,419,80"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_abstract_tile_plot.html#a4bf5c0b5faf117eaa6c9317caf239f20" title="anl.verdi.plot.types.Abstract\lTilePlot.createPaintScale" alt="" coords="467,5,649,47"/>
+<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_legend_axis.html#af18a8963498ef1f385ae3a52135d8b58" title="anl.verdi.plot.types.Legend\lAxis.getPaintScale" alt="" coords="470,71,646,112"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1color_1_1_color_map.html#ac705a01cd9201537c1df4c5857f9b678" title="anl.verdi.plot.color.Color\lMap.getColor" alt="" coords="697,5,857,47"/>
+</map>

@@ -179,9 +179,13 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-epsg-hsql" path="../core/lib/gt-epsg-hsql-12.2.jar" type="code">
+		<library id="gt-swing" path="../core/lib/gt-swing-12.2.jar" type="code">
 			<export prefix="*"/>
 		</library>
+
+		<!--library id="gt-epsg-hsql" path="../core/lib/gt-epsg-hsql-12.2.jar" type="code">
+			<export prefix="*"/>
+		</library-->
 
 		<library id="gt-epsg-ext" path="../core/lib/gt-epsg-extension-12.2.jar" type="code">
 			<export prefix="*"/>
@@ -223,9 +227,9 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="hsqldb" path="../core/lib/hsqldb-2.2.8.jar" type="code">
+		<!--library id="hsqldb" path="../core/lib/hsqldb-2.2.8.jar" type="code">
 			<export prefix="*"/>
-		</library>
+		</library-->
 
 		<library id="jaramiko" path="../core/lib/jaramiko-151.jar" type="code">
 			<export prefix="*"/>
@@ -335,6 +339,13 @@
 			<export prefix="*"/>
 		</library>
 		
+		<library id="miglayout-core" path="../core/lib/miglayout-core-5.1-20150404.220010-96.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="miglayout-swing" path="../core/lib/miglayout-swing-5.1-20150404.220019-96.jar" type="code">
+			<export prefix="*"/>
+		</library>
 
 		
 		<!-- End Gis Imports -->
@@ -443,22 +454,12 @@
 			<parameter id="class" value=""/>
 		</parameter>
 
-        <!--
-		<parameter id="actionSpec">
-			<parameter id="actionID" value="anl.verdi.plot.gui.action.TilePlot"/>
-			<parameter id="label" value="Tile Plot"/>
-			<parameter id="class" value="anl.verdi.plot.gui.action.TilePlot"/>
-			<parameter id="groupID" value="runGraph"/>
-			<parameter id="tooltip" value="Tile Plot"/>
-		</parameter>
-		-->
-		
 		<parameter id="actionSpec">
           	<parameter id="actionID" value="anl.verdi.plot.gui.action.FastTilePlot"/>
-            <parameter id="label" value="Fast Tile Plot"/>
+            <parameter id="label" value="Tile Plot"/>
             <parameter id="class" value="anl.verdi.plot.gui.action.FastTilePlot"/>
             <parameter id="groupID" value="runGraph"/>
-            <parameter id="tooltip" value="Fast Tile Plot"/>
+            <parameter id="tooltip" value="Tile Plot"/>
         </parameter>
         
         <parameter id="actionSpec">
@@ -536,7 +537,7 @@
 
 		<parameter id="actionSpec">
 			<parameter id="actionID" value="anl.verdi.core.action.Help"/>
-			<parameter id="label" value="VERDI Help Docs"/>
+			<parameter id="label" value="VERDI Help Documents"/>
 			<parameter id="class" value="anl.verdi.core.action.Help"/>
 			<parameter id="menuID" value="help"/>
 		</parameter>

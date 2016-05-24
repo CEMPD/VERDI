@@ -106,6 +106,7 @@ public class LegendPanel extends JComponent {
 			}
 		} else {
 			// use the values directly from the color map itself
+			Logger.debug("interval type is not AUTOMATIC; reading Colors from map and adding to paintScale");
 			for (int i = 0; i < colorCount; i++) {
 				try {
 //					paintScale.add(new Double(map.getIntervalStart(i)), map.getColor(i));	// 2014 old add deprecated
@@ -121,7 +122,8 @@ public class LegendPanel extends JComponent {
 	}
 
 	public static void main(String[] args) {
-		ColorMap map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), 0, 10);
+//		ColorMap map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), 0, 10);
+		ColorMap map = new ColorMap(new PavePaletteCreator().createPavePalette(), 0, 10);
 		LegendPanel panel = new LegendPanel(map, 0, 10, "Units");
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

@@ -214,17 +214,17 @@ public class ChartThemePanel extends JPanel {
 		contentPanel.add(regFontBtn, cc.xy(5, 7));
 
 		//---- Small font theme ----
-//		smallFontLbl.setText("Small Font:");
-//		contentPanel.add(smallFontLbl, cc.xy(1, 9));
-//		contentPanel.add(smallFontFld, cc.xy(3, 9));
-//		smallFont = setFontField(smallFontFld, ThemeConfig.SMALL_FONT);
-//		samllFontBtn.setText("Select");
-//		samllFontBtn.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent evt) {
-//				smallFont = selectFont(smallFontFld);
-//			}
-//		});
-//		contentPanel.add(samllFontBtn, cc.xy(5, 9));
+		smallFontLbl.setText("Small Font:");
+		contentPanel.add(smallFontLbl, cc.xy(1, 9));
+		contentPanel.add(smallFontFld, cc.xy(3, 9));
+		smallFont = setFontField(smallFontFld, ThemeConfig.SMALL_FONT);
+		samllFontBtn.setText("Select");
+		samllFontBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				smallFont = selectFont(smallFontFld);
+			}
+		});
+		contentPanel.add(samllFontBtn, cc.xy(5, 9));
 		
 		return contentPanel;
 	}
@@ -297,7 +297,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Legend theme ----
 		legendColorLbl.setText("Legend Paint:");
 		contentPanel.add(legendColorLbl, cc.xy(1, 1));
-		legendColor = setColorField(legendColorFld, ThemeConfig.LEGENT_PAINT);
+		legendColor = setColorField(legendColorFld, ThemeConfig.LEGEND_PAINT);
 		legendColorFld.setEditable(false);
 		contentPanel.add(legendColorFld, new CellConstraints(3, 1, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		legendColorBtn.setText("Select");
@@ -311,7 +311,7 @@ public class ChartThemePanel extends JPanel {
 		//---- Legend background theme ----
 		legendBgColorLbl.setText("Legend Bg Paint:");
 		contentPanel.add(legendBgColorLbl, cc.xy(1, 3));
-		legendBgColor = setColorField(legendBgColorFld, ThemeConfig.LEGENT_BG_PAINT);
+		legendBgColor = setColorField(legendBgColorFld, ThemeConfig.LEGEND_BG_PAINT);
 		legendBgColorFld.setEditable(false);
 		contentPanel.add(legendBgColorFld, new CellConstraints(3, 3, 1, 1, CellConstraints.DEFAULT, CellConstraints.DEFAULT, new Insets(4, 0, 4, 0)));
 		legendBgColorBtn.setText("Select");
@@ -564,8 +564,8 @@ public class ChartThemePanel extends JPanel {
 		if (smallFont != null) theme.putObject(ThemeConfig.SMALL_FONT, smallFont);
 		if (titleColor != null) theme.putObject(ThemeConfig.TITLE_PAINT, titleColor);
 		if (subTitleColor != null) theme.putObject(ThemeConfig.SUBTITLE_PAINT, subTitleColor);
-		if (legendColor != null) theme.putObject(ThemeConfig.LEGENT_PAINT, legendColor);
-		if (legendBgColor != null) theme.putObject(ThemeConfig.LEGENT_BG_PAINT, legendBgColor);
+		if (legendColor != null) theme.putObject(ThemeConfig.LEGEND_PAINT, legendColor);
+		if (legendBgColor != null) theme.putObject(ThemeConfig.LEGEND_BG_PAINT, legendBgColor);
 		if (axisLableColor != null) theme.putObject(ThemeConfig.AXIS_LABEL_PAINT, axisLableColor);
 		if (tickLabelColor != null) theme.putObject(ThemeConfig.TICK_LABEL_PAINT, tickLabelColor);
 		if (chartBgColor != null) theme.putObject(ThemeConfig.CHART_BG_PAINT, chartBgColor);

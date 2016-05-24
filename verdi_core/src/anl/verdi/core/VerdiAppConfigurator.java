@@ -34,10 +34,10 @@ import anl.verdi.gui.FormulaListModel;
 import anl.verdi.gui.FormulasPanel;
 
 /**
- * Application configurator for Verdi.
+ * Application configurator for VERDI.
  * <p>
  * <p/> The methods in this interface are called by the SAF application
- * initialization mechanism during points in the applications lifecycle. On
+ * initialization mechanism during points in the application's life cycle. On
  * application start up, the order in which they are called is:
  * <ol>
  * <li> #preWindowOpen </li>
@@ -56,7 +56,6 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	private DockingManager viewManager;
 	private SplashPanel splashPanel = null;
 	private SplashScreen screen = null;
-//	private JTabbedPane aTabbedPane = null;		// 2014
 
 	private Action openDatasetAction = new AbstractAction() {
 		/**
@@ -76,7 +75,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *            the main verdi application object
 	 */
 	public VerdiAppConfigurator(VerdiApplication verdi) {
-		Logger.debug("Msg #2: in VerdiAppConfigurator constructor");
+		Logger.debug("In VerdiAppConfigurator constructor");
 		System.setProperty("org.geotools.referencing.forceXY","true");
 		verdiApp = verdi;
 	}
@@ -91,9 +90,6 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *            the ViewManager used to create the initial layout
 	 */
 	public void createLayout(DockingManager manager) {
-		Logger.debug("Msg #4: in VerdiAppConfigurator.createLayout");
-//		aTabbedPane = new JTabbedPane();	// 2014 instantiate tabbed pane to try to put 3 panels in 1 tabbed pane
-		
 		try {
 			this.viewManager = manager;
 
@@ -102,31 +98,19 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 			formulaModel.addListDataListener(verdiApp);
 			Project project = new Project(datasetModel, formulaModel);
 
-			// 2014 moved DataSetPanel section to below other sections
-			//			AreaFileListModel areaModel = new AreaFileListModel();
 			AreaFilePanel areaPanel = new AreaFilePanel(project, verdiApp.getDomainPanelContext(),verdiApp);
 
-			//		//areaModel.addAreaFileModelListener(verdiApp);
 			DockableFrame view3 = viewManager.createDockable(VerdiConstants.AREA_VIEW, new JScrollPane(areaPanel));	// 2014 removed LEFT
 			view3.setTitle("Areas");
 			viewManager.addDockableToGroup(VerdiConstants.PERSPECTIVE_ID, VerdiConstants.FORMULA_DATASET_GROUP, view3);
-//			aTabbedPane.addTab("Areas", (Component) view3);
-
 
 			FormulasPanel formulasPanel = new FormulasPanel(formulaModel);
 			formulasPanel.addFormulaSelectionListener(verdiApp);
 			formulasPanel.setFormulaCreator(verdiApp);
-			// this is necessary to avoid the horizontal scrollbar
-			// showing up before it should
-			//formulasPanel.setPreferredSize(new Dimension(100, formulasPanel.getMinimumSize().height));
-//			formulasPanel.setMinimumSize(new Dimension(100, formulasPanel.getMinimumSize().height));	// 2014 setPreferredSize == setMinimumSize
-//			JScrollPane pane = new JScrollPane(formulasPanel);	//  trying same structure as Datasets (which works)
-
 
 			DockableFrame view1 = viewManager.createDockable(VerdiConstants.FORMULA_VIEW, new JScrollPane(formulasPanel));	// 2014 removed LEFT
 			view1.setTitle("Formulas");
 			viewManager.addDockableToGroup(VerdiConstants.PERSPECTIVE_ID, VerdiConstants.FORMULA_DATASET_GROUP, view1);
-//			aTabbedPane.addTab("Formulas", (Component) view1);
 			
 			DataSetPanel datasetPanel = new DataSetPanel(project, verdiApp.getDomainPanelContext());
 			datasetPanel.addOpenDatasetAction(openDatasetAction);
@@ -136,8 +120,6 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 			datasetPanel.addFormulaCallbacks(verdiApp, formulasPanel.getFormulaEditor());
 
 			viewManager.addDockableToGroup(VerdiConstants.PERSPECTIVE_ID, VerdiConstants.FORMULA_DATASET_GROUP, view2);
-//			aTabbedPane.insertTab("Datasets", null, (Component) view2,"", 1);
-
 
 			verdiApp.init(new VerdiGUI(viewManager, datasetPanel, formulasPanel,areaPanel), project);
 		} catch (Exception e) {
@@ -154,7 +136,6 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *            the GUIBarManager used to configure tool and menu bars.
 	 */
 	public void fillBars(GUIBarManager guiBarManager) {
-		Logger.debug("Msg #9: in VerdiAppConfigurator.fillBars");
 		try {
 			JTextField fld = new JTextField();
 			Font font = fld.getFont().deriveFont(Font.BOLD);
@@ -171,8 +152,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 			label.setFont(label.getFont().deriveFont(Font.BOLD));
 			panel.add(label);
 			guiBarManager.addToolBarComponent(VerdiConstants.FORMULA_BAR_GROUP, VerdiConstants.FORMULA_LABEL, panel);
-			guiBarManager.addToolBarComponent(VerdiConstants.FORMULA_BAR_GROUP, "", Box
-					.createRigidArea(new Dimension(10, 0)));
+			guiBarManager.addToolBarComponent(VerdiConstants.FORMULA_BAR_GROUP, "", Box.createRigidArea(new Dimension(10, 0)));
 		} catch (Exception e) {
 			closeSplash();
 		}
@@ -183,7 +163,6 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 * closing the main application window.
 	 */
 	public void postWindowClose() {
-		Logger.debug("in VerdiAppConfigurator.postWindowClose does nothing");
 	}
 
 	/**
@@ -194,7 +173,6 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *            the display representing the main application window.
 	 */
 	public void postWindowOpen(ISAFDisplay display) {
-		Logger.debug("Msg #10: in VerdiAppConfigurator.postWindowOpen");
 		closeSplash();
 		List<FormulaListElement> formList = verdiApp.getProject().getFormulasAsList();
 		boolean enabled = formList.size() > 0 && verdiApp.getProject().getSelectedFormula() != null;
@@ -207,7 +185,6 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	}
 
 	public void closeSplash() {
-		Logger.debug("Msg #11: in VerdiAppConfigurator.closeSplash");
 		if (splashPanel != null)
 			splashPanel.stop();
 		if (screen != null)
@@ -223,7 +200,6 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *         window close.
 	 */
 	public boolean preWindowClose() {
-		Logger.debug("in VerdiAppConfigurator.preWindowClose");
 		return verdiApp.exit();
 	}
 
@@ -240,20 +216,14 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *         be a normal condition, such as a login failing.
 	 */
 	public boolean preWindowOpen(IWindowCustomizer customizer) {
-		Logger.debug("Msg #3: in VerdiAppConfigurator.preWindowOpen");
 		try {
 			String lf = UIManager.getSystemLookAndFeelClassName();
 			if (lf.toLowerCase().contains("gtk"))
 				lf = UIManager.getCrossPlatformLookAndFeelClassName();
 			UIManager.setLookAndFeel(lf);
-			// UIManager.setLookAndFeel();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-
-		//		customizer.useStoredFrameBounds(800, 800);
-		//		customizer.useSavedLayout();
-		//		customizer.setTitle("VERDI");
 
 		if (!verdiApp.skipSplash()) {
 			customizer.useStoredFrameBounds(800, 800);

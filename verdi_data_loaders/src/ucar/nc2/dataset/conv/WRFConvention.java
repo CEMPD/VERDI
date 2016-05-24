@@ -116,8 +116,7 @@ public class WRFConvention extends CoordSysBuilder {
 
   public WRFConvention() {
     this.conventionName = "WRF";
-//    System.out.println("NOW IN WRF CONVENTION");
-  }
+ }
 
   /* Implementation notes
 

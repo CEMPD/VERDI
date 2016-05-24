@@ -471,10 +471,7 @@ public class GeoTiff implements AutoCloseable {
     channel.read(buffer);
     buffer.flip();
 
-    //printBytes( System.out, "data", buffer, 32);
-    //buffer.rewind();
-
-    for (int i=0; i<size/4; i++) {
+     for (int i=0; i<size/4; i++) {
       Logger.debug( i+": " + buffer.getFloat());
     }
   }

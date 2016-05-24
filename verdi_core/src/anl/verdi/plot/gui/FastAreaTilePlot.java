@@ -39,6 +39,7 @@ import anl.verdi.area.Units;
 import anl.verdi.area.target.DepositionRange;
 import anl.verdi.area.target.FormulaDialog;
 import anl.verdi.area.target.GridInfo;
+import anl.verdi.area.target.ShapeFileTableExporter;
 //import anl.verdi.area.target.ShapeFileTableExporter;	// 2014 disabling shapefile export in VERDI 1.5.0
 import anl.verdi.area.target.Target;
 import anl.verdi.area.target.TargetCalculator;
@@ -109,7 +110,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 	public void configure(PlotConfiguration config) {
 		super.configure(config);
 	}
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
+	public void configure(PlotConfiguration config, Plot.ConfigSource source) {
 		super.configure(config, source);
 	}	
 	public void init(){
@@ -273,11 +274,10 @@ public class FastAreaTilePlot extends FastTilePlot {
 		if(vars.length<2)builder.append(vars[0].getName());
 		else builder.append("Formulas");
 		builder.append(" (");
-		int time = axes.getTimeAxis().getOrigin();
-		builder.append(time);
+		builder.append(timestep + 1);
 		builder.append(", ");
 		if (layer != -1) {
-			builder.append(layer);
+			builder.append(layer + 1);
 		}
 		builder.append(")"); 
 		return builder.toString();
@@ -295,7 +295,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 		ArrayList targets= selectedOnly ? Target.getSelectedTargets() : Target.getTargets();
 
 		// create the table
-		JXTable table = new JXTable(new AreaDataFrameTableModel(dataFrames,targets,vars));
+		JXTable table = new JXTable(new AreaDataFrameTableModel(dataFrames,targets,vars,timestep,layer));
 		table.setColumnControlVisible(true);
 		table.setHorizontalScrollEnabled(true);
 		table.setRolloverEnabled(true);
@@ -514,9 +514,10 @@ public class FastAreaTilePlot extends FastTilePlot {
 	}
 	public void recalculateAreas(){
 		// redo the area calculations because something changed with the areas 
+		Logger.debug("recalculating areas in FastAreaTilePlot.recalculateAreas");
 		TargetCalculator calc = new TargetCalculator();
 		if(tilePlot==null||getDataFrame()==null)return;
-		calc.calculateIntersections(Target.getTargets(),getDataFrame(),(AreaTilePlot)tilePlot);
+//		calc.calculateIntersections(Target.getTargets(),getDataFrame(),(AreaTilePlot)tilePlot);
 	}
 	public void repaintAll(){
 		validate();
@@ -668,39 +669,33 @@ public class FastAreaTilePlot extends FastTilePlot {
 		}
 	}
 	// show info on all selected areas
-//	private class ProbeExportShapeAction extends AbstractAction {
-//
-//		/**
-//		 * 
-//		 */
-//		private static final long serialVersionUID = 6184257759928589456L;
-//		private JTable table;
-//		private String title, rangeAxisName;
-//
-//		public ProbeExportShapeAction(String rangeAxisName, JTable table,
-//				String title) {
-//			super("Export Shape Files");
-//			this.rangeAxisName = rangeAxisName;
-//			this.table = table;
-//			this.title = title;
-//		}
-//
-//		public void actionPerformed(ActionEvent e) {	// 2014 disable shapefile export from VERDI 1.5.0
-//
-//			ShapeFileTableExporter exporter = new ShapeFileTableExporter(table, title,
-//					rangeAxisName);
-//			exporter.setExportHeader(true);
-//
-//			try {
-//				exporter.run();
-//			} catch (IOException ex) {
-//				//ctr.error("Error while exporting probed data", ex);
-//			}
-//		}
-//	}
+	private class ProbeExportShapeAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 6184257759928589456L;
+		private JTable table;
+
+		public ProbeExportShapeAction(JTable table) {
+			super("Export Shapefiles");
+			this.table = table;
+		}
+
+		public void actionPerformed(ActionEvent e) {
+
+			ShapeFileTableExporter exporter = new ShapeFileTableExporter(table);
+
+			try {
+				exporter.run();
+			} catch (IOException ex) {
+				//ctr.error("Error while exporting probed data", ex);
+			}
+		}
+	}
 	private int plotCount = 0;
 	public void addProbe(final JTable table, String name, String rangeAxisName) {
-		String viewId = name + plotCount++;
+		String viewId = replaceInvalidChars(name) + plotCount++;
 		JPanel panel = new JPanel(new BorderLayout());
 		JScrollPane pane = new JScrollPane(table);
 		// if (rowHeader != null) pane.setRowHeaderView(rowHeader);
@@ -711,7 +706,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 		JMenuBar bar = new JMenuBar();
 		JMenu menu = new JMenu("File");
 		menu.add(new ProbeExportAction(rangeAxisName, table, name));
-//		menu.add(new ProbeExportShapeAction(rangeAxisName, table, name));	// 2014 disable export shapefiles VERDI 1.5.0
+		menu.add(new ProbeExportShapeAction(table));
 		bar.add(menu);
 		top.add(bar, BorderLayout.NORTH);
 		top.add(title, BorderLayout.CENTER);
@@ -722,6 +717,20 @@ public class FastAreaTilePlot extends FastTilePlot {
 		view.setTitle(name);
 		viewManager.addDockableToGroup(VerdiConstants.PERSPECTIVE_ID, VerdiConstants.MAIN_GROUP_ID, view);
 		view.toFront();
+	}
+	
+	// copied from VerdiGUI for creating valid Dockable identifiers
+	private String replaceInvalidChars(String name) {
+		if (name == null || name.trim().isEmpty())
+			return "";
+		
+		for (int i = 0; i < name.length(); i++) {
+			if (!Character.isLetterOrDigit(name.charAt(i))) {
+				String random = Math.random() + "";
+				name = name.replace(name.charAt(i), random.charAt(random.length() - 1));
+			}
+		}
+		return name;
 	}
 
 	/*

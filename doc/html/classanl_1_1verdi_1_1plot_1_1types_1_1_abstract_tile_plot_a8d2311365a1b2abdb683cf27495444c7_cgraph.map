@@ -1,0 +1,5 @@
+<map id="anl.verdi.plot.types.AbstractTilePlot.getMenuBar" name="anl.verdi.plot.types.AbstractTilePlot.getMenuBar">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_abstract_tile_plot.html#a228540973349a51cebf319c273ea0d3d" title="anl.verdi.plot.types.Abstract\lTilePlot.addObsOverlay" alt="" coords="236,5,419,47"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_abstract_tile_plot.html#a82b99163b312ebf6d0d511b8a3579f17" title="anl.verdi.plot.types.Abstract\lTilePlot.addVectorsOverlay" alt="" coords="236,71,419,112"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_abstract_tile_plot.html#a4854a8a868bd7d3884970a5ca08c3cca" title="anl.verdi.plot.types.Abstract\lTilePlot.createSubtitle" alt="" coords="236,136,419,177"/>
+</map>

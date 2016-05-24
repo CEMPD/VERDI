@@ -1,0 +1,8 @@
+<map id="anl.verdi.gui.DomainPanel.setDomainValues" name="anl.verdi.gui.DomainPanel.setDomainValues">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1gui_1_1_domain_panel.html#a469853ffedbc15a2d5442c12ee7ed389" title="anl.verdi.gui.DomainPanel.get\lCanvas" alt="" coords="247,5,440,47"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#aefe39ddc11f9ef383a73f13e51789703" title="anl.verdi.gui.AbstractList\lElement.getDataset" alt="" coords="261,71,425,112"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#a37ef8e3860eabc02e33fb09486343329" title="anl.verdi.gui.AbstractList\lElement.getXMax" alt="" coords="261,136,425,177"/>
+<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#acf95c45d9e8c7c4f6f220b2402d68b27" title="anl.verdi.gui.AbstractList\lElement.getXMin" alt="" coords="261,201,425,243"/>
+<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#aaaf089ec7c0ae463996329e8c1c18255" title="anl.verdi.gui.AbstractList\lElement.getYMax" alt="" coords="261,267,425,308"/>
+<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#abf0b0f42fb7f4dfef07c276e5ab7f9e6" title="anl.verdi.gui.AbstractList\lElement.getYMin" alt="" coords="261,332,425,373"/>
+</map>

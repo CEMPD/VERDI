@@ -89,7 +89,9 @@ public class ObsEvaluator {
 			int timestep) {
 		List<AxisRange> range = new ArrayList<AxisRange>();
 		range.add(new AxisRange(dataset.getCoordAxes().getTimeAxis(), 0, timestep));
-		range.add(new AxisRange(dataset.getCoordAxes().getZAxis(), 0, 1)); //could add layer if observation data is layered
+		if (dataset.getCoordAxes().getZAxis() != null) {
+			range.add(new AxisRange(dataset.getCoordAxes().getZAxis(), 0, 1)); //could add layer if observation data is layered
+		}
 
 		DataFrame obsFrame = reader.getValues(dataset, range, var);
 		DataFrame latFrame = reader.getValues(dataset, range, lat);

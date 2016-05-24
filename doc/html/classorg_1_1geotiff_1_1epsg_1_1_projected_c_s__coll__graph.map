@@ -1,0 +1,4 @@
+<map id="org.geotiff.epsg.ProjectedCS" name="org.geotiff.epsg.ProjectedCS">
+<area shape="rect" id="node2" href="$classorg_1_1geotiff_1_1epsg_1_1_horizontal_c_s.html" title="org.geotiff.epsg.HorizontalCS" alt="" coords="25,5,215,32"/>
+<area shape="rect" id="node3" href="$classorg_1_1geotiff_1_1epsg_1_1_geographic_c_s.html" title="org.geotiff.epsg.GeographicCS" alt="" coords="115,81,314,108"/>
+</map>

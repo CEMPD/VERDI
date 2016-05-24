@@ -8,6 +8,7 @@ import java.util.GregorianCalendar;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
@@ -196,4 +197,13 @@ public class SyntheticTimeAxis implements TimeCoordAxis {
 	public boolean isCompatible(CoordAxis axis) {
 		return axis.isCompatible(axis);
 	}
+	
+	/** 
+	 * Does not apply to a time axis.
+	 */
+	public 	CoordinateReferenceSystem getCRS()
+	{
+		return null;
+	}
+
 }

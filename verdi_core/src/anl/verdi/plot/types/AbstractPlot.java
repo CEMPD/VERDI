@@ -10,6 +10,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jfree.chart.JFreeChart;
 
 import anl.verdi.plot.config.PlotConfiguration;
@@ -24,6 +26,7 @@ import anl.verdi.plot.util.PlotExporter;
  * @version $Revision$ $Date$
  */
 public abstract class AbstractPlot implements Plot {
+	static final Logger Logger = LogManager.getLogger(AbstractPlot.class.getName());
 
 	protected enum ControlAction {
 		ZOOM, PROBE
@@ -42,6 +45,7 @@ public abstract class AbstractPlot implements Plot {
 	 * @param file   the file to save the image to.
 	 */
 	public void exportImage(String format, File file, int width, int height) throws IOException {
+		Logger.debug("in AbstractPlot.exportImage");
 		PlotExporter exporter = new PlotExporter(this);
 		exporter.save(format, file, width, height);
 	}
@@ -52,6 +56,7 @@ public abstract class AbstractPlot implements Plot {
 	 * @return a BufferedImage of the plot.
 	 */
 	public BufferedImage getBufferedImage() {
+		Logger.debug("in AbstractPlot.getBufferedImage()");
 		return getBufferedImage(panel.getWidth(), panel.getHeight());
 	}
 
@@ -63,6 +68,7 @@ public abstract class AbstractPlot implements Plot {
 	 * @return a BufferedImage of the plot.
 	 */
 	public BufferedImage getBufferedImage(int width, int height) {
+		Logger.debug("in AbstractPlot.getBufferedImage(width, height)");
 		return panel.getChart().createBufferedImage(width, height);
 	}
 
@@ -74,11 +80,13 @@ public abstract class AbstractPlot implements Plot {
 	 * @param config the new plot configuration
 	 */
 	public void configure(PlotConfiguration config) {
+		Logger.debug("in AbstractPlot.configure #1, not yet written");
 		//todo implement method
 	}
 	
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
-		//todo implement method
+	public void configure(PlotConfiguration config, Plot.ConfigSource source) {
+		Logger.debug("in AbstractPlot.configure#2, not yet written");
+		configure(config);
 	}
 
 	/**
@@ -87,6 +95,7 @@ public abstract class AbstractPlot implements Plot {
 	 * @return this Plot's configuration data.
 	 */
 	public PlotConfiguration getPlotConfiguration() {
+		Logger.debug("in AbstractPlot.getPlotConfiguration(), returning null");
 		return null;  //todo implement method
 	}
 
@@ -101,37 +110,46 @@ public abstract class AbstractPlot implements Plot {
 
 		public VerdiChartPanel(JFreeChart chart) {
 			super(chart);
+			Logger.debug("in AbstractPlot, constructor of private class VerdiChartPanel #1");
 		}
 
 		public VerdiChartPanel(JFreeChart chart, boolean properties, boolean save, boolean print, boolean zoom, boolean tooltips) {
 			super(chart, properties, save, print, zoom, tooltips);
+			Logger.debug("in AbstractPlot, constructor of private class VerdiChartPanel #2");
 		}
 
 		public VerdiChartPanel(JFreeChart chart, boolean useBuffer) {
 			super(chart, useBuffer);
+			Logger.debug("in AbstractPlot, constructor of private class VerdiChartPanel #3");
 		}
 
 		public VerdiChartPanel(JFreeChart chart, int width, int height, int minimumDrawWidth, int minimumDrawHeight, int maximumDrawWidth, int maximumDrawHeight, boolean useBuffer, boolean properties, boolean save, boolean print, boolean zoom, boolean tooltips) {
 			super(chart, width, height, minimumDrawWidth, minimumDrawHeight, maximumDrawWidth, maximumDrawHeight, useBuffer, properties, save, print, zoom, tooltips);
+			Logger.debug("in AbstractPlot, constructor of private class VerdiChartPanel #4");
 		}
 
 		public void doZoom(Rectangle2D selection) {
+			Logger.debug("in AbstractPlot, private class VerdiChartPanel.doZoom");
 			zoom = true;
 			zoom(selection);
 			zoom = false;
 		}
 
 		public void zoom(Rectangle2D selection) {
-			if (zoom) super.zoom(selection);
+			if (zoom) 
+				super.zoom(selection);
+			Logger.debug("in AbstractPlot, private class VerdiChartPanel.zoom");
 			repaint();
 		}
 
 
 		public boolean isZoom() {
+			Logger.debug("in  AbstractPlot, private class VerdiChartPanel.isZoom");
 			return zoom;
 		}
 
 		public void setZoom(boolean zoom) {
+			Logger.debug("in AbstractPlot, private class VerdiChartPanel.setZoom");
 			this.zoom = zoom;
 		}
 
@@ -142,12 +160,21 @@ public abstract class AbstractPlot implements Plot {
 		 * @since 1.0.3
 		 */
 		public void doEditChartProperties() {
+			Logger.debug("in AbstractPlot, private class VerdiChartPanel.doEditChartProperties");
 			Window window = SwingUtilities.getWindowAncestor(panel);
 			ConfigDialog dialog = null;
-			if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
-			else dialog = new ConfigDialog((JDialog)window);
+			if (window instanceof JFrame)
+			{
+				dialog = new ConfigDialog((JFrame) window);
+				Logger.debug("just initialized dialog to new ConfigDialog((JFrame) window");
+			}
+			else
+			{
+				dialog = new ConfigDialog((JDialog)window);
+				Logger.debug("just initialized dialog to new ConfigDialog((JDialog) window");
+			}
 			dialog.init(AbstractPlot.this, null);
-			dialog.setSize(500, 506);
+			dialog.setSize(500, 600);
 			dialog.setVisible(true);
 		}
 		

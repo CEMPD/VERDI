@@ -18,13 +18,18 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import anl.gui.window.dialog.OKWindow;
+import anl.verdi.plot.gui.FastTilePlotPanel;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class HelpWindowWithContents extends OKWindow {
   /**
 	 * 
 	 */
 	private static final long serialVersionUID = 7290813555804895372L;
-JEditorPane editorPaneLeft,editorPaneRight;
+	static final Logger Logger = LogManager.getLogger(HelpWindowWithContents.class.getName());
+	JEditorPane editorPaneLeft,editorPaneRight;
   public HelpWindowWithContents (Dialog dialog,String title, String doc,String doc2){
     super(dialog,title,false);
     inits(doc,doc2);
@@ -118,11 +123,11 @@ JEditorPane editorPaneLeft,editorPaneRight;
         URL url = file.toURI().toURL();
         pane.setPage(url);
       } catch (IOException e) {
-	      e.printStackTrace();
-        System.err.println("Attempted to read a bad file: " + doc);
+    	  Logger.error("Attempted to read a bad file: " + doc);
+    	  Logger.error(e.getStackTrace());
       }
     } else {
-      System.err.println("Couldn't find file: " + doc);
+    	Logger.error("Couldn't find file: " + doc);
     }
   }
   public boolean doAction() {

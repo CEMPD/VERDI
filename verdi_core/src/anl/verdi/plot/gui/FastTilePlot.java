@@ -8,8 +8,7 @@ package anl.verdi.plot.gui;
 
 import gov.epa.emvl.ASCIIGridWriter;
 import gov.epa.emvl.GridCellStatistics;
-//import gov.epa.emvl.GridShapefileWriter;		// 2014 disable write shapefile VERDI 1.5.0
-import gov.epa.emvl.MapLines;
+import gov.epa.emvl.GridShapefileWriter;
 import gov.epa.emvl.Mapper;
 import gov.epa.emvl.Numerics;
 import gov.epa.emvl.Projector;
@@ -83,7 +82,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
-import javax.vecmath.Point4i;
+import javax.vecmath.Point4i;	// 4 integers (x, y, z, w coordinates)
 
 import net.sf.epsgraphics.ColorMode;
 import net.sf.epsgraphics.Drawable;
@@ -91,15 +90,23 @@ import net.sf.epsgraphics.EpsTools;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.Query;
 //import org.geotools.data.DefaultQuery;	// deprecated, replacing with Query
 import org.geotools.data.shapefile.ShapefileDataStore;
 //import org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory;	// deprecated
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 //import org.geotools.map.DefaultMapLayer;	// deprecated, replacing with FeatureLayer
 import org.geotools.map.FeatureLayer;
+import org.geotools.map.MapContent;
+import org.geotools.map.MapViewport;
+import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
+import org.geotools.swing.JMapPane;			// JEB Sept 2015; for mapping support in GeoTools
+import org.geotools.swing.data.JFileDataStoreChooser;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import saf.core.ui.event.DockableFrameEvent;
 import ucar.ma2.IndexIterator;
@@ -148,10 +155,9 @@ import com.vividsolutions.jts.geom.Envelope;
 public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		ChangeListener, ComponentListener, MouseListener,
 		TimeAnimatablePlot, Plot {
-	
+	private final MapContent myMapContent = new MapContent();	// JEB Nov 2015
 	static final Logger Logger = LogManager.getLogger(FastTilePlot.class.getName());
 	private static final long serialVersionUID = 5835232088528761729L;
-
 	public static final int NO_VAL = Integer.MIN_VALUE;
 	private static final String STATES_LAYER = "STATES";
 	private static final String COUNTIES_LAYER = "COUNTIES";
@@ -180,27 +186,26 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	// Log related
 	
 	protected boolean log = false;
-	@SuppressWarnings("unused")
 	private boolean preLog = false;
 	private double logBase = 10.0; //Math.E;	
 
 	// 2D grid parameters:
 
-	protected final int startDate; // 2005241 (YYYYDDD).
-	protected final int startTime; // 0 (HHMMSS).
-	protected final int timestepSize; // 10000 (HHMMSS)
-	protected final int timesteps; // 24.
-	protected final int layers; // 14.
-	protected final int rows; // 259.
-	protected final int columns; // 268.
-	protected final int rowOrigin;
-	protected final int columnOrigin;
-	private final double westEdge; // -420000.0 meters from projection center
-	private final double southEdge; // -1716000.0 meters from projection center
-	private final double cellWidth; // 12000.0 meters.
-	private final double cellHeight; // 12000.0 meters.
+	protected int startDate; 		// (YYYYDDD).
+	protected int startTime; 		// 0 (HHMMSS).
+	protected int timestepSize; 	// 10000 (HHMMSS)
+	protected int timesteps; 
+	protected int layers; 
+	protected int rows;
+	protected int columns;
+	protected int rowOrigin;
+	protected int columnOrigin;
+	private double westEdge; 		// meters from projection center
+	private double southEdge; 	// meters from projection center
+	private double cellWidth; 	// meters.
+	private double cellHeight; 	// meters.
 	private NumberFormat format;
-	private final boolean invertRows; // HACK: Invert rows of AURAMS / GEM / CF Convention data?
+	private boolean invertRows; // HACK: Invert rows of AURAMS / GEM / CF Convention data?
 
 	// For legend-colored grid cells and annotations:
 
@@ -236,16 +241,16 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	//private float[][][] layerDataLog = null;
 	private float[][][] statisticsData = null;
 	//private float[][][] statisticsDataLog = null;
+	private CoordinateReferenceSystem gridCRS = null;	// axes -> ReferencedEnvelope -> gridCRS
 
 	// For clipped/projected/clipped map lines:
 
-	private static final String mapFileDirectory = System.getProperty("user.dir")
-			+ "/data"; // Contains map_*.bin files
+	private String mapFileDirectory = System.getenv("VERDI_HOME") + "/plugins/bootstrap/data";	// nov 2015
 
 	private //final 
 	Mapper mapper = new Mapper(mapFileDirectory);
 
-	protected final Projector projector;
+	protected Projector projector;
 
 	protected double[][] gridBounds = { { 0.0, 0.0 }, { 0.0, 0.0 } };
 	protected double[][] domain = { { 0.0, 0.0 }, { 0.0, 0.0 } };
@@ -264,13 +269,12 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	protected List<ObsAnnotation> obsAnnotations;
 	protected VectorAnnotation vectAnnotation;
 
-	// It remains a mystery why eventProducer is needed.
 	private PlotEventProducer eventProducer = new PlotEventProducer();
 
 	// GUI attributes:
-	private final JButton playStopButton;
-	private final JButton leftStepButton;
-	private final JButton rightStepButton;
+	private JButton playStopButton;
+	private JButton leftStepButton;
+	private JButton rightStepButton;
 	private final String LEFT = "<";
 	private final String RIGHT = ">";
 	private final String PLAY = "|>";
@@ -280,9 +284,9 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	private final String PLAY_TIP = "Play/Stop";
 	private TimeLayerPanel timeLayerPanel;
 	private final JToolBar toolBar = new JToolBar();
-	private final JComboBox statisticsMenu;
+	private JComboBox statisticsMenu;
 	private int preStatIndex = -1;
-	private final JTextField threshold;
+	private JTextField threshold;
 	private boolean recomputeStatistics = false;
 	private boolean recomputeLegend = false;
 
@@ -293,11 +297,11 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	private int drawMode = DRAW_ONCE;
 	private int draw_once_requests = -1;
 	private final String DELAY_LABEL = "Slow:";
-	private final JTextField delayField;
-	private final JTextField firstRowField;
-	private final JTextField lastRowField;
-	private final JTextField firstColumnField;
-	private final JTextField lastColumnField;
+	private JTextField delayField;
+	private JTextField firstRowField;
+	private JTextField lastRowField;
+	private JTextField firstColumnField;
+	private JTextField lastColumnField;
 	protected final Rubberband rubberband = new Rubberband(this);
 	protected boolean zoom = true;
 	protected boolean probe = false;
@@ -321,8 +325,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	final JMenu mapLayersMenu = new JMenu("Add Map Layers");
 	
 	private ConfigDialog dialog = null;
-	@SuppressWarnings("unused")
-	private Plot.ConfigSoure configSource = Plot.ConfigSoure.GUI;
+	@SuppressWarnings("unused")										// had been out; put back in
+	private Plot.ConfigSource configSource = Plot.ConfigSource.GUI;	// had been out; put back in
 
 	VerdiApplication app;
 	
@@ -334,8 +338,6 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	private boolean processTimeChange = true;
 //	private MapLayer controlLayer;
 	private FeatureLayer controlLayer;
-	
-
 	
 	protected Action timeSeriesSelected = new AbstractAction(
 			"Time Series of Probed Cell(s)") {
@@ -385,31 +387,34 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			RepaintManager.currentManager(threadParent);
 
 		public void run() {
+			Logger.debug("within FastTilePlot.run()");
+			Logger.debug("391: mapFileDirectory = " + mapFileDirectory);
 
 			do {
-
-				
 				if ( drawMode != DRAW_NONE &&
 					 ! VerdiGUI.isHidden( (Plot) threadParent ) ) {
-					
+Logger.debug("within drawMode != DRAW_NONE && !VerdiGUI.isHidden((Plot) threadParent)");
 					if (drawMode == DRAW_ONCE) {
 //						synchronized (lock) {
 							if (get_draw_once_requests() > 0) {
 								draw_once_requests = 0;
+								Logger.debug("set draw_once_requests = 0");
 							}
 							if ( get_draw_once_requests() >=0 ) {
 								showBusyCursor();
+								Logger.debug("get_draw_once_requests >= 0 so showBusyCursor()");
 							}
 					}
 					
 					// When animating, pause based on user-set delay rate:
 
 					if (drawMode == DRAW_CONTINUOUS && delay != 0) {
+						Logger.debug("within DRAW_CONTINUOUS with a delay");	// DO NOT SEE THIS LOGGER MSG
 						try {
 							Thread.sleep(delay);
 						} catch (Exception unused) {}
 					}
-
+Logger.debug("set up drawing space, titles, fonts, etc.");
 					final int canvasWidth = getWidth();
 					final int canvasHeight = getHeight();
 					float marginScale = 0.95f; // Controls whitespace margin around plot window.
@@ -445,13 +450,13 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 					final int xOffset = 100;
 					final int legendWidth = 80 + xOffset;
 					final int canvasSize =
-						Math.round( Math.min( Math.max( 0, canvasWidth - legendWidth ), canvasHeight ) * marginScale );
+						Math.round( Math.min( Math.max( 0, canvasWidth - legendWidth ), canvasHeight ) * marginScale );	// JEB canvasWidth and canvasHeight are both 0
 					final int subsetRows = 1 + lastRow - firstRow;
 					final int subsetColumns = 1 + lastColumn - firstColumn;
 					final float subsetMax = Math.max(subsetRows, subsetColumns);
 					final float rowScale = subsetRows / subsetMax;
 					final float columnScale = subsetColumns / subsetMax;
-					final int width = Math.round(canvasSize * columnScale);
+					final int width = Math.round(canvasSize * columnScale);	// JEB canvasSize = 0, so width and height = 0
 					final int height = Math.round(canvasSize * rowScale);
 
 					if (canvasSize == 0) {
@@ -462,11 +467,11 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 					// Use off-screen graphics for double-buffering:
 					// don't start processing until graphics system is ready!
-
-					final Image offScreenImage =
+Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
+					final Image offScreenImage =	// get actual size after call to AddPlotListener
 						repaintManager.getOffscreenBuffer(threadParent, canvasWidth, canvasHeight);
 
-					// offScreenImage = (Image) (offScreenImage.clone());
+					// offScreenImage = (Image) (offScreenImage.clone());	// commented out in 2/2014 version
 
 					if (offScreenImage == null) {
 						if ( get_draw_once_requests() < 0) 
@@ -497,33 +502,35 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 					if (drawMode == DRAW_CONTINUOUS) {
 						timestep = nextValue(1, timestep, firstTimestep, lastTimestep);
+						Logger.debug("in DRAW_CONTINUOUS for timestep = " + timestep);
 						timeLayerPanel.setTime(timestep);
 						drawOverLays();
+						Logger.debug("back from drawOverLays() & done with DRAW_CONTINUOUS block");
 					}
 					
-//					synchronized (lock) {
+//					synchronized (lock) {	// commented out in 2/2014 version
 						if (get_draw_once_requests() > 0) {
 							draw_once_requests = 0;
 							if ( get_draw_once_requests() < 0) 
 								restoreCursor();
 							continue;
 						}
-//					}
-
+//					}						// commented out in 2/2014 version
+Logger.debug("calling copySubsetLayerData from FastTilePlot.Runnable.run");
 					copySubsetLayerData(log); // Based on current timestep and layer.
 
 					
 					synchronized (lock) {
 						
 						// Erase canvas:
-
+Logger.debug("working with offScreenGraphics; first reset to blank");
 						offScreenGraphics.setColor(Color.white);
 						offScreenGraphics.fillRect(0, 0, canvasWidth,
 								canvasHeight);
 
 						// Draw legend-colored grid cells, axis, text labels and
 						// legend:
-
+Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						final Boolean showGridLines = (Boolean)
 							config.getObject( TilePlotConfiguration.SHOW_GRID_LINES );
 						final Color gridLineColor = (Color)
@@ -532,7 +539,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 						final int stepsLapsed = timestep - firstTimestep;
 						final int statisticsSelection = statisticsMenu.getSelectedIndex();
-						Logger.debug("statisticsSelection = " + statisticsSelection);
+						Logger.debug("statisticsSelection = " + statisticsSelection);	// JEB after drawMode is == DRAW_ONCE
+																						// then in DatasetListModel getElement At
 						final String statisticsUnits =
 							statisticsSelection == 0 ? null : GridCellStatistics.units( statisticsSelection - 1 );
 						Logger.debug("statisticsUnits = " + statisticsUnits);
@@ -573,72 +581,91 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 							Logger.debug("subsetLayerData.length = " + aSubsetLayerDataLength);
 							Logger.debug("ready to make revised function call to tilePlot.draw, thread = " + Thread.currentThread().toString());
 
-							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
-									width, height, stepsLapsed, layer, aRow,
-									bRow, aCol, bCol, legendLevels,
-									legendColors, axisColor, labelColor, plotVariable,
-									aPlotUnits, 
-									config, aNumberFormat, gridLineColor,
-									subsetLayerData);
-//							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
-//									width, height, stepsLapsed, layer, firstRow + rowOrigin,
-//									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
+//							tilePlot.draw(offScreenGraphics, (FastTilePlotPanel)this, // HOW TO GET TO FastTilePlotPanel FROM HERE???
+//									xOffset, yOffset,
+//									width, height, stepsLapsed, layer, aRow,
+//									bRow, aCol, bCol, legendLevels,
 //									legendColors, axisColor, labelColor, plotVariable,
-//									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
+//									aPlotUnits, 
+//									config, aNumberFormat, gridLineColor,
 //									subsetLayerData);
+							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
+									width, height, stepsLapsed, layer, firstRow + rowOrigin,
+									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
+									legendColors, axisColor, labelColor, plotVariable,
+									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
+									subsetLayerData);
 						} catch (Exception e) {
 							Logger.error("FastTilePlot's run method " + e.getMessage());
 						}
+// by this point drew panel, panel title (O3[1]), panel menu, and panel bar (time step, layer, etc.)
+						dataArea.setRect(xOffset, yOffset, width, height);	// same 4 values sent to tilePlot.draw(...)
 
-						dataArea.setRect(xOffset, yOffset, width, height);
-
-						// Draw projected/clipped map border lines over grid
-						// cells:
+						// Draw projected/clipped map border lines over grid cells:
 
 						if (get_draw_once_requests() > 0) {
 							draw_once_requests = 0;
 							if ( get_draw_once_requests() < 0) 
 								restoreCursor();
-							continue;
+							continue;		// goes to while drawMode != DRAW_END
 						}
 						
-						mapper.draw(domain, gridBounds, projector,
+						// NOTE: mapper.draw calls VerdiBoundaries.draw
+						mapper.draw(domain, gridBounds, gridCRS,	// NOTE: JEB
+																	// 1st time here gridCRS is baseCRS: DefaultGeographicCRS
+																	// conversionFromBase: DefaultConicProjection
+																	// coordinateSystem: DefaultCartesianCS
+																	// datum: DefaultGeodeticDatum
 								offScreenGraphics, xOffset, yOffset, width,
 								height, withHucs, withRivers, withRoads);
-
+						Logger.debug("back from mapper.draw, ready to check for ObsAnnotation");
+						
 						if (obsAnnotations != null) {
 							for (ObsAnnotation ann : obsAnnotations)
 								ann.draw(offScreenGraphics, xOffset, yOffset, width, height, 
-										legendLevels, legendColors, projector, domain, gridBounds);
+										legendLevels, legendColors, gridCRS, domain, gridBounds);
 						}
 						
 						if (vectAnnotation != null) {
+							Logger.debug("ready for vectAnnotation.draw");
 							vectAnnotation.draw(offScreenGraphics, xOffset, yOffset, width, height, 
 									firstRow, lastRow, firstColumn, lastColumn);
 						}
 
+						Logger.debug("ready for resetMenuItems");
 						resetMenuItems(mapLayersMenu);
+						Logger.debug("ready for Toolkit.getDefaultToolkit");
 						Toolkit.getDefaultToolkit().sync();
 
 						try {
+							Logger.debug("ready to call toBufferedImage");
 							bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
+							Logger.debug("back from toBufferedImage, ready to call graphics.drawImage");
 							graphics.drawImage(offScreenImage, 0, 0,threadParent);
+							Logger.debug("back from graphics.drawImage");
 						} finally {
 							graphics.dispose();
+							Logger.debug("just did graphics.dispose in finally block");
 							offScreenGraphics.dispose();
+							Logger.debug("just did offScreenGraphics.dispose in finally block");
 						}
 
+						Logger.debug("ready for Toolkit.getDefaultToolkit 2nd time");	// 2015 debug HIT THIS REPEATEDLY
 						Toolkit.getDefaultToolkit().sync();
 					
 					} // End of synchronized block.
+					Logger.debug("ended synchronized block. Now check drawMode.");	// 2015 debug HIT THIS REPEATEDLY
 					if (drawMode == DRAW_ONCE ) {
+						Logger.debug("drawMode is == DRAW_ONCE");		// 2015 debug HIT THIS REPEATEDLY
+																		// JEB this message is followed by DatasetListModel getElementAt
+																		// and then statisticsSelection = 0
 						decrease_draw_once_requests();
 						if (get_draw_once_requests() < 0) {
 							drawMode = DRAW_NONE;
 							restoreCursor();
 						}
 					} else {
-						//drawMode = DRAW_NONE;
+						//drawMode = DRAW_NONE;			// commented out in 2/2014 version
 					}
 					
 				} else {
@@ -646,11 +673,13 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 						Thread.sleep(100); /* ms. */
 					} catch (Exception unused) {}
 				}
-			} while (drawMode != DRAW_END);
-		}
-	};
+			} while (drawMode != DRAW_END);		// drawMode set to DRAW_END in stopThread()
+		}		// HERE FINALLY DREW FastTilePlot - NO MAP BOUNDARIES YET; waiting for user input (change time step, layer, etc.)
+				// end run()
+	};		// end Runnable()
 	
 	private BufferedImage toBufferedImage(Image image, int type, int width, int height) {
+		// NEEDS COMPLETE REWRITE
         BufferedImage result = new BufferedImage(width, height, type);
         Graphics2D g = result.createGraphics();
         g.drawImage(image, 0, 0, null);
@@ -659,91 +688,98 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
     }
 
 	public void drawBatchImage(int wdth, int hght) {
-			final int canvasWidth = wdth;
-			final int canvasHeight = hght;
-			// around plot window.
+		Logger.debug("within FastTilePlot.drawBatchImage");
+		final int canvasWidth = wdth;
+		final int canvasHeight = hght;
+		// around plot window.
 
-			String sTitle1 = config.getSubtitle1();
-			String sTitle2 = config.getSubtitle2();
-			Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
-			Font sFont1 = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
-			Font sFont2 = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
-			int fontSize = (tFont == null) ? 20 : tFont.getSize();
-			int yOffset = 20 + fontSize;
+		String sTitle1 = config.getSubtitle1();
+		String sTitle2 = config.getSubtitle2();
+		Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
+		Font sFont1 = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
+		Font sFont2 = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
+		int fontSize = (tFont == null) ? 20 : tFont.getSize();
+		int yOffset = 20 + fontSize;
 
-			if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
-				fontSize = (sFont1 == null) ? 20 : sFont1.getSize();
-				yOffset += fontSize + 6;
+		if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
+			fontSize = (sFont1 == null) ? 20 : sFont1.getSize();
+			yOffset += fontSize + 6;
+		}
+
+		if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
+			fontSize = (sFont2 == null) ? 20 : sFont2.getSize();
+
+			if (sTitle1 == null || sTitle1.trim().isEmpty()) {
+				yOffset += 26;
 			}
 
-			if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
-				fontSize = (sFont2 == null) ? 20 : sFont2.getSize();
+			yOffset += fontSize + 6;
+		}
 
-				if (sTitle1 == null || sTitle1.trim().isEmpty()) {
-					yOffset += 26;
-				}
+		final int xOffset = 100;
 
-				yOffset += fontSize + 6;
-			}
+		final Image offScreenImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_RGB);
+		final Graphics offScreenGraphics = offScreenImage.getGraphics();
 
-			final int xOffset = 100;
+		// graphics system should now be ready
+		assert offScreenImage != null;
+		assert offScreenGraphics != null;
 
-			final Image offScreenImage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_RGB);
-			final Graphics offScreenGraphics = offScreenImage.getGraphics();
+		Logger.debug("ready to call copySubsetLayerData from drawBatchImage");
+		copySubsetLayerData(this.log); // Based on current timestep and layer.
 
-			// graphics system should now be ready
-			assert offScreenImage != null;
-			assert offScreenGraphics != null;
+		offScreenGraphics.setColor(Color.white);
+		offScreenGraphics.fillRect(0, 0, canvasWidth, canvasHeight);
 
-			copySubsetLayerData(this.log); // Based on current timestep and layer.
+		// Draw legend-colored grid cells, axis, text labels and legend:
 
-				offScreenGraphics.setColor(Color.white);
-				offScreenGraphics.fillRect(0, 0, canvasWidth, canvasHeight);
-
-				// Draw legend-colored grid cells, axis, text labels and legend:
-
-				final Boolean showGridLines = (Boolean)
-					config.getObject( TilePlotConfiguration.SHOW_GRID_LINES );
-				final Color gridLineColor = (Color)
-					( ( showGridLines == null || showGridLines == false ) ? null
+		final Boolean showGridLines = (Boolean)
+				config.getObject( TilePlotConfiguration.SHOW_GRID_LINES );
+		final Color gridLineColor = (Color)
+				( ( showGridLines == null || showGridLines == false ) ? null
 						: config.getObject( TilePlotConfiguration.GRID_LINE_COLOR ) );
-				
-				final int statisticsSelection = statisticsMenu.getSelectedIndex();
-				final String statisticsUnits =
-					statisticsSelection == 0 ? null : GridCellStatistics.units( statisticsSelection - 1 );
-				Logger.debug("statisticsUnit = " + statisticsUnits);
-				final String plotVariable =
-					statisticsSelection == 0 ? variable
-					: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
-				Logger.debug("plotVariable = " + plotVariable);
-				final String plotUnits = statisticsUnits != null ? statisticsUnits : units;
-				Logger.debug("plotUnits = " + plotUnits);
-				final int stepsLapsed = timestep - firstTimestep;
-				try {
-					tilePlot.drawBatchImage(offScreenGraphics, xOffset, yOffset,
-							canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
-							lastRow, firstColumn, lastColumn, legendLevels,
-							legendColors, axisColor, labelColor, plotVariable,
-							((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
-							subsetLayerData);
-				} catch (Exception e) {
-					Logger.error("FastTilePlot's drawBatch method" + e.getMessage());
-					e.printStackTrace();
-				}
-				
-				dataArea.setRect(xOffset, yOffset, tilePlot.getPlotWidth(), tilePlot.getPlotHeight());
 
-				// Draw projected/clipped map border lines over grid cells:
+		final int statisticsSelection = statisticsMenu.getSelectedIndex();
+		final String statisticsUnits =
+				statisticsSelection == 0 ? null : GridCellStatistics.units( statisticsSelection - 1 );
+		Logger.debug("statisticsUnit = " + statisticsUnits);
+		final String plotVariable =
+				statisticsSelection == 0 ? variable
+						: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
+		Logger.debug("plotVariable = " + plotVariable);
+		final String plotUnits = statisticsUnits != null ? statisticsUnits : units;
+		Logger.debug("plotUnits = " + plotUnits);
+		final int stepsLapsed = timestep - firstTimestep;
+		try {
+			tilePlot.drawBatchImage(offScreenGraphics,
+					xOffset, yOffset,
+					canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
+					lastRow, firstColumn, lastColumn, legendLevels,
+					legendColors, axisColor, labelColor, plotVariable,
+					((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config,
+					map.getNumberFormat(), gridLineColor,
+					subsetLayerData);
+		} catch (Exception e) {
+			Logger.error("FastTilePlot's drawBatch method" + e.getMessage());
+			e.printStackTrace();
+		}
 
-				mapper.draw(domain, gridBounds, projector,
-						offScreenGraphics, xOffset, yOffset, tilePlot.getPlotWidth(),
-						tilePlot.getPlotHeight(), withHucs, withRivers, withRoads);
+		dataArea.setRect(xOffset, yOffset, tilePlot.getPlotWidth(), tilePlot.getPlotHeight());
 
-				try {
-					bImage = (BufferedImage) offScreenImage;
-				} finally {
-					offScreenGraphics.dispose();
-				}
+		// Draw projected/clipped map border lines over grid cells:
+		// NOTE: mapper.draw calls VerdiBoundaries.draw
+		Logger.debug("in FastTilePlot (797); getting ready to call mapper.draw");
+		mapper.draw(domain, gridBounds, gridCRS,
+				offScreenGraphics, xOffset, yOffset, tilePlot.getPlotWidth(),
+				tilePlot.getPlotHeight(), withHucs, withRivers, withRoads);
+
+		try {
+			bImage = (BufferedImage) offScreenImage;
+			Logger.debug("just did bImage = (BufferedImage) offScreenImage");
+		} finally {
+			offScreenGraphics.dispose();
+			Logger.debug("just did offScreenGraphics.dispose in finally block");
+		}
 	}
 	
 
@@ -754,7 +790,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 	// Plot frame closed:
 
-	public void stopThread() {
+	public void stopThread() {	// called by anl.verdi.plot.gui.PlotPanel
 		drawMode = DRAW_END;
 		draw();
 	}
@@ -812,9 +848,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		bImage = null;
 		
 		dialog = null;
-		
 		controlLayer = null;
-		
 		config = null;
 		
 		doubleBufferedRendererThread = null;
@@ -839,20 +873,15 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		popUpLocation = null;
 		probedSlice = null;
 		showGridLines = null;
-		dialog = null;
 		app = null;
-		doubleBufferedRendererThread = null;
 		minMax = null;
-		config = null;
-		controlLayer = null;
-		
 	}
 	public void viewFloated(DockableFrameEvent unused_ ) { }
 	public void viewRestored(DockableFrameEvent unused_ ) { }		
 
 	// Paint/draw:
 
-	public void paintComponent(final Graphics graphics) {
+	public void paintComponent(final Graphics graphics) {	// REDO - NOW HAVE SEPARATE Graphics objects
 		super.paintComponent(graphics);
 		draw();
 	}
@@ -880,6 +909,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 					recomputeStatistics = true;
 				} else {
 					//reset to no statistics...
+					Logger.debug("ready to call copySubsetLayerData from reset to no statistics");
 					copySubsetLayerData(this.log);
 				}
 				this.preStatIndex = statisticsMenu.getSelectedIndex();
@@ -897,9 +927,9 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			//computeDataRange function need this.log set correctly...
 			if (map.getPalette() == null)
 			{
-				Logger.debug("no palette so calling new PavePaletteCreator().createPalettes(8).get(0)");
+				Logger.debug("no palette so calling new PavePaletteCreator");
 			}
-			defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPalettes(8).get(0);
+			defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPavePalette(); // new PavePaletteCreator().createPalettes(8).get(0);
 			map.setPalette(defaultPalette);
 			
 			//set min/max for both log and non log values...
@@ -1084,7 +1114,9 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		super.processMouseEvent(me);
 	}
 	
-	protected boolean isInDataArea(MouseEvent me) {
+	protected boolean isInDataArea(MouseEvent me) {	// JEB 2016 MAY NEED TO CHANGE THIS
+			// WANT WITHIN THE JMapPane DATA MEMBER OF OVERALL JPanel
+		// dataArea is a Rectangle object, so those functions will not work as they are
 		int x = me.getPoint().x;
 		int y = me.getPoint().y;
 		
@@ -1097,7 +1129,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		return true;
 	}
 	
-	protected int getRow(Point p) {
+	protected int getRow(Point p) {	// JEB 2016 NEED TO CHANGE THIS
+		// no longer working with a Rectangle object
 		int dist = dataArea.y + dataArea.height - p.y;
 		int div = dist * (lastRow - firstRow + 1);
 		int den = dataArea.height;
@@ -1105,7 +1138,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		return firstRow +  div/den;
 	}
 	
-	protected int getCol(Point p) {
+	protected int getCol(Point p) {	// JEB 2016 NEED TO CHANGE THIS
+		// no longer working with a Rectangle object
 		int dist = p.x - dataArea.x;
 		int div = dist * (lastColumn - firstColumn + 1);
 		int den = dataArea.width;
@@ -1221,6 +1255,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	public void setTimestep(int timestep) {
 		if (timestep >= firstTimestep && timestep <= lastTimestep && timestep != this.timestep) {
 			this.timestep = timestep;
+			Logger.debug("ready to call copySubsetLayerData from setTimestep");
 			copySubsetLayerData(this.log);
 			draw();
 			drawOverLays();
@@ -1236,6 +1271,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 				recomputeStatistics = true;
 			}
 
+			Logger.debug("ready to call copySubsetLayerData from setLayer");
 			copySubsetLayerData(this.log);
 			draw();
 		}
@@ -1245,22 +1281,43 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 	public FastTilePlot(VerdiApplication app, DataFrame dataFrame) {
 		super(true);
+//		this.setRenderer(new StreamingRenderer());
 		this.app=app;
 		setDoubleBuffered(true);
 		assert dataFrame != null;
 		this.dataFrame = dataFrame;
+		
 		this.calculateDataFrameLog();
 		hasNoLayer = (dataFrame.getAxes().getZAxis() == null);
 		format = NumberFormat.getInstance();
 		format.setMaximumFractionDigits(4);
 
-		AreaFinder finder = new AreaFinder();
+//		AreaFinder finder = new AreaFinder();
+		// NOTE: 2015 appears AreaFinder is an inner class; based on Oracle's JavaSE tutorials,
+		// proper way to instantiate an inner class is to first instantiate the outer class, and
+		// then create the inner object with this syntax:
+		// OuterClass.InnerClass innerObject = outerObject.new InnerClass();
+		FastTilePlot.AreaFinder finder = this.new AreaFinder();
 		this.addMouseListener(finder);
 		this.addMouseMotionListener(finder);
 		// Initialize attributes from dataFrame argument:
 
 		final Variable dataFrameVariable = dataFrame.getVariable();
 		variable = dataFrameVariable.getName();
+		Logger.debug("1335: mapFileDirectory = " + mapFileDirectory);
+		// JEB:  HERE NEED TO TEST FOR EXISTENCE OF mapFileDirectory & POP UP A FILE CHOOSER IF DOESN'T EXIST
+		File vFile = new File(mapFileDirectory);
+		if (!vFile.exists() || !vFile.canRead() || !vFile.isDirectory())
+		{
+			vFile = JFileDataStoreChooser.showOpenFile("shp", null);
+			if(!vFile.exists() || !vFile.canRead() || !vFile.isDirectory())
+			{
+				Logger.error("incorrect map file directory: " + vFile.getAbsolutePath());
+				return;
+			}
+			mapFileDirectory = vFile.getAbsolutePath();
+			Logger.debug("mapFileDirectory now set to: " + mapFileDirectory);
+		}
 		Logger.debug("dataFrameVariable = " + dataFrameVariable);
 		Logger.debug("dataFrameVariable name = " + variable);
 		units = dataFrameVariable.getUnit().toString();
@@ -1277,12 +1334,18 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		final Dataset dataset = dataFrame.getDataset().get(0);
 		final Axes<CoordAxis> coordinateAxes = dataset.getCoordAxes();
 		final Projection projection = coordinateAxes.getProjection();
+		Logger.debug("NOTE: in FastTilePlot using Projection = coordinateAxes.getProjection(), = " + 
+				projection.getName());
+		Logger.debug("coordinateAxes.getProjection = " + projection);
 
 		if (projection instanceof LatLonProjection) {
+			Logger.debug("projector being set to null because it is an instance of LatLonProjection");
 			projector = null;
 		} else {
 			projector = new Projector(projection);
+			Logger.debug("projector set to: " + projector.toString());
 		}
+		gridCRS = coordinateAxes.getBoundingBoxer().getCRS();
 
 		// Initialize grid dimensions: timesteps, layers, rows, columns:
 
@@ -1351,7 +1414,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 		if (timesteps > 1) {
 			final GregorianCalendar date1 = axes.getDate(firstTimestep + 1);
-			long step = (date1.getTimeInMillis() - date0.getTimeInMillis()) / 1000l;	// 2014 must  use getTimeInMillis()
+			long step = (date1.getTimeInMillis() - date0.getTimeInMillis()) / 1000l;	// 2014 must use getTimeInMillis()
 			final int dhh = (int) (step / 3600);
 			final int dmm = (int) (step % 3600 / 60);
 			final int dss = (int) (step % 3600 % 60);
@@ -1371,7 +1434,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		if ( this.map == null) {
 			
 			Logger.debug("in FastTilePlot, this.map == null so calling new PavePaletteCreator");
-			defaultPalette = new PavePaletteCreator().createPalettes(8).get(0);
+			defaultPalette = new PavePaletteCreator().createPavePalette(); // new PavePaletteCreator().createPalettes(8).get(0);
 			map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
 		} else {
 			ColorMap.ScaleType sType = map.getScaleType();
@@ -1379,9 +1442,9 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 				this.log = true;
 		if(map.getPalette() == null)
 		{
-			Logger.debug("map.getPalette is null so calling new PavePaletteCreator");
+			Logger.debug("map.getPalette is null so calling new PavePaletteCreator");	// JEB does not print this message
 		}
-			defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPalettes(8).get(0);
+			defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPavePalette(); // new PavePaletteCreator().createPalettes(8).get(0);
 			map.setPalette(defaultPalette);
 		}
 
@@ -1420,6 +1483,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 		// Create GUI.
 
+		// 	BEGINNING OF NEW FUNCTION createToolBar to construct the toolbar for GTTilePlotPanel
 		timeLayerPanel = new TimeLayerPanel();
 		final DataFrameAxis lAxis = dataFrame.getAxes().getZAxis();
 		if (hasNoLayer) {
@@ -1498,64 +1562,60 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
         panel.add(timeLayerPanel);
         panel.add( statisticsPanel );
         panel.add(animate);
-		toolBar.add(panel);
+		toolBar.add(panel);		// END createToolBar function
 
 		// add(toolBar);
 		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
 		doubleBufferedRendererThread.start(); // Calls
-		
+//		super(toolBar);
 		draw();
 	}
 	
-	// Compute legend levels from data range:
-
-	private void computeLegend() {
-
-		//populate legend colors and ranges on initiation
-		//default to not a log scale
-		double[] minmax = { 0.0, 0.0 };
-		//calculate the non log min/max values, keep the code here
-		//first part of IF ELSE will use the min/max values
-		computeDataRange(minmax, false);
-//		ColorMap.ScaleType sType = map.getScaleType();
-		//computeDataRange function need this.log set correctly...
-		if(map.getPalette() == null)
-		{
-			Logger.debug("getPalette is null here also so getting ready to call PavePaletteCreator");
-		}
-		defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPalettes(8).get(0);
-		map.setPalette(defaultPalette);
-		
-		//set min/max for both log and non log values...
-		map.setMinMax( minmax[0], minmax[1]);
-		computeDataRange(minmax, true);
-		map.setLogMinMax( minmax[0], minmax[1]);
-		//this final one is for the below legend value calculations
-		computeDataRange(minmax, this.log);
-
-		legendColors = defaultPalette.getColors();
-		final double minimum = minmax[0];
-		final double maximum = minmax[1];
-		minMax = new DataUtilities.MinMax(minimum, maximum);
-		int count = legendColors.length + 1;
-		final double delta = (minmax[1] - minmax[0]) / (count - 1);
-		legendLevels = new double[count];
-		for (int level = 0; level < count; ++level) {
-			legendLevels[level] = minmax[0] + level * delta;
-		}
-		config.setUnits("");
-	}
+//	// Compute legend levels from data range:
+//
+//	private void computeLegend() {		// JEB 2/2016 THIS FUNCTION IS NEVER CALLED
+//
+//		//populate legend colors and ranges on initiation
+//		//default to not a log scale
+//		double[] minmax = { 0.0, 0.0 };
+//		//calculate the non log min/max values, keep the code here
+//		//first part of IF ELSE will use the min/max values
+//		computeDataRange(minmax, false);
+//		//computeDataRange function need this.log set correctly...
+//		if(map.getPalette() == null)
+//		{
+//			Logger.debug("getPalette is null here also so getting ready to call PavePaletteCreator");
+//		}
+//		defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPavePalette(); // new PavePaletteCreator().createPalettes(8).get(0);
+//		map.setPalette(defaultPalette);
+//		
+//		//set min/max for both log and non log values...
+//		map.setMinMax( minmax[0], minmax[1]);
+//		computeDataRange(minmax, true);
+//		map.setLogMinMax( minmax[0], minmax[1]);
+//		//this final one is for the below legend value calculations
+//		computeDataRange(minmax, this.log);
+//
+//		legendColors = defaultPalette.getColors();
+//		final double minimum = minmax[0];
+//		final double maximum = minmax[1];
+//		minMax = new DataUtilities.MinMax(minimum, maximum);
+//		int count = legendColors.length + 1;
+//		final double delta = (minmax[1] - minmax[0]) / (count - 1);
+//		legendLevels = new double[count];
+//		for (int level = 0; level < count; ++level) {
+//			legendLevels[level] = minmax[0] + level * delta;
+//		}
+//		config.setUnits("");
+//	}
 	
-	private boolean statError = false;
-	private String statErrMsg = "";
+	private boolean statError = false;	// JEB WHY IS THIS HERE INSTEAD OF WITH THE OTHER CLASS DATA MEMBERS?
 
 	private void computeStatistics(boolean log) {
 
 		if ( layerData == null ) {
 			layerData = new float[ rows ][ columns ][ timesteps ];
-			//layerDataLog = new float[ rows ][ columns ][ timesteps ];
 			statisticsData = new float[ GridCellStatistics.STATISTICS ][ rows ][ columns ];
-			//statisticsDataLog = new float[ GridCellStatistics.STATISTICS ][ rows ][ columns ];
 		}
 			
 		// Copy from dataFrame into layerData[ rows ][ columns ][ timesteps ]:
@@ -1569,11 +1629,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 				for ( int timestep = 0; timestep < timesteps; ++timestep ) {
 					dataFrameIndex.set( timestep, layer, column, dataRow );
-					//float value = this.dataFrame.getFloat( dataFrameIndex ); // do not replace this one with getDataFrame()
 					float value = this.getDataFrame(log).getFloat( dataFrameIndex ); 
 					layerData[ row ][ column ][ timestep ] = value;
-					//value = this.dataFrameLog.getFloat( dataFrameIndex );
-					//layerDataLog[ row ][ column ][ timestep ] = value;
 				}
 			}
 		}
@@ -1585,15 +1642,10 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			GridCellStatistics.computeStatistics( layerData,
 					threshold, hoursPerTimestep,
 					statisticsData, this.statisticsMenu.getSelectedIndex()-1 );
-			//GridCellStatistics.computeStatistics( layerDataLog,
-			//		threshold, hoursPerTimestep,
-			//		statisticsDataLog, this.statisticsMenu.getSelectedIndex()-1 );
 			this.statError = false;
-			this.statErrMsg = "";
 		} catch ( Exception e) {
 			Logger.error("Error occurred during computing statistics: " + e.getMessage());
 			this.statError = true;
-			this.statErrMsg = "Error occurred during computing statistics: " + e.getMessage();
 			if ( map != null && map.getScaleType() == ColorMap.ScaleType.LOGARITHM) {
 				this.preLog = true;
 				this.log = false;
@@ -1602,19 +1654,6 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 				}
 				map.setScaleType( ColorMap.ScaleType.LINEAR);
 				
-				// 2014 this section previously commented out
-				//this.computeLegend();
-//				double[] minmax = { 0.0, 0.0 };
-//				computeDataRange(minmax);
-//				final double minimum = minmax[0];
-//				final double maximum = minmax[1];
-//				minMax = new DataUtilities.MinMax(minimum, maximum);
-//				this.recomputeLegend = true;
-//				this.recomputeStatistics = true;				
-//
-//				if ( this.dialog != null) {
-//					this.dialog.initColorMap(map, minMax);
-//				}
 				draw();
 			}
 		}
@@ -1622,7 +1661,9 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 	// Compute derived attributes:
 
-	private void computeDerivedAttributes() {
+	private void computeDerivedAttributes() {	// called by zooming and resetRowsNColumns
+		// JEB 2016 figure this out & rewrite for JMapPane
+		// & get rid of Projector (use CRS) ???
 
 		// Compute grid bounds and domain:
 
@@ -1643,8 +1684,10 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 	// Compute map domain from grid bounds:
 
-	private static void computeMapDomain(final Projector projector,
+	private static void computeMapDomain(final Projector projector,		// 2016 replace Projector with CRS ???
 			final double[][] gridBounds, double[][] mapDomain) {
+		// JEB 2016 figure this out & rewrite for JMapPane
+		// & get rid of Projector (use CRS) ???
 
 		final double margin = 1.0; // Degrees lon/lat beyond grid corners.
 		final double xMinimum = gridBounds[X][MINIMUM];
@@ -1676,7 +1719,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 				longitudeLatitude[LATITUDE]);
 
 		if ( projector.getProjection() instanceof
-				ucar.unidata.geoloc.projection.Stereographic ) {
+				ucar.unidata.geoloc.projection.Stereographic ) {	// JEB 2016 probably need to change
+						// testing for a polar projection
 
 			// Must be a polar projection so
 			// use full domain in case grid crosses the equator:
@@ -1713,6 +1757,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		final int subsetLayerRows = 1 + lastRow - firstRow;
 		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
 
+		Logger.debug("into function copySubsetLayerData");	// NOT IN LOG FILE
+		
 		if (subsetLayerData == null
 				|| subsetLayerData.length != subsetLayerRows * subsetLayerColumns
 				|| subsetLayerData[0].length != subsetLayerColumns) {
@@ -1800,10 +1846,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			}
 		} else {
 						
-			//if ( this.statisticsData == null || selection != this.preStatIndex //|| this.preLog != this.log 
-				//	) {
 				this.computeStatistics(log);					
-			//}
 			
 			final int statistic = selection - 1;
 
@@ -1828,7 +1871,6 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 					}
 				}
 			}
-			
 		}
 	}
 
@@ -1869,7 +1911,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		});
 		menu.add(new LoadConfiguration(this));
 		menu.add(new SaveConfiguration(this));
-		//configureMapMenu(menu);
+		//configureMapMenu(menu);		// HERE IS WHERE THE CONFIGURE GIS LAYERS GOES??? JEB (Also commented out in v1.4.1
 		bar.add(menu);
 
 		menu = new JMenu("Controls");
@@ -1926,7 +1968,6 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		
 		menu.addSeparator();
 		
-		// item.setSelected(true);
 		JMenuItem menuItem = new JMenuItem(
 				new AbstractAction("Set Row and Column Ranges") {
 					private static final long serialVersionUID = -4465758432397962782L;
@@ -2011,7 +2052,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			menu.add(sub);
 		}
 		
-		menu = new JMenu("GIS Layers");	// in VERDI versions through 1.5.0 does not pertain to shapefiles
+		menu = new JMenu("GIS Layers");	
 		gisLayersMenu(menu);
 		bar.add(menu);
 		
@@ -2045,6 +2086,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		firstColumn = 0;
 		lastColumn = columns - 1;
 		computeDerivedAttributes();
+		Logger.debug("ready to call copySubsetLayerData from resetZooming()");
 		copySubsetLayerData(this.log);
 	}
 
@@ -2063,8 +2105,6 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			}
 		};
 		
-		// String defaultMaps = System.getProperty("default.maps", "");
-
 		JCheckBoxMenuItem item = new JCheckBoxMenuItem("World", false);
 		item.setActionCommand(WORLD_LAYER);
 		item.addActionListener(listener);
@@ -2152,7 +2192,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		na.setSelected(mapper.naMapIncluded());
 	}
 
-	private FastTileLayerEditor showGISLayersDialog() {
+	private FastTileLayerEditor showGISLayersDialog() {	// JEB possibly replace this by JFileDataStoreChooser
+				// and separate GeoTools dialog to handle layer order and features (colors, etc.)
 		Logger.debug("in FastTilePlot.showGISLayersDialog()");
 		Window frame = SwingUtilities.getWindowAncestor(this);
 		FastTileLayerEditor editor = null;
@@ -2163,34 +2204,59 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			editor = new FastTileLayerEditor((JDialog) frame);
 		
 		editor.init(mapper);
-		editor.setLayerControl(createControlLayer());
 		editor.setLocationRelativeTo(frame);
 		editor.setVisible(true);
 		editor.pack();
 		return editor;
 	}
 
-//	protected MapLayer createControlLayer() {
-	protected FeatureLayer createControlLayer() {
-		if (controlLayer != null)
-			return controlLayer;
+//	protected MapLayer createControlLayer() {	// had been hard-coded to map of North America only
+	protected FeatureLayer createControlLayer(String shapefile) {	// JEB not currently being called
+		Logger.debug("in FastTilePlot.createControlLayer");
 		
+		Logger.debug("ready to get map");
 		try {
-			URL url = new File("data/map_na.shp").toURI().toURL();
+			URL url = null;
+			Logger.debug("initialized url = null");
+			Logger.debug("shapefile = " + shapefile);
+			if(shapefile != null)
+			{
+				Logger.debug("shapefile is not null");
+				url = new File(shapefile).toURI().toURL();
+			}
+			else
+			{
+				Logger.debug("shapefile is null, bringing up file selection widget");
+				// here bring up file chooser to select a shapefile
+				File file = JFileDataStoreChooser.showOpenFile("shp", null);
+				if(file == null)
+				{
+					Logger.error("No shapefile selected for map of type OTHER. You must select a shapefile or a standard map.");
+					return null;
+				}
+				url = file.toURI().toURL();
+			}
 			Map<String, Serializable> params = new HashMap<String, Serializable>();
-			// replaced IndexedShapefileDataStoreFactory with ShapefileDataStoreFactory
+			Logger.debug("created new params structure");
 			params.put(ShapefileDataStoreFactory.URLP.key, url);
+			Logger.debug("put 1st into params");
 			params.put(ShapefileDataStoreFactory.CREATE_SPATIAL_INDEX.key, true);
-			ShapefileDataStoreFactory fac = new ShapefileDataStoreFactory();
-			ShapefileDataStore ds = (ShapefileDataStore) fac.createDataStore(params);
+			Logger.debug("put 2nd into params");
+			DataStoreFactorySpi fac = new ShapefileDataStoreFactory();
+			Logger.debug("created fac: " + fac.toString());		// GET TO HERE BEFORE THROWS Exception in FastTilePlot.createControlLayer: null
+			ShapefileDataStore ds = (ShapefileDataStore) fac.createNewDataStore(params);
+			Logger.debug("created ds");
 			StyleBuilder builder = new StyleBuilder();
+			Logger.debug("created builder");
 			Style style = builder.createStyle(builder.createLineSymbolizer());
-//			DefaultQuery query = new DefaultQuery();
-			Query query = new Query();
+			Logger.debug("created style");
+			Query query = new Query("projectMap");
+			Logger.debug("created query");
+			// now ask to project into the CRS of the FastTilePlot axes
 			query.setCoordinateSystemReproject(getDataFrame().getAxes().getBoundingBox(getDataFrame().getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());
-//			controlLayer = new DefaultMapLayer(ds.getFeatureSource().getFeatures(query), style);
+			Logger.debug("setCoordinateSystemReproject");
 			controlLayer = new FeatureLayer(ds.getFeatureSource().getFeatures(query), style);
-			controlLayer.setTitle("Control Layer");
+			Logger.debug("assigned to controlLayer");
 		} catch (Exception e) {
 			Logger.error("Exception in FastTilePlot.createControlLayer: " + e.getMessage());
 		}
@@ -2198,15 +2264,14 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		return controlLayer;
 	}
 	
-	public void setLayerMapLine(MapLines mapLines) {
-		mapper.getLayers().add(mapLines);
+	public void setLayerMapLine(VerdiBoundaries aVerdiBoundaries) { // called by ScriptHandler only
+		mapper.getLayers().add(aVerdiBoundaries);
 	}
 
-	private void showLayer(String layerKey, boolean show, JMenu addLayers) {
+	private void showLayer(String layerKey, boolean show, JMenu addJMenuLayers) {
 		try {
 			if (show && layerKey.equals(STATES_LAYER)) {
-//				MapLines map2Add = getEditedMapLayer(mapper.getUsaStatesMap());
-				MapLines map2Add = mapper.getUsaStatesMap();
+				VerdiBoundaries map2Add = mapper.getUsaStatesMap();
 				mapper.getLayers().add(map2Add);
 			}
 
@@ -2215,8 +2280,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			}
 			
 			if (show && layerKey.equals(COUNTIES_LAYER)) {
-//				MapLines map2Add = getEditedMapLayer(mapper.getUsaCountiesMap());
-				MapLines map2Add = mapper.getUsaCountiesMap();
+				VerdiBoundaries map2Add = mapper.getUsaCountiesMap();
 				mapper.getLayers().add(map2Add);
 			}
 
@@ -2225,8 +2289,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			}
 
 			if (show && layerKey.equals(WORLD_LAYER)) {
-//				MapLines map2Add = getEditedMapLayer(mapper.getWorldMap());
-				MapLines map2Add = mapper.getWorldMap();
+				VerdiBoundaries map2Add = mapper.getWorldMap();
 				mapper.getLayers().add(map2Add);
 			}
 
@@ -2235,8 +2298,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			}
 
 			if (show && layerKey.equals(NA_LAYER)) {
-//				MapLines map2Add = getEditedMapLayer(mapper.getNorthAmericaMap());
-				MapLines map2Add = mapper.getNorthAmericaMap();
+				VerdiBoundaries map2Add = mapper.getNorthAmericaMap();
 				mapper.getLayers().add(map2Add);
 			}
 
@@ -2246,7 +2308,6 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 			if (show && layerKey.equals(HUCS)) {
 				withHucs = show;
-//				mapper.getLayers().add(getEditedMapLayer(mapper.getUSHucMap()));
 				mapper.getLayers().add(mapper.getUSHucMap());
 			}
 			
@@ -2257,7 +2318,6 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 			if (show && layerKey.equals(RIVERS)) {
 				withRivers = show;
-//				mapper.getLayers().add(getEditedMapLayer(mapper.getUSRiversMap()));
 				mapper.getLayers().add(mapper.getUSRiversMap());
 			}
 			
@@ -2268,7 +2328,6 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 			if (show && layerKey.equals(ROADS)) {
 				withRoads = show;
-//				mapper.getLayers().add(getEditedMapLayer(mapper.getUSRoadsMap()));	// 2014 getting rid of popup edit box
 				mapper.getLayers().add(mapper.getUSRoadsMap());
 			}
 			
@@ -2278,7 +2337,11 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			}
 			
 			if (layerKey.equals(OTHER_MAPS)) {
-				showGISLayersDialog();
+//				showGISLayersDialog();	// 2015 CHANGEd THIS TO BRING UP FILE BROWSER FOR .SHP FILES
+				File selectFile = JFileDataStoreChooser.showOpenFile("shp", null);
+				VerdiBoundaries aVerdiBoundaries = new VerdiBoundaries();
+				aVerdiBoundaries.setFileName(selectFile.getAbsolutePath());
+				mapper.getLayers().add(aVerdiBoundaries);
 			}
 			draw();
 		} catch (Exception e) {
@@ -2286,18 +2349,9 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		}
 	}
 
-//	private MapLines getEditedMapLayer(MapLines map) {
-//Logger.debug("in FastTilePlot.getEditedMapLayer for map: " + map);
-//		Window frame = SwingUtilities.getWindowAncestor(this);
-//Logger.debug("got window ancestor = " + frame.toString() + "\n\tReady to launch FastTileAddLayerWizard");
-//		FastTileAddLayerWizard wizard = new FastTileAddLayerWizard(new File(map.getMapFile()), createControlLayer(), map, false);
-//Logger.debug("back from FastTileAddLayerWizard, now ready to return the display");
-//		return wizard.display((JFrame)frame, true);
-//	}
 
 	/**
-	 * Displays a dialog that allows the user to edit the properties for the
-	 * current chart.
+	 * Displays a dialog that allows the user to edit the properties for the current chart.
 	 * 
 	 * @since 1.0.5
 	 */
@@ -2305,18 +2359,17 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		Window window = SwingUtilities.getWindowAncestor(FastTilePlot.this);
 		dialog = null;
 		if (window instanceof JFrame)
-			dialog = new ConfigDialog((JFrame) window);
+			dialog = new ConfigDialog((JFrame) window);	// ConfigDialog is anl.verdi.plot.gui.ConfigDialog
 		else
 			dialog = new ConfigDialog((JDialog) window);
 		dialog.init(FastTilePlot.this, minMax);
 		dialog.enableScale( !this.statError);
-		dialog.setSize(500, 506);
+		dialog.setSize(500, 600);
 		dialog.setVisible(true);
 	}
 
 	/**
-	 * Gets a tool bar for this plot. This may return null if there is no tool
-	 * bar.
+	 * Gets a tool bar for this plot. This may return null if there is no tool bar.
 	 * 
 	 * @return a tool bar for this plot.
 	 */
@@ -2348,8 +2401,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	}
 
 	/**
-	 * Exports an image of this Plot to the specified file in the specified
-	 * format.
+	 * Exports an image of this Plot to the specified file in the specified format.
 	 * 
 	 * @param format
 	 *            the image format. One of PlotExporter.JPG, PlotExporter.TIF,
@@ -2374,8 +2426,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	/**
 	 * Configure this Plot according to the specified PlotConfiguration.
 	 * 
-	 * @param config
-	 *            the new plot configuration
+	 * @param config    the new plot configuration
 	 */
 
 	public void configure(PlotConfiguration config) {
@@ -2434,7 +2485,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		}
 	}
 	
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
+	public void configure(PlotConfiguration config, Plot.ConfigSource source) {
 		String configFile = config.getConfigFileName();
 		double[] minmax = { 0.0, 0.0 };
 
@@ -2446,7 +2497,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			}
 		}
 		
-		this.configSource = source;
+		this.configSource = source;		// not used, but was not commentedo out in v1.4.1
 
 		ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
 
@@ -2482,7 +2533,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			
 			updateColorMap(map);
 			recomputeStatistics = true;	
-			if ( source == Plot.ConfigSoure.FILE) {
+			if ( source == Plot.ConfigSource.FILE) {
 				this.recomputeLegend = true;
 			} 
 		}
@@ -2561,6 +2612,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	 */
 
 	public BufferedImage getBufferedImage(int width, int height) {
+		Logger.debug("sending bImage in getBufferedImage member function");
 		return bImage;
 	}
 
@@ -2588,7 +2640,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 
 	@Override
 	public int print(Graphics g, PageFormat pf, int pageIndex)
-			throws PrinterException {
+			throws PrinterException {	// JEB 2016 REDO; NO LONGER HAVE JUST 1 Graphics OBJECT TO PRINT
 		if (pageIndex != 0) {
 			return NO_SUCH_PAGE;
 		}
@@ -2616,7 +2668,15 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	}
 
 	private void setDataRanges() {
-		DataRangeDialog dialog = new DataRangeDialog("Set Row and Column Ranges",
+//		DataRangeDialog dialog = new DataRangeDialog("Set Row and Column Ranges",
+//				FastTilePlot.this, firstRow + 1, lastRow + 1, firstColumn + 1,
+//				lastColumn + 1);
+
+		// NOTE: 2015 appears DataRangeDialog is an inner class; based on Oracle's JavaSE tutorials,
+		// proper way to instantiate an inner class is to first instantiate the outer class, and
+		// then create the inner object with this syntax:
+		// OuterClass.InnerClass innerObject = outerObject.new InnerClass();
+		FastTilePlot.DataRangeDialog dialog = this.new DataRangeDialog("Set Row and Column Ranges",
 				FastTilePlot.this, firstRow + 1, lastRow + 1, firstColumn + 1,
 				lastColumn + 1);
 		dialog.showDialog();
@@ -2667,6 +2727,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 				lastColumn = Integer.valueOf(lColumnField.getText());
 				plot.resetRowsNColumns(firstRow, lastRow, firstColumn,
 						lastColumn);
+				plot.draw();
 				return YES_OPTION;
 			} catch (NumberFormatException e) {
 				Logger.error("Number Format Exception in FastTilePlot.showDialog: Set Rows and Columns: " + e.getMessage());
@@ -2901,7 +2962,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		return null;
 	}
 
-	private void probe(Rectangle axisRect) {
+	private void probe(Rectangle axisRect) {	// JEB 2016 REWRITE: no longer using Rectangle object
 		synchronized (lock) {
 			Slice slice = new Slice();
 			slice.setTimeRange(timestep - firstTimestep, 1);
@@ -2919,7 +2980,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 				DataFrame subsection = null;
 
 				//			boolean isLog = false;		// isLog is not used
-				double logBase = 10.0;
+//				double logBase = 10.0;					// JEB 2015 already have logBase as class data member
 				ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
 				if (map != null) {
 					// set log related info
@@ -3023,7 +3084,7 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		}
 	}
 
-	public Decidegrees getLatLonFor(int screenx,int screeny){
+	public Decidegrees getLatLonFor(int screenx,int screeny){	// JEB 2016 REWRITE no longer using Rectangle object
 		int yHeightOffset = (int)(dataArea.getHeight() + dataArea.getY());
 		int xOffset=(int)dataArea.getX();
 		int width=(int)dataArea.getWidth();
@@ -3229,32 +3290,46 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			}
 			return builder.toString();
 		}
+		
 	}
-
-//	2014 called from anl.verdi.plot.util.PlotExporter; disabling exporting of Shapefiles for VERDI v1.5.0
-//		public void exportShapefile( String baseFileName ) throws IOException {
+	
+//	public void exportShapefileOld( String baseFileName ) throws IOException {		// 2014 appears to not be used
 //		final int subsetLayerRows = 1 + lastRow - firstRow;
 //		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
 //		// Filter variable name/expression so operators aren't a problem in Excel:
-//		
-//		// changed to this in v. 529
-//		final int end = variable.indexOf( '[' );
-//		final String filteredVariableName = variable.substring( 0, end );
-//		
-//		// change back now 2012-06-14
-////		final String filteredVariableName =
-////			variable.replaceAll( "[\\[\\d\\]]", "" ).replaceAll( "\\W", "" );
-//		
-//		final double subsetWestEdge = westEdge + firstColumn * cellWidth;
-//		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
+//		final String filteredVariableName =
+//			variable.replaceAll( "[\\[\\d\\]]", "" ).replaceAll( "\\W", "" );
 //		GridShapefileWriter.write( baseFileName,
-//				subsetLayerRows, subsetLayerColumns,
-//				subsetWestEdge, subsetSouthEdge,
-//				cellWidth, cellHeight,
-//				filteredVariableName, subsetLayerData, projector );
+//									subsetLayerRows, subsetLayerColumns,
+//									westEdge, southEdge,
+//									cellWidth, cellHeight,
+//									filteredVariableName, subsetLayerData, projector );
 //	}
+
+	public void exportShapefile( String baseFileName ) throws IOException {
+		final int subsetLayerRows = 1 + lastRow - firstRow;
+		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
+		// Filter variable name/expression so operators aren't a problem in Excel:
+		
+		// changed to this in v. 529
+		final int end = variable.indexOf( '[' );
+		final String filteredVariableName = variable.substring( 0, end );
+		
+		// change back now 2012-06-14
+//		final String filteredVariableName =
+//			variable.replaceAll( "[\\[\\d\\]]", "" ).replaceAll( "\\W", "" );
+		
+		final double subsetWestEdge = westEdge + firstColumn * cellWidth;
+		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
+		GridShapefileWriter.write( baseFileName,
+				subsetLayerRows, subsetLayerColumns,
+				subsetWestEdge, subsetSouthEdge,
+				cellWidth, cellHeight,
+				filteredVariableName, subsetLayerData, gridCRS );
+	}
 	
 	public void exportASCIIGrid( String baseFileName ) {
+		Logger.debug("in FastTilePlot.exportASCIIGrid");
 		final int subsetLayerRows = 1 + lastRow - firstRow;
 		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
 		final double subsetWestEdge = westEdge + firstColumn * cellWidth;
@@ -3282,7 +3357,12 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 	}
 	
 	public void exportEPSImage(String filename, int width, int height) {
-		EpsRenderer renderer = new EpsRenderer(width, height);
+//		EpsRenderer renderer = new EpsRenderer(width, height);
+		// NOTE: 2015 appears EpsRenderer is an inner class; based on Oracle's JavaSE tutorials,
+		// proper way to instantiate an inner class is to first instantiate the outer class, and
+		// then create the inner object with this syntax:
+		// OuterClass.InnerClass innerObject = outerObject.new InnerClass();
+		FastTilePlot.EpsRenderer renderer = this.new EpsRenderer(width, height);
 		EpsTools.createFromDrawable(renderer, filename, width, height, ColorMode.COLOR_RGB);
 	}
 	
@@ -3292,10 +3372,12 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		public EpsRenderer(int width, int height) {
 			canvasWidth = width;
 			canvasHeight = height;
+			Logger.debug("within subclass EpsRenderer, setting canvasWidth = " + width + "; canvasHeight = " + canvasHeight);
 		}
 		
 		@Override
 		public void draw(Graphics2D g, Rectangle2D rect) {
+			Logger.debug("within FastTilePlot.EpsRenderer.draw");
 			// around plot window.
 
 			String sTitle1 = config.getSubtitle1();
@@ -3336,8 +3418,8 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 					: config.getObject( TilePlotConfiguration.GRID_LINE_COLOR ) );
 				
 			final int stepsLapsed = timestep - firstTimestep;
-			try {
-				tilePlot.drawBatchImage(g, xOffset, yOffset,
+			try {tilePlot.drawBatchImage(g,
+						xOffset, yOffset,
 							canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
 							lastRow, firstColumn, lastColumn, legendLevels,
 							legendColors, axisColor, labelColor, variable,
@@ -3350,15 +3432,16 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 			}
 				
 			// Draw projected/clipped map border lines over grid cells:
-
-			mapper.draw(domain, gridBounds, projector,
+			// NOTE: mapper.draw calls VerdiBoundaries.draw
+			Logger.debug("in FastTilePlot (3457) getting ready to call mapper.draw");
+			mapper.draw(domain, gridBounds, gridCRS,
 						g, xOffset, yOffset, tilePlot.getPlotWidth(),
 						tilePlot.getPlotHeight(), withHucs, withRivers, withRoads);
 			
 			if (obsAnnotations != null) {
 				for (ObsAnnotation ann : obsAnnotations)
 					ann.draw(g, xOffset, yOffset, tilePlot.getPlotWidth(), tilePlot.getPlotHeight(), 
-							legendLevels, legendColors, projector, domain, gridBounds);
+							legendLevels, legendColors, gridCRS, domain, gridBounds);
 			}
 			
 			if (vectAnnotation != null) {
@@ -3368,8 +3451,15 @@ public class FastTilePlot extends JPanel implements ActionListener, Printable,
 		}
 	}
 	
+	// get the JMapPane portion (the mapping rectangle containing the raster and shapefiles) of the FastTilePlot
+	public JMapPane getMapPane()
+	{
+		return null;
+	}
+
 	public void addVectorAnnotation(VectorEvaluator eval) {
 		vectAnnotation = new VectorAnnotation(eval, timestep, getDataFrame().getAxes().getBoundingBoxer());
+		draw();
 	}
 
 	public void addObservationData(DataManager manager, boolean showLegend) {

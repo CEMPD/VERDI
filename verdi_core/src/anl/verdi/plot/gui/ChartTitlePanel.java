@@ -1,5 +1,8 @@
 package anl.verdi.plot.gui;
 
+// appears to be dialog for user to select the string, font, and font size for the
+// title, subtitle1, and subtitle2
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
@@ -119,6 +122,10 @@ public class ChartTitlePanel extends JPanel {
 	public String getTitle() {
 		return textFld.getText();
 	}
+	
+	public void setTitleNull() {
+		textFld.setText(null); 		// new VERDI 1.6 ability to null out a title when ! Show Title
+	}
 
 	public boolean useTitle() {
 		return useBox.isSelected();
@@ -160,23 +167,6 @@ public class ChartTitlePanel extends JPanel {
 										FormFactory.LINE_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC
 						}));
-//		setLayout(new FormLayout(
-//				new ColumnSpec[]{
-//								FormFactory.DEFAULT_COLSPEC,
-//								FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-//								new ColumnSpec(ColumnSpec.FILL, Sizes.DEFAULT, FormSpec.DEFAULT_GROW),
-//								FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-//								FormFactory.DEFAULT_COLSPEC
-//				},
-//				new RowSpec[]{
-//								FormFactory.DEFAULT_ROWSPEC,
-//								FormFactory.LINE_GAP_ROWSPEC,
-//								FormFactory.DEFAULT_ROWSPEC,
-//								FormFactory.LINE_GAP_ROWSPEC,
-//								FormFactory.DEFAULT_ROWSPEC,
-//								FormFactory.LINE_GAP_ROWSPEC,
-//								FormFactory.DEFAULT_ROWSPEC
-//				}));
 
 		//---- label4 ----
 		label4.setText("Show Title");

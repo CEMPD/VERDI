@@ -1,0 +1,7 @@
+<map id="anl.verdi.plot.types.ScatterPlot" name="anl.verdi.plot.types.ScatterPlot">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_abstract_plot.html" title="anl.verdi.plot.types.AbstractPlot" alt="" coords="852,93,1059,120"/>
+<area shape="rect" id="node3" href="$interfaceanl_1_1verdi_1_1plot_1_1gui_1_1_plot.html" title="anl.verdi.plot.gui.Plot" alt="" coords="605,68,748,95"/>
+<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1plot_1_1jfree_1_1_chart_panel.html" title="anl.verdi.plot.jfree.Chart\lPanel" alt="" coords="336,322,493,363"/>
+<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_abstract_plot_1_1_verdi_chart_panel.html" title="anl.verdi.plot.types.Abstract\lPlot.VerdiChartPanel" alt="" coords="585,258,768,299"/>
+<area shape="rect" id="node16" href="$interfaceanl_1_1verdi_1_1data_1_1_data_frame.html" title="anl.verdi.data.DataFrame" alt="" coords="872,144,1039,171"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="anl.verdi.core.VerdiApplication.init" name="anl.verdi.core.VerdiApplication.init">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1core_1_1_verdi_g_u_i.html#ae3169f87d84a65ab6da775009b88b283" title="anl.verdi.core.VerdiGUI.get\lFrame" alt="" coords="293,5,469,47"/>
+<area shape="rect" id="node3" href="$classsimphony_1_1util_1_1messages_1_1_message_event.html#a5cd05e1e01b2ec1402a7118e51387e99" title="simphony.util.messages.Message\lEvent.getLevel" alt="" coords="271,71,491,112"/>
+<area shape="rect" id="node4" href="$classsimphony_1_1util_1_1messages_1_1_message_event.html#a9d82d32a95990f80f90e3c30d01b6983" title="simphony.util.messages.Message\lEvent.getThrowable" alt="" coords="271,136,491,177"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="org.libtiff.jai.codec.XTIFFDirectory.XTIFFDirectory" name="org.libtiff.jai.codec.XTIFFDirectory.XTIFFDirectory">
+<area shape="rect" id="node2" href="$classorg_1_1libtiff_1_1jai_1_1util_1_1_jai_i18_n.html#a12a383d4ddb5b48918dca0111290532d" title="org.libtiff.jai.util.Jai\lI18N.getString" alt="" coords="645,5,773,47"/>
+<area shape="rect" id="node3" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#a3434390e56a8cf93f3c8de9dfdef6f00" title="org.libtiff.jai.codec.XTIFFDirectory.initialize" alt="" coords="272,247,539,274"/>
+<area shape="rect" id="node4" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#af4fd944024106b49b7abcb7cb3b57ce4" title="org.libtiff.jai.codec.XTIFFDirectory.read\lUnsignedShort" alt="" coords="587,123,831,164"/>
+<area shape="rect" id="node8" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#ad578c7deb2d984a39f178eead40cee78" title="org.libtiff.jai.codec.XTIFFDirectory.read\lHeader" alt="" coords="283,64,527,105"/>
+<area shape="rect" id="node9" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#ad9527cd0ae93606d97d8cfb39f0efd76" title="org.libtiff.jai.codec.XTIFFDirectory.read\lUnsignedInt" alt="" coords="283,181,527,223"/>
+<area shape="rect" id="node6" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#a3395bd8a03ed58264e8f98ac43bdb4ae" title="org.libtiff.jai.codec.XTIFFDirectory.add\lField" alt="" coords="589,240,829,281"/>
+<area shape="rect" id="node5" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html#a0ae47977539490ee9cc9ade30f43a756" title="org.libtiff.jai.codec.XTIFFDirectory.is\lBigEndian" alt="" coords="887,123,1117,164"/>
+<area shape="rect" id="node7" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_factory.html#af7f11708cc2afbd8275c1002156460c3" title="org.libtiff.jai.codec.XTIFFFactory.create\lField" alt="" coords="879,240,1125,281"/>
+</map>

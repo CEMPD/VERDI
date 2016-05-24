@@ -1,0 +1,6 @@
+<map id="anl.verdi.data.ExtendDataFrameAxis.createDataFrameAxis" name="anl.verdi.data.ExtendDataFrameAxis.createDataFrameAxis">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1data_1_1_extend_data_frame_axis.html#a8f16eadad5ee7137a617f5a56edf2a01" title="anl.verdi.data.ExtendData\lFrameAxis.ExtendDataFrameAxis" alt="" coords="268,37,488,79"/>
+<area shape="rect" id="node5" href="$interfaceanl_1_1verdi_1_1data_1_1_extend_coord_axis.html#a1a0227135fecbdc84b8e419673422d2a" title="anl.verdi.data.ExtendCoord\lAxis.getAxisType" alt="" coords="289,103,467,144"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1data_1_1_extend_axis_range.html#a19a217fc356e9924142aca2a4aba727f" title="anl.verdi.data.ExtendAxis\lRange.getExtent" alt="" coords="540,5,709,47"/>
+<area shape="rect" id="node4" href="$interfaceanl_1_1verdi_1_1data_1_1_extend_coord_axis.html#af81dda88c71ee11c0191df3ef140bce6" title="anl.verdi.data.ExtendCoord\lAxis.getRange" alt="" coords="536,71,713,112"/>
+</map>

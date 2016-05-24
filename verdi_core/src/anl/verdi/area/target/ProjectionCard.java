@@ -1,12 +1,12 @@
 /*
- * File Name:ModelFilePanel.java
+ * File Name: ProjectionCard.java  // comment (ModelFilePanel.java) did not match actual file name
  * Description:
  * 
  * 
  * @version Feb 25, 2006
  * @author Mary Ann Bitz
  * @author Argonne National Lab
- *
+ * 
  */
 package anl.verdi.area.target;
 
@@ -35,9 +35,9 @@ public class ProjectionCard extends JPanel {
 	 */
 	private static final long serialVersionUID = 5583749836339606614L;
 	static final Logger Logger = LogManager.getLogger(ProjectionCard.class.getName());
-ProjectionPanel filePanel;
+	ProjectionPanel filePanel;
   WizardWindow window;
-  JComboBox nameBox,coordBox;
+  JComboBox nameBox, coordBox;
   String[] coordStrings = {"Geographic (lat/lon)","Projected (x,y)"};
   String[] nameStrings = {"HUC","HUC_8","HUC_11","HUC_14"};
   ProjectionPanel projPanel;
@@ -84,8 +84,6 @@ ProjectionPanel filePanel;
     layout.putConstraint(SpringLayout.WEST,coordBox,5,SpringLayout.EAST,coordLabel);
     layout.putConstraint(SpringLayout.NORTH,coordBox,10,SpringLayout.SOUTH,nameBox);
     
-    
-        
     // create the projection panel of info
     projPanel = new ProjectionPanel();
     projPanel.setup();
@@ -96,15 +94,13 @@ ProjectionPanel filePanel;
     SpringUtilities.setSize(layout,this,400,450,500,300,300,400);
 //   set the initial visibility
     setProjectionPanelInfo(coordStrings[coordBox.getSelectedIndex()]);
-    
-    
   }
+  
   CoordinateReferenceSystem fileCoords=null;
   public void initialize(String fileDBF,String fileName){
     // set the names of the fields
     DBFTranslator t = new DBFTranslator(fileDBF,null);
     t.initializeTranslator();
-//    int n=1;
     TranslatorData data= t.getData();
     Iterator it = data.getDataKeys();
     

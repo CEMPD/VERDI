@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$interfaceanl_1_1verdi_1_1data_1_1_bounding_boxer.html" title="anl.verdi.data.BoundingBoxer" alt="" coords="5,35,196,61"/>
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1loaders_1_1_c_s_v_boxer.html" title="anl.verdi.loaders.CSVBoxer" alt="" coords="244,5,424,32"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1loaders_1_1_netcdf_boxer.html" title="anl.verdi.loaders.Netcdf\lBoxer" alt="" coords="256,57,412,98"/>
+</map>

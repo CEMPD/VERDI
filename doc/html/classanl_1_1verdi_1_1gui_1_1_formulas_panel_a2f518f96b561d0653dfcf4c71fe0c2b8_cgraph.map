@@ -1,0 +1,8 @@
+<map id="anl.verdi.gui.FormulasPanel.FormulasPanel" name="anl.verdi.gui.FormulasPanel.FormulasPanel">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1gui_1_1_formulas_panel.html#afe58913d009a0d3bdea7da317f7c01ed" title="anl.verdi.gui.FormulasPanel.add\lFormulaSelectionListener" alt="" coords="239,5,445,47"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1gui_1_1_formulas_panel.html#a28d8312159371f0ccdc9eeef4bc09925" title="anl.verdi.gui.FormulasPanel.set\lDomainValues" alt="" coords="241,71,443,112"/>
+<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1gui_1_1_formulas_panel.html#aa1e701e83e3a228a5b1cee0cca1b2793" title="anl.verdi.gui.FormulasPanel.set\lLayerValues" alt="" coords="241,136,443,177"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#a75fce487871ca81c2a2ffc15f63aa1cd" title="anl.verdi.gui.AbstractList\lElement.getAxes" alt="" coords="493,71,657,112"/>
+<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#a1cda193377a59433f95148f0751c54f1" title="anl.verdi.gui.AbstractList\lElement.getLayerMin" alt="" coords="493,136,657,177"/>
+<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#a8fb2a08f90f80650228b43814cd1d11d" title="anl.verdi.gui.AbstractList\lElement.isLayerUsed" alt="" coords="493,201,657,243"/>
+</map>

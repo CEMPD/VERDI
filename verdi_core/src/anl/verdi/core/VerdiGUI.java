@@ -26,6 +26,9 @@ import javax.swing.JTable;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.geometry.jts.ReferencedEnvelope;
+//import org.geotools.swing.JMapFrame;
+import org.geotools.swing.JMapPane;
 
 import saf.core.ui.GUIBarManager;
 import saf.core.ui.GUIConstants;
@@ -66,7 +69,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	private AreaFilePanel areaPanel;
 	private java.util.List<String> viewList = new ArrayList<String>(); // amw
 																		// 02May07
-	private java.util.List<JFrame> framesToDisplay = new ArrayList<JFrame>(); // amw
+	private java.util.List<JFrame> framesToDisplay = new ArrayList<JFrame>(); // amw	// JEB try JFrame => JMapFrame
 																				// 02May07
 	private HashMap<String, PlotPanel> plotPanels = new HashMap<String, PlotPanel>();
 	private HashMap<String, JPanel> scriptPanels = new HashMap<String, JPanel>();
@@ -162,6 +165,22 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	public void addPlot(PlotPanel plotPanel) {
 		setStatusTwoText("");
 		String name = plotPanel.getName();
+		
+		// BEGIN SECTION FOR TESTING
+		JMapPane aMapPane = plotPanel.getMapPane();
+		if(aMapPane != null)
+		{
+			Logger.debug("in VerdiGUI.addPlot; existing JMapPane in plotPanel = " + aMapPane.toString());
+			ReferencedEnvelope aMPReferencedEnvelope = aMapPane.getDisplayArea();
+			double minX = aMPReferencedEnvelope.getMinX();
+			double minY = aMPReferencedEnvelope.getMinY();
+			double maxX = aMPReferencedEnvelope.getMaxX();
+			double maxY = aMPReferencedEnvelope.getMaxY();
+			Logger.debug("and its ReferencedEnvelope = (" + minX + ", " + maxX + ", " + minY + ", " + maxY + ")");
+			Logger.debug("and its current CRS = " + aMPReferencedEnvelope.getCoordinateReferenceSystem());
+		}
+		// END SECTION FOR TESTING
+		
 		String viewId = replaceInvalidChars(name) + plotCount++;
 
 		if (plotPanel.getPlotType() == Formula.Type.CONTOUR) {
@@ -218,7 +237,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 			if ( view == null ) {
 				result = false;
 			} else {
-				result = view.isMinimized();
+				result = view.isMinimized() || view.isHidden();
 			}
 		}
 
@@ -344,11 +363,19 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	}
 
 	public void setStatusTwoText(String text) {
+		// JEB 2016 altered function to compare new and existing strings and do nothing if they are the same
+		String currentText = manager.getBarManager().getStatusBarText("verdi.status.two");
+		if(currentText.equalsIgnoreCase(text))
+			return;
 		manager.getBarManager().setStatusBarText("verdi.status.two", text);
 		manager.getBarManager().getStatusBar().repaint();
 	}
 
 	public void setStatusOneText(String text) {
+		// JEB 2016 altered function to compare new and existing strings and do nothing if they are the same
+		String currentText = manager.getBarManager().getStatusBarText("verdi.status.one");
+		if(currentText.equalsIgnoreCase(text))
+			return;
 		manager.getBarManager().setStatusBarText("verdi.status.one", text);
 		manager.getBarManager().getStatusBar().repaint();
 	}
@@ -385,13 +412,16 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	}
 
 	public void setOtherPlotsEnabled(boolean enabled) {
+		Logger.debug("in VerdiGUI.setOtherPlotsEnabled");
 		GUIBarManager barManager = manager.getBarManager();
+		Logger.debug("just instantiated barManager");
 		barManager.getToolBarComponent(VerdiConstants.AREAL_INTERPOLATION_BUTTON_ID).setEnabled(enabled);
 //		barManager.getToolBarComponent(VerdiConstants.TILE_BUTTON_ID).setEnabled(enabled);
-		barManager.getToolBarComponent(VerdiConstants.FAST_TILE_BUTTON_ID).setEnabled(enabled);
 		barManager.getToolBarComponent(VerdiConstants.TIME_SERIES_LINE_BUTTON_ID).setEnabled(enabled);
 		barManager.getToolBarComponent(VerdiConstants.TIME_SERIES_BAR_BUTTON_ID).setEnabled(enabled);
 		barManager.getToolBarComponent(VerdiConstants.CONTOUR_BUTTON_ID).setEnabled(enabled);
+//		Logger.debug("VerdiConstants.GT_TILE_BUTTON_ID = " + VerdiConstants.GT_TILE_BUTTON_ID);
+		barManager.getToolBarComponent(VerdiConstants.FAST_TILE_BUTTON_ID).setEnabled(enabled);
 	}
 
 	/**
@@ -414,7 +444,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	}
 
 	/**
-	 * Displays an message to the user.
+	 * Displays a message to the user.
 	 * 
 	 * @param title
 	 *            the title of the message

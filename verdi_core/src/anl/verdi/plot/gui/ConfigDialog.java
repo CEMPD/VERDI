@@ -1,5 +1,8 @@
 package anl.verdi.plot.gui;
 
+// appears to be configuration dialog box; shows color map
+// includes tabbed panels titles, labels, other, and overlay
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -24,9 +27,9 @@ import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.color.PaletteSelectionPanel;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
+//import anl.verdi.plot.gui.GTTilePlot;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 //import anl.verdi.plot.config.VectorPlotConfiguration;
-
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
@@ -34,9 +37,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 /*
  * Created by JFormDesigner on Wed May 09 09:52:58 EDT 2007
@@ -46,7 +46,6 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
  * @author User #2
  */
 public class ConfigDialog extends JDialog {
-	static final Logger Logger = LogManager.getLogger(ConfigDialog.class.getName());
 	private static final long serialVersionUID = -2353833703730870749L;
 	private Plot plot;
 
@@ -99,11 +98,10 @@ public class ConfigDialog extends JDialog {
 		this.dispose();
 	}
 
-	// commit the plot configuration
+	// writes the plot configuration to the PlotConfiguration object (read and used by other parts of VERDI)
 	private void commit() throws Exception {
 		PlotConfiguration config = new PlotConfiguration();
 		config.putObject(PlotConfiguration.PLOT_TYPE, plot.getType()); //NOTE: to differentiate plot types
-		
 		if (tabbedPanel.indexOfTab("Color Map") != -1) {
 			config.putObject(TilePlotConfiguration.COLOR_MAP, colorMapPanel.getColorMap());
 		}
@@ -128,7 +126,7 @@ public class ConfigDialog extends JDialog {
 		if (index >= 0)
 			config = overlays.fillConfiguration(config);
 
-		plot.configure(config, Plot.ConfigSoure.GUI);
+		plot.configure(config, Plot.ConfigSource.GUI);
 	}
 
 	public void init(Plot plot) {
@@ -137,7 +135,6 @@ public class ConfigDialog extends JDialog {
 	}
 
 	public void init(Plot plot, DataUtilities.MinMax globalMinMax) {
-		Logger.debug("just called init for ConfigDialog");
 		this.plot = plot;
 		PlotConfiguration config = new PlotConfiguration(plot.getPlotConfiguration());
 		ColorMap map = (ColorMap) config.getObject(TilePlotConfiguration.COLOR_MAP);
@@ -158,9 +155,7 @@ public class ConfigDialog extends JDialog {
 			}
 		}
 
-		Logger.debug("ready to call initTitles(config)");
 		initTitles(config);
-		Logger.debug("just called initTitles(config)");
 		initLabels(config);
 		initOther(config);
 
@@ -170,7 +165,7 @@ public class ConfigDialog extends JDialog {
 			initOverlays(config);
 		}
 
-		if ( plot instanceof FastTilePlot && colorMapPanel != null ){
+		if ( plot instanceof FastTilePlot && colorMapPanel != null ){	// GTTilePlot
 			colorMapPanel.setForFastTitle( true);
 		} else {
 			colorMapPanel.setForFastTitle( false);
@@ -277,21 +272,31 @@ public class ConfigDialog extends JDialog {
 	}
 
 	private void initTitles(PlotConfiguration config) {
-		Logger.debug("in initTitles; ready to set title");
-		String title = plot.getTitle();
-		Logger.debug("title now set to: " + title);
-		titlesPanel.initTitle(title != null && !title.trim().isEmpty(), title, (Font) config
-				.getObject(PlotConfiguration.TITLE_FONT), (Color) config
-				.getObject(PlotConfiguration.TITLE_COLOR));
+		String title = config.getTitle(); // plot.getTitle(); Feb 2016 use config here like everything else 
+		String showTitle = config.getShowTitle();
+		boolean bShowTitle = true; 
+		if (showTitle.compareTo("FALSE") == 0)
+			bShowTitle = false;
+		titlesPanel.initTitle(bShowTitle, title,	// title != null && !title.trim().isEmpty(), title, 
+				(Font) config.getObject(PlotConfiguration.TITLE_FONT), 
+				(Color) config.getObject(PlotConfiguration.TITLE_COLOR));
 
-		titlesPanel.initSubTitle1(config.getSubtitle1().trim().length() > 0,
-				config.getSubtitle1(), (Font) config
-						.getObject(PlotConfiguration.SUBTITLE_1_FONT),
+		bShowTitle = true;
+		String showSubTitle1 = config.getShowSubtitle1();
+		if (showSubTitle1.compareTo("FALSE") == 0)
+			bShowTitle = false;
+		titlesPanel.initSubTitle1(bShowTitle,	// config.getSubtitle1().trim().length() > 0,
+				config.getSubtitle1(), 
+				(Font) config.getObject(PlotConfiguration.SUBTITLE_1_FONT),
 				(Color) config.getObject(PlotConfiguration.SUBTITLE_1_COLOR));
 
-		titlesPanel.initSubTitle2(config.getSubtitle2().trim().length() > 0,
-				config.getSubtitle2(), (Font) config
-						.getObject(PlotConfiguration.SUBTITLE_2_FONT),
+		bShowTitle = true;
+		String showSubTitle2 = config.getShowSubtitle2();
+		if(showSubTitle2.compareTo("FALSE") == 0)
+			bShowTitle = false;
+		titlesPanel.initSubTitle2(bShowTitle,	// config.getSubtitle2().trim().length() > 0,
+				config.getSubtitle2(), 
+				(Font) config.getObject(PlotConfiguration.SUBTITLE_2_FONT),
 				(Color) config.getObject(PlotConfiguration.SUBTITLE_2_COLOR));
 	}
 

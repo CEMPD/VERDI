@@ -3,7 +3,7 @@
 	<property file="build.properties.mac" />
 	<property name="mac.dist.name" value="${app.name}_${app.version}"/>
 	<property name="dist.dmg.file" value="${mac.dist.name}.dmg"/>
-	<property name="dist.dir" value="${user.home}/${mac.dist.name}/${mac.dist.name}" />
+	<property name="dist.dir" value="${user.home}/${mac.dist.name}" />
 	<property name="install.home" value="${user.home}/${install.dir}" />
 	<property name="plugins.dir" value="plugins"/>
 	<property name="plugins.dist.dir" value="${dist.dir}/${plugins.dir}"/>

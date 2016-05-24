@@ -43,7 +43,7 @@ public class LoadConfiguration extends AbstractAction {
 			try {
 				PlotConfiguration newConfig = new PlotConfigurationIO().loadConfiguration(file);
 				config.merge(newConfig);
-				plot.configure(config, Plot.ConfigSoure.FILE);
+				plot.configure(config, Plot.ConfigSource.FILE);
 			} catch (IOException ex) {
 				Logger.error("Error loading configuration " + ex.getMessage());
 			}

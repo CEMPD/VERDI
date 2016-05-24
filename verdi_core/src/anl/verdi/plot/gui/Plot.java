@@ -9,6 +9,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
+import org.geotools.swing.JMapPane;
+
 import anl.verdi.data.DataFrame;
 import anl.verdi.formula.Formula;
 import anl.verdi.plot.config.PlotConfiguration;
@@ -21,16 +23,23 @@ import anl.verdi.plot.config.PlotConfiguration;
  */
 public interface Plot {
 	
-	public enum ConfigSoure { 
+	public enum ConfigSource { 
 		GUI, FILE
 	}
 
 	/**
-	 * Gets the panel that contains the plot component.
+	 * Gets the entire panel that contains the plot component.
 	 * 
-	 * @return the panel that contains the plot component.
+	 * @return the entire panel that contains the plot component.
 	 */
 	JPanel getPanel();
+
+	/**
+	 * Gets the JMapPane that contains the mapping portion of the plot component.
+	 * 
+	 * @return the mapping panel that contains the mapping portion of the plot component.
+	 */
+	JMapPane getMapPane();
 
 	/**
 	 * Gets a menu bar for this Plot. This may return null if
@@ -95,7 +104,7 @@ public interface Plot {
 	 * @param config the new plot configuration
 	 */
 	void configure(PlotConfiguration config);
-	void configure(PlotConfiguration config, ConfigSoure source);
+	void configure(PlotConfiguration config, ConfigSource source);
 
 	/**
 	 * Gets this Plot's configuration data.
@@ -126,12 +135,4 @@ public interface Plot {
 	String getTitle();
 	
 	void viewClosed();
-	
-//	public void setLog(boolean log);
-//
-//	public boolean isLog();
-//
-//	public void setLogBase(double logBase);
-//
-//	public double getLogBase();
-}
+	}

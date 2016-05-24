@@ -1,0 +1,5 @@
+<map id="anl.verdi.loaders.NetcdfBoxer.getProjection" name="anl.verdi.loaders.NetcdfBoxer.getProjection">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1loaders_1_1_netcdf_boxer.html#ade172c083939bb32db981f2bc582a9e6" title="anl.verdi.loaders.Netcdf\lBoxer.axisPointToLatLonPoint" alt="" coords="209,5,407,47"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1loaders_1_1_netcdf_boxer.html#a2d42a96a4f8da658696c300a7f06908f" title="anl.verdi.loaders.Netcdf\lBoxer.createBoundingBox" alt="" coords="221,71,395,112"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1loaders_1_1_netcdf_boxer.html#ada8b401741a3e9ec5063575e53a3f70d" title="anl.verdi.loaders.Netcdf\lBoxer.latLonToAxisPoint" alt="" coords="225,136,391,177"/>
+</map>

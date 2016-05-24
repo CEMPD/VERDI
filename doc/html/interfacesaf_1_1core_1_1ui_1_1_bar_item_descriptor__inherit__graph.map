@@ -1,0 +1,5 @@
+<map id="saf.core.ui.BarItemDescriptor" name="saf.core.ui.BarItemDescriptor">
+<area shape="rect" id="node2" href="$classsaf_1_1core_1_1ui_1_1_action_descriptor.html" title="saf.core.ui.ActionDescriptor" alt="" coords="17,80,199,107"/>
+<area shape="rect" id="node4" href="$classsaf_1_1core_1_1ui_1_1_separator_descriptor.html" title="saf.core.ui.SeparatorDescriptor" alt="" coords="223,80,425,107"/>
+<area shape="rect" id="node3" href="$classsaf_1_1core_1_1ui_1_1_exit_action_descriptor.html" title="saf.core.ui.ExitActionDescriptor" alt="" coords="5,155,211,181"/>
+</map>

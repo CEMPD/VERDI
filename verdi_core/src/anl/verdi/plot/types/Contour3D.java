@@ -41,6 +41,7 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.swing.JMapPane;
 import org.jfree.chart.axis.ValueAxis;
 
 import saf.core.ui.util.FileChooserUtilities;
@@ -303,8 +304,10 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 
 	private void initColors(ColorMap map) throws RemoteException, VisADException {
 		if (map == null) {
-			this.map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), minMax.getMin(),
-							minMax.getMax());
+//			this.map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), minMax.getMin(),
+//							minMax.getMax());
+			this.map = new ColorMap(new PavePaletteCreator().createPavePalette(), minMax.getMin(),
+					minMax.getMax());
 			this.map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
 
 			legend = new LegendPanel(this.map, minMax.getMin(), minMax.getMax(), zMap.getAxisScale().getTitle());	// 2014 get scalar name of the scalar map ???
@@ -723,11 +726,13 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 	private void editChartProps() {
 		Window window = SwingUtilities.getWindowAncestor(panel);
 		ConfigDialog dialog = null;
-		if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
-		else dialog = new ConfigDialog((JDialog) window);
+		if (window instanceof JFrame) 
+			dialog = new ConfigDialog((JFrame) window);
+		else 
+			dialog = new ConfigDialog((JDialog) window);
 
 		dialog.init(this, minMax);
-		dialog.setSize(500, 506);
+		dialog.setSize(500, 600);
 		dialog.setVisible(true);
 	}
 
@@ -780,8 +785,8 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 	 *
 	 * @param config the new plot configuration
 	 */
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
-		configure( config);
+	public void configure(PlotConfiguration config, Plot.ConfigSource source) {
+		configure(config);
 	}
 	public void configure(PlotConfiguration config) {
 		String configFile = config.getConfigFileName();
@@ -802,13 +807,16 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 			Logger.error("Error setting color map " + e.getMessage());
 		}
 
-		configureTitle(canvas.getTitle(), config.getTitle(),
+		Boolean show = (config.getShowTitle().compareTo("FALSE") != 0);
+		configureTitle(canvas.getTitle(), show, config.getTitle(),
 						config.getColor(PlotConfiguration.TITLE_COLOR),
 						config.getFont(PlotConfiguration.TITLE_FONT));
-		configureTitle(canvas.getSub1(), config.getSubtitle1(),
+		show = (config.getSubtitle1().compareTo("FALSE") != 0);
+		configureTitle(canvas.getSub1(), show, config.getSubtitle1(),
 						config.getColor(PlotConfiguration.SUBTITLE_1_COLOR),
 						config.getFont(PlotConfiguration.SUBTITLE_1_FONT));
-		configureTitle(canvas.getSub2(), config.getSubtitle2(),
+		show = (config.getSubtitle2().compareTo("FALSE") != 0);
+		configureTitle(canvas.getSub2(), show, config.getSubtitle2(),
 						config.getColor(PlotConfiguration.SUBTITLE_2_COLOR),
 						config.getFont(PlotConfiguration.SUBTITLE_2_FONT));
 
@@ -820,7 +828,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		if (font != null) axis.setFont(font);
 		Color color = config.getColor(PlotConfiguration.DOMAIN_COLOR);
 		if (color != null) axis.setColor(color);
-		Boolean show = (Boolean) config.getObject(PlotConfiguration.DOMAIN_SHOW_TICK);
+		show = (Boolean) config.getObject(PlotConfiguration.DOMAIN_SHOW_TICK);
 		if (show != null) axis.setTicksVisible(show);
 
 		axis = yMap.getAxisScale();
@@ -870,7 +878,8 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		this.config = config;
 	}
 
-	private void configureTitle(Title title, String text, Color color, Font font) {
+	private void configureTitle(Title title, Boolean show, String text, Color color, Font font) {
+		title.setShow(show);
 		if (text == null) text = "";
 		title.setText(text);
 		title.setColor(color);
@@ -917,16 +926,19 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 
 	protected PlotConfiguration getTitlesLabelsConfig(PlotConfiguration config) {
 		Title title = canvas.getTitle();
+		config.setShowTitle(title.getShow() ? "TRUE" : "FALSE");
 		config.setTitle(title.getText());
 		config.putObject(PlotConfiguration.TITLE_FONT, title.getFont());
 		config.putObject(PlotConfiguration.TITLE_COLOR, title.getColor());
 
 		title = canvas.getSub1();
+		config.setShowSubtitle1(title.getShow() ? "TRUE" : "FALSE");
 		config.setSubtitle1(title.getText());
 		config.putObject(PlotConfiguration.SUBTITLE_1_FONT, title.getFont());
 		config.putObject(PlotConfiguration.SUBTITLE_1_COLOR, (Color) title.getColor());
 
 		title = canvas.getSub2();
+		config.setShowSubtitle2(title.getShow() ? "TRUE" : "FALSE");
 		config.setSubtitle2(title.getText());
 		config.putObject(PlotConfiguration.SUBTITLE_2_FONT, title.getFont());
 		config.putObject(PlotConfiguration.SUBTITLE_2_COLOR, (Color) title.getColor());
@@ -977,4 +989,9 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		timeLayerPanel = null;		
 		
 	}	
+	
+	public JMapPane getMapPane()		// required by interface
+	{
+		return null;
+	}
 }

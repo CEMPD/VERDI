@@ -48,7 +48,6 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
-//import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
@@ -59,11 +58,6 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
-//import org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory;
-//import org.geotools.map.DefaultMapContext;
-//import org.geotools.map.DefaultMapLayer;
-//import org.geotools.map.MapContext;
-//import org.geotools.map.MapLayer;
 
 import repast.simphony.gis.display.AbstractMarqueeZoomer;
 import repast.simphony.gis.display.PGISCanvas;
@@ -90,6 +84,11 @@ import com.jgoodies.forms.layout.Sizes;
 import edu.umd.cs.piccolo.event.PInputEvent;			// NOTE: required old piccolo by Repast Simphony
 import edu.umd.cs.piccolo.event.PInputEventListener;	// NOTE: required old piccolo by Repast Simphony
 import edu.umd.cs.piccolo.util.PBounds;	// NOTE: required old piccolo by Repast Simphony
+//import org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory;
+//import org.geotools.map.DefaultMapContext;
+//import org.geotools.map.DefaultMapLayer;
+//import org.geotools.map.MapLayer;
+//import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
 
 /**
  * @author User #2
@@ -409,13 +408,14 @@ public class DomainPanel extends JPanel {
 				return cursor;
 			} catch (IOException e)
 			{
-				System.err.println("Failure reading graphics file: " + imageInputFile.toString());
-				e.printStackTrace();
+				Logger.error("Failure reading graphics file: " + imageInputFile.toString());
+				Logger.error(e.getMessage());
+				Logger.error(e.getStackTrace());
 			}
 			catch(Exception ex)
 			{
-				System.err.println("Failure processing graphics file: " + imageInputFile.toString());
-				ex.printStackTrace();
+				Logger.error("Failure processing graphics file: " + imageInputFile.toString());
+				Logger.error(ex.getStackTrace());
 			}
 		}
 		return Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);	// default return for null image file or failure processing graphics input file
@@ -543,8 +543,7 @@ public class DomainPanel extends JPanel {
 		panel.getToolBar().add(Box.createHorizontalGlue());
 		panel.getToolBar().add(domainLbl);
 		Logger.debug("in DomainPanel, putting title 'Edit Domain:' before new EditDomainWindow");
-		new EditDomainWindow((JFrame) null, grid, currentElement, panel,
-				winTitle, true);
+		new EditDomainWindow((JFrame) null, grid, currentElement, panel, winTitle, true);
 
 	}
 
@@ -583,17 +582,14 @@ public class DomainPanel extends JPanel {
 		area.setEditable(false);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane
-				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setViewportView(area);
 		scrollPane.setPreferredSize(new Dimension(580, 320));
 
 		panel.add(scrollPane);
 
-		new ProjectInfoWindow((JFrame) null, panel,
-				"Dataset Metadata");
+		new ProjectInfoWindow((JFrame) null, panel, "Dataset Metadata");
 		Logger.debug("in DomainPanel, just did new ProjectInfoWindow and passed in literal Dataset Metadata");
 	}
 

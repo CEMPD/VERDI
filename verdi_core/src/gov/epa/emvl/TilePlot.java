@@ -70,7 +70,7 @@ public class TilePlot {
 
 	protected PlotConfiguration config;
 	protected NumberFormat numberFormat;
-	private int preLayer = 0;
+//	private int preLayer = 0;
 	private List<ObsAnnotation> obsAnnotations;
 	private boolean showObsLegend = false;
 	private String plotTitle;
@@ -82,7 +82,7 @@ public class TilePlot {
 	private boolean log = false;
 	private int logBase = 10; //Math.E;
 	
-	static int callInx = 1;
+//	static int callInx = 1;
 
 	/**
 	 * Constructor - inputs 2D grid parameters.
@@ -159,7 +159,7 @@ public class TilePlot {
 		Logger.debug("ready to call graphics.setColor");
 		graphics.setColor(axisColor);
 		Logger.debug("ready to call drawGridBoundary");
-		drawGridBoundary(graphics, xMinimum, xMaximum, yMinimum, yMaximum);
+		drawGridBoundary(graphics, xMinimum, xMaximum, yMinimum, yMaximum);		// draw 4 lines
 		Logger.debug("ready to call drawAxis");
 		drawAxis(graphics, xMinimum, xMaximum, yMinimum, yMaximum, firstRow,
 				lastRow, firstColumn, lastColumn);
@@ -185,10 +185,11 @@ public class TilePlot {
 
 		if ( gridLineColor != null ) {
 			Logger.debug("ready to call drawGridLines");	// 2015 not printed in log file for fast tile plot
+															// apparently gridLineColor == null
 		  drawGridLines( graphics, xMinimum, xMaximum, yMinimum, yMaximum,
 				         firstRow, lastRow, firstColumn, lastColumn, gridLineColor);
 		}
-		Logger.debug("all done with TilePlot.draw");
+		Logger.debug("all done with TilePlot.draw");	// 2015 OK to here
 	}
 	
 	public synchronized void drawBatchImage(final Graphics graphics, int xOffset, int yOffset,
@@ -198,7 +199,9 @@ public class TilePlot {
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data) {
+			final Color gridLineColor, final float[][] data
+			)
+	{
 
 		this.config = config;
 		this.numberFormat = format;
@@ -518,20 +521,21 @@ public class TilePlot {
 			int xMaximum, int yMinimum, int yMaximum, final String variable,
 			int steplapse, int layer, int firstRow, int lastRow,
 			int firstColumn, int lastColumn, final float[][] data) {
+		// NOTE: steplapse = timestep - firstTimestep (from FastTilePlot.java code)
+		// where firstTimestep is either 0 or the origin of the time axis
 
 		final int xRange = xMaximum - xMinimum;
 		final int xCenter = xMinimum + xRange / 2;
 		final int space = 20; // Space between visual components
 		final Font gFont = graphics.getFont();
 		final Color gColor = graphics.getColor();
+		String title;
 		
 		// Title label:
 		String TITLE = config.getProperty(PlotConfiguration.TITLE);
-		final String titleStr = "Layer " + (layer + 1) + " " + variable;
-
-		String theTitle = config.getTitle();
-		Logger.debug("in gov.epa.emvl.TilePlot.java: TITLE = " + TITLE + ", titleStr = " + titleStr + 
-				", theTitle = " + theTitle);
+//		final String titleStr = "Layer " + (layer + 1) + " " + variable;	// do NOT want to recalculate title here
+																			// part of bug where user blanks title and it shows up again
+		String defaultTitle = "Layer " + (layer + 1) + " " + variable;
 		Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
 		Color tColor = config.getColor(PlotConfiguration.TITLE_COLOR);
 		tColor = (tColor == null) ? labelColor : tColor;
@@ -549,9 +553,10 @@ public class TilePlot {
 		//Keep with the pattern of Layer Number, i.e., Layer 1 then Layer 2 ....
 		//look for Layer 1, if present keep with the same trend but update with current the Layer Number
 //		final String title = (TITLE == null || TITLE.isEmpty() ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
-		// need to allow blank, but null is only the first time through this function; when user deletes title it is blank
-		final String title = (TITLE == null  ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
-		
+		if(TITLE == null || TITLE.length()<2)	// rest of fix for allowing user to blank out a title
+			title = defaultTitle; // TODO: needs more work
+		else
+			title = TITLE.replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
 		
 		Font currentFont = new Font(gFont.getFontName(), Font.BOLD, gFont.getSize() * 2);
 		tFont = (tFont == null ? currentFont : tFont);
@@ -668,13 +673,16 @@ public class TilePlot {
 
 		graphics.setFont(currentFont); // Restore original font.
 
+		config.setShowTitle("TRUE");
 		config.putObject(PlotConfiguration.TITLE, title);
 //		config.putObject(PlotConfiguration.TITLE, (!title.equals(titleStr) && preLayer == layer) ? title : "");
 		config.putObject(PlotConfiguration.TITLE_FONT, tFont);
 		config.putObject(PlotConfiguration.TITLE_COLOR, tColor);
+		config.setShowSubtitle1("TRUE");
 		config.putObject(PlotConfiguration.SUBTITLE_1, (sTitle1 == null) ? "" : sTitle1);
 		config.putObject(PlotConfiguration.SUBTITLE_1_COLOR, sColor1);
 		config.putObject(PlotConfiguration.SUBTITLE_1_FONT, sFont1);
+		config.setShowSubtitle2("TRUE");
 		config.putObject(PlotConfiguration.SUBTITLE_2, (sTitle2 == null) ? "" : sTitle2);
 		config.putObject(PlotConfiguration.SUBTITLE_2_COLOR, sColor2);
 		config.putObject(PlotConfiguration.SUBTITLE_2_FONT, sFont2);
@@ -692,7 +700,7 @@ public class TilePlot {
 		config.putObject(PlotConfiguration.OBS_LEGEND_COLOR, (obsColor == null) ? labelColor : obsColor);
 		config.putObject(PlotConfiguration.OBS_LEGEND_FONT, (obsFont == null) ? gFont : obsFont);
 		
-		this.preLayer = layer;
+//		this.preLayer = layer;
 	}
 
 	private void drawObsLegend(Graphics g, int xmin, int xmax, int ymin, int ymax, int top) {
@@ -719,12 +727,6 @@ public class TilePlot {
 		symbols.put(Symbol.STAR, new ImageIcon(fileStar));
 		symbols.put(Symbol.SUN, new ImageIcon(fileSun));
 		symbols.put(Symbol.TRIANGLE, new ImageIcon(fileTriangle));
-//		symbols.put(Symbol.CIRCLE, new ImageIcon(getClass().getResource("/circle.png")));
-//		symbols.put(Symbol.DIAMOND, new ImageIcon(getClass().getResource("/diamond.png")));
-//		symbols.put(Symbol.SQUARE, new ImageIcon(getClass().getResource("/square.png")));
-//		symbols.put(Symbol.STAR, new ImageIcon(getClass().getResource("/star.png")));
-//		symbols.put(Symbol.SUN, new ImageIcon(getClass().getResource("/sun.png")));
-//		symbols.put(Symbol.TRIANGLE, new ImageIcon(getClass().getResource("/triangle.png")));
 		
 		HashMap<String, ImageIcon> legends = new HashMap<String, ImageIcon>();
 		List<String> names = new ArrayList<String>();
@@ -1001,8 +1003,7 @@ public class TilePlot {
 		final int columns = 1 + lastColumn - firstColumn;
 		final float width = xMaximum - xMinimum;
 		final float height = yMaximum - yMinimum;
-		final float xDelta = width / columns; // Width in pixels of a grid
-		// cell.
+		final float xDelta = width / columns; // Width in pixels of a grid cell.
 		final float yDelta = height / rows; // Height in pixels of a grid cell.
 		final int rectangleHeight = replaceRound(yDelta + 0.5f);
 		float rectangleWidth = xDelta;
@@ -1011,8 +1012,7 @@ public class TilePlot {
 		Color previousCellColor = null;
 
 		// Color entire grid area with the lowest legend color then
-		// avoid drawing the (usually numerous) grid cells that have
-		// that color.
+		// avoid drawing the (usually numerous) grid cells that have that color.
 
 		graphics.setColor(backgroundColor);
 		
@@ -1284,14 +1284,6 @@ public class TilePlot {
 		calendar.set(Calendar.ZONE_OFFSET, 0);
 		calendar.set(year, month - zero_based_offset, day, hour, minute, second);
 
-//		final int unused = calendar.get(Calendar.HOUR_OF_DAY); // UGLY Java
-		// BUG:
-		// Must call get() so the previous set() takes effect before calling
-		// add()!
-		// Terrible design of java.util.Calendar! Violates CQSP and the primary
-		// design rule: make it easy to use correctly and hard to use
-		// incorrectly.
-
 		calendar.add(Calendar.DAY_OF_MONTH, days);
 		calendar.add(Calendar.HOUR_OF_DAY, hours);
 		calendar.add(Calendar.MINUTE, minutes);
@@ -1303,17 +1295,6 @@ public class TilePlot {
 		hour = calendar.get(Calendar.HOUR_OF_DAY);
 		minute = calendar.get(Calendar.MINUTE);
 		second = calendar.get(Calendar.SECOND);
-		// 2014 commented out next lines & replaced with GregorianCalendar & Utilities.formatDate
-//		final String[] monthNames = { "January", "February", "March", "April",
-//				"May", "June", "July", "August", "September", "October",
-//				"November", "December" };
-//		final String monthName = monthNames[month];
-//		final String h0 = hour < 10 ? "0" : "";
-//		final String m0 = minute < 10 ? "0" : "";
-//		final String s0 = second < 10 ? "0" : "";
-//		final String result = monthName + " " + day + ", " + year + " " + h0
-//				+ hour + ":" + m0 + minute + ":" + s0 + second + " UTC";
-//		return result;
 		GregorianCalendar aGregorianCalendar = new GregorianCalendar(year,month,day,hour,minute,second);
 		String result = Utilities.formatDate(aGregorianCalendar); 
 		return result;
@@ -1436,9 +1417,6 @@ public class TilePlot {
 	}
 	
 	private int replaceRound(float num) {
-		return 
-		//(int)Math.floor(num);
-		Math.round(num);
+		return Math.round(num);
 	}
-
 }

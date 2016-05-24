@@ -1,7 +1,5 @@
 package anl.verdi.plot.gui;
 
-import gov.epa.emvl.Projector;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -17,11 +15,16 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.geometry.jts.JTS;
+import org.geotools.referencing.CRS;
 import org.jfree.chart.annotations.AbstractXYAnnotation;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.Range;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 
 import anl.verdi.data.Axes;
 import anl.verdi.data.BoundingBoxer;
@@ -32,6 +35,8 @@ import anl.verdi.data.ObsData;
 import anl.verdi.data.ObsEvaluator;
 import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.util.Graphics2DShapesTool;
+
+import com.vividsolutions.jts.geom.Coordinate;
 
 public class ObsAnnotation extends AbstractXYAnnotation {
 
@@ -192,7 +197,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	 */
 	public synchronized void draw(Graphics graphics, int xOffset, int yOffset, int width,
 			int height, double[] legendLevels, Color[] legendColors,
-			final Projector projector, final double[][] domain,
+			final CoordinateReferenceSystem gridCRS, final double[][] domain,
 			final double[][] gridBounds) {
 		Stroke stroke = ((Graphics2D) graphics).getStroke();
 		Color defaultColor = graphics.getColor();
@@ -202,7 +207,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 		final double xMaximum = gridBounds[X][MAXIMUM];
 		final double yMinimum = gridBounds[Y][MINIMUM];
 		final double yMaximum = gridBounds[Y][MAXIMUM];
-		final double lonMaximum = (projector == null) ? xMaximum : domain[X][MAXIMUM];
+		final double lonMaximum = (gridCRS == null) ? xMaximum : domain[X][MAXIMUM];
 		final double longitudeShift = lonMaximum > 180.0 ? 360.0 : 0.0;
 		final double xRange = xMaximum - xMinimum;
 		final double yRange = yMaximum - yMinimum;
@@ -215,8 +220,15 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 			lon = lon >= 0.0 ? lon : lon + longitudeShift;
 			double lat = data.getLat();
 			
-			if (projector != null) projector.project(lon, lat, point);
-			if (projector == null) {point[0] = lon; point[1] = lat;}
+			if (gridCRS == null) // no projection known so point becomes lon/lat
+			{
+				point[0] = lon; 
+				point[1] = lat;
+			}
+			else
+			{// have a projection so project lon/lat to the point
+				point = lonlat2Point(lon, lat, gridCRS);
+			}
 
 			final int x = (int) Math.round((point[0] - xMinimum) * xScale + xOffset);
 			final int y = (int) Math.round(height + yOffset - (point[1] - yMinimum) * yScale);
@@ -339,6 +351,27 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 			return false;
 
 		return idString.equalsIgnoreCase(other.getID());
+	}
+	
+	private double[] lonlat2Point(double lon, double lat, CoordinateReferenceSystem gridCRS)
+	{	// convert lon/lat to point
+		double[] aPoint = {0.0, 0.0};
+		try{
+		CRSAuthorityFactory crsFactory = CRS.getAuthorityFactory(true);
+		CoordinateReferenceSystem crs = crsFactory.createCoordinateReferenceSystem("EPSG:4326");
+		boolean lenient = true;
+		MathTransform transform = CRS.findMathTransform(crs, gridCRS, lenient);
+		Coordinate srcCoordinate = new Coordinate(lon, lat);
+		Coordinate targetCoordinate = JTS.transform(srcCoordinate, null, transform);
+		aPoint[0] = targetCoordinate.x;
+		aPoint[1] = targetCoordinate.y;
+		return aPoint;
+		} catch(Exception ex) {
+			Logger.error("Exception converting ObsAnnotation (lon,lat) to projected coordinate:"
+					+ ex.toString());
+			Logger.error(ex.getStackTrace());
+		}
+		return null;
 	}
 
 }

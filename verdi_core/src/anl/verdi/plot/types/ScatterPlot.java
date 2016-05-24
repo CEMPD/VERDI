@@ -42,6 +42,7 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.swing.JMapPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartTheme;
 import org.jfree.chart.JFreeChart;
@@ -54,6 +55,7 @@ import org.jfree.chart.title.LegendTitle;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
+
 
 //import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
@@ -446,16 +448,6 @@ public class ScatterPlot extends AbstractPlot {
 
 	/**
 	 * Configure this Plot according to the specified PlotConfiguration.
-	 *
-	 * @param config the new plot configuration
-	 */
-	@Override
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
-		configure(config);
-	}
-	
-	/**
-	 * Configure this Plot according to the specified PlotConfiguration.
 	 * 
 	 * @param config
 	 *            the new plot configuration
@@ -473,6 +465,7 @@ public class ScatterPlot extends AbstractPlot {
 		}
 
 		UnitsConfigurator unitsConfig = new UnitsConfigurator() {
+
 			public void configureUnits(Boolean showLegend, String text, Font font, Color color) {
 				LegendTitle legend = chart.getLegend();
 				legend.setVisible(showLegend);
@@ -502,7 +495,6 @@ public class ScatterPlot extends AbstractPlot {
 
 		this.config = config;
 	}
-	
 
 	/**
 	 * Gets this Plot's configuration data.
@@ -824,5 +816,9 @@ public class ScatterPlot extends AbstractPlot {
 	public String getTitle() {
 		return chart.getTitle().getText();
 	}
-
+	
+	public JMapPane getMapPane()		// required by interface
+	{
+		return null;
+	}
 }

@@ -1,0 +1,8 @@
+<map id="anl.verdi.commandline.ScriptHandler.constructMap" name="anl.verdi.commandline.ScriptHandler.constructMap">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1gui_1_1_dataset_list_model.html#a0e6dd103df2db5a633834607f6eaae82" title="anl.verdi.gui.DatasetList\lModel.getElementAt" alt="" coords="281,5,441,47"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1gui_1_1_formula_list_model.html#a517137e295c24f2f9ef7fb4c42cdacd9" title="anl.verdi.gui.FormulaList\lModel.getElementAt" alt="" coords="279,71,442,112"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1core_1_1_verdi_application.html#a0c2b3005aaa1bb9d7dc39d46698360f6" title="anl.verdi.core.VerdiApplication.getGui" alt="" coords="241,137,480,163"/>
+<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1core_1_1_verdi_application.html#a0dc1c043ad75b000da854806fcdee622" title="anl.verdi.core.VerdiApplication.get\lProject" alt="" coords="251,188,470,229"/>
+<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1gui_1_1_dataset_list_model.html#a75a534cede1e531d2bbb98980ca3e432" title="anl.verdi.gui.DatasetList\lModel.getSize" alt="" coords="281,253,441,295"/>
+<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1commandline_1_1_script_handler.html#a96ed83039b03eed482dd6e01d23c0ace" title="anl.verdi.commandline.Script\lHandler.run" alt="" coords="267,319,455,360"/>
+</map>

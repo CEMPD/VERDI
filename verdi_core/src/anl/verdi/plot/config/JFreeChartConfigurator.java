@@ -147,20 +147,23 @@ public class JFreeChartConfigurator {
 	}
 	
 	private void configureTitles(PlotConfiguration config) {
+		Boolean show = (config.getShowTitle().compareTo("FALSE") != 0);
 		String text = config.getTitle();
 		Color color = (Color) config.getObject(PlotConfiguration.TITLE_COLOR);
 		Font font = (Font) config.getObject(PlotConfiguration.TITLE_FONT);
-		titleConfigurator.configureTitle(text, font, color);
+		titleConfigurator.configureTitle(show, text, font, color);
 
+		show = (config.getShowSubtitle1().compareTo("FALSE") != 0);
 		text = config.getSubtitle1();
 		color = (Color) config.getObject(PlotConfiguration.SUBTITLE_1_COLOR);
 		font = (Font) config.getObject(PlotConfiguration.SUBTITLE_1_FONT);
-		titleConfigurator.configureSubtitle1(text, font, color);
+		titleConfigurator.configureSubtitle1(show, text, font, color);
 
+		show = (config.getShowSubtitle2().compareTo("FALSE") != 0);
 		text = config.getSubtitle2();
 		color = (Color) config.getObject(PlotConfiguration.SUBTITLE_2_COLOR);
 		font = (Font) config.getObject(PlotConfiguration.SUBTITLE_2_FONT);
-		titleConfigurator.configureSubtitle2(text, font, color);
+		titleConfigurator.configureSubtitle2(show, text, font, color);
 	}
 
 

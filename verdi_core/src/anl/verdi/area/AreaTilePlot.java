@@ -1,4 +1,4 @@
-/** AreaTilePlot.java - Draw a areal interpolation plot.
+/** AreaTilePlot.java - Draw an areal interpolation plot.
  * @author Mary Ann Bitz
  * @author Argonne National Lab
  */
@@ -45,7 +45,6 @@ public class AreaTilePlot extends TilePlot{
 	final double[][] domain;
 	final double[][] gridBounds;
 	final Projector projector;
-
 
 	protected static final int AVERAGES=0; 
 	protected static final int TOTALS=1; 
@@ -140,9 +139,6 @@ public class AreaTilePlot extends TilePlot{
 		//Target.setUnitConverters("PPM");
 		Target.setUnitConverters(units);
 
-
-
-
 		// set legend colors
 		// Draw grid boundary rectangle, labeled row/column axis and legend:
 
@@ -167,7 +163,8 @@ public class AreaTilePlot extends TilePlot{
 
 		// Draw legend-colored grid cells or polygons
 
-		MapPolygon mapPolygon=new MapPolygon();
+		MapPolygon mapPolygon=new MapPolygon();	// 2015 REDO all related to MapPolygon
+												// replace with GeoTools functionality
 		//showBusyCursor();
 		switch(currentView){
 		case GRID:
@@ -249,8 +246,6 @@ public class AreaTilePlot extends TilePlot{
 		return domain;
 	}
 
-
-
 	public double[][] getGridBounds() {
 		return gridBounds;
 	}
@@ -268,7 +263,3 @@ public class AreaTilePlot extends TilePlot{
 		}
 	}
 }
-
-
-
-

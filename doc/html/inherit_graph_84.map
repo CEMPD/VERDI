@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1loaders_1_1_c_s_v_reader.html" title="anl.verdi.loaders.CSVReader" alt="" coords="192,5,379,32"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1loaders_1_1_grid_netcdf_reader.html" title="anl.verdi.loaders.GridNetcdf\lReader" alt="" coords="195,57,375,98"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1loaders_1_1_models3_obs_reader.html" title="anl.verdi.loaders.Models3\lObsReader" alt="" coords="201,122,369,163"/>
+<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1loaders_1_1_models3_reader.html" title="anl.verdi.loaders.Models3\lReader" alt="" coords="201,187,369,229"/>
+</map>

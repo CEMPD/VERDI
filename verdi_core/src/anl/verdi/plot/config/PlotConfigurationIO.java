@@ -140,10 +140,10 @@ public class PlotConfigurationIO extends DefaultHandler2 {
 
 
 	/**
-	 * Adds a convertor to convert some class to and from a String representation.
+	 * Adds a converter to convert some class to and from a String representation.
 	 *
-	 * @param className the class this convertor operates on
-	 * @param convertor the convertor
+	 * @param className the class this converter operates on
+	 * @param convertor the converter
 	 */
 	public void addConvertor(String className, StringConvertor convertor) {
 		convertors.put(className, convertor);

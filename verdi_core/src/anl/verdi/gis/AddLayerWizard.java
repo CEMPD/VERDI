@@ -1,8 +1,10 @@
 package anl.verdi.gis;
 
+//import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 import javax.swing.JFrame;
 
-//import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.map.FeatureLayer;
 import org.pietschy.wizard.Wizard;
 import org.pietschy.wizard.models.SimplePath;
@@ -13,12 +15,14 @@ import org.pietschy.wizard.models.SimplePath;
  */
 public class AddLayerWizard {
 
+	static final Logger Logger = LogManager.getLogger(AddLayerWizard.class.getName());
 	private AddLayerWizardModel model;
 
 	private Wizard wizard;
 
 
 	public AddLayerWizard() {
+		Logger.debug("in constructor for AddLayerWizard");
 		init();
 	}
 

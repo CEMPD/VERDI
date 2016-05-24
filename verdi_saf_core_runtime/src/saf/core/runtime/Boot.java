@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+//import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +18,8 @@ import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.java.plugin.JpfException;
 import org.java.plugin.ObjectFactory;
 import org.java.plugin.Plugin;
@@ -40,6 +42,10 @@ import simphony.util.messages.MessageCenter;
  * @version $Revision: 1.11 $ $Date: 2006/06/01 16:31:11 $
  */
 public class Boot {
+	
+	static final Logger Logger = LogManager.getLogger(Boot.class.getName());
+//	protected static final MessageCenter msgCenter = MessageCenter.getMessageCenter(NetcdfDatasetFactory.class);
+
 
   private static final String PLUGIN_FOLDER_PROP = "pluginFolders";
   private static final String PLUGIN_DESCRIPTOR_PROP = "plugin.descriptors";
@@ -57,10 +63,10 @@ public class Boot {
   public PluginManager init(String[] args) {
 
     // load properties
-    if (args.length > 1)
-    {
-    //  RUNTIME_DIR_ROOT = args[1];
-    }
+//    if (args.length > 1)		// commented out a do-nothing block
+//    {
+//    //  RUNTIME_DIR_ROOT = args[1];
+//    }
     System.setProperty("applicationRoot", RUNTIME_DIR_ROOT);
     center = MessageCenter.getMessageCenter(Boot.class);
     try {
@@ -124,6 +130,7 @@ public class Boot {
 //      corePlugin.getClass().getMethod("run", String[].class).invoke(corePlugin, (Object) args);
    	// 2014 breaking up above statement; 1st get name of class at run-time for predetermined instantiated object
       Class<? extends Plugin> pClass = corePlugin.getClass();
+//      System.out.println("just did corePlugin.getClass: " + corePlugin.getClass().toString());
 //      Method[] someMethods = pClass.getDeclaredMethods();
 //      System.out.println("Now try to list the methods");
 //      for (Method aMethod : someMethods)
@@ -139,16 +146,28 @@ public class Boot {
 //      }
       // 2nd get name of method at run-time that belongs to class
       Method aMethod = pClass.getMethod((String) "run", String[].class);
+//      System.out.println("just did Method aMethod for " + String[].class);
+      Logger.debug("just did Method aMethod for " + String[].class);
+//      System.out.println("aMethod: " + aMethod);
+      Logger.debug("aMethod: " + aMethod);
+//      System.out.println("aMethod = " + aMethod.toGenericString());
+      Logger.debug("aMethod = " + aMethod.toGenericString());
       // 3rd invoke actual method of that class on an object
+//      System.out.println("ready to aMethod.invoke, args = " + args);
+//      System.out.println("args = " + args.toString());
+      Logger.debug("args = " + args.toString());
       aMethod.invoke(corePlugin, new java.lang.Object[] {args});
 
     } catch (InvocationTargetException itEx)
     {
-    	System.out.println("caught an InvocationTargetException in Boot.run; printing .getCause()");
-    	center.error(itEx.getCause(), itEx);
+    	
+    	Logger.error("caught an InvocationTargetException in Boot.run; printing .getCause()");
+    	Logger.error(itEx.getCause().toString() + ", " + itEx.toString());
+    	Logger.error(itEx.getTargetException().getMessage());
+//    	center.error(itEx.getCause(), itEx);
     }
     catch (Exception ex) {
-    	System.out.println("Caught an Exception in Boot.java");
+    	Logger.error("Caught an Exception in Boot.java");
       center.error(ex.getMessage(), ex);
     }
   }
@@ -307,7 +326,7 @@ Map<java.lang.String, Identity> map = pluginManager.publishPlugins(myLocations);
     PluginManager manager = boot.init(args);
     if(manager == null)
     {
-    	System.out.println(" boot.init returned null. Ending with exit(1)");
+    	System.err.println(" boot.init returned null. Ending with exit(1)");
     	System.exit(1);
     }
     boot.run(manager, args);

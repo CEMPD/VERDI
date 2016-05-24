@@ -1,7 +1,5 @@
 package anl.verdi.gis;
 
-import gov.epa.emvl.MapLines;
-
 import java.awt.BorderLayout;
 
 import org.apache.logging.log4j.LogManager;		// 2014
@@ -16,6 +14,7 @@ import org.pietschy.wizard.WizardModel;
 
 //import repast.gis.styleEditor.StyleEditorPanel;		// 2014 Repast Simphony changed the package name
 import repast.simphony.gis.styleEditor.StyleEditorPanel;
+import anl.verdi.plot.gui.VerdiBoundaries;
 // GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 
 /**
@@ -53,7 +52,7 @@ public class FastTileEditorStep extends PanelWizardStep {
 		model = (FastTileAddLayerWizardModel) wizardModel;
 	}
 
-//	@Override
+	@Override
 	public void prepare() {
 		// NOTE: 2014 appears that MapLayer, FeatureLayer, etc. cannot be assigned to StyleEditorPanel at this time
 		// printing an error message if hit this function
@@ -86,12 +85,15 @@ public class FastTileEditorStep extends PanelWizardStep {
 	public void applyState() throws InvalidStateException {
 		Logger.debug("in FastTileEditorStep.applyState, ready for model");
 		FastTileAddLayerWizardModel aModel = model;
-		Logger.debug("got aModel, now ready to get MapLines");
-		MapLines aMapLines = aModel.getLayer();
-		Logger.debug("got MapLines, now ready to get the Style");
+		Logger.debug("just got model = " + model);
+		Logger.debug("set aModel = model = " + aModel);		// aModel is OK here
+		Logger.debug("got aModel, now ready to get VerdiBoundaries");
+		VerdiBoundaries aVerdiBoundaries = aModel.getLayer();	// HERE returns null for layer
+		Logger.debug("got VerdiBoundaries, now ready to get the Style");	// OK - get this message
+		Logger.debug("ready to getStyle for panel: " + panel.getName());	// panel.getName() == null, so bombs rest
 		Style aStyle = panel.getStyle();		// 2014 throws NullPointerException
-		Logger.debug("get the style = " + aStyle + ", now ready to set the Style");
-		aMapLines.setStyle(aStyle);		// 2014 throws NullPointerException
+		Logger.debug("get the style = " + aStyle + ", now ready to set the Style");	// do NOT get this message
+		aVerdiBoundaries.getVerdiStyle().setStyle(aStyle);
 //		model.getLayer().setStyle(panel.getStyle());
 		Logger.debug("done in FastTileEditorStep.applyState & returning");
 	}

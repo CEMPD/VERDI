@@ -4,6 +4,9 @@ import java.awt.Frame;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;		// 2015
+import org.apache.logging.log4j.Logger;			// 2015 replacing System.out.println with logger messages
+
 import anl.verdi.area.AreaFile;
 import anl.verdi.area.AreaFilePanel;
 import anl.verdi.area.WDTWizardWindow;
@@ -23,11 +26,11 @@ public class OpenTargetWindow extends WDTWizardWindow {
 	 * 
 	 */
 	private static final long serialVersionUID = -7336905067654714414L;
+	static final Logger Logger = LogManager.getLogger(OpenTargetWindow.class.getName());
 
-ProjectionCard projectionCard;
-
-  TargetFileCard targetFileCard;
-  AreaFilePanel areaPanel;
+	ProjectionCard projectionCard;
+	TargetFileCard targetFileCard;
+	AreaFilePanel areaPanel;
   /**
    * Constructs a window to select a target file
    * 
@@ -45,11 +48,13 @@ ProjectionCard projectionCard;
     // add the cards in
     targetFileCard = new TargetFileCard(this);
     addCard(targetFileCard, "File");
+    Logger.debug("added targetFileCard");
     int[] buttons = { NEXT, CANCEL };
     pushCard("File", buttons);
 
     projectionCard = new ProjectionCard(this);
     addCard(projectionCard, "Coordinates");
+    Logger.debug("added projectionCard");
 
     // pack and show it
     pack();
@@ -62,11 +67,11 @@ ProjectionCard projectionCard;
    */
   public void nextAction() {
     if (getCurrentCard() == targetFileCard) {
-      if(!targetFileCard.nextAction())return;
+      if(!targetFileCard.nextAction())
+    	  return;
       File[] files=targetFileCard.getSelectedFiles();
       if(files!=null&&files.length!=0){
       
-//        String fileName=targetFileCard.getDefaultPath();
         String fileName=TargetFileCard.getDefaultPath();
         int[] buttons = {BACK,FINISH,CANCEL};
         
@@ -95,6 +100,7 @@ ProjectionCard projectionCard;
       return false;
     // load the files and projections
     targetFileCard.doAction(projectionCard.getNameString(), projectionCard.getProjection());
+    Logger.debug("getNameString = " + projectionCard.getName() + ", getProjection = " + projectionCard.getProjection());
     
     // update the areaFilePanel
     // update the list of area files
@@ -106,6 +112,4 @@ ProjectionCard projectionCard;
 	areaPanel.updateTilePlots(true);
     return true;
   }
-
-  
 }

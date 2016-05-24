@@ -14,15 +14,10 @@ import javax.swing.filechooser.FileFilter;
 
 import org.apache.commons.io.FilenameUtils;
 
-import anl.verdi.plot.gui.FastAreaTilePlot;
 import anl.verdi.plot.gui.FastTilePlot;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.io.TIFConvertImage;
 import anl.verdi.util.Utilities;
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-
-
 /**
  * Saves snapshots of plots.
  *
@@ -31,7 +26,6 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
  */
 public class PlotExporter {
 
-	static final Logger Logger = LogManager.getLogger(PlotExporter.class.getName());
 	public final static String JPEG = "jpeg";
 	public final static String JPG = "jpg";
 	public final static String TIFF = "tiff";
@@ -39,8 +33,7 @@ public class PlotExporter {
 	public final static String PNG = "png";
 	public final static String BMP = "bmp";
 	public final static String EPS = "eps";
-	public final static String SHP = "shp";		// 2014 disabling shapefile export in VERDI 1.5.0
-												// 2015 enabled for FastAreaTilePlot in VERDI 1.5.2
+	public final static String SHP = "shp";
 	public final static String ASC = "asc";
 
 	private Plot plot;
@@ -78,10 +71,6 @@ public class PlotExporter {
 
 	public PlotExporter(Plot plot) {
 		this.plot = plot;
-		if(plot instanceof FastAreaTilePlot)
-			Logger.debug("in PlotExplorer: plot is instanceof FastAreaTilePlot");
-		if(plot instanceof FastTilePlot)
-			Logger.debug("in PlotExplorer: plot is instanceof FastTilePlot");
 	}
 
 	/**
@@ -101,8 +90,7 @@ public class PlotExporter {
 		chooser.addChoosableFileFilter(new ImageFileFilter("EPS Image (*.eps)", EPS));
 		final FileFilter pngFileFilter = new ImageFileFilter("PNG Image (*.png)", PNG);
 		chooser.addChoosableFileFilter(pngFileFilter);
-		if(plot instanceof FastAreaTilePlot)
-			chooser.addChoosableFileFilter(new ImageFileFilter("Shapefile (*.shp, *.shx, *.dbf)", SHP));
+		chooser.addChoosableFileFilter(new ImageFileFilter("Shapefile (*.shp, *.shx, *.dbf)", SHP));
 		chooser.addChoosableFileFilter(new ImageFileFilter("ASCII Grid (*.asc)", ASC));
 		chooser.setFileFilter(pngFileFilter);
 
@@ -146,13 +134,9 @@ public class PlotExporter {
 			file = new File(file.getAbsolutePath() + "." + currentExt);
 		}
 
-		if(plot instanceof FastAreaTilePlot && currentExt.equals(SHP)){
-			String filename = file.getAbsolutePath();
-//			((FastAreaTilePlot)plot).exportShapeFile(filename);
-		}
-		else if ( plot instanceof FastTilePlot &&
+		if ( plot instanceof FastTilePlot &&
 				( currentExt.equalsIgnoreCase(EPS) ||
-//				  currentExt.equals( SHP )  ||  
+				  currentExt.equals( SHP )  ||  
 				  currentExt.equals( ASC ) ) ) {
 			String filename = file.getAbsolutePath();
 			int extPos = filename.indexOf("." + currentExt);
@@ -162,8 +146,8 @@ public class PlotExporter {
 
 			if ( currentExt.equalsIgnoreCase(EPS) ) {
 				((FastTilePlot)plot).exportEPSImage(filename);
-//			} else if ( currentExt.equals( SHP ) ) {
-//				((FastTilePlot)plot).exportShapefile(filename);
+			} else if ( currentExt.equals( SHP ) ) {
+				((FastTilePlot)plot).exportShapefile(filename);
 			} else {
 				((FastTilePlot)plot).exportASCIIGrid(filename);				
 			}
@@ -195,9 +179,7 @@ public class PlotExporter {
 //			ext = s.substring(i + 1).toLowerCase();
 //		}
 		String fileName = f.toString();
-		Logger.debug("File name extension for " + fileName + " = ");
 		String ext = new String(FilenameUtils.getExtension(fileName)).toLowerCase(); // 2015  NullPointerException thrown when first going to specify file name for exporting graphics
-		Logger.debug("     " + ext);
 		return ext;
 	}
 	
@@ -223,6 +205,6 @@ public class PlotExporter {
 			save(file);
 		}catch(IOException e){}
 		
-		currentExt = "png";	// 2015 Why change the name of the extension after the file was saved?
+		currentExt = "png";
 	}
 }

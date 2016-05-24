@@ -1,0 +1,7 @@
+<map id="anl.verdi.plot.config.PlotConfiguration.putObject" name="anl.verdi.plot.config.PlotConfiguration.putObject">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_footers_panel.html#af499de33fb9f83ea7e7652d0ea585ef2" title="anl.verdi.plot.gui.Footers\lPanel.fillConfiguration" alt="" coords="236,5,399,47"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_tile_plot_configuration.html#a08ed1fd2c5a0f44cca6a0103df985364" title="anl.verdi.plot.config.Tile\lPlotConfiguration.setColorMap" alt="" coords="219,71,416,112"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_vert_cross_plot_configuration.html#adb4076a3a0909cb268f8d7e83bcb40ce" title="anl.verdi.plot.config.Vert\lCrossPlotConfiguration.setCross\lSectionRowCol" alt="" coords="212,137,423,193"/>
+<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_vert_cross_plot_configuration.html#a4e1f9ac6f01fbb6808649dcbb73c3045" title="anl.verdi.plot.config.Vert\lCrossPlotConfiguration.setCross\lSectionType" alt="" coords="212,217,423,273"/>
+<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_tile_plot_configuration.html#a2bfe60c9462883790f62764626b9e23e" title="anl.verdi.plot.config.Tile\lPlotConfiguration.setGridLines" alt="" coords="219,297,416,339"/>
+</map>

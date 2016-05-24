@@ -4,7 +4,7 @@
 
 package anl.verdi.gis;
 
-import java.awt.BorderLayout;
+//import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -418,13 +418,13 @@ public class LayerEditorPanel extends JPanel {
 	private JButton removeLayerButton;
 	// JFormDesigner - End of variables declaration //GEN-END:variables
 
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new BorderLayout());
-		frame.setSize(500, 500);
-		frame.add(new LayerEditorPanel(), BorderLayout.CENTER);
-		frame.setVisible(true);
-	}
+//	public static void main(String[] args) {
+//		JFrame frame = new JFrame();
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setLayout(new BorderLayout());
+//		frame.setSize(500, 500);
+//		frame.add(new LayerEditorPanel(), BorderLayout.CENTER);
+//		frame.setVisible(true);
+//	}
 
 }

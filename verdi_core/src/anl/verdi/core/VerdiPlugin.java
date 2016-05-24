@@ -66,8 +66,8 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 			Properties pFRL = new Properties();		// 2014 added all pertaining to pFRL
 			pFRL.setProperty("resource.loader", "file");
 			pFRL.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
-			pFRL.setProperty("runtime.log", System.getProperty("user.home") + '/' + "verdi"
-					+ '/' + "velocity.log");
+			pFRL.setProperty("runtime.log", System.getProperty("user.home") + File.separatorChar + "verdi"
+					+ File.separatorChar + "velocity.log");
 			Velocity.init(pFRL);
 			Logger.trace("just called Velocity.init for pFRL");
 			try {

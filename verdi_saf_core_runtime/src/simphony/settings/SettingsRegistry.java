@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * This is a simple class for storing settings for an application. This is at heart just a chain of
- * {@link java.util.Map}s with an id assosciated to them. This stores that id in itself through the
+ * {@link java.util.Map}s with an id associated to them. This stores that id in itself through the
  * key {@link #REGISTRY_ID_KEY}.
  * 
  * @author Jerry Vos

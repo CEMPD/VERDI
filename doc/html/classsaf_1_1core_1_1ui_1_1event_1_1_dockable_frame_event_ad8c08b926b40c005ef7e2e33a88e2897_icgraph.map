@@ -1,0 +1,7 @@
+<map id="saf.core.ui.event.DockableFrameEvent.getDockable" name="saf.core.ui.event.DockableFrameEvent.getDockable">
+<area shape="rect" id="node2" href="$classsaf_1_1core_1_1ui_1_1dock_1_1_state_changer.html#a02cf47c8dc41beffc2ea831973949347" title="saf.core.ui.dock.StateChanger.close\lDockable" alt="" coords="241,5,473,47"/>
+<area shape="rect" id="node3" href="$classsaf_1_1core_1_1ui_1_1dock_1_1_state_changer.html#a713aa0883e9b478133f92742de23bdf6" title="saf.core.ui.dock.StateChanger.float\lDockable" alt="" coords="244,71,469,112"/>
+<area shape="rect" id="node4" href="$classsaf_1_1core_1_1ui_1_1dock_1_1_state_changer.html#a4dc1e0da3a643858aa853ca4f57ad2df" title="saf.core.ui.dock.StateChanger.maximize\lDockable" alt="" coords="228,136,485,177"/>
+<area shape="rect" id="node5" href="$classsaf_1_1core_1_1ui_1_1dock_1_1_state_changer.html#ab7d9faba500ca072d0f876ac9b5b98f4" title="saf.core.ui.dock.StateChanger.minimize\lDockable" alt="" coords="230,201,483,243"/>
+<area shape="rect" id="node6" href="$classsaf_1_1core_1_1ui_1_1dock_1_1_state_changer.html#a7618c8474526c45ba1abe96ba859a490" title="saf.core.ui.dock.StateChanger.restore\lDockable" alt="" coords="236,267,477,308"/>
+</map>

@@ -20,10 +20,10 @@ import anl.verdi.plot.config.Title;
 public class VerdiCanvas3D extends VisADCanvasJ3D {
 
 	private Object lock = new Object();
-	private Title title = new Title("", Font.decode("Dialog-plain-14"), Color.WHITE);
-	private Title sub1 = new Title("", null, Color.WHITE);
-	private Title sub2 = new Title("", null, Color.WHITE);
-	private Title time = new Title("", null, Color.WHITE);
+	private Title title = new Title(true, "", Font.decode("Dialog-plain-14"), Color.WHITE);
+	private Title sub1 = new Title(true, "", null, Color.WHITE);
+	private Title sub2 = new Title(true, "", null, Color.WHITE);
+	private Title time = new Title(true, "", null, Color.WHITE);
 	private Font defaultFont;
 	private Color defaultColor = Color.WHITE;
 
@@ -148,6 +148,7 @@ public class VerdiCanvas3D extends VisADCanvasJ3D {
 	}
 
 	private int drawString(Title title, J3DGraphics2D g2D, int yOffset) {
+		if (!title.getShow()) return yOffset;
 		String str = title.getText();
 		Font font = title.getFont();
 		Color color = title.getColor();

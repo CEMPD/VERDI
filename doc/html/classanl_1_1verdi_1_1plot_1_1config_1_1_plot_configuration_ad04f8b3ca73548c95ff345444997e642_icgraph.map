@@ -1,0 +1,9 @@
+<map id="anl.verdi.plot.config.PlotConfiguration.getSubtitle1" name="anl.verdi.plot.config.PlotConfiguration.getSubtitle1">
+<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_tile_plot.html#ad5a66f30794f88b48d3b9d9c478b6086" title="anl.verdi.plot.gui.FastTile\lPlot.addObservationData" alt="" coords="277,5,443,47"/>
+<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_contour3_d.html#ae6517c76fc1a7cb965c58299d4c76547" title="anl.verdi.plot.types.Contour3\lD.Contour3D" alt="" coords="267,71,453,112"/>
+<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_line_plot.html#a94371ad7749a9d496d56626118815ac9" title="anl.verdi.plot.types.Line\lPlot.LinePlot" alt="" coords="281,136,439,177"/>
+<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_scatter_plot.html#aa3861afefc6238a47e431d1e3c140080" title="anl.verdi.plot.types.Scatter\lPlot.ScatterPlot" alt="" coords="272,201,448,243"/>
+<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_tile_plot.html#a1cc7aa7161615f57ee40c10cf7820159" title="anl.verdi.plot.types.Tile\lPlot.TilePlot" alt="" coords="283,267,437,308"/>
+<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_time_series_bar_plot.html#a0be010158b23f223420ee02dbbecef48" title="anl.verdi.plot.types.Time\lSeriesBarPlot.TimeSeriesBarPlot" alt="" coords="253,332,467,373"/>
+<area shape="rect" id="node8" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_vertical_cross_section_plot.html#a7f864c47cfe8fd7c2237c6269130ffa2" title="anl.verdi.plot.types.Vertical\lCrossSectionPlot.VerticalCrossSectionPlot" alt="" coords="224,397,496,439"/>
+</map>

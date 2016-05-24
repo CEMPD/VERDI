@@ -7,6 +7,9 @@ import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 /**
  * Maps colors to a range of values.
  * 
@@ -19,6 +22,7 @@ public class ColorMap implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	static final Logger Logger = LogManager.getLogger(ColorMap.class.getName());
 
 	public enum IntervalType {
 		CUSTOM, AUTOMATIC 
@@ -90,6 +94,7 @@ public class ColorMap implements Serializable {
 		calcIntervals(palette, this.min, this.max);
 		//default to something...
 		this.logIntervals = new double[palette.getColorCount() + 1];
+		Logger.debug("in constructor for ColorMap using Palette, min, max");
 	}	
 
 	private void calcIntervals(Palette palette, double min, double max) {
@@ -99,6 +104,7 @@ public class ColorMap implements Serializable {
 		for (int i = 0; i < colorCount; i++) {
 			intervals[i] = min + (i * interval);
 		}
+		Logger.debug("finished with calcIntervals using Palette, min, max");
 	}
 	
 	private void calcLogIntervals(Palette palette, double logMin, double logMax) {
@@ -108,9 +114,11 @@ public class ColorMap implements Serializable {
 		for (int i = 0; i < colorCount; i++) {
 			this.logIntervals[i] = this.logMin + (i * logInterval);
 		}			
+		Logger.debug("finished with calcLogIntervals using Palette, logMin, logMax");
 	}	
 	
 	public ColorMap(Palette palette, List<Double> steps, List<Double> logSteps, ScaleType scaleType) { // NOT for logarithm
+		Logger.debug("in ColorMap constructor including Palette, List steps, List logSteps, and ScaleType");
 		this.scaleType = scaleType;
 		//make sure and sort both of these in ascending fashion...could be defined incorrectly by config file
 		Collections.sort(steps);
@@ -150,6 +158,7 @@ public class ColorMap implements Serializable {
 
 	public double getStep(int index) throws Exception {
 		if ( this.plotType == PlotType.FAST_TILE) {
+			Logger.debug(" in getStep[index] for FAST_TILE");
 			if ( this.scaleType == ScaleType.LOGARITHM) {
 				if (index > logIntervals.length - 1)
 					return logIntervals[logIntervals.length - 1];
@@ -168,8 +177,7 @@ public class ColorMap implements Serializable {
 				return intervals[index];
 			}			
 		} else {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				
+			if ( this.scaleType == ScaleType.LOGARITHM) {				
 				throw new Exception("Logarithm is not supported for PlotType " + plotType);
 		
 			} else {
@@ -228,14 +236,17 @@ public class ColorMap implements Serializable {
 	}
 
 	public PaletteType getPaletteType() {
+		Logger.debug("returning PaletteType = " + paletteType);
 		return paletteType;
 	}
 
 	public void setPaletteType(PaletteType paletteType) {
 		this.paletteType = paletteType;
+		Logger.debug("just set PaletteType to " + this.paletteType);
 	}
 
 	public Palette getPalette() {
+		Logger.debug("in getPalette(), returning Palette = " + palette);
 		return palette;
 	}
 
@@ -370,52 +381,99 @@ public class ColorMap implements Serializable {
 	}	
 
 	public NumberFormat getNumberFormat() throws Exception {
+		Logger.debug("in ColorMap getNumberFormat: format = " + format);
 		
 		if (format != null)
+		{
+			Logger.debug("in ColorMap.getNumberFormat, returning format = " + format.toPattern());
 			return format;
+		}
 		
 		if ( this.plotType == PlotType.FAST_TILE) {
 			if ( this.scaleType == ScaleType.LOGARITHM) {
+				Logger.debug("have FAST_TILE and LOGARITHM");
 				String strMin = String.valueOf(logMin);
 				String strMax = String.valueOf(logMax);
 
-				if (strMin.contains("E-") || strMax.contains("E-"))
+				if (strMin.contains("E") || strMax.contains("E") || 
+						strMin.contains("e") || strMax.contains("e") ||
+						strMin.contains("G") || strMax.contains("G") ||
+						strMin.contains("g") || strMax.contains("g") )				{
+					Logger.debug("have E,e,G, or g returning 0.000E0");
 					return new DecimalFormat("0.000E0");
-
+				}
+				Logger.debug("returnning 0.000");
 				return new DecimalFormat("0.000");
 			}
-			
+			Logger.debug("have FAST_TILE and other than LOGARITHM");
 			String strMin = String.valueOf(min);
 			String strMax = String.valueOf(max);
+			Logger.debug("in getNumberFormat: strMin = " + strMin + ", strMax = " + strMax);
 
-			if (strMin.contains("E-") || strMax.contains("E-"))
+			if (strMin.contains("E") || strMax.contains("E") || 
+					strMin.contains("e") || strMax.contains("e") ||
+					strMin.contains("G") || strMax.contains("G") ||
+					strMin.contains("g") || strMax.contains("g") )			{
+				Logger.debug("one of these formats contains E,e,G, or g so returning DecimalFormat(0.000E0)");
 				return new DecimalFormat("0.000E0");
+			}
 
+			Logger.debug("E not in Min or Max so returning DecimalFormat(0.000)");
 			return new DecimalFormat("0.000");			
 		} else {
 			if ( this.scaleType == ScaleType.LOGARITHM) {
 				throw new Exception("Logarithm is not supported for PlotType " + plotType);
 			}
 			
+			Logger.debug("in ColorMap.getNumberFormat for NOT PlotType.FAST_TILE and not ScaleType.LOGARITHM");
 			String strMin = String.valueOf(min);
 			String strMax = String.valueOf(max);
+			Logger.debug("in getNumberFormat: strMin = " + strMin + ", strMax = " + strMax);
 
-			if (strMin.contains("E-") || strMax.contains("E-"))
+			if (strMin.contains("E") || strMax.contains("E") || 
+					strMin.contains("e") || strMax.contains("e") ||
+					strMin.contains("G") || strMax.contains("G") ||
+					strMin.contains("g") || strMax.contains("g") )
+			{
+				Logger.debug("one of these formats contains E,e,G,or g so returning DecimalFormat(0.000E0)");
 				return new DecimalFormat("0.000E0");
+			}
 
+			Logger.debug("one of these formats contains E so returning DecimalFormat(0.000E0)");
 			return new DecimalFormat("0.000");				
 		}
 
 	}
 
-	public void setNumberFormat(NumberFormat format) throws Exception {
+	public void setNumberFormat(NumberFormat format) throws Exception {	// not currently called 5/2016
+		Logger.debug("in ColorMap setNumberFormat for NumberFormat: format = " + ((DecimalFormat)format).toPattern());
 		if (!(format instanceof DecimalFormat))
+		{
+			Logger.debug("Number format: " + format.toString() + " is not supported.");
 			throw new Exception("Number format: " + format.toString()
 					+ " is not supported.");
-
+		}
 		this.format = (DecimalFormat) format;
 	}
-
+	
+	/**
+	 * setNumberFormat	set the DecimalFormat in the colorMap to what the user entered
+	 * @param aNumberFormat
+	 */
+	public void setNumberFormat(DecimalFormat myFormat)
+	{
+		Logger.debug("in ColorMap setNumberFormat for DecimalFormat: myformat = " + myFormat.toPattern());
+		format = myFormat;
+		Logger.debug("minimumIntegerDigits = " + format.getMinimumIntegerDigits() + 
+				", maximumIntegerDigits = " + format.getMaximumIntegerDigits());
+		Logger.debug("minimumFractionDigits = " + format.getMinimumFractionDigits() + 
+				", maximumFractionDigits = " + format.getMaximumFractionDigits());
+		Logger.debug("Currency = " + format.getCurrency());
+		Logger.debug("decimalSeparator = " + format.getDecimalFormatSymbols().getDecimalSeparator() + 
+				", groupingSeparator = " + format.getDecimalFormatSymbols().getGroupingSeparator() + 
+				", exponentSeparator = " + format.getDecimalFormatSymbols().getExponentSeparator());
+	}
+	
 	public void setPlotType(PlotType plotType) {
 		this.plotType = plotType;
 	}
