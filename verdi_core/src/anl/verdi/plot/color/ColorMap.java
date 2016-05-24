@@ -381,45 +381,72 @@ public class ColorMap implements Serializable {
 	}	
 
 	public NumberFormat getNumberFormat() throws Exception {
+		Logger.debug("in ColorMap getNumberFormat: format = " + format);
 		
 		if (format != null)
+		{
+			Logger.debug("in ColorMap.getNumberFormat, returning format = " + format.toPattern());
 			return format;
+		}
 		
 		if ( this.plotType == PlotType.FAST_TILE) {
 			if ( this.scaleType == ScaleType.LOGARITHM) {
+				Logger.debug("have FAST_TILE and LOGARITHM");
 				String strMin = String.valueOf(logMin);
 				String strMax = String.valueOf(logMax);
 
-				if (strMin.contains("E-") || strMax.contains("E-"))
+				if (strMin.contains("E") || strMax.contains("E") || 
+						strMin.contains("e") || strMax.contains("e") ||
+						strMin.contains("G") || strMax.contains("G") ||
+						strMin.contains("g") || strMax.contains("g") )				{
+					Logger.debug("have E,e,G, or g returning 0.000E0");
 					return new DecimalFormat("0.000E0");
-
+				}
+				Logger.debug("returnning 0.000");
 				return new DecimalFormat("0.000");
 			}
-			
+			Logger.debug("have FAST_TILE and other than LOGARITHM");
 			String strMin = String.valueOf(min);
 			String strMax = String.valueOf(max);
+			Logger.debug("in getNumberFormat: strMin = " + strMin + ", strMax = " + strMax);
 
-			if (strMin.contains("E-") || strMax.contains("E-"))
+			if (strMin.contains("E") || strMax.contains("E") || 
+					strMin.contains("e") || strMax.contains("e") ||
+					strMin.contains("G") || strMax.contains("G") ||
+					strMin.contains("g") || strMax.contains("g") )			{
+				Logger.debug("one of these formats contains E,e,G, or g so returning DecimalFormat(0.000E0)");
 				return new DecimalFormat("0.000E0");
+			}
 
+			Logger.debug("E not in Min or Max so returning DecimalFormat(0.000)");
 			return new DecimalFormat("0.000");			
 		} else {
 			if ( this.scaleType == ScaleType.LOGARITHM) {
 				throw new Exception("Logarithm is not supported for PlotType " + plotType);
 			}
 			
+			Logger.debug("in ColorMap.getNumberFormat for NOT PlotType.FAST_TILE and not ScaleType.LOGARITHM");
 			String strMin = String.valueOf(min);
 			String strMax = String.valueOf(max);
+			Logger.debug("in getNumberFormat: strMin = " + strMin + ", strMax = " + strMax);
 
-			if (strMin.contains("E-") || strMax.contains("E-"))
+			if (strMin.contains("E") || strMax.contains("E") || 
+					strMin.contains("e") || strMax.contains("e") ||
+					strMin.contains("G") || strMax.contains("G") ||
+					strMin.contains("g") || strMax.contains("g") )
+			{
+				Logger.debug("one of these formats contains E,e,G,or g so returning DecimalFormat(0.000E0)");
 				return new DecimalFormat("0.000E0");
+			}
 
+			Logger.debug("one of these formats contains E so returning DecimalFormat(0.000E0)");
 			return new DecimalFormat("0.000");				
 		}
 
 	}
 
-	public void setNumberFormat(NumberFormat format) throws Exception {
+	public void setNumberFormat(NumberFormat format) throws Exception {	// not currently called 5/2016
+		Logger.debug("in ColorMap setNumberFormat for NumberFormat: format = " + ((DecimalFormat)format).toPattern());
 		if (!(format instanceof DecimalFormat))
 		{
 			Logger.debug("Number format: " + format.toString() + " is not supported.");
@@ -435,6 +462,7 @@ public class ColorMap implements Serializable {
 	 */
 	public void setNumberFormat(DecimalFormat myFormat)
 	{
+		Logger.debug("in ColorMap setNumberFormat for DecimalFormat: myformat = " + myFormat.toPattern());
 		format = myFormat;
 		Logger.debug("minimumIntegerDigits = " + format.getMinimumIntegerDigits() + 
 				", maximumIntegerDigits = " + format.getMaximumIntegerDigits());
