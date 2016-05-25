@@ -190,6 +190,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	
 	public static final double RAD_TO_DEG = 180 / Math.PI;
 	
+	private boolean forceRedraw = false;
+	
 	// Log related
 	
 	protected boolean log = false;
@@ -843,9 +845,15 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						} catch (Exception unused) {}
 					}
 					try {
-						synchronized (waitObject) {
-							waitObject.wait();
+						if (!forceRedraw) {
+							synchronized (waitObject) {
+								waitObject.wait();
+							}
 						}
+						if (forceRedraw) {
+							drawMode = DRAW_ONCE;
+						}
+						forceRedraw = false;
 					} catch (Exception unused) {}
 				}
 			} while (drawMode != DRAW_END);
@@ -1114,6 +1122,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		synchronized (waitObject) {
 			waitObject.notifyAll();
 		}
+	}
+	
+	public void forceDraw() {
+		forceRedraw = true;
+		draw();
 	}
 
 	// Buttons and fields:
@@ -1528,7 +1541,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			dataChanged = true;
 			this.timestep = timestep;
 			copySubsetLayerData(this.log);
-			draw();
+			forceDraw();
 			drawOverLays();
 		}
 	}
@@ -3697,12 +3710,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		drawOverLays();
 		processTimeChange = true;
 
-		try {
-			Thread.sleep(500); //wait for the drawing thread to finish drawing
-		} catch (InterruptedException e) {
-			Logger.error("Interrupted Exception in FastTilePlot.updateTimeStep: " + e.getMessage());
-		}
-		draw();
+		forceDraw();
 	}
 	
 	/**
