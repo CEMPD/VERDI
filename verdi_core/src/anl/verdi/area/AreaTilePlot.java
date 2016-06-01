@@ -77,6 +77,19 @@ public class AreaTilePlot extends TilePlot{
 	public GridInfo getGridInfo(){
 		return gridInfo;
 	}
+	
+	public synchronized void draw(final Graphics graphics, int xOffset, int yOffset,
+			int width, int height, int steplapse, int layer, int firstRow,
+			int lastRow, int firstColumn, int lastColumn,
+			final double[] legendLevels, final Color[] legendColors,
+			final Color axisColor, final Color labelColor,
+			final String variable, final String units,
+			PlotConfiguration config, NumberFormat format,
+			final Color gridLineColor, final float[][] data, final byte[][] colorIndexCache) {
+		draw(graphics, xOffset, yOffset, width, height, steplapse, layer, firstRow, lastRow,
+				firstColumn, lastColumn, legendLevels, legendColors, axisColor, labelColor, variable,
+				units, config, format, gridLineColor, data);
+	}
 
 	/** draw - Draw a tile plot: colored rectangles with labels and legend.
 	 * @pre graphics != null
