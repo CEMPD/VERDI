@@ -336,7 +336,6 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private final int DRAW_END = 3;
 	private int drawMode = DRAW_ONCE;
 	private int draw_once_requests = -1;
-	private String viewId = null;
 	private final String DELAY_LABEL = "Slow:";
 	private JTextField delayField;
 	private JTextField firstRowField;
@@ -4540,10 +4539,6 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private int getDrawOnceRequests() {
 		//System.err.println("Got " + draw_once_requests + " requests from " + Thread.currentThread().getStackTrace()[3]);
 		return draw_once_requests;
-	}
-	
-	public void setViewId(String id) {
-		viewId = id;
 	}
 	
 	double[][] layerMinMaxCache = null;

@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 
 public abstract class AbstractPlotPanel extends JPanel implements ComponentListener {
 	
+	protected String viewId = null;
+	
 	protected ActionListener animationHandler = null;
 	
 	/**
@@ -23,6 +25,10 @@ public abstract class AbstractPlotPanel extends JPanel implements ComponentListe
 	
 	public void viewClosed() {
 		removeComponentListener(this);
+	}
+	
+	public void setViewId(String id) {
+		viewId = id;
 	}
 
 	public abstract void draw();

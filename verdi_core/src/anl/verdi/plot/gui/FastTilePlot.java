@@ -400,6 +400,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 			Logger.debug("within FastTilePlot.run()");
 			Logger.debug("391: mapFileDirectory = " + mapFileDirectory);
 
+			try {
 			do {
 				
 				VerdiGUI.unlock();
@@ -693,6 +694,18 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 					} catch (Exception unused) {}
 				}
 			} while (drawMode != DRAW_END);		// drawMode set to DRAW_END in stopThread()
+			} catch (Throwable t) {
+				VerdiGUI.unlock();
+				restoreCursor();
+				if (dataFrame != null) { //Ignore errors if dataFrame is null - that means window is closing
+					Logger.error("Error rendering FastTilePlot", t);
+					String errInfo = t.getMessage() != null ? ": " + t.getMessage() + "  \n" : ".  ";
+					JOptionPane.showMessageDialog(app.getGui().getFrame(), "An error occured while rendering the plot" + errInfo + "Please see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);
+					try {
+						app.getGui().getViewManager().getDockable(viewId).close();
+					} catch (Throwable tr) {}
+				}
+			}
 		}		// HERE FINALLY DREW FastTilePlot - NO MAP BOUNDARIES YET; waiting for user input (change time step, layer, etc.)
 				// end run()
 	};		// end Runnable()
@@ -3632,6 +3645,4 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	private int get_draw_once_requests() {
 		return draw_once_requests;
 	}
-
-	public void setViewId(String id) {};
 }
