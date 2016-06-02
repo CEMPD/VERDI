@@ -64,6 +64,8 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	static final Logger Logger = LogManager.getLogger(VerdiGUI.class.getName());
 
 //	private static final MessageCenter ctr = MessageCenter.getMessageCenter(VerdiGUI.class);
+	
+	private static VerdiGUI instance = null;
 
 	private DockingManager manager;
 	private static int plotCount = 0;
@@ -89,7 +91,13 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 		this.manager = manager;
 		this.datasets = datasets;
 		this.areaPanel = areaPanel;
+		if (instance == null)
+			instance = this;
 //		this.formulasPanel = formulas;
+	}
+	
+	public VerdiGUI getInstance() {
+		return instance;
 	}
 
 	public void windowActivated(WindowEvent unused) {
@@ -492,6 +500,11 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	public void showError(String title, String message) {
 		JOptionPane.showMessageDialog(frame, message, title,
 				JOptionPane.ERROR_MESSAGE);
+	}
+	
+	public static void displayError(String title, String message) {
+		if (instance != null)
+			instance.showError(title, message);
 	}
 	
 	private Cursor oldCursor = null;

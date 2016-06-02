@@ -16,6 +16,7 @@ import org.java.plugin.PluginManager;
 import org.java.plugin.registry.Extension;
 import org.java.plugin.registry.ExtensionPoint;
 
+import anl.verdi.core.VerdiGUI;
 //import simphony.util.messages.MessageCenter;
 import anl.verdi.util.AliasGenerator;
 
@@ -134,6 +135,8 @@ public class DataManager {
 			throw new IOException(wrapper);
 		}
 
+		VerdiGUI.displayError("Error", "No loaders are available for the selected file.");
+		Logger.error("No loaders are available for the selected file.");
 		return NULL_DATASETS;
 	}
 
