@@ -12,6 +12,7 @@ import java.awt.Graphics;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -49,7 +50,7 @@ public class Mapper {
 	private VerdiBoundaries hucsMap = null;
 	private VerdiBoundaries riversMap = null;
 	private VerdiBoundaries roadsMap = null;
-	private List<VerdiBoundaries> layers = new ArrayList<VerdiBoundaries>();
+	private List<VerdiBoundaries> layers = new CopyOnWriteArrayList<VerdiBoundaries>();
 	private boolean initialDraw = true;
 	private static String defaultMapFileDirectory = null;
 	
