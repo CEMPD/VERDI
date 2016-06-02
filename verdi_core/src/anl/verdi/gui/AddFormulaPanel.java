@@ -162,10 +162,7 @@ public class AddFormulaPanel extends JPanel implements FormulaEditor {
 //						FormFactory.DEFAULT_ROWSPEC }));
 
 		// 2014 set up file names
-		String verdiHome = Tools.getVerdiHome();		// 2014 new method for reading in an image file
-		String separator = "/";		// use forward slash only for constructor ImageIcon(String filename);
-		String pathName = verdiHome + separator + "plugins" + separator + "core" + separator + "icons"
-				 + separator;
+		String pathName = Tools.getIconsDir();
 		
 
 		// ---- btnDelete ----

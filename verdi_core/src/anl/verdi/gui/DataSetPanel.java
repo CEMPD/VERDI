@@ -510,10 +510,7 @@ public class DataSetPanel extends JPanel {
 //						new RowSpec(RowSpec.FILL, Sizes.DEFAULT,
 //								FormSpec.DEFAULT_GROW) }));
 
-				String verdiHome = Tools.getVerdiHome();		// 2014 new method for reading in an image file
-				String separator = "/";		// use forward slash only for constructor ImageIcon(String filename);
-				String pathName = verdiHome + separator + "plugins" + separator + "core" + separator + "icons"
-						 + separator;
+				String pathName = Tools.getIconsDir();
 
 				// ---- btnAdd ----
 				String filePlus = new String(pathName + "plus.png");

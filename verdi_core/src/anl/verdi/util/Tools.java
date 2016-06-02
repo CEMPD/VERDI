@@ -35,6 +35,8 @@ public class Tools {
 	public static final String PROPERTY_FILE_TEMP = "/verdi/config.properties.TEMPLATE";
 	public static final String VERDI_HOME = "VERDI_HOME";
 	static final Logger Logger = LogManager.getLogger(VerdiPlugin.class.getName());	// 2014
+	
+	private static String iconsDir = null;
 
 	public static File getConfigFolder(PlotConfiguration config) {
 		File prevFld = (config == null ? null : config.getPreviousFolder());
@@ -99,7 +101,25 @@ public class Tools {
 		return nameStr.substring(0, nameStr.length() - 2);
 	}
 	
-	public static String getVerdiHome() 
+	public static String getIconsDir() {
+		if (iconsDir == null) {
+			// Standalone path
+			String icons = getVerdiHome() + File.separator + "plugins" + File.separator + "core" + File.separator + "icons" + File.separator;
+			if (new File(icons).exists())
+				iconsDir = icons;
+			else {
+				// Path when running from eclipse
+				icons = ".." + File.separator + "verdi_core" + File.separator + "icons" + File.separator;
+				if (new File(icons).exists())
+					iconsDir = icons;
+			}
+		}
+		return iconsDir;
+	}
+	
+	// Nothing should use this method directly since filesystem layout varies between Eclipse and stanalone.  Use getIconsDir()
+	// or another helper instead.
+	private static String getVerdiHome() 
 	{	// 2014
 		String vHome =  System.getenv(VERDI_HOME);
 		if(vHome == null || vHome.isEmpty())

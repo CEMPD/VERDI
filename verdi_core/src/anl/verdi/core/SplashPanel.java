@@ -34,12 +34,8 @@ public class SplashPanel extends JPanel {
   protected void paintComponent(Graphics g) {
     Graphics2D g2d = (Graphics2D) g;
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	String verdiHome = Tools.getVerdiHome();		// 2014 new method for reading in an image file
-	String pathName = verdiHome + File.separator + "plugins" + File.separator + "core" + File.separator + "icons"
-			 + File.separator + "splash.jpg";
+	String pathName = Tools.getIconsDir() + "splash.jpg";
 	File imageInputFile = new File(pathName);
-	if (!imageInputFile.exists())
-		imageInputFile = new File(".." + File.separator + "verdi_core" + File.separator + "icons" + File.separator + "splash.jpg" );
 	try {
 		BufferedImage aBufferedImage = ImageIO.read(imageInputFile);
 		g2d.drawImage(aBufferedImage, null, 0, 0);

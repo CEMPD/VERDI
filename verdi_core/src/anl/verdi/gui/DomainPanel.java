@@ -280,9 +280,7 @@ public class DomainPanel extends JPanel {
 			// return Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 //			ImageIcon icon = new ImageIcon(getClass().getResource(
 //					"/addArrow.gif"));
-			String verdiHome = Tools.getVerdiHome();		// 2014 new method for reading in an image file
-			String pathName = verdiHome + File.separator + "plugins" + File.separator + "core" + File.separator + "icons"
-					 + File.separator + "addArrow.gif";
+			String pathName = Tools.getIconsDir() + "addArrow.gif";
 			File imageFile = new File(pathName);
 //			return createCursor(icon, new Point(8, 3), "addArrow");
 			return createCursor(imageFile, new Point(8,3), "addArrow");

@@ -342,10 +342,7 @@ public class AreaFilePanel extends JPanel {
 //						}));
 
 				// 2014 set up file names
-				String verdiHome = Tools.getVerdiHome();		// 2014 new method for reading in an image file
-				String separator = "/";		// use forward slash only for constructor ImageIcon(String filename);
-				String pathName = verdiHome + separator + "plugins" + separator + "core" + separator + "icons"
-						+ separator;
+				String pathName = Tools.getIconsDir();
 
 				//---- btnAdd ----
 				String filePlus = new String(pathName + "plus.png");
