@@ -683,10 +683,10 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							drawMode = DRAW_NONE;
 							restoreCursor();
 						}
-						VerdiGUI.unlock();
 					} else {
 						//drawMode = DRAW_NONE;			// commented out in 2/2014 version
 					}
+					VerdiGUI.unlock();
 					
 				} else {
 					try {
@@ -705,6 +705,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						app.getGui().getViewManager().getDockable(viewId).close();
 					} catch (Throwable tr) {}
 				}
+			} finally {
+				VerdiGUI.unlock();
 			}
 		}		// HERE FINALLY DREW FastTilePlot - NO MAP BOUNDARIES YET; waiting for user input (change time step, layer, etc.)
 				// end run()
