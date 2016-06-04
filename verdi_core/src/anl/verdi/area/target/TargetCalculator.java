@@ -258,11 +258,14 @@ public class TargetCalculator extends LongTask {
 	          }
 //	          didCalcs = true;	// 2014 moved to calculate overlapArea[i]
 	        }
+	        else
+	        	didCalcs = true;
 	        }
 	        
 	    } catch (Exception e) {
 	      Logger.error("An exception occurred ");
 	      e.printStackTrace();
+	      return false;
 	    } finally {
 	      //update();
 	    }
