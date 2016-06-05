@@ -100,10 +100,11 @@ public class NetcdfDatasetFactory {
 			String urlString = url.toExternalForm();
 			netcdfDataset = NetcdfDataset.openDataset(urlString);
 			Logger.debug("in NetcdfDatasetFactory.createModels3Datasets, back from openNetcdfGridDataset");
-			if (!MPASConvention.isMine(netcdfDataset)) {
+			//Already check in MPASLoader
+			/*if (!MPASConvention.isMine(netcdfDataset)) {
 				Logger.debug("MPASConvention.isMine == false");
 				throw new IOException("Loading non-mpas file into MPASDataset");
-			}
+			}*/
 			// if here then ok.
 			Logger.debug("isMine == true, returning createDatasets for url = " + url);
 			setList.add(new MPASDataset(url, netcdfDataset));

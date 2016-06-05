@@ -138,11 +138,10 @@ public class AreaTilePlot extends TilePlot{
 		if (units==null || units.trim().equals(""))
 			units = "none";
 		
-		final int yHeightOffset = height + yOffset;
 		final int xMinimum = xOffset;
 		final int xMaximum = xOffset + width;
 		final int yMinimum = yOffset;
-		final int yMaximum = yHeightOffset;
+		final int yMaximum = yOffset + height;
 		this.config = config;
 		this.numberFormat = format;
 
