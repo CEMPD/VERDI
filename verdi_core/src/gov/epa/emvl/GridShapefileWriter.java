@@ -13,6 +13,7 @@ package gov.epa.emvl;
 import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.io.IOException;
 
@@ -33,6 +34,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
+
+import anl.verdi.area.target.Target;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -160,4 +163,95 @@ public final class GridShapefileWriter {
 			Logger.error("Error while writing shapefile: " + typeName + " does not support read/write access");
 		}
 	}
+	
+
+	  /**
+	   * write - Write a single layer of grid cells and a
+	   * single timestep of scalar data as Shapefile Polygon files
+	   * (shp, shx, dbf).
+	   * INPUTS:
+	   * final String fileName  Base name of file to create. "example".
+	   * final String variable		 Name of the data variable
+	   * List<Polygon> areas         List of polygons to write.
+	   * List<Float> data            Numeric values to write.
+	   * final CoordinateReferenceSystem gridCRS   Gridded data projection.
+	   * OUTPUTS:
+	   * fileName.shp  Contains the grid cell polygons.
+	   * fileName.shx  Index file for the above.
+	   * fileName.dbf  Contains the data as a single-column table.
+	   * fileName.prj  Projection definition.
+	   * CONTRACT:
+	   * @throws IOException 
+	   * @pre fileName != null
+	   * @pre areas != null
+	   * @pre gridCRS != null
+	   * @pre ( variable != null ) == ( data != null )
+	   */
+
+		public static void write( final String fileName,
+	                            final String variable,
+	                            List<Polygon> areas,
+	                            List<Float> data,
+	                            final CoordinateReferenceSystem gridCRS ) throws IOException {
+
+			// create the feature type
+			SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
+			typeBuilder.setName("Gridded Data Type");
+			typeBuilder.setCRS(gridCRS);
+			
+			typeBuilder.add("the_geom", Polygon.class);
+			typeBuilder.add(variable, Float.class);
+			
+			final SimpleFeatureType GRID_TYPE = typeBuilder.buildFeatureType();
+			
+			// for each grid cell, create a feature and add it to the collection
+			DefaultFeatureCollection collection = new DefaultFeatureCollection();
+			SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(GRID_TYPE);
+			
+			for (int i = 0; i < data.size(); ++i) {
+				Polygon polygon = areas.get(i);
+				featureBuilder.add(polygon);
+				featureBuilder.add(data.get(i));
+				SimpleFeature feature = featureBuilder.buildFeature(null);
+				collection.add(feature);
+
+			}
+			
+			// create the shapefile data store to write the shapefiles
+			File file = new File(fileName + ".shp");
+			ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
+			
+			Map<String, Serializable> params = new HashMap<String, Serializable>();
+			params.put("url", file.toURI().toURL());
+			params.put("create spatial index", Boolean.TRUE);
+
+			ShapefileDataStore newDataStore = (ShapefileDataStore)dataStoreFactory.createNewDataStore(params);
+			newDataStore.createSchema(GRID_TYPE);
+
+			// write the feature collection to the shapefile in a single transaction
+			Transaction transaction = new DefaultTransaction("create");
+			String typeName = newDataStore.getTypeNames()[0];
+			SimpleFeatureSource featureSource = newDataStore.getFeatureSource(typeName);
+
+			if (featureSource instanceof SimpleFeatureStore) {
+				SimpleFeatureStore featureStore = (SimpleFeatureStore)featureSource;
+
+				featureStore.setTransaction(transaction);
+				try {
+					featureStore.addFeatures(collection);
+					transaction.commit();
+
+				} catch (Exception problem) {
+					transaction.rollback();
+					Logger.error("Error while writing shapefile: " + problem.getMessage());
+
+				} finally {
+					transaction.close();
+				}
+			} else {
+				Logger.error("Error while writing shapefile: " + typeName + " does not support read/write access");
+			}
+		}
+
+	
 }

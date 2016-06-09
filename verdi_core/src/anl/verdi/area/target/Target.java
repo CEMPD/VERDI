@@ -158,6 +158,11 @@ public class Target implements Area{
 
 		}
 	}
+	
+	public Geometry getGeometry() {
+		return dataObject;
+	}
+	
 	static HashMap<String,SourceData> sourceMap = new HashMap();
 
 	static ArrayList targets = new ArrayList();

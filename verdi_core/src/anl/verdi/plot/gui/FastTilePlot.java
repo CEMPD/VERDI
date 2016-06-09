@@ -199,10 +199,10 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	protected int columns;
 	protected int rowOrigin;
 	protected int columnOrigin;
-	private double westEdge; 		// meters from projection center
-	private double southEdge; 	// meters from projection center
-	private double cellWidth; 	// meters.
-	private double cellHeight; 	// meters.
+	protected double westEdge; 		// meters from projection center
+	protected double southEdge; 	// meters from projection center
+	protected double cellWidth; 	// meters.
+	protected double cellHeight; 	// meters.
 	private NumberFormat format;
 	private boolean invertRows; // HACK: Invert rows of AURAMS / GEM / CF Convention data?
 
@@ -250,7 +250,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	//private float[][][] layerDataLog = null;
 	private float[][][] statisticsData = null;
 	//private float[][][] statisticsDataLog = null;
-	private CoordinateReferenceSystem gridCRS = null;	// axes -> ReferencedEnvelope -> gridCRS
+	protected CoordinateReferenceSystem gridCRS = null;	// axes -> ReferencedEnvelope -> gridCRS
 
 	// For clipped/projected/clipped map lines:
 
@@ -3328,15 +3328,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	public void exportShapefile( String baseFileName ) throws IOException {
 		final int subsetLayerRows = 1 + lastRow - firstRow;
 		final int subsetLayerColumns = 1 + lastColumn - firstColumn;
-		// Filter variable name/expression so operators aren't a problem in Excel:
-		
-		// changed to this in v. 529
-		final int end = variable.indexOf( '[' );
-		final String filteredVariableName = variable.substring( 0, end );
-		
-		// change back now 2012-06-14
-//		final String filteredVariableName =
-//			variable.replaceAll( "[\\[\\d\\]]", "" ).replaceAll( "\\W", "" );
+
 		
 		final double subsetWestEdge = westEdge + firstColumn * cellWidth;
 		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
@@ -3344,7 +3336,28 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				subsetLayerRows, subsetLayerColumns,
 				subsetWestEdge, subsetSouthEdge,
 				cellWidth, cellHeight,
-				filteredVariableName, subsetLayerData, gridCRS );
+				filterVariableName(variable), subsetLayerData, gridCRS );
+	}
+	
+	protected float[][] getLayerData() {
+		return subsetLayerData;
+	}
+	
+	protected String getVariableName() {
+		return filterVariableName(variable);
+	}
+	
+	protected String filterVariableName(String name) {
+		// Filter variable name/expression so operators aren't a problem in Excel:
+		
+		// changed to this in v. 529
+		final int end = name.indexOf( '[' );
+		final String filteredVariableName = name.substring( 0, end );
+		
+		// change back now 2012-06-14
+//		final String filteredVariableName =
+//			variable.replaceAll( "[\\[\\d\\]]", "" ).replaceAll( "\\W", "" );
+		return filteredVariableName;
 	}
 	
 	public void exportASCIIGrid( String baseFileName ) {

@@ -69,7 +69,7 @@ public class TargetCalculator extends LongTask {
 	public class CoordinateTransform implements CoordinateFilter{
 		Projector projector;
 		double[] t = { 0.0, 1.0 }; 
-		CoordinateTransform(Projector projection){
+		public CoordinateTransform(Projector projection){
 			projector=projection;
 		}
 
