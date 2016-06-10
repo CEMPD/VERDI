@@ -3641,7 +3641,9 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	public void restoreCursor() {
 		//   cursor restored
 		//synchronized(this) {
-			app.getGui().defaultCursor(); 
+		VerdiGUI gui = app.getGui();
+		if (gui != null)
+			gui.defaultCursor();
 //		}
 		if ( zoom) 
 			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
