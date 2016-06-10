@@ -259,7 +259,8 @@ public class TargetCalculator extends LongTask {
 //	          didCalcs = true;	// 2014 moved to calculate overlapArea[i]
 	        }
 	        else
-	        	didCalcs = true;
+	        	if (!didCalcs && target.overlapsGrid(num))
+	        		didCalcs = true;
 	        }
 	        
 	    } catch (Exception e) {

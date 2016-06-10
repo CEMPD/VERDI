@@ -1007,6 +1007,10 @@ public class Target implements Area{
 	public static void setCurrentGridNum(int currentGridNum) {
 		Target.currentGridNum = currentGridNum;
 	}
+	
+	public boolean overlapsGrid(int currentGridNum) {
+		return overlapArea.size() > currentGridNum && overlapArea.get(currentGridNum).length > 0;
+	}
 
 	static{
 		// add plot of null to list of plots
