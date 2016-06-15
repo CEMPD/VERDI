@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -20,6 +22,7 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.Variable;
 import ucar.nc2.dataset.conv.MPASConvention;
 import anl.verdi.data.DataLoader;
 import anl.verdi.data.DataReader;
@@ -52,13 +55,58 @@ public class MPASLoader implements DataLoader {
 				urlString = new URI(urlString).getPath();
 			}
 			file = NetcdfFile.open(urlString);
-			return MPASConvention.isMine(file) && hasDimensions(file);
+			return (MPASConvention.isMine(file) && hasDimensions(file)) || hasAllAttributes(file);
 		}
 		finally {
 			try {
 				if (file != null) file.close();
 			} catch (IOException e) {}
 		}
+	}
+	
+	private static Set<String> requiredVarList = new HashSet<String>();
+	
+	static {
+		requiredVarList.add("verticesOnCell");
+		requiredVarList.add("nEdgesOnCell");
+		requiredVarList.add("latVertex");
+		requiredVarList.add("lonVertex");
+		requiredVarList.add("latCell");
+		requiredVarList.add("lonCell");
+		requiredVarList.add("indexToVertexID");
+		
+	}
+	
+	private static Set<String> requiredDimList = new HashSet<String>();
+
+	
+	static {
+		requiredDimList.add("nVertices");
+		requiredDimList.add("nCells");
+	}
+	
+	public boolean hasAllAttributes(NetcdfFile file) throws IOException {
+		List<Variable> varList = file.getVariables();
+		Set<String> allAttrs = new HashSet<String>();
+		for (Variable var : varList)
+			allAttrs.add(var.getShortName());
+		for (String var : requiredVarList) {
+			if (!allAttrs.contains(var)) {
+				System.err.println("Variable " + var + " not found, not MPAS");
+				return false;
+			}
+		}
+		allAttrs.clear();
+		List<Dimension> dimList = file.getDimensions();
+		for (Dimension dim : dimList)
+			allAttrs.add(dim.getShortName());
+		for (String dim : requiredDimList) {
+			if (!allAttrs.contains(dim)) {
+				System.err.println("Dimension " + dim + " not found, not MPAS");
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private boolean hasDimensions(NetcdfFile file) throws IOException {

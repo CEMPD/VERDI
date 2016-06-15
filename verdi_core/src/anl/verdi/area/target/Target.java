@@ -158,6 +158,11 @@ public class Target implements Area{
 
 		}
 	}
+	
+	public Geometry getGeometry() {
+		return dataObject;
+	}
+	
 	static HashMap<String,SourceData> sourceMap = new HashMap();
 
 	static ArrayList targets = new ArrayList();
@@ -1001,6 +1006,10 @@ public class Target implements Area{
 	}
 	public static void setCurrentGridNum(int currentGridNum) {
 		Target.currentGridNum = currentGridNum;
+	}
+	
+	public boolean overlapsGrid(int currentGridNum) {
+		return overlapArea.size() > currentGridNum && overlapArea.get(currentGridNum).length > 0;
 	}
 
 	static{

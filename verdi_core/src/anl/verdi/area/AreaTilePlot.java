@@ -47,9 +47,9 @@ public class AreaTilePlot extends TilePlot{
 	final double[][] gridBounds;
 	final Projector projector;
 
-	protected static final int AVERAGES=0; 
-	protected static final int TOTALS=1; 
-	protected static final int GRID=2; 
+	public static final int AVERAGES=0; 
+	public static final int TOTALS=1; 
+	public static final int GRID=2; 
 	protected int currentView=AVERAGES;
 	protected FastAreaTilePlot tilePlotPanel;
 	protected GridInfo gridInfo;
@@ -138,11 +138,10 @@ public class AreaTilePlot extends TilePlot{
 		if (units==null || units.trim().equals(""))
 			units = "none";
 		
-		final int yHeightOffset = height + yOffset;
 		final int xMinimum = xOffset;
 		final int xMaximum = xOffset + width;
 		final int yMinimum = yOffset;
-		final int yMaximum = yHeightOffset;
+		final int yMaximum = yOffset + height;
 		this.config = config;
 		this.numberFormat = format;
 
@@ -190,14 +189,14 @@ public class AreaTilePlot extends TilePlot{
 			// draw the area polygons
 			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
 					legendColors,graphics, data,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView, FastAreaTilePlot.isShowSelectedOnly());
+					xOffset, yOffset, width, height,currentView, tilePlotPanel.isShowSelectedOnly());
 			break;
 		case AVERAGES:
 			float[][] allData=tilePlotPanel.getAllLayerData();
 			// draw the area polygons
 			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
 					legendColors,graphics, allData,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView,FastAreaTilePlot.isShowSelectedOnly() );
+					xOffset, yOffset, width, height,currentView,tilePlotPanel.isShowSelectedOnly() );
 			mouseOverOK = true;
 //			tilePlotPanel.calculateAverageLevels();
 //			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
@@ -209,12 +208,12 @@ public class AreaTilePlot extends TilePlot{
 			// draw the area polygons
 			mapPolygon.calculateValues(this,domain, gridBounds, projector,legendLevels,
 					legendColors,graphics, allData2,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView ,FastAreaTilePlot.isShowSelectedOnly() );
+					xOffset, yOffset, width, height,currentView ,tilePlotPanel.isShowSelectedOnly() );
 			mouseOverOK = true;
 //			tilePlotPanel.calculateTotalLevels();
 			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
 					legendColors,graphics, allData2,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView,FastAreaTilePlot.isShowSelectedOnly() );
+					xOffset, yOffset, width, height,currentView,tilePlotPanel.isShowSelectedOnly() );
 			break;	
 		}
 
@@ -248,6 +247,10 @@ public class AreaTilePlot extends TilePlot{
 	}
 	public void showGrid() {
 		currentView=GRID;
+	}
+	
+	public int getViewMode() {
+		return currentView;
 	}
 
 	public void updatePlot(){

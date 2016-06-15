@@ -69,7 +69,7 @@ public class TargetCalculator extends LongTask {
 	public class CoordinateTransform implements CoordinateFilter{
 		Projector projector;
 		double[] t = { 0.0, 1.0 }; 
-		CoordinateTransform(Projector projection){
+		public CoordinateTransform(Projector projection){
 			projector=projection;
 		}
 
@@ -258,11 +258,15 @@ public class TargetCalculator extends LongTask {
 	          }
 //	          didCalcs = true;	// 2014 moved to calculate overlapArea[i]
 	        }
+	        else
+	        	if (!didCalcs && target.overlapsGrid(num))
+	        		didCalcs = true;
 	        }
 	        
 	    } catch (Exception e) {
 	      Logger.error("An exception occurred ");
 	      e.printStackTrace();
+	      return false;
 	    } finally {
 	      //update();
 	    }

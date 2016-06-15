@@ -13,8 +13,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -176,7 +174,7 @@ public class PalettePanel extends JPanel {
 		}
 		add(scrollPane1, cc.xywh(1, 3, 5, 1));
 
-		// ---- rebuildBtn ----
+		// ---- reverseBtn ----
 		reverseBtn.setText("Reverse");
 		add(reverseBtn, cc.xy(1, 5));
 
@@ -409,6 +407,7 @@ public class PalettePanel extends JPanel {
 				} else {
 					// report error
 				}
+				Logger.debug("in intervalType actionPerformed: intervalInx = " + intervalInx);
 				
 				if ( scaleIndex != preScaleIndex	) {
 					
@@ -431,14 +430,14 @@ public class PalettePanel extends JPanel {
 					}
 					
 					
-					String minConv = "f";
-					String maxConv = "f";
+					String minConv = "F";
+					String maxConv = "F";
 					
 					if (Math.abs(min) < 0.001)
-						minConv = "e";
+						minConv = "E";
 
 					if (Math.abs(max) < 0.001)
-						maxConv = "e";
+						maxConv = "E";
 
 					minFld.setText(String.format("%.6" + minConv, min));
 					maxFld.setText(String.format("%.6" + maxConv, max));
@@ -447,6 +446,7 @@ public class PalettePanel extends JPanel {
 				}
 				
 				preScaleIndex = scaleIndex;
+				Logger.debug("in intervalType actionPerformed: minFld = " + minFld.getText() + ", maxFld = " + maxFld.getText());
 			}
 		});
 		
@@ -483,14 +483,14 @@ public class PalettePanel extends JPanel {
 						e.printStackTrace();
 					}
 					
-					String minConv = "f";
-					String maxConv = "f";
+					String minConv = "F";
+					String maxConv = "F";
 					
 					if (Math.abs(min) < 0.001)
-						minConv = "e";
+						minConv = "E";
 
 					if (Math.abs(max) < 0.001)
-						maxConv = "e";
+						maxConv = "E";
 
 					minFld.setText(String.format("%.6" + minConv, min));
 					maxFld.setText(String.format("%.6" + maxConv, max));
@@ -521,14 +521,14 @@ public class PalettePanel extends JPanel {
 						e.printStackTrace();
 					}
 					
-					String minConv = "f";
-					String maxConv = "f";
+					String minConv = "F";
+					String maxConv = "F";
 					
 					if (Math.abs(min) < 0.001)
-						minConv = "e";
+						minConv = "E";
 
 					if (Math.abs(max) < 0.001)
-						maxConv = "e";
+						maxConv = "E";
 
 					minFld.setText(String.format("%.6" + minConv, min));
 					maxFld.setText(String.format("%.6" + maxConv, max));
@@ -536,6 +536,8 @@ public class PalettePanel extends JPanel {
 					maxFld.setCaretPosition(0);	
 					
 					intervalInx = intervalType.getSelectedIndex();
+					Logger.debug("in fldLogBase actionPerformed; intervalInx = " + intervalInx);
+					Logger.debug("minFld = " + minFld.getText() + ", maxFld = " + maxFld.getText());
 					model.setIntervalEditEnabled( intervalInx); 
 					
 				} catch (NumberFormatException ex) {
@@ -559,6 +561,7 @@ public class PalettePanel extends JPanel {
 
 		rebuildBtn.addActionListener(new ActionListener() { // TODO: JIZHEN
 			public void actionPerformed(ActionEvent evt) {
+				Logger.debug("in rebuildBtn actionPerformed: intervalType.getSelectedIndex = " + intervalType.getSelectedIndex());
 				if ( intervalType.getSelectedIndex() != 2) {
 					String text = minFld.getText().trim();
 					double min, max;
@@ -636,14 +639,14 @@ public class PalettePanel extends JPanel {
 						e.printStackTrace();
 					}
 
-					String minConv = "f";
-					String maxConv = "f";
+					String minConv = "F";
+					String maxConv = "F";
 
 					if (Math.abs(min) < 0.001)
-						minConv = "e";
+						minConv = "E";
 
 					if (Math.abs(max) < 0.001)
-						maxConv = "e";
+						maxConv = "E";
 
 					minFld.setText(String.format("%.6" + minConv, min));
 					maxFld.setText(String.format("%.6" + maxConv, max));
@@ -651,7 +654,7 @@ public class PalettePanel extends JPanel {
 					maxFld.setCaretPosition(0);					
 					model.setIntervalEditEnabled( intervalType.getSelectedIndex());	
 				}
- 
+				Logger.debug("in rebuildBtn actionPerformed: minFld = " + minFld.getText() + ", maxFld = " + maxFld.getText());
 			}
 		});
 
@@ -727,8 +730,7 @@ public class PalettePanel extends JPanel {
 			index = 0;
 
 		paletteList.setSelectedIndex(index);
-		paletteList
-				.scrollRectToVisible(paletteList.getCellBounds(index, index));
+		paletteList.scrollRectToVisible(paletteList.getCellBounds(index, index));
 
 		String minConv = "f";
 		String maxConv = "f";
@@ -768,13 +770,14 @@ public class PalettePanel extends JPanel {
 		formatFld.setText("%5.3f");
 		Logger.debug("formatFld just set to %5.3f");
 		
-		if (minConv.equals("e") || maxConv.equals("e"))
+		if (minConv.equalsIgnoreCase("e") || maxConv.equalsIgnoreCase("e") )
 		{
-			formatFld.setText("%5.3e");
-			Logger.debug("formatFld just set to %5.3e");
+			formatFld.setText("%5.3E");
+			Logger.debug("formatFld just set to %5.3E");
 		}
 		
 		try {
+			Logger.debug("ready to try and see if getNumberFormat returns null");
 			if (colorMap.getNumberFormat() != null)
 				formatFld.setText(getFormat(colorMap.getNumberFormat()));
 		} catch (Exception e1) {
@@ -880,10 +883,27 @@ public class PalettePanel extends JPanel {
 		// parse any modifier at the end of the pattern
 		if(endDecimal < strLength)
 		{
-			cModifier = cPattern.substring(endDecimal + 1, strLength).toUpperCase();
+			cModifier = cPattern.substring(endDecimal + 1, strLength);	//.toUpperCase();
 			cModifierLength = cModifier.length();
 			Logger.debug("cModifier = " + cModifier + ", cModifierLength = " + cModifierLength);
 		}		// else cModifierLength remains 0
+//		if(!((cModifier.compareTo("f")== 0) || (cModifier.compareTo("d") == 0) || (cModifier.compareToIgnoreCase("e") == 0)
+//				|| (cModifier.compareToIgnoreCase("g") == 0)))
+		if(cModifier.compareTo("e") == 0)	// lower-case e not acting like upper-case e
+		{
+			cModifier = "E";
+		}
+		else if(cModifier.compareTo("e0")== 0)
+		{
+			cModifier = "E";
+			cModifierLength = 1;
+		}
+		else if(cModifier.compareTo("E")!= 0) 	// everything else gets stripped because f, d, g, G not working Java 1.7.0_71 
+		{
+			Logger.debug("PalettePanel resetNumberFormat resetting cModifier from " + cModifier + " to null");
+			cModifierLength = 0;
+			cModifier = "";		// cannot set to null
+		}
 		
 		int nonBase = (haveDot ? 1 : 0) + fieldDecimal;		// sum of dot and decimal portion of cPattern
 		Logger.debug("nonBase = " + nonBase);
@@ -938,7 +958,7 @@ public class PalettePanel extends JPanel {
 		if(cModifierLength > 0)				// anything after the decimal pattern is appended
 		{
 			myPattern.append(cModifier);
-			if(!cModifier.endsWith("0") && (cModifier.endsWith("E")))
+			if(!cModifier.endsWith("0") && cModifier.endsWith("E") )
 			{
 				myPattern.append(0);
 			}
@@ -948,23 +968,25 @@ public class PalettePanel extends JPanel {
 		DecimalFormat myDecimalFormat = new DecimalFormat(myPattern.toString());
 		myDecimalFormat.setRoundingMode(RoundingMode.HALF_UP);	// default is HALF-EVEN
 		
-		// 2016 this method not working as expected in VERDI 1.6, Java 7; may want to try again in future
-//		if(haveDot)
-//		{
-//			myDecimalFormat.setMaximumFractionDigits(fieldDecimal);	// size fraction digits are 1 - fieldDecimal
-//			myDecimalFormat.setMinimumFractionDigits(1);
-//		}
-//		else
-//		{
-//			myDecimalFormat.setMaximumFractionDigits(0);		// size fraction digits are 0 (no .)
-//			myDecimalFormat.setMinimumFractionDigits(0);
-//		}
-//		myDecimalFormat.setMinimumIntegerDigits(1);
-//		myDecimalFormat.setMaximumIntegerDigits(baseWidth); 	// size base is 1 = baseWidth
-//		Logger.debug("myDecimalFormat before DecimalFormatSymbols = " + myDecimalFormat.toPattern());
-//		DecimalFormatSymbols newSymbols = new DecimalFormatSymbols(); // need way to pass in the modifier
-//		newSymbols.setExponentSeparator(cModifier);
-//		myDecimalFormat.setDecimalFormatSymbols(newSymbols); 	 
+		if(haveDot)
+		{
+			myDecimalFormat.setMaximumFractionDigits(fieldDecimal);	// size fraction digits are 1 - fieldDecimal
+			myDecimalFormat.setMinimumFractionDigits(fieldDecimal);	// all values have same # of decimal digits 
+		}
+		else
+		{
+			myDecimalFormat.setMaximumFractionDigits(0);		// size fraction digits are 0 (no .)
+			myDecimalFormat.setMinimumFractionDigits(0);
+		}
+		myDecimalFormat.setMinimumIntegerDigits(1);
+		myDecimalFormat.setMaximumIntegerDigits(baseWidth); 	// size base is 1 = baseWidth
+		Logger.debug("myDecimalFormat before DecimalFormatSymbols = " + myDecimalFormat.toPattern());
+		if(cModifierLength > 0)
+		{
+			DecimalFormatSymbols newSymbols = new DecimalFormatSymbols(); // need way to pass in the modifier
+			newSymbols.setExponentSeparator(cModifier);
+			myDecimalFormat.setDecimalFormatSymbols(newSymbols);
+		}
 		Logger.debug("myDecimalFormat = " + myDecimalFormat.toPattern());
 		
 		map.setNumberFormat(myDecimalFormat); 					// assign this format to the color map
@@ -976,9 +998,11 @@ public class PalettePanel extends JPanel {
 		if (numberFormat == null)
 			return " %.3f";
 		
-		String format = ((DecimalFormat)numberFormat).toPattern().toUpperCase();
+		String format = ((DecimalFormat)numberFormat).toPattern();	//.toUpperCase();
 		Logger.debug("in getFormat, format = " + format);
 		int exp = format.indexOf("E");
+		if(exp < 1)
+			exp = format.indexOf("e");
 		int dot = format.indexOf(".");
 //		String forStr = "%" + dot + ".";
 		String forStr = "%" + (exp - dot + 1) + ".";		// 2016 trying to fix patterns
@@ -986,7 +1010,11 @@ public class PalettePanel extends JPanel {
 		if (exp > 0)
 			forStr += (exp - dot - 1) + "E";
 		else
-			forStr += (format.length() - 1 - dot) + "f";
+		{	// pass through f, d, e, E, g, G else try to replace other character with f
+			if((format.indexOf("f")<0) && (format.indexOf("d") < 0) && (format.indexOf("g") < 0)
+					&& (format.indexOf("G") < 0) && (format.indexOf("E")<0) && format.indexOf("e")<0)
+				forStr += (format.length() - 1 - dot) + "f";
+		}
 		
 		Logger.debug("in getFormat, forStr = " + forStr);
 		return  forStr;

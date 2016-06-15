@@ -13,6 +13,8 @@ public class ArrayLogFactory {
 			return new ArrayFloatLog((ArrayFloat)source, base);
 		else if (source instanceof ArrayDouble)
 			return new ArrayDoubleLog((ArrayDouble)source, base);
+		else if (source instanceof ArrayInt)
+			return new ArrayIntLog((ArrayInt)source, base);
 		return null;
 	}
 
