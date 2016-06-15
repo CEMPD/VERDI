@@ -33,6 +33,7 @@
                destdir="${versionbuild.dir}"
                classpathref="classpath"
                debug="on"
+        	   includeantruntime="false"
         />
 	</target>
 	
