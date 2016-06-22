@@ -47,7 +47,7 @@ public class Models3ObsLoader implements DataLoader {
 				urlString = new URI(urlString).getPath();
 			}
 			file = NetcdfFile.open(urlString);
-			return M3IOConvention.isMine(file) && hasLatLon(file);
+			return M3IOConvention.isMine(file) && hasLatLon(file) && !hasRowCol(file);
 
 		} catch (IOException io) {
 			// just warn here because it be correct that
@@ -86,6 +86,19 @@ public class Models3ObsLoader implements DataLoader {
 		return hasLat && hasLon;
 	}
 
+	private boolean hasRowCol(NetcdfFile file) {                     // if missing ROW or COL then it is observation data
+		List<Variable> vars = file.getVariables();
+		boolean hasRow = false;
+		boolean hasCol = false;
+		for (Variable var : vars) {
+//			if (var.getName().equals("LAT")) hasLat = true;			// 2014 Variable.getName() deprecated with message
+//			else if (var.getName().equals("LON")) hasLon = true;	// to use getFullName or getShortName; based on comparisons selected getShortName()
+			if (var.getShortName().equals("ROW")) hasRow = true;
+			else if (var.getShortName().equals("COL")) hasCol = true;
+		}
+
+		return hasRow && hasCol;
+	}
 
 	/**
 	 * Creates a Dataset from the data at the specified URL.
