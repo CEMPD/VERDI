@@ -29,6 +29,7 @@
                destdir="${versionbuild.dir}"
                classpathref="classpath"
                debug="on"
+        	   includeantruntime="false"
         />
 	</target>
 	
@@ -174,7 +175,7 @@
 		<unzip src="./distfiles/licenses.zip" dest="${dist.dir}"/>
 		<mkdir dir="${dist.dir}/data"/>
 		<copy todir="${dist.dir}/data">
-			<fileset dir="./distfiles/data"/>
+			<fileset dir="./distfiles/data/release"/>
 		</copy>
 	
 		<copy todir="${dist.dir}">
