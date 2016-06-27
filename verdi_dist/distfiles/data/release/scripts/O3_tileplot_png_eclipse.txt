@@ -37,11 +37,11 @@
 
 
 		<Global>
-		dir=../verdi_dist/distfiles/data/model
+		dir=../verdi_dist/distfiles/data/release/model
 		pattern=*CCTM46*
 		s=O3[1]
 		saveImage=png
-		imageDir=../verdi_dist/distfiles/data/plots
+		imageDir=../verdi_dist/distfiles/data/release/plots
 		subdomain=20 10 75 50 
 		</Global>
 

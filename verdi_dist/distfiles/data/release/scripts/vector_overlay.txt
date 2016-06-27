@@ -36,10 +36,10 @@
 		####################################################################################
 
 		<Global>
-		configFile=../verdi_dist/distfiles/data/configs/o3_10bin.cfg
-		dir=../verdi_dist/distfiles/data/model
+		configFile=../verdi_dist/distfiles/data/release/configs/o3_10bin.cfg
+		dir=../verdi_dist/distfiles/data/release/model
 		saveImage=jpeg
-		imageDir=../verdi_dist/distfiles/data/plots
+		imageDir=../verdi_dist/distfiles/data/release/plots
 		</Global>
 
 		###########################
@@ -51,8 +51,6 @@
 		f=CCTM47_aac_spr06.12k.CONC.2006113.O3.ncf
                	f=metdot3d_12k.uwind.vwind
 		vectorTile=O3[1],UWIND[2],VWIND[2]
-               	titleString="Ozone with wind vector overlay (UWINDxVWIND)
+               	titleString="Ozone with wind vector overlay (UWINDxVWIND)"
 		imageFile=vector-tile-test.jpeg
-		imageWidth=1600
-		imageHeight=1600
 		</Task>

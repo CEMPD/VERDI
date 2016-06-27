@@ -22,7 +22,7 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="saf.core.runtime.Boot"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-f &quot;../verdi_dist/distfiles/data/model/CCTM46_P16.baseO2a.36k.O3MAX&quot; -s &quot;O3[1]&quot; -subdomain 20 10 75 50 -g tile"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-f &quot;../verdi_dist/distfiles/data/release/model/CCTM46_P16.baseO2a.36k.O3MAX&quot; -s &quot;O3[1]&quot; -subdomain 20 10 75 50 -g tile"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="verdi_bootstrap"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx1024m -Djava.ext.dirs="/>
 </launchConfiguration>
