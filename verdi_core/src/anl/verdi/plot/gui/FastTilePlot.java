@@ -2592,6 +2592,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		try {
 			legendLevels[count] = map.getMax();
+			colorIndexCache = tilePlot.calculateColorIndices(subsetLayerData, legendLevels);
 		} catch (Exception e) {
 			Logger.error("Exception in FastTilePlot.updateColorMap", e);
 			return;
