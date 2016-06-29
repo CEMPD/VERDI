@@ -12,9 +12,11 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 
@@ -42,6 +44,7 @@ import anl.verdi.area.AreaFile;
 import anl.verdi.area.AreaTilePlot;
 import anl.verdi.area.Units;
 import anl.verdi.data.DataUtilities;
+import anl.verdi.plot.gui.VerdiStyle;
 import anl.verdi.util.VUnits;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -82,6 +85,10 @@ public class Target implements Area{
 	public static UnitConverter converterGrid=null;
 	public static UnitConverter converterTargetStandard=null;
 	public static UnitConverter converterTargetGrid=null;
+	
+	float currentDeposition = 0;
+	
+	private static Map<Geometry, Target> geometryMap = new HashMap<Geometry, Target>();
 
 	public void setAreaInfo(int gridNum,int[] rowIndex,int[] colIndex, float[] overlapArea){
 		if(this.rowIndex.size()>gridNum){
@@ -164,6 +171,7 @@ public class Target implements Area{
 	}
 	
 	static HashMap<String,SourceData> sourceMap = new HashMap();
+	static HashMap<String,VerdiStyle> styleMap = new HashMap();
 
 	static ArrayList targets = new ArrayList();
 	static ArrayList selectedTargets = new ArrayList();
@@ -193,7 +201,13 @@ public class Target implements Area{
 		rowIndex=new ArrayList<int[]>();
 		deposition=new ArrayList<Float>();
 		overlapArea=new ArrayList<float[]>();
-
+  		if(obj instanceof MultiPolygon){
+  			for(int i=0;i<((MultiPolygon)obj).getNumGeometries();i++){
+  				Geometry geo=((MultiPolygon)obj).getGeometryN(i);
+  				geometryMap.put(geo, this);
+  			}
+  		} else
+  			geometryMap.put(obj, this);
 	}
 	public boolean areaCalculatedForGrid(int num){
 		if(colIndex.size()<=num)return false;
@@ -263,6 +277,7 @@ public class Target implements Area{
 			ProjectionInfo.writePRJFile(baseName+".prj",proj,false);
 
 			sourceMap.put(file.getAbsolutePath(),sourceData);
+			styleMap.put(file.getAbsolutePath(), new VerdiStyle(file));
 			try {
 				while (iterator.hasNext()) {
 //					DefaultFeature feature = (DefaultFeature)iterator.next();
@@ -310,7 +325,10 @@ public class Target implements Area{
 
 	}
 	public static void removeSource(AreaFile source){
-		if(source instanceof SourceData)sourceMap.remove(((SourceData)source).fileName);
+		if(source instanceof SourceData) {
+			sourceMap.remove(((SourceData)source).fileName);
+			styleMap.remove(((SourceData)source).fileName);
+		}
 	}
 	public static CoordinateReferenceSystem loadProjectionInfo(String fileName) {
 //		FeatureIterator iterator=null;
@@ -386,6 +404,13 @@ public class Target implements Area{
 		}
 		return names;
 	}
+	
+	public static Set<VerdiStyle> getSourceStyles() {
+		HashSet<VerdiStyle> styles = new HashSet<VerdiStyle>();
+		styles.addAll(styleMap.values());
+		return styles;
+
+	}
 	/**
 	 * Get the entire list of targets
 	 * @return the whole list of them
@@ -400,12 +425,16 @@ public class Target implements Area{
 	 * @return the target that matches
 	 */
 	public static Target getTarget(Geometry obj) {
+		return geometryMap.get(obj);
+	}
+	
+	public static Target linearSearchGeometry(Geometry obj) {
 		for (int i = 0; i < targets.size(); i++) {
 			Target data = (Target)targets.get(i);
-			if (data.dataObject == obj)
+			if (data.dataObject.equals(obj))
 				return data;
 		}
-		return null;
+		return null;	
 	}
 
 	/**
@@ -563,6 +592,11 @@ public class Target implements Area{
 	public static String getDefaultUnits() {
 		return "km2";
 	}
+	
+	public boolean depositionCalculated() {
+		int gridIndex=getCurrentGridNum();
+		return rowIndex.size() > gridIndex;
+	}
 	public boolean containsDeposition(){
 		int gridIndex=getCurrentGridNum();
 
@@ -615,6 +649,7 @@ public class Target implements Area{
 			}
 		}
 	}
+	
 	/**
 	 * Calculate the deposition in a target using the grid intersection areas
 	 * and the value for selected variables at each grid location.
@@ -626,6 +661,7 @@ public class Target implements Area{
 
 		val= val/(float)(converterTargetGrid.convert((float)area));		// 2014 JEB
 //		val = val / (float)area;
+		currentDeposition = val;
 		return val;
 	}
 	public float calcAverageDeposition(float[][] data) {
@@ -634,6 +670,7 @@ public class Target implements Area{
 
 		val= val/(float)(converterTargetGrid.convert((float)area));		// 2014 JEB
 //		val = val / (float)area;
+		currentDeposition = val;
 		return val;
 	}
 	public float getAverageDeposition() {
@@ -693,8 +730,13 @@ public class Target implements Area{
 			deposition.add(null);
 		}
 		deposition.set(plotIndex,new Float(dep));
+		currentDeposition = dep;
 
 		return dep;
+	}
+	
+	public float getCurrentDeposition() {
+		return currentDeposition;
 	}
 
 	/**
@@ -906,6 +948,7 @@ public class Target implements Area{
 		targets.clear();
 		targetMap.clear();
 		sourceMap.clear();
+		geometryMap.clear();
 	}
 
 	/**
@@ -1009,6 +1052,8 @@ public class Target implements Area{
 	}
 	
 	public boolean overlapsGrid(int currentGridNum) {
+		if (overlapArea == null)
+			System.out.println("Detected invalid target, null overlap");
 		return overlapArea.size() > currentGridNum && overlapArea.get(currentGridNum).length > 0;
 	}
 

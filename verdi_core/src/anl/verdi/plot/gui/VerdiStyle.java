@@ -34,12 +34,17 @@ import org.geotools.styling.StyleFactory;
 import org.geotools.swing.styling.JSimpleStyleDialog;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
+
+import anl.gui.color.MoreColor;
+import anl.verdi.area.GeometrySelectedFilter;
+import anl.verdi.area.RangeLevelFilter;
 /**
  * @author Jo Ellen Brandmeyer, Institute for the Environment, 2015
  *
@@ -69,6 +74,7 @@ public class VerdiStyle {
 		if(vFile != null)
 			reset();			// already had file set so must reset everything
 		vFile = shpFile;		// store shapefile into class data member
+
 		Logger.debug("stored shpFile as vFile = " + vFile.toString());	// JEB YES
 		shpPath = vFile.getAbsolutePath();
 		Logger.debug("shpPath set to: " + shpPath);	// JEB YES
@@ -132,8 +138,7 @@ public class VerdiStyle {
 			vFeatureSource = vStore.getFeatureSource();
 			Logger.debug("got vFeatureSource = " + vFeatureSource.toString());	// JEB YES
 		} catch (IOException ioEx) {
-			Logger.error("Data store or feature source for file " + vFile + " could not be found.");
-			Logger.error(ioEx.getMessage());
+			Logger.error("Data store or feature source for file " + vFile + " could not be found.", ioEx);
 		}
 	}
 
@@ -165,7 +170,64 @@ public class VerdiStyle {
 		Logger.debug("returning vStyle = " + vStyle.toString());
 		return;
 	}
+	
+	public Style buildRangeStyle(double[] ranges, Color[] colors, boolean showSelectedOnly) {		
+        // create a partially opaque outline stroke
+        Stroke selectedStroke = styleFactory.createStroke(
+                filterFactory.literal(MoreColor.darkBlue),
+                filterFactory.literal(3),
+                filterFactory.literal(1));
+        
+        Stroke unSelectedStroke = styleFactory.createStroke(
+                filterFactory.literal(MoreColor.forestGreen),
+                filterFactory.literal(1),
+                filterFactory.literal(1));
+        
+        int numRules = colors.length * 2;
+        //if (showSelectedOnly)
+        	//numRules *= 2;
+        Rule[] rules = new Rule[numRules];
+        --numRules;
+        for (int i = 0; i < colors.length; ++i) {
 
+	        // create a partial opaque fill
+	        Fill selectedFill = styleFactory.createFill(
+	                filterFactory.literal(colors[i]),
+	                filterFactory.literal(1));
+	        PolygonSymbolizer selectedSym = styleFactory.createPolygonSymbolizer(selectedStroke, selectedFill, null);
+	        
+	        PolygonSymbolizer unSelectedSym = styleFactory.createPolygonSymbolizer(unSelectedStroke, null, null);
+	        
+	        PolygonSymbolizer unSelectedForcedSym = styleFactory.createPolygonSymbolizer(unSelectedStroke, selectedFill, null);
+	        
+	        
+	        //TODO if enforcing selection add the rule with filter to match 
+	        
+	        Rule rule = styleFactory.createRule();
+	        rule.symbolizers().add(selectedSym);
+	        rule.setFilter(new RangeLevelFilter(ranges[i], false));
+	        rules[numRules--] = rule;
+	        
+	        if (showSelectedOnly) {
+		        rule = styleFactory.createRule();
+		        rule.symbolizers().add(unSelectedSym);
+		        rule.setFilter(new RangeLevelFilter(ranges[i], true));
+		        rules[numRules--] = rule;
+	        } else {
+		        rule = styleFactory.createRule();
+		        rule.symbolizers().add(unSelectedForcedSym);
+		        rule.setFilter(new RangeLevelFilter(ranges[i], true));
+		        rules[numRules--] = rule;
+	        }
+        }
+
+        
+        FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(rules);
+        Style rangeStyle = styleFactory.createStyle();
+        rangeStyle.featureTypeStyles().add(fts);
+        return rangeStyle;
+	}
+	
 	private void getStyleFromDialog()
 	{		// display dialog box for user to interactively specify style attributes (not available in script mode)
 		SimpleFeatureType schema = (SimpleFeatureType)vFeatureSource.getSchema();

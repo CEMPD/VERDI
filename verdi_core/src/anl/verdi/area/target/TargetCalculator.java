@@ -185,8 +185,8 @@ public class TargetCalculator extends LongTask {
 	      				Polygon geoPolygon=(Polygon)geo;
 	      				// transform the polygon
 	      				geoPolygon.apply(filter);
-	      				geoPolygon.geometryChanged();
 	      			}
+	      			poly.geometryChanged();
 	      			// convert the area
 		  	        target.area = poly.getArea() * areaConversion;
 		  	        

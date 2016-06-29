@@ -87,7 +87,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 	public FastAreaTilePlot(VerdiApplication app,DataFrame dataFrame) {
 		super(app,dataFrame);
 		//app.getGui().setStatusOneText("Loading data. This may take a while please be patient...");
-		this.tilePlot=new AreaTilePlot(this,startDate,timestepSize,domain,gridBounds,projector);
+		this.tilePlot=new AreaTilePlot(this,startDate,timestepSize,domain,gridBounds,gridCRS);
 //		calculateAverageLevels();
 //		minMax=null;
 	}
@@ -699,7 +699,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 					try {
 						double areaValue = target.getArea();
 
-						if(target.containsDeposition()){
+						if(target.depositionCalculated() && target.containsDeposition()){
 							float value = target.getDeposition();
 							float aveValue = target.getAverageDeposition();
 

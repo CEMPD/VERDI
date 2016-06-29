@@ -54,7 +54,6 @@ public class AreaTilePlot extends TilePlot{
 	protected int currentView=AVERAGES;
 	protected FastAreaTilePlot tilePlotPanel;
 	protected GridInfo gridInfo;
-	MapPolygon mapPolygon = null;
 	
 	public boolean mouseOverOK = false;
 	
@@ -77,7 +76,6 @@ public class AreaTilePlot extends TilePlot{
 		this.gridBounds=gridBounds;
 		this.gridCRS=gridCRS;
 		gridInfo = new GridInfo(gridBounds,domain);
-		mapPolygon = new MapPolygon(this);
 	}
 
 	public GridInfo getGridInfo(){
@@ -180,6 +178,10 @@ public class AreaTilePlot extends TilePlot{
 				timelapse, layer, firstRow, lastRow, firstColumn, lastColumn,
 				data );
 
+		// Draw legend-colored grid cells or polygons
+
+		MapPolygon mapPolygon=new MapPolygon();	// 2015 REDO all related to MapPolygon
+												// replace with GeoTools functionality
 		//showBusyCursor();
 		switch(currentView){
 		case GRID:
@@ -208,9 +210,9 @@ public class AreaTilePlot extends TilePlot{
 		case TOTALS:
 			float[][] allData2=tilePlotPanel.getAllLayerData();
 			// draw the area polygons
-			/*mapPolygon.calculateValues(this,domain, gridBounds, gridCRS,legendLevels,
+			mapPolygon.calculateValues(this,domain, gridBounds, gridCRS,legendLevels,
 					legendColors,graphics, allData2,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView ,tilePlotPanel.isShowSelectedOnly() );*/
+					xOffset, yOffset, width, height,currentView ,tilePlotPanel.isShowSelectedOnly() );
 			mouseOverOK = true;
 //			tilePlotPanel.calculateTotalLevels();
 			mapPolygon.draw(this, domain, gridBounds, gridCRS,legendLevels,
