@@ -42,7 +42,7 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="saf.core.runtime.Boot"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-f &quot;../verdi_dist/distfiles/data/model/CCTM_D502addm_Linux2_x86_64intel.ACONC.CMAQ-BENCHMARK_20060801&quot; -s O3[1] -g tile -saveImage &quot;GIF&quot; /Users/lizadams/verdi/bugs/talat/outdir/static.gif -system &quot;sleep 10&quot; -quit"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-f &quot;../verdi_dist/distfiles/data/release/model/CCTM_D502addm_Linux2_x86_64intel.ACONC.CMAQ-BENCHMARK_20060801&quot; -s O3[1] -g tile -saveImage &quot;GIF&quot; /Users/lizadams/verdi/bugs/talat/outdir/static.gif -system &quot;sleep 10&quot; -quit"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="verdi_bootstrap"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx1024m"/>
 </launchConfiguration>
