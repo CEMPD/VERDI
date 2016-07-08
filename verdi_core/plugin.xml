@@ -65,7 +65,7 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="repast" path="../verdi_core/lib/repast_simphony_gis_2_1_0.jar" type="code">
+		<library id="repast" path="../verdi_core/lib/repast_simphony_gis_2_3_0.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
@@ -142,83 +142,83 @@
 		</library>
 
 		<!-- GIS Libraries -->
-		<library id="gt-api" path="../verdi_core/lib/gt-api-12.2.jar" type="code">
+		<library id="gt-api" path="../verdi_core/lib/gt-api-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-coverage" path="../verdi_core/lib/gt-coverage-12.2.jar" type="code">
+		<library id="gt-coverage" path="../verdi_core/lib/gt-coverage-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-coverage-api" path="../verdi_core/lib/gt-coverage-api-12.2.jar" type="code">
+		<library id="gt-coverage-api" path="../verdi_core/lib/gt-coverage-api-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-image" path="../verdi_core/lib/gt-image-12.2.jar" type="code">
+		<library id="gt-image" path="../verdi_core/lib/gt-image-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-main" path="../verdi_core/lib/gt-main-12.2.jar" type="code">
+		<library id="gt-main" path="../verdi_core/lib/gt-main-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-referencing" path="../verdi_core/lib/gt-referencing-12.2.jar" type="code">
+		<library id="gt-referencing" path="../verdi_core/lib/gt-referencing-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-render" path="../verdi_core/lib/gt-render-12.2.jar" type="code">
+		<library id="gt-render" path="../verdi_core/lib/gt-render-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-shapefile" path="../verdi_core/lib/gt-shapefile-12.2.jar" type="code">
+		<library id="gt-shapefile" path="../verdi_core/lib/gt-shapefile-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-swing" path="../verdi_core/lib/gt-swing-12.2.jar" type="code">
+		<library id="gt-swing" path="../verdi_core/lib/gt-swing-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<!--library id="gt-epsg-hsql" path="../verdi_core/lib/gt-epsg-hsql-12.2.jar" type="code">
+		<!--library id="gt-epsg-hsql" path="../verdi_core/lib/gt-epsg-hsql-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library-->
 
-		<library id="gt-epsg-ext" path="../verdi_core/lib/gt-epsg-extension-12.2.jar" type="code">
+		<library id="gt-epsg-ext" path="../verdi_core/lib/gt-epsg-extension-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-epsg-wkt" path="../verdi_core/lib/gt-epsg-wkt-12.2.jar" type="code">
+		<library id="gt-epsg-wkt" path="../verdi_core/lib/gt-epsg-wkt-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-coveragetools" path="../verdi_core/lib/gt-coveragetools-12.2.jar" type="code">
+		<library id="gt-coveragetools" path="../verdi_core/lib/gt-coveragetools-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-geometry" path="../verdi_core/lib/gt-geometry-12.2.jar" type="code">
+		<library id="gt-geometry" path="../verdi_core/lib/gt-geometry-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-grid" path="../verdi_core/lib/gt-grid-12.2.jar" type="code">
+		<library id="gt-grid" path="../verdi_core/lib/gt-grid-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-data" path="../verdi_core/lib/gt-data-12.2.jar" type="code">
+		<library id="gt-data" path="../verdi_core/lib/gt-data-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-jts-wrapper" path="../verdi_core/lib/gt-jts-wrapper-12.2.jar" type="code">
+		<library id="gt-jts-wrapper" path="../verdi_core/lib/gt-jts-wrapper-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-feature-ag" path="../verdi_core/lib/gt-feature-aggregate-12.2.jar" type="code">
+		<library id="gt-feature-ag" path="../verdi_core/lib/gt-feature-aggregate-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-feature-pr" path="../verdi_core/lib/gt-feature-pregeneralized-12.2.jar" type="code">
+		<library id="gt-feature-pr" path="../verdi_core/lib/gt-feature-pregeneralized-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-opengis" path="../verdi_core/lib/gt-opengis-12.2.jar" type="code">
+		<library id="gt-opengis" path="../verdi_core/lib/gt-opengis-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
@@ -254,10 +254,6 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="piccolo" path="../verdi_core/lib/piccolo.jar" type="code">
-			<export prefix="*"/>
-		</library>
-
 		<library id="piccolox.jar" path="../verdi_core/lib/piccolox.jar" type="code">
 			<export prefix="*"/>
 		</library>
@@ -266,11 +262,11 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-metadata" path="../verdi_core/lib/gt-metadata-12.2.jar" type="code">
+		<library id="gt-metadata" path="../verdi_core/lib/gt-metadata-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-brewer" path="../verdi_core/lib/gt-brewer-12.2.jar" type="code">
+		<library id="gt-brewer" path="../verdi_core/lib/gt-brewer-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 

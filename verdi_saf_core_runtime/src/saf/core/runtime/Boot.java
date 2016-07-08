@@ -29,6 +29,7 @@ import org.java.plugin.PluginManager.PluginLocation;
 import org.java.plugin.boot.DefaultPluginsCollector;
 import org.java.plugin.registry.Identity;
 import org.java.plugin.registry.IntegrityCheckReport;
+import org.java.plugin.registry.IntegrityCheckReport.ReportItem;
 import org.java.plugin.registry.PluginDescriptor;
 import org.java.plugin.util.ExtendedProperties;
 import org.xml.sax.SAXException;
@@ -161,13 +162,10 @@ public class Boot {
     } catch (InvocationTargetException itEx)
     {
     	
-    	Logger.error("caught an InvocationTargetException in Boot.run; printing .getCause()");
-    	Logger.error(itEx.getCause().toString() + ", " + itEx.toString());
-    	Logger.error(itEx.getTargetException().getMessage());
-//    	center.error(itEx.getCause(), itEx);
+    	Logger.error("caught an InvocationTargetException in Boot.run", itEx);
     }
     catch (Exception ex) {
-    	Logger.error("Caught an Exception in Boot.java");
+    	Logger.error("Caught an Exception in Boot.java", ex);
       center.error(ex.getMessage(), ex);
     }
   }
@@ -242,6 +240,9 @@ Map<java.lang.String, Identity> map = pluginManager.publishPlugins(myLocations);
         pluginManager.getPathResolver(), true);
     if (integrityCheckReport.countErrors() > 0) {	// 2014 had been != 0
       // something wrong with the plugin set
+    	for (ReportItem item : integrityCheckReport.getItems()) {
+    		Logger.error(item.getMessage());
+    	}
       center.fatal(integrityCheckReport2str(integrityCheckReport), new RuntimeException("Invalid plugin configuration"));
       System.exit(1);
     }

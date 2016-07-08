@@ -16,15 +16,15 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/org.eclipse.uomo.xml_0.7.0.201404240011.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/jscience.jar" sourcepath="/verdi_core/lib_src/jscience-4.3.1-src.zip"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/verdi_saf_core_runtime"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/log4j-api-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/log4j-api-2.0-rc1-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/log4j-api-2.0-rc1.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-core-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/log4j-core-2.0-rc1-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-opengis-12.2.jar" sourcepath="/verdi_core/lib_src/gt-opengis-12.2-sources.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-data-12.2.jar" sourcepath="/verdi_core/lib_src/gt-data-12.2-sources.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-geometry-12.2.jar" sourcepath="/verdi_core/lib_src/gt-geometry-12.2-sources.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-metadata-12.2.jar" sourcepath="/verdi_core/lib_src/gt-metadata-12.2-sources.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-referencing-12.2.jar" sourcepath="/verdi_core/lib_src/gt-referencing-12.2-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/bufr-4.3.16.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-swing-12.2.jar" sourcepath="/verdi_core/lib_src/gt-swing-12.2-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-data-14.4.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-geometry-14.4.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-metadata-14.4.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-opengis-14.4.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-referencing-14.4.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-swing-14.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

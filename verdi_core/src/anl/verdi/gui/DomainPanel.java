@@ -59,9 +59,9 @@ import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 
-import repast.simphony.gis.display.AbstractMarqueeZoomer;
 import repast.simphony.gis.display.PGISCanvas;
 import repast.simphony.gis.display.PiccoloMapPanel;
+import repast.simphony.gis.tools.AbstractMarqueeHandler;
 import repast.simphony.gis.tools.MapTool;
 import repast.simphony.gis.tools.PGISPanTool;
 import repast.simphony.gis.tools.PMarqueeZoomIn;
@@ -81,9 +81,9 @@ import com.jgoodies.forms.layout.FormSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
-import edu.umd.cs.piccolo.event.PInputEvent;			// NOTE: required old piccolo by Repast Simphony
-import edu.umd.cs.piccolo.event.PInputEventListener;	// NOTE: required old piccolo by Repast Simphony
-import edu.umd.cs.piccolo.util.PBounds;	// NOTE: required old piccolo by Repast Simphony
+import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.event.PInputEventListener;
+import org.piccolo2d.util.PBounds;
 //import org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory;
 //import org.geotools.map.DefaultMapContext;
 //import org.geotools.map.DefaultMapLayer;
@@ -270,7 +270,7 @@ public class DomainPanel extends JPanel {
 		return new FeatureLayer(ds.getFeatureSource(), style);	// 2014
 	}
 
-	class DomainZoomer extends AbstractMarqueeZoomer implements MapTool {
+	class DomainZoomer extends AbstractMarqueeHandler implements MapTool {
 		public void execute(PiccoloMapPanel panel) {
 			// TODO Auto-generated method stub
 		}
@@ -466,7 +466,7 @@ public class DomainPanel extends JPanel {
 		for (Layer layer : contextLayers) {
 			editContext.addLayer(layer);
 		}
-		HashMap<String, Object> toolParams = new HashMap<String, Object>();
+		Map<String, Object> toolParams = new HashMap<String, Object>();
 		toolParams = new HashMap<String, Object>();
 		// toolParams.put(Action.NAME, "Zoom In");
 		toolParams.put(ToolManager.TOGGLE, true);
@@ -500,6 +500,7 @@ public class DomainPanel extends JPanel {
 
 		toolParams.put(Action.SHORT_DESCRIPTION, "Select Region");
 		toolParams.put(Action.NAME, "Select Region");
+		org.piccolo2d.event.PDragSequenceEventHandler h = null;
 		selectionListener = new DomainZoomer() {
 			public void mouseMoved(PInputEvent event) {
 				super.mouseMoved(event);

@@ -11,9 +11,10 @@
 	<classpathentry kind="lib" path="lib/osx.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/verdi_saf_core_runtime"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-1.2-api-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/apache-log4j-2.0-rc1-src/apache-log4j-2.0-rc1-src"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/log4j-api-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/log4j-api-2.0-rc1-sources.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/log4j-api-2.0-rc1.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-core-2.0-rc1.jar" sourcepath="/verdi_core/lib_src/log4j-core-2.0-rc1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/dockingFramesCommon.jar"/>
 	<classpathentry kind="lib" path="lib/dockingFramesCore.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar" sourcepath="/verdi_core/lib_src/thredds_4.5.5.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
