@@ -15,7 +15,7 @@
 	<property name="linux.dist.name" value="${app.name}_${app.version}"/>
 	<property name="linux.dir" value="${dist.dir}/linux_dist"/>
 	<property name="versiondir" value="../verdi_core/src/anl/verdi/util" />
-	<property name="versionbuild.dir" value="../verdi_core/bin/anl/verdi/util" />
+	<property name="versionbuild.dir" value="../verdi_core/bin" />
 
 	<!--taskdef name="nsis" classname="net.sf.nsisant.Task">
 		<classpath location="./distlib/nsisant-1.2.jar"/>

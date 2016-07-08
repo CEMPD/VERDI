@@ -15,7 +15,7 @@
 	<property name="saf.core.ui.dir" value="${basedir}/../verdi_saf_ui"/>
 	
 	<property name="versiondir" value="../verdi_core/src/anl/verdi/util" />
-	<property name="versionbuild.dir" value="../verdi_core/bin/anl/verdi/util" />
+	<property name="versionbuild.dir" value="../verdi_core/bin" />
 
 	<path id="classpath">
 		<pathelement location="../verdi_core/bin/" />
