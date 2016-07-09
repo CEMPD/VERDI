@@ -43,7 +43,6 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
 import anl.gui.color.MoreColor;
-import anl.verdi.area.GeometrySelectedFilter;
 import anl.verdi.area.RangeLevelFilter;
 /**
  * @author Jo Ellen Brandmeyer, Institute for the Environment, 2015
