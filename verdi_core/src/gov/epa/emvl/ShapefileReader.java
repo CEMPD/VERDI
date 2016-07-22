@@ -16,6 +16,7 @@ import java.nio.ByteOrder;
 
 public class ShapefileReader {
 	
+	
 	int fileIndex = 0;
 	State state = State.CHOOSE_FILE;
 	BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
@@ -92,7 +93,7 @@ public class ShapefileReader {
 				try {
 	
 					if (!resp.startsWith("/")) {
-						resp = "/home/tahoward/" + resp;
+						resp = System.getProperty("user.home") + resp;
 					}
 					inputFile = new File(resp);
 					FileInputStream reader = new FileInputStream(inputFile);
