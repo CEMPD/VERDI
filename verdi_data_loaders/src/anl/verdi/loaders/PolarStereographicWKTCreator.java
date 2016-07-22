@@ -43,7 +43,7 @@ public class PolarStereographicWKTCreator {
 
 
 		context.put("lat_origin", projNatOriginLat);	// 2014 NOTE: usually 90.0 but some datasets use 70.0
-		context.put("central_meridian", projCentralMeridian);	//proj.getCentralMeridian());	// NOTE: function not in NetCDF-Java v4.3.20
+		context.put("central_meridian", projTangentLon);	//proj.getCentralMeridian());	// NOTE: function not in NetCDF-Java v4.3.20
   
         
 		// 2014 NetCDF-Java v4.3.20 returns -98.0 for scale
