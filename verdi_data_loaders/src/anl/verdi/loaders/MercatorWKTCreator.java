@@ -41,7 +41,13 @@ public class MercatorWKTCreator {
 			if (writer != null) writer.close();
 			Thread.currentThread().setContextClassLoader(loader);
 		}
-
-		return writer.toString();
+		String wkt = writer.toString();
+		wkt = wkt.replace("r=6370000", "r=" + Math.round(proj.getEarthRadius() * 1000));
+		wkt = wkt.replace("\"SPHERE\", 6370000.0", "\"SPHERE\", " + proj.getEarthRadius() * 1000);
+		wkt = wkt.replace("\"false_easting\", 500000", "\"false_easting\", " + Math.round(proj.getFalseEasting()));
+		wkt = wkt.replace("\"false_northing\", 0", "\"false_northing\", " + Math.round(proj.getFalseNorthing()));
+		wkt = wkt.replace("\"central_meridian\", 0", "\"central_meridian\", " + Math.round(proj.getOriginLon()));
+		
+		return wkt;
 	}
 }

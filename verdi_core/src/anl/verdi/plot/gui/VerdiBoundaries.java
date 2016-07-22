@@ -51,10 +51,10 @@ public class VerdiBoundaries {
 	private String vFileName = null;		// name of shapefile
 	private File vFile = null;				// shapefile represented as a File
 	private String vPath = null;			// vPath is absolute path to shapefile
-	private FileDataStore vStore = null;	// vStore is the FileDataStore associated with the vFile
-	private FeatureSource vFeatureSource = null;
+	//private FileDataStore vStore = null;	// vStore is the FileDataStore associated with the vFile
+	//private FeatureSource vFeatureSource = null;
 	private MapContent vMap = null;			// 
-	private MathTransform vTransform = null;	// math transform from shapefile to grid CRS
+	//private MathTransform vTransform = null;	// math transform from shapefile to grid CRS
 	
 	public VerdiBoundaries()		// default constructor
 	{
@@ -113,10 +113,10 @@ public class VerdiBoundaries {
 		vFileName = null;
 		vFile = null;
 		vPath = null;
-		vStore = null;
-		vFeatureSource = null;
+		//vStore = null;
+		//vFeatureSource = null;
 		vMap = null;
-		vTransform = null;
+		//vTransform = null;
 	}
 	
 	public void draw(double[][] domain, double[][] gridBounds, CoordinateReferenceSystem gridCRS, Graphics graphics,
@@ -129,27 +129,27 @@ public class VerdiBoundaries {
 		Logger.debug("in VerdiBoundaries.draw; aVerdiStyle.getStyle() = " + theStyle.toString());
 		Logger.debug("in VerdiBoundaries.draw, CRS for tile plot (gridCRS) = " + gridCRS);
 		Logger.debug("   and name of file = " + vFileName);
-		try {
+		/*try {
 			vStore = FileDataStoreFinder.getDataStore(vFile);
 			vFeatureSource = vStore.getFeatureSource();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}
+		}*/
 		Logger.debug("vFile = " + vFile.toString());
 		Logger.debug("vPath = " + vPath.toString());
 		Logger.debug("vMap = " + vMap.toString());
 		Logger.debug("map Coordinate Reference System (vCRS) = " + aVerdiStyle.getCoordinateReferenceSystem().toString());
 		Logger.debug("Feature Source = " + aVerdiStyle.getFeatureSource().toString());
-		Logger.debug("vStore = " + vStore.toString());
-		Logger.debug("vFeatureSource = " + vFeatureSource.toString());
+		//Logger.debug("vStore = " + vStore.toString());
+		//Logger.debug("vFeatureSource = " + vFeatureSource.toString());
 		Logger.debug("Layer = " + aVerdiStyle.getLayer().toString());
 		Logger.debug("ShapeFile = " + aVerdiStyle.getShapeFile().toString());
 		Logger.debug("Shapefile Path = " + aVerdiStyle.getShapePath());
 		Logger.debug("Style = " + aVerdiStyle.getStyle().toString());
 		Logger.debug("now set the CRS to gridCRS");	// NOTE: do NOT use Projector method (old UCAR operates point-by-point
-		Layer aLayer = new FeatureLayer(aVerdiStyle.getFeatureSource(), theStyle);
-		vMap.addLayer(aLayer);
+		//Layer aLayer = new FeatureLayer(aVerdiStyle.getFeatureSource(), theStyle);
+		//vMap.addLayer(aLayer);
 		vMap.getViewport().setCoordinateReferenceSystem(gridCRS);
 		Logger.debug("set CRS of Viewport to gridCRS: " + gridCRS.toString());
 		ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], gridCRS);
@@ -158,14 +158,14 @@ public class VerdiBoundaries {
 		
 		// set of math transform
 		// NOTE: next commented-out section is possibly the beginnings of writing out a shapefile in a given projection
-		boolean lenient = true;		// allow for some error due to different datums
+		/*boolean lenient = true;		// allow for some error due to different datums
 		try {
 			vTransform = CRS.findMathTransform(aVerdiStyle.getCoordinateReferenceSystem(), gridCRS, lenient);
 		} catch (FactoryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Logger.debug("vTransform computed as = " + vTransform.toString());	// nothing yet drawn on map
+		Logger.debug("vTransform computed as = " + vTransform.toString());	// nothing yet drawn on map */
 ////		// TODO - perform the transform
 //		SimpleFeatureCollection featureCollection = null;
 //		SimpleFeatureCollection newFeatureCollection = null;
@@ -191,7 +191,7 @@ public class VerdiBoundaries {
 //			iterator.close();
 //		}
 		// TODO - create a map layer and add it to the vMap object
-		vMap.layers().add(aVerdiStyle.getLayer());	// FIGURE THIS ONE OUT BECAUSE TRANSFORM IS HERE
+		vMap.addLayer(aVerdiStyle.getLayer());	// FIGURE THIS ONE OUT BECAUSE TRANSFORM IS HERE
 		GTRenderer renderer = new StreamingRenderer();
 		renderer.setMapContent(vMap);
 		Rectangle outputArea = new Rectangle(xOffset, yOffset, width, height);
