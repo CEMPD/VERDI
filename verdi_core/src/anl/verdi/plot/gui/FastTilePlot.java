@@ -1425,6 +1425,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		
 		//populate legend colors and ranges on initiation
 		double[] minmax = { 0.0, 0.0 };
+		double[] minmaxl = { 0.0, 0.0 };
 		//default to not a log scale
 		this.log = false;
 		//calculate the non log min/max values, keep the code here
@@ -1449,10 +1450,11 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		//set min/max for both log and non log values...
 		map.setMinMax( minmax[0], minmax[1]);
-		computeDataRange(minmax, true);
-		map.setLogMinMax( minmax[0], minmax[1]);
+		computeDataRange(minmaxl, true);
+		map.setLogMinMax( minmaxl[0], minmaxl[1]);
 		//this final one is for the below legend value calculations
-		computeDataRange(minmax, this.log);
+		if (this.log)
+			minmax = minmaxl;
 
 		//default to this type...
 		map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
