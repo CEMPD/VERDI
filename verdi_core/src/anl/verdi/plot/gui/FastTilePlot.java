@@ -700,8 +700,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				if (dataFrame != null) { //Ignore errors if dataFrame is null - that means window is closing
 					Logger.error("Error rendering FastTilePlot", t);
 					String errInfo = t.getMessage() != null ? ": " + t.getMessage() + "  \n" : ".  ";
-					JOptionPane.showMessageDialog(app.getGui().getFrame(), "An error occured while rendering the plot" + errInfo + "Please see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);
 					try {
+						JOptionPane.showMessageDialog(app.getGui().getFrame(), "An error occured while rendering the plot" + errInfo + "Please see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);
 						app.getGui().getViewManager().getDockable(viewId).close();
 					} catch (Throwable tr) {}
 				}
