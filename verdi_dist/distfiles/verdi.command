@@ -1,17 +1,19 @@
 #! /bin/sh
-export VERDI_HOME=${PWD}
-DIR=`pwd`
+
+export VERDI_HOME=$(cd "$(dirname "$0")"; pwd)
+
+DIR=$VERDI_HOME
 cd $VERDI_HOME/plugins/bootstrap
 
 
-JAVA=../../jre/Commands/java
+JAVA=../../jre/Contents/Home/bin/java
 JAVAMAXMEM="-Xmx1024M"
 
 
 # Limit the number of default spawned threads (eca):
 JAVAOPTS="-XX:+UseParallelGC -XX:ParallelGCThreads=1 -Djava.ext.dirs="
 
-JAVACMD="$JAVA $JAVAOPTS $JAVAMAXMEM -classpath ./bootstrap.jar:./lib/saf.core.runtime.jar:./lib/jpf.jar:./lib/jpf-boot.jar:./lib/:../core/lib/MacOSX/*:../core/lib/* saf.core.runtime.Boot"
+JAVACMD="$JAVA $JAVAOPTS $JAVAMAXMEM -classpath ./bootstrap.jar:./lib/saf.core.runtime.jar:./lib/jpf.jar:./lib/jpf-boot.jar:./lib/:../core/lib/MacOSX/*:../core/lib/org.apache.xalan_2.7.1.v201005080400.jar:../core/lib/org.apache.xml.serializer_2.7.1.v201005080400.jar:../core/lib/* saf.core.runtime.Boot"
 
 BATCHCMD=$1
 
