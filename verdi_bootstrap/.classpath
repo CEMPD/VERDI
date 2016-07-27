@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="verdi_core/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="/verdi_core/lib/prefsAll.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jpf-boot.jar" sourcepath="lib_src/jpf-boot-1.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jpf.jar" sourcepath="lib_src/jpf-1.5-sources.jar"/>
@@ -92,10 +96,11 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-opengis-14.4.jar" sourcepath="/home/tahoward/Downloads/geotools-14.4-project.zip"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-referencing-14.4.jar" sourcepath="/home/tahoward/Downloads/geotools-14.4-project.zip"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-render-14.4.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-14.4.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-14.4.jar" sourcepath="/verdi_core/lib_src/gt-shapefile-14.4-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-swing-14.4.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/repast_simphony_gis_2_3_0.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/GeographicLib-Java-1.44.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/core-0.26.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-transform-14.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

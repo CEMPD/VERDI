@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry excluding="org/geotools/verdi/referencing/" kind="src" path="src"/>
+	<classpathentry excluding="org/geotools/verdi/referencing/" kind="src" path="src">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="verdi_core/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/verdi_bootstrap"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/verdi_saf_ui"/>
@@ -72,11 +76,11 @@
 	<classpathentry exported="true" kind="lib" path="lib/miglayout-core-5.1-20150404.220010-96.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/miglayout-swing-5.1-20150404.220019-96.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-api-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-api-14.4.jar" sourcepath="lib_src/gt-api-14.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/gt-brewer-14.4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-coverage-14.4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-coverage-api-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-data-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-data-14.4.jar" sourcepath="lib_src/gt-data-14.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/gt-epsg-extension-14.4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-epsg-wkt-14.4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-feature-aggregate-14.4.jar"/>
@@ -85,13 +89,14 @@
 	<classpathentry kind="lib" path="lib/gt-grid-14.4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-image-14.4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-jts-wrapper-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-main-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-main-14.4.jar" sourcepath="lib_src/gt-main-14.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/gt-metadata-14.4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-opengis-14.4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-referencing-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-render-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-render-14.4.jar" sourcepath="lib_src/gt-render-14.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/gt-shapefile-14.4.jar"/>
 	<classpathentry kind="lib" path="lib/gt-swing-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-transform-14.4.jar" sourcepath="lib_src/gt-transform-14.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-all-1.4.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/repast_simphony_gis_2_3_0.jar"/>
 	<classpathentry kind="output" path="bin"/>
