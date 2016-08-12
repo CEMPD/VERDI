@@ -65,6 +65,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -77,6 +78,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.RepaintManager;
@@ -113,6 +115,13 @@ import saf.core.ui.event.DockableFrameEvent;
 import ucar.ma2.ArrayLogFactory;
 import ucar.ma2.InvalidRangeException;
 import anl.map.coordinates.Decidegrees;
+import anl.verdi.area.AreaTilePlot;
+import anl.verdi.area.MapPolygon;
+import anl.verdi.area.Units;
+import anl.verdi.area.target.DepositionRange;
+import anl.verdi.area.target.GridInfo;
+import anl.verdi.area.target.Target;
+import anl.verdi.area.target.TargetDeposition;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiGUI;
 import anl.verdi.data.ArrayReader;
@@ -128,6 +137,7 @@ import anl.verdi.data.Dataset;
 import anl.verdi.data.MPASDataFrameIndex;
 import anl.verdi.data.MPASPlotDataFrame;
 import anl.verdi.data.MeshCellInfo;
+import anl.verdi.data.MeshDataReader;
 import anl.verdi.data.ObsEvaluator;
 import anl.verdi.data.Slice;
 import anl.verdi.data.Variable;
@@ -391,6 +401,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	MPASDataFrameIndex cellIndex = null;
 	MPASDataFrameIndex hoverCellIndex = null;
 
+	boolean doInterpolation = false;
+	
+	private boolean depositionRangeAlreadySet = false;
 	
 	protected Action timeSeriesSelected = new AbstractAction(
 			"Time Series of Visible Cell(s)") {
@@ -762,7 +775,14 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 							Logger.error("MeshPlot run method", e);
 						}
 
-						renderCells(offScreenGraphics, xOffset, yOffset, true);
+						if (!doInterpolation || currentView == GRID)
+							renderCells(offScreenGraphics, xOffset, yOffset, true);
+						
+						if (doInterpolation) {
+							mapPolygon.draw(tilePlot, domain, gridBounds, gridCRS,legendLevels,
+									legendColors,offScreenGraphics, dataset.getAllCellsArray(), renderReader ,units,firstColumn,firstRow,
+									xOffset, yOffset, width, height,currentView, isShowSelectedOnly());
+						}
 
 						dataArea.setRect(xOffset + xTranslation, yOffset, screenWidth, screenHeight);
 						
@@ -2045,7 +2065,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	// Construct but do not draw yet.
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public MeshPlot(VerdiApplication app, DataFrame dataFrame) {
+	public MeshPlot(VerdiApplication app, DataFrame dataFrame, boolean interpolation) {
 		super(true);
 		this.app=app;
 		setDoubleBuffered(true);
@@ -2057,6 +2077,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		hasNoLayer = (dataFrame.getAxes().getZAxis() == null);
 		format = NumberFormat.getInstance();
 		format.setMaximumFractionDigits(4);
+		
+		doInterpolation = interpolation;
 		
 		plotFormat = NumberFormat.getInstance();
 		
@@ -2175,6 +2197,27 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		westEdge = envelope.getMinX(); // E.g., -420000.0.
 		southEdge = envelope.getMinY(); // E.g., -1716000.0.
+			
+		dataWidth = dataset.getDataWidth();
+		dataHeight = dataset.getDataHeight();
+		
+		//We need these accurate to build correct gridBounds, but zooming expects them to be 0 until loadCellStructure runs
+		visibleDataWidth = dataWidth;
+		visibleDataHeight = dataHeight;
+		
+		gridBounds[X][MINIMUM] = westEdge + panX * RAD_TO_DEG;
+		gridBounds[X][MAXIMUM] = westEdge + (panX + visibleDataWidth) * RAD_TO_DEG;
+		gridBounds[Y][MINIMUM] = southEdge + (dataHeight - panY - visibleDataHeight) * RAD_TO_DEG;
+		gridBounds[Y][MAXIMUM] = southEdge + (dataHeight - panY) * RAD_TO_DEG;
+
+		domain[LONGITUDE][MINIMUM] = gridBounds[X][MINIMUM];
+		domain[LONGITUDE][MAXIMUM] = gridBounds[X][MAXIMUM];
+		domain[LATITUDE][MINIMUM] = gridBounds[Y][MINIMUM];
+		domain[LATITUDE][MAXIMUM] = gridBounds[Y][MAXIMUM];
+		
+		//So for now reset to zero, and let get set normally
+		visibleDataWidth = 0;
+		visibleDataHeight = 0;
 		
 		cellWidth = envelope.getWidth() / columns; // 12000.0.
 		
@@ -2254,6 +2297,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		// Create EMVL TilePlot (but does not draw yet - see draw()):
 
 		tilePlot = new MPASTilePlot(startDate, timestepSize, plotMinMaxCache, statMinMaxCache);
+		
+		if (doInterpolation) {
+			tilePlot.createGridInfo(gridBounds, domain);
+		}
 		
 		if (timeAxis != null && timeAxis.getName().equals("nMonths"))
 			tilePlot.setTimestepUnits(GregorianCalendar.MONTH);
@@ -2356,11 +2403,47 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		if (hasNoLayer)
 			firstLayer = 0;
 		
+		renderReader = createDataReader();
+		
 		// add(toolBar);
 		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
 		doubleBufferedRendererThread.start(); // Calls
 		
 		draw();
+	}
+	
+	public void initInterpolation() {
+		if (doInterpolation) {
+			currentView = AVERAGES;
+			
+			mapPolygon = new MapPolygon(tilePlot);
+			
+			gridNum = GridInfo.getGridNumber(tilePlot.getGridInfo());
+				
+			calcGlobalDepositionRange();
+			
+			// calc range for this set of numbers
+			double[] minmax = { 0.0, 0.0 };
+
+//			this.range;
+			minmax[0] = range.averageMin;
+			minmax[1] = range.averageMax;
+
+			// initialize colormap to these min max values
+			minMax=new MinMax(minmax[0],minmax[1]);
+			// TODO: JIZHEN - need the old map?
+			//ColorMap map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+			if ( map == null) {
+				map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+			} else {
+				map.setPalette(defaultPalette);
+				map.setMinMax( minmax[0], minmax[1]);
+			}
+			map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+			config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+		
+			updateColorMap(map);
+		}
 	}
 	
 	private boolean statError = false;
@@ -2583,6 +2666,14 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}	
 	}
 	
+	public double[][] getGridBounds() {
+		return gridBounds;
+	}
+	
+	public double[][] getDomain() {
+		return domain;
+	}
+	
 
 	/**
 	 * Gets the panel that contains the plot component.
@@ -2754,11 +2845,109 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		gisLayersMenu(menu);
 		bar.add(menu);
 		
+		if (doInterpolation) {
+			// add in my extra option menu
+			menu = new JMenu("Options");
+			ButtonGroup group = new ButtonGroup();
+
+			JRadioButtonMenuItem radioButton=new JRadioButtonMenuItem(new AbstractAction("Show Area Averages") {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 4673389754505180377L;
+
+				public void actionPerformed(ActionEvent e) {
+					JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+					if(item.isSelected())MeshPlot.this.showAverages();
+					draw();
+				}
+			});
+			radioButton.setSelected(true);
+			group.add(radioButton);
+			menu.add(radioButton);
+
+			JRadioButtonMenuItem showTotalButton=new JRadioButtonMenuItem(new AbstractAction("Show Area Totals") {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -4078259126612838335L;
+
+				public void actionPerformed(ActionEvent e) {
+					JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+					if(item.isSelected())MeshPlot.this.showTotals();
+					draw();
+				}
+			});
+			group.add(showTotalButton);
+			menu.add(showTotalButton);
+			// disable the radiobutton if needed
+			// see if the current formula type allows this
+			if(Units.isConcentration(getDataFrame().getVariable().getUnit().toString())){
+				showTotalButton.setEnabled(false);
+			}
+
+			radioButton=new JRadioButtonMenuItem(new AbstractAction("Show Gridded Data") {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -6206984806970043891L;
+
+				public void actionPerformed(ActionEvent e) {
+					JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+					if(item.isSelected())MeshPlot.this.showGrid();
+					draw();
+				}
+			});
+			group.add(radioButton);
+			menu.add(radioButton);
+
+			menu.addSeparator();
+
+			// make radio buttons for filling options
+			ButtonGroup group2 = new ButtonGroup();
+
+			radioButton=new JRadioButtonMenuItem(new AbstractAction("Selected Areas") {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 8704295164108322755L;
+
+				public void actionPerformed(ActionEvent e) {
+					JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+					if(item.isSelected())MeshPlot.this.showSelected();
+					draw();
+				}
+			});
+			radioButton.setSelected(false);
+			group2.add(radioButton);
+			menu.add(radioButton);
+
+			radioButton=new JRadioButtonMenuItem(new AbstractAction("All Areas") {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 841441627768110972L;
+
+				public void actionPerformed(ActionEvent e) {
+					JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+					if(item.isSelected())MeshPlot.this.showAll();
+					draw();
+				}
+			});
+			radioButton.setSelected(true);
+			group2.add(radioButton);
+			menu.add(radioButton);
+
+			bar.add(menu);
+
+		}
+		
 		// change cursor for initial zoom state
 		setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 		
 		return bar;
 	}
+	
 	
 	/*protected void addObsOverlay() {
 		OverlayRequest<ObsEvaluator> request = new OverlayRequest<ObsEvaluator>(OverlayRequest.Type.OBS, this);
@@ -2769,6 +2958,47 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		OverlayRequest<VectorEvaluator> request = new OverlayRequest<VectorEvaluator>(OverlayRequest.Type.VECTOR, this);
 		eventProducer.fireOverlayRequest(request);
 	}*/
+	
+	public boolean isShowSelectedOnly() {
+		return showSelectedOnly;
+	}
+
+	public void setShowSelectedOnly(boolean showSelectedOnly) {
+		this.showSelectedOnly = showSelectedOnly;
+	}
+	
+	public void showAll() {
+		setShowSelectedOnly(false);
+		invalidate();
+		repaint();
+	}
+	public void showSelected() {
+		setShowSelectedOnly(true);
+		invalidate();
+		repaint();
+	}
+	public void showAverages() {
+		currentView = AVERAGES;
+		calculateAverageLevels();
+//		minMax=null;
+		invalidate();
+		repaint();
+	}
+	public void showTotals() {
+		currentView = TOTALS;
+		calculateTotalLevels();
+//		minMax=null;
+		invalidate();
+		repaint();
+	}
+	public void showGrid() {
+		currentView = GRID;
+		//TODO - I don't think we need the calculateGridLevels do we?
+		calculateGridLevels();
+//		minMax=null;
+		invalidate();
+		repaint();
+	}
 
 	protected void activateRubberBand() {
 		rubberband.setActive(true);
@@ -3760,6 +3990,71 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}
 	}
 	
+	public void calculateAverageLevels(){
+
+		//if (((AreaTilePlot) tilePlot).mouseOverOK) {
+		if (true) {
+//			final int count = legendLevels.length;
+			
+			Logger.debug("calculateAverageLevels ");
+
+			// calc range for this set of numbers
+			double[] minmax = { 0.0, 0.0 };
+
+			DepositionRange range = this.getGlobalDepositionRange();
+			minmax[0] = range.averageMin;
+			minmax[1] = range.averageMax;
+
+			{
+				// initialize colormap to these min max values
+				minMax=new MinMax(minmax[0],minmax[1]);
+				if ( map == null) {
+					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+				} else {
+					map.setPalette(defaultPalette);
+					map.setMinMax( minmax[0], minmax[1]);
+				}
+				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+
+
+				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
+				updateColorMap(map);
+			}
+		}
+	}
+
+	public void calculateGridLevels(){
+
+		//if (((AreaTilePlot) tilePlot).mouseOverOK) {
+		if (true) {
+//			final int count = legendLevels.length;
+			
+			Logger.debug("calculateGridLevels ");
+
+			// calc range for this set of numbers
+			double[] minmax = this.log ? this.plotMinMaxCache : this.logPlotMinMaxCache;
+
+			{
+				// initialize colormap to these min max values
+				minMax=new MinMax(minmax[0],minmax[1]);
+				if ( map == null) {
+					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+				} else {
+					map.setPalette(defaultPalette);
+					map.setMinMax( minmax[0], minmax[1]);
+				}
+				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+
+
+				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
+				updateColorMap(map);
+			}
+			Logger.debug("minMax "+minMax.getMin()+" "+minMax.getMax());
+		}
+	}
+	
 	/**
 	 * Gets the visible cells for this plot, and calculates min/max.
 	 *
@@ -4458,6 +4753,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		return tilePlot.getTitle();
 	}
 	
+	public MPASTilePlot getTilePlot() {
+		return tilePlot;
+	}
+	
 	public DataFrame createLogDataFrame(DataFrame frame) {
 		DataFrameBuilder builder = new DataFrameBuilder();
 		builder.addDataset(dataset);
@@ -4696,9 +4995,136 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 		popupHiding = true;		
 	}
-
+	
 	@Override
 	public void popupMenuCanceled(PopupMenuEvent e) {		
 	}
+	
+	private DepositionRange getGlobalDepositionRange() {
+
+		if ( !depositionRangeAlreadySet ) {
+
+			app.getGui().setStatusOneText("Calculating deposition range.");
+			calcGlobalDepositionRange();
+			// calc range for this set of numbers
+			double[] minmax = { 0.0, 0.0 };
+
+			minmax[0] = range.averageMin;
+			minmax[1] = range.averageMax;
+
+			// if(minMax==null || minMax.getMin()>minmax[0] || minMax.getMax()<minmax[1])
+			{
+				//System.out.println("computing average data minmax...");
+				//			double[] minmax = { 0.0, 0.0 };
+				//			computeDataRange(minmax);
+
+				// initialize colormap to these min max values
+				minMax=new MinMax(minmax[0],minmax[1]);
+				if ( map == null) {
+					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+				} else {
+					map.setPalette(defaultPalette);
+					map.setMinMax( minmax[0], minmax[1]);
+				}
+				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+
+				updateColorMap(map);
+			}
+		}
+
+		return range;
+	}	
+	
+	private MeshDataReader createDataReader() {
+		MeshDataReader dataReader = new MeshDataReader(renderVariable, dataFrame, cellIndex, 0, 0);
+		return dataReader;
+	}
+
+	private void calcGlobalDepositionRange() {
+		//TODO - build data reader
+		MeshDataReader reader = createDataReader();
+		for (int timestep=0; timestep<this.timesteps; timestep++) {
+			reader.setTimestep(timestep);
+			for (int layer=0; layer<this.layers; layer++) {
+				reader.setLayer(layer);
+	    		MeshCellInfo[] cells = dataset.getAllCellsArray();
+				calcFrameDepositionRange(cells, reader, gridNum, range);
+			}
+		}
+
+		depositionRangeAlreadySet = true;
+	}
+
+	private void calcFrameDepositionRange(MeshCellInfo[] data, MeshDataReader reader, int gridIndex, DepositionRange range) {
+		ArrayList polygons=Target.getTargets();
+		
+		TargetDeposition deposition = new TargetDeposition();
+		for(Target polygon:(ArrayList<Target>)polygons){
+			Target.setUnitConverters(units);
+			polygon.computeAverageDeposition(data, reader, gridIndex, deposition);
+			if (deposition.total > range.totalMax) {
+				range.totalMax = deposition.total;
+			}
+			if (deposition.total < range.totalMin) {
+				range.totalMin = deposition.total;
+			}
+			if (deposition.average > range.averageMax) {
+				range.averageMax = deposition.average;
+			}
+			if (deposition.average < range.averageMin) {
+				range.averageMin = deposition.average;
+			}
+		}
+	}
+	
+	public void calculateTotalLevels(){
+		//if (((AreaTilePlot) tilePlot).mouseOverOK) {
+		if (true) {
+			Logger.debug("calculateTotalLevels");
+
+			// calc range for this set of numbers
+			double[] minmax = { 0.0, 0.0 };
+			DepositionRange range = this.getGlobalDepositionRange();
+			minmax[0] = range.totalMin;
+			minmax[1] = range.totalMax;
+
+			// if never set before or if larger range than last set of numbers
+			{
+				Logger.debug("computing total data minmax...");
+
+				// initialize colormap to these min max values
+				minMax=new MinMax(minmax[0],minmax[1]);
+				if ( map == null){
+					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+				} else {
+					map.setPalette(defaultPalette);
+					map.setMinMax( minmax[0], minmax[1]);
+				}
+				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+
+				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
+				updateColorMap(map);
+			}
+			
+		}
+	}
+
+	
+	private DepositionRange range = new DepositionRange();
+	boolean showSelectedOnly=false;
+	
+	public static final int AVERAGES=0; 
+	public static final int TOTALS=1; 
+	public static final int GRID=2; 
+	protected int currentView=GRID;
+	
+	MapPolygon mapPolygon = null;
+	
+	int gridNum = -1;
+	
+	MeshDataReader renderReader = null;
+
 
 }

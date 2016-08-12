@@ -12,6 +12,8 @@ public interface MeshCellInfo {
 
 	public double getValue(ArrayReader renderVariable, DataFrame frame, MPASDataFrameIndex index, int timestep, int layer);
 	
+	public double getValue(MeshDataReader reader);
+	
 	public int getNumVertices();
 	
 	public double getLon();

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,11 +51,13 @@ import anl.verdi.data.DefaultVariable;
 import anl.verdi.data.MPASDataFrameIndex;
 import anl.verdi.data.MPASPlotDataFrame;
 import anl.verdi.data.MeshCellInfo;
+import anl.verdi.data.MeshDataReader;
 import anl.verdi.data.MultiAxisDataset;
 import anl.verdi.data.Variable;
 import anl.verdi.plot.color.Palette;
 import anl.verdi.plot.color.PavePaletteCreator;
 import anl.verdi.plot.data.IMPASDataset;
+import anl.verdi.plot.data.LonCellComparator;
 import anl.verdi.plot.data.MinMaxInfo;
 import anl.verdi.plot.data.MinMaxLevelListener;
 import anl.verdi.util.VUnits;
@@ -91,6 +94,9 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	private CellInfo[] cellsToRender = null;
 	private List<CellInfo> cellsToRenderList = null;
 	Collection<MeshCellInfo> allCells = null;
+	MeshCellInfo[] allCellArray = null;
+	MeshCellInfo[] lonSortedCellArray = null;
+	MeshCellInfo[] latSortedCellArray = null;
 	private Map<MeshCellInfo, Integer> splitCells = null;
 	double dataRatio = 0;
 
@@ -210,6 +216,10 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 					return ", " + e + "m";
 			}
 			return "";
+		}
+		
+		public double getValue(MeshDataReader reader) {
+			return getValue(reader.getArrayReader(), reader.getDataFrame(), reader.getDataIndex(), reader.getTimestep(), reader.getLayer());
 		}
 				
 		public double getValue(ArrayReader renderVariable, DataFrame frame, MPASDataFrameIndex index, int timestep, int layer) {			
@@ -1212,6 +1222,21 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	
 	public Collection<MeshCellInfo> getAllCells() {
 		return allCells;
+	}
+	
+	public MeshCellInfo[] getAllCellsArray() {
+		if (allCellArray == null || allCellArray.length != allCells.size()) {
+			allCellArray = allCells.toArray(new MeshCellInfo[0]);
+		}
+		return allCellArray;
+	}
+		
+	public MeshCellInfo[] getLonSortedCellsArray() {
+		if (lonSortedCellArray == null) {
+			lonSortedCellArray = getAllCellsArray().clone();
+			Arrays.sort(lonSortedCellArray, LonCellComparator.getInstance() );
+		}
+		return lonSortedCellArray;
 	}
 	
 	public MeshCellInfo getCellInfo(int id) {

@@ -43,8 +43,6 @@ public interface IMPASDataset extends Dataset {
 	
 	public double getAvgCellDiam();
 	
-	public Collection<MeshCellInfo> getAllCells();
-
 	public MeshCellInfo getCellInfo(int id);
 	
 	public double getDataWidth();
@@ -61,8 +59,17 @@ public interface IMPASDataset extends Dataset {
 	
 	public double getLatMax();
 	
+	//Returns each cell to be displayed onscreen.  Cells that cross plot boundaries are split, and each section is returned separately
+	public Collection<MeshCellInfo> getAllCells();
+	
+	public MeshCellInfo[] getAllCellsArray();
+
+	public MeshCellInfo[] getLonSortedCellsArray();
+
+	//Returns all cells as defined by the dataset
 	public MeshCellInfo[] getCellsToRender();
 	
+	//Returns all cells that cross plot boundaries
 	public Map<MeshCellInfo, Integer> getSplitCells();
 	
 	/** 
