@@ -6,6 +6,10 @@ import gov.epa.emvl.TilePlot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -430,9 +434,14 @@ public class TargetCalculator extends LongTask {
 	            	idx *= -1;
 	            if (idx > 0)
 	            	--idx;
-	              for (int cellIdx = idx; cellIdx < data.length && env.getMaxX() >= data[cellIdx].getLon(data[cellIdx].getMinXPosition()); ++cellIdx) {
-	            	MeshCellInfo cellInfo = data[cellIdx];
-	            //  for (int j = row1; j <= row2; j++) {
+	            Map<MeshCellInfo, Integer> potentialCells = new HashMap<MeshCellInfo, Integer>();
+	            for (int cellIdx = idx; cellIdx < data.length && env.getMaxX() >= data[cellIdx].getLon(data[cellIdx].getMinXPosition()); ++cellIdx) {
+	            	if (data[cellIdx].getLat(data[cellIdx].getMinYPosition()) <= env.getMaxY() && data[cellIdx].getLat(data[cellIdx].getMaxYPosition()) >= env.getMinY())
+	            		potentialCells.put(data[cellIdx], cellIdx);
+	            }
+	           
+
+	            for (MeshCellInfo cellInfo : potentialCells.keySet()) {
 	                if (canceled)
 	                  return false;
 	                  
@@ -459,7 +468,7 @@ public class TargetCalculator extends LongTask {
 	               }
 	                if (intersectionArea > 0) {
 	                  // get the area of the intersection
-	                  cellArray.add(new Integer(cellIdx));
+		              cellArray.add(potentialCells.get(cellInfo));
 	                  areas.add(new Float(intersectionArea));
 	                }
 
@@ -488,8 +497,7 @@ public class TargetCalculator extends LongTask {
 	        }
 	        
 	    } catch (Exception e) {
-	      Logger.error("An exception occurred ");
-	      e.printStackTrace();
+	      Logger.error("An exception occurred", e);
 	      return false;
 	    } finally {
 	      //update();

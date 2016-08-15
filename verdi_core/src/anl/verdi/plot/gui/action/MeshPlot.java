@@ -64,7 +64,10 @@ public static void performAction( final VerdiApplication application, final Data
 
     }
 	final String variableName = dataFrame.getVariable().getName();
-    final PlotPanel panel = new PlotPanel( plot, "Tile " + variableName);
+    String plotName = "Tile " + variableName;
+    if (calc != null)
+    	plotName = "ArealInterpolation";
+    final PlotPanel panel = new PlotPanel( plot, plotName);
     application.getGui().addPlot( panel );
     panel.addPlotListener( application );
   }

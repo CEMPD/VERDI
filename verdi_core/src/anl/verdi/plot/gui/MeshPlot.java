@@ -2886,7 +2886,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				showTotalButton.setEnabled(false);
 			}
 
-			radioButton=new JRadioButtonMenuItem(new AbstractAction("Show Gridded Data") {
+			radioButton=new JRadioButtonMenuItem(new AbstractAction("Show Cell Data") {
 				/**
 				 * 
 				 */
@@ -2980,22 +2980,18 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	public void showAverages() {
 		currentView = AVERAGES;
 		calculateAverageLevels();
-//		minMax=null;
 		invalidate();
 		repaint();
 	}
 	public void showTotals() {
 		currentView = TOTALS;
 		calculateTotalLevels();
-//		minMax=null;
 		invalidate();
 		repaint();
 	}
 	public void showGrid() {
 		currentView = GRID;
-		//TODO - I don't think we need the calculateGridLevels do we?
 		calculateGridLevels();
-//		minMax=null;
 		invalidate();
 		repaint();
 	}
@@ -4033,7 +4029,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			Logger.debug("calculateGridLevels ");
 
 			// calc range for this set of numbers
-			double[] minmax = this.log ? this.plotMinMaxCache : this.logPlotMinMaxCache;
+			double[] minmax = this.log ? this.logPlotMinMaxCache : this.plotMinMaxCache;
 
 			{
 				// initialize colormap to these min max values

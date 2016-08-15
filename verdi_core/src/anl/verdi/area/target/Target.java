@@ -71,11 +71,11 @@ public class Target implements Area{
 
 	Geometry dataObject;
 
-	ArrayList<int[]> cellIndex;
-	ArrayList<int[]> rowIndex;
-	ArrayList<int[]> colIndex;
-	ArrayList<float[]> cellOverlapArea;
-	ArrayList<float[]> overlapArea;
+	Map<Integer, int[]> cellIndex;
+	Map<Integer, int[]> rowIndex;
+	Map<Integer, int[]> colIndex;
+	Map<Integer, float[]> cellOverlapArea;
+	Map<Integer, float[]> overlapArea;
 	static ArrayList <TilePlot> plots=new ArrayList<TilePlot>();
 	Color color;
 	ArrayList<Float> deposition;
@@ -97,30 +97,13 @@ public class Target implements Area{
 	private static Map<Geometry, Target> geometryMap = new HashMap<Geometry, Target>();
 
 	public void setAreaInfo(int gridNum,int[] cellIndex, float[] overlapArea){
-		if(this.cellIndex.size()>gridNum){
-			//replace the items
-			this.cellIndex.set(gridNum,cellIndex);
-			this.cellOverlapArea.set(gridNum,overlapArea);
-		}
-		else{
-			// add the items to the end
-			this.cellIndex.add(cellIndex);
-			this.cellOverlapArea.add(overlapArea);
-		}
+		this.cellIndex.put(gridNum,cellIndex);
+		this.cellOverlapArea.put(gridNum,overlapArea);
 	}
 	public void setAreaInfo(int gridNum,int[] rowIndex,int[] colIndex, float[] overlapArea){
-		if(this.rowIndex.size()>gridNum){
-			//replace the items
-			this.rowIndex.set(gridNum,rowIndex);
-			this.colIndex.set(gridNum,colIndex);
-			this.overlapArea.set(gridNum,overlapArea);
-		}
-		else{
-			// add the items to the end
-			this.rowIndex.add(rowIndex);
-			this.colIndex.add(colIndex);
-			this.overlapArea.add(overlapArea);
-		}
+		this.rowIndex.put(gridNum,rowIndex);
+		this.colIndex.put(gridNum,colIndex);
+		this.overlapArea.put(gridNum,overlapArea);
 	}
 	// map of source files and if their indexes have been loaded
 	protected static class SourceData implements AreaFile{
@@ -215,12 +198,12 @@ public class Target implements Area{
 		//fullName=RegionNames.getRegionName(keyName);
 		sourceData = source;
 		area = 0;
-		colIndex=new ArrayList<int[]>();
-		rowIndex=new ArrayList<int[]>();
+		colIndex=new HashMap<Integer, int[]>();
+		rowIndex=new HashMap<Integer, int[]>();
 		cellIndex = rowIndex;
 		deposition=new ArrayList<Float>();
-		cellOverlapArea=new ArrayList<float[]>();
-		overlapArea=new ArrayList<float[]>();
+		cellOverlapArea=new HashMap<Integer, float[]>();
+		overlapArea=new HashMap<Integer, float[]>();
   		if(obj instanceof MultiPolygon){
   			for(int i=0;i<((MultiPolygon)obj).getNumGeometries();i++){
   				Geometry geo=((MultiPolygon)obj).getGeometryN(i);
@@ -230,9 +213,7 @@ public class Target implements Area{
   			geometryMap.put(obj, this);
 	}
 	public boolean areaCalculatedForGrid(int num){
-		if(colIndex.size()<=num)return false;
-
-		return true;
+		return rowIndex.containsKey(num);
 	}
 
 	/**
@@ -615,12 +596,12 @@ public class Target implements Area{
 	
 	public boolean depositionCalculated() {
 		int gridIndex=getCurrentGridNum();
-		return rowIndex.size() > gridIndex;
+		return rowIndex.containsKey(gridIndex);
 	}
 	public boolean containsDeposition(){
 		int gridIndex=getCurrentGridNum();
 
-		if(rowIndex.size()<=gridIndex){
+		if(!rowIndex.containsKey(gridIndex)) {
 			Logger.error("problem here");
 		}
 		int[]rows=rowIndex.get(gridIndex);
