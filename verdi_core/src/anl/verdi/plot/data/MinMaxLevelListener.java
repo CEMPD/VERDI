@@ -15,4 +15,6 @@ public interface MinMaxLevelListener {
 	public void datasetUpdated(double min, int minIndex, double max, int maxIndex, double percentComplete, boolean isLog);
 	
 	public long getRenderTime();
+	
+	boolean isAsyncListener();
 }

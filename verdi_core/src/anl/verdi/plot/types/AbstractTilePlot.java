@@ -79,9 +79,11 @@ import org.jfree.ui.RectangleInsets;
 
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
+import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataUtilities;
+import anl.verdi.data.Dataset;
 import anl.verdi.data.Slice;
 import anl.verdi.formula.Formula;
 import anl.verdi.gis.LayerEditor;
@@ -98,6 +100,7 @@ import anl.verdi.plot.config.SaveTheme;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.config.TitleConfigurator;
 import anl.verdi.plot.config.UnitsConfigurator;
+import anl.verdi.plot.data.IMPASDataset;
 import anl.verdi.plot.gui.ConfigDialog;
 import anl.verdi.plot.gui.MapAnnotation;
 import anl.verdi.plot.gui.MultiTimeSeriesPlotRequest;
@@ -138,7 +141,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	protected List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
 	protected MapAnnotation mapAnnotation;
 	protected ControlAction controlAction = ControlAction.ZOOM;
-	private DataUtilities.MinMax minMax;
+	protected DataUtilities.MinMax minMax;
 	protected boolean showLatLon = false;
 	protected PlotConfiguration config;
 
@@ -209,7 +212,10 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			requestTimeSeries(points.getMaxPoints(), "Max. cells ");
 		}
 	};
-
+	
+	public DataUtilities.MinMax calculateMinMax(DataFrame frame) {
+		return DataUtilities.minMax(frame);
+	}
 
 	public AbstractTilePlot(DataFrame frame) {
 		Logger.debug("in AbstractTilePlot constructor for a DataFrame");
@@ -217,7 +223,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		layer = 0;
 		timeStep = 0;
 		this.frame = frame;
-		minMax = DataUtilities.minMax(frame);
+		minMax = calculateMinMax(frame);
 		format = NumberFormat.getInstance();
 		format.setMaximumFractionDigits(4);
 	}
@@ -231,6 +237,10 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		List<DataFrame> list = new ArrayList<DataFrame>();
 		list.add(frame);
 		return list;
+	}
+	
+	protected Axes getAxes() {
+		return frame.getAxes();
 	}
 
 	/**
@@ -409,7 +419,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	protected GridCoverage2D getCoverage(DataFrame frame) {
 		Logger.debug("in AbstractTilePlot.getCoverage(DataFrame)");
 
-		Axes<DataFrameAxis> axes = frame.getAxes();
+		Axes<DataFrameAxis> axes = getAxes();
 	//	GridCoverageFactory fac = new GridCoverageFactory();	// replaced for GeoTools v10
 		GridCoverageFactory fac = CoverageFactoryFinder.getGridCoverageFactory(null);
 		float[][] data = new float[axes.getXAxis().getExtent()][axes.getYAxis().getExtent()];
@@ -434,7 +444,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		StyleBuilder builder = new StyleBuilder();
 		Style style = builder.createStyle(builder.createLineSymbolizer());
 		Query query = new Query();
-		query.setCoordinateSystemReproject(frame.getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());
+		query.setCoordinateSystemReproject(getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());
 //		MapLayer layer = new DefaultMapLayer(ds.getFeatureSource().getFeatures(query), style);	// replaced MapLayer and DefaultMapLayer with FeatureLayer for GeoTools v10
 		FeatureLayer layer = new FeatureLayer(ds.getFeatureSource().getFeatures(query), style);
 		layer.setTitle(file.getAbsolutePath());
@@ -450,9 +460,9 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			// of the frame, but the axes ranges refer to the range
 			// of the original dataset. So, the origin will always
 			// be 0 and the exent is the frame's exent.
-			slice.setTimeRange(0, frame.getAxes().getTimeAxis().getExtent());
-			DataFrameAxis frameAxis = frame.getAxes().getZAxis();
-			if (frameAxis != null) slice.setLayerRange(0, frameAxis.getExtent());
+			slice.setTimeRange(0, getAxes().getTimeAxis().getRange().getExtent());
+			CoordAxis frameAxis = getAxes().getZAxis();
+			if (frameAxis != null) slice.setLayerRange(0, (int)frameAxis.getRange().getExtent());
 			slice.setXRange(point.x, 1);
 			slice.setYRange(point.y, 1);
 			try {
@@ -472,9 +482,9 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		// of the frame, but the axes ranges refer to the range
 		// of the original dataset. So, the origin will always
 		// be 0 and the exent is the frame's exent.
-		slice.setTimeRange(0, frame.getAxes().getTimeAxis().getExtent());
-		DataFrameAxis frameAxis = frame.getAxes().getZAxis();
-		if (frameAxis != null) slice.setLayerRange(0, frameAxis.getExtent());
+		slice.setTimeRange(0, getAxes().getTimeAxis().getRange().getExtent());
+		CoordAxis frameAxis = getAxes().getZAxis();
+		if (frameAxis != null) slice.setLayerRange(0, (int)frameAxis.getRange().getExtent());
 		slice.setXRange(probedSlice.getXRange());
 		slice.setYRange(probedSlice.getYRange());
 
@@ -516,7 +526,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	}
 
 	protected Point2D getLatLonForAxisPoint(Point axisPoint) {
-		return frame.getAxes().getBoundingBoxer().axisPointToLatLonPoint(axisPoint.x, axisPoint.y);
+		return getAxes().getBoundingBoxer().axisPointToLatLonPoint(axisPoint.x, axisPoint.y);
 	}
 
 	/**
@@ -624,8 +634,8 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 				// moved BoundingBox and CoordinateReferenceSystem to MapViewport object associated with the MapContent object
 		MapContent context = new MapContent();	//		frame.getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());
 
-		MapViewport aViewport = new MapViewport(frame.getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()));	// defined ReferencedEnvelope
-		aViewport.setCoordinateReferenceSystem(frame.getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());	// defined CRS
+		MapViewport aViewport = new MapViewport(getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()));	// defined ReferencedEnvelope
+		aViewport.setCoordinateReferenceSystem(getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());	// defined CRS
 		context.setViewport(aViewport);	// assign Viewport (ReferencedEnvelope and BoundingBox) to MapContent object
 
 		String defaultMaps = System.getProperty("default.maps", "");
@@ -676,7 +686,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		}
 
 //		context.setAreaOfInterest(frame.getAxes().getBoundingBox(-1));	// function deprecated; already set ReferencedEnvelope above. Do we need to do it again here?
-		mapAnnotation = new MapAnnotation(context, frame.getAxes(), -1); 
+		mapAnnotation = new MapAnnotation(context, getAxes(), -1); 
 	}
 
 	/**
@@ -932,7 +942,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 
 			public void actionPerformed(ActionEvent e) {
 				AnimationPanel panel = new AnimationPanel();
-				panel.init(frame.getAxes(), AbstractTilePlot.this);
+				panel.init(getAxes(), AbstractTilePlot.this);
 			}
 		}));
 

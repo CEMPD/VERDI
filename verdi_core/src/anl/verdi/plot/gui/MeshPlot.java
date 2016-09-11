@@ -4356,7 +4356,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			else
 				value = statisticsData[preStatIndex - 1][0][cell.getId()];
 			if (cell != null) {
-				//ret += cell.getId() + " ";
+				//TODO - Add the cell.getId() line for testing
+				//ret += " " + cell.getId() + " ";
 				ret += cell.getElevation(layerAxisName, layer, timestep) + ") " + variable + " " + valueFormat.format(value) + unitString;
 				//ret += ") " + cell.getId() + " " + " " + valueFormat.format(cell.getValue()) + " c " + coordFormat.format(cell.lon) + "," + coordFormat.format(cell.lat) + " " + point.x + "," + point.y;
 
@@ -4981,6 +4982,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	@Override
 	public long getRenderTime() {
 		return renderTime;
+	}
+
+	@Override
+	public boolean isAsyncListener() {
+		return true;
 	}
 
 	@Override

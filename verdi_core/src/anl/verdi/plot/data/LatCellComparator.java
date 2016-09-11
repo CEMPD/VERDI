@@ -4,11 +4,11 @@ import java.util.Comparator;
 
 import anl.verdi.data.MeshCellInfo;
 
-public class LonCellComparator implements Comparator {
+public class LatCellComparator implements Comparator {
 
-	private static LonCellComparator instance = new LonCellComparator();
+	private static LatCellComparator instance = new LatCellComparator();
 	
-	public static LonCellComparator getInstance() {
+	public static LatCellComparator getInstance() {
 		return instance;
 	}
 
@@ -20,13 +20,13 @@ public class LonCellComparator implements Comparator {
 		else if (o1 instanceof Integer)
 			v1 = ((Integer)o1).intValue();
 		else
-			v1 = ((MeshCellInfo)o1).getLon(((MeshCellInfo)o1).getMinXPosition());
+			v1 = ((MeshCellInfo)o1).getLat(((MeshCellInfo)o1).getMinYPosition());
 		if (o2 instanceof Double)
 			v2 = (Double)o2;
 		else if (o2 instanceof Integer)
 			v2 = ((Integer)o2).intValue();
 		else
-			v2 = ((MeshCellInfo)o2).getLon(((MeshCellInfo)o2).getMinXPosition());
+			v2 = ((MeshCellInfo)o2).getLat(((MeshCellInfo)o2).getMinYPosition());
 		if (v1 == v2)
 			return 0;
 		if (v1 < v2)

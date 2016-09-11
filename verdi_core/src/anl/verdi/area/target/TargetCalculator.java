@@ -76,6 +76,8 @@ public class TargetCalculator extends LongTask {
 	private double cellHeight; // 12000.0 meters.
 	private Projector projector;
 	
+	private static GeometryFactory factory = new GeometryFactory();
+	
 	public class CoordinateTransform implements CoordinateFilter{
 		Projector projector;
 		double[] t = { 0.0, 1.0 }; 
@@ -90,6 +92,10 @@ public class TargetCalculator extends LongTask {
 			arg0.x=t[0];
 			arg0.y=t[1];
 		}
+	}
+	
+	public static GeometryFactory getGeometryFactory() {
+		return factory;
 	}
 	
   public boolean calculateIntersections(ArrayList targets,DataFrame dataFrame, TilePlot plot) {
@@ -216,7 +222,6 @@ public class TargetCalculator extends LongTask {
 	            ArrayList<Integer> rowArray = new ArrayList<Integer>();
 	            ArrayList<Integer> colArray = new ArrayList<Integer>();
 	            ArrayList<Float> areas = new ArrayList<Float>();
-	            GeometryFactory factory=new GeometryFactory();
 	            if(col1<0&&col2<0)
 	            	continue;
 	            if(row1<0&&row2<0)
@@ -410,7 +415,6 @@ public class TargetCalculator extends LongTask {
 	            ArrayList<Integer> colArray = new ArrayList<Integer>();*/
 		  	    ArrayList<Integer> cellArray = new ArrayList<Integer>();
 	            ArrayList<Float> areas = new ArrayList<Float>(); 
-	            GeometryFactory factory=new GeometryFactory();
 	            /* if(col1<0&&col2<0)
 	            	continue;
 	            if(row1<0&&row2<0)
@@ -445,12 +449,8 @@ public class TargetCalculator extends LongTask {
 	                if (canceled)
 	                  return false;
 	                  
-	                Coordinate[] coords = new Coordinate[cellInfo.getNumVertices() + 1];
-	                for (int i = 0; i < cellInfo.getNumVertices(); ++i) {
-	                	coords[i] = new Coordinate(cellInfo.getLon(i), cellInfo.getLat(i));
-	                }
-	                coords[coords.length - 1] = coords[0];
-	                Geometry cellPolygon = factory.createPolygon(coords);
+
+	                Geometry cellPolygon = cellInfo.toGeometry();
 	                // calculate the area of intersection
 	                //factory.to
 	               /*Geometry cellPolygon=factory.toGeometry(new Envelope

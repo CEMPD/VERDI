@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrameAxis;
+import anl.verdi.data.MPASDataFrameIndex;
 import anl.verdi.util.Utilities;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -44,7 +45,7 @@ public class TimeConstantAxisPanel extends JPanel {
 		}
 	}
 
-	private Axes<DataFrameAxis> axes;
+	private Axes axes;
 	private boolean spinnersOn = false;
 
 	public TimeConstantAxisPanel() {
@@ -140,7 +141,7 @@ public class TimeConstantAxisPanel extends JPanel {
 		timeSpinner.setValue(new Integer(time + 1));
 	}
 
-	public void init(Axes<DataFrameAxis> axes, DataFrameAxis constantAxis, int timeStep, int constant) {
+	public void init(Axes axes, CoordAxis constantAxis, int timeStep, int constant) {
 		this.axes = axes;
 		spinnersOn = false;
 		CoordAxis time = axes.getTimeAxis();
@@ -156,8 +157,9 @@ public class TimeConstantAxisPanel extends JPanel {
 
 		// we want the range to start with 1 rather than 0
 		// so we add 1.
-		min = (int) (constantAxis.getRange().getOrigin() + 1);
+		min = constant + 1;
 		max = min + (int) constantAxis.getRange().getExtent() - 1;
+
 		model = (SpinnerNumberModel) axisSpinner.getModel();
 		model.setMinimum(min);
 		model.setMaximum(max);

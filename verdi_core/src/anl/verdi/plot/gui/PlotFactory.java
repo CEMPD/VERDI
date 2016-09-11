@@ -104,16 +104,16 @@ public class PlotFactory {
 		return null;
 	}
 
-	public PlotPanel getVerticalCrossPlot(String formula, DataFrame frame, VertCrossPlotConfiguration config) {
+	public PlotPanel getVerticalCrossPlot(String formula, DataFrame frame, VertCrossPlotConfiguration config, boolean meshInput) {
 		String name = formula + " " + getTypeName(Type.VERTICAL_CROSS_SECTION);
-		Plot plot = new VerticalCrossSectionPlot(frame, config);
+		Plot plot = new VerticalCrossSectionPlot(frame, config, meshInput);
 		return new PlotPanel(plot, name);
 	}
 
 	public PlotPanel getVerticalCrossPlot(String formula, DataFrame frame,
 	                                      CrossSectionType type, int constAxisIndex) {
 		String name = formula + " " + getTypeName(Type.VERTICAL_CROSS_SECTION);
-		Plot plot = new VerticalCrossSectionPlot(frame, type, constAxisIndex);
+		Plot plot = new VerticalCrossSectionPlot(frame, type, constAxisIndex, false);
 		return new PlotPanel(plot, name);
 	}
 }
