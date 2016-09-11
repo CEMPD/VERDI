@@ -133,7 +133,7 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 				frameX = item % domainExtent;
 				frameX += domainOrigin;
 				//System.err.println("getValue item " + item + " lon " + colWithOrigin + " lat " + frameY + " layer " + frameLayer);
-	            MeshCellInfo[] cells = ds.getLonSortedCellsArray();
+	            MeshCellInfo[] cells = ds.getLatSortedCellsArray();
 	            
 	            reader.setLayer(frameLayer);
 	            reader.setTimestep(timeStep);
