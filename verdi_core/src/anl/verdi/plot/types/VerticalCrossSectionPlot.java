@@ -190,9 +190,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		timePanel = new TimeConstantAxisPanel();
 		timePanel.setConstantAxisLabel(getRowOrCol() + ":");
 		int column = constant;
-		if (meshInput) //Workaround for timePanel adding 1
-			--column;
-		timePanel.init(getAxes(), constantAxis,
+		timePanel.init(getAxes(), constantAxis, frame.getAxes(),
 						timeStep + frame.getAxes().getTimeAxis().getOrigin(),
 						column + (int)constantAxis.getRange().getOrigin());
 		ChangeListener changeListener = new ChangeListener() {
@@ -209,6 +207,13 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		bar.add(timePanel);
 		return bar;
 
+	}
+	
+	protected void chartBeginPainting() {
+		timePanel.setEnabled(false);
+	}
+	protected void chartEndPainting() {
+		timePanel.setEnabled(true);
 	}
 
 	private void performControlAction(Rectangle axisRect, Rectangle2D screenRect) {
@@ -315,6 +320,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		} else 
 		title = title.replaceAll("\\b(?i)" + getRowOrCol() + "\\b\\s\\b-?\\d+\\b", getRowOrCol() + " " + (constant + offset + 1));
 		chart.setTitle(title);
+
 	}
 
 	private String getRowOrCol() {
@@ -331,8 +337,8 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		long offset = getAxes().getYAxis().getRange().getOrigin();
 		if (type == CrossSectionType.X)
 			offset = getAxes().getXAxis().getRange().getOrigin();
-		//if (meshInput)
-		//	++offset;
+		if (meshInput)
+			--offset;
 		return (int)offset;
 	}
 
@@ -341,8 +347,6 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		// offset is for the title -- what the actual index for the constant col / row
 		// is
 		int offset = getOffset();
-		if (meshInput)
-			--offset;
 		if (type == CrossSectionType.X)
 			val = "Row";
 		
@@ -503,7 +507,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		title.setText("Min = " + Utilities.formatNumber(rangedMinMax.getMin()) + ", Max = " +
 						Utilities.formatNumber(rangedMinMax.getMax()));
 
-		GregorianCalendar aCalendar = getAxes().getDate(timeStep + frame.getAxes().getTimeAxis().getOrigin());
+		GregorianCalendar aCalendar = frame.getAxes().getDate(timeStep + frame.getAxes().getTimeAxis().getOrigin());
 		Logger.debug("in VerticalCrossSectionPlot createSubtitle set GregorianCalendar aCalendar = " + aCalendar);
 		title = (TextTitle) chart.getSubtitle(bottomTitle1Index);
 		title.setText(Utilities.formatDate(aCalendar));

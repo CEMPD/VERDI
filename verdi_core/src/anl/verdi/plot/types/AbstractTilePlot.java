@@ -2,6 +2,7 @@ package anl.verdi.plot.types;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
@@ -1206,7 +1207,16 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			dialog.setSize(500, 600);
 			dialog.setVisible(true);
 		}
+		
+		public void paintComponent(Graphics g) {
+			chartBeginPainting();
+			super.paintComponent(g);
+			chartEndPainting();
+		}
 	}
+	
+	protected void chartBeginPainting() {}
+	protected void chartEndPainting() {}
 
 	public PlotConfiguration getPlotConfiguration() {
 		Logger.debug("in AbstractTilePlot.getPlotConfiguration");

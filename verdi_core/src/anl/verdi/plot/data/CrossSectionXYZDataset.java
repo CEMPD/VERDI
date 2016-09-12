@@ -1,7 +1,6 @@
 package anl.verdi.plot.data;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import org.jfree.data.xy.XYZDataset;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 import anl.verdi.area.target.TargetCalculator;
 import anl.verdi.data.ArrayReader;
@@ -26,7 +24,6 @@ import anl.verdi.data.Dataset;
 import anl.verdi.data.MPASDataFrameIndex;
 import anl.verdi.data.MeshCellInfo;
 import anl.verdi.data.MeshDataReader;
-import anl.verdi.plot.types.VerticalCrossSectionPlot;
 
 /**
  * JChart XYZDataset implemented in terms of a DataFrame for
@@ -95,25 +92,28 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 		boolean meshInput;
 		MeshDataReader reader = null;
 		IMPASDataset ds = null;
+		
+		int currentRow = -1;
+		int currentStep = -1;
+		Map<String, Double[]> timestepCache = null;
 
 		public RowSeriesData(DataFrame frame, int timeStep, int row) {
 			this.frame = frame;
 			this.timeStep = timeStep;
 			this.row = row;
 			meshInput = checkMesh(frame);
-			index = frame.getIndex();
-			index.set(timeStep, 0, 0, row);
 			if (meshInput) {
 				ArrayReader renderVariable = ArrayReader.getReader(frame.getArray());
 				reader = new MeshDataReader(renderVariable, frame, new MPASDataFrameIndex(frame), timeStep, 0);
 				ds = (IMPASDataset)frame.getDataset().get(0);
 				Axes axes = frame.getDataset().get(0).getCoordAxes();
 				rowWithOrigin = row + (int)axes.getYAxis().getRange().getOrigin();
-				//TODO - check all these values
 				domainExtent = (int)axes.getXAxis().getRange().getExtent() - 1;
 				domainOrigin = (int)axes.getXAxis().getRange().getOrigin();
 				layerExtent = (int)ds.getZAxis(frame.getVariable().getName()).getRange().getExtent();
 			} else {
+				index = frame.getIndex();
+				index.set(timeStep, 0, 0, row);
 				domainExtent = frame.getAxes().getXAxis().getExtent();
 				domainOrigin = frame.getAxes().getXAxis().getOrigin();
 				layerExtent = frame.getAxes().getZAxis().getExtent();
@@ -132,13 +132,25 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 			if (meshInput) {
 				frameX = item % domainExtent;
 				frameX += domainOrigin;
-				//System.err.println("getValue item " + item + " lon " + colWithOrigin + " lat " + frameY + " layer " + frameLayer);
+				if (rowWithOrigin != currentRow || currentStep != timeStep) {
+					currentRow = rowWithOrigin;
+					currentStep = timeStep;
+					timestepCache = new HashMap<String, Double[]>();
+				}
+				String imgLoc = currentRow + "." + frameX;
+				Double[] layerValues = timestepCache.get(imgLoc);
+				if (layerValues != null)
+					return layerValues[frameLayer];
+				layerValues = new Double[layerExtent];
+				timestepCache.put(imgLoc,  layerValues);
 	            MeshCellInfo[] cells = ds.getLatSortedCellsArray();
 	            
-	            reader.setLayer(frameLayer);
 	            reader.setTimestep(timeStep);
 	            double overlapArea = 0;
-	            double valueSum = 0;
+	            double[] valueSum = new double[layerExtent];
+	            for (int i = 0; i < layerExtent; ++i)
+	            	valueSum[i] = 0;
+	            
         		Geometry env = TargetCalculator.getGeometryFactory().toGeometry(new Envelope(frameX, frameX + 1, rowWithOrigin, rowWithOrigin + 1));
 
 	            for (int cellIdx = 0; cellIdx < cells.length && (rowWithOrigin + 1) >= cells[cellIdx].getMinLatValue(); ++cellIdx) {
@@ -159,13 +171,17 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
             				continue;
             			}
 	            		overlapArea += intersectionArea;
-	            		valueSum +=  intersectionArea * cell.getValue(reader);
+	            		for (int i = 0; i < layerExtent; ++i) {
+	            			reader.setLayer(i);
+	            			valueSum[i] +=  intersectionArea * cell.getValue(reader);
+	            		}
 
 	            		//cell.getValue(reader);
 	            	}
 	            }
-				double avgValue = valueSum / overlapArea; 
-				return avgValue;
+	            for (int i = 0; i < layerExtent; ++i)
+	            	layerValues[i] = valueSum[i] / overlapArea; 
+				return layerValues[frameLayer];
 			} else {
 				index.set(timeStep, frameLayer, frameX, row);
 				return frame.getDouble(index);
@@ -250,6 +266,10 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 		boolean meshInput = false;
 		IMPASDataset ds = null;
 		MeshDataReader reader = null;
+		
+		int currentCol = -1;
+		int currentStep = -1;
+		Map<String, Double[]> timestepCache = null;
 
 		public ColSeriesData(DataFrame frame, int timeStep, int col) {
 			this.frame = frame;
@@ -287,13 +307,26 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 			if (meshInput) {
 				frameY = item % domainExtent;
 				frameY += domainOrigin;
+				if (colWithOrigin != currentCol || currentStep != timeStep) {
+					currentCol = colWithOrigin;
+					currentStep = timeStep;
+					timestepCache = new HashMap<String, Double[]>();
+				}
+				String imgLoc = currentCol + "." + frameY;
+				Double[] layerValues = timestepCache.get(imgLoc);
+				if (layerValues != null)
+					return layerValues[frameLayer];
+				layerValues = new Double[layerExtent];
+				timestepCache.put(imgLoc,  layerValues);
 				//System.err.println("getValue item " + item + " lon " + colWithOrigin + " lat " + frameY + " layer " + frameLayer);
 	            MeshCellInfo[] cells = ds.getLonSortedCellsArray();
 	            
-	            reader.setLayer(frameLayer);
 	            reader.setTimestep(timeStep);
 	            double overlapArea = 0;
-	            double valueSum = 0;
+	            double[] valueSum = new double[layerExtent];
+	            for (int i = 0; i < layerExtent; ++i)
+	            	valueSum[i] = 0;
+	            
         		Geometry env = TargetCalculator.getGeometryFactory().toGeometry(new Envelope(colWithOrigin, colWithOrigin + 1, frameY, frameY + 1));
 
         		//This optimization won't work - if we're searching for column -178, we need any cell with min <= 177 and max >= 180.  We'd have to do
@@ -322,19 +355,23 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
             				continue;
             			}
 	            		overlapArea += intersectionArea;
-	            		valueSum +=  intersectionArea * cell.getValue(reader);
+	            		for (int i = 0; i < layerExtent; ++i) {
+	            			reader.setLayer(i);
+	            			valueSum[i] +=  intersectionArea * cell.getValue(reader);
+	            		}
 
 	            		//cell.getValue(reader);
 	            	}
 	            }
-				double avgValue = valueSum / overlapArea; 
+	            for (int i = 0; i < layerExtent; ++i)
+	            	layerValues[i] = valueSum[i] / overlapArea; 
 				/*if (avgValue != avgValue) {
 					for (int i = 0; i < cells.length; ++i)
 						if (cells[i].getId() == 82611)
 							System.err.println("Found undetected cell at " + i + " started idx " + idx);
 					System.err.println("No value found for " + frameY);
 				}*/
-				return avgValue;
+				return layerValues[frameLayer];
 			} else {
 				index.set(timeStep, frameLayer, col, frameY);
 				return frame.getDouble(index);
