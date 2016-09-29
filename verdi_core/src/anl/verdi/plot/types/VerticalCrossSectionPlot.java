@@ -55,12 +55,14 @@ import anl.verdi.formula.Formula;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.VertCrossPlotConfiguration;
 import anl.verdi.plot.data.CrossSectionXYZDataset;
+import anl.verdi.plot.data.CrossSectionXYZDataset.SeriesData;
 import anl.verdi.plot.data.IMPASDataset;
 import anl.verdi.plot.data.MinMaxInfo;
 import anl.verdi.plot.data.MinMaxLevelListener;
 import anl.verdi.plot.gui.AreaSelectionEvent;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.TimeConstantAxisPanel;
+import anl.verdi.plot.jfree.MPASXYBlockRenderer;
 import anl.verdi.plot.jfree.XYBlockRenderer;
 import anl.verdi.plot.probe.ProbeEvent;
 import anl.verdi.plot.util.PlotProperties;
@@ -90,6 +92,8 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	private DataUtilities.MinMax rangedMinMax;
 	
 	boolean meshInput = false;
+	
+	XYBlockRenderer renderer = null;
 
 	/**
 	 * Creates a VerticalCrossSectionPlot.
@@ -232,7 +236,9 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	private void probe(Rectangle axisRect) {
 		Slice slice = new Slice();
 		slice.setTimeRange(timeStep, 1);
-		int y = (axisRect.y - axisRect.height) - frame.getAxes().getZAxis().getOrigin();
+		int y = 1;
+		if (hasZAxis())
+			y = (axisRect.y - axisRect.height) - (int)getZAxis().getRange().getOrigin();
 		slice.setLayerRange(y, axisRect.height + 1);
 		int offset = getOffset();
 		if (type == CrossSectionType.X) {
@@ -277,10 +283,17 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		else if (x > domainRange.getOrigin() + (domainRange.getExtent() - 1))
 			x = domainRange.getOrigin() + (domainRange.getExtent() - 1);
 
-		Range yRange = frame.getAxes().getZAxis().getRange();
-		y += yRange.getOrigin();
-		if (y < yRange.getOrigin()) y = yRange.getOrigin();
-		else if (y > yRange.getOrigin() + (yRange.getExtent() - 1)) y = yRange.getOrigin() + (yRange.getExtent() - 1);
+		int origin = 0;
+		int extent = 1;
+		if (hasZAxis()) {
+			origin = (int)getZAxis().getRange().getOrigin();
+			extent = (int)getZAxis().getRange().getExtent();
+		}
+		
+		//Range yRange = getZAxis().getRange();
+		y += origin;
+		if (y < origin) y = origin;
+		else if (y > origin + (extent - 1)) y = origin + (extent - 1);
 
 		return new Point((int) x, (int) y);
 	}
@@ -304,9 +317,19 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		rangedMinMax = null;
 
 		// updateScaleAxis((XYPlot) chart.getPlot());
+		
+		SeriesData series = null;
 
-		if (type == CrossSectionType.X) dataset.addColSeries(frame, timeStep, constant);
-		else dataset.addRowSeries(frame, timeStep, constant);
+		if (meshInput) {
+			series = dataset.getMeshSeries();
+			//TODO = remove series changes, maybe series all together
+			series.setPlotData(timeStep, constant);
+			((MPASXYBlockRenderer)renderer).setPlotInfo(timeStep, constant);
+		} 
+		if (series == null){
+			if (type == CrossSectionType.X) dataset.addColSeries(frame, timeStep, constant);
+			else dataset.addRowSeries(frame, timeStep, constant);
+		}
 		createSubtitle();
 
 		int offset = getOffset();
@@ -366,7 +389,18 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		yAxis.setLowerMargin(0.0);
 		yAxis.setStandardTickUnits(createIntegerTickUnits());
 
-		XYBlockRenderer renderer = new XYBlockRenderer();
+		if (meshInput) {
+			yAxis.setAutoRange(false);
+			if (hasZAxis()) {
+				yAxis.setRange(getZAxis().getRange().getOrigin() + 1, getZAxis().getRange().getExtent());
+			}
+			if (renderer == null)
+				renderer = new MPASXYBlockRenderer(type, frame, timeStep, constant);
+			else
+				((MPASXYBlockRenderer)renderer).setPlotInfo(timeStep, constant);
+		}
+		else
+			renderer = new XYBlockRenderer();
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
 
 		String title = getRowOrCol() + " " + (constant + offset + 1) + " " + frame.getVariable().getName();
@@ -374,9 +408,6 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		chart.removeLegend();
 		chart.setBackgroundPaint(Color.white);
 		createSubtitles();
-		//TODO - move this back down once we get a handle on the MinMax issue
-		//createSubtitle();
-		//TODO - fix updateScaleAxis(plot)
 		updateScaleAxis(plot);
 
 		plot.setBackgroundPaint(Color.lightGray);
@@ -384,9 +415,20 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		plot.setAxisOffset(new RectangleInsets(5, 5, 5, 5));
 		// plot.addAnnotation(mapAnnotation);
 
-		//createSubtitle();
 		createSubtitle();
 		return chart;
+	}
+	
+	private boolean hasZAxis() {
+		return getZAxis() != null;
+	}
+
+	private CoordAxis getZAxis() {
+		if (meshInput) {
+			return ((IMPASDataset)frame.getDataset().get(0)).getZAxis(frame.getVariable().getName());
+		}
+		else
+			return frame.getAxes().getZAxis();
 	}
 
 	/**
@@ -396,7 +438,9 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	 */
 	private TickUnitSource createIntegerTickUnits() {
 		TickUnits units = new TickUnits();
-		int layerOrigin = frame.getAxes().getZAxis().getOrigin() + 1;
+		int layerOrigin = 1;
+		if (hasZAxis())
+			layerOrigin = (int)getZAxis().getRange().getOrigin() + 1;
 		NumberFormat df0 = new LayerAxisFormatter(new DecimalFormat("0"), layerOrigin);
 		NumberFormat df1 = new LayerAxisFormatter(new DecimalFormat("#,##0"), layerOrigin);
 		units.add(new NumberTickUnit(1, df0));

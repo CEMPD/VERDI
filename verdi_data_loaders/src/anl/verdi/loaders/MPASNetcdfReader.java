@@ -36,9 +36,10 @@ import anl.verdi.data.Dataset;
 import anl.verdi.data.MPASDataFrameBuilder;
 import anl.verdi.data.Slice;
 import anl.verdi.data.Variable;
+import anl.verdi.plot.data.IMPASDataset;
 
 @SuppressWarnings("rawtypes")
-public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
+public class MPASNetcdfReader extends AbstractDataReader<IMPASDataset> {
 	static final Logger Logger = LogManager.getLogger(MPASNetcdfReader.class.getName());
 
 	public MPASNetcdfReader(MPASDataset set) {
@@ -218,7 +219,9 @@ public class MPASNetcdfReader extends AbstractDataReader<MPASDataset> {
 	/**
 	 * get the values for the given data parameters
 	 */
-	public DataFrame getValues(MPASDataset set, List<AxisRange> ranges, Variable variable) {
+	public DataFrame getValues(IMPASDataset iset, List<AxisRange> ranges, Variable variable) {
+		
+		MPASDataset set = (MPASDataset)iset;
 		
 		if (variable.getName().equals(MPASDataset.VAR_AVG_CELL_DIAM)) {
 			return new MPASDoubleVariableFrame(set.getAvgCellDiam());

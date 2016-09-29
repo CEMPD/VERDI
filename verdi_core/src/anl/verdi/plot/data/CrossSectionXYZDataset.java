@@ -42,7 +42,7 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 	 */
 	private static final long serialVersionUID = -2520787127506498240L;
 
-	private interface SeriesData {
+	public interface SeriesData {
 
 		/**
 		 * Gets the value of the specified item.
@@ -72,6 +72,10 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 		int getDomainExtent();
 
 		int getDomainOrigin();
+		
+		boolean hasMeshInput();
+		
+		void setPlotData(int timestep, int constant);
 	}
 
 	private static boolean checkMesh(DataFrame frame) {
@@ -86,7 +90,7 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 
 		DataFrame frame;
 		int domainExtent, layerExtent, domainOrigin;
-		int timeStep, row, rowWithOrigin;
+		int timeStep, row, rowWithOrigin, rowOrigin;
 		DataFrameIndex index;
 		
 		boolean meshInput;
@@ -107,17 +111,28 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 				reader = new MeshDataReader(renderVariable, frame, new MPASDataFrameIndex(frame), timeStep, 0);
 				ds = (IMPASDataset)frame.getDataset().get(0);
 				Axes axes = frame.getDataset().get(0).getCoordAxes();
-				rowWithOrigin = row + (int)axes.getYAxis().getRange().getOrigin();
+				rowOrigin = (int)axes.getYAxis().getRange().getOrigin();
+				rowWithOrigin = row + rowOrigin;
 				domainExtent = (int)axes.getXAxis().getRange().getExtent() - 1;
 				domainOrigin = (int)axes.getXAxis().getRange().getOrigin();
-				layerExtent = (int)ds.getZAxis(frame.getVariable().getName()).getRange().getExtent();
+				if (ds.getZAxis(frame.getVariable().getName()) != null)
+					layerExtent = (int)ds.getZAxis(frame.getVariable().getName()).getRange().getExtent();
+				else
+					layerExtent = 1;
 			} else {
 				index = frame.getIndex();
 				index.set(timeStep, 0, 0, row);
 				domainExtent = frame.getAxes().getXAxis().getExtent();
 				domainOrigin = frame.getAxes().getXAxis().getOrigin();
-				layerExtent = frame.getAxes().getZAxis().getExtent();
+				if (frame.getAxes().getZAxis() != null)
+					layerExtent = frame.getAxes().getZAxis().getExtent();
+				else
+					layerExtent = 1;
 			}
+		}
+		
+		public boolean hasMeshInput() {
+			return meshInput;
 		}
 
 		public int getDomainExtent() {
@@ -254,13 +269,21 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 		public int getDomainOrigin() {
 			return domainOrigin;
 		}
+
+		@Override
+		public void setPlotData(int timestep, int constant) {
+			row = constant;
+			rowWithOrigin = row + rowOrigin;
+			this.timeStep = timestep;
+			
+		}
 	}
 
 	private static class ColSeriesData implements SeriesData {
 
 		DataFrame frame;
 		int domainExtent, domainOrigin, layerExtent;
-		int timeStep, col, colWithOrigin;
+		int timeStep, col, colWithOrigin, colOrigin;
 		DataFrameIndex index;
 		
 		boolean meshInput = false;
@@ -284,13 +307,19 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 				colWithOrigin = col + (int)axes.getXAxis().getRange().getOrigin();
 				domainExtent = (int)axes.getYAxis().getRange().getExtent() - 1;
 				domainOrigin = (int)axes.getYAxis().getRange().getOrigin();
-				layerExtent = (int)ds.getZAxis(frame.getVariable().getName()).getRange().getExtent();
+				if (ds.getZAxis(frame.getVariable().getName()) != null)
+					layerExtent = (int)ds.getZAxis(frame.getVariable().getName()).getRange().getExtent();
+				else
+					layerExtent = 1;
 			} else {
 				index = frame.getIndex();
 				index.set(timeStep, 0, col, 0);
 				domainExtent = frame.getAxes().getYAxis().getExtent();
 				domainOrigin = frame.getAxes().getYAxis().getOrigin();
-				layerExtent = frame.getAxes().getZAxis().getExtent();
+				if (frame.getAxes().getZAxis() != null)
+					layerExtent = frame.getAxes().getZAxis().getExtent();
+				else
+					layerExtent = 1;
 			}
 		}
 
@@ -377,6 +406,10 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 				return frame.getDouble(index);
 			}
 		}
+		
+		public boolean hasMeshInput() {
+			return meshInput;
+		}
 
 		/**
 		 * @param domain the domain coordinate, in this case that is the
@@ -401,10 +434,23 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 		public int getDomainOrigin() {
 			return domainOrigin;
 		}
+
+
+		@Override
+		public void setPlotData(int timestep, int constant) {
+			col = constant;
+			colWithOrigin = col + colOrigin;
+			this.timeStep = timestep;
+		}
 	}
 
 	private List<SeriesData> frames = new ArrayList<SeriesData>();
-
+	
+	private SeriesData meshSeries = null;
+	
+	public SeriesData getMeshSeries() {
+		return meshSeries;
+	}
 	/**
 	 * Gets the value for the series at the specified x, y coordinate.
 	 *
@@ -431,6 +477,8 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 		} else {
 			frames.add(seriesData);
 		}
+		if (seriesData.hasMeshInput())
+			meshSeries = seriesData;
 		notifyListeners(new DatasetChangeEvent(this, this));
 	}
 
@@ -483,7 +531,13 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 	 * @return The item count.
 	 */
 	public int getItemCount(int series) {
-		return frames.get(series).size();
+		if (!frames.get(series).hasMeshInput())
+			return frames.get(series).size();
+		return 1;
+	}
+	
+	public boolean hasMeshInput(int series) {
+		return frames.get(series).hasMeshInput();
 	}
 
 	/**

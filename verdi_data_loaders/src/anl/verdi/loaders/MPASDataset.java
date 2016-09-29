@@ -582,6 +582,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 
 	double dataWidth = 0;
 	double dataHeight = 0;
+	double exactWidth = 0;
+	double exactHeight = 0;
 	
 	double avgCellDiam = 0;
 	
@@ -1170,6 +1172,9 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		dataWidth = lonMax - lonMin;
 		dataHeight = latMax - latMin;
 		
+		exactWidth = dataWidth;
+		exactHeight = dataHeight;
+		
 		//If almost full globe, set to full
 		if (Math.PI * 1.9 < dataWidth) {
 			lonMin = Math.PI * -1;
@@ -1527,6 +1532,14 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		return cellIdInfoMap.get(id);
 	}
 	
+	public double getExactWidth() {
+		return exactWidth;
+	}
+	
+	public double getExactHeight() {
+		return exactHeight;
+	}
+	
 	public double getDataWidth() {
 		return dataWidth;
 	}
@@ -1550,18 +1563,6 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	private MPASDataset() {
 		super(null);
 		cellIdInfoMap = new HashMap<Integer, CellInfo>();
-	}
-	
-	private void testClip() {
-		CellInfo info = new CellInfo(28, 6);
-		Double[] pt = info.clipPoint(2, 1, -2, 3);
-		System.out.println("Clipped to " + pt[0] + ", " + pt[1]);
-		System.out.println("donee");
-	}
-	
-	public static void main(String[] args) {
-		MPASDataset ds = new MPASDataset();
-		ds.testClip();
 	}
 
 	/** 

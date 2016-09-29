@@ -48,7 +48,10 @@ public class MeshPlot extends AbstractSAFAction<VerdiApplication> {
 	}
 	
 public static void performAction( final VerdiApplication application, final DataFrame dataFrame, TargetCalculator calc) {
-    final anl.verdi.plot.gui.MeshPlot plot = new anl.verdi.plot.gui.MeshPlot(application, dataFrame, calc != null);
+	int renderMode = anl.verdi.plot.gui.MeshPlot.MODE_PLOT;
+	if (calc != null)
+		renderMode = anl.verdi.plot.gui.MeshPlot.MODE_INTERPOLATION;
+    final anl.verdi.plot.gui.MeshPlot plot = new anl.verdi.plot.gui.MeshPlot(application, dataFrame, renderMode);
     if (calc != null) {
 		boolean retValue = calc.calculateIntersections(Target.getTargets(),(IMPASDataset)dataFrame.getDataset().get(0), plot.getTilePlot());
 		Logger.debug("back from calculateIntersections, retValue = " + retValue);
