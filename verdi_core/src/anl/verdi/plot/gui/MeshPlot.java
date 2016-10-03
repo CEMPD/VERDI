@@ -382,6 +382,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private Point popUpLocation = new Point(1,1);
 	protected Slice probedSlice;
 	protected JCheckBoxMenuItem showGridLines;
+	protected JCheckBoxMenuItem showWindVectors;
 	final JMenu mapLayersMenu = new JMenu("Add Map Layers");
 	
 	private boolean screenInitted = false;
@@ -594,7 +595,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						continue;// graphics system is not ready
 					}
 
-					final Graphics offScreenGraphics = offScreenImage.getGraphics();
+					final Graphics2D offScreenGraphics = (Graphics2D)offScreenImage.getGraphics();
 
 					if (offScreenGraphics == null) {
 						/*
@@ -634,7 +635,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						}
 					}
 
-										
+					boolean windChanged = locChanged || dataChanged;
 					if (locChanged) {
 						transformCells(/*gr,*/ canvasSize, xOffset, yOffset);	
 						previousClippedDataRatio = clippedDataRatio;
@@ -648,6 +649,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						updateCellData();
 						dataChanged = false;
 					}
+					if (windChanged && renderWind)
+						updateWindData();
 
 
 					final Graphics graphics = threadParent.getGraphics();
@@ -1628,6 +1631,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		int[] latTransformed;
 		byte colorIndex;
 		
+		int[] windStart = new int[2];
+		int[] windEnd = new int[2];
+		double scaledDiameter;
+		double windAngle;
+		double windVelocity;
+		
 		MeshCellInfo source;
 		
 		public LocalCellInfo(MeshCellInfo source) {
@@ -1650,6 +1659,44 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				latTransformed[i] = (int)Math.round((source.getLatRad(i) * -1 - latMin - panY) * yFactor) + yOffset;
 			}
 			visible = false;
+		}
+		
+		public void calculateWindVector() {
+			//TODO - cache scaledDiameter after transformCell if needed
+			scaledDiameter = source.getMaxLat() - source.getMinLat();
+			double d2 = source.getMaxLon() - source.getMinLon();
+			if (d2 < scaledDiameter)
+				scaledDiameter = d2;
+			scaledDiameter *= compositeFactor;
+			
+			//TODO - cache zonal, meridional, windAngle, windVolicty after updateCellData if needed
+			double zonal = source.getZonal(layer, timestep);
+			double meridional = source.getMeridional(layer,  timestep);		
+			windVelocity = Math.sqrt(zonal * zonal + meridional * meridional);
+			
+			if (zonal == 0) {
+				windAngle = 90;
+			} else if (meridional == 0) {
+				windAngle = 0;
+			} else {
+				if (zonal > 0 && meridional >0)
+					windAngle = Math.toDegrees(Math.atan(meridional / zonal));
+				else if (zonal < 0 && meridional > 0)
+					windAngle = 90 - Math.toDegrees(Math.atan(zonal / meridional)); //90 -
+				else if (zonal < 0 && meridional < 0)
+					windAngle = 180 + Math.toDegrees(Math.atan(meridional / zonal)); //180 +
+				else //zonal > 0 && meridional < 0
+					windAngle =  270 - Math.toDegrees(Math.atan(zonal / meridional)); // 270 -
+			}
+			
+			//TODO - calculate after updateCellData
+			double length = .75 * scaledDiameter * .5;
+			double windScale = length / windVelocity;
+
+			windStart[0] = (int)Math.round((source.getLon() / RAD_TO_DEG - lonMin - panX) * compositeFactor) + xOffset;
+			windStart[1] = (int)Math.round((source.getLat() / RAD_TO_DEG * -1 - latMin - panY) * compositeFactor) + yOffset;
+			windEnd[0] = (int)Math.round(windScale * zonal) + windStart[0];
+			windEnd[1] = (int)Math.round(windScale * -meridional) + windStart[1];
 		}
 		
 		public MeshCellInfo getSource() {
@@ -1966,11 +2013,27 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	//Prevents overwriting cell id values when drawing to id map
 	boolean forceHideBorders = false;
 	
+	boolean renderWind = false;
+	
 	public void updateCellData() {
 		long start = System.currentTimeMillis();
 		updateCellColors();
 		calculateVisibleMinMax();
 		Logger.info("Updated cell data in " + (System.currentTimeMillis() - start) + "ms");
+
+	}
+	
+	public void updateWindData() {
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < cellsToRender.length; ++i) {
+			LocalCellInfo cell = getCellInfo(i);
+			cell.calculateWindVector();
+		}
+		
+		for (LocalCellInfo cell : splitCellInfo.keySet()) {
+			cell.calculateWindVector();
+		}
+		Logger.info("Updated wind data in " + (System.currentTimeMillis() - start) + "ms");
 
 	}
 	
@@ -1990,11 +2053,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 	}
 	
-	public void renderCells(Graphics gr, int xOffset, int yOffset) {
+	public void renderCells(Graphics2D gr, int xOffset, int yOffset) {
 		renderCells(gr, xOffset, yOffset, false);
 	}
 	
-	public void renderCells(Graphics gr, int xOffset, int yOffset, boolean visibleOnly) {
+	public void renderCells(Graphics2D gr, int xOffset, int yOffset, boolean visibleOnly) {
 		
 		long renderStart = System.currentTimeMillis();
 		
@@ -2040,7 +2103,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 	}
 	
-	private void renderCell(Graphics gr, int xOffset, int yOffset, LocalCellInfo cell, boolean showCellBorder, int index) {
+	private void renderCell(Graphics2D gr, int xOffset, int yOffset, LocalCellInfo cell, boolean showCellBorder, int index) {
 		if (cell.colorIndex == -1)
 			return;
 
@@ -2070,6 +2133,19 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			}
 			gr.drawLine(cell.lonTransformed[length],  cell.latTransformed[length], 
 					cell.lonTransformed[0], cell.latTransformed[0]);
+		}
+		
+		if (renderWind) {
+			gr.setColor(Color.BLACK);			
+			AffineTransform trx = gr.getTransform();
+			//Render arrow line
+			gr.drawLine(cell.windStart[0],  cell.windStart[1],  cell.windEnd[0], cell.windEnd[1]);
+			int arrowLength = (int)Math.round(cell.scaledDiameter * .5 * .2);
+			//Render arrow head
+			gr.translate(cell.windEnd[0], cell.windEnd[1]);
+			gr.rotate(Math.toRadians(45 - cell.windAngle));
+			gr.fillPolygon(new int[] { 0, 0, -arrowLength}, new int[] { 0, arrowLength, 0}, 3 );
+			gr.setTransform(trx);
 		}
 	}
 	
@@ -2168,8 +2244,6 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		gridCRS = coordinateAxes.getBoundingBoxer().getCRS();
 
-		//TODO 
-		// Initialize grid dimensions: timesteps, layers, rows, columns:
 
 		timeAxis = axes.getTimeAxis();
 
@@ -2833,6 +2907,21 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			}
 		});
 		menu.add(showGridLines);
+		showWindVectors = new JCheckBoxMenuItem(new AbstractAction("Show Wind Vectors") {
+			private static final long serialVersionUID = 2699330329257731588L;
+
+			public void actionPerformed(ActionEvent e) {
+				JCheckBoxMenuItem windVectors = (JCheckBoxMenuItem) e.getSource();
+				((TilePlotConfiguration) config).setWindVectors(windVectors.isSelected());
+				renderWind = windVectors.isSelected();
+				if (renderWind) {
+					dataChanged = true;
+					locChanged = true;
+				}
+				draw();
+			}
+		});
+		menu.add(showWindVectors);
 		
 		bar.add(menu);
 
@@ -4375,7 +4464,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	
 	private String formatLatLon(double lonCoord, double latCoord, int hoveredId, boolean extendedFormat, int xCoord, int yCoord) {	
 
-		String ret = "(" + coordFormat.format(lonCoord) + ", " + coordFormat.format(latCoord);
+		String ret = "(" + coordFormat.format(lonCoord) + "\u00B0, " + coordFormat.format(latCoord) + "\u00B0";
 		if (!extendedFormat)
 			return ret + ")";
 		//ret += " xy " + xCoord + "," + yCoord;
@@ -4393,7 +4482,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			if (cell != null) {
 				//TODO - Add the cell.getId() line for testing
 				//ret += " " + cell.getId() + " ";
-				ret += cell.getElevation(layerAxisName, layer, timestep) + ") " + variable + " " + valueFormat.format(value) + unitString;
+				ret += " " + cell.getElevation(layerAxisName, layer, timestep) + ") ";
+				if (renderWind)
+					ret += valueFormat.format(localCell.windVelocity) + "m/s" + " " + valueFormat.format(localCell.windAngle) + "\u00B0 ";
+				ret += variable + " " + valueFormat.format(value) + unitString;
 				//ret += ") " + cell.getId() + " " + " " + valueFormat.format(cell.getValue()) + " c " + coordFormat.format(cell.lon) + "," + coordFormat.format(cell.lat) + " " + point.x + "," + point.y;
 
 			}
@@ -5364,7 +5456,6 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		MeshPlot plot = createTestPlot();
 		plot.buildTestPlotFrame();
-
 		
 	}
 	

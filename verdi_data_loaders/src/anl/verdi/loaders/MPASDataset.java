@@ -93,7 +93,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	private static final String VAR_DEPTH = "nSoilLevels";
 	
 	Array cellVertices, latVert, lonVert, latCell, lonCell, indexToVertexId, indexToCellId;
-	ArrayReader depth, elevation;
+	ArrayReader depth, elevation, zonal, meridional;
 	ucar.ma2.ArrayInt.D2 vertexList = null;
 	private Map<Integer, Integer> vertexPositionMap = new HashMap<Integer, Integer>();
 	private Map<Integer, CellInfo> cellIdInfoMap;
@@ -104,6 +104,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	MeshCellInfo[] lonSortedCellArray = null;
 	MeshCellInfo[] latSortedCellArray = null;
 	private Map<MeshCellInfo, Integer> splitCells = null;
+	private Map<MeshCellInfo, Integer> splitHorizontalCells = null;
 	double dataRatio = 0;
 	
 
@@ -242,6 +243,14 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			return "";
 		}
 		
+		public double getZonal(int currentLayer, int currentTimestep) {
+			return zonal.get(currentTimestep, cellId, currentLayer);
+		}
+		
+		public double getMeridional(int currentLayer, int currentTimestep) {
+			return meridional.get(currentTimestep, cellId, currentLayer);
+		}
+		
 		public String toString() {
 			String str = cellId + " [ ";
 			for (int i = 0; i < lonCoords.length; ++i) {
@@ -320,7 +329,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		
 		
 		//p2 is the point that crosses the boundary, p1 is the last good point
-		private Double[] clipPoint(double p1x, double p1y, double p2x, double p2y) {
+		private Double[] clipVertical(double p1x, double p1y, double p2x, double p2y) {
 			double dx1, dx2, dx;
 			if (p2x < 0) {
 				dx1 = Math.PI + p2x;//distance from end to p2x
@@ -342,6 +351,33 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			if (p1x < 0)
 				pt[0] *= -1;
 			pt[1] = p1y + dx1 * ratio;
+			
+			return pt;
+			
+		}
+		
+		private Double[] clipHorizontal(double p1x, double p1y, double p2x, double p2y) {
+			double dy1, dy2, dy;
+			if (p2y < 0) {
+				dy1 = Math.PI / 2 + p2y;//distance from end to p2y
+				dy2 = Math.PI / 2 - p1y;//distance from p1y to end
+			}
+			else {
+				dy1 = Math.PI / 2 - p2y;//distance from end to p2y
+				dy2 = Math.PI / 2 + p1y;//distance from p1y to end
+			}
+			
+			dy = dy1 + dy2;
+			
+			double dx = p2x - p1x;
+			
+			double ratio = dx / dy;
+			
+			Double[] pt = new Double[2];
+			pt[0] = Math.PI;
+			if (p1y < 0)
+				pt[1] *= -1;
+			pt[0] = p1x + dy1 * ratio;
 			
 			return pt;
 			
@@ -369,7 +405,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 				if (prevType == type)
 					lists[prevType].add(duplicatePoint(i));
 				else {
-					Double[] pt = clipPoint(lonCoords[i-1], latCoords[i-1], lonCoords[i], latCoords[i]);
+					Double[] pt = clipVertical(lonCoords[i-1], latCoords[i-1], lonCoords[i], latCoords[i]);
 					lists[prevType].add(pt);
 					Double[] pt2 = new Double[2];
 					pt2[0] = pt[0] * -1;
@@ -384,7 +420,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 				type = 1;
 			if (prevType != type) {
 				int i = lonCoords.length - 1;
-				Double[] pt = clipPoint(lonCoords[i], latCoords[i], lonCoords[0], latCoords[0]);
+				Double[] pt = clipVertical(lonCoords[i], latCoords[i], lonCoords[0], latCoords[0]);
 				lists[prevType].add(pt);
 				Double[] pt2 = new Double[2];
 				pt2[0] = pt[0] * -1;
@@ -414,6 +450,101 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			
 			
 			splitCells.put(clone, index);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+
+			return clone;
+		}
+		
+		
+
+		public CellInfo splitGeneric(int index, boolean splitVertical) {
+			CellInfo clone = null;
+			double[] splitCoordinates  = latCoords;
+			if (splitVertical)
+				splitCoordinates = lonCoords;
+			try {
+						
+			ArrayList<Double[]>[] lists = new ArrayList[2];
+			
+			lists[0] = new ArrayList<Double[]>();
+			lists[1] = new ArrayList<Double[]>();
+			
+			int prevType = 0;
+			if (splitCoordinates[0] < 0)
+				prevType = 1;
+			
+			lists[prevType].add(duplicatePoint(0));
+			
+			int type = 0;
+			for (int i = 1; i < splitCoordinates.length; ++i) {
+				if (splitCoordinates[i] < 0)
+					type = 1;
+				if (prevType == type)
+					lists[prevType].add(duplicatePoint(i));
+				else {
+					Double[] pt;
+					if (splitVertical)
+						pt = clipVertical(lonCoords[i-1], latCoords[i-1], lonCoords[i], latCoords[i]);
+					else
+						pt = clipHorizontal(lonCoords[i-1], latCoords[i-1], lonCoords[i], latCoords[i]);
+					lists[prevType].add(pt);
+					Double[] pt2 = new Double[2];
+					pt2[0] = pt[0] * -1;
+					pt2[1] = pt[1];
+					lists[type].add(pt2);
+					lists[type].add(duplicatePoint(i));
+				}
+				prevType = type;
+				type = 0;
+			}
+			if (splitCoordinates[0] < 0)
+				type = 1;
+			if (prevType != type) {
+				int i = splitCoordinates.length - 1;
+				Double[] pt;
+				if (splitVertical)
+					pt = clipVertical(lonCoords[i], latCoords[i], lonCoords[0], latCoords[0]);
+				else
+					pt = clipHorizontal(lonCoords[i], latCoords[i], lonCoords[0], latCoords[0]);
+				lists[prevType].add(pt);
+				Double[] pt2 = new Double[2];
+				pt2[0] = pt[0] * -1;
+				pt2[1] = pt[1];
+				lists[type].add(pt2);
+			}
+			
+			clone = new CellInfo(cellId, lists[0].size());
+			latCoords = new double[lists[1].size()];
+			lonCoords = new double[lists[1].size()];
+			for(int i = 0; i < latCoords.length; ++i) {
+				lonCoords[i] = lists[1].get(i)[0];
+				latCoords[i] = lists[1].get(i)[1];
+			}
+			for(int i = 0; i < clone.latCoords.length; ++i) {
+				clone.lonCoords[i] = lists[0].get(i)[0];
+				clone.latCoords[i] = lists[0].get(i)[1];
+			}
+			
+			calculateCellBounds();
+			clone.calculateCellBounds();
+			
+			if (splitVertical) {
+				clone.lat = lat;			
+				lon = (lonCoords[maxX] + lonCoords[minX]) / 2;
+				clone.lon = (clone.lonCoords[clone.maxX] + clone.lonCoords[clone.minX]) / 2;
+			} else {
+				clone.lon = lon;			
+				lat = (latCoords[maxY] + latCoords[minY]) / 2;
+				clone.lat = (clone.latCoords[clone.maxY] + clone.latCoords[clone.minY]) / 2;				
+			}
+			
+			
+			if (splitVertical)
+				splitCells.put(clone, index);
+			else
+				splitHorizontalCells.put(clone, index);
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
@@ -1096,6 +1227,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		lonCell = read("lonCell");
 		elevation = ArrayReader.getReader(read("zgrid"));
 		depth = ArrayReader.getReader(read("zs"));
+		zonal = ArrayReader.getReader(read("uReconstructZonal"));
+		meridional = ArrayReader.getReader(read("uReconstructMeridional"));
 		vertexList = (ucar.ma2.ArrayInt.D2) read("verticesOnCell");
 		
 		indexToVertexId = read("indexToVertexID");
@@ -1162,11 +1295,17 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 				//System.out.println("Cell " + cell.getId() + " " + vertices + " vertices lon " + cell.lon + " lat " + cell.lat);
 			
 			if (cell.lonCoords[cell.maxX] - cell.lonCoords[cell.minX] > Math.PI * 1.5)
-				cell.split(i);
+				cell.splitGeneric(i, true);
 			else {
 				++cellDiamCount;
 				cellDiamSum += cell.getMaxLon() - cell.getMinLon();
 			}
+			//TODO - split horizontally to fix clipping errors in vertical tile plot
+			/*
+			if (cell.latCoords[cell.minY] < 0 && cell.latCoords[cell.minY] > 0 && cell.latCoords[cell.maxY] + cell.latCoords[cell.minY] > Math.PI * .75 ) {
+				System.err.println("Maybe need to split " + cell.getId() + " these horizontally?");
+				
+			}*/
 		}
 		
 		dataWidth = lonMax - lonMin;
