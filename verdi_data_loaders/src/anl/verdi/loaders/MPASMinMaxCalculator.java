@@ -181,7 +181,10 @@ public class MPASMinMaxCalculator implements Runnable {
 		for (int i = 0; i < numLayers; ++i) {
 			calculateLayer(index, i);
 		}
-		calcDone = true;
+		synchronized(this) {
+			calcDone = true;
+			notifyAll();
+		}
 	}
 	
 	
@@ -189,15 +192,14 @@ public class MPASMinMaxCalculator implements Runnable {
 		if (listeners.indexOf(listener) == -1)
 			listeners.add(listener);
 		if (!listener.isAsyncListener()) {
-			while (!calcDone) {
-				synchronized(this) {
+			synchronized (this) {
+				while (!calcDone) {
 					try {
-						System.err.println("Sychronouse listener waiting 5s for minmax calculation to compete");
-						Thread.sleep(5000);
+						this.wait(5000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					
+
 				}
 			}
 		}

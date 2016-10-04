@@ -50,6 +50,10 @@ public interface IMPASDataset extends Dataset {
 	
 	public MeshCellInfo getCellInfo(int id);
 	
+	public double getExactWidth();
+	
+	public double getExactHeight();
+	
 	public double getDataWidth();
 	
 	public double getDataHeight();

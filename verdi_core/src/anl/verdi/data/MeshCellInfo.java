@@ -32,6 +32,14 @@ public interface MeshCellInfo {
 	
 	public double getMinX();
 	
+	public double getMinLon();
+	
+	public double getMaxLon();
+	
+	public double getMinLat();
+	
+	public double getMaxLat();
+	
 	public double getMinLonValue();
 	
 	public double getMaxLonValue();
@@ -55,6 +63,10 @@ public interface MeshCellInfo {
 	public double getMaxY();
 	
 	public String getElevation(String axisName, int currentLayer, int currentTimestep);
+	
+	public double getZonal(int currentLayer, int currentTimestep);
+	
+	public double getMeridional(int currentLayer, int currentTimestep);
 	
 	public Geometry toGeometry();
 
