@@ -1,0 +1,53 @@
+                ##################################################################################
+                # NOTE: Batch Scripting Language                                                   #
+                #                                                                                  #
+                #    * All parameter/value pairs should be inside one of the two blocks --         #
+                #        <Global/> or <Task/>                                                      #
+                #    * Number of blocks is not limited                                             #
+                #    * Only one <Global/> block is recommended. <Global/> blocks should            #
+                #        contains different items if use multiple <Global/> blocks                 #
+                #    * Parameter values in <Task/> blocks will override those in <Global/>         #
+                #    * Currently supported parameters (keys, case insensitive):                    #
+                #        configFile    -- configuration file full path                             #
+                #        f             -- dataset file path/name                                   #
+                #        dir           -- dataset file folder                                      #
+                #        pattern       -- dataset file name pattern                                #
+                #        gtype         -- plot type (tile, line, bar, vector)                      #
+                #        vector        -- vector plot variables                                    #
+                #        vectorTile    -- vector plot variables                                    #
+                #        s             -- variable name                                            #
+                #        titleString   -- plot title                                               #
+                #        subTitle1     -- plot subtitle one                                        #
+                #        subTitle2     -- plot subtitle two                                        #
+                #        saveImage     -- image file type (png, jpeg, eps, etc.)                   #
+                #        imageFile     -- image file path/name                                     #
+                #        imageDir      -- image file folder                                        #
+                #        drawGridLines -- draw grid lines on the tile plot if 'yes'                #
+                #        imageWidth    -- image width                                              #
+                #        imageHeight   -- image height                                             #
+                #        unitString    -- units                                                    #
+                #                                                                                  #
+                #                                                                                  #
+                # Author: IE, UNC at Chapel Hill                                                   #
+                # Date: 6/1/2010                                                                   #
+                # Version: 0                                                                       #
+                ####################################################################################
+
+
+                <Global>
+                dir=../verdi_dist/distfiles/data/test/model
+                f=cmaq_ready.egts_l.2010.01.SUN.KNU_27_01.CO.ncf
+                f=cmaq_ready.egts_l.2010.01.THU.KNU_27_01.tshift.CO.ncf
+                titleString= Percent Difference
+                subTitle1= timesteps need to be identical between dataset [1] and [2]
+                subTitle2= this example has date time shifted
+                saveImage=png
+                s=((CO[1]-(CO[2]))/CO[1])*100
+                configFile=../verdi_dist/distfiles/data/test/configs/pdiff.diverge.config.-100to100
+                imageDir=../verdi_dist/distfiles/data/test/plots
+                imageFile=perc_diff_CO
+                </Global>
+                <task>
+                gtype=tile
+                </task>
+
