@@ -42,7 +42,7 @@
                 subTitle1= timesteps need to be identical between dataset [1] and [2]
                 subTitle2= this example has date time shifted
                 saveImage=png
-                s=((CO[1]-(CO[2]))/CO[1])*100
+                s=((CO[2]-(CO[1]))/CO[1])*100
                 configFile=../verdi_dist/distfiles/data/test/configs/pdiff.diverge.config.-100to100
                 imageDir=../verdi_dist/distfiles/data/test/plots
                 imageFile=perc_diff_CO
