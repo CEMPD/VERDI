@@ -5309,7 +5309,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		//TODO - investigate locChanged / dataChanged optimizations here if needed
 		transformCells(screenWidth, 0, 0, xScale, yScale);
 		
-		for (int i = 0; i < cellsToRender.length; ++i) {
+		/*for (int i = 0; i < cellsToRender.length; ++i) {
 			LocalCellInfo cell = getCellInfo(i);
 			for (int j = 0; j < cell.lonTransformed.length; ++j) {
 				if (!cell.visible)
@@ -5322,7 +5322,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				if (!cell.visible)
 					continue;
 			}
-		}
+		}*/
 		
 		
 	}
@@ -5338,13 +5338,16 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		int startWidth = 700;
 		int startHeight = 400;
 		
+		startDeg = 179;
+		
 		//TODO - uncomment this to test x axis
-		/*layers = 41;
+		layers = 41;
 		sliceWidth = 1;
 		//TODO - conversion: x' = x + 180
 		//startDeg = -160;
 		startDeg = 20;
-		fixedAxis = "x";*/
+		startDeg = 359;
+		fixedAxis = "x";
 		
 		/*layers = 2;
 		sliceWidth = 45;*/
@@ -5381,7 +5384,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			rotateGraphics.setColor(Color.WHITE);
 			rotateGraphics.fillRect(0,  0, crossSectionImage.getWidth(), crossSectionImage.getHeight());
 			rotateTransform = rotateGraphics.getTransform();
-			rotateGraphics.translate(-1.0, -2.0);
+			//rotateGraphics.translate(-1.0, -2.0);
 			targetGraphics = (Graphics2D)g;
 			targetTransform = targetGraphics.getTransform();
 			targetGraphics.translate(crossXOrigin, crossYOrigin);
