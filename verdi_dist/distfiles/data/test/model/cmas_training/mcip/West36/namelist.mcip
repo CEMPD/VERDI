@@ -1,0 +1,38 @@
+
+ &FILENAMES
+  file_gd    = "/home/training/CMAQ/CMAQv5.1/data/mcip/West36/GRIDDESC"
+  file_hdr   = "/home/training/CMAQ/CMAQv5.1/data/mcip/West36/mmheader.CMAS-Training"
+  file_mm    = "/home/training/CMAQ/CMAQv5.1/data/raw/WRF/wrfout_d01x_2011-06-29_00:00:00",
+               "/home/training/CMAQ/CMAQv5.1/data/raw/WRF/wrfout_d01x_2011-06-29_12:00:00",
+               "/home/training/CMAQ/CMAQv5.1/data/raw/WRF/wrfout_d01x_2011-06-30_00:00:00",
+               "/home/training/CMAQ/CMAQv5.1/data/raw/WRF/wrfout_d01x_2011-06-30_12:00:00",
+               "/home/training/CMAQ/CMAQv5.1/data/raw/WRF/wrfout_d01x_2011-07-01_00:00:00",
+  makegrid   = .T.
+ &END
+
+ &USERDEFS
+  lpv        =  0
+  lwout      =  0
+  luvcout    =  1
+  lsat       =  0
+  mcip_start = "2011-06-29-00:00:00.0000"
+  mcip_end   = "2011-07-01-00:00:00.0000"
+  intvl      =  60
+  coordnam   = "LAM_40N97W"
+  grdnam     = "West36"
+  ctmlays    =  1.000, 0.997, 0.993, 0.988, 0.980, 0.970, 0.960, 0.950, 0.930, 
+              0.910, 0.890, 0.870, 0.840, 0.800, 0.760, 0.720, 0.680, 0.640, 
+              0.600, 0.550, 0.450, 0.350, 0.250, 0.150, 0.060, 0.000
+  btrim      =  -1
+  lprt_col   =  0
+  lprt_row   =  0
+  wrf_lc_ref_lat = 40.0
+ &END
+
+ &WINDOWDEFS
+  x0         =  4
+  y0         =  4
+  ncolsin    =  25
+  nrowsin    =  25
+ &END
+

@@ -35,7 +35,7 @@
 
 
                 <Global>
-                dir=../verdi_dist/distfiles/data/test/model
+                dir=../verdi_dist/distfiles/data/test/model/korea
                 f=cmaq_ready.egts_l.2010.01.SUN.KNU_27_01.CO.ncf
                 f=cmaq_ready.egts_l.2010.01.THU.KNU_27_01.CO.ncf
                 titleString= Percent Difference
