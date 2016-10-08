@@ -8,8 +8,8 @@ setenv dir $cwd
 echo 'current directory:'$dir
 
 /Users/lizadams/VERDI_1.6.0_shapefile_mpas/verdi.command \
-"   -f $dir/../model/cmaq_ready.egts_l.2010.01.SUN.KNU_27_01.CO.ncf \
-   -f  $dir/../model/cmaq_ready.egts_l.2010.01.THU.KNU_27_01.tshift.CO.ncf \
+"   -f $dir/../model/korea/cmaq_ready.egts_l.2010.01.SUN.KNU_27_01.CO.ncf \
+   -f  $dir/../model/korea/cmaq_ready.egts_l.2010.01.THU.KNU_27_01.tshift.CO.ncf \
    -s (CO[2]-CO[1])/CO[1]*100 \
    -configFile $dir/../configs/verdi.CO.diff.config \
    -g tile \

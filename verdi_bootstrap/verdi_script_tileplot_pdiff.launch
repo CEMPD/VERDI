@@ -42,7 +42,7 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="saf.core.runtime.Boot"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-f ../verdi_dist/distfiles/data/test/model/cmaq_ready.egts_l.2010.01.SUN.KNU_27_01.CO.ncf \&#10;   -f  ../verdi_dist/distfiles/data/test/model/cmaq_ready.egts_l.2010.01.THU.KNU_27_01.tshift.CO.ncf \&#10;   -s ((CO[2]-CO[1])/CO[1])*100 \&#10;   -configFile ../verdi_dist/distfiles/data/test/configs/pdiff.diverge.config.-100to100 \&#10;   -g tile \&#10;   -saveImage &quot;GIF&quot; ../verdi_dist/distfiles/data/test/plots/CO.pdiff.gif \&#10; -quit"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-f ../verdi_dist/distfiles/data/test/model/korea/cmaq_ready.egts_l.2010.01.SUN.KNU_27_01.CO.ncf \&#10;   -f  ../verdi_dist/distfiles/data/test/model/korea/cmaq_ready.egts_l.2010.01.THU.KNU_27_01.tshift.CO.ncf \&#10;   -s ((CO[2]-CO[1])/CO[1])*100 \&#10;   -configFile ../verdi_dist/distfiles/data/test/configs/pdiff.diverge.config.-100to100 \&#10;   -g tile \&#10;   -saveImage &quot;GIF&quot; ../verdi_dist/distfiles/data/test/plots/CO.pdiff.gif \&#10; -quit"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="verdi_bootstrap"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx1024m"/>
 </launchConfiguration>
