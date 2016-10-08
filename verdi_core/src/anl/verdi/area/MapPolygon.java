@@ -85,7 +85,7 @@ public class MapPolygon {
 			if (!polygon.depositionCalculated())
 				continue;
 			if (polygon.containsDeposition()) {
-				if (currentView == AreaTilePlot.AVERAGES) {
+				if (currentView == AreaTilePlot.AVERAGES || currentView == AreaTilePlot.GRID) {
 					if (data instanceof float[][])
 						polygon.calculateAverageDeposition((float[][])data);
 					else
