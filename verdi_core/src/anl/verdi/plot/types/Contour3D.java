@@ -58,6 +58,7 @@ import visad.FunctionType;
 import visad.GraphicsModeControl;
 import visad.Integer1DSet;
 import visad.Integer2DSet;
+import visad.Irregular2DSet;
 import visad.RealTupleType;
 import visad.RealType;
 import visad.ScalarMap;
@@ -67,11 +68,16 @@ import visad.java3d.DisplayImplJ3D;
 import visad.java3d.DisplayRendererJ3D;
 import visad.java3d.ProjectionControlJ3D;
 import visad.java3d.VisADCanvasJ3D;
+import anl.verdi.data.ArrayReader;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataFrameIndex;
 import anl.verdi.data.DataUtilities;
+import anl.verdi.data.Dataset;
+import anl.verdi.data.MPASDataFrameIndex;
+import anl.verdi.data.MeshCellInfo;
+import anl.verdi.data.MeshDataReader;
 import anl.verdi.formula.Formula;
 import anl.verdi.formula.Formula.Type;
 import anl.verdi.plot.anim.AnimationPanelContour3D;	// 2014 copy of AnimationPanel specifically for Contour3D
@@ -81,6 +87,9 @@ import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.config.Title;
+import anl.verdi.plot.data.IMPASDataset;
+import anl.verdi.plot.data.MinMaxInfo;
+import anl.verdi.plot.data.MinMaxLevelListener;
 import anl.verdi.plot.gui.ConfigDialog;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotListener;
@@ -94,13 +103,14 @@ import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;
 import anl.verdi.util.VUnits;
 
-public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
+public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLevelListener {
 
 	static final Logger Logger = LogManager.getLogger(Contour3D.class.getName());
 //	private static final MessageCenter msg = MessageCenter.getMessageCenter(Contour3D.class);
 
 	private PlotEventProducer eventProducer = new PlotEventProducer();
 	private DataFrame frame;
+	private MeshDataReader reader = null;
 	private int timeStep, layer;
 	private DisplayImplJ3D display;
 	private FunctionType timeToGrid;
@@ -121,9 +131,16 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 	private PlotConfiguration config = new PlotConfiguration();
 	private ScalarMap yMap;
 	private ScalarMap xMap;
+	//private ScalarMap latMap;
+	//private ScalarMap lonMap;
 	private ScalarMap isoMap;
 	private boolean latLonOn = false;
 	private TimeLayerPanel timeLayerPanel;
+	
+	boolean meshInput = false;
+	
+	IMPASDataset ds = null;
+
 
 	/**
 	 * Creates a contour style 3D image graph
@@ -147,18 +164,39 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 	public Contour3D(DataFrame frame, PlotConfiguration config)
 					throws RemoteException, VisADException {
 
-		hasNoLayer = frame.getAxes().getZAxis() == null;
-		minMax = DataUtilities.minMax(frame);
+		List<Dataset> datasets = frame.getDataset();
+    	if (datasets != null && datasets.size() > 0 && datasets.get(0).getClass().getName().toLowerCase().indexOf("mpas") != -1) {
+    		meshInput = true;
+    		ds = (IMPASDataset)datasets.get(0);
+    	}
+    	
+    	if (meshInput) {
+    		hasNoLayer = ds.getZAxis(frame.getVariable().getName()) == null;
+    		MinMaxInfo info = ds.getPlotMinMax(frame,  this);
+    		minMax = new DataUtilities.MinMax(info.getMin(), info.getMax());
+    	} else {
+    		hasNoLayer = frame.getAxes().getZAxis() == null;
+    		minMax = DataUtilities.minMax(frame);
+    	}
 
 		// Create the quantities
 		// Use RealType(String name, Unit unit, Set set);
 		this.frame = frame;
 		this.timeStep = 0;
 		this.layer = 0;
+		RealType x;
+		RealType y;
 
-		RealType x = RealType.getRealType("x");
-		RealType y = RealType.getRealType("y");
-		domain = new RealTupleType(y, x);
+		if (meshInput) {
+			x = RealType.Longitude;
+			y = RealType.Latitude;
+			domain = new RealTupleType(y, x);
+			
+		} else {
+			x = RealType.getRealType("x");
+			y = RealType.getRealType("y");
+			domain = new RealTupleType(y, x);
+		}
 
 		RealType value = RealType.getRealType(VUnits.getFormattedName(frame.getVariable().getUnit()));
 		RealTupleType range = new RealTupleType(value);
@@ -184,19 +222,19 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 					Vector v = super.getCursorStringVector();
 					Logger.debug("super.getCursorStringVector() = " + super.getCursorStringVector());
 					DataFrame frame = Contour3D.this.frame;
-					Axes<DataFrameAxis> axes = frame.getAxes();
+					Axes<DataFrameAxis> axes = getAxes();
 
 					int frameY = (int) Math.floor(getValue((String) v.get(0)));
 					if (frameY < 0) frameY = 0;
-					else if (frameY > axes.getYAxis().getExtent() - 1) frameY = (int) axes.getYAxis().getExtent() - 1;
+					else if (frameY > axes.getYAxis().getRange().getExtent() - 1) frameY = (int) Math.round(axes.getYAxis().getRange().getExtent() - 1);
 
 
 					int frameX = (int) Math.floor(getValue((String) v.get(1)));
 					if (frameX < 0) frameX = 0;
-					else if (frameX > axes.getXAxis().getExtent() - 1) frameX = (int) axes.getXAxis().getExtent() - 1;
+					else if (frameX > axes.getXAxis().getRange().getExtent() - 1) frameX = (int) Math.round(axes.getXAxis().getRange().getExtent() - 1);
 
-					int y = frameY + axes.getYAxis().getOrigin();
-					int x = frameX + axes.getXAxis().getOrigin();
+					int y = frameY + (int)Math.round(axes.getYAxis().getRange().getOrigin());
+					int x = frameX + (int)Math.round(axes.getXAxis().getRange().getOrigin());
 					DataFrameIndex index = frame.getIndex();
 					if (hasNoLayer) {
 						index.setTime(timeStep);
@@ -227,8 +265,8 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		canvas = new VerdiCanvas3D(renderer, gConfig);
 
 		canvas.setTitleText(createTitle());
-		canvas.setTimeText(Utilities.formatDate(frame.getAxes().
-						getDate(timeStep + frame.getAxes().getTimeAxis().getOrigin())));
+		canvas.setTimeText(Utilities.formatDate(getAxes().
+						getDate(timeStep + getAxes().getTimeAxis().getRange().getOrigin())));
 		display = new DisplayImplJ3D("display1", renderer, DisplayImplJ3D.JPANEL,
 						gConfig, canvas);
 		((ProjectionControlJ3D) display.getProjectionControl()).setOrthoView(ProjectionControlJ3D.Y_MINUS);
@@ -240,26 +278,53 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		//dispGMC.setPolygonMode(DisplayImplJ3D.POLYGON_LINE);
 
 		Font font = Font.decode(null).deriveFont(11f);
+		
+		AxisScale axisScale;
+		NumberFormat format;
 
-		yMap = new ScalarMap(y, Display.YAxis);
-		AxisScale axisScale = yMap.getAxisScale();
-		NumberFormat format = new OffsetNumberFormat(axisScale.getNumberFormat(),
-						frame.getAxes().getYAxis().getOrigin() + 1);
-		axisScale.setNumberFormat(format);
-		//axisScale.setGridLinesVisible(true);
-		axisScale.setFont(font);
-		axisScale.setLabelAllTicks(true);
-		axisScale.setMinorTickSpacing(2);
+		if (meshInput) {
+			yMap = new ScalarMap(y, Display.YAxis);
+			axisScale = yMap.getAxisScale();  //THis is null for anything but x, y, and z axis
+			format = new OffsetNumberFormat(axisScale.getNumberFormat(), 0);
+			axisScale.setNumberFormat(format);
+			//axisScale.setGridLinesVisible(true);
+			axisScale.setFont(font);
+			axisScale.setLabelAllTicks(true);
+			axisScale.setMinorTickSpacing(2);
+	
+			xMap = new ScalarMap(x, Display.XAxis);
+			axisScale = xMap.getAxisScale();
+			format = new OffsetNumberFormat(axisScale.getNumberFormat(), 0);
+			axisScale.setNumberFormat(format);
+			//axisScale.setGridLinesVisible(true);
+			axisScale.setFont(font);
+			axisScale.setLabelAllTicks(true);
+			axisScale.setMinorTickSpacing(2);
+		} 
+		
+		else {
+			yMap = new ScalarMap(y, Display.YAxis);
+			axisScale = yMap.getAxisScale();
+			format = new OffsetNumberFormat(axisScale.getNumberFormat(),
+							(int)getAxes().getYAxis().getRange().getOrigin() + 1);
+			axisScale.setNumberFormat(format);
+			//axisScale.setGridLinesVisible(true);
+			axisScale.setFont(font);
+			axisScale.setLabelAllTicks(true);
+			axisScale.setMinorTickSpacing(2);
+	
+			xMap = new ScalarMap(x, Display.XAxis);
+			axisScale = xMap.getAxisScale();
+			format = new OffsetNumberFormat(axisScale.getNumberFormat(),
+							(int)getAxes().getXAxis().getRange().getOrigin() + 1);
+			axisScale.setNumberFormat(format);
+			//axisScale.setGridLinesVisible(true);
+			axisScale.setFont(font);
+			axisScale.setLabelAllTicks(true);
+			axisScale.setMinorTickSpacing(2);
+		}
 
-		xMap = new ScalarMap(x, Display.XAxis);
-		axisScale = xMap.getAxisScale();
-		format = new OffsetNumberFormat(axisScale.getNumberFormat(),
-						frame.getAxes().getXAxis().getOrigin() + 1);
-		axisScale.setNumberFormat(format);
-		//axisScale.setGridLinesVisible(true);
-		axisScale.setFont(font);
-		axisScale.setLabelAllTicks(true);
-		axisScale.setMinorTickSpacing(2);
+
 
 		zMap = new ScalarMap(value, Display.ZAxis);
 		zMap.setRange(minMax.getMin(), minMax.getMax());
@@ -273,8 +338,13 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 		isoMap = new ScalarMap(value, Display.IsoContour);
 
 		// Add maps to display
-		display.addMap(yMap);
-		display.addMap(xMap);
+		if (meshInput) {
+			display.addMap(yMap);
+			display.addMap(xMap);
+		} else {
+			display.addMap(yMap);
+			display.addMap(xMap);
+		}
 		display.addMap(valueMap);
 		display.addMap(zMap);
 
@@ -300,6 +370,10 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 			int displayedLayer = frame.getAxes().getZAxis().getOrigin() + layer + 1;
 			return frame.getVariable().getName() + " - " + "Layer " + displayedLayer;
 		}
+	}
+	
+	protected Axes getAxes() {
+		return frame.getDataset().get(0).getCoordAxes();
 	}
 
 	private void initColors(ColorMap map) throws RemoteException, VisADException {
@@ -499,28 +573,53 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 	}
 
 	private FieldImpl createData() throws VisADException, RemoteException {
-		Axes<DataFrameAxis> axes = frame.getAxes();
-		int xLen = axes.getXAxis().getExtent();
-		int yLen = axes.getYAxis().getExtent();
-
-		Integer2DSet gridSet = new Integer2DSet(domain, yLen, xLen);
-		Integer1DSet timeSet = new Integer1DSet(timeType, axes.getTimeAxis().getExtent());
-
+		Axes axes = getAxes();
+		int numCells = 0;
+		Irregular2DSet latLonSet = null;
+		Integer2DSet gridSet = null;
+		FlatField grid = null;
+		
+		Integer1DSet timeSet = new Integer1DSet(timeType, (int)axes.getTimeAxis().getRange().getExtent());
 		FieldImpl timeField = new FieldImpl(timeToGrid, timeSet);
-		DataFrameIndex index = frame.getIndex();
-		FlatField grid = new FlatField(gridType, gridSet);
-		double[][] data = new double[1][xLen * yLen];
-		if (hasNoLayer) {
-			index.setTime(timeStep);
-			index.setXY(0, 0);
-		} else index.set(timeStep, layer, 0, 0);
-		for (int c = 0; c < xLen; c++) {
-			for (int r = 0; r < yLen; r++) {
-				index.setXY(c, r);
-				data[0][c * yLen + r] = frame.getDouble(index);
+
+		if (meshInput) {
+			numCells = frame.getAxes().getCellAxis().getExtent();
+			float[][] data = new float[2][numCells];
+			float[][] samples = new float[1][numCells];
+			ArrayReader renderVariable = ArrayReader.getReader(frame.getArray());
+			reader = new MeshDataReader(renderVariable, frame, new MPASDataFrameIndex(frame), timeStep, layer);
+			MeshCellInfo[] cells = ds.getAllCellsArray();
+
+			for (int c = 0; c < numCells; ++c) {
+				data[1][c] = (float)cells[c].getLon();
+				data[0][c] = (float)cells[c].getLat();
+				samples[0][c] = (float)ds.getCellInfo(c).getValue(reader);
 			}
+			latLonSet = new Irregular2DSet(domain, data );
+			grid = new FlatField(gridType, latLonSet);
+			grid.setSamples(samples);
+
+		} else {
+			double[][] data = null;
+			int xLen = (int)axes.getXAxis().getRange().getExtent();
+			int yLen = (int)axes.getYAxis().getRange().getExtent();
+			gridSet = new Integer2DSet(domain, yLen, xLen);
+			grid = new FlatField(gridType, gridSet);
+		
+			DataFrameIndex index = frame.getIndex();
+			data = new double[1][xLen * yLen];
+			if (hasNoLayer) {
+				index.setTime(timeStep);
+				index.setXY(0, 0);
+			} else index.set(timeStep, layer, 0, 0);
+			for (int c = 0; c < xLen; c++) {
+				for (int r = 0; r < yLen; r++) {
+					index.setXY(c, r);
+					data[0][c * yLen + r] = frame.getDouble(index);
+				}
+			}
+			grid.setSamples(data);
 		}
-		grid.setSamples(data);
 		timeField.setSample(timeStep, grid, false);
 
 		return timeField;
@@ -996,4 +1095,27 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable {
 	}
 	
 	public void setViewId(String id) {}
+
+	@Override
+	public void layerUpdated(int level, double min, int minIndex, double max, int maxIndex, double percentComplete,
+			boolean isLog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void datasetUpdated(double min, int minIndex, double max, int maxIndex, double percentComplete,
+			boolean isLog) {
+		
+	}
+
+	@Override
+	public long getRenderTime() {
+		return 0;
+	}
+
+	@Override
+	public boolean isAsyncListener() {
+		return false;
+	}
 }
