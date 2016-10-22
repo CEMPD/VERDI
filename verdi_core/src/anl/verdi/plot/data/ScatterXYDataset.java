@@ -8,6 +8,7 @@ import org.jfree.data.general.AbstractDataset;
 import org.jfree.data.general.DatasetChangeEvent;
 import org.jfree.data.xy.XYDataset;
 
+import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameIndex;
 import anl.verdi.data.MPASDataFrameIndex;
@@ -31,6 +32,9 @@ public class ScatterXYDataset extends AbstractDataset implements XYDataset {
 		int xExtent, yExtent;
 		DataFrameIndex index;
 
+		protected Axes getAxes() {
+			return frame.getDataset().get(0).getCoordAxes();
+		}
 
 		public FrameData(DataFrame frame, int timeStep, int layer) {
 			this.frame = frame;
@@ -40,15 +44,15 @@ public class ScatterXYDataset extends AbstractDataset implements XYDataset {
 			} else {
 				if (index instanceof MPASDataFrameIndex) {
 					((MPASDataFrameIndex)index).set(timeStep,  layer,  0);
-					xExtent = frame.getAxes().getCellAxis().getExtent();
+					xExtent = (int)getAxes().getCellAxis().getRange().getExtent();
 					yExtent = 1;
 					return;
 				}
 				else
 					index.set(timeStep, layer, 0, 0);
 			}
-			xExtent = frame.getAxes().getXAxis().getExtent();
-			yExtent = frame.getAxes().getYAxis().getExtent();
+			xExtent = (int)getAxes().getXAxis().getRange().getExtent();
+			yExtent = (int)getAxes().getYAxis().getRange().getExtent();
 		}
 
 		public double getValue(int item) {
