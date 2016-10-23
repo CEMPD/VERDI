@@ -40,7 +40,14 @@ public class ScatterXYDataset extends AbstractDataset implements XYDataset {
 			this.frame = frame;
 			index = frame.getIndex();
 			if (frame.getAxes().getZAxis() == null) {
-				index.setTime(timeStep);
+				if (index instanceof MPASDataFrameIndex) {
+					((MPASDataFrameIndex)index).set(timeStep,  0,  0);
+					xExtent = (int)frame.getAxes().getCellAxis().getRange().getExtent();
+					yExtent = 1;
+					return;
+				}
+				else
+					index.setTime(timeStep);
 			} else {
 				if (index instanceof MPASDataFrameIndex) {
 					((MPASDataFrameIndex)index).set(timeStep,  layer,  0);

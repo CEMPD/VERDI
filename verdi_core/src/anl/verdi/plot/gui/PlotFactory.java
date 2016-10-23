@@ -52,6 +52,8 @@ public class PlotFactory {
 
 	public PlotPanel getScatterPlot(String xFormula, String yFormula, DataFrame xFrame, DataFrame yFrame) {
 		Plot plot = new ScatterPlot(xFrame, yFrame);
+		if (plot.getPanel() == null)
+			return null;
 		return new PlotPanel(plot, xFormula + " x " + yFormula + " Scatter");
 	}
 
