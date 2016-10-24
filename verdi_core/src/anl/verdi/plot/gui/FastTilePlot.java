@@ -850,6 +850,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	public void viewClosed() { 
 		// 
+		mapper.dispose();
 		mapper = null;
 		dataFrameLog = null;
 		dataFrame = null;

@@ -1081,6 +1081,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		} catch( Exception e) {
 		}
 		
+		mapper.dispose();
 		mapper = null;
 		dataFrameLog = null;
 		dataFrame = null;
