@@ -56,6 +56,8 @@ public class ScatterPlotCreator extends AbstractPlotCreator {
 				
 				final PlotPanel panel = factory.getScatterPlot(xElement.getFormula(), yElement.getFormula(),
 								xFrame, yFrame);
+				if (panel == null)
+					return null;
 				gui.addPlot(panel);
 				panel.addPlotListener(app);
 				return panel.getPlot();

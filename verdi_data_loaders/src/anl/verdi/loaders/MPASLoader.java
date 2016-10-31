@@ -9,7 +9,6 @@ package anl.verdi.loaders;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-
 
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.Dimension;
@@ -92,7 +90,7 @@ public class MPASLoader implements DataLoader {
 			allAttrs.add(var.getShortName());
 		for (String var : requiredVarList) {
 			if (!allAttrs.contains(var)) {
-				System.err.println("Variable " + var + " not found, not MPAS");
+				Logger.debug("Variable " + var + " not found, not MPAS");
 				return false;
 			}
 		}
@@ -102,7 +100,7 @@ public class MPASLoader implements DataLoader {
 			allAttrs.add(dim.getShortName());
 		for (String dim : requiredDimList) {
 			if (!allAttrs.contains(dim)) {
-				System.err.println("Dimension " + dim + " not found, not MPAS");
+				Logger.debug("Dimension " + dim + " not found, not MPAS");
 				return false;
 			}
 		}

@@ -45,7 +45,7 @@ public class TimeLayerPanel extends JPanel {
 		}
 	}
 
-	private Axes<DataFrameAxis> axes;
+	private Axes axes;
 	private boolean spinnersOn = false;
 
 
@@ -115,7 +115,7 @@ public class TimeLayerPanel extends JPanel {
 		return noLayers;
 	}
 
-	public void init(Axes<DataFrameAxis> axes, int timeStep, int layer, boolean layerEnabled) {
+	public void init(Axes axes, int timeStep, int layer, boolean layerEnabled) {
 		this.axes = axes;
 		spinnersOn = false;
 		CoordAxis time = axes.getTimeAxis();

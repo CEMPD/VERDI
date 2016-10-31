@@ -106,7 +106,7 @@ public class VerdiBoundaries {
 		return true;	// successfully set data members		// JEB YES returning to calling pgm (Mapper)
 	}
 	
-	private void reset()	// reset member variables to null
+	public void reset()	// reset member variables to null
 	{
 		aVerdiStyle = null;
 		vColor = Color.black;
@@ -115,6 +115,8 @@ public class VerdiBoundaries {
 		vPath = null;
 		//vStore = null;
 		//vFeatureSource = null;
+		if (vMap != null)
+			vMap.dispose();
 		vMap = null;
 		//vTransform = null;
 	}
@@ -251,5 +253,9 @@ public class VerdiBoundaries {
 	public void setColor(Color aColor)
 	{
 		vColor = aColor;
+	}
+	
+	public void finalize() throws Throwable {
+		super.finalize();
 	}
 }
