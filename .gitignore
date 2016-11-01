@@ -1,4 +1,5 @@
 verdi_bootstrap/data/tl_2014_us_county/
+verdi_core/src/anl/verdi/util/VersionInfo.java
 verdi_core/lib_src/gt-api-12.2-sources.jar
 verdi_core/lib_src/gt-brewer-12.2-sources.jar
 verdi_core/lib_src/gt-coverage-12.2-sources.jar
