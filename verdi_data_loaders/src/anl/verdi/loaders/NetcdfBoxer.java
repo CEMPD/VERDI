@@ -205,7 +205,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 		Logger.info("xStart = start + xMin * xInc = " + xStart );
 		xEnd = end - ((limit - xMax) * xInc);
 		Logger.info("xEnd = end - ((limit - xMax) * xInc) = " + xEnd);
-
+		Logger.debug("netcdfConv =" + netcdfConv);
 		if ( netcdfConv == VerdiConstants.NETCDF_CONV_ARW_WRF) { // JIZHEN-SHIFT
 			Logger.info("in recompute code section");
 			xStart = xStart - xaxis.getIncrement() * scaler * 0.5;
@@ -226,9 +226,14 @@ public class NetcdfBoxer implements BoundingBoxer {
 		Logger.info("yStart =start + yMin * yInc = " + yStart );
 		yEnd = end - ((limit - yMax) * yInc);
 		Logger.info("yEnd = end - ((limit - yMax) * yInc) = " + yEnd);
+		Logger.debug("netcdfConv=" + netcdfConv);
 		if ( netcdfConv == VerdiConstants.NETCDF_CONV_ARW_WRF) { // JIZHEN-SHIFT
 			Logger.info("within if block:");
+			Logger.debug("yStart before shift=" + yStart);
 			yStart = yStart - yaxis.getIncrement() * scaler * 0.5; // bottom_left
+			Logger.debug("yStart after shift=" + yStart);
+			Logger.debug("yaxis.getIncrement()=" + yaxis.getIncrement());
+			Logger.debug("scaler=" + scaler);
 			Logger.info("yStart = yStart - yaxis.getIncrement() * scaler * 0.5 = " + yStart);
 			//yEnd = yEnd - yaxis.getIncrement() * scaler * ( 0.5 + 1);
 			yEnd = yEnd - yaxis.getIncrement() * scaler * 0.5; // top_right
@@ -238,7 +243,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 		Hints.putSystemDefault(Hints.COMPARISON_TOLERANCE, 10e-9);
 
 		Projection proj = getProjection();
-
+		Logger.debug("proj = " + proj.toString() + '\n' + "  projection is not checked yet");
 		if (proj instanceof LambertConformal) {
 			Logger.debug("proj = " + proj.toString() + '\n' + "  projection is of type LambertConformal");
 			if (crs == null) {
@@ -249,7 +254,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 					Logger.info("created strCRS = " + strCRS);
 					Logger.info("Ready to call CRS.parseWKT for LambertConformal");
 					crs = CRS.parseWKT(strCRS);	// NOTE: preferred method (docs.geotools.org/stable/userguide/library/referencing/crs.html)
-					Logger.info("parsed CRS: " + crs.toString());
+					Logger.info("parsed CRS: " + crs.toString()); // sphere radius is 6370000
 					Logger.info("done printing crs");
 				} catch (IOException ex) {
 					Logger.info("into exception handling");

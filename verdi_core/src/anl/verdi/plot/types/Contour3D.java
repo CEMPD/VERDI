@@ -70,6 +70,7 @@ import visad.java3d.ProjectionControlJ3D;
 import visad.java3d.VisADCanvasJ3D;
 import anl.verdi.data.ArrayReader;
 import anl.verdi.data.Axes;
+import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataFrameIndex;
@@ -222,7 +223,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLev
 					Vector v = super.getCursorStringVector();
 					Logger.debug("super.getCursorStringVector() = " + super.getCursorStringVector());
 					DataFrame frame = Contour3D.this.frame;
-					Axes<DataFrameAxis> axes = getAxes();
+					Axes axes = getAxes();
 
 					int frameY = (int) Math.floor(getValue((String) v.get(0)));
 					if (frameY < 0) frameY = 0;
@@ -236,13 +237,21 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLev
 					int y = frameY + (int)Math.round(axes.getYAxis().getRange().getOrigin());
 					int x = frameX + (int)Math.round(axes.getXAxis().getRange().getOrigin());
 					DataFrameIndex index = frame.getIndex();
-					if (hasNoLayer) {
-						index.setTime(timeStep);
-						index.setXY(frameX, frameY);
-					} else {
-						index.set(timeStep, layer, frameX, frameY);
+					double val = 0;
+					if (meshInput) {
+						String zVal = v.get(2).toString();
+						zVal = zVal.substring(zVal.lastIndexOf(" ") + 1);
+						val = Double.parseDouble(zVal);
+					}else {
+						if (hasNoLayer) {
+							index.setTime(timeStep);
+							index.setXY(frameX, frameY);
+						} else {
+							index.set(timeStep, layer, frameX, frameY);
+						}
+					
+						val = frame.getDouble(index);
 					}
-					double val = frame.getDouble(index);
 					if (latLonOn) {
 						Point2D pt = frame.getAxes().getBoundingBoxer().axisPointToLatLonPoint(x, y);
 						cursorVec.add("latitude = " + Utilities.formatLat(pt.getY(), 4));
@@ -259,6 +268,8 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLev
 
 			private double getValue(String item) {
 				String val = item.substring(item.indexOf("=") + 1, item.length()).trim();
+				if (val.indexOf(" ") != -1)
+					val = val.substring(0, val.indexOf(" "));
 				return Double.valueOf(val);
 			}
 		};
@@ -571,43 +582,56 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLev
 			e.printStackTrace();
 		}
 	}
+	
+	float[][] cellData = null;
+	float[][] cellSamples = null;
+	Irregular2DSet latLonSet = null;
+	FlatField grid = null;
+	
+	Integer2DSet gridSet = null;
+	DataFrameIndex index = null;
+	double[][] data = null;
 
 	private FieldImpl createData() throws VisADException, RemoteException {
 		Axes axes = getAxes();
 		int numCells = 0;
-		Irregular2DSet latLonSet = null;
-		Integer2DSet gridSet = null;
-		FlatField grid = null;
 		
 		Integer1DSet timeSet = new Integer1DSet(timeType, (int)axes.getTimeAxis().getRange().getExtent());
 		FieldImpl timeField = new FieldImpl(timeToGrid, timeSet);
 
 		if (meshInput) {
 			numCells = frame.getAxes().getCellAxis().getExtent();
-			float[][] data = new float[2][numCells];
-			float[][] samples = new float[1][numCells];
 			ArrayReader renderVariable = ArrayReader.getReader(frame.getArray());
 			reader = new MeshDataReader(renderVariable, frame, new MPASDataFrameIndex(frame), timeStep, layer);
 			MeshCellInfo[] cells = ds.getAllCellsArray();
 
-			for (int c = 0; c < numCells; ++c) {
-				data[1][c] = (float)cells[c].getLon();
-				data[0][c] = (float)cells[c].getLat();
-				samples[0][c] = (float)ds.getCellInfo(c).getValue(reader);
+			if (cellData == null) {
+				cellData = new float[2][numCells];
+				cellSamples = new float[1][numCells];
+				for (int c = 0; c < numCells; ++c) {
+					cellData[1][c] = (float)cells[c].getLon();
+					cellData[0][c] = (float)cells[c].getLat();
+					cellSamples[0][c] = (float)ds.getCellInfo(c).getValue(reader);
+				}
+				latLonSet = new Irregular2DSet(domain, cellData );
+				grid = new FlatField(gridType, latLonSet);
 			}
-			latLonSet = new Irregular2DSet(domain, data );
-			grid = new FlatField(gridType, latLonSet);
-			grid.setSamples(samples);
+			else {
+				for (int c = 0; c < numCells; ++c) {
+					cellSamples[0][c] = (float)ds.getCellInfo(c).getValue(reader);
+				}
+			}
+			grid.setSamples(cellSamples);
 
 		} else {
-			double[][] data = null;
 			int xLen = (int)axes.getXAxis().getRange().getExtent();
 			int yLen = (int)axes.getYAxis().getRange().getExtent();
-			gridSet = new Integer2DSet(domain, yLen, xLen);
-			grid = new FlatField(gridType, gridSet);
-		
-			DataFrameIndex index = frame.getIndex();
-			data = new double[1][xLen * yLen];
+			if (gridSet == null) {
+				gridSet = new Integer2DSet(domain, yLen, xLen);
+				grid = new FlatField(gridType, gridSet);
+				index = frame.getIndex();
+				data = new double[1][xLen * yLen];
+			}
 			if (hasNoLayer) {
 				index.setTime(timeStep);
 				index.setXY(0, 0);
@@ -655,13 +679,13 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLev
 		JToolBar bar = new JToolBar();
 		bar.setFloatable(false);
 		timeLayerPanel = new TimeLayerPanel();
-		final DataFrameAxis layerAxis = frame.getAxes().getZAxis();
+		final CoordAxis layerAxis = getAxes().getZAxis();
 		if (hasNoLayer) {
-			timeLayerPanel.init(frame.getAxes(),
-							timeStep + frame.getAxes().getTimeAxis().getOrigin(), 0, false);
+			timeLayerPanel.init(getAxes(),
+							timeStep + (int)getAxes().getTimeAxis().getRange().getOrigin(), 0, false);
 		} else {
-			timeLayerPanel.init(frame.getAxes(), timeStep + frame.getAxes().getTimeAxis().getOrigin(), layer
-							+ layerAxis.getOrigin(), layerAxis.getExtent() > 1);
+			timeLayerPanel.init(getAxes(), timeStep + frame.getAxes().getTimeAxis().getOrigin(), layer
+							+ (int)layerAxis.getRange().getOrigin(), layerAxis.getRange().getExtent() > 1);
 		}
 		ChangeListener changeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -669,7 +693,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLev
 					int time = timeLayerPanel.getTime() - frame.getAxes().getTimeAxis().getOrigin();
 					if (hasNoLayer) updateTimeStepLayer(time, 0);
 					else {
-						int layer = timeLayerPanel.getLayer() - layerAxis.getOrigin();
+						int layer = timeLayerPanel.getLayer() - (int)layerAxis.getRange().getOrigin();
 						updateTimeStepLayer(time, layer);
 					}
 				}

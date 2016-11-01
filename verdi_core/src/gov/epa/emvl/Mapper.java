@@ -480,4 +480,21 @@ public class Mapper {
 	public boolean usRoadsMapIncluded() {
 		return layers.contains(roadsMap);
 	}
+	
+	public void dispose() {
+		if (worldMap != null)
+			worldMap.getMap().dispose();
+		if (northAmericaMap != null)
+			northAmericaMap.getMap().dispose();
+		if (stateMap != null)
+			stateMap.getMap().dispose();
+		if (countyMap != null)
+			countyMap.getMap().dispose();
+		if (hucsMap != null)
+			hucsMap.getMap().dispose();
+		if (riversMap != null)
+			riversMap.getMap().dispose();
+		if (roadsMap != null)
+			roadsMap.getMap().dispose();
+	}
 }

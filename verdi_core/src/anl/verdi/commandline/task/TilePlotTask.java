@@ -72,6 +72,7 @@ public class TilePlotTask implements AbstractTask {
 	public void run() {
 		TilePlotConfiguration tconfig = createConfig();
 		int timeStep = 0;
+		int layer = 0;
 
 		if (datafiles == null || datafiles.length == 0) {
 			Logger.error("No data files found.");
@@ -148,6 +149,17 @@ public class TilePlotTask implements AbstractTask {
 					else
 						timeStep = Integer.parseInt(map.get(VerdiConstants.TIME_STEP)) - 1; //assume it is 1-based
 					plot.updateTimeStep(timeStep - axes.getTimeAxis().getOrigin());
+				} catch (NumberFormatException e) {
+					Logger.error("Number Format Exception in TilePlotTask when calling updateTimeStep: " + e.getMessage());
+				}
+				try {
+					Axes<DataFrameAxis> axes = dataFrame.getAxes();
+					String aLayer = map.get(VerdiConstants.LAYER);
+					if(aLayer == null)
+						layer = 0;
+					else
+						layer = Integer.parseInt(map.get(VerdiConstants.LAYER)) - 1; //assume it is 1-based
+					plot.updateLayer(layer - axes.getZAxis().getOrigin());
 				} catch (NumberFormatException e) {
 					Logger.error("Number Format Exception in TilePlotTask when calling updateTimeStep: " + e.getMessage());
 				}

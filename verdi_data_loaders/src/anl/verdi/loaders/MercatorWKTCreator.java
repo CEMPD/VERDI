@@ -47,6 +47,11 @@ public class MercatorWKTCreator {
 		wkt = wkt.replace("\"false_easting\", 500000", "\"false_easting\", " + Math.round(proj.getFalseEasting()));
 		wkt = wkt.replace("\"false_northing\", 0", "\"false_northing\", " + Math.round(proj.getFalseNorthing()));
 		wkt = wkt.replace("\"central_meridian\", 0", "\"central_meridian\", " + Math.round(proj.getOriginLon()));
+		Logger.debug("in MercatorWKTcreate: proj.EarthRadius returns " + proj.getEarthRadius()*1000);
+		Logger.debug("in MercatorWKTcreate: proj.getFalseEasting returns " + proj.getFalseEasting());
+		Logger.debug("in MercatorWKTcreate: proj.getFalseNorthing returns " + proj.getFalseNorthing());
+		Logger.debug("in MercatorWKTcreate: central_meridian proj.getOriginLon returns " + proj.getOriginLon());
+
 		
 		return wkt;
 	}

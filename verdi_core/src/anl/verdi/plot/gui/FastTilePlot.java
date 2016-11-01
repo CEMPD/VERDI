@@ -346,6 +346,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	protected MinMax minMax;
 	protected PlotConfiguration config;
 	private boolean processTimeChange = true;
+	private boolean processLayerChange = true;
 //	private MapLayer controlLayer;
 	private FeatureLayer controlLayer;
 	
@@ -850,6 +851,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	public void viewClosed() { 
 		// 
+		mapper.dispose();
 		mapper = null;
 		dataFrameLog = null;
 		dataFrame = null;
@@ -2961,6 +2963,29 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		drawOverLays();
 		draw();
 		processTimeChange = true;
+
+		try {
+			Thread.sleep(500); //wait for the drawing thread to finish drawing
+		} catch (InterruptedException e) {
+			Logger.error("Interrupted Exception in FastTilePlot.updateTimeStep", e);
+		}
+	}
+	public void updateLayer(int step) {
+		processLayerChange = false;
+		drawMode = DRAW_ONCE;
+		prevLayer = layer;
+		layer = firstLayer + step;
+		
+		try {
+			timeLayerPanel.setLayer(layer);
+		} catch (Exception e) {
+			Logger.error("Exception setting layer. Layer = " + layer + ". Is this 1-based?", e);
+		}
+		
+		drawOverLays();
+		draw();
+		processTimeChange = true;
+		processLayerChange = true;
 
 		try {
 			Thread.sleep(500); //wait for the drawing thread to finish drawing

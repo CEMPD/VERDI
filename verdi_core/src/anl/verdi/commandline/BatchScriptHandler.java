@@ -57,6 +57,7 @@ public class BatchScriptHandler {
 //		"\t#        vectorTile    -- vector plot variables                                    #\n" +
 		"\t#        s             -- variable name                                            #\n" +
 		"\t#        ts            -- time step (1-based)                                      #\n" +
+		"\t#        layer         -- layer (1-based)                                          #\n" +
 		"\t#        titleString   -- plot title                                               #\n" +
 		"\t#[       subDomain     -- <xmin> <ymin> <xmax> <ymax>                              #\n" +	// 2014 added subdomain processing 
 		"\t#        subTitle1     -- plot subtitle one                                        #\n" +
@@ -74,6 +75,8 @@ public class BatchScriptHandler {
 		"\t#      min, mean, sum values over the time steps (within the same layer)           #\n" +
 		"\t#      for each individual grid cell in the domain.                                #\n" +
 		"\t#                                                                                  #\n" +
+		"\t#       example: ts=3      # select timestep = 2 for IO/API Convention file        #\n" +
+		"\t#       example: layer=3   # select layer = 3 for IO/API Convention file           #\n" +
 		"\t#                                                                                  #\n" +
 		"\t# Author: IE, UNC at Chapel Hill                                                   #\n" +
 		"\t# Date: 12/06/2010                                                                 #\n" +

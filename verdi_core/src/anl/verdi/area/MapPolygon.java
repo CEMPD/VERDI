@@ -136,6 +136,7 @@ public class MapPolygon {
 		}
 		
 		graphics.setClip(oldclip);
+		vMap.dispose();
 		
 	}
 
