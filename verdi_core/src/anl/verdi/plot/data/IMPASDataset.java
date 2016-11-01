@@ -9,6 +9,7 @@ package anl.verdi.plot.data;
 import java.util.Collection;
 import java.util.Map;
 
+import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.MeshCellInfo;
@@ -24,6 +25,10 @@ public interface IMPASDataset extends Dataset {
 	 */
 	public MinMaxInfo getPlotMinMax(DataFrame variable, MinMaxLevelListener listener);
 	
+	public MinMaxInfo getPlotMinMaxX(DataFrame variable, int timestep, int x);
+
+	public MinMaxInfo getPlotMinMaxY(DataFrame variable, int timestep, int y);
+
 	/**
 	 * Returns min / max values for the given variable within the given layer.  Initially, values are only accurate for the
 	 * first timestep, with remaining values calculated as quickly as possible.
@@ -43,9 +48,11 @@ public interface IMPASDataset extends Dataset {
 	
 	public double getAvgCellDiam();
 	
-	public Collection<MeshCellInfo> getAllCells();
-
 	public MeshCellInfo getCellInfo(int id);
+	
+	public double getExactWidth();
+	
+	public double getExactHeight();
 	
 	public double getDataWidth();
 	
@@ -61,9 +68,23 @@ public interface IMPASDataset extends Dataset {
 	
 	public double getLatMax();
 	
+	//Returns each cell to be displayed onscreen.  Cells that cross plot boundaries are split, and each section is returned separately
+	public Collection<MeshCellInfo> getAllCells();
+	
+	public MeshCellInfo[] getAllCellsArray();
+
+	public MeshCellInfo[] getLonSortedCellsArray();
+	
+	public MeshCellInfo[] getLatSortedCellsArray();
+
+	//Returns all cells as defined by the dataset
 	public MeshCellInfo[] getCellsToRender();
 	
+	//Returns all cells that cross plot boundaries
 	public Map<MeshCellInfo, Integer> getSplitCells();
+	
+	//MPAS files can have multiple layer axes.  Returns the one for the given variable
+	public CoordAxis getZAxis(String variable);
 	
 	/** 
 	 * 

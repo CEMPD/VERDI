@@ -155,6 +155,10 @@
 			<export prefix="*"/>
 		</library>
 
+		<library id="gt-transform" path="../core/lib/gt-transform-14.4.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
 		<library id="gt-coverage-api" path="../core/lib/gt-coverage-api-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>

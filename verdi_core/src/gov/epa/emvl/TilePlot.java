@@ -25,6 +25,7 @@ import javax.swing.ImageIcon;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
+import anl.verdi.area.target.GridInfo;
 import anl.verdi.data.DataUtilities;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
@@ -1336,6 +1337,10 @@ public class TilePlot {
 
 		range[MINIMUM] = minimumValue;
 		range[MAXIMUM] = maximumValue;
+	}
+	
+	public GridInfo getGridInfo(){
+		return null;
 	}
 
 	/**

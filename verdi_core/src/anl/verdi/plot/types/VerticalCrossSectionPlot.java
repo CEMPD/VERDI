@@ -26,6 +26,7 @@ import javax.vecmath.Point4i;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.swing.JMapPane;
+
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.ChartTheme;
 import org.jfree.chart.JFreeChart;
@@ -44,6 +45,7 @@ import org.jfree.ui.RectangleInsets;
 //import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
+import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataUtilities;
@@ -53,9 +55,14 @@ import anl.verdi.formula.Formula;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.VertCrossPlotConfiguration;
 import anl.verdi.plot.data.CrossSectionXYZDataset;
+import anl.verdi.plot.data.CrossSectionXYZDataset.SeriesData;
+import anl.verdi.plot.data.IMPASDataset;
+import anl.verdi.plot.data.MinMaxInfo;
+import anl.verdi.plot.data.MinMaxLevelListener;
 import anl.verdi.plot.gui.AreaSelectionEvent;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.TimeConstantAxisPanel;
+import anl.verdi.plot.jfree.MPASXYBlockRenderer;
 import anl.verdi.plot.jfree.XYBlockRenderer;
 import anl.verdi.plot.probe.ProbeEvent;
 import anl.verdi.plot.util.PlotProperties;
@@ -66,10 +73,10 @@ import anl.verdi.util.Utilities;
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public class VerticalCrossSectionPlot extends AbstractTilePlot {
+public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMaxLevelListener {
 	static final Logger Logger = LogManager.getLogger(VerticalCrossSectionPlot.class.getName());
 
-	private DataFrameAxis constantAxis, domainAxis;
+	private CoordAxis constantAxis, domainAxis;
 	private TimeConstantAxisPanel timePanel;
 	private boolean processTimeChange = true;
 
@@ -83,6 +90,10 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 	private CrossSectionXYZDataset dataset;
 	private CrossSectionType type;
 	private DataUtilities.MinMax rangedMinMax;
+	
+	boolean meshInput = false;
+	
+	XYBlockRenderer renderer = null;
 
 	/**
 	 * Creates a VerticalCrossSectionPlot.
@@ -91,8 +102,8 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 	 * @param config the configuration info for this plot. This must contain valid
 	 *               CrossSectionType and contant row/col
 	 */
-	public VerticalCrossSectionPlot(DataFrame frame, VertCrossPlotConfiguration config) {
-		this(frame, config.getCrossSectionType(), config.getCrossSectionRowCol());
+	public VerticalCrossSectionPlot(DataFrame frame, VertCrossPlotConfiguration config, boolean meshInput) {
+		this(frame, config.getCrossSectionType(), config.getCrossSectionRowCol(), meshInput);
 		Logger.debug("in constructor for VerticalCrossSectionPlot");
 		if (config.getSubtitle1() == null || config.getSubtitle1().trim().isEmpty())
 			config.setSubtitle1(Tools.getDatasetNames(frame));
@@ -128,17 +139,18 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 	 * @param constant the constant column or row. Whether this is a column or row
 	 *                 is dependent on the cross section type.
 	 */
-	public VerticalCrossSectionPlot(DataFrame frame, CrossSectionType type, int constant) {
+	public VerticalCrossSectionPlot(DataFrame frame, CrossSectionType type, int constant, boolean meshInput) {
 		super(frame);
+		this.meshInput = meshInput;
 		Logger.debug("in alternate constructor for VerticalCrossSectionPlot");
 		this.type = type;
 		this.constant = constant;
 
-		constantAxis = frame.getAxes().getXAxis();
-		domainAxis = frame.getAxes().getYAxis();
+		constantAxis = getAxes().getXAxis();
+		domainAxis = getAxes().getYAxis();
 		if (type == CrossSectionType.Y) {
-			constantAxis = frame.getAxes().getYAxis();
-			domainAxis = frame.getAxes().getXAxis();
+			constantAxis = getAxes().getYAxis();
+			domainAxis = getAxes().getXAxis();
 		}
 
 		// createMapAnnotation();
@@ -181,14 +193,15 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 		bar.setFloatable(false);
 		timePanel = new TimeConstantAxisPanel();
 		timePanel.setConstantAxisLabel(getRowOrCol() + ":");
-		timePanel.init(frame.getAxes(), constantAxis,
+		int column = constant;
+		timePanel.init(getAxes(), constantAxis, frame.getAxes(),
 						timeStep + frame.getAxes().getTimeAxis().getOrigin(),
-						constant + constantAxis.getOrigin());
+						column + (int)constantAxis.getRange().getOrigin());
 		ChangeListener changeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if (processTimeChange) {
 					int time = timePanel.getTime() - frame.getAxes().getTimeAxis().getOrigin();
-					int cons = timePanel.getAxisValue() - constantAxis.getOrigin();
+					int cons = timePanel.getAxisValue() - (int)constantAxis.getRange().getOrigin();
 					updateTimeStepAndConstant(time, cons);
 				}
 			}
@@ -198,6 +211,13 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 		bar.add(timePanel);
 		return bar;
 
+	}
+	
+	protected void chartBeginPainting() {
+		timePanel.setEnabled(false);
+	}
+	protected void chartEndPainting() {
+		timePanel.setEnabled(true);
 	}
 
 	private void performControlAction(Rectangle axisRect, Rectangle2D screenRect) {
@@ -216,14 +236,16 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 	private void probe(Rectangle axisRect) {
 		Slice slice = new Slice();
 		slice.setTimeRange(timeStep, 1);
-		int y = (axisRect.y - axisRect.height) - frame.getAxes().getZAxis().getOrigin();
+		int y = 1;
+		if (hasZAxis())
+			y = (axisRect.y - axisRect.height) - (int)getZAxis().getRange().getOrigin();
 		slice.setLayerRange(y, axisRect.height + 1);
-		Axes<DataFrameAxis> axes = frame.getAxes();
+		int offset = getOffset();
 		if (type == CrossSectionType.X) {
 			slice.setXRange(constant, 1);
-			slice.setYRange(axisRect.x - axes.getYAxis().getOrigin(), axisRect.width + 1);
+			slice.setYRange(axisRect.x - offset, axisRect.width + 1);
 		} else {
-			slice.setXRange(axisRect.x - axes.getXAxis().getOrigin(), axisRect.width + 1);
+			slice.setXRange(axisRect.x - offset, axisRect.width + 1);
 			slice.setYRange(constant, 1);
 		}
 
@@ -261,10 +283,17 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 		else if (x > domainRange.getOrigin() + (domainRange.getExtent() - 1))
 			x = domainRange.getOrigin() + (domainRange.getExtent() - 1);
 
-		Range yRange = frame.getAxes().getZAxis().getRange();
-		y += yRange.getOrigin();
-		if (y < yRange.getOrigin()) y = yRange.getOrigin();
-		else if (y > yRange.getOrigin() + (yRange.getExtent() - 1)) y = yRange.getOrigin() + (yRange.getExtent() - 1);
+		int origin = 0;
+		int extent = 1;
+		if (hasZAxis()) {
+			origin = (int)getZAxis().getRange().getOrigin();
+			extent = (int)getZAxis().getRange().getExtent();
+		}
+		
+		//Range yRange = getZAxis().getRange();
+		y += origin;
+		if (y < origin) y = origin;
+		else if (y > origin + (extent - 1)) y = origin + (extent - 1);
 
 		return new Point((int) x, (int) y);
 	}
@@ -288,22 +317,33 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 		rangedMinMax = null;
 
 		// updateScaleAxis((XYPlot) chart.getPlot());
+		
+		SeriesData series = null;
 
-		if (type == CrossSectionType.X) dataset.addColSeries(frame, timeStep, constant);
-		else dataset.addRowSeries(frame, timeStep, constant);
+		if (meshInput) {
+			series = dataset.getMeshSeries();
+			//TODO = remove series changes, maybe series all together
+			series.setPlotData(timeStep, constant);
+			((MPASXYBlockRenderer)renderer).setPlotInfo(timeStep, constant);
+		} 
+		if (series == null){
+			if (type == CrossSectionType.X) dataset.addColSeries(frame, timeStep, constant);
+			else dataset.addRowSeries(frame, timeStep, constant);
+		}
 		createSubtitle();
 
-		int offset = frame.getAxes().getYAxis().getOrigin();
-		if (type == CrossSectionType.X) {
-			offset = frame.getAxes().getXAxis().getOrigin();
-		}
+		int offset = getOffset();
 
 		// + 1 so row or col appears to start 1
 		//Keep with the pattern of Row/Col Index, i.e., Row 1 then Row 2 ....
 		//look for Row 12 or Column 34, if present keep with the same trend but update with current the Row/Column Number
 		String title = chart.getTitle().getText() != null ? chart.getTitle().getText() : "";
-		title = title.replaceAll("\\b(?i)" + getRowOrCol() + "\\b\\s\\b\\d+\\b", getRowOrCol() + " " + (constant + offset + 1));
+		if (meshInput) {
+			title = title.replaceAll(getRowOrCol() + " -?\\d+", getRowOrCol() + " " + (constant + offset + 1));
+		} else 
+		title = title.replaceAll("\\b(?i)" + getRowOrCol() + "\\b\\s\\b-?\\d+\\b", getRowOrCol() + " " + (constant + offset + 1));
 		chart.setTitle(title);
+
 	}
 
 	private String getRowOrCol() {
@@ -311,30 +351,56 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 		if (type == CrossSectionType.Y) val = "Row";
 		return val;
 	}
+	
+	protected Axes getAxes() {
+		return frame.getDataset().get(0).getCoordAxes();
+	}
+	
+	private int getOffset() {
+		long offset = getAxes().getYAxis().getRange().getOrigin();
+		if (type == CrossSectionType.X)
+			offset = getAxes().getXAxis().getRange().getOrigin();
+		if (meshInput)
+			--offset;
+		return (int)offset;
+	}
 
 	private JFreeChart createChart(XYZDataset dataset) {
 		String val = "Column";
 		// offset is for the title -- what the actual index for the constant col / row
 		// is
-		int offset = frame.getAxes().getYAxis().getOrigin();
-		if (type == CrossSectionType.X) {
+		int offset = getOffset();
+		if (type == CrossSectionType.X)
 			val = "Row";
-			offset = frame.getAxes().getXAxis().getOrigin();
-		}
+		
 		NumberAxis xAxis = new NumberAxis("Domain " + val);
 		xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		Range domainRange = domainAxis.getRange();
-		xAxis.setRange(domainRange.getOrigin(), domainRange.getOrigin() + (domainRange.getExtent() - 1));
+		int origin = (int)domainRange.getOrigin();
+
+		xAxis.setRange(origin, origin + (domainRange.getExtent() - 1));
 		xAxis.setUpperMargin(0.0);
 		xAxis.setLowerMargin(0.0);
-		xAxis.setNumberFormatOverride(new AxisNumberFormatter(new DecimalFormat()));
+		if (!meshInput)
+			xAxis.setNumberFormatOverride(new AxisNumberFormatter(new DecimalFormat()));
 
 		NumberAxis yAxis = new NumberAxis("Layer");
 		yAxis.setUpperMargin(0.0);
 		yAxis.setLowerMargin(0.0);
 		yAxis.setStandardTickUnits(createIntegerTickUnits());
 
-		XYBlockRenderer renderer = new XYBlockRenderer();
+		if (meshInput) {
+			yAxis.setAutoRange(false);
+			if (hasZAxis()) {
+				yAxis.setRange(getZAxis().getRange().getOrigin() + 1, getZAxis().getRange().getExtent());
+			}
+			if (renderer == null)
+				renderer = new MPASXYBlockRenderer(type, frame, timeStep, constant);
+			else
+				((MPASXYBlockRenderer)renderer).setPlotInfo(timeStep, constant);
+		}
+		else
+			renderer = new XYBlockRenderer();
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
 
 		String title = getRowOrCol() + " " + (constant + offset + 1) + " " + frame.getVariable().getName();
@@ -352,6 +418,18 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 		createSubtitle();
 		return chart;
 	}
+	
+	private boolean hasZAxis() {
+		return getZAxis() != null;
+	}
+
+	private CoordAxis getZAxis() {
+		if (meshInput) {
+			return ((IMPASDataset)frame.getDataset().get(0)).getZAxis(frame.getVariable().getName());
+		}
+		else
+			return frame.getAxes().getZAxis();
+	}
 
 	/**
 	 * Returns a collection of tick units for integer values.
@@ -360,7 +438,9 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 	 */
 	private TickUnitSource createIntegerTickUnits() {
 		TickUnits units = new TickUnits();
-		int layerOrigin = frame.getAxes().getZAxis().getOrigin() + 1;
+		int layerOrigin = 1;
+		if (hasZAxis())
+			layerOrigin = (int)getZAxis().getRange().getOrigin() + 1;
 		NumberFormat df0 = new LayerAxisFormatter(new DecimalFormat("0"), layerOrigin);
 		NumberFormat df1 = new LayerAxisFormatter(new DecimalFormat("#,##0"), layerOrigin);
 		units.add(new NumberTickUnit(1, df0));
@@ -401,9 +481,9 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 	protected Point4i[] rectToPoints(Rectangle rect) {
 		Point4i[] points = new Point4i[2];
 		// rect is layer, row/col
-		Axes<DataFrameAxis> axes = frame.getAxes();
-		int xOrigin = axes.getXAxis().getOrigin();
-		int yOrigin = axes.getYAxis().getOrigin();
+		Axes axes = getAxes();
+		int xOrigin = (int)axes.getXAxis().getRange().getOrigin();
+		int yOrigin = (int)axes.getYAxis().getRange().getOrigin();
 		if (type == CrossSectionType.X) {
 			// x is constant, layer is y
 			Point4i point = new Point4i(constant + xOrigin, rect.x, rect.y, NO_VAL);
@@ -435,13 +515,34 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 	protected DataUtilities.MinMax getMinMax() {
 		try {
 			if (rangedMinMax == null) {
-				if (type == CrossSectionType.X) rangedMinMax = DataUtilities.minMaxTX(frame, timeStep, constant);
+				if (meshInput) {
+					MinMaxInfo info = null;
+					if (type == CrossSectionType.X)
+						info = ((IMPASDataset)frame.getDataset().get(0)).getPlotMinMaxY(frame, timeStep, constant + (int)domainAxis.getRange().getOrigin());
+					else
+						info = ((IMPASDataset)frame.getDataset().get(0)).getPlotMinMaxX(frame, timeStep, constant + (int)domainAxis.getRange().getOrigin());
+					rangedMinMax = new DataUtilities.MinMax(info.getMin(), info.getMax());
+				}
+				else if (type == CrossSectionType.X) rangedMinMax = DataUtilities.minMaxTX(frame, timeStep, constant);
 				else rangedMinMax = DataUtilities.minMaxTY(frame, timeStep, constant);
 			}
 		} catch (InvalidRangeException e) {
 			Logger.error("Error getting min max " + e.getMessage());
 		}
 		return rangedMinMax;
+	}
+	
+	public DataUtilities.MinMax calculateMinMax(DataFrame frame) {
+		//if (meshInput) {
+			//TODO - this may not be necessary - revisit to verify
+			//TODO - this is supposed to be the results of DataUtilities.minMax, probably over the entire frame, not
+			//the rangedMinMax used as a placeholder
+			//Figure out what to do when updateScaleAxis wants to happen
+			//before calculation is complete
+		/*	MinMaxInfo info = ((IMPASDataset)frame.getDataset().get(0)).getPlotMinMax(frame, this);
+			return new DataUtilities.MinMax(info.getMin(), info.getMax());
+		}*/
+		return super.calculateMinMax(frame);
 	}
 
 	protected void createSubtitle() {
@@ -451,7 +552,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 						Utilities.formatNumber(rangedMinMax.getMax()));
 
 		GregorianCalendar aCalendar = frame.getAxes().getDate(timeStep + frame.getAxes().getTimeAxis().getOrigin());
-		Logger.debug("in VerticalCrossSectionPlot createSubtitle set GregorianCalendar aCalendar = " + aCalendar.toString());
+		Logger.debug("in VerticalCrossSectionPlot createSubtitle set GregorianCalendar aCalendar = " + aCalendar);
 		title = (TextTitle) chart.getSubtitle(bottomTitle1Index);
 		title.setText(Utilities.formatDate(aCalendar));
 	}
@@ -734,5 +835,25 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot {
 	public JMapPane getMapPane()		// required by interface
 	{
 		return null;
+	}
+
+	@Override
+	public void layerUpdated(int level, double min, int minIndex, double max, int maxIndex, double percentComplete,
+			boolean isLog) {		
+	}
+
+	@Override
+	public void datasetUpdated(double min, int minIndex, double max, int maxIndex, double percentComplete,
+			boolean isLog) {		
+	}
+
+	@Override
+	public long getRenderTime() {
+		return 0;
+	}
+
+	@Override
+	public boolean isAsyncListener() {
+		return false;
 	}
 }

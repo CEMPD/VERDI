@@ -26,5 +26,7 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-opengis-14.4.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-referencing-14.4.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/gt-swing-14.4.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-transform-14.4.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/gt-shapefile-14.4.jar" sourcepath="/verdi_core/lib_src/gt-shapefile-14.4-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

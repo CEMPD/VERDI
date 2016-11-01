@@ -218,6 +218,10 @@
 			<export prefix="*"/>
 		</library>
 
+		<library id="gt-transform" path="../verdi_core/lib/gt-transform-14.4.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
 		<library id="gt-opengis" path="../verdi_core/lib/gt-opengis-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>

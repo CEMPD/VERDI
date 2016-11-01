@@ -7,6 +7,7 @@
 package anl.verdi.plot.gui.action;
 
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -18,8 +19,14 @@ import anl.verdi.area.AreaTilePlot;
 import anl.verdi.area.target.Target;
 import anl.verdi.area.target.TargetCalculator;
 import anl.verdi.core.VerdiApplication;
+import anl.verdi.data.ArrayReader;
 import anl.verdi.data.DataFrame;
+import anl.verdi.data.Dataset;
+import anl.verdi.data.MPASDataFrameIndex;
+import anl.verdi.data.MeshCellInfo;
+import anl.verdi.data.MeshDataReader;
 import anl.verdi.formula.Formula;
+import anl.verdi.plot.data.IMPASDataset;
 import anl.verdi.plot.gui.FastAreaTilePlot;
 import anl.verdi.plot.gui.PlotPanel;
 
@@ -50,12 +57,23 @@ public class ArealInterpolation extends AbstractSAFAction<VerdiApplication> {
 			final DataFrame dataFrame = application.evaluateFormula( Formula.Type.TILE );
 
 			if ( dataFrame != null ) {
-
-				final FastAreaTilePlot plot = new FastAreaTilePlot(application, dataFrame);
-
+				
+		    	  List<Dataset> datasets = dataFrame.getDataset();
+				
 				// calculate the areas 
 				TargetCalculator calc = new TargetCalculator();
+				
+				
 				Logger.debug("ready to call TargetCalculator.calculateIntersections");
+				
+		    	  if (datasets != null && datasets.size() > 0 && datasets.get(0).getClass().getName().toLowerCase().indexOf("mpas") != -1) {
+		    		  MeshPlot.performAction(application, dataFrame, calc);
+		    		  application.getGui().defaultCursor();
+		    		  return;
+		    	  }
+		    	  
+					final FastAreaTilePlot plot = new FastAreaTilePlot(application, dataFrame);
+		    	  
 				boolean retValue = calc.calculateIntersections(Target.getTargets(),dataFrame,(AreaTilePlot)plot.getTilePlot());
 				Logger.debug("back from calculateIntersections, retValue = " + retValue);
 				if(!retValue)

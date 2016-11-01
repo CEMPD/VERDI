@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +28,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.unitsofmeasurement.unit.Unit;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayDouble;
@@ -37,6 +42,7 @@ import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.NetcdfDataset;
+import anl.verdi.area.target.TargetCalculator;
 import anl.verdi.data.AbstractDataset;
 import anl.verdi.data.ArrayReader;
 import anl.verdi.data.Axes;
@@ -50,11 +56,14 @@ import anl.verdi.data.DefaultVariable;
 import anl.verdi.data.MPASDataFrameIndex;
 import anl.verdi.data.MPASPlotDataFrame;
 import anl.verdi.data.MeshCellInfo;
+import anl.verdi.data.MeshDataReader;
 import anl.verdi.data.MultiAxisDataset;
 import anl.verdi.data.Variable;
 import anl.verdi.plot.color.Palette;
 import anl.verdi.plot.color.PavePaletteCreator;
 import anl.verdi.plot.data.IMPASDataset;
+import anl.verdi.plot.data.LatCellComparator;
+import anl.verdi.plot.data.LonCellComparator;
 import anl.verdi.plot.data.MinMaxInfo;
 import anl.verdi.plot.data.MinMaxLevelListener;
 import anl.verdi.util.VUnits;
@@ -84,15 +93,19 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	private static final String VAR_DEPTH = "nSoilLevels";
 	
 	Array cellVertices, latVert, lonVert, latCell, lonCell, indexToVertexId, indexToCellId;
-	ArrayReader depth, elevation;
+	ArrayReader depth, elevation, zonal, meridional;
 	ucar.ma2.ArrayInt.D2 vertexList = null;
 	private Map<Integer, Integer> vertexPositionMap = new HashMap<Integer, Integer>();
 	private Map<Integer, CellInfo> cellIdInfoMap;
 	private CellInfo[] cellsToRender = null;
 	private List<CellInfo> cellsToRenderList = null;
 	Collection<MeshCellInfo> allCells = null;
+	MeshCellInfo[] allCellArray = null;
+	MeshCellInfo[] lonSortedCellArray = null;
+	MeshCellInfo[] latSortedCellArray = null;
 	private Map<MeshCellInfo, Integer> splitCells = null;
 	double dataRatio = 0;
+	
 
 	//double[] legendLevels = null;
 	
@@ -176,6 +189,14 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			return cellId;
 		}
 		
+		public double getMinLonValue() {
+			return getLon(getMinXPosition());
+		}
+		
+		public double getMaxLonValue() {
+			return getLon(getMaxXPosition());
+		}
+		
 		public int getMinXPosition() {
 			return minX;
 		}
@@ -183,6 +204,15 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		public int getMaxXPosition() {
 			return maxX;
 		}
+		
+		public double getMinLatValue() {
+			return getLat(getMinYPosition());
+		}
+		
+		public double getMaxLatValue() {
+			return getLat(getMaxYPosition());
+		}
+		
 		
 		public int getMinYPosition() {
 			return minY;
@@ -210,6 +240,29 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 					return ", " + e + "m";
 			}
 			return "";
+		}
+		
+		public double getZonal(int currentLayer, int currentTimestep) {
+			return zonal.get(currentTimestep, cellId, currentLayer);
+		}
+		
+		public double getMeridional(int currentLayer, int currentTimestep) {
+			return meridional.get(currentTimestep, cellId, currentLayer);
+		}
+		
+		public String toString() {
+			String str = cellId + " [ ";
+			for (int i = 0; i < lonCoords.length; ++i) {
+				str += getLon(i) + " " + getLat(i);
+				if (i + 1 < lonCoords.length)
+					str += ", ";
+			}
+			str += "] ";
+			return str;
+		}
+		
+		public double getValue(MeshDataReader reader) {
+			return getValue(reader.getArrayReader(), reader.getDataFrame(), reader.getDataIndex(), reader.getTimestep(), reader.getLayer());
 		}
 				
 		public double getValue(ArrayReader renderVariable, DataFrame frame, MPASDataFrameIndex index, int timestep, int layer) {			
@@ -250,6 +303,10 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		}
 		
 		public void calculateCellBounds() {
+			minX = 0;
+			maxX = 0;
+			minY = 0;
+			maxY = 0;
 			for (int j = 0; j < latCoords.length; ++j) {
 				if (lonCoords[j] < lonCoords[minX])
 					minX = j;
@@ -261,8 +318,120 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 					maxY = j;
 			}	
 		}
+
+		private Double[] duplicatePoint(int i) {
+			Double[] pt = new Double[2];
+			pt[0] = lonCoords[i];
+			pt[1] = latCoords[i];
+			return pt;
+		}
 		
-		public CellInfo split(int index) {			
+		
+		//p2 is the point that crosses the boundary, p1 is the last good point
+		private Double[] clipPoint(double p1x, double p1y, double p2x, double p2y) {
+			double dx1, dx2, dx;
+			if (p2x < 0) {
+				dx1 = Math.PI + p2x;//distance from end to p2x
+				dx2 = Math.PI - p1x;//distance from p1x to end
+			}
+			else {
+				dx1 = Math.PI - p2x;//distance from end to p2x
+				dx2 = Math.PI + p1x;//distance from p1x to end
+			}
+			
+			dx = dx1 + dx2;
+			
+			double dy = p2y - p1y;
+			
+			double ratio = dy / dx;
+			
+			Double[] pt = new Double[2];
+			pt[0] = Math.PI;
+			if (p1x < 0)
+				pt[0] *= -1;
+			pt[1] = p1y + dx1 * ratio;
+			
+			return pt;
+			
+		}
+		
+		public CellInfo split(int index) {
+			CellInfo clone = null;
+			try {
+						
+			ArrayList<Double[]>[] lists = new ArrayList[2];
+			
+			lists[0] = new ArrayList<Double[]>();
+			lists[1] = new ArrayList<Double[]>();
+			
+			int prevType = 0;
+			if (lonCoords[0] < 0)
+				prevType = 1;
+			
+			lists[prevType].add(duplicatePoint(0));
+			
+			int type = 0;
+			for (int i = 1; i < lonCoords.length; ++i) {
+				if (lonCoords[i] < 0)
+					type = 1;
+				if (prevType == type)
+					lists[prevType].add(duplicatePoint(i));
+				else {
+					Double[] pt = clipPoint(lonCoords[i-1], latCoords[i-1], lonCoords[i], latCoords[i]);
+					lists[prevType].add(pt);
+					Double[] pt2 = new Double[2];
+					pt2[0] = pt[0] * -1;
+					pt2[1] = pt[1];
+					lists[type].add(pt2);
+					lists[type].add(duplicatePoint(i));
+				}
+				prevType = type;
+				type = 0;
+			}
+			if (lonCoords[0] < 0)
+				type = 1;
+			if (prevType != type) {
+				int i = lonCoords.length - 1;
+				Double[] pt = clipPoint(lonCoords[i], latCoords[i], lonCoords[0], latCoords[0]);
+				lists[prevType].add(pt);
+				Double[] pt2 = new Double[2];
+				pt2[0] = pt[0] * -1;
+				pt2[1] = pt[1];
+				lists[type].add(pt2);
+			}
+			
+			clone = new CellInfo(cellId, lists[0].size());
+			latCoords = new double[lists[1].size()];
+			lonCoords = new double[lists[1].size()];
+			for(int i = 0; i < latCoords.length; ++i) {
+				lonCoords[i] = lists[1].get(i)[0];
+				latCoords[i] = lists[1].get(i)[1];
+			}
+			for(int i = 0; i < clone.latCoords.length; ++i) {
+				clone.lonCoords[i] = lists[0].get(i)[0];
+				clone.latCoords[i] = lists[0].get(i)[1];
+			}
+			
+			calculateCellBounds();
+			clone.calculateCellBounds();
+			
+			clone.lat = lat;
+			
+			lon = (lonCoords[maxX] + lonCoords[minX]) / 2;
+			clone.lon = (clone.lonCoords[clone.maxX] + clone.lonCoords[clone.minX]) / 2;
+			
+			
+			splitCells.put(clone, index);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+
+			return clone;
+		}
+		
+
+		/*
+		public CellInfo split(int index) {	
 			CellInfo clone = new CellInfo(cellId, lonCoords.length);
 			clone.latCoords = Arrays.copyOf(latCoords, latCoords.length);
 			clone.lonCoords = Arrays.copyOf(lonCoords, lonCoords.length);
@@ -294,6 +463,68 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 
 			return clone;
 		}
+		*/
+		
+		public Geometry toGeometry() {
+            Coordinate[] coords = new Coordinate[getNumVertices() + 1];
+            for (int i = 0; i < getNumVertices(); ++i) {
+            	coords[i] = new Coordinate(getLon(i), getLat(i));
+            }
+            coords[coords.length - 1] = coords[0];
+            return TargetCalculator.getGeometryFactory().createPolygon(coords);
+		}
+		
+		//All this shouldn't be needed with new split method
+		/*
+		public Geometry toGeometry() {
+            Coordinate[] coords = new Coordinate[getNumVertices() + 1];
+            Coordinate[] origCoords = new Coordinate[getNumVertices() + 1];
+            double xP = Double.NaN;
+            double xPP = Double.NaN;
+            double yP = Double.NaN;
+            double yPP = Double.NaN;
+            int removedVertices = 0;
+            for (int i = 0; i < getNumVertices(); ++i) {
+            	double x = getLon(i);
+            	double y = getLat(i);
+            	//Needed to work around com.vividsolutions.jts.geom.TopologyException: found non-noded intersection between LINESTRING ( -179.32438229684877 -84.0, -180.0 -83.64965921403859 ) and LINESTRING ( -180.0 -83.49458162383357, -180.0 -83.7820279688085 ) [ (-180.0, -83.64965921403859, NaN) ]
+            	//Happens when multiple polygon edges are in a straight line
+            	if ((xP == x && xPP == x) ||
+            			(yP == y && yPP == y)) {
+            		++removedVertices;
+            		xP = x;
+            		yP = y;
+            	} else {
+            		xPP = xP;
+            		xP = x;
+            		yPP = yP;
+            		yP = y;
+            	}
+            	coords[i - removedVertices] = new Coordinate(x, y);
+            	origCoords[i] = new Coordinate(x, y);
+            }
+            //remove duplicate segments wrapping last 2 and first
+            if ((xP == coords[0].x && xPP == coords[0].x) ||
+            		(yP == coords[0].y && yPP == coords[0].y))
+            	++removedVertices;
+            //remove duplicate segments wrapping last and first 2
+            if ((coords[0].x == coords[1].x ) && (coords[0].x == coords[coords.length - 2 - removedVertices].x) ||
+            		(coords[0].y == coords[1].y) && (coords[0].y == coords[coords.length - 2 - removedVertices].y)) {
+            	++removedVertices;
+            	for (int i = 0; i < coords.length - 2; ++i)
+            		coords[i] = coords[i+1];
+            }
+            
+            coords[coords.length - 1 - removedVertices] = coords[0];
+            if (removedVertices != 0) {
+            	Coordinate[] newCoords = new Coordinate[coords.length - removedVertices];
+            	for (int i = 0; i < newCoords.length; ++i)
+            		newCoords[i] = coords[i];
+            	coords = newCoords;
+            }
+            return TargetCalculator.getGeometryFactory().createPolygon(coords);
+		}
+		*/
 	}
 
 	/*
@@ -359,6 +590,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 
 	double dataWidth = 0;
 	double dataHeight = 0;
+	double exactWidth = 0;
+	double exactHeight = 0;
 	
 	double avgCellDiam = 0;
 	
@@ -871,6 +1104,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		lonCell = read("lonCell");
 		elevation = ArrayReader.getReader(read("zgrid"));
 		depth = ArrayReader.getReader(read("zs"));
+		zonal = ArrayReader.getReader(read("uReconstructZonal"));
+		meridional = ArrayReader.getReader(read("uReconstructMeridional"));
 		vertexList = (ucar.ma2.ArrayInt.D2) read("verticesOnCell");
 		
 		indexToVertexId = read("indexToVertexID");
@@ -946,6 +1181,9 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		
 		dataWidth = lonMax - lonMin;
 		dataHeight = latMax - latMin;
+		
+		exactWidth = dataWidth;
+		exactHeight = dataHeight;
 		
 		//If almost full globe, set to full
 		if (Math.PI * 1.9 < dataWidth) {
@@ -1033,6 +1271,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	public CoordAxis getZAxis(String variable) {
 		List<CoordAxis> axisList = coordAxes.getAxes();
 		ucar.nc2.Variable var = getVariableDS(getVariable(variable));
+		if (var == null && variable.indexOf("[") != -1) //try without dataset alias
+			var = getVariableDS(getVariable(variable.substring(0, variable.lastIndexOf('['))));
 		Set<String> dimensions = new HashSet<String>();
 		dimensions.addAll(Arrays.asList(var.getDimensionsString().split("\\s+")));
 		for (CoordAxis axis : axisList) {
@@ -1172,6 +1412,67 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		}
 		return calculator;
 	}
+	
+	public MinMaxInfo getPlotMinMaxX(DataFrame frame, int timestep, int x) {
+		MeshCellInfo[] cells = getLonSortedCellsArray();
+		Comparator comp = LonCellComparator.getInstance();
+		return getPlotMinMaxSection(frame, timestep, x, comp, cells, true);
+	}
+	
+	public MinMaxInfo getPlotMinMaxY(DataFrame frame, int timestep, int y) {
+		MeshCellInfo[] cells = getLatSortedCellsArray();
+		Comparator comp = LatCellComparator.getInstance();
+		return getPlotMinMaxSection(frame, timestep, y, comp, cells, false);
+	}
+	
+	public MinMaxInfo getPlotMinMaxSection(DataFrame frame, int timestep, int selectedDimension, Comparator comp, MeshCellInfo[] cells, boolean useLon) {
+		boolean isLog = frame.getArray().getClass().getName().endsWith("Log");
+
+		CoordAxis axis = frame.getAxes().getTimeAxis();
+		int timeOrigin = 0;
+		int numTimesteps = 0;
+		int layerOrigin = 0;
+		int numLayers = 0;
+		
+		if (axis != null) {
+			timeOrigin = (int)axis.getRange().getOrigin();
+			numTimesteps = (int)axis.getRange().getExtent();
+		}
+		axis = frame.getAxes().getZAxis();
+		if (axis != null) {
+			layerOrigin = (int)axis.getRange().getOrigin();
+			numLayers = (int)axis.getRange().getExtent();
+		}
+		axis = frame.getAxes().getCellAxis();
+		numCells = (int)axis.getRange().getExtent();
+		
+		final MPASDataFrameIndex index = new MPASDataFrameIndex(frame);
+				
+        int idx = Arrays.binarySearch(cells, selectedDimension, comp );
+        if (idx < 0)
+        	idx *= -1;
+        if (idx > 0)
+        	--idx;
+
+        ArrayReader reader =  ArrayReader.getReader(frame.getArray());
+        double border;
+		MinMaxInfo info = new MinMaxInfo(0);
+		for (int layer = layerOrigin; layer < numLayers; ++layer) {
+
+			for (int cell = idx; cell < cells.length; ++cell) {
+				if (useLon)
+					border = cells[cell].getMinX();
+				else
+					border = cells[cell].getMinY();
+				if (Math.floor(border) != selectedDimension)
+					break;
+				double value = cells[cell].getValue(reader, frame, index, timestep, layer);
+				info.visitValue(value,  cell);
+			}
+			
+		}
+		return info;
+	}
 
 	@Override
 	public MinMaxInfo getPlotMinMax(DataFrame variable, MinMaxLevelListener listener) {
@@ -1214,8 +1515,39 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		return allCells;
 	}
 	
+	public MeshCellInfo[] getAllCellsArray() {
+		if (allCellArray == null || allCellArray.length != allCells.size()) {
+			allCellArray = allCells.toArray(new MeshCellInfo[0]);
+		}
+		return allCellArray;
+	}
+		
+	public MeshCellInfo[] getLonSortedCellsArray() {
+		if (lonSortedCellArray == null) {
+			lonSortedCellArray = getAllCellsArray().clone();
+			Arrays.sort(lonSortedCellArray, LonCellComparator.getInstance() );
+		}
+		return lonSortedCellArray;
+	}
+	
+	public MeshCellInfo[] getLatSortedCellsArray() {
+		if (latSortedCellArray == null) {
+			latSortedCellArray = getAllCellsArray().clone();
+			Arrays.sort(latSortedCellArray, LatCellComparator.getInstance() );
+		}
+		return latSortedCellArray;
+	}
+	
 	public MeshCellInfo getCellInfo(int id) {
 		return cellIdInfoMap.get(id);
+	}
+	
+	public double getExactWidth() {
+		return exactWidth;
+	}
+	
+	public double getExactHeight() {
+		return exactHeight;
 	}
 	
 	public double getDataWidth() {
@@ -1236,6 +1568,11 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	
 	public Map<MeshCellInfo, Integer> getSplitCells() {
 		return splitCells;
+	}
+	
+	private MPASDataset() {
+		super(null);
+		cellIdInfoMap = new HashMap<Integer, CellInfo>();
 	}
 
 	/** 

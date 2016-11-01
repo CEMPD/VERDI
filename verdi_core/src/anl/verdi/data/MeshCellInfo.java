@@ -6,11 +6,15 @@
 
 package anl.verdi.data;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 public interface MeshCellInfo {
 	
 	public int getId();
 
 	public double getValue(ArrayReader renderVariable, DataFrame frame, MPASDataFrameIndex index, int timestep, int layer);
+	
+	public double getValue(MeshDataReader reader);
 	
 	public int getNumVertices();
 	
@@ -28,9 +32,25 @@ public interface MeshCellInfo {
 	
 	public double getMinX();
 	
+	public double getMinLon();
+	
+	public double getMaxLon();
+	
+	public double getMinLat();
+	
+	public double getMaxLat();
+	
+	public double getMinLonValue();
+	
+	public double getMaxLonValue();
+	
 	public int getMinXPosition();
 	
 	public int getMaxXPosition();
+	
+	public double getMinLatValue();
+	
+	public double getMaxLatValue();
 	
 	public int getMinYPosition();
 	
@@ -43,6 +63,12 @@ public interface MeshCellInfo {
 	public double getMaxY();
 	
 	public String getElevation(String axisName, int currentLayer, int currentTimestep);
+	
+	public double getZonal(int currentLayer, int currentTimestep);
+	
+	public double getMeridional(int currentLayer, int currentTimestep);
+	
+	public Geometry toGeometry();
 
 
 }

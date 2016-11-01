@@ -1,0 +1,68 @@
+VERDI loads both of these datasets and indicates that their time min is 1 and maximum is 24 for both.
+
+I think the proper behavior would be to say that the file with *shift* in it's name starts from
+time 1 and goes to 24
+The other file goes from time 0 to time 23
+
+So, when you try to take a difference of these variables
+CO[1]-CO[2] VERDI will not load this formula
+An error isn't thrown, but it is due to the fact that the times do not align correctly.
+
+CCTM_v5.0.1_cb05tucl_Linux2_x86_64intel_cb05_F40_2007ed_06_base.ACONC.shift.20060101_CO
+data:
+
+ TFLAG =
+  2006001, 10000,
+  2006001, 20000,
+  2006001, 30000,
+  2006001, 40000,
+  2006001, 50000,
+  2006001, 60000,
+  2006001, 70000,
+  2006001, 80000,
+  2006001, 90000,
+  2006001, 100000,
+  2006001, 110000,
+  2006001, 120000,
+  2006001, 130000,
+  2006001, 140000,
+  2006001, 150000,
+  2006001, 160000,
+  2006001, 170000,
+  2006001, 180000,
+  2006001, 190000,
+  2006001, 200000,
+  2006001, 210000,
+  2006001, 220000,
+  2006001, 230000,
+  2006002, 0 ;
+
+
+CCTM_v5.0.1_cb05tucl_Linux2_x86_64intel_cb05_F40_2007ed_06_base.ACONC.20060101_CO
+data:
+
+ TFLAG =
+  2006001, 0,
+  2006001, 10000,
+  2006001, 20000,
+  2006001, 30000,
+  2006001, 40000,
+  2006001, 50000,
+  2006001, 60000,
+  2006001, 70000,
+  2006001, 80000,
+  2006001, 90000,
+  2006001, 100000,
+  2006001, 110000,
+  2006001, 120000,
+  2006001, 130000,
+  2006001, 140000,
+  2006001, 150000,
+  2006001, 160000,
+  2006001, 170000,
+  2006001, 180000,
+  2006001, 190000,
+  2006001, 200000,
+  2006001, 210000,
+  2006001, 220000,
+  2006001, 230000 ;

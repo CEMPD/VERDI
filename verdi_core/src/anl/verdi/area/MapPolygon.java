@@ -5,7 +5,9 @@
 
 package anl.verdi.area;
 
+import gov.epa.emvl.MPASTilePlot;
 import gov.epa.emvl.Numerics;
+import gov.epa.emvl.TilePlot;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -28,6 +30,8 @@ import org.geotools.styling.Style;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import anl.verdi.area.target.Target;
+import anl.verdi.data.MeshCellInfo;
+import anl.verdi.data.MeshDataReader;
 import anl.verdi.plot.gui.VerdiStyle;
 
 //import visad.Unit;
@@ -44,24 +48,31 @@ public class MapPolygon {
 	// Attributes:
 
 	
-	AreaTilePlot tilePlot = null;
+	TilePlot tilePlot = null;
 	
 	private boolean cachedShowSelectedOnly = false;
 
-	public MapPolygon(AreaTilePlot plot){
+	public MapPolygon(TilePlot plot){
 		tilePlot = plot;
+	}
+	
+	public void draw( TilePlot plot,final double[][] domain, final double[][] gridBounds,
+			final CoordinateReferenceSystem gridCRS, double[] legendLevels,Color[] legendColors, 
+			final Graphics graphics,float[][] data,String units,int firstColumn,int firstRow,
+			int xOffset, int yOffset, int width, int height,int currentView, boolean showSelectedOnly ) {
+		draw(plot, domain, gridBounds, gridCRS, legendLevels, legendColors, graphics, data, null, units,
+				firstColumn, firstRow, xOffset, yOffset, width, height, currentView, showSelectedOnly);
 	}
 	
 	// Draw domain-clipped projected grid-clipped polygons to graphics:
 
-	public void draw( AreaTilePlot plot,final double[][] domain, final double[][] gridBounds,
+	public void draw( TilePlot plot,final double[][] domain, final double[][] gridBounds,
 			final CoordinateReferenceSystem gridCRS, double[] legendLevels,Color[] legendColors, 
-			final Graphics graphics,float[][] data,String units,int firstColumn,int firstRow,
+			final Graphics graphics,Object data, MeshDataReader reader, String units,int firstColumn,int firstRow,
 			int xOffset, int yOffset, int width, int height,int currentView, boolean showSelectedOnly ) {
 		
 		Shape oldclip = graphics.getClip();
 		graphics.setClip(new Rectangle((int)xOffset, (int)yOffset, (int)width, (int)height));
-
 				
 		MapContent vMap = new MapContent();
 		Set<VerdiStyle> styles = Target.getSourceStyles();
@@ -74,10 +85,18 @@ public class MapPolygon {
 			if (!polygon.depositionCalculated())
 				continue;
 			if (polygon.containsDeposition()) {
-				if (currentView == AreaTilePlot.AVERAGES)
-					polygon.calculateAverageDeposition(data);
-				else if (currentView == AreaTilePlot.TOTALS)
-					polygon.calculateTotalDeposition(data);
+				if (currentView == AreaTilePlot.AVERAGES || currentView == AreaTilePlot.GRID) {
+					if (data instanceof float[][])
+						polygon.calculateAverageDeposition((float[][])data);
+					else
+						polygon.calculateAverageDeposition((MeshCellInfo[])data, reader);
+				}
+				else if (currentView == AreaTilePlot.TOTALS) {
+					if (data instanceof float[][])
+						polygon.calculateTotalDeposition((float[][])data);
+					else
+						polygon.calculateTotalDeposition((MeshCellInfo[])data, reader);
+				}
 			}
 		}
 
@@ -113,7 +132,6 @@ public class MapPolygon {
 
 			renderer.paint(gShape, outputArea, vMap.getViewport().getBounds());
 			g2d.drawImage(shapefile, 0,  0, null);
-
 
 		}
 		

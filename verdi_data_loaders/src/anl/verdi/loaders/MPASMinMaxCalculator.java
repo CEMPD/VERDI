@@ -181,13 +181,28 @@ public class MPASMinMaxCalculator implements Runnable {
 		for (int i = 0; i < numLayers; ++i) {
 			calculateLayer(index, i);
 		}
-		calcDone = true;
+		synchronized(this) {
+			calcDone = true;
+			notifyAll();
+		}
 	}
 	
 	
 	private void addLevelListener(MinMaxLevelListener listener) {
 		if (listeners.indexOf(listener) == -1)
 			listeners.add(listener);
+		if (!listener.isAsyncListener()) {
+			synchronized (this) {
+				while (!calcDone) {
+					try {
+						this.wait(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+				}
+			}
+		}
 	}
 	
 	private void fireLayerUpdated(int layer, MinMaxInfo info) {

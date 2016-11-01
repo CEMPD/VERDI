@@ -14,6 +14,7 @@ import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import anl.verdi.area.target.GridInfo;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.gui.MeshPlot;
@@ -39,6 +40,7 @@ public class MPASTilePlot extends TilePlot {
 	double clipYMax;
 	double clipXMin;
 	double clipXMax;
+	protected GridInfo gridInfo = null;
 	
 	NumberFormat plotFormat;
 	
@@ -58,6 +60,16 @@ public class MPASTilePlot extends TilePlot {
 	
 	public void setUseStats(boolean stats) {
 		useStats = stats;
+	}
+	
+	public GridInfo createGridInfo(double[][] gridBounds, double[][] domain){
+		if (gridInfo == null)
+			gridInfo = new GridInfo(gridBounds,domain);
+		return gridInfo;
+	}
+	
+	public GridInfo getGridInfo() {
+		return gridInfo;
 	}
 	
 	protected void drawAxis(final Graphics graphics, int xMinimum, int xMaximum,

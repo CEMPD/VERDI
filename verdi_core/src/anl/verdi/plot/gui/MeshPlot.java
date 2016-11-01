@@ -34,10 +34,9 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -61,10 +60,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -77,6 +78,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.RepaintManager;
@@ -102,7 +104,6 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 //import org.geotools.map.DefaultMapLayer;	// deprecated, replacing with FeatureLayer
 import org.geotools.map.FeatureLayer;
-import org.geotools.map.MapContent;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.swing.JMapPane;
@@ -113,6 +114,12 @@ import saf.core.ui.event.DockableFrameEvent;
 import ucar.ma2.ArrayLogFactory;
 import ucar.ma2.InvalidRangeException;
 import anl.map.coordinates.Decidegrees;
+import anl.verdi.area.MapPolygon;
+import anl.verdi.area.Units;
+import anl.verdi.area.target.DepositionRange;
+import anl.verdi.area.target.GridInfo;
+import anl.verdi.area.target.Target;
+import anl.verdi.area.target.TargetDeposition;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiGUI;
 import anl.verdi.data.ArrayReader;
@@ -121,13 +128,16 @@ import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataFrameBuilder;
+import anl.verdi.data.DataLoader;
 import anl.verdi.data.DataManager;
+import anl.verdi.data.DataReader;
 import anl.verdi.data.DataUtilities;
 import anl.verdi.data.DataUtilities.MinMax;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.MPASDataFrameIndex;
 import anl.verdi.data.MPASPlotDataFrame;
 import anl.verdi.data.MeshCellInfo;
+import anl.verdi.data.MeshDataReader;
 import anl.verdi.data.ObsEvaluator;
 import anl.verdi.data.Slice;
 import anl.verdi.data.Variable;
@@ -279,6 +289,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	
 	private long renderTime = 200;
 	
+	private boolean asyncEnabled = true;
+	
 	private BufferedImage cellIdMap = null;
 
 	// For clipped/projected/clipped map lines:
@@ -354,6 +366,14 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 	private final JPanel threadParent = this;
 	private BufferedImage bImage = null;
+	private BufferedImage crossSectionImage = null;
+	private BufferedImage rotatedImage = null;
+	private int crossXOrigin;
+	private int crossYOrigin;
+	private boolean reverseAxes = false;
+	private double layerHeight = 0;
+	private int displayHeight = 0;
+
 	private boolean forceBufferedImage = false;
 	private static final Object lock = new Object();
 	private JPopupMenu popup;
@@ -362,6 +382,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private Point popUpLocation = new Point(1,1);
 	protected Slice probedSlice;
 	protected JCheckBoxMenuItem showGridLines;
+	protected JCheckBoxMenuItem showWindVectors;
 	final JMenu mapLayersMenu = new JMenu("Add Map Layers");
 	
 	private boolean screenInitted = false;
@@ -391,6 +412,13 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	MPASDataFrameIndex cellIndex = null;
 	MPASDataFrameIndex hoverCellIndex = null;
 
+	private int renderMode = MODE_PLOT;
+	
+	public static int MODE_PLOT = 1;
+	public static int MODE_INTERPOLATION = 3;
+	public static int MODE_CROSS_SECTION = 3;
+	
+	private boolean depositionRangeAlreadySet = false;
 	
 	protected Action timeSeriesSelected = new AbstractAction(
 			"Time Series of Visible Cell(s)") {
@@ -567,7 +595,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						continue;// graphics system is not ready
 					}
 
-					final Graphics offScreenGraphics = offScreenImage.getGraphics();
+					final Graphics2D offScreenGraphics = (Graphics2D)offScreenImage.getGraphics();
 
 					if (offScreenGraphics == null) {
 						/*
@@ -607,7 +635,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						}
 					}
 
-										
+					boolean windChanged = locChanged || dataChanged;
 					if (locChanged) {
 						transformCells(/*gr,*/ canvasSize, xOffset, yOffset);	
 						previousClippedDataRatio = clippedDataRatio;
@@ -621,6 +649,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						updateCellData();
 						dataChanged = false;
 					}
+					if (windChanged && renderWind)
+						updateWindData();
 
 
 					final Graphics graphics = threadParent.getGraphics();
@@ -762,7 +792,14 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 							Logger.error("MeshPlot run method", e);
 						}
 
-						renderCells(offScreenGraphics, xOffset, yOffset, true);
+						if (renderMode == MODE_PLOT || currentView == GRID)
+							renderCells(offScreenGraphics, xOffset, yOffset, true);
+						
+						if (renderMode == MODE_INTERPOLATION) {
+							mapPolygon.draw(tilePlot, domain, gridBounds, gridCRS,legendLevels,
+									legendColors,offScreenGraphics, dataset.getAllCellsArray(), renderReader ,units,firstColumn,firstRow,
+									xOffset, yOffset, width, height,currentView, isShowSelectedOnly());
+						}
 
 						dataArea.setRect(xOffset + xTranslation, yOffset, screenWidth, screenHeight);
 						
@@ -862,7 +899,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			if (dataFrame != null) { //Ignore errors if dataFrame is null - that means window is closing
 				Logger.error("Error rendering MeshPlot", t);
 				String errInfo = t.getMessage() != null ? ": " + t.getMessage() + "  \n" : ".  ";
-				JOptionPane.showMessageDialog(app.getGui().getFrame(), "An error occured while rendering the plot" + errInfo + "Please see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);
+				if (app != null)
+					JOptionPane.showMessageDialog(app.getGui().getFrame(), "An error occured while rendering the plot" + errInfo + "Please see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);
 				try {
 					app.getGui().getViewManager().getDockable(viewId).close();
 				} catch (Throwable tr) {}
@@ -1366,7 +1404,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 		boolean setLatLonRange = false;
 		if (previousPanX == -1) {
-			//previousPanX/Y was set alread, ignore
+			//previousPanX/Y was set already, ignore
 			//also there was no clicked cell, so don't try to set it
 			setLatLonRange = true;
 		}
@@ -1593,6 +1631,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		int[] latTransformed;
 		byte colorIndex;
 		
+		int[] windStart = new int[2];
+		int[] windEnd = new int[2];
+		double scaledDiameter;
+		double windAngle;
+		double windVelocity;
+		
 		MeshCellInfo source;
 		
 		public LocalCellInfo(MeshCellInfo source) {
@@ -1609,12 +1653,50 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			return source.getId();
 		}
 		
-		private void transformCell(double factor, int xOffset, int yOffset) {
+		private void transformCell(double xFactor, double yFactor, int xOffset, int yOffset) {
 			for (int i = 0; i < source.getNumVertices(); ++i) {
-				lonTransformed[i] = (int)Math.round((source.getLonRad(i) - lonMin - panX) * factor) + xOffset;
-				latTransformed[i] = (int)Math.round((source.getLatRad(i) * -1 - latMin - panY) * factor) + yOffset;
+				lonTransformed[i] = (int)Math.round((source.getLonRad(i) - lonMin - panX) * xFactor) + xOffset;
+				latTransformed[i] = (int)Math.round((source.getLatRad(i) * -1 - latMin - panY) * yFactor) + yOffset;
 			}
 			visible = false;
+		}
+		
+		public void calculateWindVector() {
+			//TODO - cache scaledDiameter after transformCell if needed
+			scaledDiameter = source.getMaxLat() - source.getMinLat();
+			double d2 = source.getMaxLon() - source.getMinLon();
+			if (d2 < scaledDiameter)
+				scaledDiameter = d2;
+			scaledDiameter *= compositeFactor;
+			
+			//TODO - cache zonal, meridional, windAngle, windVolicty after updateCellData if needed
+			double zonal = source.getZonal(layer, timestep);
+			double meridional = source.getMeridional(layer,  timestep);		
+			windVelocity = Math.sqrt(zonal * zonal + meridional * meridional);
+			
+			if (zonal == 0) {
+				windAngle = 90;
+			} else if (meridional == 0) {
+				windAngle = 0;
+			} else {
+				if (zonal > 0 && meridional >0)
+					windAngle = Math.toDegrees(Math.atan(meridional / zonal));
+				else if (zonal < 0 && meridional > 0)
+					windAngle = 90 - Math.toDegrees(Math.atan(zonal / meridional)); //90 -
+				else if (zonal < 0 && meridional < 0)
+					windAngle = 180 + Math.toDegrees(Math.atan(meridional / zonal)); //180 +
+				else //zonal > 0 && meridional < 0
+					windAngle =  270 - Math.toDegrees(Math.atan(zonal / meridional)); // 270 -
+			}
+			
+			//TODO - calculate after updateCellData
+			double length = .75 * scaledDiameter * .5;
+			double windScale = length / windVelocity;
+
+			windStart[0] = (int)Math.round((source.getLon() / RAD_TO_DEG - lonMin - panX) * compositeFactor) + xOffset;
+			windStart[1] = (int)Math.round((source.getLat() / RAD_TO_DEG * -1 - latMin - panY) * compositeFactor) + yOffset;
+			windEnd[0] = (int)Math.round(windScale * zonal) + windStart[0];
+			windEnd[1] = (int)Math.round(windScale * -meridional) + windStart[1];
 		}
 		
 		public MeshCellInfo getSource() {
@@ -1867,24 +1949,34 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}
 	}
 	
-	
-	
 	private void transformCells(/*Graphics gr, */ int canvasSize, int xOrigin, int yOrigin) {
+		transformCells(canvasSize, xOrigin, yOrigin, 1, 1);
+	}
+	
+	private void transformCells(/*Graphics gr, */ int canvasSize, int xOrigin, int yOrigin, double xScale, double yScale) {
 		long start = System.currentTimeMillis();
 		
-		screenWidth = canvasSize;
-		screenHeight = (int)Math.round(screenWidth / clippedDataRatio);
 
-		compositeFactor = screenWidth / dataWidth * zoomFactor;
+		
+		if (reverseAxes) {
+			compositeFactor = zoomFactor;
+		} else {
+			screenWidth = canvasSize;
+			screenHeight = (int)Math.round(screenWidth / clippedDataRatio);
+			compositeFactor = screenWidth / dataWidth * zoomFactor;
+		}
+		
 		transformedCellDiam = (int)Math.round(avgCellDiam * compositeFactor);
 		renderBorder = transformedCellDiam / screenWidth > borderDisplayCutoff;
 
+		double xFactor = compositeFactor * xScale;
+		double yFactor = compositeFactor * yScale;
 		for (int i = 0; i < cellsToRender.length; ++i) {
-			getCellInfo(i).transformCell(compositeFactor, xOrigin, yOrigin);
+			getCellInfo(i).transformCell(xFactor, yFactor, xOrigin, yOrigin);
 		}
 		
 		for (LocalCellInfo cell : splitCellInfo.keySet()) {
-			cell.transformCell(compositeFactor, xOrigin, yOrigin);
+			cell.transformCell(xFactor, yFactor, xOrigin, yOrigin);
 		}
 		
 		gridBounds[X][MINIMUM] = westEdge + panX * RAD_TO_DEG;
@@ -1902,7 +1994,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			java.awt.Graphics2D g = cellIdMap.createGraphics();
 	        g.setColor(new Color(COLOR_BASE * -1 - 1));
 	        g.fillRect(0,  0,  screenWidth+1, screenHeight + 1);
-	        g.translate(xOffset * -1,  yOffset * -1);
+	        g.translate(xOrigin * -1,  yOrigin * -1);
 	        forceHideBorders = true;
 	        renderCells(g, 0, 0);
 	        forceHideBorders = false;
@@ -1921,7 +2013,31 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	//Prevents overwriting cell id values when drawing to id map
 	boolean forceHideBorders = false;
 	
+	boolean renderWind = false;
+	
 	public void updateCellData() {
+		long start = System.currentTimeMillis();
+		updateCellColors();
+		calculateVisibleMinMax();
+		Logger.info("Updated cell data in " + (System.currentTimeMillis() - start) + "ms");
+
+	}
+	
+	public void updateWindData() {
+		long start = System.currentTimeMillis();
+		for (int i = 0; i < cellsToRender.length; ++i) {
+			LocalCellInfo cell = getCellInfo(i);
+			cell.calculateWindVector();
+		}
+		
+		for (LocalCellInfo cell : splitCellInfo.keySet()) {
+			cell.calculateWindVector();
+		}
+		Logger.info("Updated wind data in " + (System.currentTimeMillis() - start) + "ms");
+
+	}
+	
+	public void updateCellColors() {
 		long start = System.currentTimeMillis();
 		synchronized (legendLock) {
 		for (int i = 0; i < cellsToRender.length; ++i) {
@@ -1933,29 +2049,26 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			cell.colorIndex = indexOfObsValue((float)cell.getValue(), legendLevels);
 		}
 		}
-		calculateVisibleMinMax();
 		Logger.info("Updated cell data in " + (System.currentTimeMillis() - start) + "ms");
 
 	}
-
-	public void renderCells(Graphics gr, int xOffset, int yOffset) {
+	
+	public void renderCells(Graphics2D gr, int xOffset, int yOffset) {
 		renderCells(gr, xOffset, yOffset, false);
 	}
-	public void renderCells(Graphics gr, int xOffset, int yOffset, boolean visibleOnly) {
+	
+	public void renderCells(Graphics2D gr, int xOffset, int yOffset, boolean visibleOnly) {
 		
 		long renderStart = System.currentTimeMillis();
 		
-		if (xOffset != 0)
-			gr.setClip(xOffset, yOffset, screenWidth, screenHeight);
+		if (xOffset != 0) {
+			if (!reverseAxes)
+				gr.setClip(xOffset, yOffset, screenWidth, screenHeight);
+		}
 		
 		final Boolean showGridLines = (Boolean)
 				config.getObject( TilePlotConfiguration.SHOW_GRID_LINES );
 		final boolean showCellBorder = showGridLines != null && showGridLines.booleanValue() && !forceHideBorders;
-		
-		/*
-		BufferedImage img = new java.awt.image.BufferedImage(imageWidth, imageHeight, java.awt.image.BufferedImage.TYPE_3BYTE_BGR);
-        java.awt.Graphics2D g = img.createGraphics();
-        */
 
 		synchronized (legendLock) {
 			for (int i = 0; i < cells; ++i) { //for each cell
@@ -1990,7 +2103,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 	}
 	
-	private void renderCell(Graphics gr, int xOffset, int yOffset, LocalCellInfo cell, boolean showCellBorder, int index) {
+	private void renderCell(Graphics2D gr, int xOffset, int yOffset, LocalCellInfo cell, boolean showCellBorder, int index) {
 		if (cell.colorIndex == -1)
 			return;
 
@@ -2021,6 +2134,19 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			gr.drawLine(cell.lonTransformed[length],  cell.latTransformed[length], 
 					cell.lonTransformed[0], cell.latTransformed[0]);
 		}
+		
+		if (renderWind) {
+			gr.setColor(Color.BLACK);			
+			AffineTransform trx = gr.getTransform();
+			//Render arrow line
+			gr.drawLine(cell.windStart[0],  cell.windStart[1],  cell.windEnd[0], cell.windEnd[1]);
+			int arrowLength = (int)Math.round(cell.scaledDiameter * .5 * .2);
+			//Render arrow head
+			gr.translate(cell.windEnd[0], cell.windEnd[1]);
+			gr.rotate(Math.toRadians(45 - cell.windAngle));
+			gr.fillPolygon(new int[] { 0, 0, -arrowLength}, new int[] { 0, arrowLength, 0}, 3 );
+			gr.setTransform(trx);
+		}
 	}
 	
 	public void exportShapeFile(String filename) {
@@ -2045,9 +2171,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	// Construct but do not draw yet.
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public MeshPlot(VerdiApplication app, DataFrame dataFrame) {
+	public MeshPlot(VerdiApplication app, DataFrame dataFrame, int mode) {
 		super(true);
 		this.app=app;
+		if (app == null)
+			asyncEnabled = false;
 		setDoubleBuffered(true);
 		assert dataFrame != null;
 		this.dataFrame = dataFrame;
@@ -2057,6 +2185,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		hasNoLayer = (dataFrame.getAxes().getZAxis() == null);
 		format = NumberFormat.getInstance();
 		format.setMaximumFractionDigits(4);
+		
+		renderMode = mode;
 		
 		plotFormat = NumberFormat.getInstance();
 		
@@ -2114,8 +2244,6 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		gridCRS = coordinateAxes.getBoundingBoxer().getCRS();
 
-		//TODO 
-		// Initialize grid dimensions: timesteps, layers, rows, columns:
 
 		timeAxis = axes.getTimeAxis();
 
@@ -2175,6 +2303,27 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		westEdge = envelope.getMinX(); // E.g., -420000.0.
 		southEdge = envelope.getMinY(); // E.g., -1716000.0.
+			
+		dataWidth = dataset.getDataWidth();
+		dataHeight = dataset.getDataHeight();
+		
+		//We need these accurate to build correct gridBounds, but zooming expects them to be 0 until loadCellStructure runs
+		visibleDataWidth = dataWidth;
+		visibleDataHeight = dataHeight;
+		
+		gridBounds[X][MINIMUM] = westEdge + panX * RAD_TO_DEG;
+		gridBounds[X][MAXIMUM] = westEdge + (panX + visibleDataWidth) * RAD_TO_DEG;
+		gridBounds[Y][MINIMUM] = southEdge + (dataHeight - panY - visibleDataHeight) * RAD_TO_DEG;
+		gridBounds[Y][MAXIMUM] = southEdge + (dataHeight - panY) * RAD_TO_DEG;
+
+		domain[LONGITUDE][MINIMUM] = gridBounds[X][MINIMUM];
+		domain[LONGITUDE][MAXIMUM] = gridBounds[X][MAXIMUM];
+		domain[LATITUDE][MINIMUM] = gridBounds[Y][MINIMUM];
+		domain[LATITUDE][MAXIMUM] = gridBounds[Y][MAXIMUM];
+		
+		//So for now reset to zero, and let get set normally
+		visibleDataWidth = 0;
+		visibleDataHeight = 0;
 		
 		cellWidth = envelope.getWidth() / columns; // 12000.0.
 		
@@ -2254,6 +2403,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		// Create EMVL TilePlot (but does not draw yet - see draw()):
 
 		tilePlot = new MPASTilePlot(startDate, timestepSize, plotMinMaxCache, statMinMaxCache);
+		
+		if (renderMode == MODE_INTERPOLATION) {
+			tilePlot.createGridInfo(gridBounds, domain);
+		}
 		
 		if (timeAxis != null && timeAxis.getName().equals("nMonths"))
 			tilePlot.setTimestepUnits(GregorianCalendar.MONTH);
@@ -2356,11 +2509,50 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		if (hasNoLayer)
 			firstLayer = 0;
 		
-		// add(toolBar);
-		doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
-		doubleBufferedRendererThread.start(); // Calls
+		if (renderMode == MODE_INTERPOLATION)
+			renderReader = createDataReader();
 		
-		draw();
+		if (renderMode == MODE_INTERPOLATION || renderMode == MODE_PLOT) {
+			// add(toolBar);
+			doubleBufferedRendererThread = new Thread(doubleBufferedRenderer);
+			doubleBufferedRendererThread.start(); // Calls
+			
+			draw();
+		}
+	}
+	
+	public void initInterpolation() {
+		if (renderMode == MODE_INTERPOLATION) {
+			currentView = AVERAGES;
+			
+			mapPolygon = new MapPolygon(tilePlot);
+			
+			gridNum = GridInfo.getGridNumber(tilePlot.getGridInfo());
+				
+			calcGlobalDepositionRange();
+			
+			// calc range for this set of numbers
+			double[] minmax = { 0.0, 0.0 };
+
+//			this.range;
+			minmax[0] = range.averageMin;
+			minmax[1] = range.averageMax;
+
+			// initialize colormap to these min max values
+			minMax=new MinMax(minmax[0],minmax[1]);
+			// TODO: JIZHEN - need the old map?
+			//ColorMap map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+			if ( map == null) {
+				map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+			} else {
+				map.setPalette(defaultPalette);
+				map.setMinMax( minmax[0], minmax[1]);
+			}
+			map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+			config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+		
+			updateColorMap(map);
+		}
 	}
 	
 	private boolean statError = false;
@@ -2583,6 +2775,14 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}	
 	}
 	
+	public double[][] getGridBounds() {
+		return gridBounds;
+	}
+	
+	public double[][] getDomain() {
+		return domain;
+	}
+	
 
 	/**
 	 * Gets the panel that contains the plot component.
@@ -2707,6 +2907,21 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			}
 		});
 		menu.add(showGridLines);
+		showWindVectors = new JCheckBoxMenuItem(new AbstractAction("Show Wind Vectors") {
+			private static final long serialVersionUID = 2699330329257731588L;
+
+			public void actionPerformed(ActionEvent e) {
+				JCheckBoxMenuItem windVectors = (JCheckBoxMenuItem) e.getSource();
+				((TilePlotConfiguration) config).setWindVectors(windVectors.isSelected());
+				renderWind = windVectors.isSelected();
+				if (renderWind) {
+					dataChanged = true;
+					locChanged = true;
+				}
+				draw();
+			}
+		});
+		menu.add(showWindVectors);
 		
 		bar.add(menu);
 
@@ -2754,11 +2969,109 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		gisLayersMenu(menu);
 		bar.add(menu);
 		
+		if (renderMode == MODE_INTERPOLATION) {
+			// add in my extra option menu
+			menu = new JMenu("Options");
+			ButtonGroup group = new ButtonGroup();
+
+			JRadioButtonMenuItem radioButton=new JRadioButtonMenuItem(new AbstractAction("Show Area Averages") {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 4673389754505180377L;
+
+				public void actionPerformed(ActionEvent e) {
+					JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+					if(item.isSelected())MeshPlot.this.showAverages();
+					draw();
+				}
+			});
+			radioButton.setSelected(true);
+			group.add(radioButton);
+			menu.add(radioButton);
+
+			JRadioButtonMenuItem showTotalButton=new JRadioButtonMenuItem(new AbstractAction("Show Area Totals") {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -4078259126612838335L;
+
+				public void actionPerformed(ActionEvent e) {
+					JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+					if(item.isSelected())MeshPlot.this.showTotals();
+					draw();
+				}
+			});
+			group.add(showTotalButton);
+			menu.add(showTotalButton);
+			// disable the radiobutton if needed
+			// see if the current formula type allows this
+			if(Units.isConcentration(getDataFrame().getVariable().getUnit().toString())){
+				showTotalButton.setEnabled(false);
+			}
+
+			radioButton=new JRadioButtonMenuItem(new AbstractAction("Show Cell Data") {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = -6206984806970043891L;
+
+				public void actionPerformed(ActionEvent e) {
+					JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+					if(item.isSelected())MeshPlot.this.showGrid();
+					draw();
+				}
+			});
+			group.add(radioButton);
+			menu.add(radioButton);
+
+			menu.addSeparator();
+
+			// make radio buttons for filling options
+			ButtonGroup group2 = new ButtonGroup();
+
+			radioButton=new JRadioButtonMenuItem(new AbstractAction("Selected Areas") {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 8704295164108322755L;
+
+				public void actionPerformed(ActionEvent e) {
+					JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+					if(item.isSelected())MeshPlot.this.showSelected();
+					draw();
+				}
+			});
+			radioButton.setSelected(false);
+			group2.add(radioButton);
+			menu.add(radioButton);
+
+			radioButton=new JRadioButtonMenuItem(new AbstractAction("All Areas") {
+				/**
+				 * 
+				 */
+				private static final long serialVersionUID = 841441627768110972L;
+
+				public void actionPerformed(ActionEvent e) {
+					JRadioButtonMenuItem item = (JRadioButtonMenuItem) e.getSource();
+					if(item.isSelected())MeshPlot.this.showAll();
+					draw();
+				}
+			});
+			radioButton.setSelected(true);
+			group2.add(radioButton);
+			menu.add(radioButton);
+
+			bar.add(menu);
+
+		}
+		
 		// change cursor for initial zoom state
 		setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 		
 		return bar;
 	}
+	
 	
 	/*protected void addObsOverlay() {
 		OverlayRequest<ObsEvaluator> request = new OverlayRequest<ObsEvaluator>(OverlayRequest.Type.OBS, this);
@@ -2769,6 +3082,43 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		OverlayRequest<VectorEvaluator> request = new OverlayRequest<VectorEvaluator>(OverlayRequest.Type.VECTOR, this);
 		eventProducer.fireOverlayRequest(request);
 	}*/
+	
+	public boolean isShowSelectedOnly() {
+		return showSelectedOnly;
+	}
+
+	public void setShowSelectedOnly(boolean showSelectedOnly) {
+		this.showSelectedOnly = showSelectedOnly;
+	}
+	
+	public void showAll() {
+		setShowSelectedOnly(false);
+		invalidate();
+		repaint();
+	}
+	public void showSelected() {
+		setShowSelectedOnly(true);
+		invalidate();
+		repaint();
+	}
+	public void showAverages() {
+		currentView = AVERAGES;
+		calculateAverageLevels();
+		invalidate();
+		repaint();
+	}
+	public void showTotals() {
+		currentView = TOTALS;
+		calculateTotalLevels();
+		invalidate();
+		repaint();
+	}
+	public void showGrid() {
+		currentView = GRID;
+		calculateGridLevels();
+		invalidate();
+		repaint();
+	}
 
 	protected void activateRubberBand() {
 		rubberband.setActive(true);
@@ -3760,6 +4110,71 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}
 	}
 	
+	public void calculateAverageLevels(){
+
+		//if (((AreaTilePlot) tilePlot).mouseOverOK) {
+		if (true) {
+//			final int count = legendLevels.length;
+			
+			Logger.debug("calculateAverageLevels ");
+
+			// calc range for this set of numbers
+			double[] minmax = { 0.0, 0.0 };
+
+			DepositionRange range = this.getGlobalDepositionRange();
+			minmax[0] = range.averageMin;
+			minmax[1] = range.averageMax;
+
+			{
+				// initialize colormap to these min max values
+				minMax=new MinMax(minmax[0],minmax[1]);
+				if ( map == null) {
+					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+				} else {
+					map.setPalette(defaultPalette);
+					map.setMinMax( minmax[0], minmax[1]);
+				}
+				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+
+
+				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
+				updateColorMap(map);
+			}
+		}
+	}
+
+	public void calculateGridLevels(){
+
+		//if (((AreaTilePlot) tilePlot).mouseOverOK) {
+		if (true) {
+//			final int count = legendLevels.length;
+			
+			Logger.debug("calculateGridLevels ");
+
+			// calc range for this set of numbers
+			double[] minmax = this.log ? this.logPlotMinMaxCache : this.plotMinMaxCache;
+
+			{
+				// initialize colormap to these min max values
+				minMax=new MinMax(minmax[0],minmax[1]);
+				if ( map == null) {
+					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+				} else {
+					map.setPalette(defaultPalette);
+					map.setMinMax( minmax[0], minmax[1]);
+				}
+				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+
+
+				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
+				updateColorMap(map);
+			}
+			Logger.debug("minMax "+minMax.getMin()+" "+minMax.getMax());
+		}
+	}
+	
 	/**
 	 * Gets the visible cells for this plot, and calculates min/max.
 	 *
@@ -4049,7 +4464,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	
 	private String formatLatLon(double lonCoord, double latCoord, int hoveredId, boolean extendedFormat, int xCoord, int yCoord) {	
 
-		String ret = "(" + coordFormat.format(lonCoord) + ", " + coordFormat.format(latCoord);
+		String ret = "(" + coordFormat.format(lonCoord) + "\u00B0, " + coordFormat.format(latCoord) + "\u00B0";
 		if (!extendedFormat)
 			return ret + ")";
 		//ret += " xy " + xCoord + "," + yCoord;
@@ -4065,8 +4480,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			else
 				value = statisticsData[preStatIndex - 1][0][cell.getId()];
 			if (cell != null) {
-				//ret += cell.getId() + " ";
-				ret += cell.getElevation(layerAxisName, layer, timestep) + ") " + variable + " " + valueFormat.format(value) + unitString;
+				//TODO - Add the cell.getId() line for testing
+				//ret += " " + cell.getId() + " ";
+				ret += " " + cell.getElevation(layerAxisName, layer, timestep) + ") ";
+				if (renderWind)
+					ret += valueFormat.format(localCell.windVelocity) + "m/s" + " " + valueFormat.format(localCell.windAngle) + "\u00B0 ";
+				ret += variable + " " + valueFormat.format(value) + unitString;
 				//ret += ") " + cell.getId() + " " + " " + valueFormat.format(cell.getValue()) + " c " + coordFormat.format(cell.lon) + "," + coordFormat.format(cell.lat) + " " + point.x + "," + point.y;
 
 			}
@@ -4458,6 +4877,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		return tilePlot.getTitle();
 	}
 	
+	public MPASTilePlot getTilePlot() {
+		return tilePlot;
+	}
+	
 	public DataFrame createLogDataFrame(DataFrame frame) {
 		DataFrameBuilder builder = new DataFrameBuilder();
 		builder.addDataset(dataset);
@@ -4689,6 +5112,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	}
 
 	@Override
+	public boolean isAsyncListener() {
+		return asyncEnabled;
+	}
+
+	@Override
 	public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
 	}
 
@@ -4696,9 +5124,433 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 		popupHiding = true;		
 	}
-
+	
 	@Override
 	public void popupMenuCanceled(PopupMenuEvent e) {		
 	}
+	
+	private DepositionRange getGlobalDepositionRange() {
+
+		if ( !depositionRangeAlreadySet ) {
+
+			if (app != null)
+				app.getGui().setStatusOneText("Calculating deposition range.");
+			calcGlobalDepositionRange();
+			// calc range for this set of numbers
+			double[] minmax = { 0.0, 0.0 };
+
+			minmax[0] = range.averageMin;
+			minmax[1] = range.averageMax;
+
+			// if(minMax==null || minMax.getMin()>minmax[0] || minMax.getMax()<minmax[1])
+			{
+				//System.out.println("computing average data minmax...");
+				//			double[] minmax = { 0.0, 0.0 };
+				//			computeDataRange(minmax);
+
+				// initialize colormap to these min max values
+				minMax=new MinMax(minmax[0],minmax[1]);
+				if ( map == null) {
+					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+				} else {
+					map.setPalette(defaultPalette);
+					map.setMinMax( minmax[0], minmax[1]);
+				}
+				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+
+				updateColorMap(map);
+			}
+		}
+
+		return range;
+	}
+	
+	public static MeshPlot createTestPlot() {
+		DataLoader loader = null;
+		try {
+			loader = (DataLoader)Class.forName("anl.verdi.loaders.MPASLoader").newInstance();
+
+		
+			String path = "file:///home/verdi/data/mpas-orig.nc";
+			List<Dataset> sets = loader.createDatasets(new URL(path));
+			IMPASDataset ds = (IMPASDataset)sets.get(0);
+			ds.setAlias("[1] mpas-orig.nc");
+			DataReader reader = loader.createReader(sets.get(0));
+			Variable pressure = ds.getVariable("pressure");
+			DataFrame frame = reader.getValues(ds, null, pressure);
+
+
+			return new anl.verdi.plot.gui.MeshPlot(null, frame, MODE_CROSS_SECTION);
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private class CrossSectionRenderInfo {
+		int startX;
+		int startY;
+		int startWidth;
+		int startHeight;
+		int timeStep;
+		String fixedAxis;
+		double sliceHeight;
+		double startDegree;
+		
+		public CrossSectionRenderInfo(int startX, int startY, int startWidth, int startHeight, String fixedAxis, double sliceDataHeightDeg, double startDegree) {
+			this.startX = startX;
+			this.startY = startY;
+			this.startWidth = startWidth;
+			this.startHeight = startHeight;
+			this.fixedAxis = fixedAxis;
+			this.sliceHeight = sliceDataHeightDeg;
+			this.startDegree = startDegree;
+		}
+
+		
+		public boolean equals(CrossSectionRenderInfo info) {
+			return info != null &&
+					startX == info.startX &&
+					startY == info.startY &&
+					startWidth == info.startWidth &&
+					startHeight == info.startHeight &&
+					fixedAxis.equals(info.fixedAxis) &&
+					sliceHeight == info.sliceHeight &&
+					startDegree == info.startDegree;
+		}
+	}
+	
+	CrossSectionRenderInfo renderInfo = null;
+	CrossSectionRenderInfo previousRenderInfo = null;
+	
+	/*
+	 * 
+	 * pxWidth            - width of area to display plot (not including labels, legend, etc
+	 * pxHeight           - height of area to display plot (not including labels, legend, etc
+	 * sliceDataHeightDeg - height in degrees of each slice
+	 * numLayers          - number of layers
+	 * startDegreee       - location to start plotting graph
+	 * 
+	 */
+	public void initDisplayParameters(int startX, int startY, int startWidth, int startHeight, String fixedAxis, double sliceDataHeightDeg, int step, double startDegree) {
+		previousRenderInfo = renderInfo;
+		this.timestep = step;
+		renderInfo = new CrossSectionRenderInfo(startX, startY, startWidth, startHeight, fixedAxis, sliceDataHeightDeg, startDegree);
+		if (renderInfo.equals(previousRenderInfo))
+			return;
+		reverseAxes = !fixedAxis.equals("y");
+		double yScale = 1;
+		double xScale = 1;
+		
+		int imgWidth = startWidth;
+		int imgHeight = startHeight;
+		crossXOrigin = startX;
+		crossYOrigin = startY;		
+		
+		displayHeight = startHeight;		
+		layerHeight = startHeight / (double)layers;
+		
+		if (reverseAxes) {		
+			
+			double screenRatio = startWidth / (double)startHeight;
+
+			imgHeight = startWidth;
+			imgWidth = (int)Math.round(imgHeight * screenRatio);
+			
+			
+			zoomFactor = imgHeight / dataset.getExactHeight();
+
+			double displayLayerWidth = startHeight / (double)layers;
+			double zoomedLayerWidth = (Math.PI * 2 * zoomFactor ) * sliceDataHeightDeg / 360;
+			
+			xScale = displayLayerWidth / zoomedLayerWidth;
+			imgWidth = (int)Math.round(startHeight / (double)layers);
+		
+			rotatedImage = new BufferedImage(imgHeight, imgWidth, BufferedImage.TYPE_INT_RGB);
+
+
+		}
+
+		crossSectionImage = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_RGB);
+
+
+		screenWidth = imgWidth;
+		screenHeight = imgHeight;
+		double startRad = 0;
+		
+
+		//If y, account for axis numbers being inverted
+		if (!reverseAxes) {
+			//TODO - commented section expects unconverted values, try with converted
+			/*
+			startDegree += sliceDataHeightDeg;
+			startDegree = startDegree * -1 + 90;
+			*/
+			//startDegree -= sliceDataHeightDeg;
+			startDegree = 179 - startDegree;
+			clippedDataRatio = screenWidth / (screenHeight / (double)layers);
+		}
+		
+		startRad = startDegree / RAD_TO_DEG;
+		
+		panX = 0;
+		panY = 0;
+		
+		if (reverseAxes)
+			panX = startRad;
+		else {
+			yScale = (dataset.getExactHeight() * RAD_TO_DEG) / sliceDataHeightDeg / layers; 
+			panY = startRad;
+		}
+		
+		//TODO - investigate locChanged / dataChanged optimizations here if needed
+		transformCells(screenWidth, 0, 0, xScale, yScale);
+		
+		/*for (int i = 0; i < cellsToRender.length; ++i) {
+			LocalCellInfo cell = getCellInfo(i);
+			for (int j = 0; j < cell.lonTransformed.length; ++j) {
+				if (!cell.visible)
+					continue;
+			}
+		}
+
+		for (LocalCellInfo cell : splitCellInfo.keySet()) {
+			for (int j = 0; j < cell.lonTransformed.length; ++j) {
+				if (!cell.visible)
+					continue;
+			}
+		}*/
+		
+		
+	}
+		
+	private void buildTestPlotFrame() {
+		
+		layers = 41;
+		double sliceWidth = 1;
+		//TODO - conversion: x' = x * -1 + 90
+		//double startDeg = -70;
+		double startDeg = 3;
+		String fixedAxis = "y";
+		int startWidth = 700;
+		int startHeight = 400;
+		
+		startDeg = 179;
+		
+		//TODO - uncomment this to test x axis
+		layers = 41;
+		sliceWidth = 1;
+		//TODO - conversion: x' = x + 180
+		//startDeg = -160;
+		startDeg = 20;
+		startDeg = 359;
+		fixedAxis = "x";
+		
+		/*layers = 2;
+		sliceWidth = 45;*/
+		
+		initDisplayParameters(0, 0, startWidth, startHeight, fixedAxis, sliceWidth, 0, startDeg);
+		
+		JFrame mainFrame = new JFrame("Mesh Debug");
+        
+		
+        mainFrame.setSize(701, 400);
+        final MeshPlot plot = this;
+		JPanel panel = new JPanel() { 
+			public void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				plot.renderVerticalCrossSection(g);
+			}	
+		};
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.getContentPane().add(panel);
+        panel.setSize(701, 410);
+        //Frame is always 2 x 19 too small (linux bug?), expand dimensions to compensate
+		mainFrame.setSize(713, 439);
+        mainFrame.setVisible(true);
+	}
+	
+	public void renderVerticalCrossSection(Graphics g) {
+		Graphics2D targetGraphics = null;
+		Graphics2D rotateGraphics = null;
+		AffineTransform rotateTransform = null;
+		AffineTransform targetTransform = null;
+		g.setColor(Color.WHITE);
+		if (reverseAxes) {
+			rotateGraphics = crossSectionImage.createGraphics();
+			rotateGraphics.setColor(Color.WHITE);
+			rotateGraphics.fillRect(0,  0, crossSectionImage.getWidth(), crossSectionImage.getHeight());
+			rotateTransform = rotateGraphics.getTransform();
+			//rotateGraphics.translate(-1.0, -2.0);
+			targetGraphics = (Graphics2D)g;
+			targetTransform = targetGraphics.getTransform();
+			targetGraphics.translate(crossXOrigin, crossYOrigin);
+		}
+		else {
+			targetGraphics = crossSectionImage.createGraphics();
+			targetGraphics.setColor(Color.WHITE);
+			targetGraphics.fillRect(0,  0, crossSectionImage.getWidth(), crossSectionImage.getHeight());
+			rotateGraphics = targetGraphics;
+		}
+						
+		targetGraphics.translate(0, displayHeight);
+		/*if (!reverseAxes) {
+			//targetGraphics.translate(0, 0);
+		}*/
+
+		for (int i = 0; i < layers; ++i) {
+			targetGraphics.translate(0,  layerHeight * -1);
+
+			layer = i;
+			updateCellColors();
+	        //xOffset has to be nonzero - normally will be anyway
+			
+	        renderCells(rotateGraphics, 1, 0, true);
+	        if (reverseAxes) {
+				Graphics2D tmpImg  = rotatedImage.createGraphics();
+				tmpImg.rotate(90 / RAD_TO_DEG);
+				tmpImg.translate(0, -rotatedImage.getWidth());
+				tmpImg.drawImage(crossSectionImage, 0, 0, null);
+				
+				//targetGraphics.drawImage(rotatedImage,  crossXOrigin,  crossYOrigin,  null);
+				targetGraphics.drawImage(rotatedImage,  0,  0,  null);
+				
+				/*File io = new File("/tmp/out" + i + ".png");
+				try {
+					ImageIO.write(crossSectionImage, "png", io);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}*/
+				
+				/*
+				File out = new File("/tmp/rot" + i + ".png");
+				try {
+					ImageIO.write(rotatedImage, "png", out);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}*/
+				
+				
+
+	        }
+	        
+		}
+		if (!reverseAxes) {
+			targetGraphics = (Graphics2D)g;
+			targetTransform = targetGraphics.getTransform();
+			targetGraphics.translate(crossXOrigin, crossYOrigin);
+			targetGraphics.drawImage(crossSectionImage,  0,  0,  null);
+		}
+		File io = new File("/tmp/out.png");
+		try {
+			ImageIO.write(crossSectionImage, "png", io);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		targetGraphics.setTransform(targetTransform);
+		if (rotateTransform != null)
+			rotateGraphics.setTransform(rotateTransform);
+	}
+	
+	public static void main(String[] args) {
+
+		MeshPlot plot = createTestPlot();
+		plot.buildTestPlotFrame();
+		
+	}
+	
+	private MeshDataReader createDataReader() {
+		MeshDataReader dataReader = new MeshDataReader(renderVariable, dataFrame, cellIndex, 0, 0);
+		return dataReader;
+	}
+
+	private void calcGlobalDepositionRange() {
+		//TODO - build data reader
+		MeshDataReader reader = createDataReader();
+		for (int timestep=0; timestep<this.timesteps; timestep++) {
+			reader.setTimestep(timestep);
+			for (int layer=0; layer<this.layers; layer++) {
+				reader.setLayer(layer);
+	    		MeshCellInfo[] cells = dataset.getAllCellsArray();
+				calcFrameDepositionRange(cells, reader, gridNum, range);
+			}
+		}
+
+		depositionRangeAlreadySet = true;
+	}
+
+	private void calcFrameDepositionRange(MeshCellInfo[] data, MeshDataReader reader, int gridIndex, DepositionRange range) {
+		ArrayList polygons=Target.getTargets();
+		
+		TargetDeposition deposition = new TargetDeposition();
+		for(Target polygon:(ArrayList<Target>)polygons){
+			Target.setUnitConverters(units);
+			polygon.computeAverageDeposition(data, reader, gridIndex, deposition);
+			if (deposition.total > range.totalMax) {
+				range.totalMax = deposition.total;
+			}
+			if (deposition.total < range.totalMin) {
+				range.totalMin = deposition.total;
+			}
+			if (deposition.average > range.averageMax) {
+				range.averageMax = deposition.average;
+			}
+			if (deposition.average < range.averageMin) {
+				range.averageMin = deposition.average;
+			}
+		}
+	}
+	
+	public void calculateTotalLevels(){
+		//if (((AreaTilePlot) tilePlot).mouseOverOK) {
+		if (true) {
+			Logger.debug("calculateTotalLevels");
+
+			// calc range for this set of numbers
+			double[] minmax = { 0.0, 0.0 };
+			DepositionRange range = this.getGlobalDepositionRange();
+			minmax[0] = range.totalMin;
+			minmax[1] = range.totalMax;
+
+			// if never set before or if larger range than last set of numbers
+			{
+				Logger.debug("computing total data minmax...");
+
+				// initialize colormap to these min max values
+				minMax=new MinMax(minmax[0],minmax[1]);
+				if ( map == null){
+					map = new ColorMap(defaultPalette, minmax[0], minmax[1]);
+				} else {
+					map.setPalette(defaultPalette);
+					map.setMinMax( minmax[0], minmax[1]);
+				}
+				map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
+				config.putObject(TilePlotConfiguration.COLOR_MAP, map);
+
+				Logger.debug("minmax: " + minmax[0] + " " + minmax[1]);
+				updateColorMap(map);
+			}
+			
+		}
+	}
+
+	
+	private DepositionRange range = new DepositionRange();
+	boolean showSelectedOnly=false;
+	
+	public static final int AVERAGES=0; 
+	public static final int TOTALS=1; 
+	public static final int GRID=2; 
+	protected int currentView=GRID;
+	
+	MapPolygon mapPolygon = null;
+	
+	int gridNum = -1;
+	
+	MeshDataReader renderReader = null;
+
 
 }
