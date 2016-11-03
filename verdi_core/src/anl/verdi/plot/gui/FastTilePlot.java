@@ -1537,8 +1537,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		final String[] statisticsNames = new String[ GridCellStatistics.STATISTICS ];
 		statisticsNames[ 0 ] = "None";
 
-		for ( int index = 1; index < GridCellStatistics.STATISTICS; ++index ) {
-			statisticsNames[ index ] = GridCellStatistics.name( index - 1 );
+		for ( int index = 1; index < GridCellStatistics.STATISTICS; index++ ) {
+			statisticsNames[ index ] = GridCellStatistics.name( index - 1);
 		}
 
 		// Force menu visible on WIN32?
