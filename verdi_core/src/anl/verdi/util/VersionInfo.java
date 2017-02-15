@@ -6,7 +6,7 @@ package anl.verdi.util;
  */
 public class VersionInfo {
 	public static final String version = "1.6.0_shapefile_mpas";
-	public static final String date = "2016-11-03";
+	public static final String date = "2017-02-05";
 
 	public static String getVersion() {
 		return version;

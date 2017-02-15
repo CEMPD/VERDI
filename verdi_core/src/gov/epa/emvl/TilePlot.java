@@ -161,15 +161,20 @@ public class TilePlot {
 			final Color gridLineColor, final float[][] data, final byte[][] colorIndexCache) 
 	{
 		Logger.debug("in gov.epa.emvl.TilePlot.draw(lots of parameters), thread = " + Thread.currentThread().toString());
+		System.out.println("In TilePlot draw");
 		this.config = config;
 		this.numberFormat = format;
 		this.layer = layer;
 		this.plotWidth = width;
 		this.plotHeight = height;
 		xMinimum = xOffset;
+		System.out.println("xMinimum" + xMinimum);
+		System.out.println("width" + width);
 		final int xMaximum = xOffset + width;
 		final int yMinimum = yOffset;
 		final int yHeightOffset = yMinimum + height;
+		System.out.println("yMinimum" + yMinimum);
+		System.out.println("height" + height);
 		final int yMaximum = yHeightOffset;
 
 		// Draw grid boundary rectangle, labeled row/column axis and legend:
@@ -776,6 +781,7 @@ public class TilePlot {
 		for (String name : names) {
 			ImageIcon icon = legends.get(name);
 			g.drawImage(icon.getImage(), startx, y, null);
+			System.out.println("In TilePlot - startx" + startx);
 			g.drawString(name, startx + icon.getIconWidth(), y + charHeight + halfCharHeight);
 			startx += (name.length()) * charWidth;
 		}

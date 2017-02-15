@@ -263,7 +263,8 @@ map_proj =  1: Lambert Conformal
  //          Logger.debug(" using LC "+proj.paramsToString());
           break;
         case 1:
-          proj = new LambertConformal(standardLat, standardLon, lat1, lat2);
+//          proj = new LambertConformal(standardLat, standardLon, lat1, lat2);
+	  proj = new LambertConformal(standardLat, standardLon, lat1, lat2, 0.0, 0.0, 6370.);
           projCT = new ProjectionCT("Lambert", "FGDC", proj);
 //          Logger.debug(" using LC "+proj.paramsToString());
           break;

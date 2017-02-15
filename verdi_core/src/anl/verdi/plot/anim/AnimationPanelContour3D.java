@@ -349,7 +349,7 @@ public class AnimationPanelContour3D extends JPanel {
 		movieChk.setEnabled(false); 	// 2014
 		maxDate = compFactory.createLabel("");
 		gifChk = new JCheckBox();
-		gifChk.setEnabled(false); 		// 2014
+		gifChk.setEnabled(true); 		// 2014
 		gifFileLbl = new JLabel();
 		gifFileBtn = new JButton();
 		aviChk = new JCheckBox();

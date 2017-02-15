@@ -303,9 +303,11 @@ public class AnimationPanel extends JPanel {
 		Window window = SwingUtilities.getWindowAncestor(plot.getPanel());
 
 		// NOTE: a JMapFrame should be an instance of a JFrame because JMapFrame extends JFrame
-		if (window instanceof JFrame) dialog = new JDialog((JFrame) window, "Animate Plot", false);
+		if (window instanceof JFrame) 
+			dialog = new JDialog((JFrame) window, "Animate Plot", false);
 //		if (window instanceof JFrame) dialog = new JDialog((JMapFrame) window, "Animate Plot", false);
-		else dialog = new JDialog((JDialog) window, "Animate Plot", false);
+		else 
+			dialog = new JDialog((JDialog) window, "Animate Plot", false);
 
 		dialog.setLayout(new BorderLayout());
 		dialog.add(this, BorderLayout.CENTER);
