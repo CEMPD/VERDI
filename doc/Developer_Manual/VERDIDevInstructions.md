@@ -147,9 +147,9 @@ Check to see if the Java Development Toolkit (JDK) and the Java Run-time Environ
 
 2.  Type the command “java –version” as shown below [Figure 2‑1](#Figure2‑1). If you see the proper response from that java command, then your java version is already installed and included in your PATH.
 
+<a id=Figure2-1></a> Figure 2‑1. Java -version command on 64-bit Windows 7
 <img src="media/image001.png" width="541" height="179" />
 
-<a id=Figure2-1></a> Figure 2‑1. Java -version command on 64-bit Windows 7
 
 1.  Make certain that your Java version is at least that shown above. If you have an earlier Java version (e.g., 1.6 or before) you need to download and install an update.
 
@@ -304,29 +304,20 @@ Output: * master
 
 Output:
 
+```csh
 Shapefiles
-
 master
-
 * shapefile_mpas
-
 remotes/origin/HEAD -&gt; origin/master
-
 remotes/origin/Shapefiles
-
 remotes/origin/gh-pages
-
 remotes/origin/master
-
 remotes/origin/shapefile_mpas
-
 remotes/origin/verdi_1.6
-
 remotes/origin/verdi_1.6_v1
-
 remotes/origin/verdi_config_v1
-
 remotes/origin/verdi_mpas
+```
 
 Checkout Branch
 ---------------
@@ -375,39 +366,25 @@ Check log of commits
 
 Output:
 
+```csh
 * 0ca8b20 2016-04-19 | Temporarily disable Add Layer and Edit Layer buttons in Configure GIS Layers dialog (HEAD -&gt; Shapefiles, origin/Shapefiles) [Catherine Seppanen]
-
 * 5bbd76b 2016-04-18 | Set world bounds on MapContent viewport before rendering [Catherine Seppanen]
-
 * 1455e91 2016-04-18 | Specify no ellipsoid shift in assumed datum for datasets [Catherine Seppanen]
-
 * 93145c5 2016-04-18 | Fix inconsistent datum and ellipsoid for world map shapefile [Catherine Seppanen]
-
 * 2ebbdf3 2016-04-18 | Merge branch 'Shapefiles' of https://github.com/CEMPD/VERDI into Shapefiles [Catherine Seppanen]
-
 |
-
 | * 4107a02 2016-04-18 | removed 3 old *.sld files no longer being used. [Jo Ellen Brandmeyer]
-
 * | 9a6b7bd 2016-04-18 | Ignore QGIS spatial index files (*.qix) in Git [Catherine Seppanen]
-
 |/
-
 * 6f37689 2016-04-18 | Merge branch 'Shapefiles' of https://github.com/CEMPD/VERDI.git into Shapefiles [Jo Ellen Brandmeyer]
-
 |
-
 | * 79a6222 2016-04-17 | Use current timestep and layer when building Area Information table [Catherine Seppanen]
-
 | * e5ca158 2016-04-17 | Replace invalid characters in Area Information dockable identifier [Catherine Seppanen]
-
 * | c058216 2016-04-18 | Changed US Counties coverage from tl_2015_us_county to cb_2014_us_county_500k (smaller file, highest resolution of the 3 sets of cartographic boundary shapefiles US counties from www.census.gov/geo/maps-data/data/cbf/cbf_counties.html [Jo Ellen Brandmeyer]
-
 |/
-
 * c9d9bac 2016-04-14 | When user enters a pattern for formatting values shown in the legend, changed code such that a "0" is appended only with the modifier ends with "E" and not "0". [Jo Ellen Brandmeyer]
-
 * de70b4a 2016-04-13 | Merge branch 'Shapefiles' of https://github.com/CEMPD/VERDI.git into Shapefiles [Jo Ellen Brandmeyer]
+```
 
 Create a new branch for new development on VERDI GitHub site
 ------------------------------------------------------------
