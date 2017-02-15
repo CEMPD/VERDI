@@ -478,7 +478,7 @@ The Eclipse IDE window as shown in [Figure 5‑6](#Figure5-6) has a title bar at
 Import VERDI into Eclipse from your local git repository
 ========================================================
 
-Select FileImport
+Select File > Import
 -----------------
 
 <a id=Figure5-7></a>Figure 5‑7. File/Import in Eclipse
