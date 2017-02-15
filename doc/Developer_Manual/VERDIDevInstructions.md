@@ -22,7 +22,7 @@ Date: June 15, 2016
 ](#install-java-development-kit)
   * [2.2 Download and Install Eclipse](#download-and-install-eclipse)
 * [3. Using git from the command line 5](#using-git-from-the-command-line)
-  * [3.1 VERDI is available through the GitHub repository under the CEMPD organization, see Figure 3‑1.](#figure-31.)
+  * [3.1 VERDI is available through the GitHub repository under the CEMPD organization, see Figure 3‑1.](#Figure3-1)
   * [3.2 Install git](#install-git)
   * [3.3 Set-up git](#set-up-git)
   * [3.4 Clone the master branch of VERDI to a local repository](#clone-the-master-branch-of-verdi-to-a-local-repository)
@@ -71,46 +71,46 @@ Date: June 15, 2016
 
 **Figures**
 
-* [Figure 2‑1. Java -version command on 64-bit Windows 7](#_Toc449293850)
-* [Figure 3‑1. GitHub site for VERDI](#_Toc449293851)
-* [Figure 3‑2. Create a New Branch in GitHub](#_Toc449293852)
-* [Figure 4‑1. Git Desktop Client](#_Toc449293853)
-* [Figure 4‑2. Git Desktop – Add Commit Message](#_Toc449293854)
-* [Figure 5‑1. Example startup screen for Eclipse](#_Toc449293855)
-* [Figure 5‑2. Select a VERDI workspace for Eclipse](#_Toc449293856)
-* [Figure 5‑3. Eclipse workbench](#_Toc449293857)
-* [Figure 5‑4. Click on Worbench Arrow to go to Eclipse workbench](#_Toc449293858)
-* [Figure 5‑5. Example Eclipse development environment for Java projects](#_Toc449293859)
-* [Figure 5‑6. Example Eclipse window in editing mode](#_Toc449293860)
-* [Figure 6‑1. File/Import in Eclipse](#_Toc449293861)
-* [Figure 6‑2. Import a project into Eclipse from Git](#_Toc449293862)
-* [Figure 6‑3. Checkout Projects from Git](#_Toc449293863)
-* [Figure 6‑4. Import Projects from Git](#_Toc449293864)
-* [Figure 6‑5. Search for Git repository on your local file system](#_Toc449293865)
-* [Figure 6‑6. Select Git repository on local file system](#_Toc449293866)
-* [Figure 6‑7. Select projects to check out from Git](#_Toc449293867)
-* [Figure 6‑8. VERDI projects imported to Eclipse workspace](#_Toc449293868)
-* [Figure 6‑9. Projects listed in the Package Explorer of the Eclipse workspace](#_Toc449293869)
-* [Figure 6‑10. Location of source code for open source libraries](#_Toc449293870)
-* [Figure 6‑11. Cross-reference of source code and class libraries within an Eclipse project](#_Toc449293871)
-* [Figure 7‑1. Eclipse preferences](#_Toc449293872)
-* [Figure 7‑2. Ant preferences within Eclipse](#_Toc449293873)
-* [Figure 7‑3. Add tools.jar to Ant classpath](#_Toc449293874)
-* [Figure 8‑1. Eclipse preferences](#_Toc449293875)
-* [Figure 8‑2. Project references for verdi_core](#_Toc449293876)
-* [Figure 8‑3. Dependent projects for verdi_core](#_Toc449293877)
-* [Figure 8‑4. Project-specific settings for the Java compiler](#_Toc449293878)
-* [Figure 10‑1. Run configurations](#_Toc449293879)
-* [Figure 10‑2. Sample configuration for a VERDI script](#_Toc449293880)
-* [Figure 10‑3. Tab to set environment variables for a run configuration](#_Toc449293881)
-* [Figure 10‑4. Specify VERDI_HOME environment variable](#_Toc449293882)
-* [Figure 11‑1. Review and edit a build.properties file](#_Toc449293883)
-* [Figure 11‑2. Window Show View Ant](#_Toc449293884)
-* [Figure 11‑3. Double-click on build.win.dist to build VERDI distribution with Ant](#_Toc449293885)
-* [Figure 11‑4. Console error message related to not finding Java compiler](#_Toc449293886)
-* [Figure 11‑5. Open Window Preferences](#_Toc449293887)
-* [Figure 11‑6. Expand Ant, select runtime, select global entries](#_Toc449293888)
-* [Figure 11‑7. Add tools.jar to Ant preferences](#_Toc449293889)
+* [Figure 2‑1. Java -version command on 64-bit Windows 7](#Figure2-1)
+* [Figure 3‑1. GitHub site for VERDI](#Figure3-1)
+* [Figure 3‑2. Create a New Branch in GitHub](#Figure3-2)
+* [Figure 4‑1. Git Desktop Client](#Figure4-1)
+* [Figure 4‑2. Git Desktop – Add Commit Message](#Figure4-2)
+* [Figure 5‑1. Example startup screen for Eclipse](#Figure5-1)
+* [Figure 5‑2. Select a VERDI workspace for Eclipse](#Figure5-2)
+* [Figure 5‑3. Eclipse workbench](#Figure5-3)
+* [Figure 5‑4. Click on Worbench Arrow to go to Eclipse workbench](#Figure5-4)
+* [Figure 5‑5. Example Eclipse development environment for Java projects](#Figure5-5)
+* [Figure 5‑6. Example Eclipse window in editing mode](#Figure5-6)
+* [Figure 6‑1. File/Import in Eclipse](#Figure6-1)
+* [Figure 6‑2. Import a project into Eclipse from Git](#Figure6-2)
+* [Figure 6‑3. Checkout Projects from Git](#Figure6-3)
+* [Figure 6‑4. Import Projects from Git](#Figure6-4)
+* [Figure 6‑5. Search for Git repository on your local file system](#Figure6-5)
+* [Figure 6‑6. Select Git repository on local file system](#Figure6-6)
+* [Figure 6‑7. Select projects to check out from Git](#Figure6-7)
+* [Figure 6‑8. VERDI projects imported to Eclipse workspace](#Figure6-8)
+* [Figure 6‑9. Projects listed in the Package Explorer of the Eclipse workspace](#Figure6-9)
+* [Figure 6‑10. Location of source code for open source libraries](#Figure6-10)
+* [Figure 6‑11. Cross-reference of source code and class libraries within an Eclipse project](#Figure6-11)
+* [Figure 7‑1. Eclipse preferences](#Figure7-1)
+* [Figure 7‑2. Ant preferences within Eclipse](#Figure7-2)
+* [Figure 7‑3. Add tools.jar to Ant classpath](#Figure7-3)
+* [Figure 8‑1. Eclipse preferences](#Figure8-1)
+* [Figure 8‑2. Project references for verdi_core](#Figure8-2)
+* [Figure 8‑3. Dependent projects for verdi_core](#Figure8-3)
+* [Figure 8‑4. Project-specific settings for the Java compiler](#Figure8-4)
+* [Figure 10‑1. Run configurations](#Figure10-1)
+* [Figure 10‑2. Sample configuration for a VERDI script](#Figure10-2)
+* [Figure 10‑3. Tab to set environment variables for a run configuration](#Figure10-3)
+* [Figure 10‑4. Specify VERDI_HOME environment variable](#Figure10-4)
+* [Figure 11‑1. Review and edit a build.properties file](#Figure11-1)
+* [Figure 11‑2. Window Show View Ant](#Figure11-2)
+* [Figure 11‑3. Double-click on build.win.dist to build VERDI distribution with Ant](#Figure11-3)
+* [Figure 11‑4. Console error message related to not finding Java compiler](#Figure11-4)
+* [Figure 11‑5. Open Window Preferences](#Figure11-5)
+* [Figure 11‑6. Expand Ant, select runtime, select global entries](#Figure11-6)
+* [Figure 11‑7. Add tools.jar to Ant preferences](#Figure11-7)
 
 Introduction
 ============
@@ -145,11 +145,11 @@ Check to see if the Java Development Toolkit (JDK) and the Java Run-time Environ
 
 1.  Under Windows 7, open a Command window to get to a Command prompt.
 
-2.  Type the command “java –version” as shown below (Figure 2‑1). If you see the proper response from that java command, then your java version is already installed and included in your PATH.
+2.  Type the command “java –version” as shown below [Figure 2‑1](#Figure2‑1). If you see the proper response from that java command, then your java version is already installed and included in your PATH.
 
 <img src="media/image001.png" width="541" height="179" />
 
-<span id="_Ref449285501" class="anchor"><span id="_Toc449293850" class="anchor"></span></span>Figure ‑. Java -version command on 64-bit Windows 7
+<a id=Figure2-1></a> Figure 2‑1. Java -version command on 64-bit Windows 7
 
 1.  Make certain that your Java version is at least that shown above. If you have an earlier Java version (e.g., 1.6 or before) you need to download and install an update.
 
@@ -231,12 +231,12 @@ Download and Install Eclipse
 Using git from the command line
 ===============================
 
-VERDI is available through the GitHub repository under the CEMPD organization, see Figure 3‑1.
+VERDI is available through the GitHub repository under the CEMPD organization, see [Figure 3‑1](#Figure3-1).
 -----------------------------------------------------------------------------------------------
 
 <img src="media/image002.png" width="624" height="431" />
 
-<span id="_Ref449285832" class="anchor"><span id="_Toc449293851" class="anchor"></span></span>Figure ‑. GitHub site for VERDI
+<a id=Figure3-1></a>Figure 3‑1. GitHub site for VERDI
 
 ***If you do not have a GitHub account, register for it on the following website: <https://github.com/> and click on Sign Up to create a personal account.***
 
@@ -422,11 +422,11 @@ Create a new branch for new development on VERDI GitHub site
 
 3.  Type in the new name of your branch, for example: new_branch in the text box.
 
-4.  Click on the Blue “Create branch: new_branch from ‘master’ (see Figure 3‑2).
+4.  Click on the Blue “Create branch: new_branch from ‘master’ (see [Figure 3‑2](Figure3-2)).
 
 <img src="media/image003.png" width="624" height="355" />
 
-<span id="_Ref449287142" class="anchor"><span id="_Toc449293852" class="anchor"></span></span>Figure ‑. Create a New Branch in GitHub
+<a id=Figure3-2></a>Figure 3‑2. Create a New Branch in GitHub
 
 GitHub Released Versions
 ------------------------
@@ -442,13 +442,13 @@ As an alternative to using git command line, the Git Desktop Client allows you t
 
 <img src="media/image004.png" width="547" height="357" />
 
-<span id="_Ref449287241" class="anchor"><span id="_Toc449293853" class="anchor"></span></span>Figure ‑. Git Desktop Client
+<a id=Figure4-1></a>Figure 4‑1. Git Desktop Client
 
 If you make changes to a file in Eclipse and then view the VERDI project in the Git Desktop Client, then you see a list of the number of files that were changed with the filenames changed on the left side, and the changes in the file highlighted in green on the right side (Figure 4‑2). At the bottom of the left panel is a comment box for you to add a message about the commit and the “Commit to Shapefile Branch” button that you use to make the commit. After you commit the change, click on the Sync button in the upper right to synchronize the local shapefile branch with the remote GitHub Server.
 
 <img src="media/image005.png" width="621" height="407" />
 
-<span id="_Ref449287354" class="anchor"><span id="_Toc449293854" class="anchor"></span></span>Figure ‑. Git Desktop – Add Commit Message
+<a id=Figure4-2></a>Figure 4‑2. Git Desktop – Add Commit Message
 
 Start Eclipse
 =============
@@ -463,33 +463,33 @@ Figure 5‑1 shows the startup window for Eclipse. A progress bar is displayed a
 
 <img src="media/image006.png" width="446" height="289" />
 
-<span id="_Ref449287496" class="anchor"><span id="_Toc449293855" class="anchor"></span></span>Figure ‑. Example startup screen for Eclipse
+<a id=Figure5-1></a>Figure 5‑1. Example startup screen for Eclipse
 
 Next, select the workspace for Eclipse (Figure 5‑2). If you have not yet used VERDI on your computer, you can select the Browse button to select where you want to put the workspace directory. Eclipse will create the directory for you. Warning: The location of the workplace directory should be different than the location of the local git repository directory. In fact, it will look empty (even after you import the VERDI local git repository into Eclipse) but will contain a .metadata directory that contains a version.ini file. Eclipse’s startup screen is once again displayed while more tools are loaded.
 
 <img src="media/image007.png" width="623" height="252" />
 
-<span id="_Ref449287604" class="anchor"><span id="_Toc449293856" class="anchor"></span></span>Figure ‑. Select a VERDI workspace for Eclipse
+<a id=Figure5-2></a>Figure 5‑2. Select a VERDI workspace for Eclipse
 
-Depending on the version of Eclipse to enter the developer workspace, click on the link under the Welcome screen; titled “ Go to the workbench” (Figure 5‑3) or click on an arrow that is labeled Workbench (Figure 5‑4). The Eclipse workbench contains several windows that allow you to view source code, edit, and build within a single developer environment (Figure 5‑5).<span id="_Toc197166186" class="anchor"><span id="_Toc241299220" class="anchor"><span id="_Toc241299356" class="anchor"></span></span></span>
+Depending on the version of Eclipse to enter the developer workspace, click on the link under the Welcome screen; titled “ Go to the workbench” (Figure 5‑3) or click on an arrow that is labeled Workbench (Figure 5‑4). The Eclipse workbench contains several windows that allow you to view source code, edit, and build within a single developer environment (Figure 5‑5).
 
 <img src="media/image008.png" width="509" height="303" />
 
-<span id="_Ref449287643" class="anchor"><span id="_Toc449293857" class="anchor"></span></span>Figure ‑. Eclipse workbench
+<a id=Figure5-3></a>Figure 5‑3. Eclipse workbench
 
 <img src="media/image009.png" width="509" height="231" />
 
-<span id="_Ref449287724" class="anchor"><span id="_Toc449293858" class="anchor"></span></span>Figure ‑. Click on Worbench Arrow to go to Eclipse workbench
+<a id=Figure5-4></a>Figure 5‑4. Click on Worbench Arrow to go to Eclipse workbench
 
 <img src="media/image010.png" width="495" height="370" />
 
-<span id="_Ref449287795" class="anchor"><span id="_Toc449293859" class="anchor"></span></span>Figure ‑. Example Eclipse development environment for Java projects
+<a id=Figure5-5></a>Figure 5‑5. Example Eclipse development environment for Java projects
 
 The Eclipse IDE window as shown in Figure 5‑6 has a title bar at the top showing the name of the file currently being edited, menus and icons below the title bar, the Package Explorer down the left-hand side, multiple tabbed panes in the central file editor with Java keyword highlighting, messages along the bottom, and the Ant build environment in the bottom right-hand corner. These and other windows may be added, closed, moved, and resized as-needed for the work being performed.
 
 <img src="media/image011.png" width="624" height="467" />
 
-<span id="_Ref449288307" class="anchor"><span id="_Toc449293860" class="anchor"></span></span>Figure ‑. Example Eclipse window in editing mode
+<a id=Figure5-6></a>Figure 5‑6. Example Eclipse window in editing mode
 
 Import VERDI into Eclipse from your local git repository
 ========================================================
@@ -499,7 +499,7 @@ Select FileImport
 
 <img src="media/image012.png" width="415" height="288" />
 
-<span id="_Ref449288392" class="anchor"><span id="_Toc449293861" class="anchor"></span></span>Figure ‑. File/Import in Eclipse
+<a id=Figure5-7></a>Figure 5‑7. File/Import in Eclipse
 
 To import the VERDI source code, use your mouse to select **FileImport** (Figure 6‑1). This will generate a pop-up window titled Import (Figure 6‑2).
 
@@ -507,7 +507,7 @@ To import the VERDI source code, use your mouse to select **FileImport** (Figure
 
 <img src="media/image013.png" width="301" height="316" />
 
-<span id="_Ref449288458" class="anchor"><span id="_Toc449293862" class="anchor"></span></span>Figure ‑. Import a project into Eclipse from Git
+<a id=Figure6-1></a>Figure 6‑1. Import a project into Eclipse from Git
 
 Checkout Projects from Git
 --------------------------
@@ -516,7 +516,7 @@ Click on the **Git** Folder to open it, and then select **Checkout Projects from
 
 <img src="media/image014.png" width="283" height="295" />
 
-<span id="_Ref449288505" class="anchor"><span id="_Toc449293863" class="anchor"></span></span>Figure ‑. Checkout Projects from Git
+<a id=Figure6-3></a>Figure 6‑3. Checkout Projects from Git
 
 Import Projects from Git - Select Existing Local Repository
 -----------------------------------------------------------
@@ -525,7 +525,7 @@ Click on the **Existing local repository** to open it, and then select **Next** 
 
 <img src="media/image015.png" width="280" height="295" />
 
-<span id="_Ref449288570" class="anchor"><span id="_Toc449293864" class="anchor"></span></span>Figure ‑. Import Projects from Git
+<a id=Figure6-4></a>Figure 6‑4. Import Projects from Git
 
 Specify Location of Repository Location
 ---------------------------------------
@@ -534,7 +534,7 @@ Click on Add.. and type in the directory location of your local git Repository i
 
 <img src="media/image016.png" width="268" height="317" />
 
-<span id="_Ref449288658" class="anchor"><span id="_Toc449293865" class="anchor"></span></span>Figure ‑. Search for Git repository on your local file system
+Figure 6‑5. Search for Git repository on your local file system
 
 Specify Location of your local Git Repository
 ---------------------------------------------
@@ -543,7 +543,7 @@ Click on the box next to the local Git repository that was found and then click 
 
 <img src="media/image017.png" width="421" height="478" />
 
-<span id="_Ref449288733" class="anchor"><span id="_Toc449293866" class="anchor"></span></span>Figure ‑. Select Git repository on local file system
+<a id=Figure6-6></a>Figure 6‑6. Select Git repository on local file system
 
 Select VERDI Local Git Repository
 ---------------------------------
@@ -552,17 +552,17 @@ To load the software into eclipse click on VERDI and then click next and then se
 
 <img src="media/image018.png" width="478" height="505" />
 
-<span id="_Ref449288885" class="anchor"><span id="_Toc449293867" class="anchor"></span></span>Figure ‑. Select projects to check out from Git
+<a id=Figure6-7></a>Figure 6‑7. Select projects to check out from Git
 
 Eclipse then checks out VERDI from the local repository. The workspace and the directory where the VERDI software is installed should not share the same location. Figure 6‑8 shows that the code has been successfully imported into the workspace. A red X by one of the folders, on the other hand, indicates a problem. The six VERDI projects are shown in the workspace in Figure 6‑9. Note that the Git branch name for each project is listed next to the project’s name.
 
 <img src="media/image019.png" width="381" height="402" />
 
-<span id="_Ref449288954" class="anchor"><span id="_Toc449293868" class="anchor"></span></span>Figure ‑. VERDI projects imported to Eclipse workspace
+<a id=Figure6-7></a>Figure 6‑7. VERDI projects imported to Eclipse workspace
 
 <img src="media/image020.png" width="623" height="399" />
 
-<span id="_Ref449289185" class="anchor"><span id="_Toc449293869" class="anchor"></span></span>Figure ‑. Projects listed in the Package Explorer of the Eclipse workspace
+<a id=Figure6-8></a>Figure 6‑8. Projects listed in the Package Explorer of the Eclipse workspace
 
 Source Code for Libraries
 -------------------------
@@ -573,13 +573,13 @@ All of this source code is included in the verdi_core/lib_src directory of your 
 
 <img src="media/image021.png" width="624" height="365" />
 
-<span id="_Ref449289426" class="anchor"><span id="_Toc449293870" class="anchor"></span></span>Figure ‑. Location of source code for open source libraries
+<a id=Figure6-10></a>Figure 6‑10. Location of source code for open source libraries
 
 Each library is cross-referenced within Eclipse from its executable jar file to its source file. To see the libraries used by one of the projects, verdi_data_loaders for example, right-click on verdi_data_loaders in the Eclipse Package Explorer. This brings up the Properties box. Select Java Build Path on the left-hand side and the four tabs then open – Source, Projects, Libraries, and Order and Export (Figure 6‑11).
 
 <img src="media/image022.png" width="592" height="362" />
 
-<span id="_Ref449289646" class="anchor"><span id="_Toc449293871" class="anchor"></span></span>Figure ‑. Cross-reference of source code and class libraries within an Eclipse project
+<a id=Figure6-11></a>Figure 6‑11. Cross-reference of source code and class libraries within an Eclipse project
 
 As shown in Figure 6‑11, the library gt-data-12.2.jar within the directory verdi_core/lib is cross-referenced to the gt-data-12.2-sources.jar within verdi_core/lib_src. Note that both the class and source libraries are located in verdi_core directory structure, although the properties for the verdi_data_loaders project are shown. The libraries that are used for multiple Eclipse projects within VERDI are stored under verdi_core, which is the largest project. All library source code that is distributed with VERDI is located within verdi_core/lib_src.
 
@@ -592,19 +592,19 @@ You need to edit the General Ant Preferences to add the tools.jar from the JDK. 
 
 <img src="media/image023.png" width="624" height="284" />
 
-<span id="_Ref449289782" class="anchor"><span id="_Toc449293872" class="anchor"></span></span>Figure ‑. Eclipse preferences
+<a id=Figure7-1></a>Figure 7‑1. Eclipse preferences
 
 Next, select Ant&gt; Runtime&gt; Global Entries as shown in Figure 7‑2.
 
 <img src="media/image024.png" width="624" height="559" />
 
-<span id="_Ref449289838" class="anchor"><span id="_Toc449293873" class="anchor"></span></span>Figure ‑. Ant preferences within Eclipse
+<a id=Figure7-2></a>Figure 7‑2. Ant preferences within Eclipse
 
 Then select **Add External JARS** and navigate to the location where the JDK is installed on your computer. Next, browse to the lib, select *tools.jar* and click the Open button (Figure 7‑3). Finally, press the Apply button followed by the OK button.
 
 <img src="media/image025.png" width="624" height="557" />
 
-<span id="_Ref449289929" class="anchor"><span id="_Toc449293874" class="anchor"></span></span>Figure ‑. Add tools.jar to Ant classpath
+<a id=Figure7-3></a>Figure 7‑3. Add tools.jar to Ant classpath
 
 Set Eclipse Preferences
 =======================
@@ -622,7 +622,7 @@ NOTE: Any options that you set here are for all of the projects in this workspac
 
 <img src="media/image026.png" width="624" height="522" />
 
-<span id="_Ref449289989" class="anchor"><span id="_Toc449293875" class="anchor"></span></span>Figure ‑. Eclipse preferences
+<a id=Figure8-1></a>Figure 8‑1. Eclipse preferences
 
 If you want Eclipse to automatically rebuild your projects as you change a file, check the Build Automatically checkbox (Figure 8‑1). Note that this option can slow down your development if you are making several changes because your projects will rebuild after each change.
 
@@ -637,7 +637,7 @@ In the Package Explorer view, right click on verdi_core and select Properties at
 
 <img src="media/image027.png" width="624" height="343" />
 
-<span id="_Ref449290237" class="anchor"><span id="_Toc449293876" class="anchor"></span></span>Figure ‑. Project references for verdi_core
+<a id=Figure8-2></a>Figure 8‑2. Project references for verdi_core
 
 ### Java Build Path
 
@@ -645,7 +645,7 @@ Select Java Build Path. The right side of the window then shows four tabs, conta
 
 <img src="media/image028.png" width="623" height="432" />
 
-<span id="_Ref449290284" class="anchor"><span id="_Toc449293877" class="anchor"></span></span>Figure ‑. Dependent projects for verdi_core
+<a id=Figure8-3></a>Figure 8‑3. Dependent projects for verdi_core
 
 Figure 8‑3 shows that the verdi_core project depends upon three other projects – verdi_bootstrap, verdi_saf_core_runtime, and verdi_saf_ui. Therefore, these projects must be built and available to the Java compiler when verdi_core is built. Also, note that the latter two projects are part of the Repast Simphony library. You should not need to change these dependencies.
 
@@ -655,7 +655,7 @@ From the verdi_core Properties window, select Java Compiler (Figure 8‑4). The 
 
 <img src="media/image029.png" width="624" height="510" />
 
-<span id="_Ref449290409" class="anchor"><span id="_Toc449293878" class="anchor"></span></span>Figure ‑. Project-specific settings for the Java compiler
+<a id=Figure8-4></a>Figure 8‑4. Project-specific settings for the Java compiler
 
 The Classfile Generation section, which is beneath the compliance settings, has several options that are used by the debugger. If you plan on running VERDI in the Eclipse debugger, check these settings.
 
@@ -748,25 +748,25 @@ From the Eclipse Main Menu, select either Run&gt;Run Configurations or Run&gt; D
 
 <img src="media/image030.png" width="624" height="499" />
 
-<span id="_Ref449291270" class="anchor"><span id="_Toc449293879" class="anchor"></span></span>Figure ‑. Run configurations
+<a id=Figure10-1></a>Figure 10‑1. Run configurations
 
 The script names include verdi_script, verdi_script_batch, verdi_script_camx, verdi_script_two_bars, and verdi_script_vertical_crosssection. Select verdi_script, and then click on the arguments tab to view the command-line arguments that are passed to VERDI in the script (Figure 10‑2). When you run the script, VERDI automatically loads the data and creates plots using the script commands specified in the arguments tab. Setting up and running scripts shorten the time required to debug plot issues because plots can be reproduced more quickly. (Note: The pathnames are specified relative to the distfiles/data directory in the arguments tab. This allows developers to run the test scripts on different platforms [Windows, Linux, or Mac] without having to edit the pathname to load the data correctly.)
 
 <img src="media/image031.png" alt="run_config_arguments" width="623" height="431" />
 
-<span id="_Ref449291324" class="anchor"><span id="_Toc449293880" class="anchor"></span></span>Figure ‑. Sample configuration for a VERDI script
+<a id=Figure10-2></a>Figure 10‑2. Sample configuration for a VERDI script
 
 Before you run the script, you need to add the VERDI_HOME environment variable to point to a location with the distribution files (the files that are available after you build VERDI within eclipse). Click on the **Environment** Tab shown in Figure 10‑3.
 
 <img src="media/image032.png" width="624" height="495" />
 
-<span id="_Ref449291422" class="anchor"><span id="_Toc449293881" class="anchor"></span></span>Figure ‑. Tab to set environment variables for a run configuration
+<a id=Figure10-3></a>Figure 10‑3. Tab to set environment variables for a run configuration
 
 Add the environment variable VERDI_HOME and have it point to your eclipse workspace VERDI (see Figure 10‑4). At this point you are able to debug VERDI within Eclipse using the verdi_script.launch file.
 
 <img src="media/image033.png" width="421" height="161" />
 
-<span id="_Ref449291718" class="anchor"><span id="_Toc449293882" class="anchor"></span></span>Figure ‑. Specify VERDI_HOME environment variable
+<a id=Figure10-4></a>Figure 10‑4. Specify VERDI_HOME environment variable
 
 Build the VERDI Distribution
 =============================
@@ -784,7 +784,7 @@ C:\Program Files\Java\jdk1.7.0_55
 
 <img src="media/image034.png" width="624" height="430" />
 
-<span id="_Ref449291933" class="anchor"><span id="_Toc449293883" class="anchor"></span></span>Figure ‑. Review and edit a build.properties file
+<a id=Figure11-1></a>Figure 11‑1. Review and edit a build.properties file
 
 ### Linux
 
@@ -821,11 +821,11 @@ The Windows distribution can be built using the scripts (build_dist_win32.xml or
 
 <img src="media/image035.png" width="624" height="456" />
 
-<span id="_Ref449292354" class="anchor"><span id="_Toc449293884" class="anchor"></span></span>Figure ‑. Window Show View Ant
+<a id=Figure11-2></a>Figure 11‑2. Window Show View Ant
 
 <img src="media/image036.png" width="622" height="444" />
 
-<span id="_Ref449292418" class="anchor"><span id="_Toc449293885" class="anchor"></span></span>Figure ‑. Double-click on build.win.dist to build VERDI distribution with Ant
+<a id=Figure11-3></a>Figure 11‑3. Double-click on build.win.dist to build VERDI distribution with Ant
 
 ### Linux Distribution
 
@@ -853,7 +853,7 @@ Error messages will appear in the console window underneath the Ant window. If y
 
 <img src="media/image037.png" width="539" height="384" />
 
-<span id="_Ref449292634" class="anchor"><span id="_Ref449292883" class="anchor"><span id="_Toc449293886" class="anchor"></span></span></span>Figure ‑. Console error message related to not finding Java compiler
+<a id=Figure11-4></a>Figure 11‑4. Console error message related to not finding Java compiler
 
 ### Add Java Compiler to Ant
 
@@ -873,15 +873,15 @@ To allow the Ant compiler to find the Java compiler, you will also need to chang
 
 <img src="media/image038.png" width="623" height="467" />
 
-<span id="_Ref449293075" class="anchor"><span id="_Toc449293887" class="anchor"></span></span>Figure ‑. Open Window Preferences
+<a id=Figure11-5></a>Figure 11‑5. Open Window Preferences
 
 <img src="media/image039.png" width="363" height="293" />
 
-<span id="_Ref449293127" class="anchor"><span id="_Toc449293888" class="anchor"></span></span>Figure ‑. Expand Ant, select runtime, select global entries
+<a id=Figure11-6></a>Figure 11‑6. Expand Ant, select runtime, select global entries
 
 <img src="media/image040.png" width="419" height="346" />
 
-<span id="_Ref449293176" class="anchor"><span id="_Toc449293889" class="anchor"></span></span>Figure ‑. Add tools.jar to Ant preferences
+<a id=Figure11-7></a>Figure 11‑7. Add tools.jar to Ant preferences
 
 Logging Messages in VERDI
 =========================
