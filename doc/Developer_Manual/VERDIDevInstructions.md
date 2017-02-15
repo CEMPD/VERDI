@@ -45,7 +45,7 @@ Date: June 15, 2016
 * [7. Configure Apache Ant to Use tools.jar from the JDK](#configure-apache-ant-to-use-tools.jar-from-the-jdk)
 * [8. Set Eclipse Preferences](#set-eclipse-preferences)
   * [8.1 Workspace Preferences](#workspace-preferences)
-  * [8.2 Verdi\_core Properties](#verdi_core-properties)
+  * [8.2 Verdi_core Properties](#verdi_core-properties)
     * [8.2.1 Java Build Path](#java-build-path)
     * [8.2.2 Java Compiler](#java-compiler)
 * [9. Build the NetCDF-Java Library with Modifications for VERDI](#build-the-netcdf-java-library-with-modifications-for-verdi)
@@ -57,7 +57,7 @@ Date: June 15, 2016
    * [11.1.1 Microsoft Windows](#microsoft-windows)
    * [11.1.2 Linux](#linux)
    * [11.1.3 Mac OS X](#mac-os-x)
-   * [11.1.4 Build\_dist xml](#build_dist-xml)
+   * [11.1.4 Build_dist xml](#build_dist-xml)
   * [11.2 Build Using Ant](#build-using-ant)
    * [11.2.1 Microsoft Windows Distribution](#microsoft-windows-distribution)
    * [11.2.2 Linux Distribution](#linux-distribution)
@@ -97,13 +97,13 @@ Date: June 15, 2016
 * [Figure 7‑2. Ant preferences within Eclipse](#_Toc449293873)
 * [Figure 7‑3. Add tools.jar to Ant classpath](#_Toc449293874)
 * [Figure 8‑1. Eclipse preferences](#_Toc449293875)
-* [Figure 8‑2. Project references for verdi\_core](#_Toc449293876)
-* [Figure 8‑3. Dependent projects for verdi\_core](#_Toc449293877)
+* [Figure 8‑2. Project references for verdi_core](#_Toc449293876)
+* [Figure 8‑3. Dependent projects for verdi_core](#_Toc449293877)
 * [Figure 8‑4. Project-specific settings for the Java compiler](#_Toc449293878)
 * [Figure 10‑1. Run configurations](#_Toc449293879)
 * [Figure 10‑2. Sample configuration for a VERDI script](#_Toc449293880)
 * [Figure 10‑3. Tab to set environment variables for a run configuration](#_Toc449293881)
-* [Figure 10‑4. Specify VERDI\_HOME environment variable](#_Toc449293882)
+* [Figure 10‑4. Specify VERDI_HOME environment variable](#_Toc449293882)
 * [Figure 11‑1. Review and edit a build.properties file](#_Toc449293883)
 * [Figure 11‑2. Window Show View Ant](#_Toc449293884)
 * [Figure 11‑3. Double-click on build.win.dist to build VERDI distribution with Ant](#_Toc449293885)
@@ -147,7 +147,7 @@ Check to see if the Java Development Toolkit (JDK) and the Java Run-time Environ
 
 2.  Type the command “java –version” as shown below (Figure 2‑1). If you see the proper response from that java command, then your java version is already installed and included in your PATH.
 
-<img src="media/image1.png" width="541" height="179" />
+<img src="media/image001.png" width="541" height="179" />
 
 <span id="_Ref449285501" class="anchor"><span id="_Toc449293850" class="anchor"></span></span>Figure ‑. Java -version command on 64-bit Windows 7
 
@@ -159,14 +159,14 @@ Download the JDK and the JRE for your operating system from the current reposito
 
     1.  Download the gzipped tar file *&lt;version&gt;*-linux-x64.tar.gz file
 
-    2.  Run the command tar –xzvf \*<span id="jdk-8u91-oth-JPRXXXjdk-8u91-linux-x64.ta" class="anchor"></span>jdk-8u91-linux-x64.tar.gz to give it executable permissions
+    2.  Run the command tar –xzvf *<span id="jdk-8u91-oth-JPRXXXjdk-8u91-linux-x64.ta" class="anchor"></span>jdk-8u91-linux-x64.tar.gz to give it executable permissions
 
     3.  Run the alternatives program to tell the system about the existence of your new installation:
 
 Alternatives –config java
 
 (this will list how many versions are installed. If there is only one then install the JDK as number 2)
-alternatives –install /usr/bin/java java /opt/jdk1.6.0\_20/bin/java 2
+alternatives –install /usr/bin/java java /opt/jdk1.6.0_20/bin/java 2
 Run the alternatives program again, to choose the new installation
 alternatives –config java, select number 2
 
@@ -175,7 +175,7 @@ alternatives –config java, select number 2
 
 2.  Repeat the above steps for javac:
 
-Alternatives –install /usr/bin/javac javac /opt/jdk1.6.0\_20/bin/javac 2
+Alternatives –install /usr/bin/javac javac /opt/jdk1.6.0_20/bin/javac 2
 
 Alternatives –config java, select number 2
 
@@ -187,7 +187,7 @@ Alternatives –config java, select number 2
 
     3.  If you already have a version of Java in your path, update it’s version, otherwise add it.
 
-    4.  Edit the PATH environment variable to add the fully qualified path to your java executable (e.g., C:\\Program Files\\Java\\jdk1.8.0\_91\\bin).
+    4.  Edit the PATH environment variable to add the fully qualified path to your java executable (e.g., C:\Program Files\Java\jdk1.8.0_91\bin).
 
     5.  Note that the list is semicolon-delimited.
 
@@ -195,7 +195,7 @@ Alternatives –config java, select number 2
 
 2.  For Windows 64 with Powershell: Use the following command to set the path, then exit Powershell and restart it for the path to be set.
 
-    1.  setx PATH "$env:path;\\the\\directory\\to\\add" –m
+    1.  setx PATH "$env:path;\the\directory\to\add" –m
 
     2.  You should see SUCCESS: Specified value was saved.
 
@@ -234,7 +234,7 @@ Using git from the command line
 VERDI is available through the GitHub repository under the CEMPD organization, see Figure 3‑1.
 -----------------------------------------------------------------------------------------------
 
-<img src="media/image2.png" width="624" height="431" />
+<img src="media/image002.png" width="624" height="431" />
 
 <span id="_Ref449285832" class="anchor"><span id="_Toc449293851" class="anchor"></span></span>Figure ‑. GitHub site for VERDI
 
@@ -269,11 +269,11 @@ Set-up git
 Clone the master branch of VERDI to a local repository
 ------------------------------------------------------
 
-1.  To obtain a local cloned copy of VERDI use the following commands to download the source code from GitHub to the directory local\_git\_repository/VERDI
+1.  To obtain a local cloned copy of VERDI use the following commands to download the source code from GitHub to the directory local_git_repository/VERDI
 
-> &gt; mkdir local\_git\_repository
+> &gt; mkdir local_git_repository
 >
-> &gt; cd local\_git\_repository
+> &gt; cd local_git_repository
 >
 > &gt; git clone https://github.com/CEMPD/VERDI.git ./VERDI
 >
@@ -292,7 +292,7 @@ Examine existing branches
 
 > &gt; git branch
 
-Output: \* master
+Output: * master
 
 1.  To fetch a branch from the GitHub repository use the command:
 
@@ -308,7 +308,7 @@ Shapefiles
 
 master
 
-\* shapefile\_mpas
+* shapefile_mpas
 
 remotes/origin/HEAD -&gt; origin/master
 
@@ -318,28 +318,28 @@ remotes/origin/gh-pages
 
 remotes/origin/master
 
-remotes/origin/shapefile\_mpas
+remotes/origin/shapefile_mpas
 
-remotes/origin/verdi\_1.6
+remotes/origin/verdi_1.6
 
-remotes/origin/verdi\_1.6\_v1
+remotes/origin/verdi_1.6_v1
 
-remotes/origin/verdi\_config\_v1
+remotes/origin/verdi_config_v1
 
-remotes/origin/verdi\_mpas
+remotes/origin/verdi_mpas
 
 Checkout Branch
 ---------------
 
 1.  To checkout a branch other than the master branch and switch to using that branch use the following command, for example to obtain and switch to using the Shapefiles branch:
 
-> &gt; git checkout shapefile\_mpas
+> &gt; git checkout shapefile_mpas
 >
 > Output:
 >
-> Branch shapefile\_mpas set up to track remote branch shapefile\_mpas from origin.
+> Branch shapefile_mpas set up to track remote branch shapefile_mpas from origin.
 >
-> Switched to a new branch 'shapefile\_mpas'
+> Switched to a new branch 'shapefile_mpas'
 
 Make changes, check status, stage change, commit change to the local repository, and push changes to GitHub
 -----------------------------------------------------------------------------------------------------------
@@ -371,43 +371,43 @@ Check log of commits
 
 1.  One line history
 
-    &gt; git log --pretty=format:'%h %ad | %s%d \[%an\]' --graph --date=short
+    &gt; git log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
 
 Output:
 
-\* 0ca8b20 2016-04-19 | Temporarily disable Add Layer and Edit Layer buttons in Configure GIS Layers dialog (HEAD -&gt; Shapefiles, origin/Shapefiles) \[Catherine Seppanen\]
+* 0ca8b20 2016-04-19 | Temporarily disable Add Layer and Edit Layer buttons in Configure GIS Layers dialog (HEAD -&gt; Shapefiles, origin/Shapefiles) [Catherine Seppanen]
 
-\* 5bbd76b 2016-04-18 | Set world bounds on MapContent viewport before rendering \[Catherine Seppanen\]
+* 5bbd76b 2016-04-18 | Set world bounds on MapContent viewport before rendering [Catherine Seppanen]
 
-\* 1455e91 2016-04-18 | Specify no ellipsoid shift in assumed datum for datasets \[Catherine Seppanen\]
+* 1455e91 2016-04-18 | Specify no ellipsoid shift in assumed datum for datasets [Catherine Seppanen]
 
-\* 93145c5 2016-04-18 | Fix inconsistent datum and ellipsoid for world map shapefile \[Catherine Seppanen\]
+* 93145c5 2016-04-18 | Fix inconsistent datum and ellipsoid for world map shapefile [Catherine Seppanen]
 
-\* 2ebbdf3 2016-04-18 | Merge branch 'Shapefiles' of https://github.com/CEMPD/VERDI into Shapefiles \[Catherine Seppanen\]
+* 2ebbdf3 2016-04-18 | Merge branch 'Shapefiles' of https://github.com/CEMPD/VERDI into Shapefiles [Catherine Seppanen]
 
-|\\
+|
 
-| \* 4107a02 2016-04-18 | removed 3 old \*.sld files no longer being used. \[Jo Ellen Brandmeyer\]
+| * 4107a02 2016-04-18 | removed 3 old *.sld files no longer being used. [Jo Ellen Brandmeyer]
 
-\* | 9a6b7bd 2016-04-18 | Ignore QGIS spatial index files (\*.qix) in Git \[Catherine Seppanen\]
-
-|/
-
-\* 6f37689 2016-04-18 | Merge branch 'Shapefiles' of https://github.com/CEMPD/VERDI.git into Shapefiles \[Jo Ellen Brandmeyer\]
-
-|\\
-
-| \* 79a6222 2016-04-17 | Use current timestep and layer when building Area Information table \[Catherine Seppanen\]
-
-| \* e5ca158 2016-04-17 | Replace invalid characters in Area Information dockable identifier \[Catherine Seppanen\]
-
-\* | c058216 2016-04-18 | Changed US Counties coverage from tl\_2015\_us\_county to cb\_2014\_us\_county\_500k (smaller file, highest resolution of the 3 sets of cartographic boundary shapefiles US counties from www.census.gov/geo/maps-data/data/cbf/cbf\_counties.html \[Jo Ellen Brandmeyer\]
+* | 9a6b7bd 2016-04-18 | Ignore QGIS spatial index files (*.qix) in Git [Catherine Seppanen]
 
 |/
 
-\* c9d9bac 2016-04-14 | When user enters a pattern for formatting values shown in the legend, changed code such that a "0" is appended only with the modifier ends with "E" and not "0". \[Jo Ellen Brandmeyer\]
+* 6f37689 2016-04-18 | Merge branch 'Shapefiles' of https://github.com/CEMPD/VERDI.git into Shapefiles [Jo Ellen Brandmeyer]
 
-\* de70b4a 2016-04-13 | Merge branch 'Shapefiles' of https://github.com/CEMPD/VERDI.git into Shapefiles \[Jo Ellen Brandmeyer\]
+|
+
+| * 79a6222 2016-04-17 | Use current timestep and layer when building Area Information table [Catherine Seppanen]
+
+| * e5ca158 2016-04-17 | Replace invalid characters in Area Information dockable identifier [Catherine Seppanen]
+
+* | c058216 2016-04-18 | Changed US Counties coverage from tl_2015_us_county to cb_2014_us_county_500k (smaller file, highest resolution of the 3 sets of cartographic boundary shapefiles US counties from www.census.gov/geo/maps-data/data/cbf/cbf_counties.html [Jo Ellen Brandmeyer]
+
+|/
+
+* c9d9bac 2016-04-14 | When user enters a pattern for formatting values shown in the legend, changed code such that a "0" is appended only with the modifier ends with "E" and not "0". [Jo Ellen Brandmeyer]
+
+* de70b4a 2016-04-13 | Merge branch 'Shapefiles' of https://github.com/CEMPD/VERDI.git into Shapefiles [Jo Ellen Brandmeyer]
 
 Create a new branch for new development on VERDI GitHub site
 ------------------------------------------------------------
@@ -420,11 +420,11 @@ Create a new branch for new development on VERDI GitHub site
 
 2.  Click on the Branch button.
 
-3.  Type in the new name of your branch, for example: new\_branch in the text box.
+3.  Type in the new name of your branch, for example: new_branch in the text box.
 
-4.  Click on the Blue “Create branch: new\_branch from ‘master’ (see Figure 3‑2).
+4.  Click on the Blue “Create branch: new_branch from ‘master’ (see Figure 3‑2).
 
-<img src="media/image3.png" width="624" height="355" />
+<img src="media/image003.png" width="624" height="355" />
 
 <span id="_Ref449287142" class="anchor"><span id="_Toc449293852" class="anchor"></span></span>Figure ‑. Create a New Branch in GitHub
 
@@ -440,20 +440,20 @@ Git Desktop Client
 
 As an alternative to using git command line, the Git Desktop Client allows you to view changes that were made to files in eclipse and then to synchronize those changes to the remote server. In the middle of Figure 4‑1 you see two tabs, one that is labeled “No Uncommitted Changes”, and the other that is labeled “History”. Download the Git Desktop client and follow the set-up instructions from the following website: <https://desktop.github.com/>
 
-<img src="media/image4.png" width="547" height="357" />
+<img src="media/image004.png" width="547" height="357" />
 
 <span id="_Ref449287241" class="anchor"><span id="_Toc449293853" class="anchor"></span></span>Figure ‑. Git Desktop Client
 
 If you make changes to a file in Eclipse and then view the VERDI project in the Git Desktop Client, then you see a list of the number of files that were changed with the filenames changed on the left side, and the changes in the file highlighted in green on the right side (Figure 4‑2). At the bottom of the left panel is a comment box for you to add a message about the commit and the “Commit to Shapefile Branch” button that you use to make the commit. After you commit the change, click on the Sync button in the upper right to synchronize the local shapefile branch with the remote GitHub Server.
 
-<img src="media/image5.png" width="621" height="407" />
+<img src="media/image005.png" width="621" height="407" />
 
 <span id="_Ref449287354" class="anchor"><span id="_Toc449293854" class="anchor"></span></span>Figure ‑. Git Desktop – Add Commit Message
 
 Start Eclipse
 =============
 
-**Using Windows:** Select the Eclipse icon on your taskbar, start menu, or desktop, or go to the directory where your installed Eclipse (e.g., C:\\Program Files\\eclipse directory and double-click on eclipse.exe.
+**Using Windows:** Select the Eclipse icon on your taskbar, start menu, or desktop, or go to the directory where your installed Eclipse (e.g., C:\Program Files\eclipse directory and double-click on eclipse.exe.
 
 **Using a Mac:** Go to the applications directory, to the Eclipse folder, and click on the Eclipse icon.
 
@@ -461,33 +461,33 @@ Start Eclipse
 
 Figure 5‑1 shows the startup window for Eclipse. A progress bar is displayed at the bottom of the window to indicate how Eclipse is being configured. Eclipse requires more startup time as you add tools into the Eclipse environment.
 
-<img src="media/image6.png" width="446" height="289" />
+<img src="media/image006.png" width="446" height="289" />
 
 <span id="_Ref449287496" class="anchor"><span id="_Toc449293855" class="anchor"></span></span>Figure ‑. Example startup screen for Eclipse
 
 Next, select the workspace for Eclipse (Figure 5‑2). If you have not yet used VERDI on your computer, you can select the Browse button to select where you want to put the workspace directory. Eclipse will create the directory for you. Warning: The location of the workplace directory should be different than the location of the local git repository directory. In fact, it will look empty (even after you import the VERDI local git repository into Eclipse) but will contain a .metadata directory that contains a version.ini file. Eclipse’s startup screen is once again displayed while more tools are loaded.
 
-<img src="media/image7.png" width="623" height="252" />
+<img src="media/image007.png" width="623" height="252" />
 
 <span id="_Ref449287604" class="anchor"><span id="_Toc449293856" class="anchor"></span></span>Figure ‑. Select a VERDI workspace for Eclipse
 
 Depending on the version of Eclipse to enter the developer workspace, click on the link under the Welcome screen; titled “ Go to the workbench” (Figure 5‑3) or click on an arrow that is labeled Workbench (Figure 5‑4). The Eclipse workbench contains several windows that allow you to view source code, edit, and build within a single developer environment (Figure 5‑5).<span id="_Toc197166186" class="anchor"><span id="_Toc241299220" class="anchor"><span id="_Toc241299356" class="anchor"></span></span></span>
 
-<img src="media/image8.png" width="509" height="303" />
+<img src="media/image008.png" width="509" height="303" />
 
 <span id="_Ref449287643" class="anchor"><span id="_Toc449293857" class="anchor"></span></span>Figure ‑. Eclipse workbench
 
-<img src="media/image9.png" width="509" height="231" />
+<img src="media/image009.png" width="509" height="231" />
 
 <span id="_Ref449287724" class="anchor"><span id="_Toc449293858" class="anchor"></span></span>Figure ‑. Click on Worbench Arrow to go to Eclipse workbench
 
-<img src="media/image10.png" width="495" height="370" />
+<img src="media/image010.png" width="495" height="370" />
 
 <span id="_Ref449287795" class="anchor"><span id="_Toc449293859" class="anchor"></span></span>Figure ‑. Example Eclipse development environment for Java projects
 
 The Eclipse IDE window as shown in Figure 5‑6 has a title bar at the top showing the name of the file currently being edited, menus and icons below the title bar, the Package Explorer down the left-hand side, multiple tabbed panes in the central file editor with Java keyword highlighting, messages along the bottom, and the Ant build environment in the bottom right-hand corner. These and other windows may be added, closed, moved, and resized as-needed for the work being performed.
 
-<img src="media/image11.PNG" width="624" height="467" />
+<img src="media/image011.png" width="624" height="467" />
 
 <span id="_Ref449288307" class="anchor"><span id="_Toc449293860" class="anchor"></span></span>Figure ‑. Example Eclipse window in editing mode
 
@@ -497,7 +497,7 @@ Import VERDI into Eclipse from your local git repository
 Select FileImport
 -----------------
 
-<img src="media/image12.png" width="415" height="288" />
+<img src="media/image012.png" width="415" height="288" />
 
 <span id="_Ref449288392" class="anchor"><span id="_Toc449293861" class="anchor"></span></span>Figure ‑. File/Import in Eclipse
 
@@ -505,7 +505,7 @@ To import the VERDI source code, use your mouse to select **FileImport** (Figure
 
 <span id="_Toc272501656" class="anchor"></span>
 
-<img src="media/image13.png" width="301" height="316" />
+<img src="media/image013.png" width="301" height="316" />
 
 <span id="_Ref449288458" class="anchor"><span id="_Toc449293862" class="anchor"></span></span>Figure ‑. Import a project into Eclipse from Git
 
@@ -514,7 +514,7 @@ Checkout Projects from Git
 
 Click on the **Git** Folder to open it, and then select **Checkout Projects from Git** by clicking on it (see Figure 6‑3). Then click next.
 
-<img src="media/image14.png" width="283" height="295" />
+<img src="media/image014.png" width="283" height="295" />
 
 <span id="_Ref449288505" class="anchor"><span id="_Toc449293863" class="anchor"></span></span>Figure ‑. Checkout Projects from Git
 
@@ -523,7 +523,7 @@ Import Projects from Git - Select Existing Local Repository
 
 Click on the **Existing local repository** to open it, and then select **Next** (see Figure 6‑4). Then click next.
 
-<img src="media/image15.png" width="280" height="295" />
+<img src="media/image015.png" width="280" height="295" />
 
 <span id="_Ref449288570" class="anchor"><span id="_Toc449293864" class="anchor"></span></span>Figure ‑. Import Projects from Git
 
@@ -532,7 +532,7 @@ Specify Location of Repository Location
 
 Click on Add.. and type in the directory location of your local git Repository into the search field (Figure 6‑5), then click on the box next to the local git repository that was found and then click Finish.
 
-<img src="media/image16.png" width="268" height="317" />
+<img src="media/image016.png" width="268" height="317" />
 
 <span id="_Ref449288658" class="anchor"><span id="_Toc449293865" class="anchor"></span></span>Figure ‑. Search for Git repository on your local file system
 
@@ -541,7 +541,7 @@ Specify Location of your local Git Repository
 
 Click on the box next to the local Git repository that was found and then click Finish (Figure 6‑6).
 
-<img src="media/image17.png" width="421" height="478" />
+<img src="media/image017.png" width="421" height="478" />
 
 <span id="_Ref449288733" class="anchor"><span id="_Toc449293866" class="anchor"></span></span>Figure ‑. Select Git repository on local file system
 
@@ -550,17 +550,17 @@ Select VERDI Local Git Repository
 
 To load the software into eclipse click on VERDI and then click next and then select Import Existing Eclipse Projects. Click the Finish button (Figure 6‑7).
 
-<img src="media/image18.png" width="478" height="505" />
+<img src="media/image018.png" width="478" height="505" />
 
 <span id="_Ref449288885" class="anchor"><span id="_Toc449293867" class="anchor"></span></span>Figure ‑. Select projects to check out from Git
 
 Eclipse then checks out VERDI from the local repository. The workspace and the directory where the VERDI software is installed should not share the same location. Figure 6‑8 shows that the code has been successfully imported into the workspace. A red X by one of the folders, on the other hand, indicates a problem. The six VERDI projects are shown in the workspace in Figure 6‑9. Note that the Git branch name for each project is listed next to the project’s name.
 
-<img src="media/image19.png" width="381" height="402" />
+<img src="media/image019.png" width="381" height="402" />
 
 <span id="_Ref449288954" class="anchor"><span id="_Toc449293868" class="anchor"></span></span>Figure ‑. VERDI projects imported to Eclipse workspace
 
-<img src="media/image20.png" width="623" height="399" />
+<img src="media/image020.png" width="623" height="399" />
 
 <span id="_Ref449289185" class="anchor"><span id="_Toc449293869" class="anchor"></span></span>Figure ‑. Projects listed in the Package Explorer of the Eclipse workspace
 
@@ -569,19 +569,19 @@ Source Code for Libraries
 
 Some of the libraries that VERDI uses are open source and have their source code readily available. The source code to many of these libraries are distributed with VERDI and are linked within the Eclipse project. Now if your debugging session needs to go into a library for which the source code is distributed, Eclipse should be able to display the source code for you.
 
-All of this source code is included in the verdi\_core/lib\_src directory of your VERDI source code installation. As shown in Figure 6‑10, the library source files are provided as jar or zip files.
+All of this source code is included in the verdi_core/lib_src directory of your VERDI source code installation. As shown in Figure 6‑10, the library source files are provided as jar or zip files.
 
-<img src="media/image21.PNG" width="624" height="365" />
+<img src="media/image021.png" width="624" height="365" />
 
 <span id="_Ref449289426" class="anchor"><span id="_Toc449293870" class="anchor"></span></span>Figure ‑. Location of source code for open source libraries
 
-Each library is cross-referenced within Eclipse from its executable jar file to its source file. To see the libraries used by one of the projects, verdi\_data\_loaders for example, right-click on verdi\_data\_loaders in the Eclipse Package Explorer. This brings up the Properties box. Select Java Build Path on the left-hand side and the four tabs then open – Source, Projects, Libraries, and Order and Export (Figure 6‑11).
+Each library is cross-referenced within Eclipse from its executable jar file to its source file. To see the libraries used by one of the projects, verdi_data_loaders for example, right-click on verdi_data_loaders in the Eclipse Package Explorer. This brings up the Properties box. Select Java Build Path on the left-hand side and the four tabs then open – Source, Projects, Libraries, and Order and Export (Figure 6‑11).
 
-<img src="media/image22.PNG" width="592" height="362" />
+<img src="media/image022.png" width="592" height="362" />
 
 <span id="_Ref449289646" class="anchor"><span id="_Toc449293871" class="anchor"></span></span>Figure ‑. Cross-reference of source code and class libraries within an Eclipse project
 
-As shown in Figure 6‑11, the library gt-data-12.2.jar within the directory verdi\_core/lib is cross-referenced to the gt-data-12.2-sources.jar within verdi\_core/lib\_src. Note that both the class and source libraries are located in verdi\_core directory structure, although the properties for the verdi\_data\_loaders project are shown. The libraries that are used for multiple Eclipse projects within VERDI are stored under verdi\_core, which is the largest project. All library source code that is distributed with VERDI is located within verdi\_core/lib\_src.
+As shown in Figure 6‑11, the library gt-data-12.2.jar within the directory verdi_core/lib is cross-referenced to the gt-data-12.2-sources.jar within verdi_core/lib_src. Note that both the class and source libraries are located in verdi_core directory structure, although the properties for the verdi_data_loaders project are shown. The libraries that are used for multiple Eclipse projects within VERDI are stored under verdi_core, which is the largest project. All library source code that is distributed with VERDI is located within verdi_core/lib_src.
 
 Configure Apache Ant to Use tools.jar from the JDK
 ==================================================
@@ -590,19 +590,19 @@ Apache Ant is a software tool for automating the software build process. It is p
 
 You need to edit the General Ant Preferences to add the tools.jar from the JDK. To do this, select Window&gt; Preferences as shown in Figure 7‑1.
 
-<img src="media/image23.png" width="624" height="284" />
+<img src="media/image023.png" width="624" height="284" />
 
 <span id="_Ref449289782" class="anchor"><span id="_Toc449293872" class="anchor"></span></span>Figure ‑. Eclipse preferences
 
 Next, select Ant&gt; Runtime&gt; Global Entries as shown in Figure 7‑2.
 
-<img src="media/image24.png" width="624" height="559" />
+<img src="media/image024.png" width="624" height="559" />
 
 <span id="_Ref449289838" class="anchor"><span id="_Toc449293873" class="anchor"></span></span>Figure ‑. Ant preferences within Eclipse
 
 Then select **Add External JARS** and navigate to the location where the JDK is installed on your computer. Next, browse to the lib, select *tools.jar* and click the Open button (Figure 7‑3). Finally, press the Apply button followed by the OK button.
 
-<img src="media/image25.png" width="624" height="557" />
+<img src="media/image025.png" width="624" height="557" />
 
 <span id="_Ref449289929" class="anchor"><span id="_Toc449293874" class="anchor"></span></span>Figure ‑. Add tools.jar to Ant classpath
 
@@ -620,7 +620,7 @@ Window &gt; Preferences &gt; General &gt; Click on Workspace &gt;
 
 NOTE: Any options that you set here are for all of the projects in this workspace.
 
-<img src="media/image26.png" width="624" height="522" />
+<img src="media/image026.png" width="624" height="522" />
 
 <span id="_Ref449289989" class="anchor"><span id="_Toc449293875" class="anchor"></span></span>Figure ‑. Eclipse preferences
 
@@ -630,30 +630,30 @@ There is also a setting to automatically recognize files that are added to the w
 
 If your code is to be used on multiple platforms, go to “Text File Encoding” near the bottom of the window. Click the radio button to the left of “Other” and select “UTF-8”. Click the Apply button and then the OK button.
 
-Verdi\_core Properties
+Verdi_core Properties
 ----------------------
 
-In the Package Explorer view, right click on verdi\_core and select Properties at the bottom of the pop-up menu. A pop-up window titled Properties will appear for verdi\_core (Figure 8‑2).
+In the Package Explorer view, right click on verdi_core and select Properties at the bottom of the pop-up menu. A pop-up window titled Properties will appear for verdi_core (Figure 8‑2).
 
-<img src="media/image27.png" width="624" height="343" />
+<img src="media/image027.png" width="624" height="343" />
 
-<span id="_Ref449290237" class="anchor"><span id="_Toc449293876" class="anchor"></span></span>Figure ‑. Project references for verdi\_core
+<span id="_Ref449290237" class="anchor"><span id="_Toc449293876" class="anchor"></span></span>Figure ‑. Project references for verdi_core
 
 ### Java Build Path
 
 Select Java Build Path. The right side of the window then shows four tabs, containing information on the **Source** folders, the required **Projects**, the **Libraries** (Java ARchives (JARS) and class folders on the build path), and the **Order and Export** (entries that are selected for export to dependent projects) (Figure 8‑3). <span id="_Toc353898019" class="anchor"><span id="_Toc353949788" class="anchor"><span id="_Toc353950157" class="anchor"></span></span></span>
 
-<img src="media/image28.png" width="623" height="432" />
+<img src="media/image028.png" width="623" height="432" />
 
-<span id="_Ref449290284" class="anchor"><span id="_Toc449293877" class="anchor"></span></span>Figure ‑. Dependent projects for verdi\_core
+<span id="_Ref449290284" class="anchor"><span id="_Toc449293877" class="anchor"></span></span>Figure ‑. Dependent projects for verdi_core
 
-Figure 8‑3 shows that the verdi\_core project depends upon three other projects – verdi\_bootstrap, verdi\_saf\_core\_runtime, and verdi\_saf\_ui. Therefore, these projects must be built and available to the Java compiler when verdi\_core is built. Also, note that the latter two projects are part of the Repast Simphony library. You should not need to change these dependencies.
+Figure 8‑3 shows that the verdi_core project depends upon three other projects – verdi_bootstrap, verdi_saf_core_runtime, and verdi_saf_ui. Therefore, these projects must be built and available to the Java compiler when verdi_core is built. Also, note that the latter two projects are part of the Repast Simphony library. You should not need to change these dependencies.
 
 ### Java Compiler
 
-From the verdi\_core Properties window, select Java Compiler (Figure 8‑4). The panel on the right side shows the version of the JDK that is currently being used by VERDI. Note that the compliance settings are all set to Java 1.7. Also, the check mark at the top enables project-specific settings for the Java Compiler.
+From the verdi_core Properties window, select Java Compiler (Figure 8‑4). The panel on the right side shows the version of the JDK that is currently being used by VERDI. Note that the compliance settings are all set to Java 1.7. Also, the check mark at the top enables project-specific settings for the Java Compiler.
 
-<img src="media/image29.png" width="624" height="510" />
+<img src="media/image029.png" width="624" height="510" />
 
 <span id="_Ref449290409" class="anchor"><span id="_Toc449293878" class="anchor"></span></span>Figure ‑. Project-specific settings for the Java compiler
 
@@ -704,7 +704,7 @@ Follow these steps to download version 4.5.5 of the NetCDF-Java Library from Git
 
     1.  Change package import statement on files that did not compile correctly from opendap.util.gui to opendap.tools.gui.
 
-    2.  Under ucar.nc2.dods remove *\#***import** *ucar.nc2.DODSNode*;
+    2.  Under ucar.nc2.dods remove *#***import** *ucar.nc2.DODSNode*;
 
     3.  For CoordSysTable.java use **import** ucar.ma2.DataType to solve the issue of the unresolved DataType.
 
@@ -712,11 +712,11 @@ Follow these steps to download version 4.5.5 of the NetCDF-Java Library from Git
 
 10. There are three files that have been modified for VERDI: WRFConvention.java, M3IOConvention.java and Stereographic.java
 
-11. The versions specific to VERDI are found under: verdi\_data\_loaders/src/ucar/nc2/dataset/conv/M3IOConvention.java
+11. The versions specific to VERDI are found under: verdi_data_loaders/src/ucar/nc2/dataset/conv/M3IOConvention.java
 
-    verdi\_data\_loaders/src/ucar/nc2/dataset/conv/WRFConvention.java
+    verdi_data_loaders/src/ucar/nc2/dataset/conv/WRFConvention.java
 
-    verdi\_data\_loaders/src/ucar/unidata/geoloc/projection/Stereographic.java
+    verdi_data_loaders/src/ucar/unidata/geoloc/projection/Stereographic.java
 
     These versions need to be copied from the above directories to replace these files under thredds:
 
@@ -730,11 +730,11 @@ Follow these steps to download version 4.5.5 of the NetCDF-Java Library from Git
 
 13. After the files have been compiled in eclipse, do a mvn install from the command line (outside of eclipse) to build the jar file needed by VERDI.
 
-14. This will create a netcdfAll-\*.jar under thedds/ui/target
+14. This will create a netcdfAll-*.jar under thedds/ui/target
 
-15. Copy the netcdfAll-\*.jar to /verdi\_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar
+15. Copy the netcdfAll-*.jar to /verdi_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar
 
-16. Refresh the verdi\_core project and rebuild VERDI.
+16. Refresh the verdi_core project and rebuild VERDI.
 
 Test VERDI Using Scripts within Eclipse
 =======================================
@@ -746,27 +746,27 @@ View Scripts within Eclipse
 
 From the Eclipse Main Menu, select either Run&gt;Run Configurations or Run&gt; Debug Configurations if you want to run the script within the debugger. Then, select Java Application to view the scripts (Figure 10‑1).
 
-<img src="media/image30.png" width="624" height="499" />
+<img src="media/image030.png" width="624" height="499" />
 
 <span id="_Ref449291270" class="anchor"><span id="_Toc449293879" class="anchor"></span></span>Figure ‑. Run configurations
 
-The script names include verdi\_script, verdi\_script\_batch, verdi\_script\_camx, verdi\_script\_two\_bars, and verdi\_script\_vertical\_crosssection. Select verdi\_script, and then click on the arguments tab to view the command-line arguments that are passed to VERDI in the script (Figure 10‑2). When you run the script, VERDI automatically loads the data and creates plots using the script commands specified in the arguments tab. Setting up and running scripts shorten the time required to debug plot issues because plots can be reproduced more quickly. (Note: The pathnames are specified relative to the distfiles/data directory in the arguments tab. This allows developers to run the test scripts on different platforms \[Windows, Linux, or Mac\] without having to edit the pathname to load the data correctly.)
+The script names include verdi_script, verdi_script_batch, verdi_script_camx, verdi_script_two_bars, and verdi_script_vertical_crosssection. Select verdi_script, and then click on the arguments tab to view the command-line arguments that are passed to VERDI in the script (Figure 10‑2). When you run the script, VERDI automatically loads the data and creates plots using the script commands specified in the arguments tab. Setting up and running scripts shorten the time required to debug plot issues because plots can be reproduced more quickly. (Note: The pathnames are specified relative to the distfiles/data directory in the arguments tab. This allows developers to run the test scripts on different platforms [Windows, Linux, or Mac] without having to edit the pathname to load the data correctly.)
 
-<img src="media/image31.png" alt="run_config_arguments" width="623" height="431" />
+<img src="media/image031.png" alt="run_config_arguments" width="623" height="431" />
 
 <span id="_Ref449291324" class="anchor"><span id="_Toc449293880" class="anchor"></span></span>Figure ‑. Sample configuration for a VERDI script
 
-Before you run the script, you need to add the VERDI\_HOME environment variable to point to a location with the distribution files (the files that are available after you build VERDI within eclipse). Click on the **Environment** Tab shown in Figure 10‑3.
+Before you run the script, you need to add the VERDI_HOME environment variable to point to a location with the distribution files (the files that are available after you build VERDI within eclipse). Click on the **Environment** Tab shown in Figure 10‑3.
 
-<img src="media/image32.png" width="624" height="495" />
+<img src="media/image032.png" width="624" height="495" />
 
 <span id="_Ref449291422" class="anchor"><span id="_Toc449293881" class="anchor"></span></span>Figure ‑. Tab to set environment variables for a run configuration
 
-Add the environment variable VERDI\_HOME and have it point to your eclipse workspace VERDI (see Figure 10‑4). At this point you are able to debug VERDI within Eclipse using the verdi\_script.launch file.
+Add the environment variable VERDI_HOME and have it point to your eclipse workspace VERDI (see Figure 10‑4). At this point you are able to debug VERDI within Eclipse using the verdi_script.launch file.
 
-<img src="media/image33.png" width="421" height="161" />
+<img src="media/image033.png" width="421" height="161" />
 
-<span id="_Ref449291718" class="anchor"><span id="_Toc449293882" class="anchor"></span></span>Figure ‑. Specify VERDI\_HOME environment variable
+<span id="_Ref449291718" class="anchor"><span id="_Toc449293882" class="anchor"></span></span>Figure ‑. Specify VERDI_HOME environment variable
 
 Build the VERDI Distribution
 =============================
@@ -780,9 +780,9 @@ Once VERDI has been checked out of the repository, the folders will be displayed
 
 If you are building VERDI for the Windows platform, open and edit either the 32-bit build.properties.win32 or the 64-bit build.properties.win64 file that matches your JDK; double-click on the appropriate file to open it in the text editor (Figure 11‑1). Edit the build.properties file to specify the JDK used to compile VERDI and the directory where Eclipse will build the VERDI distribution. Save your new file both under its initial name and as the new build.properties file. An example JDK location is:
 
-C:\\\\Program Files\\\\Java\\\\jdk1.7.0\_55
+C:\Program Files\Java\jdk1.7.0_55
 
-<img src="media/image34.png" width="624" height="430" />
+<img src="media/image034.png" width="624" height="430" />
 
 <span id="_Ref449291933" class="anchor"><span id="_Toc449293883" class="anchor"></span></span>Figure ‑. Review and edit a build.properties file
 
@@ -790,7 +790,7 @@ C:\\\\Program Files\\\\Java\\\\jdk1.7.0\_55
 
 If you are building VERDI for a Linux platform, open and edit either the 32-bit build.properties.linux32 or the 64-bit build.properties.linux64 file that matches your JDK. Edit the file to specify the JDK used to compile VERDI and the directory where Eclipse will build the VERDI distribution. Save your new file both under its initial name and as the new build.properties file. An example JDK location is:
 
-/home/lizadams/jdk1.7.0\_55
+/home/lizadams/jdk1.7.0_55
 
 ### Mac OS X
 
@@ -798,11 +798,11 @@ If you are building VERDI for a Mac, open and edit the build.properties.mac file
 
 /System/Library/Java/JavaVirtualMachines/1.7.0.*jdk*/Contents/
 
-### Build\_dist xml
+### Build_dist xml
 
-There are five build\_dist xml files available for Ant building, each for a specific version of JDK: build\_dist\_win32.xml, build\_dist\_win64.xml, build\_dist\_linux32.xml, build\_dist\_linux64.xml, and build\_dist\_mac.xml. These XML files provide the instructions for how to build the respective Windows, Linux, and Mac OS X distributions of VERDI. After editing a file, save it both under its initial name and as the new build\_dist.xml file.
+There are five build_dist xml files available for Ant building, each for a specific version of JDK: build_dist_win32.xml, build_dist_win64.xml, build_dist_linux32.xml, build_dist_linux64.xml, and build_dist_mac.xml. These XML files provide the instructions for how to build the respective Windows, Linux, and Mac OS X distributions of VERDI. After editing a file, save it both under its initial name and as the new build_dist.xml file.
 
-The build\_dist.xml file obtains the local directory settings from the build.properties file. Although the changes to specify these directories could be made in the in the build\_dist xml file, the build.properties file has been created to clearly identify what settings are dependent on the local computer configurations. Also, this structure should reduce errors that might be incurred by a user editing the build\_dist xml file. <span id="_Toc353949811" class="anchor"><span id="_Toc353950179" class="anchor"><span id="_Toc353949813" class="anchor"><span id="_Toc353950181" class="anchor"><span id="_Toc272501680" class="anchor"></span></span></span></span></span>
+The build_dist.xml file obtains the local directory settings from the build.properties file. Although the changes to specify these directories could be made in the in the build_dist xml file, the build.properties file has been created to clearly identify what settings are dependent on the local computer configurations. Also, this structure should reduce errors that might be incurred by a user editing the build_dist xml file. <span id="_Toc353949811" class="anchor"><span id="_Toc353950179" class="anchor"><span id="_Toc353949813" class="anchor"><span id="_Toc353950181" class="anchor"><span id="_Toc272501680" class="anchor"></span></span></span></span></span>
 
 Build Using Ant
 ---------------
@@ -811,7 +811,7 @@ If you have not already set your workspace preferences, you need to set them pri
 
 ### Microsoft Windows Distribution
 
-The Windows distribution can be built using the scripts (build\_dist\_win32.xml or build\_dist\_win64.xml) within verdi\_dist on a Windows 7 computer. Select the Eclipse menu options WindowShow ViewAnt to create a subwindow for Ant (Figure 11‑2). Drag the corresponding build\_dist\_{machineOS}.xml into the Ant window. Click on the small arrow next to **verdi** to open and display the contents.
+The Windows distribution can be built using the scripts (build_dist_win32.xml or build_dist_win64.xml) within verdi_dist on a Windows 7 computer. Select the Eclipse menu options WindowShow ViewAnt to create a subwindow for Ant (Figure 11‑2). Drag the corresponding build_dist_{machineOS}.xml into the Ant window. Click on the small arrow next to **verdi** to open and display the contents.
 
 1.  Double click on build-version to update the build version number
 
@@ -819,17 +819,17 @@ The Windows distribution can be built using the scripts (build\_dist\_win32.xml 
 
 3.  Double click on build.win.dist to build the VERDI distribution for a Windows machine (Figure 11‑3).
 
-<img src="media/image35.png" width="624" height="456" />
+<img src="media/image035.png" width="624" height="456" />
 
 <span id="_Ref449292354" class="anchor"><span id="_Toc449293884" class="anchor"></span></span>Figure ‑. Window Show View Ant
 
-<img src="media/image36.png" width="622" height="444" />
+<img src="media/image036.png" width="622" height="444" />
 
 <span id="_Ref449292418" class="anchor"><span id="_Toc449293885" class="anchor"></span></span>Figure ‑. Double-click on build.win.dist to build VERDI distribution with Ant
 
 ### Linux Distribution
 
-The Linux distribution can be built by using Ant to run build.linux.dist on a Linux machine. The verdi\_dist folder contains the build\_dist\_linx32.xml or build\_dist\_linx64.xml script. Select the Eclipse menu options WindowShow ViewAnt to create a subwindow for Ant (Figure 11‑2). Drag the corresponding build\_dist xml into the Ant window. Click on the plus button next to verdi to open and display the contents.
+The Linux distribution can be built by using Ant to run build.linux.dist on a Linux machine. The verdi_dist folder contains the build_dist_linx32.xml or build_dist_linx64.xml script. Select the Eclipse menu options WindowShow ViewAnt to create a subwindow for Ant (Figure 11‑2). Drag the corresponding build_dist xml into the Ant window. Click on the plus button next to verdi to open and display the contents.
 
 1.  Double click on build-version to update the build version number
 
@@ -839,7 +839,7 @@ The Linux distribution can be built by using Ant to run build.linux.dist on a Li
 
 ### Mac Distribution
 
-The Mac distribution can be built by using Ant to run build.mac.dist on a Mac OS X machine. The verdi\_dist folder contains the build\_dist\_mac.xml script. Select the Eclipse menu options WindowShow ViewAnt to create a subwindow for Ant (Figure 11‑2). Drag the corresponding build\_dist xml into the Ant window. Click on the plus button next to verdi to open and display the contents.
+The Mac distribution can be built by using Ant to run build.mac.dist on a Mac OS X machine. The verdi_dist folder contains the build_dist_mac.xml script. Select the Eclipse menu options WindowShow ViewAnt to create a subwindow for Ant (Figure 11‑2). Drag the corresponding build_dist xml into the Ant window. Click on the plus button next to verdi to open and display the contents.
 
 1.  Double click on build-version to update the build version number
 
@@ -851,7 +851,7 @@ The Mac distribution can be built by using Ant to run build.mac.dist on a Mac OS
 
 Error messages will appear in the console window underneath the Ant window. If you obtain the error shown in Figure 11‑4, add the Java compiler to your path on the Windows or Linux machine (please review Chapter 7 and Section 8.2.2 to resolve and fix the problem).
 
-<img src="media/image37.png" width="539" height="384" />
+<img src="media/image037.png" width="539" height="384" />
 
 <span id="_Ref449292634" class="anchor"><span id="_Ref449292883" class="anchor"><span id="_Toc449293886" class="anchor"></span></span></span>Figure ‑. Console error message related to not finding Java compiler
 
@@ -871,15 +871,15 @@ To allow the Ant compiler to find the Java compiler, you will also need to chang
 
 5.  Locate the tools.jar under the lib folder on the JDK local installation directory, then click OK, and click OK again (Figure 11‑7).
 
-<img src="media/image38.png" width="623" height="467" />
+<img src="media/image038.png" width="623" height="467" />
 
 <span id="_Ref449293075" class="anchor"><span id="_Toc449293887" class="anchor"></span></span>Figure ‑. Open Window Preferences
 
-<img src="media/image39.png" width="363" height="293" />
+<img src="media/image039.png" width="363" height="293" />
 
 <span id="_Ref449293127" class="anchor"><span id="_Toc449293888" class="anchor"></span></span>Figure ‑. Expand Ant, select runtime, select global entries
 
-<img src="media/image40.png" width="419" height="346" />
+<img src="media/image040.png" width="419" height="346" />
 
 <span id="_Ref449293176" class="anchor"><span id="_Toc449293889" class="anchor"></span></span>Figure ‑. Add tools.jar to Ant preferences
 
@@ -939,7 +939,7 @@ List of Libraries and Source Code Files
 | ant-contrib-1.0b2-bin.zip                        |                                            |
 | AppleJavaExtensions.jar                          |                                            |
 | bufr-4.3.16.jar                                  | bufr-3.0-sources.jar                       |
-| clibwrapper\_jiio-1.1.jar                        |                                            |
+| clibwrapper_jiio-1.1.jar                        |                                            |
 | commons-codec-1.9.jar                            | commons-codec-1.9-sources.jar              |
 | commons-collections-3.2.1.jar                    | commons-collections-3.2.1-sources.jar      |
 | commons-httpclient-3.1.jar                       | commons-httpclient-3.1-sources.jar         |
@@ -975,17 +975,17 @@ List of Libraries and Source Code Files
 | gt-shapefile-12.2.jar                            | gt-shapefile-12.2-sources.jar              |
 | gt-swing-12.2.jar                                | gt-swing-12.2-sources.jar                  |
 | hamcrest-core-1.3.jar                            | hamcrest-core-1.3-sources.jar              |
-| icu4j-50\_1\_1.jar                               | icu4j-50\_1\_1-src.jar                     |
+| icu4j-50_1_1.jar                               | icu4j-50_1_1-src.jar                     |
 | j3dcore-d3d.dll                                  |                                            |
 | j3dcore-ogl.dll                                  |                                            |
 | j3dcore-ogl-cg.dll                               |                                            |
 | j3dcore.jar                                      |                                            |
 | j3dutils.jar                                     |                                            |
-| jai\_codec-1.1.3.jar                             |                                            |
-| jai\_core-1.1.3.jar                              |                                            |
-| jai\_imageio-1.1.jar                             |                                            |
-| jai\_imageio\_windows-i586.jar                   |                                            |
-| jaramiko-151.jar                                 | jaramiko\_java.zip                         |
+| jai_codec-1.1.3.jar                             |                                            |
+| jai_core-1.1.3.jar                              |                                            |
+| jai_imageio-1.1.jar                             |                                            |
+| jai_imageio_windows-i586.jar                   |                                            |
+| jaramiko-151.jar                                 | jaramiko_java.zip                         |
 | jarbundler-1.9.jar                               |                                            |
 | javadbf-0.4.0.jar                                | javadbf-0.4.0-sources.jar                  |
 | jcommon-1.0.23.jar                               | jcommon-1.0.23-sources.jar                 |
@@ -993,7 +993,7 @@ List of Libraries and Source Code Files
 | jeo.jar                                          |                                            |
 | jfreechart-1.0.19.jar                            | jfreechart-1.0.19-sources.jar              |
 | jfreesvg-2.0.jar                                 |                                            |
-| jh-2.0\_0.2.jar                                  |                                            |
+| jh-2.0_0.2.jar                                  |                                            |
 | jide-oss-3.5.14.jar                              | jide-oss-3.5.14-sources.jar                |
 | jmf.jar                                          |                                            |
 | jogl-all.jar                                     |                                            |
@@ -1014,21 +1014,21 @@ List of Libraries and Source Code Files
 | log4j-taglib-2.0-rc1.jar                         | log4j-taglib-2.0-rc1-sources.jar           |
 | miglayout-core-5.1-20150404.220010-96.jar        |                                            |
 | miglayout-swing-5.1-20150404.220019-96.jar       |                                            |
-| milStd2525\_png.jar                              |                                            |
-| mlibwrapper\_jai-1.1.3.jar                       |                                            |
-| mlib\_jai-1.1.2\_01.jar                          |                                            |
-| netcdfAll-4.5.5-SNAPSHOT.jar                     | thredds\_4.5.5.zip                         |
+| milStd2525_png.jar                              |                                            |
+| mlibwrapper_jai-1.1.3.jar                       |                                            |
+| mlib_jai-1.1.2_01.jar                          |                                            |
+| netcdfAll-4.5.5-SNAPSHOT.jar                     | thredds_4.5.5.zip                         |
 | omcorba.jar                                      |                                            |
 | omj3d.jar                                        |                                            |
 | omsvg.jar                                        |                                            |
-| org.apache.commons.lang\_2.6.0.v201205030909.jar |                                            |
+| org.apache.commons.lang_2.6.0.v201205030909.jar |                                            |
 | org.eclipse.osgi-3.9.1.v20130814-1242.jar        |                                            |
-| org.eclipse.uomo.core\_0.7.0.20140420011.jar     |                                            |
-| org.eclipse.uomo.ucum\_0.7.0.20140420011.jar     |                                            |
-| org.eclipse.uomo.ui\_0.7.0.20140420011.jar       |                                            |
-| org.eclipse.uomo.units\_0.7.0.20140420011.jar    |                                            |
-| org.eclipse.uomo.util\_0.7.0.20140420011.jar     |                                            |
-| org.eclipse.uomo.xml\_0.7.0.20140420011.jar      |                                            |
+| org.eclipse.uomo.core_0.7.0.20140420011.jar     |                                            |
+| org.eclipse.uomo.ucum_0.7.0.20140420011.jar     |                                            |
+| org.eclipse.uomo.ui_0.7.0.20140420011.jar       |                                            |
+| org.eclipse.uomo.units_0.7.0.20140420011.jar    |                                            |
+| org.eclipse.uomo.util_0.7.0.20140420011.jar     |                                            |
+| org.eclipse.uomo.xml_0.7.0.20140420011.jar      |                                            |
 | osx.jar                                          |                                            |
 | piccolo.jar                                      |                                            |
 | piccolo2d-core-3.0.jar                           | piccolo2d-core-3.0-sources.jar             |
@@ -1037,14 +1037,14 @@ List of Libraries and Source Code Files
 | piccolox.jar                                     |                                            |
 | prefsAll.jar                                     |                                            |
 | reference.jar                                    |                                            |
-| repast\_simphony\_gis\_2\_1\_0.jar               |                                            |
-| sgt\_v30.jar                                     | sgt\_src\_v30.jar                          |
+| repast_simphony_gis_2_1_0.jar               |                                            |
+| sgt_v30.jar                                     | sgt_src_v30.jar                          |
 | swingx-all-1.6.5.jar                             | swingx-all-1.6.5-sources.jar               |
 | TableLayout.jar                                  |                                            |
 | unit-api-0.6.1.jar                               | unitsofmeasurement.zip                     |
 | vecmath-1.3.2.jar                                |                                            |
 | velocity-1.7.jar                                 | velocity-1.7.zip                           |
-| visad.jar                                        | visad\_src.jar                             |
+| visad.jar                                        | visad_src.jar                             |
 | wizard-0.1.12.jar                                |                                            |
-| xpp3\_min-1.1.4c.jar                             | xpp3\_min-1.1.4c-sources.jar               |
+| xpp3_min-1.1.4c.jar                             | xpp3_min-1.1.4c-sources.jar               |
 | xstream-1.4.7.jar                                | xtream-distribution-1.4.7-src.zip          |
