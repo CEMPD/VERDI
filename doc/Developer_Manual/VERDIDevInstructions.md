@@ -657,8 +657,7 @@ The Classfile Generation section, which is beneath the compliance settings, has 
 
 After verifying all of your settings, click the Apply button and then the OK button.
 
-Build the NetCDF-Java Library with
-Modifications for VERDI
+Build the NetCDF-Java Library with Modifications for VERDI
 ==================================
 
 You may skip this chapter unless you need to make changes to the NetCDF-Java library. Note that VERDI uses a modified version of the netcdfAll library.
