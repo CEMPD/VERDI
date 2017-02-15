@@ -67,7 +67,7 @@ Date: June 15, 2016
 * [12. Logging Messages in VERDI](#logging-messages-in-verdi)
   * [12.1 Implementing Log4J2](#implementing-log4j2)
   * [12.2 Log files](#log-files)
-* [13. List of Libraries and Source Code Files](#list-of-libraries-and-source-code-files)
+* [13. List of Libraries and Source Code Files](#13.-list-of-libraries-and-source-code-files)
 
 **Figures**
 
