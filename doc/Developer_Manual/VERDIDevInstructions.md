@@ -112,7 +112,7 @@ Date: June 15, 2016
 * [Figure 11‑6. Expand Ant, select runtime, select global entries](#Figure11-6)
 * [Figure 11‑7. Add tools.jar to Ant preferences](#Figure11-7)
 
-Introduction
+1. Introduction
 ============
 
 This manual contains instructions on how developers can set up, run, build, and obtain updates from the software repository for the Visualization Environment for Rich Data Interpretation (VERDI) software. Developers are encouraged to develop and contribute code for VERDI. Anyone who experiences a bug should check and, if appropriate, update the existing issues list on the VERDI github site: https://github.com/CEMPD/VERDI/issues. If the bug is new please submit a new issue report along with available test datasets and screenshots that demonstrate the problem. Requests for enhancements are always welcome.
@@ -131,7 +131,7 @@ VERDI 1.6.0 alpha is distributed for the following computing environments:
 
 -   Mac, 64 bit
 
-Install Developer Environment
+2. Install Developer Environment
 =============================
 
 To install VERDI 1.6.0 alpha on Windows 7, you no longer need administrator privileges. You should exit all programs before installing software. NOTE: VERDI 1.6.0 alpha was developed under Java 7 and has been minimally tested under Java 8.
@@ -228,7 +228,7 @@ Download and Install Eclipse
 
     3.  Place on Desktop: Hover over “Send to”, move your mouse into the menu that opens to the right and select “Desktop (create shortcut)”. You can then move your shortcut to a different location on your desktop or rename it.
 
-Using git from the command line
+3. Using git from the command line
 ===============================
 
 VERDI GitHub Repository
@@ -413,7 +413,7 @@ The GitHub site allows you to create a tagged Released Version of your code. Git
 
 <https://github.com/blog/1547-release-your-software>
 
-Git Desktop Client
+4. Git Desktop Client
 ==================
 
 As an alternative to using git command line, the Git Desktop Client allows you to view changes that were made to files in eclipse and then to synchronize those changes to the remote server. In the middle of [Figure 4‑1](#Figure4-1) you see two tabs, one that is labeled “No Uncommitted Changes”, and the other that is labeled “History”. Download the Git Desktop client and follow the set-up instructions from the following website: <https://desktop.github.com/>
@@ -430,7 +430,7 @@ If you make changes to a file in Eclipse and then view the VERDI project in the 
 <img src="media/image005.png" width="621" height="407" />
 
 
-Start Eclipse
+5. Start Eclipse
 =============
 
 **Using Windows:** Select the Eclipse icon on your taskbar, start menu, or desktop, or go to the directory where your installed Eclipse (e.g., C:\Program Files\eclipse directory and double-click on eclipse.exe.
@@ -475,7 +475,7 @@ The Eclipse IDE window as shown in [Figure 5‑6](#Figure5-6) has a title bar at
 <img src="media/image011.png" width="624" height="467" />
 
 
-Import VERDI into Eclipse from your local git repository
+6. Import VERDI into Eclipse from your local git repository
 ========================================================
 
 Select File > Import
@@ -574,7 +574,7 @@ Each library is cross-referenced within Eclipse from its executable jar file to 
 
 As shown in [Figure 6‑11](#Figure6-11), the library gt-data-12.2.jar within the directory verdi_core/lib is cross-referenced to the gt-data-12.2-sources.jar within verdi_core/lib_src. Note that both the class and source libraries are located in verdi_core directory structure, although the properties for the verdi_data_loaders project are shown. The libraries that are used for multiple Eclipse projects within VERDI are stored under verdi_core, which is the largest project. All library source code that is distributed with VERDI is located within verdi_core/lib_src.
 
-Configure Apache Ant to Use tools.jar from the JDK
+7. Configure Apache Ant to Use tools.jar from the JDK
 ==================================================
 
 Apache Ant is a software tool for automating the software build process. It is provided with Eclipse.
@@ -600,7 +600,7 @@ Then select **Add External JARS** and navigate to the location where the JDK is 
 <img src="media/image025.png" width="624" height="557" />
 
 
-Set Eclipse Preferences
+8. Set Eclipse Preferences
 =======================
 
 This chapter provides recommended Eclipse settings for building VERDI.
@@ -657,7 +657,7 @@ The Classfile Generation section, which is beneath the compliance settings, has 
 
 After verifying all of your settings, click the Apply button and then the OK button.
 
-Build the NetCDF-Java Library with Modifications for VERDI
+9. Build the NetCDF-Java Library with Modifications for VERDI
 ==================================
 
 You may skip this chapter unless you need to make changes to the NetCDF-Java library. Note that VERDI uses a modified version of the netcdfAll library.
@@ -731,7 +731,7 @@ Follow these steps to download version 4.5.5 of the NetCDF-Java Library from Git
 
 16. Refresh the verdi_core project and rebuild VERDI.
 
-Test VERDI Using Scripts within Eclipse
+10. Test VERDI Using Scripts within Eclipse
 =======================================
 
 Scripts are available for testing VERDI within Eclipse for several plot types.
@@ -765,7 +765,7 @@ Add the environment variable VERDI_HOME and have it point to your eclipse worksp
 
 <img src="media/image033.png" width="421" height="161" />
 
-Build the VERDI Distribution
+11. Build the VERDI Distribution
 =============================
 
 Prepare to Build VERDI Distribution
@@ -887,7 +887,7 @@ To allow the Ant compiler to find the Java compiler, you will also need to chang
 <img src="media/image040.png" width="419" height="346" />
 
 
-Logging Messages in VERDI
+12. Logging Messages in VERDI
 =========================
 
 VERDI 1.6a uses the Apache Log4J version 2 (Log4J2) logging services. For complete information see <http://logging.apache.org/log4j/2.x/>. All of the messages produced by VERDI itself are now sent through the Log4J2. Some of the libraries used by VERDI also use Log4, allowing messages generated within these libraries to print in with the VERDI-generated messages in a single log file for debugging purposes.
@@ -934,7 +934,7 @@ The log4j2.xml file distributed with VERDI appends logs into an existing log fil
 
 Also, the XML file included in the distribution is set up to write to the file named verdi.log in the verdi subdirectory of the user’s home directory. You can change the directory or the name of the file to suit your needs.
 
-List of Libraries and Source Code Files
+13. List of Libraries and Source Code Files
 =======================================
 
 | **Compiled Library**                             | **Source Code**                            |
