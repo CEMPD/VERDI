@@ -236,6 +236,7 @@ VERDI GitHub Repository
 VERDI is available through the GitHub repository under the CEMPD organization, see [Figure 3‑1](#Figure3-1).
 
 <a id=Figure3-1></a>Figure 3‑1. GitHub site for VERDI
+
 <img src="media/image002.png" width="624" height="431" />
 
 ***If you do not have a GitHub account, register for it on the following website: <https://github.com/> and click on Sign Up to create a personal account.***
