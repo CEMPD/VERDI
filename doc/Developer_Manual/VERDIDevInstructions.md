@@ -67,7 +67,7 @@ Date: June 15, 2016
 * [12. Logging Messages in VERDI](#logging-messages-in-verdi)
   * [12.1 Implementing Log4J2](#implementing-log4j2)
   * [12.2 Log files](#log-files)
-* [13. List of Libraries and Source Code Files](#13.-list-of-libraries-and-source-code-files)
+* [13. List of Libraries and Source Code Files](#13-list-of-libraries-and-source-code-files)
 
 **Figures**
 
@@ -934,7 +934,7 @@ The log4j2.xml file distributed with VERDI appends logs into an existing log fil
 
 Also, the XML file included in the distribution is set up to write to the file named verdi.log in the verdi subdirectory of the user’s home directory. You can change the directory or the name of the file to suit your needs.
 
-13. List of Libraries and Source Code Files
+13 List of Libraries and Source Code Files
 =======================================
 
 | **Compiled Library**                             | **Source Code**                            |
