@@ -121,32 +121,32 @@ Date: June 15, 2016
 11.5 [GIS Layers](#gis-layers)
 11.5.1 [Add Map Layers](#add-map-layers)
 11.5.2 [Configure GIS Layers](#configure-gis-layers)
-12 [Supported Grid and Coordinate Systems (Map Projections)](#map-projections)
+12 [Supported Grid and Coordinate Systems (Map Projections)](#supported-grid-and-coordinate-systems-map-projections)
 12.1 [I/O API-formatted Data](#io-api-formatted-data)
 12.2 [CAMx Gridded Data](#camx-gridded-data)
-13 [I/O API Utilities, Data Conversion Programs, and Libraries]
-14 [Contributing to VERDI Development
-15 [Known Bugs
-16 [Mathematical Functions
-16.1 [Unary Functions
-16.2 [Binary Operators
-16.3 [Boolean Operators
-16.4 [Time Step Index
-17 [VERDI Batch Script Editor
-17.1 [Specify hour/time step formula in batch script mode
-17.2 [Mathematical function capability in batch script mode
-17.2.1 [Batch Script Example: Maximum Ozone – layer 1 (Figure 17-11)
-17.2.2 [Batch Script Example : Minimum Ozone – layer 1 (Figure 17-12)
-17.2.3 [Batch Script Example : Mean of Ozone – layer 1 (Figure 17-13)
-17.2.4 [Batch Script Example : Sum of Ozone – layer 1 (Figure 17-14)
-18 [Command Line Scripting
-18.1 [Example Command Line Script for Linux Users
-18.2 [Example Command Line Script for Windows Users
-19 [Areal Interpolation Calculations
-20 [Licenses for JAVA Libraries used by VERDI
-[Acknowledgments
-[Data Contributions
-[Data Reader Contributions
+13 [I/O API Utilities, Data Conversion Programs, and Libraries](#io-api-utilities-data-conversion-programs-and-libraries)
+14 [Contributing to VERDI Development](#contributing-to-verdi-development)
+15 [Known Bugs](#known-bugs)
+16 [Mathematical Functions](#mathematical-functions-)
+16.1 [Unary Functions](#unary-functions)
+16.2 [Binary Operators](#binary-operators)
+16.3 [Boolean Operators](#boolean-operators)
+16.4 [Time Step Index](#time-step-index)
+17 [VERDI Batch Script Editor](#-verdi-batch-script-editor)
+17.1 [Specify hour/time step formula in batch script mode](#specify-hourtime-step-formula-in-batch-script-mode)
+17.2 [Mathematical function capability in batch script mode](#mathematical-function-capability-in-batch-script-mode)
+17.2.1 [Batch Script Example: Maximum Ozone – layer 1 (Figure 17-11)](#batch-script-example-maximum-ozone--layer-1-figure-17-11)
+17.2.2 [Batch Script Example : Minimum Ozone – layer 1 (Figure 17-12)](#batch-script-example--minimum-ozone--layer-1-figure-17-12)
+17.2.3 [Batch Script Example : Mean of Ozone – layer 1 (Figure 17-13)](#batch-script-example--mean-of-ozone--layer-1-figure-17-13)
+17.2.4 [Batch Script Example : Sum of Ozone – layer 1 (Figure 17-14)](#batch-script-example--sum-of-ozone--layer-1-figure-17-14)
+18 [Command Line Scripting](#command-line-scripting)
+18.1 [Example Command Line Script for Linux Users](#example-command-line-script-for-linux-users)
+18.2 [Example Command Line Script for Windows Users](#example-command-line-script-for-windows-users)
+19 [Areal Interpolation Calculations](#-areal-interpolation-calculations)
+20 [Licenses for JAVA Libraries used by VERDI](#licenses-for-java-libraries-used-by-verdi)
+[Acknowledgments](#acknowledgments)
+[Data Contributions](#data-contributions)
+[Data Reader Contributions](#data-reader-contributions)
 
 **Figures**
 
