@@ -305,11 +305,11 @@ You can download the latest version of VERDI from <https://www.cmascenter.org/ve
 
 <a id=Figure1-1></a>
 Figure 1‑1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.
-<img src="media/image001.png" width="596" height="347" />
+<img src="media/image001.png"/>
 
 <a id=Figure1-2></a>
 Figure 1‑2. Bottom of VERDI Page
-<img src="media/image002.png" width="624" height="361" />
+<img src="media/image002.png"/>
 
 <a id=Figure1-3></a>
 Figure 1‑3. Downloading VERDI from the CMAS Web Site, Step 2.
