@@ -571,25 +571,13 @@ Navigating VERDI’s Main Menu Options
 <a id=Table5-1></a>
 Table 5‑1. VERDI Main Menu Options
 
-| File               | Plots              | Window   | Help                 |
+| **File**           | **Plots**          | **Window**| **Help**            |
 |--------------------|--------------------|----------|----------------------|
-| Open Project       
-                     
- Save Project        
-                     
- Save Project As     
-                     
- View Script Editor  | Undock All Plots   
-                      
-  Animate Tile Plots  | Areas    
-             
-   Datasets  
-             
-   Formulas  | VERDI Help Documents 
-                          
-    About                 |
-|                    |                    |          |                      |
-| Exit               |
+| Open Project       |Undock All Plots    | Areas    | VERDI Help | 
+| Save Project       |Animate Tile Plots  | Datasets | About      |
+| Save Project As    |                    | Formulas |            |
+| View Script Editor |                    |          |            | 
+| Exit               |                    |          |            |
 
 
 File Menu Options
@@ -1157,26 +1145,14 @@ Each VERDI plot contains a menu bar with options specific to that type of plot. 
 <a id=Table11-1></a>
 Table 11‑1. Tile and Areal Interpolation Plot Pull-down Menu Options
 
-| File                | Configure          | Controls                  | Plot                              | GIS Layers                       |
-|---------------------|--------------------|---------------------------|-----------------------------------|----------------------------------|
-| Print               
-                      
- Export as Image/GIS  | Configure Plot     
-                      
-  Load Configuration  
-                      
-  Save Configuration  | Zoom                      
-                              
-   Probe                      | Time Series of Probed Cell(s)     
-                                       
-    Time Series Bar of Probed Cell(s)  
-                                       
-    Time Series of Min. Cell(s)        
-                                       
-    Time Series of Max. Cell(s)        | Add Map Layers                   |
-|                     |                    | Set Row and Column Ranges |                                   | Configure GIS Layers             |
-|                     |                    | Show Grid Lines           | Animate Plot                      | Set Current Maps as Plot Default |
-|                     |                    | Show Lat/Lon              | Add Overlay                       |                                  |
+| **File**         | **Configure**          | **Controls**         | **Plot**                       | **GIS Layers** |
+|---------------------|--------------------|---------------------------|----------------------------|------------|
+| Print   | Configure Plot                 | Zoom                      | Time Series of Probed Cell(s) | Add Map Layers |
+| Export as Image/GIS  | Load Configuration | Probe          | Time Series Bar of Probed Cell(s)|Configure GIS Layers  | 
+|                      | Save Configuration  |Set Row and Column Ranges|Time Series of Min. Cell(s)|Set Current Maps as Plot Default |
+|                      |                   |  Show Grid Lines          |Time Series of Max. Cell(s) |  |
+|                     |                    | Show Lat/Lon              | Animate Plot               |  | 
+|                     |                    |                           | Add Overlay                |  |
 
 
 The menu options at the top of the Vertical Cross Section, Time Series, Time Series Bar Plot and Scatter Plot include those shown in [Table 11‑2](#Table11-2). Most options are common to all plots, and function in the same way (unless the option is grayed out). Therefore, this chapter is organized by menu instead of by plot type.
@@ -1185,23 +1161,12 @@ The menu options at the top of the Vertical Cross Section, Time Series, Time Ser
 Table 11‑2. Vertical Cross Section, Time Series, Time Series Bar, Scatter Plot Pull-down Menu Options
 
 
-| File            | Configure          | Controls     | Plot                              |
-|-----------------|--------------------|--------------|-----------------------------------|
-| Print           
-                  
- Export as Image  | Configure Plot     
-                      
-  Load Configuration  
-                      
-  Save Configuration  | Zoom         
-                 
-   Probe         | Time Series of Probed Cell(s)     
-                                       
-    Time Series Bar of Probed Cell(s)  
-                                       
-    Time Series of Min. Cell(s)        
-                                       
-    Time Series of Max. Cell(s)        |
+| **File**        | **Configure**      | **Controls** | **Plot**                         |
+|-----------------|--------------------|--------------|---------------------------------|
+| Print           | Configure Plot     | Zoom         | Time Series of Probed Cell(s)   | 
+| Export as Image  | Load Configuration | Probe       | Time Series Bar of Probed Cell(s)| 
+|                 |  Save Configuration  |            | Time Series of Min. Cell(s)   |      
+|                 |                     |                 Time Series of Max. Cell(s)        |
 |                 | Load Chart Theme   | Show Lat/Lon |                                   |
 |                 | Edit Chart Theme   |              | Animate Plot                      |
 |                 | Save Chart Theme   |              |                                   |
