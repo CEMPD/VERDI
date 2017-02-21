@@ -1187,7 +1187,7 @@ The **Configure** pull-down menu contains the following options: Configure Plot,
 -   **Titles** **tab:** [Figure 11‑1](#Figure11-1) shows the selections on this tab that you can use to edit title text and select the font type, size, and color for the title and two subtitles of the plot. Subtitles may be turned on or off by selecting or deselecting the check box for each subtitle. If a check box is not selected the associated text, font type and size, and color boxes are grayed out. However, you must provide a title or VERDI will provide its default title for you. To blank out the title you must select it and then enter spaces for the name of the title. If you deselect the title VERDI will provide its default title for you.
 
 <a id=Figure11-1></a>
-Figure 11‑1. Configure Plot, Titles Tab
+Figure 11‑1. Configure Plot, Titles Tab<br>
 <img src="media/image048.png"/>
 
 
