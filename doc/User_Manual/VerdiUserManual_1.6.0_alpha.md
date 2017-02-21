@@ -1183,11 +1183,14 @@ The **Configure** pull-down menu contains the following options: Configure Plot,
 
 ### Configure Plot
 
-[Figure 11‑1](#Figure11-1) through [Figure 11‑4](#Figure11-4) show the dialog boxes that appear when you select Configure Plot. The **Configure Plot** dialog box contains four tabs: **Titles, Color Map, Labels,** and **Other**.
+[Figure 11‑1](#Figure11-1) through [Figure 11‑5](#Figure11-5) show the dialog boxes that appear when you select Configure Plot. The **Configure Plot** dialog box contains four tabs: **Titles, Color Map, Labels,** and **Other**.
 
 -   **Titles** **tab:** [Figure 11‑1](#Figure11-1) shows the selections on this tab that you can use to edit title text and select the font type, size, and color for the title and two subtitles of the plot. Subtitles may be turned on or off by selecting or deselecting the check box for each subtitle. If a check box is not selected the associated text, font type and size, and color boxes are grayed out. However, you must provide a title or VERDI will provide its default title for you. To blank out the title you must select it and then enter spaces for the name of the title. If you deselect the title VERDI will provide its default title for you.
 
-<!-- -->
+<a id=Figure11-1></a>
+Figure 11‑1. Configure Plot, Titles Tab
+<img src="media/image048.png"/>
+
 
 -   **Text:** Enter the desired text directly in the textbox. You can enter text for the plot’s title and up to two optional subtitles.
 
@@ -1195,11 +1198,12 @@ The **Configure** pull-down menu contains the following options: Configure Plot,
 
 -   **Color:** Press the **Select** button to the right of the Color line for the title or subtitle to edit. There are five types of color palettes that you can use to select a color – Swatches, HSV, HSL, RGB, and CMYK – each on its own tab. When you select a color examples of its use are shown in the Preview portion of the Select Color window. Select the **OK** button to accept the color and return to the Titles tab of the Configure Plot dialog box.
 
-<!-- -->
-
 -   **Color Map** **tab:** This tab is available for only the Tile and Areal Interpolation Plots (see [Figure 11‑2](#Figure11-2)). This tab provides many widgets for you to configure your legend colors, break points, range, etc. You can select the number of tiles, the palette type to be used, the color interval, the number format, and the scale.
 
-<!-- -->
+<a id=Figure11-2></a>
+Figure 11‑2. Configure Plot, Color Map Tab
+<img src="media/image049.png"/>
+
 
 -   **Number of Tiles:** Start by selecting the number of tiles at the top of the pane. Options in some other selections, such as the available palettes and break points, change as you vary the number of tiles.
 
@@ -1233,15 +1237,22 @@ The **Configure** pull-down menu contains the following options: Configure Plot,
 
 -   **Rebuild:** The Rebuild button is either active or inactive (i.e., grayed out) depending upon what other widgets are active. If you make changes and the Rebuild button is active, press it before continuing.
 
-<!-- -->
 
 -   **Labels** **tab:** [Figure 11‑3](#Figure11-3) shows widgets for you to edit more labels on your plot. There are four tabs through which you can edit the labels of the Domain Axis (x-axis), the Range Axis (y-axis), Legend, and Footer.
 
-<!-- -->
+<a id=Figure11-3></a>
+Figure 11‑3. Configure Plot, Labels Tab
+<img src="media/image050.png"/>
+
 
 -   **Domain Axis:** This tab has two parts: Label and Ticks. Use the Label panel the same way as the Titles tab (above) by editing the Text, Font, and Color. The Ticks panel allows you to change the labels associated with the ticks on the Domain Axis. The “Show Tick Labels” checkbox is typically checked, but you can uncheck it to not show any ticks or labels on this axis. Number allows you to decrease the number of tick labels. Note that you cannot increase the number of ticks via this screen and the values of the ticks do not change; you are effectively turning tick labels on/off via this checkbox. The Font and Color widgets work the same as for the Titles tab.
 
--   **Range Axis:** All the widgets on this tab are the same as on the Domain Axis tab. You are just making the changes for the Range Axis. [Figure 11‑5](#Figure11-5) shows an example plot where the number of Tick Labels has been reduced in both the Range Axis and the Legend, but the number of tick labels has not been reduced in the Domain Axis.
+-   **Range Axis:** All the widgets on this tab are the same as on the Domain Axis tab. You are just making the changes for the Range Axis. [Figure 11‑4](#Figure11-4) shows an example plot where the number of Tick Labels has been reduced in both the Range Axis and the Legend, but the number of tick labels has not been reduced in the Domain Axis.
+
+<a id=Figure11-4></a>
+Figure 11‑4. Example Plot with Selected Tick Marks for Range Axis and Legend
+<img src="media/image052.png"/>
+
 
 -   **Legend:** The Show Legend checkbox defaults to checked, which indicates that the legend should be shown. If you do not want a legend, uncheck that checkbox. All the widgets on this tab are the same as on the tabs for the axes. Use the Label part to designate and format the label that appears vertically in the left side of the legend box. The tick labels are for the boundaries between colors in the legend. If you uncheck the Show Tick Labels checkbox, the tick labels disappear from the legend.
 
@@ -1249,23 +1260,8 @@ The **Configure** pull-down menu contains the following options: Configure Plot,
 
 <!-- -->
 
--   **Other** **tab:** As shown in [Figure 11‑4](#Figure11-4), use the widgets on this tab to enable or disable showing the grid lines, to select the color of grid lines, and to select the series color.
+-   **Other** **tab:** As shown in [Figure 11‑5](#Figure11-5), use the widgets on this tab to enable or disable showing the grid lines, to select the color of grid lines, and to select the series color.
 
-<a id=Figure11-1></a>
-Figure 11‑1. Configure Plot, Titles Tab
-<img src="media/image048.png"/> 
-
-<a id=Figure11-2></a>
-Figure 11‑2. Configure Plot, Color Map Tab
-<img src="media/image049.png"/> 
-
-<a id=Figure11-3></a>
-Figure 11‑3. Configure Plot, Labels Tab
-<img src="media/image050.png"/> 
-
-<a id=Figure11-4></a>
-Figure 11‑4. Configure Plot, Other Tab
-<img src="media/image051.png"/> 
 
 <a id=Figure11-5></a>
 Figure 11‑5. Example Plot with Selected Tick Marks for Range Axis and Legend
