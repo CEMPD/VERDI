@@ -1250,8 +1250,10 @@ Figure 11‑3. Configure Plot, Labels Tab
 -   **Range Axis:** All the widgets on this tab are the same as on the Domain Axis tab. You are just making the changes for the Range Axis. [Figure 11‑4](#Figure11-4) shows an example plot where the number of Tick Labels has been reduced in both the Range Axis and the Legend, but the number of tick labels has not been reduced in the Domain Axis.
 
 <a id=Figure11-4></a>
-Figure 11‑4. Example Plot with Selected Tick Marks for Range Axis and Legend
+<center>
+Figure 11‑4. Example Plot with Selected Tick Marks for Range Axis and Legend<br>
 <img src="media/image052.png"/>
+</center>
 
 
 -   **Legend:** The Show Legend checkbox defaults to checked, which indicates that the legend should be shown. If you do not want a legend, uncheck that checkbox. All the widgets on this tab are the same as on the tabs for the axes. Use the Label part to designate and format the label that appears vertically in the left side of the legend box. The tick labels are for the boundaries between colors in the legend. If you uncheck the Show Tick Labels checkbox, the tick labels disappear from the legend.
@@ -1264,8 +1266,10 @@ Figure 11‑4. Example Plot with Selected Tick Marks for Range Axis and Legend
 
 
 <a id=Figure11-5></a>
-Figure 11‑5. Other Tab
-<img src="media/image051.png"/> 
+<center>
+Figure 11‑5. Other Tab<br>
+<img src="media/image051.png"/>
+</center
 
 ###  Save Configuration
 
