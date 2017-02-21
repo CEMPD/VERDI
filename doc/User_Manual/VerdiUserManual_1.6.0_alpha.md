@@ -461,28 +461,19 @@ Setting VERDI Preferences
 
 VERDI is configured via the config.properties file that you copied to your home/verdi directory. Edit this file to specify default directories for saving files, for placing the location of configuration files, and for saving project files. Contents of config.properties.TEMPLATE:
 
+```csh
 \# This file should be put in $USER\_HOME/verdi/ subdirectory
-
 \# Please use double backslash for Windows platform or slash for UNIX-like platforms
-
 \# Please uncomment the following lines and modify them to suit your local settings
-
 \# Windows example settings format
-
 \# verdi.project.home=C:\\\\ Users\\\\yourusername\\\\VERDI\_1.6\_alpha\\\\project
-
 \# verdi.config.home=C:\\\\ Users\\\\yourusername\\\\VERDI\_1.6\_alpha\\\\config
-
 \# Linux example settings format
 
 verdi.project.home=../../data/project
-
 verdi.config.home=../../data/configs
-
 verdi.user.home=../../data/model
-
 verdi.dataset.home=../../data/model
-
 verdi.script.home=../../data/scripts
 
 \# file folder used as default location of HUC datasets for areal interpolation
@@ -492,29 +483,22 @@ verdi.hucData=../../data/hucRegion/
 \# For VERDI to access remote big netCDF data files
 
 verdi.remote.hosts=terrae.nesc.epa.gov,vortex.rtpnc.epa.gov,garnet01.rtpnc.epa.gov,tulip.rtpnc.epa.gov
-
 remote.file.util=/usr/local/bin/RemoteFileUtility
-
 verdi.remote.ssh=/usr/bin/ssh
 
 \# on local machine where VERDI is running. Used to hold temporary data file downloaded from a remote machine
 
 verdi.temporary.dir=C:\\\\Users\\username\\temp
+```
 
 The items in the config.properties.TEMPLATE file that is installed with VERDI are commented out. To specify default directories, uncommented these lines by removing the starting ‘\#’ sign. Example settings that are provided in the default file show how to specify the paths to these locations, depending on whether the installation is for a Windows or Linux platform. Here are how the settings are used by VERDI. Note that VERDI stores the most recently used directory for each of these functions and will go to that directory when you repeat the load or save in the same session.
 
 -   verdi.project.home: Default location from which to load and save projects
-
 -   verdi.config.home: Default location from which to load and save plot configuration files
-
 -   verdi.dataset.home: Default location from which to load datasets
-
 -   verdi.script.home: Default location from which to load and save batch scripts
-
 -   verdi.hucData: Default location where area shapefiles are located; VERDI navigates to this directory when the user selects to add a dataset in the Area pane.
-
 -   verdi.remote.hosts: Contains a list of machines that the user can select to browse when adding a remote dataset using VERDI’s Remote File Access capability
-
 -   verdi.remote.util: Location of the RemoteFileUtility script for Linux and Mac installations of VERDI.
 
 Starting in VERDI version 1.4, the ui.properties file was removed and the user-configurable settings, such as the default directory locations, were moved to the config.properties file.
