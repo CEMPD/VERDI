@@ -338,7 +338,7 @@ Figure 1‑5. Getting Documentation on VERDI from the CMAS Web Site
 <img src="media/image6.PNG"/>
 
 <a id=Figure1-6></a>
-Figure ‑. VERDI Documentation on the CMAS Web Site
+Figure 1‑6. VERDI Documentation on the CMAS Web Site
 <img src="media/image006.png"/>
 
 Help Desk Support for VERDI
@@ -717,11 +717,11 @@ After you select a dataset, VERDI loads header information and displays the avai
 Datasets can be removed by highlighting the name of the dataset in the dataset list and pressing the yellow **minus** button. Note that although the dataset will be removed, the number that was assigned to that dataset will not be reused by VERDI during the current session (unless there had been only one dataset loaded, and it was removed; in that case the next dataset that is loaded will be labeled number 1).
 
 <a id=Figure6-2></a>
-Figure ‑. Open Dataset File Browser
+Figure 6‑2. Open Dataset File Browser
 <img src="media/image012.png"/>
 
 <a id=Figure6-3></a>
-Figure ‑. Datasets Pane Displaying Information about a Dataset
+Figure 6‑3. Datasets Pane Displaying Information about a Dataset
 <img src="media/image013.png"/>
 
 Adding and Removing a Dataset from a Remote File System
@@ -776,7 +776,7 @@ Variables List
 The variables list shows all of the variables contained in a loaded dataset (see Figure 6‑8). To display a variables list, select the name of the dataset of interest in the **Datasets** pane. Each of the variables in the list can be used to create a formula in the **Formula** pane that can then be used to create plots. VERDI allows the user to automatically add a formula by double-clicking on the name of a variable. This automatically creates a formula that contains the variable for the loaded dataset and makes it the default formula for making plots. In addition, you may right-click on the name of the variable to show a popup menu as shown in the middle of the figure. From this menu you can either add the variable as a formula, or you can to add it into the formula editor so that it can be used to compose more complex formulas. Formulas are described in more detail in Chapter 7.
 
 <a id=Figure6-8></a>
-Figure ‑. Right-Click on Variable in Dataset Pane
+Figure 6‑8. Right-Click on Variable in Dataset Pane
 <img src="media/image018.png"/>
 
 Time Steps and Layers Panels
@@ -1110,7 +1110,6 @@ The **scatter plot** shows the relationship between two formulas using dots ([Fi
 <a id=Figure10-17></a>
 Figure 10‑17. Scatter Plot
 <img src="media/image042.png"/>
-Figure ‑. Scatter Plot
 
 <a id=Figure10-18></a>
 Figure 10‑18. Scatter Plot Dialog Box
