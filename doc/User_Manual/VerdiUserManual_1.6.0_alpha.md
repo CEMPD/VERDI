@@ -1264,7 +1264,7 @@ Figure 11‑4. Example Plot with Selected Tick Marks for Range Axis and Legend
 
 
 <a id=Figure11-5></a>
-Figure 11‑5. Range Axis 
+Figure 11‑5. Other Tab
 <img src="media/image051.png"/> 
 
 ###  Save Configuration
