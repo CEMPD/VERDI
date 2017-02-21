@@ -1,6 +1,6 @@
 **Visualization Environment for Rich Data Interpretation (VERDI): User’s Manual**
 ============
-<center>
+
 U.S. EPA Contract No. EP-W-09-023, “Operation of the Center for Community Air Quality Modeling and Analysis (CMAS)”<br>
 Prepared for: Donna Schwede<br>
 U.S. EPA, ORD/NERL/AMD/APMB<br>
@@ -12,7 +12,6 @@ The University of North Carolina at Chapel Hill<br>
 100 Europa Drive, Suite 490,CB 1105 <br>
 Chapel Hill, NC 27599-1105<br>
 Date: Feb 28, 2017<br>
-</center>
 
 **Contents**
 * 1 [Introduction](#introduction)
@@ -1260,16 +1259,12 @@ Figure 11‑4. Example Plot with Selected Tick Marks for Range Axis and Legend<b
 
 -   **Footer:** This tab is divided into three parts: Line One, Line Two, and Observational Data Legend. Lines One and Two are for the first and second lines of footers, respectively. VERDI automatically creates these lines for you, but you can either edit or remove them here. You cannot enter text for the Observational Data Legend if you do not have observational data on your plot.
 
-<!-- -->
-
 -   **Other** **tab:** As shown in [Figure 11‑5](#Figure11-5), use the widgets on this tab to enable or disable showing the grid lines, to select the color of grid lines, and to select the series color.
 
 
 <a id=Figure11-5></a>
-<center>
 Figure 11‑5. Other Tab<br>
 <img src="media/image051.png"/>
-</center
 
 ###  Save Configuration
 
@@ -1308,11 +1303,11 @@ Figure 11‑7. Bottom Portion of Edit Chart Theme (Bg=background, Grdln=grid lin
 <img src="media/image054.png"/>
 
 <a id=Figure11-8></a>
-Figure 11‑8. Select Font
+Figure 11‑8. Select Font in Edit Chart Theme Window
 <img src="media/image055.png"/>
 
 <a id=Figure11-9></a>
-Figure 11‑9. Select Color
+Figure 11‑9. Select Color in Edit Chart Theme Window
 <img src="media/image056.png"/>
 
 
@@ -1368,10 +1363,6 @@ The **Controls&gt;Set Row and Column Ranges** menu item displays a popup window 
 Figure 11‑14. Select Set Row and Column Ranges
 <img src="media/image062.png"/>
 
-<a id=Figure11-15></a>
-Figure 11‑15. Enter Row and Column Values
-<img src="media/image063.png"/>
-
 
 ### Show Grid Lines
 
@@ -1379,7 +1370,7 @@ Use the Show Grid Lines selection on the Controls menu if you want to have grid 
 
 <a id=Figure11-16></a>
 Figure 11‑16. Show Grid Lines on a Tile Plot
-<img src="media/image064.png"/>
+<img src="media/image063.png"/>
 
 ### Show Latitude and Longitude
 
@@ -1387,7 +1378,7 @@ To view the latitude and longitude values for a point on the plot, select the Sh
 
 <a id=Figure11-17></a>
 Figure 11‑17. Lat/Lon Values Shown in Lower Right of VERDI
-<img src="media/image065.png"/>
+<img src="media/image064.png"/>
 
 
  Plot Menu Options
@@ -1397,7 +1388,7 @@ The **Plot** pull-down menu ([Figure 11‑18](#Figure11-18)) contains the follow
 
 <a id=Figure11-18></a>
 Figure 11‑18. Plot Menu Options
-<img src="media/image066.png"/>
+<img src="media/image065.png"/>
 
 
 ### Time Series Plots
@@ -1410,7 +1401,7 @@ You can create an animated plot by selecting the Animate Plot option. The Time S
 
 <a id=Figure11-19></a>
 Figure 11‑19. Animate Plot Dialog Box
-<img src="media/image067.png"/>
+<img src="media/image066.png"/>
 
 ### Add Overlays
 
@@ -1444,11 +1435,11 @@ The center of the observational data point corresponds to the lat/lon value that
 
 <a id=Figure11-20></a>
 Figure 11‑20. Tile Plot Observation Dialog
-<img src="media/image068.png"/>
+<img src="media/image067.png"/>
 
 <a id=Figure11-21></a>
 Figure 11‑21. Tile Plot with Observational Data Overlay
-<img src="media/image069.png"/>
+<img src="media/image068.png"/>
 
 
 #### Vector Overlays
@@ -1473,13 +1464,13 @@ Currently, vectors are plotted in the center of the grid cell. UWIND and VWIND a
 
 <a id=Figure11-22></a>
 Figure 11‑22. Vector Overlay Dialog Box
-<img src="media/image70.png"/>
+<img src="media/image069.png"/>
 
 An example of an ozone concentration Tile Plot with a wind vector overlay is shown in Figure 11‑25. The length of each vector is proportional to its length. The direction of the vector is calculated from the direction and magnitudes of its two components. This figure illustrates how the wind changes speed and direction in this portion of the modeling domain for layer 1, time step 1.
 
 <a id=Figure11-23></a>
 Figure 11‑23. Wind Vector Overlay on an Ozone Tile Plot
-<img src="media/image71.png"</a>
+<img src="media/image070.png"</a>
 
 
 GIS Layers
@@ -1495,7 +1486,7 @@ A selection of default maps—including World, North America. USA States, USA Co
 
 <a id=Figure11-24></a>
 Figure 11‑24. Add Map Layers
-<img src="media/image72.png"/>
+<img src="media/image071.png"/>
 
 As of VERDI 1.6.0 alpha release, the Tile Plot and Areal Interpolation Plot use the Shapefile format for all maps and GIS layers, the bin format is no longer used.
 
@@ -1505,7 +1496,7 @@ To show an additional map on the plot, select the **Configure GIS Layers** optio
 
 <a id=Figure11-25></a>
 Figure 11‑25. Manage Layers Dialog Box
-<img src="media/image073.png"/>
+<img src="media/image072.png"/>
 
 -   To rearrange the order in which the GIS layers are displayed on the plot, select a layer in the Manage Layers dialog box, and then select Move Up or Move Down. Click the **OK** button to reposition the order of that layer within the list. If the layers that you are selecting are boundaries and were created to have a transparent fill, then rearranging the order of the layers will not change the look of the boundaries on the plot.
 
@@ -1525,19 +1516,19 @@ Users that need VERDI to support other projections are encouraged to provide sma
 
 <a id=Figure12-1></a>
 Figure 12‑1. Lambert Conformal Conic Map Projection Example Plot
-<img src="media/image074.png"/>
+<img src="media/image073.png"/>
 
 <a id=Figure12-2></a>
 Figure 12‑2. Polar Stereographic Map Projection Example Plot
-<img src="media/image075.png"/>
+<img src="media/image074.png"/>
 
 <a id=Figure12-3></a>
 Figure 12‑3. Mercator Map Projection Example Plot
-<img src="media/image076.png"/>
+<img src="media/image075.png"/>
 
 <a id=Figure12-4></a>
 Figure 12‑4. UTM Map Projection Example Plot
-<img src="media/image077.png"/>
+<img src="media/image076.png"/>
 
 
 CAMx Gridded Data
@@ -1547,24 +1538,24 @@ The netCDF-java library used in VERDI includes support for CAMx UAM‑IV binary 
 
 <a id=Figure12-5></a>
 Figure 12‑5. Example CAMx diagnostic text file
-<img src="media/image078.png"/>
+<img src="media/image077.png"/>
 
 
 The netCDF-java library writes the default projection information to a text file in the directory where the CAMx binary (UAM-IV) file is located. You can then review and edit the projection information to make it consistent with the projection specified in the CAMx diagnostic text files. The definitions of the projection parameters used in the camxproj.txt file are defined using Models-3 I/O API format https://www.cmascenter.org/ioapi/documentation/3.1/html/GRIDS.html. You must edit the camxproj.txt file to match the grid description information provided in the corresponding camx.diag file. [Figure 12‑6](#Figure12-6) shows the definition for the grid projection parameters for a Lambert conformal conic projection.
 
 <a id=Figure12-6></a>
 Figure 12‑6. Models-3 I/O API Map Projection Parameters for Lambert Conformal Conic Projection
-<img src="media/image079.png"/>
+<img src="media/image078.png"/>
 
 [Figure 12‑7](#Figure12-7) shows the values of the camxproj.txt after editing it to match the values of the camx.diag file (**Error! Reference source not found.**) using the definitions of the Models-3 grid parameters (**Error! Reference source not found.**). [Figure 12‑8](#Figure12-8) shows the resulting Tile Plot of the CAMx sample dataset.
 
 <a id=Figure12-7></a>
 Figure 12‑7. Edited Example Projection File: camxproj.txt
-<img src="media/image80.png"/>
+<img src="media/image79.png"/>
 
 <a id=Figure12-8></a>
 Figure 12‑8. CAMx Example Plot
-<img src="media/image81.png" />
+<img src="media/image80.png" />
 
 
 I/O API Utilities, Data Conversion Programs, and Libraries
@@ -1748,36 +1739,35 @@ To open the Script Editor, use File&gt;View Script Editor ([Figure 17‑1](#Figu
 
 <a id=Figure17-1></a>
 Figure 17‑1. File: View Script Editor
-<img src="media/image082.png"/>
+<img src="media/image081.png"/>
 
 An **Open** popup window will be displayed, click on a sample script file in the VERDI_1.5/data/scripts directory ([Figure 17‑2](#Figure17-2)).
 
 <a id=Figure17-2></a>
 Figure 17‑2. Open Popup Window
-<img src="media/image083.png"/>
+<img src="media/image082.png"/>
 
 After you select a script file and click Open in the Open popup window, the Script Editor window ([Figure 17‑3](#Figure17-3)), the Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
 
 Unload all datasets before running a batch script within the Script Editor. If any dataset is not unloaded a warning message will pop up ([Figure 17‑5](#Figure17-5)) requesting that you close all datasets before running your batch script.
 
 <a id=Figure17-5></a>
-<img src="media/image084.png"/>
+<img src="media/image083.png"/>
 
 Figure 17‑5) appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.
 
+<img src="media/image84.png"/>
+Figure 17‑6. Top of Sample Script File – VERDI\_1.5/data/scripts/file\_patterns.txt
+
 <img src="media/image85.png"/>
-Figure ‑. Top of Sample Script File – VERDI\_1.5/data/scripts/file\_patterns.txt
+Figure 17‑7. Bottom of Sample Script File – VERDI\_1.5/data/scripts/tile\_patterns.txt
 
-<img src="media/image86.png"/>
-Figure ‑. Bottom of Sample Script File – VERDI\_1.5/data/scripts/tile\_patterns.txt
-
-<span id="_Ref323235774" class="anchor"></span>As shown in **Error! Reference source not found.** and **Error! Reference source not found.**, the Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
+The Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
 
 Unload all datasets before running a batch script within the Script Editor. If any dataset is not unloaded a warning message will pop up (Figure 17‑5) requesting that you close all datasets before running your batch script.
 
 <img src="media/image84.png"/>
-
-<span id="_Ref323235805" class="anchor"><span id="_Toc327606531" class="anchor"></span></span>Figure ‑. Close Datasets Warning Message
+Figure 17‑8. Close Datasets Warning Message
 
 The multifiles.txt sample script that is provided as part of the VERDI release demonstrates how to create a tile plot using a mathematical combination of variables. An excerpt of that script is shown below.
 
@@ -1816,13 +1806,11 @@ The image file name is specified by setting the parameter *imageFile*; imageFile
 Use the left mouse button to highlight the task that you would like to run and then click **Run** in the Script Editor window. A popup window then appears to indicate the task ran successfully (Figure 17‑6). In this example the title and subtitle were obtained from the definition in the global block. Aspects of the plot defined in the global block are used for multiple tasks and are applied even if only a highlighted task is run.
 
 <img src="media/image87.png"/>
-
-<span id="_Ref323235839" class="anchor"><span id="_Toc327606532" class="anchor"></span></span>Figure ‑. Highlight Text to Select Task and Click Run
+Figure ‑. Highlight Text to Select Task and Click Run
 
 If you select Run without highlighting a Text Block, then the entire batch script executes and generates the plots. To edit the batch script, highlight a segment that you would like to copy and use Ctrl-C to copy the text; then click in an area where you want to paste the text and use Ctrl-V to insert the copied text. Test your changes to the script by highlighting the text block and click run. When your script executes successfully VERDI displays the popup window shown in If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in **Error! Reference source not found.**.
 
 <img src="media/image88.png"/>
-
 Figure 17‑8. Unsuccessful Batch Run
 
 NOTE: Click either the Save or the Save As… button to save your edits before exiting the Script Editor.
@@ -1847,13 +1835,12 @@ run.bat –batch
 
 <img src="media/image89.png"/>
 
-<span id="_Toc327606533" class="anchor"></span>Figure ‑. Successful Batch Script Message
+Figure ‑. Successful Batch Script Message
 
-<span id="_Ref323235856" class="anchor"></span>If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in **Error! Reference source not found.**.
+If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in **Error! Reference source not found.**.
 
 <img src="media/image88.png"/>
-
-<span id="_Toc327606534" class="anchor"></span>Figure ‑. Unsuccessful Batch Script Message: File not found
+Figure ‑. Unsuccessful Batch Script Message: File not found
 
 The VERDI Batch Editor checks to see if the path specified by the user as the imageDir exists. If the path does not exist, VERDI displays the error message:
 
@@ -1862,8 +1849,7 @@ The VERDI Batch Editor checks to see if the path specified by the user as the im
 followed by the message “(No such file or directory).” Verify that you supplied the correct path and filename. The directory specified as the image directory must exist prior to running the batch command. Double-click on the file in the imageDir directory to load and view the image file in your default visualization software. **Error! Reference source not found.** illustrates the tile plot image that was generated by running the highlighted text block.
 
 <img src="media/image90.jpeg"/>
-
-<span id="_Toc327606535" class="anchor"></span>Figure ‑. Plot Image Generated by Task Block
+Figure ‑. Plot Image Generated by Task Block
 
 Specify hour/time step formula in batch script mode
 ---------------------------------------------------
@@ -1907,8 +1893,7 @@ Batch Script Example:
 **&lt;/Task&gt;**
 
 <img src="media/image91.png"/>
-
-<span id="_Toc327606536" class="anchor"></span>Figure ‑. Tile Plot of Ozone at Time step 17, Layer 1
+Figure ‑. Tile Plot of Ozone at Time step 17, Layer 1
 
 Mathematical function capability in batch script mode
 -----------------------------------------------------
@@ -1956,8 +1941,7 @@ The mathematical functions operate over all time steps at each grid cell. Exampl
 **&lt;/Task&gt;**
 
 <img src="media/image92.png"/>
-
-<span id="_Toc327606537" class="anchor"></span>Figure ‑. Tile Plot of Maximum Air Temperature (aggregated over 25 time steps)
+Figure ‑. Tile Plot of Maximum Air Temperature (aggregated over 25 time steps)
 
 ### Batch Script Example : Minimum Ozone – layer 1 (Figure 17-12)
 
@@ -1984,8 +1968,7 @@ The mathematical functions operate over all time steps at each grid cell. Exampl
 **&lt;/Task&gt;**
 
 <img src="media/image93.png"/>
-
-<span id="_Toc327606538" class="anchor"></span>Figure ‑. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
+Figure ‑. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
 
 ### Batch Script Example : Mean of Ozone – layer 1 (Figure 17-13)
 
@@ -2012,8 +1995,7 @@ The mathematical functions operate over all time steps at each grid cell. Exampl
 **&lt;/Task&gt;**
 
 <img src="media/image94.png"/>
-
-<span id="_Toc327606539" class="anchor"></span>Figure ‑. Tile Plot of Mean Ozone (aggregated over 25 time steps)
+Figure ‑. Tile Plot of Mean Ozone (aggregated over 25 time steps)
 
 ### Batch Script Example : Sum of Ozone – layer 1 (Figure 17-14)
 
@@ -2040,8 +2022,7 @@ s=sum(O3\[1\])
 &lt;/Task&gt;
 
 <img src="media/image95.png"/>
-
-<span id="_Toc327606540" class="anchor"></span>Figure ‑. Tile Plot of the Sum of Ozone (aggregated over 25 time steps)
+Figure ‑. Tile Plot of the Sum of Ozone (aggregated over 25 time steps)
 
 Command Line Scripting
 ======================
@@ -2097,8 +2078,7 @@ Example Command Line Script for Windows Users
 Edit the run.bat script in the VERDI\_1.5 directory by right clicking on the file and selecting edit.
 
 <img src="media/image96.png"/>
-
-<span id="_Toc327606541" class="anchor"></span>Figure ‑. Location of run.bat script in Windows
+Figure ‑. Location of run.bat script in Windows
 
 The current run.bat in notepad contains a “%1” at the end that allows it to accept input following the run.bat script using the Windows run command. Unfortunately, this command does not accept directory names that have a space them, such as the “Program Files”. If you would like to enter the script command line options after run.bat, please move the data directory to C:\\VERDI\\data or some other similar location.
 
@@ -2121,8 +2101,7 @@ SET JAVA=..\\..\\jre1.6.0\\bin\\java
 Run the run.bat script by clicking on Start, then selecting Run, then either using Browse to find the run.bat or typing it in (**Error! Reference source not found.**).
 
 <img src="media/image97.png"/>
-
-<span id="_Toc327606542" class="anchor"></span>Figure ‑. Submit run.bat script from Run command
+Figure ‑. Submit run.bat script from Run command
 
 Script commands that can be used for command line scripting (listed in alphabetical order) are described below. Adding support for these script commands in the Script Editor is planned for a future VERDI release.
 
