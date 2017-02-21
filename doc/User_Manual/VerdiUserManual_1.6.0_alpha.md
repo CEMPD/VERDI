@@ -1,6 +1,6 @@
-***Visualization Environment for Rich Data Interpretation (VERDI 1.6 alpha): User’s Manual***
+**Visualization Environment for Rich Data Interpretation (VERDI): User’s Manual**
 ============
-
+<center>
 U.S. EPA Contract No. EP-W-09-023, “Operation of the Center for Community Air Quality Modeling and Analysis (CMAS)”<br>
 Prepared for: Donna Schwede<br>
 U.S. EPA, ORD/NERL/AMD/APMB<br>
@@ -9,13 +9,13 @@ Research Triangle Park, NC 27711<br>
 Prepared by: Liz Adams and Jo Ellen Brandmeyer<br>
 Institute for the Environment<br>
 The University of North Carolina at Chapel Hill<br>
-100 Europa Drive, Suite 490<br>
-CB 1105<br>
+100 Europa Drive, Suite 490,CB 1105 <br>
 Chapel Hill, NC 27599-1105<br>
 Date: Feb 28, 2017<br>
+</center>
 
 **Contents**
-* 1 [Introduction](#introduction) 
+* 1 [Introduction](#introduction)
   * 1.1 [Background](#background)
   * 1.2 [Where to Obtain VERDI](#-where-to-obtain-verdi)
   * 1.3 [Where to Obtain VERDI Documentation](#where-to-obtain-verdi-documentation)
@@ -151,110 +151,110 @@ Date: Feb 28, 2017<br>
 
 **Figures**
 
-Figure 1‑1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.
-Figure 1‑2. Bottom of VERDI Page
-Figure 1‑3. Downloading VERDI from the CMAS Web Site, Step 2.
-Figure 1‑4. Downloading VERDI from the CMAS Web Site, Step 3
-Figure 1‑5. Getting Documentation on VERDI from the CMAS Web Site
-Figure 1‑6. VERDI Documentation on the CMAS Web Site
-Figure 4‑1. Starting VERDI in Windows
-Figure 4‑2. VERDI Main Window
-Figure 5‑1. VERDI Main Menu Options
-Figure 5‑2. Selected plots must have matching time steps.
-Figure 5‑3 Animate Plots Dialog and Tile Plots
-Figure 6‑1. Example observational data file showing format.
-Figure 6‑2. Open Dataset File Browser
-Figure 6‑3. Datasets Pane Displaying Information about a Dataset
-Figure 6‑4. Available Hosts in the Remote File Access Browser
-Figure 6‑5. Select One or More Variables from Remote Dataset
-Figure 6‑6. Remote Dataset Labeled with Number at End of the Filename
-Figure 6‑7. Edit configure.properties File to Add a Remote Host
-Figure 6‑8. Right-Click on Variable in Dataset Pane
-Figure 7‑1. Adding Multiple Variables to Formula Editor
-Figure 8‑1. Areas Pane
-Figure 8‑2. Open Area File Browser
-Figure 8‑3. Open Area File: Select Name Field
-Figure 8‑4. Area Name Fields in Current Shapefile
-Figure 9‑1. Specify Time Step Range
-Figure 9‑2. Edit Layer Range in Formula Pane
-Figure 10‑1. Tile Plot Example
-Figure 10‑2. Areal Interpolation Plot: Area Average
-Figure 10‑3. Areal Interpolation Plot: Area Totals
-Figure 10‑4. Areal Interpolation Plot: Show Gridded Data
-Figure 10‑5. Areal Interpolation Plot: Show Selected Areas
-Figure 10‑6. Areal Values for a Selected Polygon
-Figure 10‑7. Right Click on Area Plot
-Figure 10‑8. Area Information in Columns
-Figure 10‑9. Export to a Text File
-Figure 10‑10. Name and Save the Text File
-Figure 10‑11. Export Shapefile
-Figure 10‑12. Name and Save Shapefile
-Figure 10‑13. Vertical Cross Section Plot
-Figure 10‑14. Vertical Cross Section Dialog Box
-Figure 10‑15. Time Series Plot
-Figure 10‑16. Time Series Bar Plot
-Figure 10‑17. Scatter Plot
-Figure 10‑18. Scatter Plot Dialog Box
-Figure 10‑19. Scatter Plot Export Data into a CSV file
-Figure 10‑20. Contour Plot
-Figure 10‑21. Contour Plot Menu Options
-Figure 10‑22. Rotated Contour Plot
-Figure 11‑1. Tile and Areal Interpolation Plot Pull-down Menu Options
-Figure 11‑2. Vertical Cross Section, Time Series, Time Series Bar, Scatter Plot Pull-down Menu Options
-Figure 11‑3. Configure Plot, Titles Tab
-Figure 11‑4. Configure Plot, Color Map Tab
-Figure 11‑5. Configure Plot, Labels Tab
-Figure 11‑6. Configure Plot, Other Tab
-Figure 11‑7. Example Plot with Selected Tick Marks for Range Axis and Legend
-Figure 11‑8. Top Portion of Edit Chart Theme Window
-Figure 11‑9. Bottom Portion of Edit Chart Theme (Bg=background, Grdln=grid line)
-Figure 11‑10. Select Font
-Figure 11‑11. Select Color
-Figure 11‑12. Save Dialog
-Figure 11‑13. Right-Click on Tile Plot to Zoom Out
-Figure 11‑14. Click on Plot to Probe: Data Value Shown in Lower Left of VERDI, Latitude/Longitude Values Shown in Lower Right
-Figure 11‑15. Data Window Showing Probed Values for Region of Interest
-Figure 11‑16. Select Set Row and Column Ranges
-Figure 11‑17. Enter Row and Column Values
-Figure 11‑18. Show Grid Lines on a Tile Plot
-Figure 11‑19. Lat/Lon Values Shown in Lower Right of VERDI
-Figure 11‑20. Plot Menu Options
-Figure 11‑21. Animate Plot Dialog Box
-Figure 11‑22. Tile Plot Observation Dialog
-Figure 11‑23. Tile Plot with Observational Data Overlay
-Figure 11‑24. Vector Overlay Dialog Box
-Figure 11‑25. Wind Vector Overlay on an Ozone Tile Plot
-Figure 11‑26. Add Map Layers
-Figure 11‑27. Manage Layers Dialog Box
-Figure 12‑1. Lambert Conformal Conic Map Projection Example Plot
-Figure 12‑2. Polar Stereographic Map Projection Example Plot
-Figure 12‑3. Mercator Map Projection Example Plot
-Figure 12‑4. UTM Map Projection Example Plot
-Figure 12‑5. Example CAMx diagnostic text file
-Figure 12‑6. Models-3 I/O API Map Projection Parameters for Lambert Conformal Conic Projection
-Figure 12‑7. Edited Example Projection File: camxproj.txt
-Figure 12‑8. CAMx Example Plot
-Figure 17‑1. File: View Script Editor
-Figure 17‑2. Open Popup Window
-Figure 17‑3. Top of Sample Script File – VERDI\_1.5/data/scripts/file\_patterns.txt
-Figure 17‑4. Bottom of Sample Script File – VERDI\_1.5/data/scripts/tile\_patterns.txt
-Figure 17‑5. Close Datasets Warning Message
-Figure 17‑6. Highlight Text to Select Task and Click Run
-Figure 17‑7. Successful Batch Script Message
-Figure 17‑8. Unsuccessful Batch Script Message: File not found
-Figure 17‑9. Plot Image Generated by Task Block
-Figure 17‑10. Tile Plot of Ozone at Time step 17, Layer 1
-Figure 17‑11. Tile Plot of Maximum Air Temperature (aggregated over 25 time steps)
-Figure 17‑12. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
-Figure 17‑13. Tile Plot of Mean Ozone (aggregated over 25 time steps)
-Figure 17‑14. Tile Plot of the Sum of Ozone (aggregated over 25 time steps)
-Figure 18‑1. Location of run.bat script in Windows
-Figure 18‑2. Submit run.bat script from Run command
-
+* [Figure 1‑1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.](#Figure1-1)
+* [Figure 1‑2. Bottom of VERDI Page](#Figure1-2)
+* [Figure 1‑3. Downloading VERDI from the CMAS Web Site, Step 2.]((#Figure1-3)
+* [Figure 1‑4. Downloading VERDI from the CMAS Web Site, Step 3](#Figure1-4)
+* [Figure 1‑5. Getting Documentation on VERDI from the CMAS Web Site](#Figure1-5)
+* [Figure 1‑6. VERDI Documentation on the CMAS Web Site](#Figure1-6)
+* [Figure 4‑1. Starting VERDI in Windows](#Figure4-1)
+* [Figure 4‑2. VERDI Main Window](#Figure4-2)
+* [Figure 5‑1. VERDI Main Menu Options](#Figure5-1)
+* [Figure 5‑2. Selected plots must have matching time steps.](#Figure5-2)
+* [Figure 5‑3 Animate Plots Dialog and Tile Plots](#Figure5-3)
+* [Figure 6‑1. Example observational data file showing format.](#Figure6-1)
+* [Figure 6‑2. Open Dataset File Browser](#Figure6-2)
+* [Figure 6‑3. Datasets Pane Displaying Information about a Dataset](#Figure6-3)
+* [Figure 6‑4. Available Hosts in the Remote File Access Browser](#Figure6-4)
+* [Figure 6‑5. Select One or More Variables from Remote Dataset](#Figure6-5)
+* [Figure 6‑6. Remote Dataset Labeled with Number at End of the Filename](#Figure6-6)
+* [Figure 6‑7. Edit configure.properties File to Add a Remote Host](#Figure6-7)
+* [Figure 6‑8. Right-Click on Variable in Dataset Pane](#Figure6-8)
+* [Figure 7‑1. Adding Multiple Variables to Formula Editor](#Figure7-1)
+* [Figure 8‑1. Areas Pane](#Figure8-1)
+* [Figure 8‑2. Open Area File Browser](#Figure8-2)
+* [Figure 8‑3. Open Area File: Select Name Field](#Figure8-3)
+* [Figure 8‑4. Area Name Fields in Current Shapefile](#Figure8-4)
+* [Figure 9‑1. Specify Time Step Range](#Figure9-1)
+* [Figure 9‑2. Edit Layer Range in Formula Pane](#Figure9-2)
+* [Figure 10‑1. Tile Plot Example](#Figure10-1)
+* [Figure 10‑2. Areal Interpolation Plot: Area Average](#Figure10-2)
+* [Figure 10‑3. Areal Interpolation Plot: Area Totals](#Figure10-3)
+* [Figure 10‑4. Areal Interpolation Plot: Show Gridded Data](#Figure10-4)
+* [Figure 10‑5. Areal Interpolation Plot: Show Selected Areas](#Figure10-5)
+* [Figure 10‑6. Areal Values for a Selected Polygon](#Figure10-6)
+* [Figure 10‑7. Right Click on Area Plot](#Figure10-7)
+* [Figure 10‑8. Area Information in Columns](#Figure10-8)
+* [Figure 10‑9. Export to a Text File](#Figure10-9)
+* [Figure 10‑10. Name and Save the Text File](#Figure10-10)
+* [Figure 10‑11. Export Shapefile](#Figure10-11)
+* [Figure 10‑12. Name and Save Shapefile](#Figure10-12)
+* [Figure 10‑13. Vertical Cross Section Plot](#Figure10-13)
+* [Figure 10‑14. Vertical Cross Section Dialog Box](#Figure10-14)
+* [Figure 10‑15. Time Series Plot](#Figure10-15)
+* [Figure 10‑16. Time Series Bar Plot](#Figure10-16)
+* [Figure 10‑17. Scatter Plot](#Figure10-17)
+* [Figure 10‑18. Scatter Plot Dialog Box](#Figure10-18)
+* [Figure 10‑19. Scatter Plot Export Data into a CSV file](#Figure10-19)
+* [Figure 10‑20. Contour Plot](#Figure10-20)
+* [Figure 10‑21. Contour Plot Menu Options](#Figure10-21)
+* [Figure 10‑22. Rotated Contour Plot](#Figure10-22)
+* [Figure 11‑1. Tile and Areal Interpolation Plot Pull-down Menu Options](#Figure11-1)
+* [Figure 11‑2. Vertical Cross Section, Time Series, Time Series Bar, Scatter Plot Pull-down Menu Options](#Figure11-2)
+* [Figure 11‑3. Configure Plot, Titles Tab](#Figure11-3)
+* [Figure 11‑4. Configure Plot, Color Map Tab](#Figure11-4)
+* [Figure 11‑5. Configure Plot, Labels Tab](#Figure11-5)
+* [Figure 11‑6. Configure Plot, Other Tab](#Figure11-6)
+* [Figure 11‑7. Example Plot with Selected Tick Marks for Range Axis and Legend](#Figure1-2)
+* [Figure 11‑8. Top Portion of Edit Chart Theme Window](#Figure11-8)
+* [Figure 11‑9. Bottom Portion of Edit Chart Theme (Bg=background, Grdln=grid line)](#Figure11-9)
+* [Figure 11‑10. Select Font](#Figure11-10)
+* [Figure 11‑11. Select Color](#Figure11-11)
+* [Figure 11‑12. Save Dialog](#Figure11-12)
+* [Figure 11‑13. Right-Click on Tile Plot to Zoom Out](#Figure11-13)
+* [Figure 11‑14. Click on Plot to Probe: Data Value Shown in Lower Left of VERDI, Latitude/Longitude Values Shown in Lower Right](#Figure11-14)
+* [Figure 11‑15. Data Window Showing Probed Values for Region of Interest](#Figure11-15)
+* [Figure 11‑16. Select Set Row and Column Ranges](#Figure11-16)
+* [Figure 11‑17. Enter Row and Column Values](#Figure11-17)
+* [Figure 11‑18. Show Grid Lines on a Tile Plot](#Figure11-18)
+* [Figure 11‑19. Lat/Lon Values Shown in Lower Right of VERDI](#Figure11-19)
+* [Figure 11‑20. Plot Menu Options](#Figure11-20)
+* [Figure 11‑21. Animate Plot Dialog Box](#Figure11-21)
+* [Figure 11‑22. Tile Plot Observation Dialog](#Figure11-22)
+* [Figure 11‑23. Tile Plot with Observational Data Overlay](#Figure11-23)
+* [Figure 11‑24. Vector Overlay Dialog Box](#Figure11-24)
+* [Figure 11‑25. Wind Vector Overlay on an Ozone Tile Plot](#Figure11-25)
+* [Figure 11‑26. Add Map Layers](#Figure11-26)
+* [Figure 11‑27. Manage Layers Dialog Box](#Figure11-27)
+* [Figure 12‑1. Lambert Conformal Conic Map Projection Example Plot](#Figure12-1)
+* [Figure 12‑2. Polar Stereographic Map Projection Example Plot](#Figure12-2)
+* [Figure 12‑3. Mercator Map Projection Example Plot](#Figure12-3)
+* [Figure 12‑4. UTM Map Projection Example Plot](#Figure12-4)
+* [Figure 12‑5. Example CAMx diagnostic text file](#Figure12-5)
+* [Figure 12‑6. Models-3 I/O API Map Projection Parameters for Lambert Conformal Conic Projection](#Figure12-6)
+* [Figure 12‑7. Edited Example Projection File: camxproj.txt](#Figure12-7)
+* [Figure 12‑8. CAMx Example Plot](#Figure12-8)
+* [Figure 17‑1. File: View Script Editor](#Figure17-1)
+* [Figure 17‑2. Open Popup Window](#Figure17-2)
+* [Figure 17‑3. Top of Sample Script File – VERDI\_1.5/data/scripts/file\_patterns.txt](#Figure17-3)
+* [Figure 17‑4. Bottom of Sample Script File – VERDI\_1.5/data/scripts/tile\_patterns.txt](#Figure17-4)
+* [Figure 17‑5. Close Datasets Warning Message](#Figure17-5)
+* [Figure 17‑6. Highlight Text to Select Task and Click Run](#Figure17-6)
+* [Figure 17‑7. Successful Batch Script Message](#Figure17-7)
+* [Figure 17‑8. Unsuccessful Batch Script Message: File not found](#Figure17-8)
+* [Figure 17‑9. Plot Image Generated by Task Block](#Figure17-9)
+* [Figure 17‑10. Tile Plot of Ozone at Time step 17, Layer 1](#Figure17-10)
+* [Figure 17‑11. Tile Plot of Maximum Air Temperature (aggregated over 25 time steps)](#Figure17-11)
+* [Figure 17‑12. Tile Plot of Minimum Ozone (aggregated over 25 time steps)](#Figure17-12)
+* [Figure 17‑13. Tile Plot of Mean Ozone (aggregated over 25 time steps)](#Figure17-13)
+* [Figure 17‑14. Tile Plot of the Sum of Ozone (aggregated over 25 time steps)](#Figure17-14)
+* [Figure 18‑1. Location of run.bat script in Windows](#Figure18-1)
+* [Figure 18‑2. Submit run.bat script from Run command](#Figure18-2)
+ 
 Introduction
 ============
 
-Background 
+Background
 -----------
 
 This manual describes how to use the Visualization Environment for Rich Data Interpretation (VERDI). VERDI is a flexible and modular Java-based visualization software tool that allows users to visualize multivariate gridded environmental datasets created by environmental modeling systems such as the Community Multiscale Air Quality (CMAQ) modeling system and the Weather Research and Forecasting (WRF) modeling system. These systems produce files of gridded concentration and deposition fields that users need to visualize and compare with observational data both spatially and temporally. VERDI can facilitate these types of analyses.
@@ -429,7 +429,7 @@ Follow these instructions to install VERDI:
 
     Please continue with section 3.4.
 
-Installation Instructions for Windows 
+Installation Instructions for Windows
 --------------------------------------
 
 To install VERDI for Windows, unzip the file to a local directory on your Windows 7 computer. NOTE: You do not need to install VERDI under a Program Files directory or in the root directory on one of your hard disk drives. Therefore, you should not need Administrator rights to install VERDI 1.6 alpha. If your system is under strict control from your Administrator, you may be able to unzip the VERDI distribution under your home directory or your documents directory; however, you may have problems if there is a space in the path to your VERDI installation directory.
@@ -530,7 +530,7 @@ All other locations are specified relative to the VERDI_HOME or the JAVADIR, so 
 
 To start VERDI from Linux and other non-Windows JRE 7 Supported System Configurations, find the directory where VERDI was installed; then run the verdi.sh script. On a Mac go to the /Applications/verdi_1.6.0_alpha directory and run the verdi.command script.
 
-Main Window 
+Main Window
 ------------
 
 When VERDI starts it displays its title screen as it loads. The main window is then displayed ([Figure 4‑2](#Figure4-2)). The top of the main window contains a menu bar with the main window options (**File, Plots, Window,** and **Help**). Below the menu bar are three icons that are shortcuts to some of the options available in the Main Window Menu Bar; the first is an **Open Project** icon, the second is a **Save Project** icon, the third is an icon that allows you to **Undock All Plots**. These shortcuts and the options available in the Main Window Menu Bar are discussed further in Chapter 5, “Navigating VERDI’s Main Menu Options.”
@@ -574,21 +574,21 @@ Table 5‑1. VERDI Main Menu Options
 
 | **File**           | **Plots**          | **Window**| **Help**            |
 |--------------------|--------------------|----------|----------------------|
-| Open Project       |Undock All Plots    | Areas    | VERDI Help | 
+| Open Project       |Undock All Plots    | Areas    | VERDI Help |
 | Save Project       |Animate Tile Plots  | Datasets | About      |
 | Save Project As    |                    | Formulas |            |
-| View Script Editor |                    |          |            | 
+| View Script Editor |                    |          |            |
 | Exit               |                    |          |            |
 
 
 File Menu Options
 -----------------
 
-### Open Project 
+### Open Project
 
 **Open Project** retrieves projects that were saved during a previous session (using the two **Save Project** options described in Section 5.1.2). Note that when you use a saved project, *it is very important* to load that project into VERDI *before* you load any additional datasets or create any additional variables/formulas. If you have already loaded datasets and then try to open a previously saved project, VERDI will show you a message that says “All currently loaded datasets will be unloaded” and will ask if you want to continue.<span id="_Toc197166128" class="anchor"></span>
 
-### Save Project 
+### Save Project
 
 The **Save Project** and **Save Project As** options save dataset lists and associated formulas as a “project” for later use.
 
@@ -634,7 +634,7 @@ Window Menu Options
 
 The **Window** menu provides an alternate way to select windows/panes to be brought to the front, and provides the same function as clicking on the tabs at the bottom of the windows/panes.
 
-### Datasets, Areas, and Formulas 
+### Datasets, Areas, and Formulas
 
 Select from the **Window** pull-down menu to bring to the front either the **Datasets** pane, **Areas** pane, or **Formulas** pane when those panes are docked.
 
@@ -718,11 +718,11 @@ Datasets can be removed by highlighting the name of the dataset in the dataset l
 
 <a id=Figure6-2></a>
 Figure ‑. Open Dataset File Browser
-<img src="media/image012.png"/> 
+<img src="media/image012.png"/>
 
 <a id=Figure6-3></a>
 Figure ‑. Datasets Pane Displaying Information about a Dataset
-<img src="media/image013.png"/> 
+<img src="media/image013.png"/>
 
 Adding and Removing a Dataset from a Remote File System
 -------------------------------------------------------
@@ -731,7 +731,7 @@ VERDI provides users with the ability to select and add variables from datasets 
 
 <a id=Figure6-4></a>
 Figure 6‑4. Available Hosts in the Remote File Access Browser
-<img src="media/image014.png"/> 
+<img src="media/image014.png"/>
 
 
 ### Remote File Browser
@@ -740,7 +740,7 @@ The top panel displays a listing of the home directory on the remote file system
 
 <a id=Figure6-5></a>
 Figure 6‑5. Select One or More Variables from Remote Dataset
-<img src="media/image015.png"/> 
+<img src="media/image015.png"/>
 
 The variables read from the remote dataset will be displayed in the dataset and variable browser in the same way that variables from a local dataset are added and displayed within VERDI. The subsetted local dataset names are identical to the file names on the remote host, except for an additional extension that enumerates how many times the remote files were read and saved locally by VERDI (i.e., filename1, filename2, filename3, etc.), as shown in [Figure 6‑6](#Figure6-6). To add variables from the same remote dataset, click on the **plus remote** button, and repeat the above procedure.
 
@@ -752,7 +752,7 @@ Remote datasets can be removed from the dataset list in VERDI using the same pro
 
 <a id=Figure6-6></a>
 Figure 6‑6. Remote Dataset Labeled with Number at End of the Filename
-<img src="media/image016.png"/> 
+<img src="media/image016.png"/>
 
 ### Adding Additional Remote Hosts
 
@@ -768,7 +768,7 @@ VERDI contains the RemoteFileUtility and ncvariable programs that enable VERDI t
 
 <a id=Figure6-7></a>
 Figure 6‑7. Edit configure.properties File to Add a Remote Host
-<img src="media/image017.png"/> 
+<img src="media/image017.png"/>
 
 Variables List
 --------------
@@ -777,7 +777,7 @@ The variables list shows all of the variables contained in a loaded dataset (see
 
 <a id=Figure6-8></a>
 Figure ‑. Right-Click on Variable in Dataset Pane
-<img src="media/image018.png"/> 
+<img src="media/image018.png"/>
 
 Time Steps and Layers Panels
 ----------------------------
@@ -801,7 +801,7 @@ After loading the desired gridded datasets, you can use the variables in them to
 
 <a id=Figure7-1></a>
 Figure 7‑1. Adding Multiple Variables to Formula Editor
-<img src="media/image019.png"/> 
+<img src="media/image019.png"/>
 
 After the variable names are added to the Formula Editor, click on the formula pane and use the cursor and the keyboard to type in the mathematical functions and operators where needed to create a valid formula (see Section 7.2 and Chapter 16). After the formula has been created in the Formula Editor, click the **Add** button to place it in the list of formulas available in the **Formula** pane.
 
@@ -886,19 +886,19 @@ When you select the Areal Interpolation Plot, your selected formula is remapped 
 
 <a id=Figure8-1></a>
 Figure 8‑1. Areas Pane
-<img src="media/image020.png"/> 
+<img src="media/image020.png"/>
 
 <a id=Figure8-2></a>
 Figure 8‑2. Open Area File Browser
-<img src="media/image021.png"/> 
+<img src="media/image021.png"/>
 
 <a id=Figure8-3></a>
 Figure 8‑3. Open Area File: Select Name Field
-<img src="media/image022.png"/> 
+<img src="media/image022.png"/>
 
 <a id=Figure8-4></a>
 Figure 8‑4. Area Name Fields in Current Shapefile
-<img src="media/image023.png"/> 
+<img src="media/image023.png"/>
 
 Subsetting Spatial and Temporal Data
 ====================================
@@ -912,7 +912,7 @@ The **Time Steps** panel ([Figure 9‑1](#Figure9-1)) displays the range of time
 
 <a id=Figure9-1></a>
 Figure 9‑1. Specify Time Step Range
-<img src="media/image024.png"/> 
+<img src="media/image024.png"/>
 
 Specify Layer Range
 -------------------
@@ -921,7 +921,7 @@ Information on the range of vertical model layers included in a dataset is displ
 
 <a id=Figure9-2></a>
 Figure 9‑2. Edit Layer Range in Formula Pane
-<img src="media/image025.png"/> 
+<img src="media/image025.png"/>
 
 Specify Domain Range
 --------------------
@@ -954,7 +954,7 @@ Tile Plot
 The **Tile Plot** displays gridded data defined as time steps and layers. It can also display grid cell time aggregate statistics. [Figure 10‑1](#Figure10-1) provides an example of the **Tile Plot** window.
 
 Figure 10‑1. Tile Plot Example
-<img src="media/image026.png"/> 
+<img src="media/image026.png"/>
 
 ### Time Selection and Animation Controls
 
@@ -1017,19 +1017,19 @@ The Areal Interpolation Plot menu contains an **Options** menu to allow the user
 
 <a id=Figure10-2></a>
 Figure 10‑2. Areal Interpolation Plot: Area Average
-<img src="media/image027.png"/> 
+<img src="media/image027.png"/>
 
 <a id=Figure10-3></a>
 Figure 10‑3. Areal Interpolation Plot: Area Totals
-<img src="media/image028.png"/> 
+<img src="media/image028.png"/>
 
 <a id=Figure10-4></a>
 Figure 10‑4. Areal Interpolation Plot: Show Gridded Data
-<img src="media/image029.png"/> 
+<img src="media/image029.png"/>
 
 <a id=Figure10-5></a>
 Figure 10‑5. Areal Interpolation Plot: Show Selected Areas
-<img src="media/image030.png"/> 
+<img src="media/image030.png"/>
 
 ### Areal Values for Polygon Segment
 
@@ -1037,7 +1037,7 @@ To view the area, total value, and average value for a selected polygon segment 
 
 <a id=Figure10-6></a>
 Figure 10‑6. Areal Values for a Selected Polygon
-<img src="media/image031.png"/> 
+<img src="media/image031.png"/>
 
 ### View and Export Areal Interpolation Plot Data in Text Format
 
@@ -1045,19 +1045,19 @@ To view the average and total interpolation values for selected formulas in a sp
 
 <a id=Figure10-7></a>
 Figure 10‑7. Right Click on Area Plot
-<img src="media/image032.png"/> 
+<img src="media/image032.png"/>
 
 <a id=Figure10-8></a>
 Figure 10‑8. Area Information in Columns
-<img src="media/image033.png"/> 
+<img src="media/image033.png"/>
 
 <a id=Figure10-9></a>
 Figure 10‑9. Export to a Text File     
-<img src="media/image034.png"/> 
+<img src="media/image034.png"/>
 
 <a id=Figure10-10></a>
 Figure 10‑10. Name and Save the Text File
-<img src="media/image035.png"/> 
+<img src="media/image035.png"/>
 
 ### Export Areal Interpolation Plot Data to Shapefiles
 
@@ -1065,11 +1065,11 @@ At the top of the **Area Information** tab ([Figure 10‑11](#Figure10-11)), the
 
 <a id=Figure10-11></a>
 Figure 10‑11. Export Shapefile
-<img src="media/image036.png"/> 
+<img src="media/image036.png"/>
 
 <a id=Figure10-12></a>
 Figure 10‑12. Name and Save Shapefile  |
-<img src="media/image037.png"/> 
+<img src="media/image037.png"/>
 
  Vertical Cross Section Plot
 ----------------------------
@@ -1078,11 +1078,11 @@ The **vertical cross section plot** allows you to show a slice of data ([Figure 
 
 <a id=Figure10-13></a>
 Figure 10‑13. Vertical Cross Section Plot
-<img src="media/image038.png"/> 
+<img src="media/image038.png"/>
 
 <a id=Figure10-14></a>
 Figure 10‑14. Vertical Cross Section Dialog Box
-<img src="media/image039.png"/> 
+<img src="media/image039.png"/>
 
 Time Series Plot
 ----------------
@@ -1091,7 +1091,7 @@ The **time series plot** shows a line graph with the average values over time ([
 
 <a id=Figure10-15></a>
 Figure 10‑15. Time Series Plot
-<img src="media/image040.png"/> 
+<img src="media/image040.png"/>
 
 Time Series Bar Plot
 --------------------
@@ -1100,25 +1100,25 @@ The **time series bar plot** shows average values over time in a bar plot format
 
 <a id=Figure10-16></a>
 Figure 10‑16. Time Series Bar Plot
-<img src="media/image041.png"/> 
+<img src="media/image041.png"/>
 
-Scatter Plot 
+Scatter Plot
 -------------
 
 The **scatter plot** shows the relationship between two formulas using dots ([Figure 10‑17](#Figure10-17)). Specify the formulas using the dialog box that comes up before the plot is displayed ([Figure 10‑18](#Figure10-18)). The current time step and layer can be adjusted using the spinner controls above the plot. The data from a scatter plot may be exported by selecting the **File** menu option and then selecting Export data. If your dataset has more than one layer or time step, a popup window (see [Figure 10‑19](#Figure10-19)) allows you to specify whether you want to export the data for the current layer, or for all layers, and for the current time step, or for all time steps. Specify the time and layer ranges, and then click the **OK** button. A Save popup dialog box appears. Navigate to the directory in which you want to save this file and enter a file name with a .csv extension. The CSV file will be comma-delimited, and will contain the following columns of data: layer, time step, *x*-axis formula, *y*-axis formula. You can open this file in a spreadsheet program if your data does not contain too many rows (e.g., 65,536 or 1,048,576 depending upon version of Microsoft Excel).
 
 <a id=Figure10-17></a>
 Figure 10‑17. Scatter Plot
-<img src="media/image042.png"/> 
+<img src="media/image042.png"/>
 Figure ‑. Scatter Plot
 
 <a id=Figure10-18></a>
 Figure 10‑18. Scatter Plot Dialog Box
-<img src="media/image043.png"/> 
+<img src="media/image043.png"/>
 
 <a id=Figure10-19></a>
 Figure 10‑19. Scatter Plot Export Data into a CSV file
-<img src="media/image044.png"/> 
+<img src="media/image044.png"/>
 
 Contour Plot
 ------------
@@ -1127,15 +1127,15 @@ The **contour plot** shows a three-dimensional (3‑D) representation of values 
 
 <a id=Figure10-20></a>
 Figure 10‑20. Contour Plot
-<img src="media/image045.png"/> 
+<img src="media/image045.png"/>
 
 <a id=Figure10-21></a>
 Figure 10‑21. Contour Plot Menu Options
-<img src="media/image046.png"/> 
+<img src="media/image046.png"/>
 
 <a id=Figure10-22></a>
 Figure 10‑22. Rotated Contour Plot
-<img src="media/image047.png"/> 
+<img src="media/image047.png"/>
 
 
  Plot Menu Bar
@@ -1149,10 +1149,10 @@ Table 11‑1. Tile and Areal Interpolation Plot Pull-down Menu Options
 | **File**         | **Configure**          | **Controls**         | **Plot**                       | **GIS Layers** |
 |---------------------|--------------------|---------------------------|----------------------------|------------|
 | Print   | Configure Plot                 | Zoom                      | Time Series of Probed Cell(s) | Add Map Layers |
-| Export as Image/GIS  | Load Configuration | Probe          | Time Series Bar of Probed Cell(s)|Configure GIS Layers  | 
+| Export as Image/GIS  | Load Configuration | Probe          | Time Series Bar of Probed Cell(s)|Configure GIS Layers  |
 |                      | Save Configuration  |Set Row and Column Ranges|Time Series of Min. Cell(s)|Set Current Maps as Plot Default |
 |                      |                   |  Show Grid Lines          |Time Series of Max. Cell(s) |  |
-|                     |                    | Show Lat/Lon              | Animate Plot               |  | 
+|                     |                    | Show Lat/Lon              | Animate Plot               |  |
 |                     |                    |                           | Add Overlay                |  |
 
 
@@ -1164,20 +1164,20 @@ Table 11‑2. Vertical Cross Section, Time Series, Time Series Bar, Scatter Plot
 
 | **File**        | **Configure**      | **Controls** | **Plot**                         |
 |-----------------|--------------------|--------------|---------------------------------|
-| Print           | Configure Plot     | Zoom         | Time Series of Probed Cell(s)   | 
-| Export as Image  | Load Configuration | Probe       | Time Series Bar of Probed Cell(s)| 
+| Print           | Configure Plot     | Zoom         | Time Series of Probed Cell(s)   |
+| Export as Image  | Load Configuration | Probe       | Time Series Bar of Probed Cell(s)|
 |                 |  Save Configuration  | Show Lat/Lon| Time Series of Min. Cell(s)   |      
 |                 | Load Chart Theme   | Animate Plot | Time Series of Max. Cell(s)   |
 |                 | Edit Chart Theme   |              |                         |
 |                 | Save Chart Theme   |              |                                   |
 
 
-File Menu 
+File Menu
 ----------
 
 Options in the **File** menu include printing a plot and exporting a plot to an image file. Plots can be saved as BMP, EPS, JPEG, PNG, TIFF image files or as the Shapefile format. The ASC format is a text file containing the cell values.
 
- Configure Menu 
+ Configure Menu
 ----------------
 
 The **Configure** pull-down menu contains the following options: Configure Plot, Load Configuration, and Save Configuration. <span id="_Toc197166164" class="anchor"></span>When you want to see your changes on the plot, press the **Apply** button. When you have finalized the settings for your plot, click the **OK** button to close the Configure Plot dialog box.
@@ -1302,19 +1302,19 @@ To edit a chart theme, select the **Configure** menu on the plot and then the **
 
 <a id=Figure11-6></a>
 Figure 11‑6. Top Portion of Edit Chart Theme Window
-<img src="media/image053.png"/> 
+<img src="media/image053.png"/>
 
 <a id=Figure11-7></a>
 Figure 11‑7. Bottom Portion of Edit Chart Theme (Bg=background, Grdln=grid line)
-<img src="media/image054.png"/> 
+<img src="media/image054.png"/>
 
 <a id=Figure11-8></a>
 Figure 11‑8. Select Font
-<img src="media/image055.png"/> 
+<img src="media/image055.png"/>
 
 <a id=Figure11-9></a>
 Figure 11‑9. Select Color
-<img src="media/image056.png"/> 
+<img src="media/image056.png"/>
 
 
 ###  Save Chart Theme
@@ -1323,21 +1323,21 @@ To edit a chart theme, select **Save Chart Theme** option from the Configure men
 
 <a id=Figure11-10></a>
 Figure 11‑10. Save Dialog
-<img src="media/image057.png"/> 
+<img src="media/image057.png"/>
 
 
-Controls Menu 
+Controls Menu
 --------------
 
 The **Controls** pull-down menu contains the following options: Zoom, Probe, Set Row and Column Ranges, Show Grid Lines, and Show Lat/Lon.
 
-### Zoom 
+### Zoom
 
 To zoom in and enlarge a subdomain of the plot, select the **Zoom** option. Then use your left mouse button to draw a rectangle around your region of interest on the plot. To zoom out click on the chart using your right mouse button to bring up the context menu ([Figure 11‑11](#Figure11-11)). Move your cursor over either Zoom Out or Max Zoom Out and press the left mouse button. The Zoom Out selection performs a step zoom and the Max Zoom Out selection zooms out to the full extent of the plot.
 
 <a id=Figure11-11></a>
 Figure 11‑11. Right-Click on Tile Plot to Zoom Out
-<img src="media/image058.png"/> 
+<img src="media/image058.png"/>
 
 The selections in the context menu are a little different for the time series plot. Zoom In and Zoom Out open another level of menus where you can select Both Axes, Domain Axis, or Range Axis. The Auto Range selection opens another submenu with the same 3 selections; use the Auto Range, Both Axes submenu to reset both axes to the full extent of both the domain and the range.
 
@@ -1351,7 +1351,7 @@ To probe a single data point, use the mouse to hover the cursor over a single po
 
 <a id=Figure11-12></a>
 Figure 11‑12. Click on Plot to Probe: Data Value Shown in Lower Left of VERDI, Latitude/Longitude Values Shown in Lower Right
-<img src="media/image060.png"/> 
+<img src="media/image060.png"/>
 
 #### Probing a Domain Region of Data
 
@@ -1359,7 +1359,7 @@ When you have Probe selected you can examine the values of a region of locations
 
 <a id=Figure11-13></a>
 Figure 11‑13. Data Window Showing Probed Values for Region of Interest
-<img src="media/image061.png"/> 
+<img src="media/image061.png"/>
 
 ### Set Row and Column Ranges
 
@@ -1380,7 +1380,7 @@ Use the Show Grid Lines selection on the Controls menu if you want to have grid 
 
 <a id=Figure11-16></a>
 Figure 11‑16. Show Grid Lines on a Tile Plot
-<img src="media/image064.png"/> 
+<img src="media/image064.png"/>
 
 ### Show Latitude and Longitude
 
@@ -1398,7 +1398,7 @@ The **Plot** pull-down menu ([Figure 11‑18](#Figure11-18)) contains the follow
 
 <a id=Figure11-18></a>
 Figure 11‑18. Plot Menu Options
-<img src="media/image066.png"/> 
+<img src="media/image066.png"/>
 
 
 ### Time Series Plots
@@ -1411,7 +1411,7 @@ You can create an animated plot by selecting the Animate Plot option. The Time S
 
 <a id=Figure11-19></a>
 Figure 11‑19. Animate Plot Dialog Box
-<img src="media/image067.png"/> 
+<img src="media/image067.png"/>
 
 ### Add Overlays
 
@@ -1445,11 +1445,11 @@ The center of the observational data point corresponds to the lat/lon value that
 
 <a id=Figure11-20></a>
 Figure 11‑20. Tile Plot Observation Dialog
-<img src="media/image068.png"/> 
+<img src="media/image068.png"/>
 
 <a id=Figure11-21></a>
 Figure 11‑21. Tile Plot with Observational Data Overlay
-<img src="media/image069.png"/> 
+<img src="media/image069.png"/>
 
 
 #### Vector Overlays
@@ -1474,13 +1474,13 @@ Currently, vectors are plotted in the center of the grid cell. UWIND and VWIND a
 
 <a id=Figure11-22></a>
 Figure 11‑22. Vector Overlay Dialog Box
-<img src="media/image70.png"/> 
+<img src="media/image70.png"/>
 
 An example of an ozone concentration Tile Plot with a wind vector overlay is shown in Figure 11‑25. The length of each vector is proportional to its length. The direction of the vector is calculated from the direction and magnitudes of its two components. This figure illustrates how the wind changes speed and direction in this portion of the modeling domain for layer 1, time step 1.
 
 <a id=Figure11-23></a>
 Figure 11‑23. Wind Vector Overlay on an Ozone Tile Plot
-<img src="media/image71.png"</a> 
+<img src="media/image71.png"</a>
 
 
 GIS Layers
@@ -1496,7 +1496,7 @@ A selection of default maps—including World, North America. USA States, USA Co
 
 <a id=Figure11-24></a>
 Figure 11‑24. Add Map Layers
-<img src="media/image72.png"/> 
+<img src="media/image72.png"/>
 
 As of VERDI 1.6.0 alpha release, the Tile Plot and Areal Interpolation Plot use the Shapefile format for all maps and GIS layers, the bin format is no longer used.
 
@@ -1506,7 +1506,7 @@ To show an additional map on the plot, select the **Configure GIS Layers** optio
 
 <a id=Figure11-25></a>
 Figure 11‑25. Manage Layers Dialog Box
-<img src="media/image073.png"/> 
+<img src="media/image073.png"/>
 
 -   To rearrange the order in which the GIS layers are displayed on the plot, select a layer in the Manage Layers dialog box, and then select Move Up or Move Down. Click the **OK** button to reposition the order of that layer within the list. If the layers that you are selecting are boundaries and were created to have a transparent fill, then rearranging the order of the layers will not change the look of the boundaries on the plot.
 
@@ -1526,19 +1526,19 @@ Users that need VERDI to support other projections are encouraged to provide sma
 
 <a id=Figure12-1></a>
 Figure 12‑1. Lambert Conformal Conic Map Projection Example Plot
-<img src="media/image074.png"/> 
+<img src="media/image074.png"/>
 
 <a id=Figure12-2></a>
 Figure 12‑2. Polar Stereographic Map Projection Example Plot
-<img src="media/image075.png"/> 
+<img src="media/image075.png"/>
 
 <a id=Figure12-3></a>
 Figure 12‑3. Mercator Map Projection Example Plot
-<img src="media/image076.png"/> 
+<img src="media/image076.png"/>
 
 <a id=Figure12-4></a>
 Figure 12‑4. UTM Map Projection Example Plot
-<img src="media/image077.png"/> 
+<img src="media/image077.png"/>
 
 
 CAMx Gridded Data
@@ -1548,24 +1548,24 @@ The netCDF-java library used in VERDI includes support for CAMx UAM‑IV binary 
 
 <a id=Figure12-5></a>
 Figure 12‑5. Example CAMx diagnostic text file
-<img src="media/image078.png"/> 
+<img src="media/image078.png"/>
 
 
 The netCDF-java library writes the default projection information to a text file in the directory where the CAMx binary (UAM-IV) file is located. You can then review and edit the projection information to make it consistent with the projection specified in the CAMx diagnostic text files. The definitions of the projection parameters used in the camxproj.txt file are defined using Models-3 I/O API format https://www.cmascenter.org/ioapi/documentation/3.1/html/GRIDS.html. You must edit the camxproj.txt file to match the grid description information provided in the corresponding camx.diag file. [Figure 12‑6](#Figure12-6) shows the definition for the grid projection parameters for a Lambert conformal conic projection.
 
 <a id=Figure12-6></a>
 Figure 12‑6. Models-3 I/O API Map Projection Parameters for Lambert Conformal Conic Projection
-<img src="media/image079.png"/> 
+<img src="media/image079.png"/>
 
 [Figure 12‑7](#Figure12-7) shows the values of the camxproj.txt after editing it to match the values of the camx.diag file (**Error! Reference source not found.**) using the definitions of the Models-3 grid parameters (**Error! Reference source not found.**). [Figure 12‑8](#Figure12-8) shows the resulting Tile Plot of the CAMx sample dataset.
 
 <a id=Figure12-7></a>
 Figure 12‑7. Edited Example Projection File: camxproj.txt
-<img src="media/image80.png"/> 
+<img src="media/image80.png"/>
 
 <a id=Figure12-8></a>
 Figure 12‑8. CAMx Example Plot
-<img src="media/image81.png" /> 
+<img src="media/image81.png" />
 
 
 I/O API Utilities, Data Conversion Programs, and Libraries
@@ -1607,7 +1607,7 @@ Known Bugs
 
 As discussed in Section 1.4, you are encouraged to review the VERDI FAQ <http://www.cmascenter.org/help/faq.cfm>, review the latest release notes, query the m3user listserv <http://lists.unc.edu/read/?forum=m3user> to search questions and answers, bug reports, and suggestions. Once a bug is identified through the m3user listserve, it will be added as an issue on the Github for the developers to prioritize and fix. https://github.com/CEMPD/VERDI/issues.
 
-Mathematical Functions 
+Mathematical Functions
 =======================
 
 All VERDI visualizations are the result of a formula evaluation. Formulas operate on the variables provided by the datasets. The simplest valid formula consists of a single variable; for example, “O3[1]” is the parameter O3 from current dataset 1. Using infix notation, you can construct more complicated formulas using the mathematical operators and functions listed below. (Note that the documentation below derives from the equivalent documentation for the Package for Analysis and Visualization of Environmental data [PAVE], which is available at <http://www.ie.unc.edu/cempd/EDSS/pave_doc/EntirePaveManual.html>.)
@@ -1749,34 +1749,34 @@ To open the Script Editor, use File&gt;View Script Editor ([Figure 17‑1](#Figu
 
 <a id=Figure17-1></a>
 Figure 17‑1. File: View Script Editor
-<img src="media/image082.png"/> 
+<img src="media/image082.png"/>
 
 An **Open** popup window will be displayed, click on a sample script file in the VERDI_1.5/data/scripts directory ([Figure 17‑2](#Figure17-2)).
 
 <a id=Figure17-2></a>
 Figure 17‑2. Open Popup Window
-<img src="media/image083.png"/> 
+<img src="media/image083.png"/>
 
 After you select a script file and click Open in the Open popup window, the Script Editor window ([Figure 17‑3](#Figure17-3)), the Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
 
 Unload all datasets before running a batch script within the Script Editor. If any dataset is not unloaded a warning message will pop up ([Figure 17‑5](#Figure17-5)) requesting that you close all datasets before running your batch script.
 
 <a id=Figure17-5></a>
-<img src="media/image084.png"/> 
+<img src="media/image084.png"/>
 
-Figure 17‑5) appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files. 
+Figure 17‑5) appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.
 
-<img src="media/image85.png"/> 
+<img src="media/image85.png"/>
 Figure ‑. Top of Sample Script File – VERDI\_1.5/data/scripts/file\_patterns.txt
 
-<img src="media/image86.png"/> 
+<img src="media/image86.png"/>
 Figure ‑. Bottom of Sample Script File – VERDI\_1.5/data/scripts/tile\_patterns.txt
 
 <span id="_Ref323235774" class="anchor"></span>As shown in **Error! Reference source not found.** and **Error! Reference source not found.**, the Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
 
 Unload all datasets before running a batch script within the Script Editor. If any dataset is not unloaded a warning message will pop up (Figure 17‑5) requesting that you close all datasets before running your batch script.
 
-<img src="media/image84.png"/> 
+<img src="media/image84.png"/>
 
 <span id="_Ref323235805" class="anchor"><span id="_Toc327606531" class="anchor"></span></span>Figure ‑. Close Datasets Warning Message
 
@@ -1816,13 +1816,13 @@ The image file name is specified by setting the parameter *imageFile*; imageFile
 
 Use the left mouse button to highlight the task that you would like to run and then click **Run** in the Script Editor window. A popup window then appears to indicate the task ran successfully (Figure 17‑6). In this example the title and subtitle were obtained from the definition in the global block. Aspects of the plot defined in the global block are used for multiple tasks and are applied even if only a highlighted task is run.
 
-<img src="media/image87.png"/> 
+<img src="media/image87.png"/>
 
 <span id="_Ref323235839" class="anchor"><span id="_Toc327606532" class="anchor"></span></span>Figure ‑. Highlight Text to Select Task and Click Run
 
 If you select Run without highlighting a Text Block, then the entire batch script executes and generates the plots. To edit the batch script, highlight a segment that you would like to copy and use Ctrl-C to copy the text; then click in an area where you want to paste the text and use Ctrl-V to insert the copied text. Test your changes to the script by highlighting the text block and click run. When your script executes successfully VERDI displays the popup window shown in If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in **Error! Reference source not found.**.
 
-<img src="media/image88.png"/> 
+<img src="media/image88.png"/>
 
 Figure 17‑8. Unsuccessful Batch Run
 
@@ -1846,13 +1846,13 @@ run.bat –batch
 
 ./verdi.sh –batch
 
-<img src="media/image89.png"/> 
+<img src="media/image89.png"/>
 
 <span id="_Toc327606533" class="anchor"></span>Figure ‑. Successful Batch Script Message
 
 <span id="_Ref323235856" class="anchor"></span>If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in **Error! Reference source not found.**.
 
-<img src="media/image88.png"/> 
+<img src="media/image88.png"/>
 
 <span id="_Toc327606534" class="anchor"></span>Figure ‑. Unsuccessful Batch Script Message: File not found
 
@@ -1862,7 +1862,7 @@ The VERDI Batch Editor checks to see if the path specified by the user as the im
 
 followed by the message “(No such file or directory).” Verify that you supplied the correct path and filename. The directory specified as the image directory must exist prior to running the batch command. Double-click on the file in the imageDir directory to load and view the image file in your default visualization software. **Error! Reference source not found.** illustrates the tile plot image that was generated by running the highlighted text block.
 
-<img src="media/image90.jpeg"/> 
+<img src="media/image90.jpeg"/>
 
 <span id="_Toc327606535" class="anchor"></span>Figure ‑. Plot Image Generated by Task Block
 
@@ -1907,7 +1907,7 @@ Batch Script Example:
 
 **&lt;/Task&gt;**
 
-<img src="media/image91.png"/> 
+<img src="media/image91.png"/>
 
 <span id="_Toc327606536" class="anchor"></span>Figure ‑. Tile Plot of Ozone at Time step 17, Layer 1
 
@@ -1956,7 +1956,7 @@ The mathematical functions operate over all time steps at each grid cell. Exampl
 
 **&lt;/Task&gt;**
 
-<img src="media/image92.png"/> 
+<img src="media/image92.png"/>
 
 <span id="_Toc327606537" class="anchor"></span>Figure ‑. Tile Plot of Maximum Air Temperature (aggregated over 25 time steps)
 
@@ -1984,7 +1984,7 @@ The mathematical functions operate over all time steps at each grid cell. Exampl
 
 **&lt;/Task&gt;**
 
-<img src="media/image93.png"/> 
+<img src="media/image93.png"/>
 
 <span id="_Toc327606538" class="anchor"></span>Figure ‑. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
 
@@ -2012,7 +2012,7 @@ The mathematical functions operate over all time steps at each grid cell. Exampl
 
 **&lt;/Task&gt;**
 
-<img src="media/image94.png"/> 
+<img src="media/image94.png"/>
 
 <span id="_Toc327606539" class="anchor"></span>Figure ‑. Tile Plot of Mean Ozone (aggregated over 25 time steps)
 
@@ -2040,7 +2040,7 @@ s=sum(O3\[1\])
 
 &lt;/Task&gt;
 
-<img src="media/image95.png"/> 
+<img src="media/image95.png"/>
 
 <span id="_Toc327606540" class="anchor"></span>Figure ‑. Tile Plot of the Sum of Ozone (aggregated over 25 time steps)
 
@@ -2097,7 +2097,7 @@ Example Command Line Script for Windows Users
 
 Edit the run.bat script in the VERDI\_1.5 directory by right clicking on the file and selecting edit.
 
-<img src="media/image96.png"/> 
+<img src="media/image96.png"/>
 
 <span id="_Toc327606541" class="anchor"></span>Figure ‑. Location of run.bat script in Windows
 
@@ -2121,7 +2121,7 @@ SET JAVA=..\\..\\jre1.6.0\\bin\\java
 
 Run the run.bat script by clicking on Start, then selecting Run, then either using Browse to find the run.bat or typing it in (**Error! Reference source not found.**).
 
-<img src="media/image97.png"/> 
+<img src="media/image97.png"/>
 
 <span id="_Toc327606542" class="anchor"></span>Figure ‑. Submit run.bat script from Run command
 
