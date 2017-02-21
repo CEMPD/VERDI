@@ -13,140 +13,140 @@ CB 1105
 Chapel Hill, NC 27599-1105
 Date: June 15, 2016
 
-<span id="_Toc80776013" class="anchor"></span>**Contents**
-* 1 Introduction
-  * 1.1 Background
-  * 1.2 Where to Obtain VERDI
-  * 1.3 Where to Obtain VERDI Documentation
-  * 1.4 Help Desk Support for VERDI
-  * 1.5 Future VERDI Development
-* 2 Requirements for Using VERDI
-  * 2.1 Java Runtime Environment
-  * 2.2 Memory and CPU Requirements
-  * 2.3 Requirements to Run VERDI Remotely
-  * 2.4 Graphics Requirements
-  * 2.5 Display Properties
-* 3 VERDI Installation Instructions
-  * 3.1 Installation Instructions for Linux and Mac
-  * 3.2 Installation Instructions for Windows
-  * 3.3 Installation Instructions for computer that that requires a JRE<sup>TM</sup> 7 other than what was provided in the distribution
-  * 3.4 Setting VERDI Preferences
-* 4 Starting VERDI and Getting Your Data into VERDI
-  * 4.1 Starting VERDI
-  * 4.1.1 Windows
-  * 4.1.2 Linux and Other Non-Windows JRE 7 Supported System Configurations
-  * 4.2 Main Window
-  * 4.3 Rearrange the Datasets, Formulas, and Areas Panes
-* 5 Navigating VERDI’s Main Menu Options
-  * 5.1 File Menu Options
-    * 5.1.1 Open Project
-    * 5.1.2 Save Project
-    * 5.1.3 View Script Editor
-  * 5.2 Plots Menu Options
-    * 5.2.1 Undock All Plots
-    * 5.2.2 Animate Tile Plots
-  * 5.3 Window Menu Options
-    * 5.3.1 Datasets, Areas, and Formulas
-    * 5.3.2 Script Editor
-    * 5.3.3 List of Plots
-  * 5.4 Help Menu Options
-* 6 Working with Gridded Datasets
-  * 6.1 Gridded Input File Formats
-    * 6.1.1 Model Formats
-    * 6.1.2 Observational Data Formats
-  * 6.2 Example Datasets
-  * 6.3 Adding and Removing a Dataset from a Local File System
-  * 6.4 Adding and Removing a Dataset from a Remote File System
-    * 6.4.1 Remote File Browser
-    * 6.4.2 Adding Additional Remote Hosts
-  * 6.5 Variables List
-  * 6.6 Time Steps and Layers Panels
-6.7 Saving Projects
-7 Working with Formulas
-7.1 Adding and Removing a Formula
-7.2 Example Formulas
-7.3 Selecting a Formula for Plotting
-7.4 Saving Formulas
-7.5 Time Step and Layer Ranges
-8 Working with Area Files
-8.1 Area File Formats
-8.2 Example Area File
-8.3 Requirements for Shapefiles used in Areal Interpolation
-8.4 Adding and Removing an Area File
-8.5 Areas List
-8.6 Areal Interpolation
-9 Subsetting Spatial andTemporal Data
-9.1 Specify Time Step Range
-9.2 Specify Layer Range
-9.3 Specify Domain Range
-9.4 Rules of Precedence for Subsetting Data
-10 Creating Plots
-10.1 Tile Plot
-10.1.1 Time Selection and Animation Controls
-10.1.2 Layer Selection
-10.1.3 Grid Cell Time Aggregate Statistics
-10.2 Areal Interpolation Plot
-10.2.1 Options Menu
-10.2.2 Areal Values for Polygon Segment
-10.2.3 View and Export Areal Interpolation Plot Data in Text Format
-10.2.4 Export Areal Interpolation Plot Data to Shapefiles
-10.3 Vertical Cross Section Plot
-10.4 Time Series Plot
-10.5 Time Series Bar Plot
-10.6 Scatter Plot
-10.7 Contour Plot
-11 Plot Menu Bar
-11.1 File Menu
-11.2 Configure Menu
-11.2.1 Configure Plot
-11.2.2 Save Configuration
-11.2.3 Load Configuration
-11.2.4 Load Chart Theme
-11.2.5 Edit Chart Theme
-11.2.6 Save Chart Theme
-11.3 Controls Menu
-11.3.1 Zoom
-11.3.2 Probe
-11.3.2.1 Probe at a Single Point
-11.3.2.2 Probing a Domain Region of Data
-11.3.3 Set Row and Column Ranges
-11.3.4 Show Grid Lines
-11.3.5 Show Latitude and Longitude
-11.4 Plot Menu Options
-11.4.1 Time Series Plots
-11.4.2 Animate Plots
-11.4.3 Add Overlays
-11.4.3.1 Observational Data Overlays
-11.4.3.2 Vector Overlays
-11.5 GIS Layers
-11.5.1 Add Map Layers
-11.5.2 Configure GIS Layers
-12 Supported Grid and Coordinate Systems (Map Projections)
-12.1 I/O API-formatted Data
-12.2 CAMx Gridded Data
-13 I/O API Utilities, Data Conversion Programs, and Libraries
-14 Contributing to VERDI Development
-15 Known Bugs
-16 Mathematical Functions
-16.1 Unary Functions
-16.2 Binary Operators
-16.3 Boolean Operators
-16.4 Time Step Index
-17 VERDI Batch Script Editor
-17.1 Specify hour/time step formula in batch script mode
-17.2 Mathematical function capability in batch script mode
-17.2.1 Batch Script Example: Maximum Ozone – layer 1 (Figure 17-11)
-17.2.2 Batch Script Example : Minimum Ozone – layer 1 (Figure 17-12)
-17.2.3 Batch Script Example : Mean of Ozone – layer 1 (Figure 17-13)
-17.2.4 Batch Script Example : Sum of Ozone – layer 1 (Figure 17-14)
-18 Command Line Scripting
-18.1 Example Command Line Script for Linux Users
-18.2 Example Command Line Script for Windows Users
-19 Areal Interpolation Calculations
-20 Licenses for JAVA Libraries used by VERDI
-Acknowledgments
-Data Contributions
-Data Reader Contributions
+**Contents**
+* 1 [Introduction](#introduction) 
+  * 1.1 [Background](#background)
+  * 1.2 [Where to Obtain VERDI](#-where-to-obtain-verdi)
+  * 1.3 [Where to Obtain VERDI Documentation](#where-to-obtain-verdi-documentation)
+  * 1.4 [Help Desk Support for VERDI](#help-desk-support-for-verdi)
+  * 1.5 [Future VERDI Development](#future-verdi-development)
+* 2 [Requirements for Using VERDI](#requirements-for-using-verdi)
+  * 2.1 [Java Runtime Environment](#java-runtime-environment)
+  * 2.2 [Memory and CPU Requirements](#memory-and-cpu-requirements)
+  * 2.3 [Requirements to Run VERDI Remotely](#requirements-to-run-verdi-remotely)
+  * 2.4 [Graphics Requirements](#graphics-requirements)
+  * 2.5 [Display Properties](#display-properties)
+* 3 [VERDI Installation Instructions](#verdi-installation-instructions)
+  * 3.1 [Installation Instructions for Linux and Mac](#installation-instructions-for-linux-and-mac)
+  * 3.2 [Installation Instructions for Windows](#installation-instructions-for-windows-)
+  * 3.3 [Installation Instructions for computer that that requires a JRE<sup>TM</sup> 7 other than what was provided in the distribution](#installation-instructions-for-computer-that-that-requires-a-jretm-7-other-than-what-was-provided-in-the-distribution)
+  * 3.4 [Setting VERDI Preferences](#setting-verdi-preferences)
+* 4 [Starting VERDI and Getting Your Data into VERDI](#starting-verdi-and-getting-your-data-into-verdi)
+  * 4.1 [Starting VERDI](#starting-verdi)
+  * 4.1.1 [Windows](#windows)
+  * 4.1.2 [Linux and Other Non-Windows JRE 7 Supported System Configurations](#linux-and-other-non-windows-jre-7-supported-system-configurations)
+  * 4.2 [Main Window](#main-window-)
+  * 4.3 [Rearrange the Datasets, Formulas, and Areas Panes](#rearrange-the-datasets-formulas-and-areas-panes)
+* 5 [Navigating VERDI’s Main Menu Options](#navigating-verdis-main-menu-options)
+  * 5.1 [File Menu Options](#file-menu-options)
+    * 5.1.1 [Open Project](#open-project)
+    * 5.1.2 [Save Project](#save-project)
+    * 5.1.3 [View Script Editor](#view-script-editor)
+  * 5.2 [Plots Menu Options](#plots-menu-options)
+    * 5.2.1 [Undock All Plots](#undock-all-plots)
+    * 5.2.2 [Animate Tile Plots](#animate-tile-plots)
+  * 5.3 [Window Menu Options](#window-menu-options)
+    * 5.3.1 [Datasets, Areas, and Formulas](#datasets-areas-and-formulas)
+    * 5.3.2 [Script Editor](#script-editor)
+    * 5.3.3 [List of Plots](#list-of-plots)
+  * 5.4 [Help Menu Options](#help-menu-options)
+* 6 [Working with Gridded Datasets](#working-with-gridded-datasets)
+  * 6.1 [Gridded Input File Formats](#gridded-input-file-formats)
+    * 6.1.1 [Model Formats](#model-formats)
+    * 6.1.2 [Observational Data Formats](#observational-data-formats)
+  * 6.2 [Example Datasets](#example-datasets)
+  * 6.3 [Adding and Removing a Dataset from a Local File System](#adding-and-removing-a-dataset-from-a-local-file-system)
+  * 6.4 [Adding and Removing a Dataset from a Remote File System](#adding-and-removing-a-dataset-from-a-remote-file-system)
+    * 6.4.1 [Remote File Browser](#remote-file-browser)
+    * 6.4.2 [Adding Additional Remote Hosts](#adding-additional-remote-hosts)
+  * 6.5 [Variables List](#variables-list)
+  * 6.6 [Time Steps and Layers Panels](#time-steps-and-layers-panels)
+6.7 [Saving Projects](#saving-projects)
+7 [Working with Formulas](#working-with-formulas)
+7.1 [Adding and Removing a Formula](#adding-and-removing-a-formula)
+7.2 [Example Formulas](#example-formulas)
+7.3 [Selecting a Formula for Plotting](#selecting-a-formula-for-plotting)
+7.4 [Saving Formulas](#saving-formulas)
+7.5 [Time Step and Layer Ranges](#time-step-and-layer-ranges)
+8 [Working with Area Files](#working-with-area-files)
+8.1 [Area File Formats](#area-file-formats)
+8.2 [Example Area File](#example-area-file)
+8.3 [Requirements for Shapefiles used in Areal Interpolation](#requirements-for-shapefiles-used-in-areal-interpolation)
+8.4 [Adding and Removing an Area File](#adding-and-removing-an-area-file)
+8.5 [Areas List](#areas-list)
+8.6 [Areal Interpolation](#areal-interpolation)
+9 [Subsetting Spatial and Temporal Data](#subsetting-spatial-and-temporal-data)
+9.1 [Specify Time Step Range](#specify-time-step-range)
+9.2 [Specify Layer Range](#specify-layer-range)
+9.3 [Specify Domain Range](#specify-domain-range)
+9.4 [Rules of Precedence for Subsetting Data](#rules-of-precedence-for-subsetting-data)
+10 [Creating Plots](#creating-plots)
+10.1 [Tile Plot](#tile-plot)
+10.1.1 [Time Selection and Animation Controls](#time-selection-and-animation-controls)
+10.1.2 [Layer Selection](#layer-selection)
+10.1.3 [Grid Cell Time Aggregate Statistics](#grid-cell-time-aggregate-statistics)
+10.2 [Areal Interpolation Plot](#areal-interpolation-plot)
+10.2.1 [Options Menu](#options-menu)
+10.2.2 [Areal Values for Polygon Segment](#areal-values-for-polygon-segment)
+10.2.3 [View and Export Areal Interpolation Plot Data in Text Format](#view-and-export-areal-interpolation-plot-data-in-text-format)
+10.2.4 [Export Areal Interpolation Plot Data to Shapefiles](#export-areal-interpolation-plot-data-to-shapefiles)
+10.3 [Vertical Cross Section Plot](#-vertical-cross-section-plot)
+10.4 [Time Series Plot](#time-series-plot)
+10.5 [Time Series Bar Plot](#time-series-bar-plot)
+10.6 [Scatter Plot](#scatter-plot-)
+10.7 [Contour Plot](#contour-plot)
+11 [Plot Menu Bar](#-plot-menu-bar)
+11.1 [File Menu](#file-menu-)
+11.2 [Configure Menu](#-configure-menu-)
+11.2.1 [Configure Plot](#configure-plot)
+11.2.2 [Save Configuration](#save-configuration)
+11.2.3 [Load Configuration](#load-configuration)
+11.2.4 [Load Chart Theme](#load-chart-theme)
+11.2.5 [Edit Chart Theme](#edit-chart-theme)
+11.2.6 [Save Chart Theme](#save-chart-theme)
+11.3 [Controls Menu](#controls-menu-)
+11.3.1 [Zoom](#zoom)
+11.3.2 [Probe](#probe)
+11.3.2.1 [Probe at a Single Point](#probe-at-a-single-point)
+11.3.2.2 [Probing a Domain Region of Data](#probing-a-domain-region-of-data)
+11.3.3 [Set Row and Column Ranges](#set-row-and-column-ranges)
+11.3.4 [Show Grid Lines](#show-grid-lines)
+11.3.5 [Show Latitude and Longitude](#show-latitude-and-longitude)
+11.4 [Plot Menu Options](#-plot-menu-options)
+11.4.1 [Time Series Plots(#time-series-plots)
+11.4.2 [Animate Plots](#animate-plots)
+11.4.3 [Add Overlays](#add-overlays)
+11.4.3.1 [Observational Data Overlays](#observational-data-overlays)
+11.4.3.2 [Vector Overlays](#vector-overlays)
+11.5 [GIS Layers](#gis-layers)
+11.5.1 [Add Map Layers](#add-map-layers)
+11.5.2 [Configure GIS Layers](#configure-gis-layers)
+12 [Supported Grid and Coordinate Systems (Map Projections)](#map-projections)
+12.1 [I/O API-formatted Data](#io-api-formatted-data)
+12.2 [CAMx Gridded Data](#camx-gridded-data)
+13 [I/O API Utilities, Data Conversion Programs, and Libraries]
+14 [Contributing to VERDI Development
+15 [Known Bugs
+16 [Mathematical Functions
+16.1 [Unary Functions
+16.2 [Binary Operators
+16.3 [Boolean Operators
+16.4 [Time Step Index
+17 [VERDI Batch Script Editor
+17.1 [Specify hour/time step formula in batch script mode
+17.2 [Mathematical function capability in batch script mode
+17.2.1 [Batch Script Example: Maximum Ozone – layer 1 (Figure 17-11)
+17.2.2 [Batch Script Example : Minimum Ozone – layer 1 (Figure 17-12)
+17.2.3 [Batch Script Example : Mean of Ozone – layer 1 (Figure 17-13)
+17.2.4 [Batch Script Example : Sum of Ozone – layer 1 (Figure 17-14)
+18 [Command Line Scripting
+18.1 [Example Command Line Script for Linux Users
+18.2 [Example Command Line Script for Windows Users
+19 [Areal Interpolation Calculations
+20 [Licenses for JAVA Libraries used by VERDI
+[Acknowledgments
+[Data Contributions
+[Data Reader Contributions
 
 **Figures**
 
@@ -1511,8 +1511,7 @@ Figure 11‑25. Manage Layers Dialog Box
 
 -   To remove a GIS layer from the plot, select that layer in the list and select Remove Layer. Then click the **OK** button to remove it.
 
- Supported Grid and Coordinate Systems
-(Map Projections)
+Supported Grid and Coordinate Systems (Map Projections)
 ======================================
 
 VERDI makes calls to the netCDF Java library to obtain the grid and coordinate system information about the data directly from the model data input files when the input data files are self-describing (CMAQ, SMOKE, WRF netCDF format files).
@@ -1568,8 +1567,7 @@ Figure 12‑8. CAMx Example Plot
 <img src="media/image81.png" /> 
 
 
-I/O API Utilities, Data Conversion Programs,
-and Libraries
+I/O API Utilities, Data Conversion Programs, and Libraries
 ============================================
 
 As discussed in Section 6.1, routines are available to convert gridded input data to I/O API format or new code can be written and contributed to VERDI for use by the community. The I/O API routines that have been written to convert data into this format are discussed in this section. If you are unable to use the available routines to convert your data and have a gridded dataset that VERDI is unable to read, please contact VERDI support via *m3user@listserv.unc.edu* with a description of the dataset.
