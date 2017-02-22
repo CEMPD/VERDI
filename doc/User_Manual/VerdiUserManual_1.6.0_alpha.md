@@ -567,7 +567,7 @@ You can also change the amount of the entire VERDI window that is devoted to the
 Navigating VERDI’s Main Menu Options
 ====================================
 
-[Table 5‑1](#Table5-1) illustrates the main menu options that are available on the top menu bar in VERDI’s main window (see [Figure 4‑2](#Figure4-2)). These options are discussed in detail below.
+[Table 5‑1](#Table5-1) lists the main menu options that are available on the top menu bar in VERDI’s main window (see [Table 5-1](#Table5-1)). These options are discussed in detail below.
 
 <a id=Table5-1></a>
 Table 5‑1. VERDI Main Menu Options
