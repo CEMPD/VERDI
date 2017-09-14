@@ -124,7 +124,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		LAYER_DIMENSIONS.add("nSoilLevels");
 		LAYER_DIMENSIONS.add("nFGSoilLevels");
 		LAYER_DIMENSIONS.add("nFGLevels");
-		LAYER_DIMENSIONS.add("nOznLevels,");
+		LAYER_DIMENSIONS.add("nOznLevels");
+		LAYER_DIMENSIONS.add("nEmisLevels");
 	}
 
 	
