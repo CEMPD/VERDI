@@ -66,8 +66,10 @@ public class MPASConvention extends CoordSysBuilder {
 	  List<Attribute> attrs = ncfile.getGlobalAttributes();
 	  for (Attribute attr : attrs) {
 		  //System.out.println("Attribute " + attr.getFullName() + ": " + attr.getStringValue());
-		  if ( (attr.getFullName().equalsIgnoreCase("model_name") || attr.getFullName().equalsIgnoreCase("Conventions")) &&
-				  "mpas".equalsIgnoreCase(attr.getStringValue()))
+		  if ( (attr.getFullName().equalsIgnoreCase("model_name") ||
+				  attr.getFullName().equalsIgnoreCase("Conventions")) &&
+				  "mpas".equalsIgnoreCase(attr.getStringValue()) || 
+				  attr.getFullName().equals("mesh_spec"))
 			  supported = true;
 	  }
     return supported;
