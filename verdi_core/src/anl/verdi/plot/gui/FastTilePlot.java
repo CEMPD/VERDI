@@ -99,9 +99,6 @@ import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 //import org.geotools.map.DefaultMapLayer;	// deprecated, replacing with FeatureLayer
 import org.geotools.map.FeatureLayer;
-import org.geotools.map.MapContent;
-import org.geotools.map.MapViewport;
-import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.swing.JMapPane;			// JEB Sept 2015; for mapping support in GeoTools
@@ -257,7 +254,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	private String mapFileDirectory = Mapper.getDefaultMapFileDirectory();
 
 	private //final 
-	Mapper mapper = new Mapper(mapFileDirectory);
+	Mapper mapper = null;
 
 	protected Projector projector;
 
@@ -1360,6 +1357,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			Logger.debug("projector set to: " + projector.toString());
 		}
 		gridCRS = coordinateAxes.getBoundingBoxer().getCRS();
+		
+		mapper = new Mapper(mapFileDirectory, projection, gridCRS);
 
 		// Initialize grid dimensions: timesteps, layers, rows, columns:
 

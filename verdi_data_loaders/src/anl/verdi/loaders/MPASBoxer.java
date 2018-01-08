@@ -35,28 +35,30 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.Projection;
 import ucar.unidata.geoloc.ProjectionPointImpl;
-import ucar.unidata.geoloc.projection.LambertConformal;
 import ucar.unidata.geoloc.projection.LatLonProjection;
-import ucar.unidata.geoloc.projection.Mercator;
-import ucar.unidata.geoloc.projection.Stereographic;
-import ucar.unidata.geoloc.projection.UtmProjection;
-import anl.verdi.core.VerdiConstants;
 import anl.verdi.data.BoundingBoxer;
 
 public class MPASBoxer implements BoundingBoxer {
+	
+	static CoordinateReferenceSystem PLACEHOLDER_CRS = null;
+	static {
+		try {
+			String strCRS = new LatlonWKTCreator().createWKT(new LatLonProjection());
+			PLACEHOLDER_CRS = CRS.parseWKT(strCRS);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	static final Logger Logger = LogManager.getLogger(MPASBoxer.class.getName());
 
 	MathTransformFactory mtFactory = ReferencingFactoryFinder.getMathTransformFactory(null);
 	ReferencingFactoryContainer factories = new ReferencingFactoryContainer(null);
-
-	private CoordinateReferenceSystem crs;
 	
-	//TODO - use a real projection here
 	Projection proj = null; //new LambertConformal();
 	boolean isLatLon = true;
 
@@ -96,38 +98,6 @@ public class MPASBoxer implements BoundingBoxer {
 		return proj;
 	}
 
-	private CoordinateReferenceSystem getLambert() {
-		try {
-			Map<String, Object> params = new HashMap<String, Object>();
-			params.put("name", "North_American_Datum_1983");
-//			GeodeticDatum datum = FactoryFinder.getDatumFactory(null).createGeodeticDatum(params,
-//							DefaultEllipsoid.SPHERE, DefaultPrimeMeridian.GREENWICH);
-			GeodeticDatum datum = ReferencingFactoryFinder.getDatumFactory(null).createGeodeticDatum(params,
-					DefaultEllipsoid.SPHERE, DefaultPrimeMeridian.GREENWICH);
-			params = new HashMap<String, Object>();
-			params.put("name", "NAD83");
-
-//			GeographicCRS crs = FactoryFinder.getCRSFactory(null).createGeographicCRS(params, datum,
-//							DefaultEllipsoidalCS.GEODETIC_2D);
-			GeographicCRS crs = ReferencingFactoryFinder.getCRSFactory(null).createGeographicCRS(params, datum,
-					DefaultEllipsoidalCS.GEODETIC_2D);
-			ParameterValueGroup parameters = mtFactory.getDefaultParameters("Lambert_Conformal_Conic_2SP");
-			parameters.parameter("standard_parallel_1").setValue(30);
-			parameters.parameter("standard_parallel_2").setValue(60);
-			parameters.parameter("latitude_of_origin").setValue(40);
-			parameters.parameter("longitude_of_origin").setValue(-90);
-			parameters.parameter("central_meridian").setValue(-90);
-			parameters.parameter("false_easting").setValue(0);
-			parameters.parameter("false_northing").setValue(0);
-			Map<String, String> properties = Collections.singletonMap("name", "unknown");	// changed Map to Map<String, String>
-//			return factories.createProjectedCRS(properties, crs, null, parameters, DefaultCartesianCS.GENERIC_2D);
-			CRSFactory crsFactory = factories.getCRSFactory();
-			DefiningConversion conv = new DefiningConversion("sample", parameters);
-			return crsFactory.createProjectedCRS(properties, crs, conv, DefaultCartesianCS.GENERIC_2D);
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Unable to create coordinate reference system", e);
-		}
-	}
 	
 	/**
 	 * Creates a bounding box from the specified ranges. The
@@ -198,91 +168,14 @@ public class MPASBoxer implements BoundingBoxer {
 //		Hints hints = new Hints(Hints.COMPARISON_TOLERANCE, 1E-9);	// TODO: 2014  probably need to do in beginning of VERDI
 		Hints.putSystemDefault(Hints.COMPARISON_TOLERANCE, 10e-9);*/
 
-		Projection proj = getProjection();
-
-		if (proj instanceof LambertConformal) {
-			Logger.debug("proj = " + proj.toString() + '\n' + "  projection is of type LambertConformal");
-			if (crs == null) {
-				Logger.info("NOTE: crs is null");
-				try {
-					Logger.info("within try/catch block");
-					String strCRS = new LambertWKTCreator().createWKT((LambertConformal) proj);
-					Logger.info("created strCRS = " + strCRS);
-					Logger.info("Ready to call CRS.parseWKT for LambertConformal");
-					crs = CRS.parseWKT(strCRS);	// NOTE: preferred method (docs.geotools.org/stable/userguide/library/referencing/crs.html)
-					Logger.info("parsed CRS: " + crs.toString());
-					Logger.info("done printing crs");
-				} catch (IOException ex) {
-					Logger.info("into exception handling");
-					Logger.error("Error while creating CRS for LambertConformal");
-					ex.printStackTrace();
-				} catch (FactoryException e) {
-					Logger.error("Caught FactoryException while creating CRS for LambertConformal");
-					e.printStackTrace();
-				}
-			}
-		} else if (proj instanceof UtmProjection) {
-			Logger.debug("projection is of type UtmProjection");
-			if (crs == null) {
-				Logger.info("NOTE: crs is null");
-				try {
-					Logger.info("within try/catch block");
-					String strCRS = new UtmWKTCreator().createWKT((UtmProjection) proj);
-					Logger.info("created strCRS = " + strCRS.toString());
-					Logger.info("Ready to call CRS.parseWKT for UTM Projection");
-					crs = CRS.parseWKT(strCRS);
-				} catch (Exception ex) {
-					Logger.error("Error while creating CRS for UTM " + ex.getMessage());
-				}
-			}
-		} else if (proj instanceof Stereographic) {
-			Logger.debug("projection is of type Stereographic");
-			if (crs == null) {
-				Logger.info("NOTE: crs is null");
-				try {
-					Logger.info("within try/catch block");
-					String strCRS = new PolarStereographicWKTCreator().createWKT((Stereographic) proj);
-					Logger.info("created strCRS = " + strCRS.toString());	// FAILURE CAUSE: PARAMETER["scale_factor", -98.0],
-					Logger.info("Ready to call CRS.parseWKT for Stereographic Projection");
-					crs = CRS.parseWKT(strCRS);		// FAILURE POINT
-					Logger.info("parsed CRS: " + crs.toString());
-				} catch (Exception ex) {
-					Logger.error("Error while creating CRS for Stereographic " + ex.getMessage());
-				}
-			}
-		} else if (isLatLon) {
-			if (crs == null) {
-				try {
-					String strCRS = new LatlonWKTCreator().createWKT((LatLonProjection)proj);
-					crs = CRS.parseWKT(strCRS);
-				} catch (Exception ex) {
-					Logger.error("Error while creating CRS for Lat-Lon " + ex.getMessage());
-				}
-			}
-		} else if (proj instanceof Mercator) {
-			if (crs == null) {
-				try {
-					String strCRS = new MercatorWKTCreator().createWKT((Mercator)proj);
-					crs = CRS.parseWKT(strCRS);
-				} catch (Exception e) {
-					Logger.error("Error while creating CRS for Mercator " + e.getMessage());
-				}
-			}
-		}
-
-		// TODO: add more projections here
-		else {
-			Logger.error("Projection is not recognized!!");
-		} 
-
 		//return new ReferencedEnvelope(xStart, xEnd, yStart, yEnd, crs);
-		return new ReferencedEnvelope(xMin, xMax, yMin, yMax, crs);
+		return new ReferencedEnvelope(xMin, xMax, yMin, yMax, PLACEHOLDER_CRS);
 
 	}
 	
 	public CoordinateReferenceSystem getCRS() {
-		Logger.debug("in getCRS(): returning crs = " + crs);
-		return crs;
+		//Logger.debug("in getCRS(): returning crs = " + crs);
+		return PLACEHOLDER_CRS;
 	}
 
 }

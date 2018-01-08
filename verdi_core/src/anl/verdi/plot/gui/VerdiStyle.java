@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
+import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
@@ -34,7 +35,6 @@ import org.geotools.styling.StyleFactory;
 import org.geotools.swing.styling.JSimpleStyleDialog;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.LineString;
@@ -44,6 +44,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import anl.gui.color.MoreColor;
 import anl.verdi.area.RangeLevelFilter;
+import ucar.unidata.geoloc.Projection;
 /**
  * @author Jo Ellen Brandmeyer, Institute for the Environment, 2015
  *
@@ -60,6 +61,7 @@ public class VerdiStyle {
 	private Layer vLayer = null;
 	private CoordinateReferenceSystem vCRS = null;	// CRS for this Shapefile
 	private FileDataStore vStore = null;	// this is used despite what Eclipse says!
+	private Projection vProjection = null;
 
 	public VerdiStyle(File shpFile)		// File must previously exist and be for a .shp file
 	{									// constructor called from VerdiBoundaries.java
@@ -127,15 +129,24 @@ public class VerdiStyle {
 		vLayer = null;
 		vStore = null;
 	}
+	
+	public void projectShapefile(Projection proj, CoordinateReferenceSystem targetCRS) {
+		vFeatureSource = VerdiShapefileUtil.projectShapefile(vFile.getName(), (SimpleFeatureSource)vFeatureSource, proj, targetCRS);
+		vProjection = proj;
+		vCRS = vFeatureSource.getSchema().getCoordinateReferenceSystem();
+	}
 
 	private void findFeatureSource()	// find the FeatureSource for the shapefile
 	{
-		vFeatureSource = null;
+		vFeatureSource = VerdiShapefileUtil.getCachedShapefile(vFile.getName(), vProjection, null);
+		if (vFeatureSource != null)
+			return;
+		
 		try{
 			vStore = FileDataStoreFinder.getDataStore(vFile);
-			Logger.debug("got FileDataStore = " + vStore.toString());		// JEB YES
+			Logger.debug("got FileDataStore = " + vStore);		// JEB YES
 			vFeatureSource = vStore.getFeatureSource();
-			Logger.debug("got vFeatureSource = " + vFeatureSource.toString());	// JEB YES
+			Logger.debug("got vFeatureSource = " + vFeatureSource);	// JEB YES
 		} catch (IOException ioEx) {
 			Logger.error("Data store or feature source for file " + vFile + " could not be found.", ioEx);
 		}

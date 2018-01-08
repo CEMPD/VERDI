@@ -22,6 +22,7 @@ import org.geotools.swing.JMapPane;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import anl.verdi.plot.gui.VerdiBoundaries;
+import ucar.unidata.geoloc.Projection;
 
 // Contains a set of VerdiBoundaries and draws them clipped to a domain.
 public class Mapper {
@@ -53,10 +54,33 @@ public class Mapper {
 	private List<VerdiBoundaries> layers = new CopyOnWriteArrayList<VerdiBoundaries>();
 	private boolean initialDraw = true;
 	private static String defaultMapFileDirectory = null;
+	private Projection projection;
+	private CoordinateReferenceSystem targetCRS;
+	
+	public Mapper(String directoryName) {
+		this(directoryName, null, null);
+	}
+	
+	public Mapper(Projection projection, CoordinateReferenceSystem targetCRS) {
+		this(Mapper.getDefaultMapFileDirectory(), projection, targetCRS);
+	}
+	
+	public static void cacheDefaultProjections(Projection projection, CoordinateReferenceSystem coordSys) {
+		final Projection proj = projection;
+		final CoordinateReferenceSystem crs = coordSys;
+		new Thread() { 
+			public void run() {
+				new Mapper(proj, crs);
+			}
+		}.start();
+	}
+
 	
 	// Construct with URL or directory containing the map files.
-	public Mapper(String directoryName) {
+	public Mapper(String directoryName, Projection projection, CoordinateReferenceSystem targetCRS) {
 		Logger.debug("in constructor for Mapper, directoryName = " + directoryName);
+		this.projection = projection;
+		this.targetCRS = targetCRS;
 		mapFileDirectory = directoryName + "/";
 		Logger.debug("Number of layers = " + layers.size());
 		try {
@@ -174,6 +198,20 @@ public class Mapper {
 			Logger.debug("just reset graphics color to: " + mapColor);	// OK here
 		}
 	}
+		
+	public void projectShapefiles() {
+		try {
+			getWorldMap();
+			getNorthAmericaMap();
+			getUsaStatesMap();
+			getUsaCountiesMap();
+			getUSHucMap();
+			getUSRiversMap();
+			getUSRoadsMap();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	// Choose a map based on a domain.
 	private VerdiBoundaries chooseMap(final double[][] domain) {
@@ -263,6 +301,7 @@ public class Mapper {
 		if (hucsMap == null) {
 			try {
 				hucsMap = new VerdiBoundaries();
+				hucsMap.setProjection(projection, targetCRS);
 				hucsMap.setFileName(mapFileDirectory + hucsMapFileName);
 				Logger.debug("got new VerdiBoundaries hucsMap = " + hucsMap);
 			} catch (Exception unused) {
@@ -281,6 +320,7 @@ public class Mapper {
 		if (roadsMap == null) {
 			try {
 				roadsMap = new VerdiBoundaries();
+				roadsMap.setProjection(projection, targetCRS);
 				roadsMap.setFileName(mapFileDirectory + roadsMapFileName);
 				Logger.debug("got new VerdiBoundaries roadsMap = " + roadsMap);
 			} catch (Exception unused) {
@@ -299,6 +339,7 @@ public class Mapper {
 		if (riversMap == null) {
 			try {
 				riversMap = new VerdiBoundaries();
+				riversMap.setProjection(projection, targetCRS);
 				riversMap.setFileName(mapFileDirectory + riversMapFileName);
 				Logger.debug("got new VerdiBoundaries riversMap = " + riversMap);
 			} catch (Exception unused) {
@@ -318,6 +359,7 @@ public class Mapper {
 			if (stateMap == null)
 			{
 				stateMap = new VerdiBoundaries();
+				stateMap.setProjection(projection, targetCRS);
 				stateMap.setFileName(mapFileDirectory + stateMapFileName);
 			}
 			Logger.debug("got new VerdiBoundaries stateMap = " + stateMap);
@@ -345,6 +387,7 @@ public class Mapper {
 			if (countyMap == null)
 			{
 				countyMap = new VerdiBoundaries();
+				countyMap.setProjection(projection, targetCRS);
 				countyMap.setFileName(mapFileDirectory + countyMapFileName);
 			}
 			Logger.debug("got new VerdiBoundaries countyMap = " + countyMap);
@@ -372,8 +415,9 @@ public class Mapper {
 			if (worldMap == null)
 			{
 				worldMap = new VerdiBoundaries();
+				worldMap.setProjection(projection, targetCRS);
 				worldMap.setFileName(mapFileDirectory + worldMapFileName);
-			}
+			}		
 			Logger.debug("got new VerdiBoundaries worldMap = " + worldMap);
 			return worldMap;
 		} catch (Exception e) {
@@ -398,8 +442,9 @@ public class Mapper {
 			if (northAmericaMap == null)
 			{
 				northAmericaMap = new VerdiBoundaries();
+				northAmericaMap.setProjection(projection, targetCRS);
 				northAmericaMap.setFileName(mapFileDirectory + northAmericaMapFileName);
-			}
+			}		
 			Logger.debug("got new VerdiBoundaries northAmericaMap = " + northAmericaMap);
 			return northAmericaMap;
 		} catch (Exception e) {

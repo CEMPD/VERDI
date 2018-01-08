@@ -14,34 +14,22 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.FileDataStore;
-import org.geotools.data.FileDataStoreFinder;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
-import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.FeatureLayer;
-import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
-import org.geotools.referencing.CRS;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
-import org.opengis.feature.simple.SimpleFeature;
 //import org.opengis.geometry.Geometry;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 
-import com.vividsolutions.jts.geom.Geometry;
 // VerdiBoundaries provides VerdiStyle and CRS for a shapefile (e.g., state boundaries)
 // & transforms it to the CRS of a grid file
 // independent of time & vertical layer
+
+import ucar.unidata.geoloc.Projection;
 
 public class VerdiBoundaries {
 
@@ -55,6 +43,8 @@ public class VerdiBoundaries {
 	//private FeatureSource vFeatureSource = null;
 	private MapContent vMap = null;			// 
 	//private MathTransform vTransform = null;	// math transform from shapefile to grid CRS
+	private Projection vProjection = null;
+	private CoordinateReferenceSystem vCRS = null;
 	
 	public VerdiBoundaries()		// default constructor
 	{
@@ -101,9 +91,15 @@ public class VerdiBoundaries {
 			Logger.debug("VerdiBoundaries.setFileName failed; unable to create the aVerdiStyle.");
 			return false;
 		}
+		aVerdiStyle.projectShapefile(vProjection, vCRS);
 		Logger.debug("Successfully completed VerdiBoundaries.setFileName for: " + vPath +
 				" and back from instantiating VerdiStyle.");	// JEB BACK FROM CREATING new VerdiStyle
 		return true;	// successfully set data members		// JEB YES returning to calling pgm (Mapper)
+	}
+	
+	public void setProjection(Projection proj, CoordinateReferenceSystem targetCRS) {
+		vProjection = proj;
+		vCRS = targetCRS;
 	}
 	
 	public void reset()	// reset member variables to null
@@ -141,7 +137,7 @@ public class VerdiBoundaries {
 		Logger.debug("vFile = " + vFile.toString());
 		Logger.debug("vPath = " + vPath.toString());
 		Logger.debug("vMap = " + vMap.toString());
-		Logger.debug("map Coordinate Reference System (vCRS) = " + aVerdiStyle.getCoordinateReferenceSystem().toString());
+		Logger.debug("map Coordinate Reference System (vCRS) = " + aVerdiStyle.getCoordinateReferenceSystem());
 		Logger.debug("Feature Source = " + aVerdiStyle.getFeatureSource().toString());
 		//Logger.debug("vStore = " + vStore.toString());
 		//Logger.debug("vFeatureSource = " + vFeatureSource.toString());

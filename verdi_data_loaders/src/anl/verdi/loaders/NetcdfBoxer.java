@@ -3,7 +3,6 @@
 package anl.verdi.loaders;
 
 import java.awt.geom.Point2D;
-import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,19 +18,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import ucar.nc2.dataset.CoordinateAxis1D;
-import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.Projection;
 import ucar.unidata.geoloc.ProjectionPointImpl;
-import ucar.unidata.geoloc.projection.LambertConformal;
-import ucar.unidata.geoloc.projection.LatLonProjection;
-import ucar.unidata.geoloc.projection.Mercator;
-import ucar.unidata.geoloc.projection.Stereographic;
-import ucar.unidata.geoloc.projection.UtmProjection;
 import anl.verdi.core.VerdiConstants;
 import anl.verdi.data.BoundingBoxer;
+import gov.epa.emvl.Mapper;
 
 /**
  * Bounding boxer that uses netcdf to create the bounding box.
@@ -49,7 +43,26 @@ public class NetcdfBoxer implements BoundingBoxer {
 	ReferencingFactoryContainer factories = new ReferencingFactoryContainer(null);
 
 	private GridDatatype grid;
-	private CoordinateReferenceSystem crs;
+	/** 
+	 * This is now a placeholder only, and is never used - any valid Geotools projection
+	 * could be created here.  Instead, VERDI's VerdiShapefileUtil converts all shapefiles
+	 * to lat/lon (if not already lat/lon, then uses the NetCDF projection to project the
+	 * lat/lon shapefiles into new ones that are actually used.  All instances of the 
+	 * Geotools CRS are set to the CRS created here, and Geotools won't try to do any 
+	 * further projections on the shapefiles since it thinks all CRSs are the same.  This 
+	 * allows us to use the Geotools framework to render shapefiles, while ensuring that 
+	 * they're projected properly to match the underlying NetCDF data.  We don't have to 
+	 * worry about making sure Geotools supports the NetCDF projection, or that the Geotools 
+	 * projection parameters are set to match the NetCDF ones.
+	 */
+	public static CoordinateReferenceSystem PLACEHOLDER_CRS = null;
+	static {
+		try {
+			PLACEHOLDER_CRS = CRS.decode("EPSG:2154");
+		} catch (Exception e) {
+			Logger.error("Could not create placeholder crs", e);
+		}
+	}
 	protected boolean isLatLon;
 	
 	protected NetcdfBoxer() {
@@ -59,6 +72,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 		Logger.debug("in constructor for NetcdfBoxer for a GridDatatype");
 		this.grid = grid;
 		this.isLatLon = grid.getCoordinateSystem().isLatLon();
+		Mapper.cacheDefaultProjections(getProjection(), getCRS());
 	}
 	
 	/**
@@ -242,6 +256,12 @@ public class NetcdfBoxer implements BoundingBoxer {
 //		Hints hints = new Hints(Hints.COMPARISON_TOLERANCE, 1E-9);	// TODO: 2014  probably need to do in beginning of VERDI
 		Hints.putSystemDefault(Hints.COMPARISON_TOLERANCE, 10e-9);
 
+		return new ReferencedEnvelope(xStart, xEnd, yStart, yEnd, PLACEHOLDER_CRS);
+	}
+	
+	/*
+	private CoordinateReferenceSystem createCRS() {
+		return PLACEHOLDER_CRS;
 		Projection proj = getProjection();
 		Logger.debug("proj = " + proj.toString() + '\n' + "  projection is not checked yet");
 		if (proj instanceof LambertConformal) {
@@ -303,7 +323,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 					Logger.error("Error while creating CRS for Lat-Lon " + ex.getMessage());
 				}
 			}
-		} else if (proj instanceof Mercator) {
+		} else if (proj instanceof Mercator) {			
 			if (crs == null) {
 				try {
 					String strCRS = new MercatorWKTCreator().createWKT((Mercator)proj);
@@ -311,19 +331,23 @@ public class NetcdfBoxer implements BoundingBoxer {
 				} catch (Exception e) {
 					Logger.error("Error while creating CRS for Mercator " + e.getMessage());
 				}
-			}
+			} 
 		}
 
 		// TODO: add more projections here
 		else {
 			Logger.error("Projection is not recognized!!");
 		} 
-		return new ReferencedEnvelope(xStart, xEnd, yStart, yEnd, crs);
+
+		return crs;
+		
+		
 	}
+	*/
 	
 	public CoordinateReferenceSystem getCRS() {
-		Logger.debug("in getCRS(): returning crs = " + crs);
-		return crs;
+		Logger.debug("in getCRS(): returning crs = " + PLACEHOLDER_CRS);
+		return PLACEHOLDER_CRS;
 	}
 
 	protected CoordinateAxis1D getXAxis() {

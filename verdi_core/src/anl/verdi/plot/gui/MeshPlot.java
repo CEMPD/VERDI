@@ -113,6 +113,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import saf.core.ui.event.DockableFrameEvent;
 import ucar.ma2.ArrayLogFactory;
 import ucar.ma2.InvalidRangeException;
+import ucar.unidata.geoloc.projection.LatLonProjection;
 import anl.map.coordinates.Decidegrees;
 import anl.verdi.area.MapPolygon;
 import anl.verdi.area.Units;
@@ -298,7 +299,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private String mapFileDirectory = Mapper.getDefaultMapFileDirectory();
 
 	private //final 
-	Mapper mapper = new Mapper(mapFileDirectory);
+	Mapper mapper = null;
 
 	protected Projector projector = null;
 
@@ -2244,6 +2245,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}*/
 
 		gridCRS = coordinateAxes.getBoundingBoxer().getCRS();
+				
+		mapper = new Mapper(mapFileDirectory, new LatLonProjection(), gridCRS);
 
 
 		timeAxis = axes.getTimeAxis();
@@ -3315,7 +3318,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			Query query = new Query("projectMap");
 			Logger.debug("created query");
 			// now ask to project into the CRS of the FastTilePlot axes
-			query.setCoordinateSystemReproject(getDataFrame().getAxes().getBoundingBox(getDataFrame().getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());
+			query.setCoordinateSystemReproject(gridCRS);
 			Logger.debug("setCoordinateSystemReproject");
 			controlLayer = new FeatureLayer(ds.getFeatureSource().getFeatures(query), style);
 			Logger.debug("assigned to controlLayer");
@@ -4439,8 +4442,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		g.fillRect(2, 0, 2, 2);
 		g.setColor(new Color(199990));
 		g.fillRect(3, 0, 2, 2);
-		System.out.println("Color 1 " + (imgMap.getRGB(0,  0) + COLOR_BASE) + " color 3 " + (imgMap.getRGB(3, 0) + COLOR_BASE));
-		System.out.println("Color 1 " + imgMap.getRGB(0,  0) + " color 3 " + imgMap.getRGB(3, 0));
+		//System.out.println("Color 1 " + (imgMap.getRGB(0,  0) + COLOR_BASE) + " color 3 " + (imgMap.getRGB(3, 0) + COLOR_BASE));
+		//System.out.println("Color 1 " + imgMap.getRGB(0,  0) + " color 3 " + imgMap.getRGB(3, 0));
 
 	}
 	
