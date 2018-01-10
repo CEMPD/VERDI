@@ -386,10 +386,12 @@ FormulaElementCreator, ListDataListener {
 				frame = formula.evaluate(manager, ranges, convertUnits);
 			}
 
-		} catch (IllegalFormulaException e) {
-			Logger.error("Error while evaluating formula", e);
 		} catch (Throwable e) {
 			Logger.error("Error while evaluating formula", e);
+			String errInfo = e.getClass().getName();
+			if (e.getMessage() != null && !e.getMessage().equals(""))
+				errInfo += ": " + e.getMessage();
+			JOptionPane.showMessageDialog(getGui().getFrame(), "An error occured while evaluating the formula:\n" + errInfo + "\nPlease see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);			
 		}
 
 		return frame;

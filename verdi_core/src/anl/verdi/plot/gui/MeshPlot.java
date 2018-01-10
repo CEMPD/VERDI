@@ -899,9 +899,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			restoreCursor();
 			if (dataFrame != null) { //Ignore errors if dataFrame is null - that means window is closing
 				Logger.error("Error rendering MeshPlot", t);
-				String errInfo = t.getMessage() != null ? ": " + t.getMessage() + "  \n" : ".  ";
+				String errInfo = t.getClass().getName();
+				if (t.getMessage() != null && !t.getMessage().equals(""))
+					errInfo += ": " + t.getMessage();										
 				if (app != null)
-					JOptionPane.showMessageDialog(app.getGui().getFrame(), "An error occured while rendering the plot" + errInfo + "Please see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(app.getGui().getFrame(), "An error occured while rendering the plot:\n" + errInfo + "\nPlease see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);
 				try {
 					app.getGui().getViewManager().getDockable(viewId).close();
 				} catch (Throwable tr) {}

@@ -62,9 +62,6 @@ public class FastTilePlot extends AbstractSAFAction<VerdiApplication> {
 		        panel.addPlotListener( application );
 		        Logger.debug("all done with actionPerformed");
 	      } 
-	      else {
-	    	application.getGui().showError("Error", "An error occurred while rendering the plot");
-	      }
 	    }
 	    } catch (Throwable t) {
     	    Logger.error("An error occurred while rendering the plot", t);
