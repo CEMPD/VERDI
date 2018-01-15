@@ -10,6 +10,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
+import anl.verdi.plot.util.PrintfNumberFormat;
+
 /**
  * Maps colors to a range of values.
  * 
@@ -74,6 +76,7 @@ public class ColorMap implements Serializable {
 	private double logBase = 10.0; //Math.E;
 	private PaletteType paletteType = PaletteType.QUALITATIVE;
 	private DecimalFormat format;
+	private NumberFormat printfFormat = null;
 	
 	private double logMin, logMax;
 	private double[] logIntervals;
@@ -378,9 +381,28 @@ public class ColorMap implements Serializable {
 	public void setLogBase(double base) {
 		this.logBase = base;
 //		calcLogIntervals(palette, logMin, logMax);
-	}	
-
+	}
+	
+	public String getFormatString() throws Exception {
+		return PalettePanel.getFormat(getInternalNumberFormat());
+	}
+	
+	/*
+	 * 
+	 * Verdi uses printf style formatting strings.  However, code using java's NumberFormat.format() will
+	 * display incorrectly since it uses a different pattern api.  Instead, expose PrintfNumberFormat which
+	 * uses printf style patterns, and provide getInternalNumberFormat for code that needs the java style
+	 * formats.
+	 * 
+	 */
 	public NumberFormat getNumberFormat() throws Exception {
+		if (format == null)
+			getInternalNumberFormat();
+		printfFormat = new PrintfNumberFormat(getFormatString());
+		return printfFormat;
+	}
+
+	public NumberFormat getInternalNumberFormat() throws Exception {
 		Logger.debug("in ColorMap getNumberFormat: format = " + format);
 		
 		if (format != null)

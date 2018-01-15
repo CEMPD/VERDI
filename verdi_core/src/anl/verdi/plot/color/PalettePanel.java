@@ -779,7 +779,7 @@ public class PalettePanel extends JPanel {
 		try {
 			Logger.debug("ready to try and see if getNumberFormat returns null");
 			if (colorMap.getNumberFormat() != null)
-				formatFld.setText(getFormat(colorMap.getNumberFormat()));
+				formatFld.setText(getFormat(colorMap.getInternalNumberFormat()));
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -993,7 +993,7 @@ public class PalettePanel extends JPanel {
 		return map;
 	}
 	
-	private String getFormat(NumberFormat numberFormat) {
+	public static String getFormat(NumberFormat numberFormat) {
 		Logger.debug("in PalettePanel.getFormat");
 		if (numberFormat == null)
 			return " %.3f";
@@ -1052,7 +1052,19 @@ public class PalettePanel extends JPanel {
 			//setEnabled(!autoInterval);
 			setEnabled(intervalInx == 1);
 		}
+		
+		public String getText() {
+			String text = super.getText();
+			return text;
+		}
+		
+	    public void setText(String text) {
+	    	super.setText(text);
+	    }
 	}
+	
+
+
 
 	public ColorMap.PaletteType getPaletteType() {
 		Logger.debug("in PalettePanel.getPaletteType");
