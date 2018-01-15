@@ -590,8 +590,7 @@ public class PalettePanel extends JPanel {
 						max = min;
 						min = tmp;
 					}
-					//Don't reset the color palette - the user may have made changes
-					//Palette palette = (Palette) paletteList.getSelectedValue();
+
 					ColorMap oldMap = model.getColorMap();
 					ColorMap map = null; //new ColorMap(palette, sType, min, max);	
 					boolean chgColorMap = false;	// default is to not change the color map
@@ -600,10 +599,13 @@ public class PalettePanel extends JPanel {
 					} else {
 						map = new ColorMap();
 						chgColorMap = true;
+						//Don't reset the color palette unless the user chnaged color maps- the user
+						//may have made changes
+						Palette palette = (Palette) paletteList.getSelectedValue();
+						map.setPalette(palette);
+						map.setPaletteType(getPaletteType());	
 					}
-					//Don't reset the color palette - the user may have made changes
-					//map.setPalette(palette);
-					//map.setPaletteType(getPaletteType());					
+				
 					ColorMap.ScaleType sType = ColorMap.ScaleType.LINEAR;
 					if ( scaleType.getSelectedIndex() == 1) {
 						sType = ColorMap.ScaleType.LOGARITHM;
