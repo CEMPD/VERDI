@@ -322,6 +322,9 @@ public class TilePlot {
 			int yMinimum, int yMaximum, int firstRow, int lastRow,
 			int firstColumn, int lastColumn) {
 
+		Integer dLabelCnt = (Integer) config.getObject(TilePlotConfiguration.DOMAIN_TICK_NUMBER);
+		Integer rLabelCnt = (Integer) config.getObject(TilePlotConfiguration.RANGE_TICK_NUMBER);
+
 		final int xAxisOffset = 5; // Pixel offset left of west edge of grid.
 		final int yAxisOffset = 5; // Pixel offset below south edge of grid.
 		final int xTicLength = 5; // Pixel legth of tic mark on X-axis.
@@ -339,8 +342,10 @@ public class TilePlot {
 
 		final float xDelta = labelWidth * 3;
 		final float yDelta = labelHeight * 2;
-		final int xTics = Math.min(columns, replaceRound(xRange / xDelta + 0.5f));
-		final int yTics = Math.min(rows, replaceRound(yRange / yDelta + 0.5f));
+		int xTics = Math.min(columns, replaceRound(xRange / xDelta + 0.5f));
+		int yTics = Math.min(rows, replaceRound(yRange / yDelta + 0.5f));
+		xTics = dLabelCnt != null ? Math.min(xTics, dLabelCnt) : xTics;
+		yTics = rLabelCnt != null ? Math.min(yTics,  rLabelCnt) : yTics;
 		final int columnStep = columns / xTics;
 		final int rowStep = rows / yTics;
 		final int fSize = graphics.getFont().getSize();
@@ -351,7 +356,6 @@ public class TilePlot {
 
 		String domainX = config.getString(PlotConfiguration.DOMAIN_LABEL);
 		Boolean dShowTick = (Boolean) config.getObject(PlotConfiguration.DOMAIN_SHOW_TICK);
-		Integer dLabelCnt = (Integer) config.getObject(TilePlotConfiguration.DOMAIN_TICK_NUMBER);
 		Color domainClr = config.getColor(PlotConfiguration.DOMAIN_COLOR);
 		Color domainTickClr = config.getColor(PlotConfiguration.DOMAIN_TICK_COLOR);
 		Font domainFont = config.getFont(PlotConfiguration.DOMAIN_FONT);
@@ -365,7 +369,6 @@ public class TilePlot {
 		Color rangeTickClr = config.getColor(PlotConfiguration.RANGE_TICK_COLOR);
 		Font rangeFont = config.getFont(PlotConfiguration.RANGE_FONT);
 		Font rangeTickFont = config.getFont(PlotConfiguration.RANGE_TICK_FONT);
-		Integer rLabelCnt = (Integer) config.getObject(TilePlotConfiguration.RANGE_TICK_NUMBER);
 		rShowTick = (rShowTick == null ? true : rShowTick);
 		boolean[] rLevelValues = getLevelValues(rLabelCnt == null ? yTics : rLabelCnt, rows / rowStep + 1);
 
