@@ -91,8 +91,6 @@ public class PalettePanel extends JPanel {
 	private JTextField fldLogBase;
 	private JLabel lblLogBase;	
 	private JButton reverseBtn;
-
-	private boolean isForFastTitle = false;
 	
 	public void enableScale( boolean enable) {
 		this.scaleType.setEnabled( enable);
@@ -430,14 +428,14 @@ public class PalettePanel extends JPanel {
 					}
 					
 					
-					String minConv = "F";
-					String maxConv = "F";
+					String minConv = "f";
+					String maxConv = "f";
 					
 					if (Math.abs(min) < 0.001)
-						minConv = "E";
+						minConv = "e";
 
 					if (Math.abs(max) < 0.001)
-						maxConv = "E";
+						maxConv = "e";
 
 					minFld.setText(String.format("%.6" + minConv, min));
 					maxFld.setText(String.format("%.6" + maxConv, max));
@@ -483,14 +481,14 @@ public class PalettePanel extends JPanel {
 						e.printStackTrace();
 					}
 					
-					String minConv = "F";
-					String maxConv = "F";
+					String minConv = "f";
+					String maxConv = "f";
 					
 					if (Math.abs(min) < 0.001)
-						minConv = "E";
+						minConv = "e";
 
 					if (Math.abs(max) < 0.001)
-						maxConv = "E";
+						maxConv = "e";
 
 					minFld.setText(String.format("%.6" + minConv, min));
 					maxFld.setText(String.format("%.6" + maxConv, max));
@@ -521,14 +519,14 @@ public class PalettePanel extends JPanel {
 						e.printStackTrace();
 					}
 					
-					String minConv = "F";
-					String maxConv = "F";
+					String minConv = "f";
+					String maxConv = "f";
 					
 					if (Math.abs(min) < 0.001)
-						minConv = "E";
+						minConv = "e";
 
 					if (Math.abs(max) < 0.001)
-						maxConv = "E";
+						maxConv = "e";
 
 					minFld.setText(String.format("%.6" + minConv, min));
 					maxFld.setText(String.format("%.6" + maxConv, max));
@@ -643,14 +641,14 @@ public class PalettePanel extends JPanel {
 						e.printStackTrace();
 					}
 
-					String minConv = "F";
-					String maxConv = "F";
+					String minConv = "f";
+					String maxConv = "f";
 
 					if (Math.abs(min) < 0.001)
-						minConv = "E";
+						minConv = "e";
 
 					if (Math.abs(max) < 0.001)
-						maxConv = "E";
+						maxConv = "e";
 
 					minFld.setText(String.format("%.6" + minConv, min));
 					maxFld.setText(String.format("%.6" + maxConv, max));
@@ -1087,18 +1085,12 @@ public class PalettePanel extends JPanel {
 		model.resetPaletteType(getPaletteType());
 	}
 
-	public void setForFastTitle(boolean isForFastTitle) {
+	public void setForFastTitle() {
 		Logger.debug("in PalettePanel.setForFastTitle");
-		this.isForFastTitle = isForFastTitle;
 		ColorMap.IntervalType iType = ColorMap.IntervalType.AUTOMATIC;
 		ColorMap.ScaleType sType = ColorMap.ScaleType.LINEAR;
 		
 		if ( this.model != null && this.model.getColorMap() != null) {
-			if ( isForFastTitle ){
-				this.model.getColorMap().setPlotType( ColorMap.PlotType.FAST_TILE);
-			} else {
-				this.model.getColorMap().setPlotType( ColorMap.PlotType.OTHER);
-			}
 			sType = this.model.getColorMap().getScaleType();
 			iType = this.model.getColorMap().getIntervalType();
 		}
@@ -1111,23 +1103,15 @@ public class PalettePanel extends JPanel {
 			Logger.debug("Error: IntervalType should not be Logarithm");
 		}
 		
-		if ( this.isForFastTitle //&& this.model.getColorMap().getStatType() == ColorMap.StatType.NONE 
-		    ) {
-			this.labelScale.setVisible( true);
-			this.scaleType.setVisible( true);
-			if ( sType == ColorMap.ScaleType.LOGARITHM) {
-				this.scaleType.setSelectedIndex(1);
-			} else {
-				this.scaleType.setSelectedIndex(0);
-			}			
+
+		this.labelScale.setVisible( true);
+		this.scaleType.setVisible( true);
+		if ( sType == ColorMap.ScaleType.LOGARITHM) {
+			this.scaleType.setSelectedIndex(1);
 		} else {
-			this.labelScale.setVisible( false);
-			this.scaleType.setVisible( false);
-		}	
+			this.scaleType.setSelectedIndex(0);
+		}			
+	
 	}
 
-	public boolean isForFastTitle() {
-		Logger.debug("in PalettePanel.isForFastTitle");
-		return isForFastTitle;
-	}
 }

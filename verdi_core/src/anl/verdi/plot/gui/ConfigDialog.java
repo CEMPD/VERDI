@@ -165,10 +165,8 @@ public class ConfigDialog extends JDialog {
 			initOverlays(config);
 		}
 
-		if ( plot instanceof FastTilePlot && colorMapPanel != null ){	// GTTilePlot
-			colorMapPanel.setForFastTitle( true);
-		} else {
-			colorMapPanel.setForFastTitle( false);
+		if (colorMapPanel != null ){	// GTTilePlot
+			colorMapPanel.setForFastTitle();
 		}
 	}
 
@@ -275,7 +273,7 @@ public class ConfigDialog extends JDialog {
 		String title = config.getTitle(); // plot.getTitle(); Feb 2016 use config here like everything else 
 		String showTitle = config.getShowTitle();
 		boolean bShowTitle = true; 
-		if (showTitle.compareTo("FALSE") == 0)
+		if (showTitle != null && showTitle.compareTo("FALSE") == 0)
 			bShowTitle = false;
 		titlesPanel.initTitle(bShowTitle, title,	// title != null && !title.trim().isEmpty(), title, 
 				(Font) config.getObject(PlotConfiguration.TITLE_FONT), 

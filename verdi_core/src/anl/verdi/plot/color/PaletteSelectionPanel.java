@@ -127,10 +127,10 @@ public class PaletteSelectionPanel extends JPanel {
 		palettePanel.initMap(map, minMax);
 	}
 	
-	public void setForFastTitle(boolean isForFastTile) {
+	public void setForFastTitle() {
 		Logger.debug("in PaletteSelectionPanel.setForFastTitle");
 		if ( palettePanel != null) {
-			palettePanel.setForFastTitle( isForFastTile );
+			palettePanel.setForFastTitle();
 		}
 	}	
 	
