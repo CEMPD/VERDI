@@ -210,7 +210,15 @@ public class ConfigDialog extends JDialog {
 						.getFont(PlotConfiguration.DOMAIN_FONT), config
 						.getColor(PlotConfiguration.DOMAIN_COLOR));
 		
-		Formula.Type plottype = (Formula.Type)config.getObject(PlotConfiguration.PLOT_TYPE); //NOTE: to differentiate time series plots
+		Object type = config.getObject(PlotConfiguration.PLOT_TYPE);
+		Formula.Type plottype = null;
+		if (type != null) {
+			if (type instanceof Formula.Type)
+				plottype = (Formula.Type)type;
+			else if (type instanceof String)
+				plottype = Formula.Type.valueOf((String)type);
+		}
+		
 		String domainLabelFormat = config.getString(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT);
 		
 		if (plottype != null && plottype == Formula.Type.TIME_SERIES_BAR) {
