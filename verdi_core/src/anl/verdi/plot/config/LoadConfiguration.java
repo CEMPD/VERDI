@@ -45,7 +45,7 @@ public class LoadConfiguration extends AbstractAction {
 				config.merge(newConfig);
 				plot.configure(config, Plot.ConfigSource.FILE);
 			} catch (IOException ex) {
-				Logger.error("Error loading configuration " + ex.getMessage());
+				Logger.error("Error loading configuration", ex);
 			}
 		}
 	}
