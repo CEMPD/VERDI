@@ -177,7 +177,7 @@ public class ColorMapLoader extends DefaultHandler2 {
 			try {
 				map.setNumberFormat(format);
 			} catch (Exception e) {
-				throw new SAXException(e.getMessage());
+				throw new SAXException(e);
 			}
 		}
 	}

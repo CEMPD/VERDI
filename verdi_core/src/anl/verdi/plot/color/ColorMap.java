@@ -386,6 +386,8 @@ public class ColorMap implements Serializable {
 	 */
 	public void setNumberFormat(DecimalFormat myFormat)
 	{
+		if (myFormat == null)
+			return;
 		Logger.debug("in ColorMap setNumberFormat for DecimalFormat: myformat = " + myFormat.toPattern());
 		format = myFormat;
 		Logger.debug("minimumIntegerDigits = " + format.getMinimumIntegerDigits() + 
