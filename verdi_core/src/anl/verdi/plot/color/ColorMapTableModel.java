@@ -98,7 +98,7 @@ public class ColorMapTableModel extends AbstractTableModel {
 			}
 			
 			try {
-				return String.format(map.getFormatString(), interval);
+				return String.format("%" + map.getFormatString(), interval);
 			} catch (Exception e) {
 				//throw e;
 			}

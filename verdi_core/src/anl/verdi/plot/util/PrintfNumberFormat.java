@@ -13,7 +13,7 @@ public class PrintfNumberFormat extends NumberFormat {
 	String pattern = null;
 	
 	public PrintfNumberFormat(String pattern) {
-		this.pattern = pattern;
+		this.pattern = "%" + pattern;
 	}
 	
     public StringBuffer format(double number,

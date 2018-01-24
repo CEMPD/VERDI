@@ -4996,6 +4996,14 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		updatedInfo[0] = min;
 		updatedInfo[1] = max;
 		updatedInfo[2] = percentComplete;
+		if (map != null) {
+			if (isLog)
+				map.setLogMinMax(min, max);
+			else
+				map.setMinMax(min, max);
+		}
+		
+			
 		//if (preStatIndex < 1) {
 		if (isLog == log) {
 			updateLegendLevels();

@@ -25,6 +25,8 @@ public class ColorMap implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	static final Logger Logger = LogManager.getLogger(ColorMap.class.getName());
+	
+	private static final String DEFAULT_NUMBER_FORMAT = "-2.3f";
 
 	public enum IntervalType {
 		CUSTOM, AUTOMATIC 
@@ -71,7 +73,7 @@ public class ColorMap implements Serializable {
 	
 	private double logBase = 10.0; //Math.E;
 	private PaletteType paletteType = PaletteType.QUALITATIVE;
-	private DecimalFormat format;
+	private String formatString = null;
 	private NumberFormat printfFormat = null;
 	
 	private double logMin, logMax;
@@ -79,7 +81,7 @@ public class ColorMap implements Serializable {
 	
 	private IntervalType intervalType = IntervalType.AUTOMATIC;
 	private ScaleType scaleType = ScaleType.LINEAR;
-
+	
 	public ColorMap() {
 		palette = new Palette(new Color[0], "", false);
 	}
@@ -309,7 +311,7 @@ public class ColorMap implements Serializable {
 	}
 	
 	public String getFormatString() throws Exception {
-		return PalettePanel.getFormat(getInternalNumberFormat());
+		return formatString;
 	}
 	
 	/*
@@ -321,83 +323,29 @@ public class ColorMap implements Serializable {
 	 * 
 	 */
 	public NumberFormat getNumberFormat() throws Exception {
-		if (format == null)
-			getInternalNumberFormat();
-		printfFormat = new PrintfNumberFormat(getFormatString());
-		return printfFormat;
-	}
-
-	public NumberFormat getInternalNumberFormat() throws Exception {
-		Logger.debug("in ColorMap getNumberFormat: format = " + format);
-		
-		if (format != null)
-		{
-			Logger.debug("in ColorMap.getNumberFormat, returning format = " + format.toPattern());
-			return format;
-		}
-		
-		if ( this.scaleType == ScaleType.LOGARITHM) {
-			Logger.debug("have FAST_TILE and LOGARITHM");
-			String strMin = String.valueOf(logMin);
-			String strMax = String.valueOf(logMax);
-
-			if (strMin.contains("E") || strMax.contains("E") || 
-					strMin.contains("e") || strMax.contains("e") ||
-					strMin.contains("G") || strMax.contains("G") ||
-					strMin.contains("g") || strMax.contains("g") )				{
-				Logger.debug("have E,e,G, or g returning 0.000E0");
-				return new DecimalFormat("0.000E0");
+		if (formatString == null)
+			formatString = DEFAULT_NUMBER_FORMAT;
+		if (printfFormat == null) {
+			try {
+				printfFormat = new PrintfNumberFormat(formatString);
+			} catch (Throwable e) {
+				printfFormat = new DecimalFormat(formatString);
 			}
-			Logger.debug("returnning 0.000");
-			return new DecimalFormat("0.000");
+			
 		}
-		Logger.debug("have FAST_TILE and other than LOGARITHM");
-		String strMin = String.valueOf(min);
-		String strMax = String.valueOf(max);
-		Logger.debug("in getNumberFormat: strMin = " + strMin + ", strMax = " + strMax);
-
-		if (strMin.contains("E") || strMax.contains("E") || 
-				strMin.contains("e") || strMax.contains("e") ||
-				strMin.contains("G") || strMax.contains("G") ||
-				strMin.contains("g") || strMax.contains("g") )			{
-			Logger.debug("one of these formats contains E,e,G, or g so returning DecimalFormat(0.000E0)");
-			return new DecimalFormat("0.000E0");
-		}
-
-		Logger.debug("E not in Min or Max so returning DecimalFormat(0.000)");
-		return new DecimalFormat("0.000");			
-
-	}
-
-	public void setNumberFormat(NumberFormat format) throws Exception {	// not currently called 5/2016
-		Logger.debug("in ColorMap setNumberFormat for NumberFormat: format = " + ((DecimalFormat)format).toPattern());
-		if (!(format instanceof DecimalFormat))
-		{
-			Logger.debug("Number format: " + format.toString() + " is not supported.");
-			throw new Exception("Number format: " + format.toString()
-					+ " is not supported.");
-		}
-		this.format = (DecimalFormat) format;
+		return printfFormat;
 	}
 	
 	/**
 	 * setNumberFormat	set the DecimalFormat in the colorMap to what the user entered
 	 * @param aNumberFormat
 	 */
-	public void setNumberFormat(DecimalFormat myFormat)
+	public void setFormatString(String pattern)
 	{
-		if (myFormat == null)
+		if (pattern == null)
 			return;
-		Logger.debug("in ColorMap setNumberFormat for DecimalFormat: myformat = " + myFormat.toPattern());
-		format = myFormat;
-		Logger.debug("minimumIntegerDigits = " + format.getMinimumIntegerDigits() + 
-				", maximumIntegerDigits = " + format.getMaximumIntegerDigits());
-		Logger.debug("minimumFractionDigits = " + format.getMinimumFractionDigits() + 
-				", maximumFractionDigits = " + format.getMaximumFractionDigits());
-		Logger.debug("Currency = " + format.getCurrency());
-		Logger.debug("decimalSeparator = " + format.getDecimalFormatSymbols().getDecimalSeparator() + 
-				", groupingSeparator = " + format.getDecimalFormatSymbols().getGroupingSeparator() + 
-				", exponentSeparator = " + format.getDecimalFormatSymbols().getExponentSeparator());
+		formatString = pattern;
+		printfFormat = null;
 	}
 	
 	public void setMinMax(double min, double max) {
