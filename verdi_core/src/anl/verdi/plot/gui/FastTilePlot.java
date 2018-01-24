@@ -3153,7 +3153,14 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		double ty = -(screeny-yHeightOffset+0.5)/yScale+yMinimum;					
 		double[] longitudeLatitude = { 0.0, 0.0 };
 		
-		projector.unproject(tx, ty, longitudeLatitude);
+		if (projector != null)
+			projector.unproject(tx, ty, longitudeLatitude);
+		else { //LatLonProjection
+			longitudeLatitude[0] = tx;
+			longitudeLatitude[1] = ty;
+		}
+			
+			
 		
 		return new Decidegrees(longitudeLatitude[1], longitudeLatitude[0]);
 	}
