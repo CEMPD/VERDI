@@ -6,6 +6,8 @@ import java.text.ParsePosition;
 
 public class PrintfNumberFormat extends NumberFormat {
 	
+	Exception creation = new Exception("New PrintfNumberFormat");
+	
 	/**
 	 * 
 	 */
@@ -33,6 +35,10 @@ public class PrintfNumberFormat extends NumberFormat {
             FieldPosition pos) {
 	return toAppendTo.append(String.format(pattern,  number));	
 	}
+    
+    public String toPattern() {
+    	return pattern.substring(1);
+    }
 
 	@Override
 	public Number parse(String source, ParsePosition parsePosition) {
