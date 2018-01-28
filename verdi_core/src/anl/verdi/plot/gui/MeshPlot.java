@@ -317,6 +317,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	protected //final 
 	DataFrame dataFrame;
 	protected DataFrame dataFrameLog;
+	protected DataFrame currentDataFrame;
 	protected List<OverlayObject> obsData = new ArrayList<OverlayObject>();
 	protected List<ObsAnnotation> obsAnnotations;
 	protected VectorAnnotation vectAnnotation;
@@ -897,7 +898,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		} catch (Throwable t) {
 			VerdiGUI.unlock();
 			restoreCursor();
-			if (dataFrame != null) { //Ignore errors if dataFrame is null - that means window is closing
+			if (currentDataFrame != null) { //Ignore errors if dataFrame is null - that means window is closing
 				Logger.error("Error rendering MeshPlot", t);
 				String errInfo = t.getClass().getName();
 				if (t.getMessage() != null && !t.getMessage().equals(""))
@@ -1650,7 +1651,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}
 		
 		public double getValue() {
-			return source.getValue(renderVariable, dataFrame, cellIndex, timestep - firstTimestep, layer - firstLayer);
+			return source.getValue(currentVariable, currentDataFrame, cellIndex, timestep - firstTimestep, layer - firstLayer);
 		}
 		
 		public int getId() {
@@ -1885,6 +1886,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	
 	
 	ArrayReader renderVariable = null;
+	ArrayReader logRenderVariable = null;
+	ArrayReader currentVariable = null;
 	
 	LoadConfiguration loadConfig = null;
 	SaveConfiguration saveConfig = null;
@@ -1932,8 +1935,16 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		cellInfo = new LocalCellInfo[cellsToRender.length];
 		Map<MeshCellInfo, Integer> splitCells = dataset.getSplitCells();
 		splitCellInfo = new HashMap<LocalCellInfo, Integer>();
-		
 		renderVariable = ArrayReader.getReader(dataFrame.getArray());
+		
+		if (this.log) {
+			currentVariable = logRenderVariable;
+			currentDataFrame = dataFrameLog;
+		}
+		else {
+			currentVariable = renderVariable;
+			currentDataFrame = dataFrame;
+		}
 		dataRatio = dataset.getDataRatio();
 		previousClippedDataRatio = clippedDataRatio;
 		clippedDataRatio = dataRatio;
@@ -2046,7 +2057,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		synchronized (legendLock) {
 		for (int i = 0; i < cellsToRender.length; ++i) {
 			LocalCellInfo cell = getCellInfo(i);
-			getCellInfo(i).colorIndex = indexOfObsValue((float)cell.getValue(), legendLevels);
+			cell.colorIndex = indexOfObsValue((float)cell.getValue(), legendLevels);
 		}
 		
 		for (LocalCellInfo cell : splitCellInfo.keySet()) {
@@ -2160,8 +2171,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					(double)lastColumn + columnOrigin,
 					(double)firstRow + rowOrigin,
 					(double)lastRow + rowOrigin,
-					variable, renderVariable,
-					dataFrame,
+					variable, currentVariable,
+					currentDataFrame,
 					timestep,
 					layer,
 					cellsToRender);
@@ -2346,7 +2357,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		//populate legend colors and ranges on initiation
 
 		//default to not a log scale
-		this.log = false;
+		enableLog(false);
 		//calculate the non log min/max values, keep the code here
 		//first part of IF ELSE will use the min/max values
 		Logger.info("Calculating data range " + new Date());
@@ -2358,8 +2369,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			map = new ColorMap(defaultPalette, plotMinMaxCache[0], plotMinMaxCache[1]);
 		} else {
 			ColorMap.ScaleType sType = map.getScaleType();
-			if ( sType != null && sType == ColorMap.ScaleType.LOGARITHM ) 
-				this.log = true;
+			if ( sType != null && sType == ColorMap.ScaleType.LOGARITHM ) {
+				enableLog(true);
+			}
 		if(map.getPalette() == null)
 		{
 			Logger.debug("map.getPalette is null so calling new PavePaletteCreator");
@@ -2606,7 +2618,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			this.statError = true;
 			if ( map != null && map.getScaleType() == ColorMap.ScaleType.LOGARITHM) {
 				this.preLog = true;
-				this.log = false;
+				enableLog(false);
 				if ( this.tilePlot != null) {
 					this.tilePlot.setLog( false);
 				}
@@ -3520,7 +3532,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			ColorMap.ScaleType sType = map.getScaleType();
 			this.preLog = this.log;
 			if ( sType == ColorMap.ScaleType.LOGARITHM ) {
-				this.log = true;
+				if (logRenderVariable == null)
+					logRenderVariable = ArrayReader.getReader(dataFrameLog.getArray());
+				enableLog(true);
 				if ( this.tilePlot != null) {
 					this.tilePlot.setLog( true);
 					this.tilePlot.setLogBase( (int)map.getLogBase());
@@ -3538,7 +3552,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				}
 
 			} else {
-				this.log = false;
+				enableLog(false);
 				if ( this.tilePlot != null) {
 					this.tilePlot.setLog( false);
 				}				
@@ -3583,7 +3597,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			ColorMap.ScaleType sType = map.getScaleType();
 			this.preLog = this.log;
 			if ( sType == ColorMap.ScaleType.LOGARITHM ) {
-				this.log = true;
+				enableLog(true);
 				if ( this.tilePlot != null) {
 					this.tilePlot.setLog( true);
 					this.tilePlot.setLogBase( (int)map.getLogBase());
@@ -3600,7 +3614,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				}
 
 			} else {
-				this.log = false;
+				enableLog(false);
 				if ( this.tilePlot != null) {
 					this.tilePlot.setLog( false);
 				}				
@@ -3629,6 +3643,21 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}
 	}	
 
+	private void enableLog(boolean enabled) {
+		if (this.log != enabled)
+			dataChanged = true;
+		this.log = enabled;
+		if (enabled) {
+			if (logRenderVariable == null)
+				logRenderVariable = ArrayReader.getReader(dataFrameLog.getArray());
+			currentVariable = logRenderVariable;
+			currentDataFrame = dataFrameLog;
+		} else {
+			currentVariable = renderVariable;
+			currentDataFrame = dataFrame;
+		}
+
+	}
 	private void updateColorMap(ColorMap map) {
 		this.map = map;
 		
@@ -4075,7 +4104,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	protected void calculateVisibleMinMax() {
 		// If not zoomed use default zoom
 		if (zoomFactor == 1) {
-			MinMaxInfo info = dataset.getTimestepMinMax(dataFrame, layer, timestep);
+			MinMaxInfo info = dataset.getTimestepMinMax(currentDataFrame, layer, timestep);
 			if (info != null && info.getCompletion() == 100) {
 				MeshCellInfo cell = cellsToRender[info.getMinIndex()];
 				currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = info.getMin();
@@ -4242,9 +4271,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		Set<MeshCellInfo> minCells = new HashSet<MeshCellInfo>();
 		double min = Double.POSITIVE_INFINITY;
 		double value = 0;
-		MPASDataFrameIndex index = new MPASDataFrameIndex(dataFrame);
+		MPASDataFrameIndex index = new MPASDataFrameIndex(currentDataFrame);
 		for (MeshCellInfo cell : cellsToRender) {
-			value = cell.getValue(renderVariable, dataFrame, index, timestep - firstTimestep, layer - firstLayer);
+			value = cell.getValue(currentVariable, currentDataFrame, index, timestep - firstTimestep, layer - firstLayer);
 			if (value == min)
 				minCells.add(cell);
 			else if (value < min) {
@@ -4260,9 +4289,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		Set<MeshCellInfo> maxCells = new HashSet<MeshCellInfo>();
 		double max = Double.NEGATIVE_INFINITY;
 		double value;
-		MPASDataFrameIndex index = new MPASDataFrameIndex(dataFrame);
+		MPASDataFrameIndex index = new MPASDataFrameIndex(currentDataFrame);
 		for (MeshCellInfo cell : cellsToRender) {
-			value = cell.getValue(renderVariable, dataFrame, index, timestep - firstTimestep, layer - firstLayer);
+			value = cell.getValue(currentVariable, currentDataFrame, index, timestep - firstTimestep, layer - firstLayer);
 			if (value == max)
 				maxCells.add(cell);
 			else if (value > max) {
@@ -4339,7 +4368,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			slice.setCellRange(cell.getId(), 1);
 			
 			try {
-				DataFrame subsection = new MPASPlotDataFrame(label, renderVariable.getArray(), slice, dataFrame.getVariable(), dataFrame.getAxes(), dataset);
+				DataFrame subsection = new MPASPlotDataFrame(label, currentVariable.getArray(), slice, currentDataFrame.getVariable(), currentDataFrame.getAxes(), dataset);
 				request.addItem(subsection, true);
 			} catch (InvalidRangeException e1) {
 				Logger.error("InvalidRangeException in FastTilePlot.requestTimeSeries: " + e1.getMessage());
@@ -4363,7 +4392,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 			try {
 				String label = formatLatLon(cell.getLon(), cell.getLat(), cell.getId(), false, 0, 0);
-				DataFrame subsection = new MPASPlotDataFrame(label, renderVariable.getArray(), slice, dataFrame.getVariable(), dataFrame.getAxes(), dataset);
+				DataFrame subsection = new MPASPlotDataFrame(label, currentVariable.getArray(), slice, currentDataFrame.getVariable(), currentDataFrame.getAxes(), dataset);
 
 			
 				request.addItem(subsection);
@@ -4482,7 +4511,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			MeshCellInfo cell = localCell.getSource();
 			double value;
 			if (preStatIndex < 1)
-				value = cell.getValue(renderVariable, dataFrame, hoverCellIndex, timestep - firstTimestep, layer - firstLayer);
+				value = cell.getValue(currentVariable, currentDataFrame, hoverCellIndex, timestep - firstTimestep, layer - firstLayer);
 			else
 				value = statisticsData[preStatIndex - 1][0][cell.getId()];
 			if (cell != null) {
@@ -4682,9 +4711,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
 		float[][] exportCellData = new float[1][cellsToRender.length];
 		
-		MPASDataFrameIndex index = new MPASDataFrameIndex(dataFrame);
+		MPASDataFrameIndex index = new MPASDataFrameIndex(currentDataFrame);
 		for ( int cell = 0; cell < cellsToRender.length; ++cell ) {
-			exportCellData[0][cell] = (float)cellsToRender[cell].getValue(renderVariable, dataFrame, index, timestep - firstTimestep, layer - firstLayer);
+			exportCellData[0][cell] = (float)cellsToRender[cell].getValue(currentVariable, currentDataFrame, index, timestep - firstTimestep, layer - firstLayer);
 		}
 		ASCIIGridWriter.write( baseFileName + ".asc",
 		1, cellsToRender.length,
@@ -5083,7 +5112,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	
 	private void initLayerCache(int maxLayer) {
 		for (int i = 0; i < maxLayer; ++i) {
-			MinMaxInfo info = dataset.getLayerMinMax(dataFrame, i, this);
+			MinMaxInfo info = dataset.getLayerMinMax(currentDataFrame, i, this);
 			int minIndex = info.getMinIndex();
 			if (minIndex < 0) //Has not been calculated yet - break and wait for notifications
 				break;
@@ -5477,7 +5506,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	}
 	
 	private MeshDataReader createDataReader() {
-		MeshDataReader dataReader = new MeshDataReader(renderVariable, dataFrame, cellIndex, 0, 0);
+		MeshDataReader dataReader = new MeshDataReader(currentVariable, currentDataFrame, cellIndex, 0, 0);
 		return dataReader;
 	}
 
