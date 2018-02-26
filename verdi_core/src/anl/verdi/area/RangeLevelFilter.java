@@ -14,18 +14,36 @@ public class RangeLevelFilter implements PropertyIsEqualTo {
 	float cutoff;
 	boolean unselectedOnly;
 	
+	/* Geotools has a bug where filters continue being applied after the first match.
+	 * initialFilter and matchFound allows a list of filters to know and stop processing
+	 * after the initial match.
+	 */
+	boolean initialFilter = false;
+	static ThreadLocal<Boolean> matchFound = new ThreadLocal<Boolean>();
+	
 	public RangeLevelFilter(double cutoff, boolean unselectedOnly) {
 		this.cutoff = (float)cutoff;
 		this.unselectedOnly = unselectedOnly;
 	}
 	
+	public void setInitialFilter(boolean initial) {
+		initialFilter = initial;
+	}
+	
 	@Override
 	public boolean evaluate(Object object) {
+		if (initialFilter)
+			matchFound.set(Boolean.FALSE);
+		else if (Boolean.TRUE.equals(matchFound.get()))
+				return false;				
+		
 		boolean ret = true;
 		if (unselectedOnly)
 			ret = matchUnSelected(object);
 		if (ret)
 			ret = matchRange(object);
+		if (ret)
+			matchFound.set(Boolean.TRUE);
 		return ret;
 	}
 	

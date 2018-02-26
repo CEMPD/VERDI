@@ -765,7 +765,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 								tilePlot.setRenderVars(xTranslation, coordFormat, currentMinMaxCache);
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									screenWidth, screenHeight, stepsLapsed, MeshPlot.this.layer, aRow,
-									bRow, aCol, bCol, legendLevels,
+									bRow, aCol, bCol, null, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
 									aPlotUnits, 
 									config, aNumberFormat, gridLineColor,
@@ -798,7 +798,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 							renderCells(offScreenGraphics, xOffset, yOffset, true);
 						
 						if (renderMode == MODE_INTERPOLATION) {
-							mapPolygon.draw(tilePlot, domain, gridBounds, gridCRS,legendLevels,
+							mapPolygon.draw(tilePlot, domain, gridBounds, gridCRS, null, legendLevels,
 									legendColors,offScreenGraphics, dataset.getAllCellsArray(), renderReader ,units,firstColumn,firstRow,
 									xOffset, yOffset, width, height,currentView, isShowSelectedOnly());
 						}

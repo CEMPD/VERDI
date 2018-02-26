@@ -28,6 +28,7 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
+import anl.verdi.area.target.Target;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.Projection;
 import ucar.unidata.geoloc.ProjectionPointImpl;
@@ -131,12 +132,18 @@ public class VerdiShapefileUtil {
     	
     }
 
-
-	
     public static FeatureSource projectShapefile(String filename, SimpleFeatureSource sourceShapefile, Projection targetProjection, CoordinateReferenceSystem targetCRS) {
+    	return projectShapefile(filename, sourceShapefile, targetProjection, targetCRS, false);
+    }
+
+	//targetProjection - NetCDF projection used to create map data
+    //targetCRS - CRS that Verdi determines the map to be using
+    public static FeatureSource projectShapefile(String filename, SimpleFeatureSource sourceShapefile, Projection targetProjection, CoordinateReferenceSystem targetCRS, boolean mapTargets) {
     	SimpleFeatureSource convertedSource = getCachedShapefile(filename, targetProjection, sourceShapefile);
         if (convertedSource != null)
         	return convertedSource;
+        if (targetProjection == null)
+        	return sourceShapefile;
         
         if (sourceShapefile.getSchema().getCoordinateReferenceSystem().getCoordinateSystem().toString().toLowerCase().indexOf("longitude") == -1) {
         	//Not in lat/lon, reproject
@@ -178,7 +185,10 @@ public class VerdiShapefileUtil {
 	                	Polygon[] targetGeometries = new Polygon[sourceGeometry.getNumGeometries()];
 	                	for (int i = 0; i < targetGeometries.length; ++i) {
 	                		Geometry internalGeometry = sourceGeometry.getGeometryN(i);
-	                		targetGeometries[i] = projectPolygon((Polygon)internalGeometry, targetProjection);	
+	                		targetGeometries[i] = projectPolygon((Polygon)internalGeometry, targetProjection);
+	    	                if (mapTargets) {
+	    	                	Target.mapProjection(internalGeometry, targetGeometries[i]);
+	    	                }
 	                	}
 	                	
 	                	targetGeometry = geometryFactory.createMultiPolygon(targetGeometries);
@@ -188,13 +198,15 @@ public class VerdiShapefileUtil {
 	                	LineString[] targetGeometries = new LineString[sourceGeometry.getNumGeometries()];
 	                	for (int i = 0; i < targetGeometries.length; ++i) {
 	                		Geometry internalGeometry = sourceGeometry.getGeometryN(i);
-	                		targetGeometries[i] = projectLineString((LineString)internalGeometry, targetProjection);	
+	                		targetGeometries[i] = projectLineString((LineString)internalGeometry, targetProjection);
+	    	                if (mapTargets) {
+	    	                	Target.mapProjection(internalGeometry, targetGeometries[i]);
+	    	                }
 	                	}
 	                	targetGeometry = geometryFactory.createMultiLineString(targetGeometries);
 	                } else {
 	                	throw new IllegalArgumentException("Unsupported shapefile type: " + sourceGeometry.getClass());
 	                }
-	                
 	
 	                copy.setDefaultGeometry(targetGeometry);
 	                writer.write();

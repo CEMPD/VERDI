@@ -7,6 +7,7 @@ package anl.verdi.area;
 
 import gov.epa.emvl.Projector;
 import gov.epa.emvl.TilePlot;
+import ucar.unidata.geoloc.Projection;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -86,14 +87,14 @@ public class AreaTilePlot extends TilePlot{
 	
 	public synchronized void draw(final Graphics graphics, int xOffset, int yOffset,
 			int width, int height, int steplapse, int layer, int firstRow,
-			int lastRow, int firstColumn, int lastColumn,
+			int lastRow, int firstColumn, int lastColumn, Projection projection,
 			final double[] legendLevels, final Color[] legendColors,
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
 			final Color gridLineColor, final float[][] data, final byte[][] colorIndexCache) {
 		draw(graphics, xOffset, yOffset, width, height, steplapse, layer, firstRow, lastRow,
-				firstColumn, lastColumn, legendLevels, legendColors, axisColor, labelColor, variable,
+				firstColumn, lastColumn, projection, legendLevels, legendColors, axisColor, labelColor, variable,
 				units, config, format, gridLineColor, data);
 	}
 
@@ -132,6 +133,7 @@ public class AreaTilePlot extends TilePlot{
 			int timelapse, int layer,
 			int firstRow, int lastRow,
 			int firstColumn, int lastColumn,
+			Projection projection,
 			final double[] legendLevels,
 			final Color[] legendColors,
 			final Color axisColor,
@@ -189,14 +191,14 @@ public class AreaTilePlot extends TilePlot{
 					firstRow, lastRow, firstColumn, lastColumn,
 					legendLevels, legendColors, data );
 			// draw the area polygons
-			mapPolygon.draw(this, domain, gridBounds, gridCRS,legendLevels,
+			mapPolygon.draw(this, domain, gridBounds, gridCRS, projection, legendLevels,
 					legendColors,graphics, data,units,firstColumn,firstRow,
 					xOffset, yOffset, width, height,currentView, tilePlotPanel.isShowSelectedOnly());
 			break;
 		case AVERAGES:
 			float[][] allData=tilePlotPanel.getAllLayerData();
 			// draw the area polygons
-			mapPolygon.draw(this, domain, gridBounds, gridCRS,legendLevels,
+			mapPolygon.draw(this, domain, gridBounds, gridCRS, projection, legendLevels,
 					legendColors,graphics, allData,units,firstColumn,firstRow,
 					xOffset, yOffset, width, height,currentView,tilePlotPanel.isShowSelectedOnly() );
 			mouseOverOK = true;
@@ -213,7 +215,7 @@ public class AreaTilePlot extends TilePlot{
 					xOffset, yOffset, width, height,currentView ,tilePlotPanel.isShowSelectedOnly() );*/
 			mouseOverOK = true;
 //			tilePlotPanel.calculateTotalLevels();
-			mapPolygon.draw(this, domain, gridBounds, gridCRS,legendLevels,
+			mapPolygon.draw(this, domain, gridBounds, gridCRS, projection, legendLevels,
 					legendColors,graphics, allData2,units,firstColumn,firstRow,
 					xOffset, yOffset, width, height,currentView,tilePlotPanel.isShowSelectedOnly() );
 			break;	

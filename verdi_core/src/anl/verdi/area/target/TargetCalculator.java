@@ -13,6 +13,8 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.referencing.CRS;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
@@ -98,7 +100,7 @@ public class TargetCalculator extends LongTask {
 		return factory;
 	}
 	
-  public boolean calculateIntersections(ArrayList targets,DataFrame dataFrame, TilePlot plot) {
+  public boolean calculateIntersections(ArrayList targets,DataFrame dataFrame, AreaTilePlot plot) {
 	  
 	    statMessage = "Calculating Intersections...";
 	    Logger.debug("TargetCalculator.calculateIntersections for multiple args " + statMessage);
@@ -192,7 +194,9 @@ public class TargetCalculator extends LongTask {
 	        statMessage = "Polygon " + target + " (" + (targetNum + 1) + " of " + targets.size() + ")";
 	        Logger.debug(statMessage);
 
-	        Geometry obj = target.dataObject;
+	        CoordinateReferenceSystem gridCRS = null;
+;
+	        Geometry obj = target.getGeometry(null, null);
 	        
 	        // if it hasn't been done yet
 	        if(!target.areaCalculatedForGrid(num)){
@@ -382,7 +386,7 @@ public class TargetCalculator extends LongTask {
 	        statMessage = "Polygon " + target + " (" + (targetNum + 1) + " of " + targets.size() + ")";
 	        Logger.debug(statMessage);
 
-	        Geometry obj = target.dataObject;
+	        Geometry obj = target.getGeometry(new LatLonProjection(), CRS.decode("EPSG:4326"));
 	        
 	        // if it hasn't been done yet
 	        if(!target.areaCalculatedForGrid(num)){

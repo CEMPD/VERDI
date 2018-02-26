@@ -248,6 +248,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	private float[][][] statisticsData = null;
 	//private float[][][] statisticsDataLog = null;
 	protected CoordinateReferenceSystem gridCRS = null;	// axes -> ReferencedEnvelope -> gridCRS
+	Projection projection = null;
 
 	// For clipped/projected/clipped map lines:
 
@@ -605,7 +606,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 //									subsetLayerData);
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									width, height, stepsLapsed, layer, firstRow + rowOrigin,
-									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, legendLevels,
+									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, projection, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
 									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
 									subsetLayerData, colorIndexCache);
@@ -1347,7 +1348,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		final Dataset dataset = dataFrame.getDataset().get(0);
 		final Axes<CoordAxis> coordinateAxes = dataset.getCoordAxes();
-		final Projection projection = coordinateAxes.getProjection();
+		projection = coordinateAxes.getProjection();
 		Logger.debug("NOTE: in FastTilePlot using Projection = coordinateAxes.getProjection(), = " + 
 				projection.getName());
 		Logger.debug("coordinateAxes.getProjection = " + projection);
@@ -1685,6 +1686,12 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			domain[LATITUDE][MINIMUM] = gridBounds[Y][MINIMUM];
 			domain[LATITUDE][MAXIMUM] = gridBounds[Y][MAXIMUM];
 		}
+	}
+	
+	public Projection getPojection() {
+		if (projector == null)
+			return null;
+		return projector.getProjection();
 	}
 
 	// Compute map domain from grid bounds:

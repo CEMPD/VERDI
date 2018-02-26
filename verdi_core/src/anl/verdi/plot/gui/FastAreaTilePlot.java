@@ -137,6 +137,9 @@ public class FastAreaTilePlot extends FastTilePlot {
 	    	TargetCalculator calc = new TargetCalculator();
 	    	// get all the polygons in the grid
 
+	    	Projection proj = null;
+	    	if (projector != null)
+	    		proj = projector.getProjection();
 			CoordinateTransform filter = calc.new CoordinateTransform(projector);
 			Target.setCurrentTilePlot((AreaTilePlot)tilePlot);
 			Target.setCurrentGridInfo(((AreaTilePlot)tilePlot).getGridInfo());
@@ -149,7 +152,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 				Target target = ((Target)targets.get(targetNum));
 				if (isShowSelectedOnly() && !target.isSelectedPolygon())
 					continue;
-				Geometry poly = (Geometry)target.getGeometry().clone();
+				Geometry poly = (Geometry)target.getGeometry(proj, gridCRS).clone();
 				for(int i=0;i<((MultiPolygon)poly).getNumGeometries();i++){
 					if (i > 0)
 						throw new UnsupportedOperationException("Multiple polygons per target not allowed");

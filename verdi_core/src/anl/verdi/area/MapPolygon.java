@@ -8,6 +8,7 @@ package anl.verdi.area;
 import gov.epa.emvl.MPASTilePlot;
 import gov.epa.emvl.Numerics;
 import gov.epa.emvl.TilePlot;
+import ucar.unidata.geoloc.Projection;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
+import org.geotools.data.FeatureSource;
+import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
@@ -32,6 +35,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import anl.verdi.area.target.Target;
 import anl.verdi.data.MeshCellInfo;
 import anl.verdi.data.MeshDataReader;
+import anl.verdi.plot.gui.VerdiShapefileUtil;
 import anl.verdi.plot.gui.VerdiStyle;
 
 //import visad.Unit;
@@ -57,17 +61,17 @@ public class MapPolygon {
 	}
 	
 	public void draw( TilePlot plot,final double[][] domain, final double[][] gridBounds,
-			final CoordinateReferenceSystem gridCRS, double[] legendLevels,Color[] legendColors, 
+			final CoordinateReferenceSystem gridCRS, Projection projection, double[] legendLevels,Color[] legendColors, 
 			final Graphics graphics,float[][] data,String units,int firstColumn,int firstRow,
 			int xOffset, int yOffset, int width, int height,int currentView, boolean showSelectedOnly ) {
-		draw(plot, domain, gridBounds, gridCRS, legendLevels, legendColors, graphics, data, null, units,
+		draw(plot, domain, gridBounds, gridCRS, projection, legendLevels, legendColors, graphics, data, null, units,
 				firstColumn, firstRow, xOffset, yOffset, width, height, currentView, showSelectedOnly);
 	}
 	
 	// Draw domain-clipped projected grid-clipped polygons to graphics:
 
 	public void draw( TilePlot plot,final double[][] domain, final double[][] gridBounds,
-			final CoordinateReferenceSystem gridCRS, double[] legendLevels,Color[] legendColors, 
+			final CoordinateReferenceSystem gridCRS, Projection projection, double[] legendLevels,Color[] legendColors, 
 			final Graphics graphics,Object data, MeshDataReader reader, String units,int firstColumn,int firstRow,
 			int xOffset, int yOffset, int width, int height,int currentView, boolean showSelectedOnly ) {
 		
@@ -110,7 +114,10 @@ public class MapPolygon {
 			
 			//graphics.setColor(Color.BLACK); //TODO - vColor from VerdiBoundaries
 						
-			Layer aLayer = new FeatureLayer(style.getFeatureSource(), shapeStyle);
+			FeatureSource source = style.getFeatureSource();
+		    source = VerdiShapefileUtil.projectShapefile(style.getShapePath(), (SimpleFeatureSource)source, projection, gridCRS, true);
+
+			Layer aLayer = new FeatureLayer(source, shapeStyle);
 			vMap.addLayer(aLayer);
 			vMap.getViewport().setCoordinateReferenceSystem(gridCRS);
 			ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], gridCRS);

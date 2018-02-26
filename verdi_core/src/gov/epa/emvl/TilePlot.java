@@ -33,6 +33,7 @@ import anl.verdi.plot.gui.ObsAnnotation;
 import anl.verdi.plot.gui.ObsAnnotation.Symbol;
 import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;		// 2014 to handle footer date/time correctly
+import ucar.unidata.geoloc.Projection;
 
 /**
  * @invariant startDate >= 1900001
@@ -85,6 +86,8 @@ public class TilePlot {
 	private boolean log = false;
 	private int logBase = 10; //Math.E;
 	protected int xTranslation = 0;
+	
+	Projection proj = null;
 	
 //	static int callInx = 1;
 
@@ -140,20 +143,20 @@ public class TilePlot {
 	
 	public synchronized void draw(final Graphics graphics, int xOffset, int yOffset,
 			int width, int height, int steplapse, int layer, int firstRow,
-			int lastRow, int firstColumn, int lastColumn,
+			int lastRow, int firstColumn, int lastColumn, Projection projection,
 			final double[] legendLevels, final Color[] legendColors,
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
 			final Color gridLineColor, final float[][] data) {
 		draw(graphics, xOffset, yOffset, width, height, steplapse, layer, firstRow,
-				lastRow, firstColumn, lastColumn, legendLevels, legendColors, axisColor,
+				lastRow, firstColumn, lastColumn, projection, legendLevels, legendColors, axisColor,
 				labelColor, variable, units, config, format, gridLineColor, data, null);
 	}
 	
 	public synchronized void draw(final Graphics graphics, int xOffset, int yOffset,
 			int width, int height, int steplapse, int layer, int firstRow,
-			int lastRow, int firstColumn, int lastColumn,
+			int lastRow, int firstColumn, int lastColumn, Projection projection,
 			final double[] legendLevels, final Color[] legendColors,
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,

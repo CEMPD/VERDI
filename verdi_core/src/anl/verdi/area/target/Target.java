@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-
 //import javax.measure.converters.UnitConverter;
 //import javax.measure.converter.UnitConverter;
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
@@ -41,15 +40,14 @@ import org.unitsofmeasurement.unit.UnitConverter;
 
 import anl.verdi.area.Area;
 import anl.verdi.area.AreaFile;
-import anl.verdi.area.AreaTilePlot;
 import anl.verdi.area.Units;
 import anl.verdi.data.DataUtilities;
 import anl.verdi.data.MeshCellInfo;
 import anl.verdi.data.MeshDataReader;
 import anl.verdi.plot.gui.VerdiStyle;
 import anl.verdi.util.VUnits;
-import gov.epa.emvl.MPASTilePlot;
 import gov.epa.emvl.TilePlot;
+import ucar.unidata.geoloc.Projection;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
@@ -167,7 +165,7 @@ public class Target implements Area{
 		}
 	}
 	
-	public Geometry getGeometry() {
+	public Geometry getGeometry(Projection projection, CoordinateReferenceSystem crs) {
 		return dataObject;
 	}
 	
@@ -419,16 +417,35 @@ public class Target implements Area{
 	public static ArrayList getTargets() {
 		return targets;
 	}
-
+	
 	/** 
 	 * Find a target that corresponds to a given polygon
 	 * @param obj the Geometry object
 	 * @return the target that matches
 	 */
 	public static Target getTarget(Geometry obj) {
-		return geometryMap.get(obj);
+		Target tgt = null;//projectionMap.get(new GeometryWrapper(obj));
+		if (obj instanceof MultiPolygon) {
+			if (((MultiPolygon)obj).getNumGeometries() > 1) {
+				return null;
+			}
+			obj = ((MultiPolygon)obj).getGeometryN(0);
+		}
+		if (tgt == null)
+			tgt = geometryMap.get(obj);
+		return tgt;
 	}
-	
+		
+	public static void mapProjection(Geometry source, Geometry projected) {
+		Target tgt = geometryMap.get(source);
+		if (projected instanceof MultiPolygon) {
+			Geometry nested = ((MultiPolygon)projected).getGeometryN(0);
+			geometryMap.put(nested, tgt);
+			
+		} else
+			geometryMap.put(projected, tgt);
+	}
+		
 	public static Target linearSearchGeometry(Geometry obj) {
 		for (int i = 0; i < targets.size(); i++) {
 			Target data = (Target)targets.get(i);

@@ -230,7 +230,7 @@ public class VerdiStyle {
 		        rules[numRules--] = rule;
 	        }
         }
-
+        ((RangeLevelFilter)rules[0].getFilter()).setInitialFilter(true);
         
         FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(rules);
         Style rangeStyle = styleFactory.createStyle();
