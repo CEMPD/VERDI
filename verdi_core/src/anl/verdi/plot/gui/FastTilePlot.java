@@ -2372,6 +2372,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 //				showGISLayersDialog();	// 2015 CHANGEd THIS TO BRING UP FILE BROWSER FOR .SHP FILES
 				File selectFile = JFileDataStoreChooser.showOpenFile("shp", null);
 				VerdiBoundaries aVerdiBoundaries = new VerdiBoundaries();
+				aVerdiBoundaries.setProjection(projection, gridCRS);
 				aVerdiBoundaries.setFileName(selectFile.getAbsolutePath());
 				mapper.getLayers().add(aVerdiBoundaries);
 			}
