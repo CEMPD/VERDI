@@ -195,7 +195,7 @@ public class VerdiBoundaries {
 		Rectangle outputArea = new Rectangle(xOffset, yOffset, width, height);
 		renderer.paint((Graphics2D)graphics, outputArea, vMap.getViewport().getBounds());
 	}	// end of draw function
-	
+		
 	public MapContent getMap()	// send vMap back to calling program
 	{
 		return vMap;

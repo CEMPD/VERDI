@@ -386,7 +386,7 @@ public class TargetCalculator extends LongTask {
 	        statMessage = "Polygon " + target + " (" + (targetNum + 1) + " of " + targets.size() + ")";
 	        Logger.debug(statMessage);
 
-	        Geometry obj = target.getGeometry(new LatLonProjection(), CRS.decode("EPSG:4326"));
+	        Geometry obj = target.getGeometry(null, null);
 	        
 	        // if it hasn't been done yet
 	        if(!target.areaCalculatedForGrid(num)){

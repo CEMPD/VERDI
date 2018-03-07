@@ -23,18 +23,23 @@ import java.util.Set;
 
 import org.geotools.data.FeatureSource;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
+import org.geotools.referencing.CRS;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
+import org.opengis.feature.Feature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import anl.verdi.area.target.Target;
 import anl.verdi.data.MeshCellInfo;
 import anl.verdi.data.MeshDataReader;
+import anl.verdi.plot.gui.VerdiBoundaries;
 import anl.verdi.plot.gui.VerdiShapefileUtil;
 import anl.verdi.plot.gui.VerdiStyle;
 
@@ -56,6 +61,15 @@ public class MapPolygon {
 	
 	private boolean cachedShowSelectedOnly = false;
 
+	public static CoordinateReferenceSystem PLACEHOLDER_CRS = null;
+	static {
+		try {
+			PLACEHOLDER_CRS = CRS.decode("EPSG:2154");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public MapPolygon(TilePlot plot){
 		tilePlot = plot;
 	}
@@ -115,7 +129,7 @@ public class MapPolygon {
 			//graphics.setColor(Color.BLACK); //TODO - vColor from VerdiBoundaries
 						
 			FeatureSource source = style.getFeatureSource();
-		    source = VerdiShapefileUtil.projectShapefile(style.getShapePath(), (SimpleFeatureSource)source, projection, gridCRS, true);
+		    source = VerdiShapefileUtil.projectShapefile(style.getShapePath(), (SimpleFeatureSource)source, projection, PLACEHOLDER_CRS, true);
 
 			Layer aLayer = new FeatureLayer(source, shapeStyle);
 			vMap.addLayer(aLayer);

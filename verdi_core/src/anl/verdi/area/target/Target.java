@@ -437,6 +437,9 @@ public class Target implements Area{
 	}
 		
 	public static void mapProjection(Geometry source, Geometry projected) {
+		if (source instanceof MultiPolygon)
+			source = ((MultiPolygon)source).getGeometryN(0);
+		
 		Target tgt = geometryMap.get(source);
 		if (projected instanceof MultiPolygon) {
 			Geometry nested = ((MultiPolygon)projected).getGeometryN(0);

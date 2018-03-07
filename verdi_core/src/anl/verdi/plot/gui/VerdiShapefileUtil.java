@@ -92,6 +92,8 @@ public class VerdiShapefileUtil {
 	                Geometry geometry2 = JTS.transform(geometry, transform);
 	
 	                copy.setDefaultGeometry(geometry2);
+                	Target.mapProjection(geometry, geometry2);
+
 	                writer.write();
 	            }
 	            transaction.commit();
@@ -145,7 +147,8 @@ public class VerdiShapefileUtil {
         if (targetProjection == null)
         	return sourceShapefile;
         
-        if (sourceShapefile.getSchema().getCoordinateReferenceSystem().getCoordinateSystem().toString().toLowerCase().indexOf("longitude") == -1) {
+       // if (sourceShapefile.getSchema().getCoordinateReferenceSystem().getCoordinateSystem().toString().toLowerCase().indexOf("longitude") == -1) {
+        if (sourceShapefile.getSchema().getCoordinateReferenceSystem().toString().indexOf("WGS84") == -1) {
         	//Not in lat/lon, reproject
         	sourceShapefile = projectionToLatLon(sourceShapefile);
         } else if (targetProjection instanceof LatLonProjection)
