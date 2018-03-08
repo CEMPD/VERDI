@@ -64,7 +64,7 @@ public class MapPolygon {
 	public static CoordinateReferenceSystem PLACEHOLDER_CRS = null;
 	static {
 		try {
-			PLACEHOLDER_CRS = CRS.decode("EPSG:2154");
+			PLACEHOLDER_CRS = CRS.decode("EPSG:4326");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

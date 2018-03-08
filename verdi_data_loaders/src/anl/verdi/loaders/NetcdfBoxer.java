@@ -58,7 +58,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 	public static CoordinateReferenceSystem PLACEHOLDER_CRS = null;
 	static {
 		try {
-			PLACEHOLDER_CRS = CRS.decode("EPSG:2154");
+			PLACEHOLDER_CRS = CRS.decode("EPSG:4326");
 		} catch (Exception e) {
 			Logger.error("Could not create placeholder crs", e);
 		}
