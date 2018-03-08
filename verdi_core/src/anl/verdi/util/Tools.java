@@ -104,7 +104,7 @@ public class Tools {
 	public static String getIconsDir() {
 		if (iconsDir == null) {
 			// Standalone path
-			String icons = getVerdiHome() + File.separator + "plugins" + File.separator + "core" + File.separator + "icons" + File.separator;
+			String icons = ".." + File.separator + "core" + File.separator + "icons" + File.separator;
 			if (new File(icons).exists())
 				iconsDir = icons;
 			else {

@@ -40,7 +40,7 @@ public class SplashPanel extends JPanel {
 		BufferedImage aBufferedImage = ImageIO.read(imageInputFile);
 		g2d.drawImage(aBufferedImage, null, 0, 0);
 	} catch (IOException e) {
-		System.err.println("Failure reading splash.jpg");
+		System.err.println("Failure reading " + pathName);
 		e.printStackTrace();
 		System.exit(ERROR);
 	}
