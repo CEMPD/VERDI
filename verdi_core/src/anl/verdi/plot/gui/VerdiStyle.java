@@ -10,6 +10,8 @@ package anl.verdi.plot.gui;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;		// using log4j instead of System.out.println for messages
 import org.apache.logging.log4j.Logger;
@@ -18,6 +20,7 @@ import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
 import org.geotools.map.Layer;
 import org.geotools.styling.FeatureTypeStyle;
@@ -59,6 +62,8 @@ public class VerdiStyle {
 	private File vFile = null;			// File associated with this Shapefile
 	private String shpPath = null;		// path (as a String) to this Shapefile
 	private Layer vLayer = null;
+	private Layer pannedLayer = null;
+	List<Layer> layerList = null;
 	private CoordinateReferenceSystem vCRS = null;	// CRS for this Shapefile
 	private FileDataStore vStore = null;	// this is used despite what Eclipse says!
 	private Projection vProjection = null;
@@ -134,6 +139,27 @@ public class VerdiStyle {
 		vFeatureSource = VerdiShapefileUtil.projectShapefile(vFile.getName(), (SimpleFeatureSource)vFeatureSource, proj, targetCRS);
 		vProjection = proj;
 		vCRS = vFeatureSource.getSchema().getCoordinateReferenceSystem();
+		
+		double xMin = targetCRS.getCoordinateSystem().getAxis(0).getMinimumValue();
+		double xMax = targetCRS.getCoordinateSystem().getAxis(0).getMaximumValue();
+		double panX = 0;
+		double crsWidth = xMax - xMin;
+		try {
+			ReferencedEnvelope bounds = vFeatureSource.getBounds();
+			if (bounds.getWidth() / crsWidth >= 359 / 360) { //map spans the globe
+				if (bounds.getMinX() < xMin && bounds.getMaxX() > xMin)
+					panX = crsWidth;
+				else if (bounds.getMinX() < xMax && bounds.getMaxX() > xMax)
+					panX -= crsWidth;
+				if (panX != 0) {
+					SimpleFeatureSource pannedMap = VerdiShapefileUtil.panShapefile((SimpleFeatureSource)vFeatureSource, panX, 0);
+					//pannedLayer = new FeatureLayer(pannedMap, vStyle);
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void findFeatureSource()	// find the FeatureSource for the shapefile
@@ -385,13 +411,20 @@ public class VerdiStyle {
 		vStyle = aStyle;			// set the style from another part of the program
 	}
 	
-	public Layer getLayer()			// get Layer based on FeatureSource and Style
+	public List<Layer> getLayers()			// get Layer based on FeatureSource and Style
 	{
 		if(vLayer == null)
 		{
 			vLayer = new FeatureLayer(vFeatureSource, vStyle);
 		}
-		return vLayer;
+		if (layerList == null) {
+			layerList = new ArrayList<Layer>();
+			layerList.add(vLayer);
+			if (pannedLayer != null)
+				layerList.add(pannedLayer);
+		}
+			
+		return layerList;
 	}
 	
 	public CoordinateReferenceSystem getCoordinateReferenceSystem()	// get CoordinateReferenceSystem

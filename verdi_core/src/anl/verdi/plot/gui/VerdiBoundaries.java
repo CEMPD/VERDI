@@ -18,6 +18,7 @@ import java.io.File;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
@@ -141,7 +142,7 @@ public class VerdiBoundaries {
 		Logger.debug("Feature Source = " + aVerdiStyle.getFeatureSource().toString());
 		//Logger.debug("vStore = " + vStore.toString());
 		//Logger.debug("vFeatureSource = " + vFeatureSource.toString());
-		Logger.debug("Layer = " + aVerdiStyle.getLayer().toString());
+		Logger.debug("Layer = " + aVerdiStyle.getLayers().get(0));
 		Logger.debug("ShapeFile = " + aVerdiStyle.getShapeFile().toString());
 		Logger.debug("Shapefile Path = " + aVerdiStyle.getShapePath());
 		Logger.debug("Style = " + aVerdiStyle.getStyle().toString());
@@ -152,7 +153,8 @@ public class VerdiBoundaries {
 		Logger.debug("set CRS of Viewport to gridCRS: " + gridCRS.toString());
 		ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], gridCRS);
 		vMap.getViewport().setBounds(displayBounds);
-		aVerdiStyle.getLayer().setVisible(true);
+		for (Layer layer : aVerdiStyle.getLayers())
+			layer.setVisible(true);
 		
 		// set of math transform
 		// NOTE: next commented-out section is possibly the beginnings of writing out a shapefile in a given projection
@@ -189,7 +191,7 @@ public class VerdiBoundaries {
 //			iterator.close();
 //		}
 		// TODO - create a map layer and add it to the vMap object
-		vMap.addLayer(aVerdiStyle.getLayer());	// FIGURE THIS ONE OUT BECAUSE TRANSFORM IS HERE
+		vMap.addLayers(aVerdiStyle.getLayers());	// FIGURE THIS ONE OUT BECAUSE TRANSFORM IS HERE
 		GTRenderer renderer = new StreamingRenderer();
 		renderer.setMapContent(vMap);
 		Rectangle outputArea = new Rectangle(xOffset, yOffset, width, height);

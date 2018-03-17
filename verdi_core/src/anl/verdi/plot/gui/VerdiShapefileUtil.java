@@ -1,6 +1,10 @@
 package anl.verdi.plot.gui;
 
+import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.geotools.data.DefaultTransaction;
@@ -15,8 +19,10 @@ import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.operation.transform.AffineTransform2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -59,20 +65,49 @@ public class VerdiShapefileUtil {
 	
 	static GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
 	
-	public static SimpleFeatureSource projectionToLatLon(SimpleFeatureSource sourceShapefile) {
-		SimpleFeatureSource convertedSource = null;
+	private static CoordinateReferenceSystem LAT_LON_CRS = null;
+	static {
 		try {
+			LAT_LON_CRS = CRS.decode("EPSG:4326");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	
+	public static SimpleFeatureSource panShapefile(SimpleFeatureSource sourceShapefile, double panX, double panY) {
+		AffineTransform affineTransform = AffineTransform.getTranslateInstance(panX, panY);
+		MathTransform transform = new AffineTransform2D(affineTransform);
+
+
+		return transformFeature(sourceShapefile, transform, false);
+	}
+	
+	public static SimpleFeatureSource projectionToLatLon(SimpleFeatureSource sourceShapefile, boolean mapTargets) {
+		SimpleFeatureSource convertedSource = null;
+        try {
 			CoordinateReferenceSystem sourceCRS = sourceShapefile.getSchema().getCoordinateReferenceSystem();
-			CoordinateReferenceSystem latLonCRS = CRS.decode("EPSG:4326");
 			
 	        boolean lenient = true; // allow for some error due to different datums
-	        MathTransform transform = CRS.findMathTransform(sourceCRS, latLonCRS, lenient);
+
+			MathTransform transform = CRS.findMathTransform(sourceCRS, LAT_LON_CRS, lenient);
+			convertedSource = transformFeature(sourceShapefile, transform, mapTargets);
+		} catch (FactoryException e) {
+			e.printStackTrace();
+		}
+        return convertedSource;
+        
+	}
+	
+	public static SimpleFeatureSource transformFeature(SimpleFeatureSource sourceShapefile, MathTransform transform, boolean mapTargets) {
+		SimpleFeatureSource convertedSource = null;
+		try {
 	        
 	        
 	        SimpleFeatureCollection featureCollection = sourceShapefile.getFeatures();
 	
 	        MemoryDataStore dataStore = new MemoryDataStore();
-	        SimpleFeatureType featureType = SimpleFeatureTypeBuilder.retype(sourceShapefile.getSchema(), latLonCRS);
+	        SimpleFeatureType featureType = SimpleFeatureTypeBuilder.retype(sourceShapefile.getSchema(), LAT_LON_CRS);
 	        dataStore.createSchema(featureType);
 	
 	        //Get the name of the new Shapefile, which will be used to open the FeatureWriter
@@ -92,7 +127,8 @@ public class VerdiShapefileUtil {
 	                Geometry geometry2 = JTS.transform(geometry, transform);
 	
 	                copy.setDefaultGeometry(geometry2);
-                	Target.mapProjection(geometry, geometry2);
+	                if (mapTargets)
+	                	Target.mapProjection(geometry, geometry2);
 
 	                writer.write();
 	            }
@@ -150,9 +186,10 @@ public class VerdiShapefileUtil {
        // if (sourceShapefile.getSchema().getCoordinateReferenceSystem().getCoordinateSystem().toString().toLowerCase().indexOf("longitude") == -1) {
         if (sourceShapefile.getSchema().getCoordinateReferenceSystem().toString().indexOf("WGS84") == -1) {
         	//Not in lat/lon, reproject
-        	sourceShapefile = projectionToLatLon(sourceShapefile);
-        } else if (targetProjection instanceof LatLonProjection)
+        	sourceShapefile = projectionToLatLon(sourceShapefile, mapTargets);
+        } else if (targetProjection instanceof LatLonProjection && ((LatLonProjection)targetProjection).getCenterLon() == 0 ) {
         	return sourceShapefile;
+        }
         
         MemoryDataStore dataStore = null;
         
@@ -198,15 +235,17 @@ public class VerdiShapefileUtil {
 	
 	                }
 	                else if (sourceGeometry instanceof MultiLineString) {
-	                	LineString[] targetGeometries = new LineString[sourceGeometry.getNumGeometries()];
-	                	for (int i = 0; i < targetGeometries.length; ++i) {
+	                	List<LineString> lineStringList = new ArrayList<LineString>();
+	                	LineString[] listArray = new LineString[0];
+	                	LineString lineString = null;
+	                	for (int i = 0; i < sourceGeometry.getNumGeometries(); ++i) {
 	                		Geometry internalGeometry = sourceGeometry.getGeometryN(i);
-	                		targetGeometries[i] = projectLineString((LineString)internalGeometry, targetProjection);
+	                		lineString = projectLineString(lineStringList, (LineString)internalGeometry, targetProjection);
 	    	                if (mapTargets) {
-	    	                	Target.mapProjection(internalGeometry, targetGeometries[i]);
+	    	                	Target.mapProjection(internalGeometry, lineString);
 	    	                }
 	                	}
-	                	targetGeometry = geometryFactory.createMultiLineString(targetGeometries);
+	                	targetGeometry = geometryFactory.createMultiLineString(lineStringList.toArray(listArray));
 	                } else {
 	                	throw new IllegalArgumentException("Unsupported shapefile type: " + sourceGeometry.getClass());
 	                }
@@ -230,30 +269,106 @@ public class VerdiShapefileUtil {
         return convertedSource;
     }
     
-    private static LineString projectLineString(Geometry sourceGeometry, Projection proj) {
-    	double factor = 1000;
-    	if (proj instanceof LatLonProjection)
-    		factor = 1;
+    private static LineString projectAndClipLineString(List<LineString> lineStringList, Coordinate[] sourceCoordinates, int startIndex, LatLonPointImpl latLon, ProjectionPointImpl xy, double factor, double width, Projection proj, int reverseMode) {
+   
+    	Coordinate[] targetCoordinates = new Coordinate[sourceCoordinates.length - startIndex];
     	LineString targetLineString = null;
-        Coordinate[] sourceCoordinates = sourceGeometry.getCoordinates();
-    	Coordinate[] targetCoordinates = new Coordinate[sourceCoordinates.length];
-        LatLonPointImpl latLon = new LatLonPointImpl();
-        ProjectionPointImpl xy = new ProjectionPointImpl();
         
+    	int i = startIndex;
+    	int j = 0;
+    	Coordinate source = sourceCoordinates[i];
+    	int minXPos = 0;
+    	int maxXPos = 0;
+    	double prevX = Double.POSITIVE_INFINITY;
+    	double currentX = 0;
     	
-        for (int i = 0; i < sourceCoordinates.length; ++i) {
-        	Coordinate source = sourceCoordinates[i];
+    	if (reverseMode > 0) {
         	latLon.set(source.y, source.x);
         	proj.latLonToProj(latLon, xy);
-        	targetCoordinates[i] = new Coordinate(xy.getX() * factor, xy.getY() * factor);
+        	targetCoordinates[j] = new Coordinate(xy.getX() * factor, xy.getY() * factor);
+    		if (reverseMode == 1) {
+    			targetCoordinates[j].x += width;
+    		} else
+    			targetCoordinates[j].x -= width;
+			prevX = targetCoordinates[j++].x;
+			++i;
+    	}
+    	
+        for (; i < sourceCoordinates.length; ++i, ++j) { //TODO here
+        	source = sourceCoordinates[i];
+        	latLon.set(source.y, source.x);
+        	proj.latLonToProj(latLon, xy);
+        	currentX = xy.getX() * factor;
+        	if (prevX == Double.POSITIVE_INFINITY)
+        		prevX = currentX;
+        	
+        	//TODO - see if this needs to be done for non lat/lon maps
+        	/*
+        	 * when lat/lon maps are rotated from 0 to a nonzero center lon, lines can get split across the edges,
+        	 * resulting in horiontal lines running across the screen.  This code detects when that happens and
+        	 * separates the line into 2 separate lines, one on each side
+        	 */
+        	if (proj instanceof LatLonProjection && ((LatLonProjection)proj).getCenterLon() != 0 && Math.abs(currentX - prevX) > width / 2) {
+        		if (currentX > prevX) {
+        			currentX -= width;
+        			reverseMode = 1;
+        		}
+        		else {
+        			currentX += width;
+        			reverseMode = 2;
+        		}
+        		//negative means current is on right, move left
+            	targetCoordinates[j] = new Coordinate(currentX, xy.getY() * factor);    
+
+            	Coordinate[] clippedSegment = Arrays.copyOf(targetCoordinates, j + 1);
+
+        		
+                try {
+                	targetLineString = geometryFactory.createLineString(clippedSegment);
+                	lineStringList.add(targetLineString);
+            		projectAndClipLineString(lineStringList, sourceCoordinates, i - 1, latLon, xy, factor, width, proj, reverseMode);
+                	return targetLineString;
+                } catch (Exception e) {
+                	e.printStackTrace();
+                }
+        		
+        	}
+        	prevX = currentX;
+        		
+        	targetCoordinates[j] = new Coordinate(currentX, xy.getY() * factor);
+
+        	try {
+        	if (targetCoordinates[j].x > targetCoordinates[maxXPos].x)
+        		maxXPos = j;
+        	if (targetCoordinates[j].x < targetCoordinates[minXPos].x)
+        		minXPos = j;
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
+
         }
+
         
         try {
         	targetLineString = geometryFactory.createLineString(targetCoordinates);
+        	lineStringList.add(targetLineString);
         } catch (Exception e) {
         	e.printStackTrace();
         }
         return targetLineString;   
+
+    }
+
+    
+    private static LineString projectLineString(List<LineString> lineStringList, Geometry sourceGeometry, Projection proj) {
+    	double factor = 1000;
+    	if (proj instanceof LatLonProjection)
+    		factor = 1;
+        Coordinate[] sourceCoordinates = sourceGeometry.getCoordinates();
+        LatLonPointImpl latLon = new LatLonPointImpl();
+        ProjectionPointImpl xy = new ProjectionPointImpl();
+        
+        return projectAndClipLineString(lineStringList, sourceCoordinates, 0, latLon, xy, factor, proj.getDefaultMapArea().getWidth() * factor, proj, 0);
     }
 
     private static Polygon projectPolygon(Geometry sourceGeometry, Projection proj) {
