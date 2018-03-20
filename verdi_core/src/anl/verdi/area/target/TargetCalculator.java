@@ -41,6 +41,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.operation.overlay.OverlayOp;
+import com.vividsolutions.jts.operation.overlay.snap.SnapOverlayOp;
 
 /**
  * 
@@ -101,6 +103,8 @@ public class TargetCalculator extends LongTask {
 	}
 	
   public boolean calculateIntersections(ArrayList targets,DataFrame dataFrame, AreaTilePlot plot) {
+	  long start = System.currentTimeMillis();
+	 // System.err.println("TargetCalculator calculating intersections " + new java.util.Date());
 	  
 	    statMessage = "Calculating Intersections...";
 	    Logger.debug("TargetCalculator.calculateIntersections for multiple args " + statMessage);
@@ -109,6 +113,7 @@ public class TargetCalculator extends LongTask {
 	    //Logger.debug("plot = " + plot);
 	    // change to busy cursor
 	    boolean didCalcs = false;
+		double totalSquares = 0;
 	    try {
 	      if (targets == null || targets.isEmpty())
 	      {
@@ -186,7 +191,10 @@ public class TargetCalculator extends LongTask {
 			int num=Target.getCurrentGridNum();
 			
 	      //  get all the selected target polygons
+			double squares = 0;
 	      for (int targetNum = 0; targetNum < targets.size(); targetNum++) {
+	    	  long begin = System.currentTimeMillis();
+	    	  String dimension = "";
 	        
 	        current = targetNum;
 	        Target target = ((Target)targets.get(targetNum));
@@ -221,6 +229,12 @@ public class TargetCalculator extends LongTask {
 	      			int col2=(int)Math.floor((env.getMaxX()-westEdge)/cellWidth);
 	      			int row1=(int)Math.floor((env.getMinY()-southEdge)/cellHeight);
 	      			int row2=(int)Math.floor((env.getMaxY()-southEdge)/cellHeight);
+	      			
+	      			int w = col2 - col1;
+	      			int l = row2 - row1;
+	      			squares = w * l;
+	      			totalSquares += squares;
+	      			dimension = " size " + w + "x" + l + ", " + w*l;
 	        		      			
 				// create the arrays to store the grid index data
 	            ArrayList<Integer> rowArray = new ArrayList<Integer>();
@@ -239,6 +253,7 @@ public class TargetCalculator extends LongTask {
 	            if(row2>=rows)
 	            	row2=rows-1;
 	            
+	            //TODO - this part scales with the size and complexity of the area covered by the area map.  Look for optimizations
 	            for (int i = col1; i <= col2; i++) {
 	              for (int j = row1; j <= row2; j++) {
 	                if (canceled)
@@ -251,7 +266,9 @@ public class TargetCalculator extends LongTask {
 	            		   j*cellHeight+southEdge,
 	            		   (j+1)*cellHeight+southEdge));
 	                
-	               Geometry intersection = poly.intersection(cellPolygon);
+	               Geometry intersection = calculateIntersection(poly, cellPolygon);
+	               
+	               //Geometry intersection = poly.intersection(cellPolygon);
 	               float intersectionArea=(float)intersection.getArea();
 	                if (intersectionArea > 0) {
 	                  // get the area of the intersection
@@ -284,6 +301,8 @@ public class TargetCalculator extends LongTask {
 	        else
 	        	if (!didCalcs && target.overlapsGrid(num))
 	        		didCalcs = true;
+	        long total = System.currentTimeMillis() - begin;
+	        System.err.println("Calculated target " + targetNum + " of " + targets.size() + ": " + target.getKeyName() + " " + dimension + " in " + total + "ms, " + (squares / total) + "squares/ms");
 	        }
 	        
 	    } catch (Exception e) {
@@ -294,8 +313,41 @@ public class TargetCalculator extends LongTask {
 	      //update();
 	    }
 	    
+	    long duration = System.currentTimeMillis() - start;
+		System.err.println("TargetCalculator calculated " + targets.size() + " areas in " + duration + "ms");
+		Logger.debug("TargetCalculator calculated " + targets.size() + " areas, " + totalSquares + " in " + duration + "ms, " + (totalSquares / duration) + " squares/ms");
 	    return didCalcs;	// 2014 had returned true; now calling program can test for success
 	  }
+  
+  private static Geometry calculateIntersection(Geometry g1, Geometry g2) {
+	  Geometry result = null;
+	  RuntimeException e = null;
+	  boolean isSuccess = false;
+	    try {
+	        // try basic operation with input geometries
+	        result = OverlayOp.overlayOp(g1, g2, OverlayOp.INTERSECTION); 
+	        boolean isValid = true;
+	        // not needed if noding validation is used
+	        if (isValid)
+	        	isSuccess = true;
+	      }
+	      catch (RuntimeException ex) {
+	      	e = ex;
+
+	      }
+	      if (! isSuccess) {
+	      	// this may still throw an exception
+	      	// if so, throw the original exception since it has the input coordinates
+	      	try {
+	      		result = SnapOverlayOp.overlayOp(g1, g2, OverlayOp.INTERSECTION);
+	      	}
+	      	catch (RuntimeException ex) {
+	      		throw e;
+	      	}
+	      }
+	      return result;
+
+  }
   
   public boolean calculateIntersections(ArrayList targets, IMPASDataset dataset, TilePlot plot) {
 	  

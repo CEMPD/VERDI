@@ -426,24 +426,24 @@ public class Target implements Area{
 	public static Target getTarget(Geometry obj) {
 		Target tgt = null;//projectionMap.get(new GeometryWrapper(obj));
 		if (obj instanceof MultiPolygon) {
-			if (((MultiPolygon)obj).getNumGeometries() > 1) {
-				return null;
-			}
-			obj = ((MultiPolygon)obj).getGeometryN(0);
+			MultiPolygon poly = (MultiPolygon)obj;
+			for (int i = 0; i < poly.getNumGeometries() && tgt == null; ++i)
+				tgt = geometryMap.get(poly.getGeometryN(i));
 		}
-		if (tgt == null)
+		else
 			tgt = geometryMap.get(obj);
 		return tgt;
 	}
-		
+			
 	public static void mapProjection(Geometry source, Geometry projected) {
 		if (source instanceof MultiPolygon)
 			source = ((MultiPolygon)source).getGeometryN(0);
 		
 		Target tgt = geometryMap.get(source);
 		if (projected instanceof MultiPolygon) {
-			Geometry nested = ((MultiPolygon)projected).getGeometryN(0);
-			geometryMap.put(nested, tgt);
+			MultiPolygon poly = (MultiPolygon)projected;
+			for (int i = 0; i < poly.getNumGeometries(); ++i)
+				geometryMap.put(((MultiPolygon)projected).getGeometryN(i), tgt);
 			
 		} else
 			geometryMap.put(projected, tgt);
@@ -1129,7 +1129,11 @@ public class Target implements Area{
 	public boolean overlapsGrid(int currentGridNum) {
 		if (overlapArea == null)
 			System.out.println("Detected invalid target, null overlap");
+		try {
 		return overlapArea.size() > currentGridNum && overlapArea.get(currentGridNum).length > 0;
+		} catch (NullPointerException e) {
+			throw e;
+		}
 	}
 
 	public boolean overlapsMesh(int currentGridNum) {
