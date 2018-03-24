@@ -190,6 +190,8 @@ public class TargetCalculator extends LongTask {
 			Target.setCurrentGridInfo(plot.getGridInfo());
 			int num=Target.getCurrentGridNum();
 			
+			CachedTargetList cachedTargetList = CachedTargetList.getCachedTargetList((Target)targets.get(0), rows, columns, westEdge, southEdge, cellWidth, cellHeight);
+
 	      //  get all the selected target polygons
 			double squares = 0;
 	      for (int targetNum = 0; targetNum < targets.size(); targetNum++) {
@@ -201,13 +203,19 @@ public class TargetCalculator extends LongTask {
 	        // update the message
 	        statMessage = "Polygon " + target + " (" + (targetNum + 1) + " of " + targets.size() + ")";
 	        Logger.debug(statMessage);
-
-	        CoordinateReferenceSystem gridCRS = null;
 ;
 	        Geometry obj = target.getGeometry(null, null);
 	        
 	        // if it hasn't been done yet
 	        if(!target.areaCalculatedForGrid(num)){
+	        	TargetAreaInfo areaInfo = null;
+	        	areaInfo = cachedTargetList.getCachedAreaInfo(target, projection, rows, columns, westEdge, southEdge, cellWidth, cellHeight);
+	        	if (areaInfo != null) {
+		        	areaInfo = cachedTargetList.getCachedAreaInfo(target, projection, rows, columns, westEdge, southEdge, cellWidth, cellHeight);
+	        		target.setAreaInfo(num, areaInfo.getRowIndex(), areaInfo.getColIndex(), areaInfo.getOverlapArea());
+	        		target.area = areaInfo.getArea();
+	        		continue;
+	        	}
 	        	target.setAreaInfo(num, null,null,null);
 	        	Geometry poly = (Geometry)obj.clone();
 	      		if(poly instanceof MultiPolygon){
@@ -294,6 +302,7 @@ public class TargetCalculator extends LongTask {
 	              }
 	              // set the areas for that grid
 	              target.setAreaInfo(num, rowIndex, colIndex, overlapArea);
+	              cachedTargetList.cacheAreaInfo(target, rowIndex, colIndex, overlapArea);
 	            }
 	          }
 //	          didCalcs = true;	// 2014 moved to calculate overlapArea[i]

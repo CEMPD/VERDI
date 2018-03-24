@@ -327,6 +327,7 @@ public class Target implements Area{
 		if(source instanceof SourceData) {
 			sourceMap.remove(((SourceData)source).fileName);
 			styleMap.remove(((SourceData)source).fileName);
+			CachedTargetList.closeFile(((SourceData)source).fileName);
 		}
 	}
 	public static CoordinateReferenceSystem loadProjectionInfo(String fileName) {
