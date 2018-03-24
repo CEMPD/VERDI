@@ -269,7 +269,7 @@ public class Target implements Area{
 
 			int totalLength=0;
 			// make the sourceData object for this target file
-			SourceData sourceData = new SourceData(file.getAbsolutePath(),file.getName(),proj,false);
+			SourceData sourceData = new SourceData(file.getAbsolutePath(),nameField,proj,false);
 			String baseName=file.getCanonicalPath();
 			baseName=baseName.substring(0, baseName.length()-4);
 			// write projection file if it does not exist

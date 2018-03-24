@@ -104,6 +104,7 @@ public class TargetCalculator extends LongTask {
 	
   public boolean calculateIntersections(ArrayList targets,DataFrame dataFrame, AreaTilePlot plot) {
 	  long start = System.currentTimeMillis();
+	  long duration = 0;
 	 // System.err.println("TargetCalculator calculating intersections " + new java.util.Date());
 	  
 	    statMessage = "Calculating Intersections...";
@@ -311,7 +312,9 @@ public class TargetCalculator extends LongTask {
 	        	if (!didCalcs && target.overlapsGrid(num))
 	        		didCalcs = true;
 	        long total = System.currentTimeMillis() - begin;
-	        System.err.println("Calculated target " + targetNum + " of " + targets.size() + ": " + target.getKeyName() + " " + dimension + " in " + total + "ms, " + (squares / total) + "squares/ms");
+	        duration = System.currentTimeMillis() - start;
+	        if (duration > 30000)
+	        	System.err.println("Calculated target " + targetNum + " of " + targets.size() + ": " + target.getKeyName() + " " + dimension + " in " + total + "ms, " + (squares / total) + "squares/ms");
 	        }
 	        
 	    } catch (Exception e) {
@@ -322,8 +325,9 @@ public class TargetCalculator extends LongTask {
 	      //update();
 	    }
 	    
-	    long duration = System.currentTimeMillis() - start;
-		System.err.println("TargetCalculator calculated " + targets.size() + " areas in " + duration + "ms");
+	    duration = System.currentTimeMillis() - start;
+	    if (duration > 30000)
+	    	System.err.println("TargetCalculator calculated " + targets.size() + " areas in " + duration + "ms");
 		Logger.debug("TargetCalculator calculated " + targets.size() + " areas, " + totalSquares + " in " + duration + "ms, " + (totalSquares / duration) + " squares/ms");
 	    return didCalcs;	// 2014 had returned true; now calling program can test for success
 	  }
