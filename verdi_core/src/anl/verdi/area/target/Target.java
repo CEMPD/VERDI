@@ -1131,7 +1131,7 @@ public class Target implements Area{
 		if (overlapArea == null)
 			System.out.println("Detected invalid target, null overlap");
 		try {
-		return overlapArea.size() > currentGridNum && overlapArea.get(currentGridNum).length > 0;
+		return overlapArea.size() > currentGridNum && overlapArea.get(currentGridNum) != null && overlapArea.get(currentGridNum).length > 0;
 		} catch (NullPointerException e) {
 			throw e;
 		}
@@ -1140,7 +1140,7 @@ public class Target implements Area{
 	public boolean overlapsMesh(int currentGridNum) {
 		if (cellOverlapArea == null)
 			System.out.println("Detected invalid target, null overlap");
-		return cellOverlapArea.size() > currentGridNum && cellOverlapArea.get(currentGridNum).length > 0;
+		return cellOverlapArea.size() > currentGridNum && cellOverlapArea.get(currentGridNum) != null && cellOverlapArea.get(currentGridNum).length > 0;
 	}
 
 	static{
