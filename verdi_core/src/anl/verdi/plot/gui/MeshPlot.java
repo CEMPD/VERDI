@@ -4106,14 +4106,21 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		if (zoomFactor == 1) {
 			MinMaxInfo info = dataset.getTimestepMinMax(currentDataFrame, layer, timestep);
 			if (info != null && info.getCompletion() == 100) {
-				MeshCellInfo cell = cellsToRender[info.getMinIndex()];
-				currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = info.getMin();
-				currentMinMaxCache[LEVELS_CACHE_MIN_LON] = cell.getLon();
-				currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = cell.getLat();
-				cell = cellsToRender[info.getMaxIndex()];
-				currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = info.getMax();
-				currentMinMaxCache[LEVELS_CACHE_MAX_LON] = cell.getLon();
-				currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = cell.getLat();
+				int index = info.getMinIndex();
+				MeshCellInfo cell = null;
+				if (index >= 0) {
+					cell = cellsToRender[index];
+					currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = info.getMin();
+					currentMinMaxCache[LEVELS_CACHE_MIN_LON] = cell.getLon();
+					currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = cell.getLat();
+				}
+				index = info.getMaxIndex();
+				if (index >= 0) {
+					cell = cellsToRender[index];
+					currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = info.getMax();
+					currentMinMaxCache[LEVELS_CACHE_MAX_LON] = cell.getLon();
+					currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = cell.getLat();
+				}
 				//System.out.println("Updated min layer " + layer + " step " + timestep + " value " + currentMinMaxCache[LEVELS_CACHE_MIN_VALUE]);
 				return;
 			}
@@ -4130,12 +4137,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			if (cell.visible){
 				MeshCellInfo meshCell = cell.getSource();
 				double value = cell.getValue();
-				if (value < currentMinMaxCache[LEVELS_CACHE_MIN_VALUE]) {
+				if (value < currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] && value > DataUtilities.BADVAL3) {
 					currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = value;
 					currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = meshCell.getLat();
 					currentMinMaxCache[LEVELS_CACHE_MIN_LON] = meshCell.getLon();
 				}
-				if (value > currentMinMaxCache[LEVELS_CACHE_MAX_VALUE]) {
+				if (value > currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] && value > DataUtilities.BADVAL3) {
 					currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = value;
 					currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = meshCell.getLat();
 					currentMinMaxCache[LEVELS_CACHE_MAX_LON] = meshCell.getLon();					
@@ -4241,11 +4248,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				cell.visible = true;
 			if (cell.visible && meshCell.getLon() >= minLon && meshCell.getLon() <= maxLon && meshCell.getLat() <= maxLat && meshCell.getLat() >= minLat) { //&& zoomFactor != 1) {
 				double value = cell.getValue();
-				if (value < currentMinMaxCache[LEVELS_CACHE_MIN_VALUE]) {
+				if (value < currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] && value > DataUtilities.BADVAL3) {
 					currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = value;
 					currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = meshCell.getLat();
 					currentMinMaxCache[LEVELS_CACHE_MIN_LON] = meshCell.getLon();
-				} else if (value > currentMinMaxCache[LEVELS_CACHE_MAX_VALUE]) {
+				} else if (value > currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] && value > DataUtilities.BADVAL3) {
 					currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = value;
 					currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = meshCell.getLat();
 					currentMinMaxCache[LEVELS_CACHE_MAX_LON] = meshCell.getLon();					
@@ -4274,9 +4281,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		MPASDataFrameIndex index = new MPASDataFrameIndex(currentDataFrame);
 		for (MeshCellInfo cell : cellsToRender) {
 			value = cell.getValue(currentVariable, currentDataFrame, index, timestep - firstTimestep, layer - firstLayer);
-			if (value == min)
+			if (value == min && value > DataUtilities.BADVAL3)
 				minCells.add(cell);
-			else if (value < min) {
+			else if (value < min && value > DataUtilities.BADVAL3) {
 				min = value;
 				minCells.clear();
 				minCells.add(cell);
@@ -4292,9 +4299,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		MPASDataFrameIndex index = new MPASDataFrameIndex(currentDataFrame);
 		for (MeshCellInfo cell : cellsToRender) {
 			value = cell.getValue(currentVariable, currentDataFrame, index, timestep - firstTimestep, layer - firstLayer);
-			if (value == max)
+			if (value == max && value > DataUtilities.BADVAL3)
 				maxCells.add(cell);
-			else if (value > max) {
+			else if (value > max && value > DataUtilities.BADVAL3) {
 				max = value;
 				maxCells.clear();
 				maxCells.add(cell);
@@ -4514,6 +4521,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				value = cell.getValue(currentVariable, currentDataFrame, hoverCellIndex, timestep - firstTimestep, layer - firstLayer);
 			else
 				value = statisticsData[preStatIndex - 1][0][cell.getId()];
+			if (value < DataUtilities.BADVAL3)
+				value = DataUtilities.BADVAL3;
 			if (cell != null) {
 				//TODO - Add the cell.getId() line for testing
 				//ret += " " + cell.getId() + " ";
@@ -4714,6 +4723,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		MPASDataFrameIndex index = new MPASDataFrameIndex(currentDataFrame);
 		for ( int cell = 0; cell < cellsToRender.length; ++cell ) {
 			exportCellData[0][cell] = (float)cellsToRender[cell].getValue(currentVariable, currentDataFrame, index, timestep - firstTimestep, layer - firstLayer);
+			if (exportCellData[0][cell] < DataUtilities.BADVAL3)
+				exportCellData[0][cell] = (float)DataUtilities.BADVAL3;
 		}
 		ASCIIGridWriter.write( baseFileName + ".asc",
 		1, cellsToRender.length,
@@ -5133,16 +5144,22 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		double[][] localCache = layerMinMaxCache;
 		if (isLog)
 			localCache = logLayerMinMaxCache;
-		localCache[updLayer][LEVELS_CACHE_MIN_VALUE] = min;
-		localCache[updLayer][LEVELS_CACHE_MAX_VALUE] = max;
+		if (minIndex >= 0)
+			localCache[updLayer][LEVELS_CACHE_MIN_VALUE] = min;
+		if (maxIndex >= 0)
+			localCache[updLayer][LEVELS_CACHE_MAX_VALUE] = max;
 		localCache[updLayer][LEVELS_CACHE_PERCENT_COMPLETE] = percentComplete;
 		currentMinMaxCache[LEVELS_CACHE_PERCENT_COMPLETE] = percentComplete;
 		if (cellsToRender == null || cellsToRender[cellsToRender.length - 1] == null) //not until a few ms after this is 1st called
 			return;
-		localCache[updLayer][LEVELS_CACHE_MIN_LON] = cellsToRender[minIndex].getLon();
-		localCache[updLayer][LEVELS_CACHE_MIN_LAT] = cellsToRender[minIndex].getLat();
-		localCache[updLayer][LEVELS_CACHE_MAX_LON] = cellsToRender[maxIndex].getLon();
-		localCache[updLayer][LEVELS_CACHE_MAX_LAT] = cellsToRender[maxIndex].getLat();
+		if (minIndex >= 0) {
+			localCache[updLayer][LEVELS_CACHE_MIN_LON] = cellsToRender[minIndex].getLon();
+			localCache[updLayer][LEVELS_CACHE_MIN_LAT] = cellsToRender[minIndex].getLat();
+		}
+		if (maxIndex >= 0) {
+			localCache[updLayer][LEVELS_CACHE_MAX_LON] = cellsToRender[maxIndex].getLon();
+			localCache[updLayer][LEVELS_CACHE_MAX_LAT] = cellsToRender[maxIndex].getLat();
+		}
 		if (!layerCacheInitted) { //Updates any layers that were modified between initial opening and first update notification - this happens when opening, closing, and re-opening a plot
 			initLayerCache(updLayer);
 			layerCacheInitted = true;
