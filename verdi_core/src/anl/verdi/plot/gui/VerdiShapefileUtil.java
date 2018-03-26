@@ -277,8 +277,6 @@ public class VerdiShapefileUtil {
     	int i = startIndex;
     	int j = 0;
     	Coordinate source = sourceCoordinates[i];
-    	int minXPos = 0;
-    	int maxXPos = 0;
     	double prevX = Double.POSITIVE_INFINITY;
     	double currentX = 0;
     	
@@ -336,15 +334,6 @@ public class VerdiShapefileUtil {
         	prevX = currentX;
         		
         	targetCoordinates[j] = new Coordinate(currentX, xy.getY() * factor);
-
-        	try {
-        	if (targetCoordinates[j].x > targetCoordinates[maxXPos].x)
-        		maxXPos = j;
-        	if (targetCoordinates[j].x < targetCoordinates[minXPos].x)
-        		minXPos = j;
-        	} catch (Exception e) {
-        		e.printStackTrace();
-        	}
 
         }
 

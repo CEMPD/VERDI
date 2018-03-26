@@ -140,7 +140,7 @@ public class VerdiStyle {
 		vProjection = proj;
 		vCRS = vFeatureSource.getSchema().getCoordinateReferenceSystem();
 		
-		double xMin = targetCRS.getCoordinateSystem().getAxis(0).getMinimumValue();
+		/*double xMin = targetCRS.getCoordinateSystem().getAxis(0).getMinimumValue();
 		double xMax = targetCRS.getCoordinateSystem().getAxis(0).getMaximumValue();
 		double panX = 0;
 		double crsWidth = xMax - xMin;
@@ -159,7 +159,7 @@ public class VerdiStyle {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	private void findFeatureSource()	// find the FeatureSource for the shapefile
