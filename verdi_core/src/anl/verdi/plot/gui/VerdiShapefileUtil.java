@@ -269,31 +269,38 @@ public class VerdiShapefileUtil {
         return convertedSource;
     }
     
-    private static LineString projectAndClipLineString(List<LineString> lineStringList, Coordinate[] sourceCoordinates, int startIndex, LatLonPointImpl latLon, ProjectionPointImpl xy, double factor, double width, Projection proj, int reverseMode) {
+    //If you went to far
+      //If going west, subtract width
+      //If going east, add width
+    //Add fake point
+    //Pick up where you left off, adding the previous point first
+    private static LineString projectAndClipLineString(List<LineString> lineStringList, Coordinate[] sourceCoordinates, int startIndex, LatLonPointImpl latLon, ProjectionPointImpl xy, double factor, double widthh, Projection proj, int reverseMode) {
    
     	Coordinate[] targetCoordinates = new Coordinate[sourceCoordinates.length - startIndex];
     	LineString targetLineString = null;
         
-    	int i = startIndex;
-    	int j = 0;
-    	Coordinate source = sourceCoordinates[i];
+    	int sourceIndex = startIndex;
+    	int targetIndex = 0;
+    	Coordinate source = sourceCoordinates[sourceIndex];
     	double prevX = Double.POSITIVE_INFINITY;
     	double currentX = 0;
     	
     	if (reverseMode > 0) {
         	latLon.set(source.y, source.x);
         	proj.latLonToProj(latLon, xy);
-        	targetCoordinates[j] = new Coordinate(xy.getX() * factor, xy.getY() * factor);
-    		if (reverseMode == 1) {
-    			targetCoordinates[j].x += width;
-    		} else
-    			targetCoordinates[j].x -= width;
-			prevX = targetCoordinates[j++].x;
-			++i;
+        	targetCoordinates[targetIndex] = new Coordinate(xy.getX() * factor, xy.getY() * factor);
+    		if (reverseMode == 1) { //crossed to the east, take current point and move left
+    			targetCoordinates[targetIndex].x += 360;
+    		} else //crossed to the west, take current point and move right
+    			targetCoordinates[targetIndex].x -= 360;
+    		System.err.println("Continuing clip from " + targetCoordinates[targetIndex].x);
+			prevX = Double.POSITIVE_INFINITY;
+			++targetIndex;
+			++sourceIndex;
     	}
     	
-        for (; i < sourceCoordinates.length; ++i, ++j) { //TODO here
-        	source = sourceCoordinates[i];
+        for (; sourceIndex < sourceCoordinates.length; ++sourceIndex, ++targetIndex) { //TODO here
+        	source = sourceCoordinates[sourceIndex];
         	latLon.set(source.y, source.x);
         	proj.latLonToProj(latLon, xy);
         	currentX = xy.getX() * factor;
@@ -306,25 +313,27 @@ public class VerdiShapefileUtil {
         	 * resulting in horiontal lines running across the screen.  This code detects when that happens and
         	 * separates the line into 2 separate lines, one on each side
         	 */
-        	if (proj instanceof LatLonProjection && ((LatLonProjection)proj).getCenterLon() != 0 && Math.abs(currentX - prevX) > width / 2) {
+        	if (proj instanceof LatLonProjection && ((LatLonProjection)proj).getCenterLon() != 0 && Math.abs(currentX - prevX) > 360 *.75) {
+        		System.err.println("Point from " + prevX + " to " + currentX + ", clipping length " + (targetIndex + 1));
+        		//Going east, move point to the left and continue
         		if (currentX > prevX) {
-        			currentX -= width;
+        			currentX -= 360;
         			reverseMode = 1;
         		}
-        		else {
-        			currentX += width;
+        		else { //going west, move point to the right and continue
+        			currentX += 360;
         			reverseMode = 2;
         		}
         		//negative means current is on right, move left
-            	targetCoordinates[j] = new Coordinate(currentX, xy.getY() * factor);    
+            	targetCoordinates[targetIndex] = new Coordinate(currentX, xy.getY() * factor);    
 
-            	Coordinate[] clippedSegment = Arrays.copyOf(targetCoordinates, j + 1);
+            	Coordinate[] clippedSegment = Arrays.copyOf(targetCoordinates, targetIndex + 1);
 
         		
                 try {
                 	targetLineString = geometryFactory.createLineString(clippedSegment);
                 	lineStringList.add(targetLineString);
-            		projectAndClipLineString(lineStringList, sourceCoordinates, i - 1, latLon, xy, factor, width, proj, reverseMode);
+            		projectAndClipLineString(lineStringList, sourceCoordinates, sourceIndex - 1, latLon, xy, factor, widthh, proj, reverseMode);
                 	return targetLineString;
                 } catch (Exception e) {
                 	e.printStackTrace();
@@ -333,7 +342,7 @@ public class VerdiShapefileUtil {
         	}
         	prevX = currentX;
         		
-        	targetCoordinates[j] = new Coordinate(currentX, xy.getY() * factor);
+        	targetCoordinates[targetIndex] = new Coordinate(currentX, xy.getY() * factor);
 
         }
 
