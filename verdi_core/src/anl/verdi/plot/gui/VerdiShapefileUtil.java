@@ -293,7 +293,7 @@ public class VerdiShapefileUtil {
     			targetCoordinates[targetIndex].x += 360;
     		} else //crossed to the west, take current point and move right
     			targetCoordinates[targetIndex].x -= 360;
-    		System.err.println("Continuing clip from " + targetCoordinates[targetIndex].x);
+    		//System.err.println("Continuing clip from " + targetCoordinates[targetIndex].x);
 			prevX = Double.POSITIVE_INFINITY;
 			++targetIndex;
 			++sourceIndex;
@@ -314,7 +314,7 @@ public class VerdiShapefileUtil {
         	 * separates the line into 2 separate lines, one on each side
         	 */
         	if (proj instanceof LatLonProjection && ((LatLonProjection)proj).getCenterLon() != 0 && Math.abs(currentX - prevX) > 360 *.75) {
-        		System.err.println("Point from " + prevX + " to " + currentX + ", clipping length " + (targetIndex + 1));
+        		//System.err.println("Point from " + prevX + " to " + currentX + ", clipping length " + (targetIndex + 1));
         		//Going east, move point to the left and continue
         		if (currentX > prevX) {
         			currentX -= 360;
