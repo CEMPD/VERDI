@@ -739,7 +739,7 @@ public final class GridCellStatistics {
 
       if ( value > AMISS3 ) {
         
-        if ( result <= BADVAL3 ) {
+        if ( result <= BADVAL3 || result >= DataUtilities.NC_FILL_FLOAT) {
           result = value;
           count = 1;
         } else {

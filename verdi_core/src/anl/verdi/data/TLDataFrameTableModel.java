@@ -36,6 +36,6 @@ public class TLDataFrameTableModel extends AbstractDataFrameTableModel {
 
 		DataFrameIndex index = frame.getIndex();
 		index.setTime(columnIndex);
-		return frame.getDouble(index) > DataUtilities.BADVAL3 ? frame.getDouble(index) : DataUtilities.BADVAL3;
+		return (frame.getDouble(index) > DataUtilities.BADVAL3 && frame.getDouble(index) < DataUtilities.NC_FILL_FLOAT) ? frame.getDouble(index) : DataUtilities.BADVAL3;
 	}
 }

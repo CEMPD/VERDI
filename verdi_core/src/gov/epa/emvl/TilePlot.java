@@ -1221,7 +1221,7 @@ public class TilePlot {
 	 */
 
 	private static byte indexOfValue(float value, final double[] values) { // TODO: log color legend: take log on value
-		if (new Float(value).toString().equals("NaN") || value <= DataUtilities.AMISS3 || value <= DataUtilities.BADVAL3)
+		if (new Float(value).toString().equals("NaN") || value <= DataUtilities.AMISS3 || value <= DataUtilities.BADVAL3 || value >= DataUtilities.NC_FILL_FLOAT)
 			return -1;
 		
 		final int count = values.length;
@@ -1332,7 +1332,7 @@ public class TilePlot {
 				final int dataColumn = column - firstColumn;
 				final float value = data[dataRow][dataColumn];
 
-				if (value <= DataUtilities.BADVAL3 || value <= DataUtilities.AMISS3)
+				if (value <= DataUtilities.BADVAL3 || value <= DataUtilities.AMISS3 || value >= DataUtilities.NC_FILL_FLOAT)
 					continue;
 				
 				if (value < minimumValue) {

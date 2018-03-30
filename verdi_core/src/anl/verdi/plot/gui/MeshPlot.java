@@ -1607,7 +1607,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		if (Float.isNaN(value))
 			return -1;
 		
-		if (value <= DataUtilities.BADVAL3 || value <= DataUtilities.AMISS3) 	// 2014 changed AMISS3 comparison from == to <=
+		if (value <= DataUtilities.BADVAL3 || value <= DataUtilities.AMISS3 || value >= DataUtilities.NC_FILL_FLOAT) 	// 2014 changed AMISS3 comparison from == to <=
 			return -1;
 
 		final byte count = (byte)values.length;
@@ -4137,12 +4137,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			if (cell.visible){
 				MeshCellInfo meshCell = cell.getSource();
 				double value = cell.getValue();
-				if (value < currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] && value > DataUtilities.BADVAL3) {
+				if (value < currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] && value > DataUtilities.BADVAL3 && value < DataUtilities.NC_FILL_FLOAT) {
 					currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = value;
 					currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = meshCell.getLat();
 					currentMinMaxCache[LEVELS_CACHE_MIN_LON] = meshCell.getLon();
 				}
-				if (value > currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] && value > DataUtilities.BADVAL3) {
+				if (value > currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] && value > DataUtilities.BADVAL3 && value < DataUtilities.NC_FILL_FLOAT) {
 					currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = value;
 					currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = meshCell.getLat();
 					currentMinMaxCache[LEVELS_CACHE_MAX_LON] = meshCell.getLon();					
@@ -4248,11 +4248,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				cell.visible = true;
 			if (cell.visible && meshCell.getLon() >= minLon && meshCell.getLon() <= maxLon && meshCell.getLat() <= maxLat && meshCell.getLat() >= minLat) { //&& zoomFactor != 1) {
 				double value = cell.getValue();
-				if (value < currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] && value > DataUtilities.BADVAL3) {
+				if (value < currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] && value > DataUtilities.BADVAL3 && value < DataUtilities.NC_FILL_FLOAT) {
 					currentMinMaxCache[LEVELS_CACHE_MIN_VALUE] = value;
 					currentMinMaxCache[LEVELS_CACHE_MIN_LAT] = meshCell.getLat();
 					currentMinMaxCache[LEVELS_CACHE_MIN_LON] = meshCell.getLon();
-				} else if (value > currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] && value > DataUtilities.BADVAL3) {
+				} else if (value > currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] && value > DataUtilities.BADVAL3 && value < DataUtilities.NC_FILL_FLOAT) {
 					currentMinMaxCache[LEVELS_CACHE_MAX_VALUE] = value;
 					currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = meshCell.getLat();
 					currentMinMaxCache[LEVELS_CACHE_MAX_LON] = meshCell.getLon();					
@@ -4281,9 +4281,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		MPASDataFrameIndex index = new MPASDataFrameIndex(currentDataFrame);
 		for (MeshCellInfo cell : cellsToRender) {
 			value = cell.getValue(currentVariable, currentDataFrame, index, timestep - firstTimestep, layer - firstLayer);
-			if (value == min && value > DataUtilities.BADVAL3)
+			if (value == min && value > DataUtilities.BADVAL3 && value < DataUtilities.NC_FILL_FLOAT)
 				minCells.add(cell);
-			else if (value < min && value > DataUtilities.BADVAL3) {
+			else if (value < min && value > DataUtilities.BADVAL3 && value < DataUtilities.NC_FILL_FLOAT) {
 				min = value;
 				minCells.clear();
 				minCells.add(cell);
@@ -4299,9 +4299,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		MPASDataFrameIndex index = new MPASDataFrameIndex(currentDataFrame);
 		for (MeshCellInfo cell : cellsToRender) {
 			value = cell.getValue(currentVariable, currentDataFrame, index, timestep - firstTimestep, layer - firstLayer);
-			if (value == max && value > DataUtilities.BADVAL3)
+			if (value == max && value > DataUtilities.BADVAL3 && value < DataUtilities.NC_FILL_FLOAT)
 				maxCells.add(cell);
-			else if (value > max && value > DataUtilities.BADVAL3) {
+			else if (value > max && value > DataUtilities.BADVAL3 && value < DataUtilities.NC_FILL_FLOAT) {
 				max = value;
 				maxCells.clear();
 				maxCells.add(cell);
@@ -4521,7 +4521,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				value = cell.getValue(currentVariable, currentDataFrame, hoverCellIndex, timestep - firstTimestep, layer - firstLayer);
 			else
 				value = statisticsData[preStatIndex - 1][0][cell.getId()];
-			if (value < DataUtilities.BADVAL3)
+			if (value < DataUtilities.BADVAL3 || value > DataUtilities.NC_FILL_FLOAT)
 				value = DataUtilities.BADVAL3;
 			if (cell != null) {
 				//TODO - Add the cell.getId() line for testing
@@ -4723,7 +4723,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		MPASDataFrameIndex index = new MPASDataFrameIndex(currentDataFrame);
 		for ( int cell = 0; cell < cellsToRender.length; ++cell ) {
 			exportCellData[0][cell] = (float)cellsToRender[cell].getValue(currentVariable, currentDataFrame, index, timestep - firstTimestep, layer - firstLayer);
-			if (exportCellData[0][cell] < DataUtilities.BADVAL3)
+			if (exportCellData[0][cell] < DataUtilities.BADVAL3 || exportCellData[0][cell] > DataUtilities.NC_FILL_FLOAT)
 				exportCellData[0][cell] = (float)DataUtilities.BADVAL3;
 		}
 		ASCIIGridWriter.write( baseFileName + ".asc",

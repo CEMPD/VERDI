@@ -731,7 +731,7 @@ public class Target implements Area{
 				}
 				float dataPoint = data[ rows[i] ][ cols[i] ];
 				
-				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3) 
+				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
 				{	// 2014 changed comparison to AMISS3 from == to <=
 					//Logger.debug("  === ");
 					continue;
@@ -769,7 +769,7 @@ public class Target implements Area{
 				}
 				float dataPoint = (float)data[ cells[i] ].getValue(reader);
 				
-				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3) 
+				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
 				{	// 2014 changed comparison to AMISS3 from == to <=
 					//Logger.debug("  === ");
 					continue;
@@ -1181,7 +1181,7 @@ public class Target implements Area{
 				
 				// Logger.debug(new Float(dataPoint).toString());
 
-				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3) 
+				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
 				{	// 2014 changed AMISS3 comparison from == to <=
 					// Logger.debug("  === ");
 					continue;
@@ -1230,7 +1230,7 @@ public class Target implements Area{
 				
 				// Logger.debug(new Float(dataPoint).toString());
 
-				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3) 
+				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
 				{	// 2014 changed AMISS3 comparison from == to <=
 					// Logger.debug("  === ");
 					continue;

@@ -535,7 +535,7 @@ FormulaElementCreator, ListDataListener {
 				buf.append((format != null) ? format.format(doubleValue) : doubleValue);
 			} else {
 				double logvalue = Math.log(frame.getDouble(index))/Math.log(logBase);
-				logvalue = (logvalue >  DataUtilities.BADVAL3) ? logvalue : DataUtilities.BADVAL3;
+				logvalue = (logvalue >  DataUtilities.BADVAL3 && logvalue < DataUtilities.NC_FILL_FLOAT) ? logvalue : DataUtilities.BADVAL3;
 				buf.append((format != null) ? format.format(logvalue) : logvalue);
 			}
 			gui.setStatusOneText(buf.toString());

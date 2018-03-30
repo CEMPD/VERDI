@@ -74,6 +74,7 @@ public interface VerdiConstants {
 	String TIME_STEP = "ts".toUpperCase();
 	String LAYER = "layer".toUpperCase();
 
+	public static final float NC_FILL_FLOAT = 9.9692099683868690e+36f;		// 2014 changed from -9.999E36f to assist floating point comparison
 	public static final float BADVAL3 = -9.998E36f;		// 2014 changed from -9.999E36f to assist floating point comparison
 	public static final float AMISS3  = -8.999E36f;		// 2014 changed from -9.000E36f to assist floating point comparison
 	

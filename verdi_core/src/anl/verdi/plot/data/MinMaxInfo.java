@@ -27,11 +27,11 @@ public class MinMaxInfo {
 	}
 	
 	public void visitValue(double value, int index) {
-		if (value <= min && value > DataUtilities.BADVAL3 && value > DataUtilities.AMISS3) {
+		if (value <= min && value > DataUtilities.BADVAL3 && value > DataUtilities.AMISS3 && value < DataUtilities.NC_FILL_FLOAT) {
 			min = value;
 			minIndex = index;
 		}
-		if (value >= max && value > DataUtilities.BADVAL3 && value > DataUtilities.AMISS3) {
+		if (value >= max && value > DataUtilities.BADVAL3 && value > DataUtilities.AMISS3 && value < DataUtilities.NC_FILL_FLOAT) {
 			max = value;
 			maxIndex = index;
 		}

@@ -60,7 +60,7 @@ public class XYLDataFrameTableModel extends AbstractDataFrameTableModel {
 			index.setLayer(rowIndex - 1);
 			if (constIsX) index.setXY(0, columnIndex - 1);
 			else index.setXY(columnIndex - 1, 0);
-			return frame.getDouble(index) > DataUtilities.BADVAL3 ? frame.getDouble(index) : DataUtilities.BADVAL3;
+			return (frame.getDouble(index) > DataUtilities.BADVAL3 && frame.getDouble(index) < DataUtilities.NC_FILL_FLOAT) ? frame.getDouble(index) : DataUtilities.BADVAL3;
 		}
 	}
 }
