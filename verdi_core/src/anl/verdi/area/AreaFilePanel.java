@@ -352,7 +352,7 @@ public class AreaFilePanel extends JPanel {
 				areaFiles.add(btnAdd, cc.xy(1, 1));
 
 				//---- btnDelete ----
-				String fileMinus = new String(pathName + "Minus.png");
+				String fileMinus = new String(pathName + "minus.png");
 				//				btnDelete.setIcon(new ImageIcon(getClass().getResource("/minus.png")));
 				btnDelete.setIcon(new ImageIcon(fileMinus));
 				btnDelete.setToolTipText("Delete Area File");
