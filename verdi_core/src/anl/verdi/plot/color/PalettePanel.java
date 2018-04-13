@@ -64,6 +64,9 @@ public class PalettePanel extends JPanel {
 	private int preScaleIndex = 0; 
 	private PaletteType paletteType;
 	
+	DataUtilities.MinMax defaultMinMax;
+	ColorMap defaultColorMap;
+	
 	// JFormDesigner - Variables declaration - DO NOT MODIFY
 	// //GEN-BEGIN:variables
 	// Generated using JFormDesigner non-commercial license
@@ -91,6 +94,7 @@ public class PalettePanel extends JPanel {
 	private JTextField fldLogBase;
 	private JLabel lblLogBase;	
 	private JButton reverseBtn;
+	private JButton resetBtn;
 	
 	public void enableScale( boolean enable) {
 		this.scaleType.setEnabled( enable);
@@ -127,11 +131,12 @@ public class PalettePanel extends JPanel {
 		scrollPane2 = new JScrollPane();
 		paletteTable = new JTable();
 		reverseBtn = new JButton();
+		resetBtn = new JButton();
 		CellConstraints cc = new CellConstraints();
 
 		// ======== this ========
 		// 2014
-		ColumnSpec[] aColumnSpec = ColumnSpec.decodeSpecs("min(default;150dlu):grow");
+		ColumnSpec[] aColumnSpec = ColumnSpec.decodeSpecs("min(default;180dlu):grow");
 		RowSpec aRowSpec = new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, 0.5);
 		RowSpec bRowSpec = new RowSpec(RowSpec.FILL, Sizes.DEFAULT, 0.5);
 		setLayout(new FormLayout(new ColumnSpec[] { FormFactory.PREF_COLSPEC,
@@ -175,6 +180,10 @@ public class PalettePanel extends JPanel {
 		// ---- reverseBtn ----
 		reverseBtn.setText("Reverse");
 		add(reverseBtn, cc.xy(1, 5));
+		
+		resetBtn.setText("Reset");
+		add(resetBtn, cc.xy(5, 5));
+
 
 		add(separator2, cc.xywh(1, 6, 5, 1));
 		
@@ -671,6 +680,13 @@ public class PalettePanel extends JPanel {
 				paletteTable.repaint();
 			}
 		});
+		
+		resetBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				model.resetColors();
+				initMap(defaultColorMap,  defaultMinMax);
+			}
+		});
 	}
 
 	public void setPalettes(List<Palette> palettes) {
@@ -707,6 +723,12 @@ public class PalettePanel extends JPanel {
 
 	public void initMap(ColorMap colorMap, DataUtilities.MinMax minMax) {
 		Logger.debug("in PalettePanel.initMap");
+		defaultMinMax = minMax;
+		try {
+			defaultColorMap = new ColorMap(colorMap.getPalette(), colorMap.getMin(), colorMap.getMax());
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
 		ColorMap.IntervalType iType = colorMap.getIntervalType();
 		if (iType == ColorMap.IntervalType.AUTOMATIC) {
 			intervalType.setSelectedItem("Automatic");

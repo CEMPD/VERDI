@@ -2397,7 +2397,6 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			dialog = new ConfigDialog((JDialog) window);
 		dialog.init(FastTilePlot.this, minMax);
 		dialog.enableScale( !this.statError);
-		dialog.setSize(500, 600);
 		dialog.setVisible(true);
 	}
 

@@ -93,6 +93,11 @@ public class ConfigDialog extends JDialog {
 			}
 		});
 	}
+	
+    public void setVisible(boolean b) {
+    	setSize(600, 600);
+        super.setVisible(b);
+    }
 
 	private void exit() {
 		this.dispose();

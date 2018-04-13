@@ -7,6 +7,8 @@ import static anl.verdi.plot.color.ColorMap.ScaleType.LOGARITHM;
 
 import java.awt.Color;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -28,6 +30,10 @@ public class ColorMapTableModel extends AbstractTableModel {
 
 	private boolean edit = false;
 	private ColorMap.ScaleType sType = ColorMap.ScaleType.LINEAR;
+	
+	Palette currentPalette;
+	Map<Integer, Color> currentCustomColors;
+	Map<Palette, Map<Integer, Color>> customColors = new HashMap<Palette, Map<Integer, Color>>();
 
 	public ColorMapTableModel() {
 		map = new ColorMap();
@@ -42,8 +48,22 @@ public class ColorMapTableModel extends AbstractTableModel {
 		map.setPaletteType(paletteType);
 	}
 	
+	public void resetColors() {
+		customColors.clear();
+		currentCustomColors.clear();
+	}
+	
 	public void resetPalette(Palette palette) {
 		map.setPalette(palette);
+		currentPalette = palette;
+		currentCustomColors = customColors.get(currentPalette);
+		if (currentCustomColors == null) {
+			currentCustomColors = new HashMap<Integer, Color>();
+			customColors.put(currentPalette,  currentCustomColors);
+		}
+		for (Integer position : currentCustomColors.keySet()) {
+			map.setColor(position,  currentCustomColors.get(position));
+		}
 		fireTableDataChanged();
 	}
 
@@ -118,7 +138,10 @@ public class ColorMapTableModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		if (aValue != null) {
-			if (columnIndex == 0) map.setColor(rowIndex, (Color) aValue);
+			if (columnIndex == 0) {
+				map.setColor(rowIndex, (Color) aValue);
+				currentCustomColors.put(rowIndex, (Color) aValue);
+			}
 			else if (columnIndex == 1) {
 				try {
 					double val = Double.parseDouble(aValue.toString());

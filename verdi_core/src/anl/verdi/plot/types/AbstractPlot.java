@@ -176,7 +176,6 @@ public abstract class AbstractPlot implements Plot {
 				Logger.debug("just initialized dialog to new ConfigDialog((JDialog) window");
 			}
 			dialog.init(AbstractPlot.this, null);
-			dialog.setSize(500, 600);
 			dialog.setVisible(true);
 		}
 		

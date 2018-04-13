@@ -3444,7 +3444,6 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			dialog = new ConfigDialog((JDialog) window);
 		dialog.init(MeshPlot.this, minMax);
 		dialog.enableScale( !this.statError);
-		dialog.setSize(500, 600);
 		dialog.setVisible(true);
 	}
 

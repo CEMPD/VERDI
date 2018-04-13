@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -79,32 +82,45 @@ public class PaletteSelectionPanel extends JPanel {
 		else
 			return ColorBrewer.DIVERGING;
 	}
-
+	
+	Map<Integer, Map<PaletteType, List<Palette>>> paletteMapByCount = new HashMap<Integer, Map<PaletteType, List<Palette>>>();;
+	
 	private void createPalettes() {
 		Logger.debug("in PaletteSelectionPanel.createPalettes");
 		int tileCount = ((Integer) tileSpinner.getValue()).intValue();
 		Logger.debug("\ttileCount = " + tileCount);
 		PaletteType paletteType = getPaletteType();
-		BrewerPalette[] pals = brewer.getPalettes(paletteType, tileCount);
-		Logger.debug("\tjust did brewer.getPalettes");
-		java.util.List<Palette> palettes = new ArrayList<Palette>();
-		
-//		//if diverging add custom INVERTED versions of the diverging palettes...
-//		if (paletteType.equals(ColorBrewer.DIVERGING)) {
-//			for (BrewerPalette pal : pals) {
-//				Color[] colors = pal.getColors(tileCount);
-//				palettes.add(new Palette(colors, pal.getDescription()));
-//			}
-//		}
-		for (BrewerPalette pal : pals) {
-			Color[] colors = pal.getColors(tileCount);
-			palettes.add(new Palette(colors, pal.getDescription(), false));
-//			Logger.debug("for each BrewerPalette, palettes.add " + pal.getDescription());
+		Map<PaletteType, List<Palette>> paletteMap = paletteMapByCount.get(tileCount);
+		if (paletteMap == null) {
+			paletteMap = new HashMap<PaletteType, List<Palette>>();
+			paletteMapByCount.put(tileCount,  paletteMap);
 		}
-
-		if (paletteType.equals(ColorBrewer.SEQUENTIAL)) {
-//			Logger.debug("ColorBrewer is SEQUENTIAL, doing palettes.addAll for tileCount = " + tileCount);
-			palettes.addAll(palBrewer.createPalettes(tileCount));
+		java.util.List<Palette> palettes = paletteMap.get(paletteType);
+		if (palettes == null) {
+			palettes = new ArrayList<Palette>();
+	
+			BrewerPalette[] pals = brewer.getPalettes(paletteType, tileCount);
+			
+			Logger.debug("\tjust did brewer.getPalettes");
+			
+	//		//if diverging add custom INVERTED versions of the diverging palettes...
+	//		if (paletteType.equals(ColorBrewer.DIVERGING)) {
+	//			for (BrewerPalette pal : pals) {
+	//				Color[] colors = pal.getColors(tileCount);
+	//				palettes.add(new Palette(colors, pal.getDescription()));
+	//			}
+	//		}
+			for (BrewerPalette pal : pals) {
+				Color[] colors = pal.getColors(tileCount);
+				palettes.add(new Palette(colors, pal.getDescription(), false));
+	//			Logger.debug("for each BrewerPalette, palettes.add " + pal.getDescription());
+			}
+	
+			if (paletteType.equals(ColorBrewer.SEQUENTIAL)) {
+	//			Logger.debug("ColorBrewer is SEQUENTIAL, doing palettes.addAll for tileCount = " + tileCount);
+				palettes.addAll(palBrewer.createPalettes(tileCount));
+			}
+			paletteMap.put(paletteType,  palettes);
 		}
 
 		palettePanel.setPalettes(palettes);
