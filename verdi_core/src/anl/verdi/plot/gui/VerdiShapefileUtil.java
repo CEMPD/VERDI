@@ -1,6 +1,7 @@
 package anl.verdi.plot.gui;
 
 import java.awt.geom.AffineTransform;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -174,20 +175,26 @@ public class VerdiShapefileUtil {
     	return projectShapefile(filename, sourceShapefile, targetProjection, targetCRS, false);
     }
 
+    static SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
 	//targetProjection - NetCDF projection used to create map data
     //targetCRS - CRS that Verdi determines the map to be using
     public static FeatureSource projectShapefile(String filename, SimpleFeatureSource sourceShapefile, Projection targetProjection, CoordinateReferenceSystem targetCRS, boolean mapTargets) {
+    	//long start = System.currentTimeMillis();
+    	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " "+ format.format( new Date()) + " " + filename + " to " + targetProjection.getName());
     	SimpleFeatureSource convertedSource = getCachedShapefile(filename, targetProjection, sourceShapefile);
-        if (convertedSource != null)
+        if (convertedSource != null) {
+        	//long duration = System.currentTimeMillis() - start;
+        	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " " + duration + "ms "+ filename + " cached");
         	return convertedSource;
-        if (targetProjection == null)
-        	return sourceShapefile;
+        }
         
        // if (sourceShapefile.getSchema().getCoordinateReferenceSystem().getCoordinateSystem().toString().toLowerCase().indexOf("longitude") == -1) {
         if (sourceShapefile.getSchema().getCoordinateReferenceSystem().toString().indexOf("WGS84") == -1) {
         	//Not in lat/lon, reproject
         	sourceShapefile = projectionToLatLon(sourceShapefile, mapTargets);
         } else if (targetProjection instanceof LatLonProjection && ((LatLonProjection)targetProjection).getCenterLon() == 0 ) {
+        	//long duration = System.currentTimeMillis() - start;
+        	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " " + duration + "ms "+ filename + " already lat lon");       	
         	return sourceShapefile;
         }
         
@@ -266,7 +273,9 @@ public class VerdiShapefileUtil {
         	e.printStackTrace();
         }
         cacheShapefile(filename, targetProjection, convertedSource);
-        return convertedSource;
+    	//long duration = System.currentTimeMillis() - start;
+    	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " " + duration + "ms "+ filename + " projected");
+    	return convertedSource;
     }
     
     //If you went to far

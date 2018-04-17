@@ -53,7 +53,11 @@ public class VerdiBoundaries {
 		Logger.debug("done with default constructor for VerdiBoundaries");	// JEB done 9 times - each of supplied shapefiles + selected shapefile
 	}
 	
-	public boolean setFileName(String aFileName)	// set values from a file name belonging to a shapefile
+	public boolean setFileName(String aFileName) {
+		return setFileName(aFileName, false);
+	}
+	
+	public boolean setFileName(String aFileName, boolean async)	// set values from a file name belonging to a shapefile
 	{
 		Logger.debug("setting file name in VerdiBoundaries to: " + aFileName);		// JEB OK done once per std shapefile (7 times)
 		if(aFileName == null)		// cannot pass in a null for the file name
@@ -92,7 +96,7 @@ public class VerdiBoundaries {
 			Logger.debug("VerdiBoundaries.setFileName failed; unable to create the aVerdiStyle.");
 			return false;
 		}
-		aVerdiStyle.projectShapefile(vProjection, vCRS);
+		aVerdiStyle.projectShapefile(vProjection, vCRS, async);
 		Logger.debug("Successfully completed VerdiBoundaries.setFileName for: " + vPath +
 				" and back from instantiating VerdiStyle.");	// JEB BACK FROM CREATING new VerdiStyle
 		return true;	// successfully set data members		// JEB YES returning to calling pgm (Mapper)

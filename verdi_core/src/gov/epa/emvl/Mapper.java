@@ -64,17 +64,21 @@ public class Mapper {
 	public Mapper(Projection projection, CoordinateReferenceSystem targetCRS) {
 		this(Mapper.getDefaultMapFileDirectory(), projection, targetCRS);
 	}
-	
-	public static void cacheDefaultProjections(Projection projection, CoordinateReferenceSystem coordSys) {
-		final Projection proj = projection;
-		final CoordinateReferenceSystem crs = coordSys;
-		new Thread() { 
-			public void run() {
-				new Mapper(proj, crs);
-			}
-		}.start();
-	}
 
+	public void cacheMaps() {
+		try {
+			getWorldMap(true);
+			getNorthAmericaMap(true);
+			getUsaStatesMap(true);
+			getUsaCountiesMap(true);
+			getUSHucMap(true);
+			getUSRiversMap(true);
+			getUSRoadsMap(true);
+			Logger.debug("done with get map functions, leaving Mapper constructor");
+		} catch (Exception e) {
+			Logger.debug("caught an exception caching maps from " + mapFileDirectory, e);
+		}
+	}
 	
 	// Construct with URL or directory containing the map files.
 	public Mapper(String directoryName, Projection projection, CoordinateReferenceSystem targetCRS) {
@@ -82,21 +86,8 @@ public class Mapper {
 		this.projection = projection;
 		this.targetCRS = targetCRS;
 		mapFileDirectory = directoryName + "/";
+		cacheMaps();
 		Logger.debug("Number of layers = " + layers.size());
-		try {
-			getWorldMap();
-			getNorthAmericaMap();
-			getUsaStatesMap();
-			getUsaCountiesMap();
-			getUSHucMap();
-			getUSRiversMap();
-			getUSRoadsMap();
-			Logger.debug("done with get map functions, leaving Mapper constructor");
-		} catch (Exception e) {
-			Logger.debug("caught an exception in Mapper constructor with directoryName = " + directoryName);
-			Logger.debug("Exception: " + e.getMessage());
-			Logger.debug("continuing");
-		}
 	}
 		
 	public static String getDefaultMapFileDirectory() {
@@ -201,13 +192,13 @@ public class Mapper {
 		
 	public void projectShapefiles() {
 		try {
-			getWorldMap();
-			getNorthAmericaMap();
-			getUsaStatesMap();
-			getUsaCountiesMap();
-			getUSHucMap();
-			getUSRiversMap();
-			getUSRoadsMap();
+			getWorldMap(true);
+			getNorthAmericaMap(true);
+			getUsaStatesMap(true);
+			getUsaCountiesMap(true);
+			getUSHucMap(true);
+			getUSRiversMap(true);
+			getUSRoadsMap(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -298,11 +289,15 @@ public class Mapper {
 	}
 
 	public VerdiBoundaries getUSHucMap() {
+		return getUSHucMap(false);
+	}
+	
+	public VerdiBoundaries getUSHucMap(boolean async) {
 		if (hucsMap == null) {
 			try {
 				hucsMap = new VerdiBoundaries();
 				hucsMap.setProjection(projection, targetCRS);
-				hucsMap.setFileName(mapFileDirectory + hucsMapFileName);
+				hucsMap.setFileName(mapFileDirectory + hucsMapFileName, async);
 				Logger.debug("got new VerdiBoundaries hucsMap = " + hucsMap);
 			} catch (Exception unused) {
 			}
@@ -317,11 +312,15 @@ public class Mapper {
 	}
 
 	public VerdiBoundaries getUSRoadsMap() {
+		return getUSRoadsMap(false);
+	}
+	
+	public VerdiBoundaries getUSRoadsMap(boolean async) {
 		if (roadsMap == null) {
 			try {
 				roadsMap = new VerdiBoundaries();
 				roadsMap.setProjection(projection, targetCRS);
-				roadsMap.setFileName(mapFileDirectory + roadsMapFileName);
+				roadsMap.setFileName(mapFileDirectory + roadsMapFileName, async);
 				Logger.debug("got new VerdiBoundaries roadsMap = " + roadsMap);
 			} catch (Exception unused) {
 			}
@@ -336,11 +335,15 @@ public class Mapper {
 	}
 
 	public VerdiBoundaries getUSRiversMap() {
+		return getUSRiversMap(false);
+	}
+	
+	public VerdiBoundaries getUSRiversMap(boolean async) {
 		if (riversMap == null) {
 			try {
 				riversMap = new VerdiBoundaries();
 				riversMap.setProjection(projection, targetCRS);
-				riversMap.setFileName(mapFileDirectory + riversMapFileName);
+				riversMap.setFileName(mapFileDirectory + riversMapFileName, async);
 				Logger.debug("got new VerdiBoundaries riversMap = " + riversMap);
 			} catch (Exception unused) {
 			}
@@ -355,12 +358,16 @@ public class Mapper {
 	}
 
 	public VerdiBoundaries getUsaStatesMap() throws Exception {
+		return getUsaStatesMap(false);
+	}
+	
+	public VerdiBoundaries getUsaStatesMap(boolean async) throws Exception {
 		try {
 			if (stateMap == null)
 			{
 				stateMap = new VerdiBoundaries();
 				stateMap.setProjection(projection, targetCRS);
-				stateMap.setFileName(mapFileDirectory + stateMapFileName);
+				stateMap.setFileName(mapFileDirectory + stateMapFileName, async);
 			}
 			Logger.debug("got new VerdiBoundaries stateMap = " + stateMap);
 
@@ -383,12 +390,16 @@ public class Mapper {
 	}
 
 	public VerdiBoundaries getUsaCountiesMap() throws Exception {
+		return getUsaCountiesMap(false);
+	}
+	
+	public VerdiBoundaries getUsaCountiesMap(boolean async) throws Exception {
 		try {
 			if (countyMap == null)
 			{
 				countyMap = new VerdiBoundaries();
 				countyMap.setProjection(projection, targetCRS);
-				countyMap.setFileName(mapFileDirectory + countyMapFileName);
+				countyMap.setFileName(mapFileDirectory + countyMapFileName, async);
 			}
 			Logger.debug("got new VerdiBoundaries countyMap = " + countyMap);
 
@@ -411,12 +422,16 @@ public class Mapper {
 	}
 
 	public VerdiBoundaries getWorldMap() throws Exception {
+		return getWorldMap(false);
+	}
+	
+	public VerdiBoundaries getWorldMap(boolean async) throws Exception {
 		try {
 			if (worldMap == null)
 			{
 				worldMap = new VerdiBoundaries();
 				worldMap.setProjection(projection, targetCRS);
-				worldMap.setFileName(mapFileDirectory + worldMapFileName);
+				worldMap.setFileName(mapFileDirectory + worldMapFileName, async);
 			}		
 			Logger.debug("got new VerdiBoundaries worldMap = " + worldMap);
 			return worldMap;
@@ -438,12 +453,16 @@ public class Mapper {
 	}
 
 	public VerdiBoundaries getNorthAmericaMap() throws Exception {
+		return getNorthAmericaMap(false);
+	}
+	
+	public VerdiBoundaries getNorthAmericaMap(boolean async) throws Exception {
 		try {
 			if (northAmericaMap == null)
 			{
 				northAmericaMap = new VerdiBoundaries();
 				northAmericaMap.setProjection(projection, targetCRS);
-				northAmericaMap.setFileName(mapFileDirectory + northAmericaMapFileName);
+				northAmericaMap.setFileName(mapFileDirectory + northAmericaMapFileName, async);
 			}		
 			Logger.debug("got new VerdiBoundaries northAmericaMap = " + northAmericaMap);
 			return northAmericaMap;

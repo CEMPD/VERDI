@@ -12,6 +12,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.logging.log4j.LogManager;		// using log4j instead of System.out.println for messages
 import org.apache.logging.log4j.Logger;
@@ -52,7 +56,7 @@ import ucar.unidata.geoloc.Projection;
  * @author Jo Ellen Brandmeyer, Institute for the Environment, 2015
  *
  */
-public class VerdiStyle {
+public class VerdiStyle implements Callable<Boolean> {
 
 	private StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory(null);
 	private FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory(null);
@@ -135,7 +139,50 @@ public class VerdiStyle {
 		vStore = null;
 	}
 	
-	public void projectShapefile(Projection proj, CoordinateReferenceSystem targetCRS) {
+	static ExecutorService backgroundExecutor = Executors.newFixedThreadPool(1);
+	static ExecutorService foregroundExecutor = Executors.newFixedThreadPool(1);
+	
+	Projection sourceProjection = null;
+	CoordinateReferenceSystem projectingCRS = null;
+	Future<Boolean> projectionCalculated = null;
+	
+	private void waitForProjection() {
+		if (projectionCalculated != null)
+			try {
+				projectionCalculated.get();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	}
+	
+	
+	public Boolean call() {
+		projectShapefile(sourceProjection, projectingCRS);
+		return Boolean.TRUE;
+	}
+	
+	public void projectShapefile(Projection proj, CoordinateReferenceSystem targetCRS, boolean async) {
+		sourceProjection = proj;
+		projectingCRS = targetCRS;
+		ExecutorService executor = null;
+		synchronized (backgroundExecutor) {
+			if (async)
+				executor = backgroundExecutor;
+			else
+				executor = foregroundExecutor;
+			if (projectionCalculated != null) {
+				if (!async)
+					waitForProjection();
+				return;
+			}
+			projectionCalculated = executor.submit(this);
+		}
+		if (!async) {
+			waitForProjection();
+		}
+	}
+	
+	private void projectShapefile(Projection proj, CoordinateReferenceSystem targetCRS) {
 		vFeatureSource = VerdiShapefileUtil.projectShapefile(vFile.getName(), (SimpleFeatureSource)vFeatureSource, proj, targetCRS);
 		vProjection = proj;
 		vCRS = vFeatureSource.getSchema().getCoordinateReferenceSystem();
@@ -266,6 +313,7 @@ public class VerdiStyle {
 	
 	private void getStyleFromDialog()
 	{		// display dialog box for user to interactively specify style attributes (not available in script mode)
+		waitForProjection();
 		SimpleFeatureType schema = (SimpleFeatureType)vFeatureSource.getSchema();
 		Logger.debug("in getStyleFromDialog; SimpleFeatureType schema = " + schema.toString());
 		vStyle = JSimpleStyleDialog.showDialog(null, schema);
@@ -273,6 +321,7 @@ public class VerdiStyle {
 
 	private void getStyleFromPgm()
 	{		// get style based on type of geometry in the File
+		waitForProjection();
 		SimpleFeatureType schema = (SimpleFeatureType)vFeatureSource.getSchema();
 		Logger.debug("in getStyleFromPgm; SimpleFeatureType schema = " + schema.toString());		// JEB YES knows map_world and MultiLineString
 		Class geomType = schema.getGeometryDescriptor().getType().getBinding();
@@ -397,6 +446,7 @@ public class VerdiStyle {
 	
 	public FeatureSource getFeatureSource()	// get FeatureSource associated with this map layer
 	{
+		waitForProjection();
 		return vFeatureSource;
 	}
 	
@@ -415,6 +465,7 @@ public class VerdiStyle {
 	{
 		if(vLayer == null)
 		{
+			waitForProjection();
 			vLayer = new FeatureLayer(vFeatureSource, vStyle);
 		}
 		if (layerList == null) {
