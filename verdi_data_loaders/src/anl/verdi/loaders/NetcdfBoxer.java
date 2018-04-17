@@ -72,7 +72,6 @@ public class NetcdfBoxer implements BoundingBoxer {
 		Logger.debug("in constructor for NetcdfBoxer for a GridDatatype");
 		this.grid = grid;
 		this.isLatLon = grid.getCoordinateSystem().isLatLon();
-		Mapper.cacheDefaultProjections(getProjection(), getCRS());
 	}
 	
 	/**
