@@ -516,6 +516,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 		}
 	}
 	public void restoreCursor() {
+		setStatusOneText("");
 		if ( oldCursor != null && getFrame() != null) {
 			getFrame().setCursor(oldCursor);
 		} else {

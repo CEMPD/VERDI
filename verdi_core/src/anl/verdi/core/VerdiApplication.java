@@ -645,11 +645,13 @@ FormulaElementCreator, ListDataListener {
 		File[] files = FileChooserUtilities.getOpenFiles(currentDatasetFile);
 		if (files.length > 0) {
 			try {
+				getGui().showBusyCursor();
 				loadDataset(files);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			getGui().restoreCursor();
 			currentDatasetFile = files[0];
 		}
 	}
