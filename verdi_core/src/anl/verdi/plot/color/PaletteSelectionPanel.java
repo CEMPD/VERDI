@@ -113,6 +113,15 @@ public class PaletteSelectionPanel extends JPanel {
 			for (BrewerPalette pal : pals) {
 				Color[] colors = pal.getColors(tileCount);
 				palettes.add(new Palette(colors, pal.getDescription(), false));
+				if (pal.getDescription().equals("dark red to light to dark blue")) {
+					colors = pal.getColors(tileCount);
+					if (tileCount %2 == 0) {
+						colors[tileCount / 2] = Color.WHITE;
+						colors[tileCount / 2 - 1] = Color.WHITE;
+					} else
+						colors[(int)Math.floor(tileCount / 2.0)] = Color.WHITE;
+					palettes.add(new Palette(colors, "dark red to white to dark blue", false));
+				}
 	//			Logger.debug("for each BrewerPalette, palettes.add " + pal.getDescription());
 			}
 	
