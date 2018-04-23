@@ -54,7 +54,11 @@ public class MPASDataFrameBuilder extends DataFrameBuilder {
 					public CoordinateReferenceSystem getCRS() {
 						return null;
 					}
-				};
+
+					public CoordinateReferenceSystem getOriginalCRS() {
+						return null;
+					}
+};
 			}
 			if (nCellsAxis != null)
 				others.add(nCellsAxis);

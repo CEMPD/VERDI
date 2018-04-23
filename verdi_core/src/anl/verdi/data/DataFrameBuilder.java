@@ -85,6 +85,10 @@ public class DataFrameBuilder {
 					public CoordinateReferenceSystem getCRS() {
 						return null;
 					}
+					
+					public CoordinateReferenceSystem getOriginalCRS() {
+						return null;
+					}
 				};
 			}
 			if (xAxis != null)

@@ -178,4 +178,8 @@ public class MPASBoxer implements BoundingBoxer {
 		return PLACEHOLDER_CRS;
 	}
 
+	public CoordinateReferenceSystem getOriginalCRS() {
+		return PLACEHOLDER_CRS;
+	}
+
 }

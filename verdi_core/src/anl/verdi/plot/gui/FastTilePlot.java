@@ -248,6 +248,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	private float[][][] statisticsData = null;
 	//private float[][][] statisticsDataLog = null;
 	protected CoordinateReferenceSystem gridCRS = null;	// axes -> ReferencedEnvelope -> gridCRS
+	protected CoordinateReferenceSystem originalCRS = null;
 	Projection projection = null;
 
 	// For clipped/projected/clipped map lines:
@@ -1361,6 +1362,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			Logger.debug("projector set to: " + projector.toString());
 		}
 		gridCRS = coordinateAxes.getBoundingBoxer().getCRS();
+		
+		originalCRS = coordinateAxes.getBoundingBoxer().getOriginalCRS();
 		
 		mapper = new Mapper(mapFileDirectory, projection, gridCRS);
 
@@ -3380,7 +3383,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				subsetLayerRows, subsetLayerColumns,
 				subsetWestEdge, subsetSouthEdge,
 				cellWidth, cellHeight,
-				filterVariableName(variable), subsetLayerData, gridCRS );
+				filterVariableName(variable), subsetLayerData, originalCRS );
 	}
 	
 	protected float[][] getLayerData() {

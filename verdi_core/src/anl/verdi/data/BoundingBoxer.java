@@ -56,4 +56,6 @@ public interface BoundingBoxer {
 	Point2D latLonToAxisPoint(double lat, double lon);
 	
 	public CoordinateReferenceSystem getCRS();
+
+	public CoordinateReferenceSystem getOriginalCRS();
 }

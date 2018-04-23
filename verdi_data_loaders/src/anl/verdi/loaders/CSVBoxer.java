@@ -91,6 +91,10 @@ public class CSVBoxer implements BoundingBoxer {
 		return crs;
 	}
 
+	public CoordinateReferenceSystem getOriginalCRS() {
+		return crs;
+	}
+
 	private CoordinateReferenceSystem getLambert() {
 		try {
 			Map<String, Object> params = new HashMap<String, Object>();

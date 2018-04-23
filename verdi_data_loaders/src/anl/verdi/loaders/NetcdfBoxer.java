@@ -3,6 +3,7 @@
 package anl.verdi.loaders;
 
 import java.awt.geom.Point2D;
+import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +24,11 @@ import ucar.nc2.dt.GridDatatype;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.Projection;
 import ucar.unidata.geoloc.ProjectionPointImpl;
+import ucar.unidata.geoloc.projection.LambertConformal;
+import ucar.unidata.geoloc.projection.LatLonProjection;
+import ucar.unidata.geoloc.projection.Mercator;
+import ucar.unidata.geoloc.projection.Stereographic;
+import ucar.unidata.geoloc.projection.UtmProjection;
 import anl.verdi.core.VerdiConstants;
 import anl.verdi.data.BoundingBoxer;
 import gov.epa.emvl.Mapper;
@@ -63,6 +69,8 @@ public class NetcdfBoxer implements BoundingBoxer {
 			Logger.error("Could not create placeholder crs", e);
 		}
 	}
+	
+	CoordinateReferenceSystem origCRS = null;
 	protected boolean isLatLon;
 	
 	protected NetcdfBoxer() {
@@ -255,25 +263,25 @@ public class NetcdfBoxer implements BoundingBoxer {
 //		Hints hints = new Hints(Hints.COMPARISON_TOLERANCE, 1E-9);	// TODO: 2014  probably need to do in beginning of VERDI
 		Hints.putSystemDefault(Hints.COMPARISON_TOLERANCE, 10e-9);
 
+		detectCRS();
 		return new ReferencedEnvelope(xStart, xEnd, yStart, yEnd, PLACEHOLDER_CRS);
 	}
 	
-	/*
-	private CoordinateReferenceSystem createCRS() {
-		return PLACEHOLDER_CRS;
+	
+	private void detectCRS() {
 		Projection proj = getProjection();
 		Logger.debug("proj = " + proj.toString() + '\n' + "  projection is not checked yet");
 		if (proj instanceof LambertConformal) {
 			Logger.debug("proj = " + proj.toString() + '\n' + "  projection is of type LambertConformal");
-			if (crs == null) {
+			if (origCRS == null) {
 				Logger.info("NOTE: crs is null");
 				try {
 					Logger.info("within try/catch block");
 					String strCRS = new LambertWKTCreator().createWKT((LambertConformal) proj);
 					Logger.info("created strCRS = " + strCRS);
 					Logger.info("Ready to call CRS.parseWKT for LambertConformal");
-					crs = CRS.parseWKT(strCRS);	// NOTE: preferred method (docs.geotools.org/stable/userguide/library/referencing/crs.html)
-					Logger.info("parsed CRS: " + crs.toString()); // sphere radius is 6370000
+					origCRS = CRS.parseWKT(strCRS);	// NOTE: preferred method (docs.geotools.org/stable/userguide/library/referencing/crs.html)
+					Logger.info("parsed CRS: " + origCRS.toString()); // sphere radius is 6370000
 					Logger.info("done printing crs");
 				} catch (IOException ex) {
 					Logger.info("into exception handling");
@@ -286,47 +294,47 @@ public class NetcdfBoxer implements BoundingBoxer {
 			}
 		} else if (proj instanceof UtmProjection) {
 			Logger.debug("projection is of type UtmProjection");
-			if (crs == null) {
+			if (origCRS == null) {
 				Logger.info("NOTE: crs is null");
 				try {
 					Logger.info("within try/catch block");
 					String strCRS = new UtmWKTCreator().createWKT((UtmProjection) proj);
 					Logger.info("created strCRS = " + strCRS.toString());
 					Logger.info("Ready to call CRS.parseWKT for UTM Projection");
-					crs = CRS.parseWKT(strCRS);
+					origCRS = CRS.parseWKT(strCRS);
 				} catch (Exception ex) {
 					Logger.error("Error while creating CRS for UTM " + ex.getMessage());
 				}
 			}
 		} else if (proj instanceof Stereographic) {
 			Logger.debug("projection is of type Stereographic");
-			if (crs == null) {
+			if (origCRS == null) {
 				Logger.info("NOTE: crs is null");
 				try {
 					Logger.info("within try/catch block");
 					String strCRS = new PolarStereographicWKTCreator().createWKT((Stereographic) proj);
 					Logger.info("created strCRS = " + strCRS.toString());	// FAILURE CAUSE: PARAMETER["scale_factor", -98.0],
 					Logger.info("Ready to call CRS.parseWKT for Stereographic Projection");
-					crs = CRS.parseWKT(strCRS);		// FAILURE POINT
-					Logger.info("parsed CRS: " + crs.toString());
+					origCRS = CRS.parseWKT(strCRS);		// FAILURE POINT
+					Logger.info("parsed CRS: " + origCRS.toString());
 				} catch (Exception ex) {
 					Logger.error("Error while creating CRS for Stereographic " + ex.getMessage());
 				}
 			}
 		} else if (isLatLon) {
-			if (crs == null) {
+			if (origCRS == null) {
 				try {
 					String strCRS = new LatlonWKTCreator().createWKT((LatLonProjection)proj);
-					crs = CRS.parseWKT(strCRS);
+					origCRS = CRS.parseWKT(strCRS);
 				} catch (Exception ex) {
 					Logger.error("Error while creating CRS for Lat-Lon " + ex.getMessage());
 				}
 			}
 		} else if (proj instanceof Mercator) {			
-			if (crs == null) {
+			if (origCRS == null) {
 				try {
 					String strCRS = new MercatorWKTCreator().createWKT((Mercator)proj);
-					crs = CRS.parseWKT(strCRS);
+					origCRS = CRS.parseWKT(strCRS);
 				} catch (Exception e) {
 					Logger.error("Error while creating CRS for Mercator " + e.getMessage());
 				}
@@ -338,15 +346,18 @@ public class NetcdfBoxer implements BoundingBoxer {
 			Logger.error("Projection is not recognized!!");
 		} 
 
-		return crs;
 		
 		
 	}
-	*/
+	
 	
 	public CoordinateReferenceSystem getCRS() {
 		Logger.debug("in getCRS(): returning crs = " + PLACEHOLDER_CRS);
 		return PLACEHOLDER_CRS;
+	}
+	
+	public CoordinateReferenceSystem getOriginalCRS() {
+		return origCRS;
 	}
 
 	protected CoordinateAxis1D getXAxis() {
