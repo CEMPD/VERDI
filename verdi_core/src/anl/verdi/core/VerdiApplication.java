@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -119,6 +120,7 @@ FormulaElementCreator, ListDataListener {
 
 	public VerdiApplication(DataManager manager) {
 		this.manager = manager;
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		singleton = this;
 		Logger.debug("Msg #1: in VerdiApplication DataManager");
 	}
