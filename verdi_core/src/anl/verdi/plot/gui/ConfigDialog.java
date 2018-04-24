@@ -9,6 +9,7 @@ import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -96,6 +97,8 @@ public class ConfigDialog extends JDialog {
 	
     public void setVisible(boolean b) {
     	setSize(600, 600);
+    	Point p = getLocation();
+    	setLocation(0, p.y);
         super.setVisible(b);
     }
 

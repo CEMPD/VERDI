@@ -6,6 +6,7 @@ package anl.verdi.plot.anim;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -328,6 +329,8 @@ public class AnimationPanelContour3D extends JPanel {
 		dialog.setLayout(new BorderLayout());
 		dialog.add(this, BorderLayout.CENTER);
 		dialog.setLocationRelativeTo(plot.getPanel());
+		Point p = dialog.getLocation();
+		dialog.setLocation(0, p.y);
 		dialog.pack();
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setVisible(true);

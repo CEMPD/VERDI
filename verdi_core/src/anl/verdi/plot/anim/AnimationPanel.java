@@ -3,6 +3,7 @@ package anl.verdi.plot.anim;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -314,6 +315,8 @@ public class AnimationPanel extends JPanel {
 		dialog.setLocationRelativeTo(plot.getPanel());
 		dialog.pack();
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		Point p = dialog.getLocation();
+		dialog.setLocation(0, p.y);
 		dialog.setVisible(true);
 	}
 

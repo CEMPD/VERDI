@@ -3285,6 +3285,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		editor.init(mapper);
 		//editor.setLayerControl(createControlLayer());
 		editor.setLocationRelativeTo(frame);
+		Point p = editor.getLocation();
+		editor.setLocation(0, p.y);
 		editor.setVisible(true);
 		editor.pack();
 		return editor;
@@ -3444,6 +3446,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			dialog = new ConfigDialog((JDialog) window);
 		dialog.init(MeshPlot.this, minMax);
 		dialog.enableScale( !this.statError);
+		Point p = getLocation();
+		setLocation(0, p.y);
 		dialog.setVisible(true);
 	}
 
@@ -3833,6 +3837,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		public int showDialog() {
 			this.pack();
+			Point p = getLocation();
+			setLocation(0, p.y);
 			this.setVisible(true);
 
 			if (this.cancelled)

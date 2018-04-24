@@ -2241,6 +2241,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		editor.init(mapper);
 		editor.setLocationRelativeTo(frame);
 		editor.setVisible(true);
+		Point p = editor.getLocation();
+		editor.setLocation(0, p.y);
 		editor.pack();
 		return editor;
 	}
@@ -2749,6 +2751,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		public int showDialog() {
 			this.pack();
+			Point p = getLocation();
+			setLocation(0, p.y);
 			this.setVisible(true);
 
 			if (this.cancelled)

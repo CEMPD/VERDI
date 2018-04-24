@@ -6,6 +6,7 @@ import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -195,4 +196,10 @@ public class HelpDialog extends JDialog {
 	      } catch (IOException e) { /* TODO: error handling */ }
 	    } else { /* TODO: error handling */ }
 	  }
+	  
+	    public void setVisible(boolean b) {
+	    	Point p = getLocation();
+	    	setLocation(0, p.y);
+	        super.setVisible(b);
+	    }
 }
