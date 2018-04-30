@@ -47,6 +47,7 @@ public class TimeLayerPanel extends JPanel {
 
 	private Axes axes;
 	private boolean spinnersOn = false;
+	private boolean redrawing = false;
 
 
 	public TimeLayerPanel() {
@@ -212,6 +213,20 @@ public class TimeLayerPanel extends JPanel {
 		add(label2, cc.xy(7, 1));
 		add(layerSpinner, cc.xy(9, 1));
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
+	}
+	
+	public void invalidate() {
+		if (!redrawing)
+			super.invalidate();
+	}
+	
+	public void revalidate() {
+		if (!redrawing)
+			super.revalidate();
+	}
+	
+	public void setRedrawing(boolean draw) {
+		redrawing = draw;
 	}
 	
 	public void close() {

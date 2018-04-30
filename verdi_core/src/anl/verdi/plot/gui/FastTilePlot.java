@@ -482,16 +482,20 @@ Logger.debug("set up drawing space, titles, fonts, etc.");
 					// Use off-screen graphics for double-buffering:
 					// don't start processing until graphics system is ready!
 Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
-					final Image offScreenImage =	// get actual size after call to AddPlotListener
-						repaintManager.getOffscreenBuffer(threadParent, canvasWidth, canvasHeight);
+					Image tmpOffScreenImage =	null; // get actual size after call to AddPlotListener
+					try {
+						tmpOffScreenImage =	repaintManager.getOffscreenBuffer(threadParent, canvasWidth, canvasHeight);
+					} catch (NullPointerException e) {}
 
 					// offScreenImage = (Image) (offScreenImage.clone());	// commented out in 2/2014 version
 
-					if (offScreenImage == null) {
+					if (tmpOffScreenImage == null) {
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
 						continue;// graphics system is not ready
 					}
+					
+					final Image offScreenImage = tmpOffScreenImage;
 
 					final Graphics offScreenGraphics = offScreenImage.getGraphics();
 
@@ -972,6 +976,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				leftStepButton.setEnabled(false);
 				rightStepButton.setEnabled(false);
 				drawMode = DRAW_CONTINUOUS;
+				timeLayerPanel.setRedrawing(true);
 				int holdDelay = delay;
 						try {
 							delay = Integer.parseInt(delayField.getText().toString());
@@ -990,6 +995,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				drawMode = DRAW_NONE;
 				leftStepButton.setEnabled(true);
 				rightStepButton.setEnabled(true);
+				timeLayerPanel.setRedrawing(false);
 				try {
 					Thread.sleep(100);
 				} catch (Exception unused) {}
