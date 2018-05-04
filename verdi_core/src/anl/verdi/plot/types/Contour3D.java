@@ -10,6 +10,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -96,6 +97,7 @@ import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotListener;
 import anl.verdi.plot.gui.TimeLayerPanel;
 import anl.verdi.plot.probe.PlotEventProducer;
+import anl.verdi.plot.types.AbstractPlot.ChartEpsRenderer;
 import anl.verdi.plot.util.LegendPanel;
 import anl.verdi.plot.util.OffsetNumberFormat;
 import anl.verdi.plot.util.PlotExporterAction;
@@ -103,8 +105,11 @@ import anl.verdi.plot.util.VerdiCanvas3D;
 import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;
 import anl.verdi.util.VUnits;
+import net.sf.epsgraphics.ColorMode;
+import net.sf.epsgraphics.Drawable;
+import net.sf.epsgraphics.EpsTools;
 
-public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLevelListener {
+public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLevelListener, EPSExporter {
 
 	static final Logger Logger = LogManager.getLogger(Contour3D.class.getName());
 //	private static final MessageCenter msg = MessageCenter.getMessageCenter(Contour3D.class);
@@ -493,6 +498,39 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLev
 
 		return img;
 	}
+	
+	public Graphics2D getBufferedImage(Graphics2D g2) {
+		BufferedImage img = getBufferedImage();
+		g2.drawImage(img, 0, 0, img.getWidth(), img.getHeight(), null);
+		return g2;
+	}
+	
+	public void exportEPSImage(String filename) {
+		int width = panel.getWidth();
+		int height = panel.getHeight();
+		exportEPSImage(filename, width, height);
+	}
+	
+	public void exportEPSImage(String filename, int width, int height) {
+		ContourEpsRenderer renderer = new ContourEpsRenderer(width, height);
+		EpsTools.createFromDrawable(renderer, filename, width, height, ColorMode.COLOR_RGB);
+	}
+	
+	class ContourEpsRenderer implements Drawable {
+		final int canvasWidth, canvasHeight;
+		
+		public ContourEpsRenderer(int width, int height) {
+			canvasWidth = width;
+			canvasHeight = height;
+			Logger.debug("within subclass EpsRenderer, setting canvasWidth = " + width + "; canvasHeight = " + canvasHeight);
+		}
+		
+		@Override
+		public void draw(Graphics2D g, Rectangle2D rect) {
+			getBufferedImage(g);
+		}
+	}
+
 
 	/**
 	 * Creates a print job for the chart.

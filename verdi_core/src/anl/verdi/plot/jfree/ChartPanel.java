@@ -1171,6 +1171,62 @@ public class ChartPanel extends JPanel
 		//Logger.debug("chartBuffer.getCapabilities().isAccelerated() = " + chartBuffer.getCapabilities().isAccelerated());
 	}
 
+	private void renderDirect(boolean scale, Rectangle2D chartArea, Rectangle2D available, Graphics2D g2) {
+		Rectangle2D bufferArea = new Rectangle2D.Double(0, 0, this.chartBufferWidth, this.chartBufferHeight);
+		if (scale) {
+			AffineTransform saved = g2.getTransform();
+			AffineTransform st = AffineTransform.getScaleInstance(this.scaleX, this.scaleY);
+			g2.transform(st);
+			this.chart.draw(g2, chartArea, this.anchor, this.info);
+			g2.setTransform(saved);
+		} else
+			this.chart.draw(g2, bufferArea, this.anchor, this.info);
+	}
+	
+	public void directPaintImage(Graphics2D g2) {
+		if (this.chart == null) {
+			return;
+		}
+		// first determine the size of the chart rendering area...
+		Dimension size = getSize();
+		Insets insets = getInsets();
+		Rectangle2D available = new Rectangle2D.Double(insets.left, insets.top,
+						size.getWidth() - insets.left - insets.right,
+						size.getHeight() - insets.top - insets.bottom);
+
+		// work out if scaling is required...
+		boolean scale = false;
+		double drawWidth = available.getWidth();
+		double drawHeight = available.getHeight();
+		this.scaleX = 1.0;
+		this.scaleY = 1.0;
+
+		if (drawWidth < this.minimumDrawWidth) {
+			this.scaleX = drawWidth / this.minimumDrawWidth;
+			drawWidth = this.minimumDrawWidth;
+			scale = true;
+		} else if (drawWidth > this.maximumDrawWidth) {
+			this.scaleX = drawWidth / this.maximumDrawWidth;
+			drawWidth = this.maximumDrawWidth;
+			scale = true;
+		}
+
+		if (drawHeight < this.minimumDrawHeight) {
+			this.scaleY = drawHeight / this.minimumDrawHeight;
+			drawHeight = this.minimumDrawHeight;
+			scale = true;
+		} else if (drawHeight > this.maximumDrawHeight) {
+			this.scaleY = drawHeight / this.maximumDrawHeight;
+			drawHeight = this.maximumDrawHeight;
+			scale = true;
+		}
+
+		Rectangle2D chartArea = new Rectangle2D.Double(0.0, 0.0, drawWidth,
+						drawHeight);
+		
+		renderDirect(scale, chartArea, available, g2);
+	}
+
 	/**
 	 * Paints the component by drawing the chart to fill the entire component,
 	 * but allowing for the insets (which will be non-zero if a border has been

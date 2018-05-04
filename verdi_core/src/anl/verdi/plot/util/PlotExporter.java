@@ -18,6 +18,7 @@ import anl.verdi.plot.gui.FastTilePlot;
 import anl.verdi.plot.gui.MeshPlot;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.io.TIFConvertImage;
+import anl.verdi.plot.types.EPSExporter;
 import anl.verdi.util.Utilities;
 /**
  * Saves snapshots of plots.
@@ -135,10 +136,21 @@ public class PlotExporter {
 			file = new File(file.getAbsolutePath() + "." + currentExt);
 		}
 
-		if( plot instanceof MeshPlot && currentExt.equals(SHP)){
+		if( plot instanceof MeshPlot && 
+				(currentExt.equals(SHP) || 
+						currentExt.equals(EPS) ||
+						currentExt.equals( ASC) ) ){
 			String filename = file.getAbsolutePath();
-			filename = filename.substring(0, filename.length() - (SHP.length() + 1));
-			((MeshPlot)plot).exportShapeFile(filename);
+			int extPos = filename.indexOf("." + currentExt);
+
+			if (extPos > 0)
+				filename = filename.substring(0, extPos);
+			if (currentExt.equalsIgnoreCase(SHP))
+				((MeshPlot)plot).exportShapeFile(filename);
+			else if (currentExt.equalsIgnoreCase(EPS))
+				((MeshPlot)plot).exportEPSImage(filename);
+			else if (currentExt.equalsIgnoreCase(ASC))
+				((MeshPlot)plot).exportASCIIGrid(filename);
 		}
 		
 		if ( plot instanceof FastTilePlot &&
@@ -162,6 +174,21 @@ public class PlotExporter {
 			return;
 		}
 		
+		if ( plot instanceof EPSExporter &&
+				 currentExt.equalsIgnoreCase(EPS)) {
+			String filename = file.getAbsolutePath();
+			int extPos = filename.indexOf("." + currentExt);
+
+			if (extPos > 0)
+				filename = filename.substring(0, extPos);
+
+			if ( currentExt.equalsIgnoreCase(EPS) ) {
+				((EPSExporter)plot).exportEPSImage(filename);
+			}
+			return;
+		}
+
+		
 		if (currentExt.equalsIgnoreCase(TIFF) || currentExt.equalsIgnoreCase(TIF)) {
 			if ( !Utilities.is64bitWindows()) {
 				BufferedImage image = plot.getBufferedImage();
@@ -170,8 +197,6 @@ public class PlotExporter {
 			}
 		}
 		
-		if (currentExt.equalsIgnoreCase(EPS))
-			return;
 
 		BufferedImage image = plot.getBufferedImage();
 		ImageIO.write(image, currentExt, file);

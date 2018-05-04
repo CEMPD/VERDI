@@ -236,6 +236,9 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 
 	private Color axisColor = Color.darkGray;
 	private Color labelColor = Color.black;
+	
+	Graphics2D exportGraphics = null;
+
 
 	// subsetLayerData[ 1 + lastRow - firstRow ][ 1 + lastColumn - firstColumn ]
 	// at current timestep and layer.
@@ -497,7 +500,7 @@ Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
 					
 					final Image offScreenImage = tmpOffScreenImage;
 
-					final Graphics offScreenGraphics = offScreenImage.getGraphics();
+					final Graphics offScreenGraphics = exportGraphics == null ? offScreenImage.getGraphics() : exportGraphics;
 
 					if (offScreenGraphics == null) {
 						if ( get_draw_once_requests() < 0) 
@@ -2657,6 +2660,23 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		Logger.debug("sending bImage in getBufferedImage member function");
 		return bImage;
 	}
+	
+	public Graphics2D getBufferedImage(Graphics2D g) {
+		exportGraphics = g;
+		bImage = null;
+		forceBufferedImage = true;
+		draw();
+		long start = System.currentTimeMillis();
+		while (System.currentTimeMillis() - start < 2000 && bImage == null )
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				Logger.error("Caught exception waiting for buffered image", e);
+				break;
+			}
+		exportGraphics = null;
+		return g;
+	}
 
 	/**
 	 * Adds the specified PlotListener.
@@ -3466,78 +3486,9 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		
 		@Override
 		public void draw(Graphics2D g, Rectangle2D rect) {
-			Logger.debug("within FastTilePlot.EpsRenderer.draw");
-			// around plot window.
-
-			String sTitle1 = config.getSubtitle1();
-			String sTitle2 = config.getSubtitle2();
-			Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
-			Font sFont1 = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
-			Font sFont2 = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
-			int fontSize = (tFont == null) ? 20 : tFont.getSize();
-			int yOffset = 20 + fontSize;
-
-			if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
-				fontSize = (sFont1 == null) ? 20 : sFont1.getSize();
-				yOffset += fontSize + 6;
-			}
-
-			if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
-				fontSize = (sFont2 == null) ? 20 : sFont2.getSize();
-
-				if (sTitle1 == null || sTitle1.trim().isEmpty()) {
-					yOffset += 26;
-				}
-
-				yOffset += fontSize + 6;
-			}
-
-			final int xOffset = 100;
-
-			g.setColor(Color.white);
-			g.fillRect(0, 0, canvasWidth, canvasHeight);
-
-			// Draw legend-colored grid cells, axis, text labels and
-			// legend:
-
-			final Boolean showGridLines = (Boolean)
-				config.getObject( TilePlotConfiguration.SHOW_GRID_LINES );
-			final Color gridLineColor = (Color)
-				( ( showGridLines == null || showGridLines == false ) ? null
-					: config.getObject( TilePlotConfiguration.GRID_LINE_COLOR ) );
-				
-			final int stepsLapsed = timestep - firstTimestep;
-			try {tilePlot.drawBatchImage(g,
-						xOffset, yOffset,
-							canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
-							lastRow, firstColumn, lastColumn, legendLevels,
-							legendColors, axisColor, labelColor, variable,
-							((units==null || units.trim().equals("")) ? "none" : units), config, map.getNumberFormat(), gridLineColor,
-							subsetLayerData);
-			} catch (Exception e) {
-				Logger.error("Exception in FastTilePlot.Draw (EpsRenderer's draw method)", e);
-				e.printStackTrace();
-				return;
-			}
-				
-			// Draw projected/clipped map border lines over grid cells:
-			// NOTE: mapper.draw calls VerdiBoundaries.draw
-			Logger.debug("in FastTilePlot (3457) getting ready to call mapper.draw");
-			mapper.draw(domain, gridBounds, gridCRS,
-						g, xOffset, yOffset, tilePlot.getPlotWidth(),
-						tilePlot.getPlotHeight(), withHucs, withRivers, withRoads);
-			
-			if (obsAnnotations != null) {
-				for (ObsAnnotation ann : obsAnnotations)
-					ann.draw(g, xOffset, yOffset, tilePlot.getPlotWidth(), tilePlot.getPlotHeight(), 
-							legendLevels, legendColors, gridCRS, domain, gridBounds);
-			}
-			
-			if (vectAnnotation != null) {
-				vectAnnotation.draw(g, xOffset, yOffset, tilePlot.getPlotWidth(), tilePlot.getPlotHeight(), 
-						firstRow, lastRow, firstColumn, lastColumn);
-			}
+			getBufferedImage(g);
 		}
+		
 	}
 	
 	// get the JMapPane portion (the mapping rectangle containing the raster and shapefiles) of the FastTilePlot

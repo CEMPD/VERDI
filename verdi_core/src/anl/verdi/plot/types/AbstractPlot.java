@@ -1,5 +1,6 @@
 package anl.verdi.plot.types;
 
+import java.awt.Graphics2D;
 import java.awt.Window;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -20,12 +21,15 @@ import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.ThemeDialog;
 import anl.verdi.plot.jfree.ChartPanel;
 import anl.verdi.plot.util.PlotExporter;
+import net.sf.epsgraphics.ColorMode;
+import net.sf.epsgraphics.Drawable;
+import net.sf.epsgraphics.EpsTools;
 
 /**
  * @author Nick Collier
  * @version $Revision$ $Date$
  */
-public abstract class AbstractPlot implements Plot {
+public abstract class AbstractPlot implements Plot, EPSExporter {
 	static final Logger Logger = LogManager.getLogger(AbstractPlot.class.getName());
 
 	protected enum ControlAction {
@@ -192,6 +196,32 @@ public abstract class AbstractPlot implements Plot {
 			else dialog = new ThemeDialog((JDialog)window, panel.getChart());
 			dialog.setSize(500, 506);
 			dialog.setVisible(true);
+		}
+	}
+	
+	public void exportEPSImage(String filename) {
+		int width = panel.getWidth();
+		int height = panel.getHeight();
+		exportEPSImage(filename, width, height);
+	}
+	
+	public void exportEPSImage(String filename, int width, int height) {
+		ChartEpsRenderer renderer = new ChartEpsRenderer(width, height);
+		EpsTools.createFromDrawable(renderer, filename, width, height, ColorMode.COLOR_RGB);
+	}
+	
+	class ChartEpsRenderer implements Drawable {
+		final int canvasWidth, canvasHeight;
+		
+		public ChartEpsRenderer(int width, int height) {
+			canvasWidth = width;
+			canvasHeight = height;
+			Logger.debug("within subclass EpsRenderer, setting canvasWidth = " + width + "; canvasHeight = " + canvasHeight);
+		}
+		
+		@Override
+		public void draw(Graphics2D g, Rectangle2D rect) {
+			panel.directPaintImage(g);
 		}
 	}
 }

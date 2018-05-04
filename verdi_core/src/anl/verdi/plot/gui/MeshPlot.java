@@ -410,6 +410,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private boolean processTimeChange = true;
 //	private MapLayer controlLayer;
 	private FeatureLayer controlLayer;
+	Graphics2D exportGraphics = null;
 	
 	MPASDataFrameIndex cellIndex = null;
 	MPASDataFrameIndex hoverCellIndex = null;
@@ -597,7 +598,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						continue;// graphics system is not ready
 					}
 
-					final Graphics2D offScreenGraphics = (Graphics2D)offScreenImage.getGraphics();
+					final Graphics2D offScreenGraphics = exportGraphics == null ? (Graphics2D)offScreenImage.getGraphics() : exportGraphics;
 
 					if (offScreenGraphics == null) {
 						/*
@@ -1047,6 +1048,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 	public void stopThread() {
 		drawMode = DRAW_END;
+		waitObject.notifyAll();
 		draw();
 	}
 	
@@ -3748,6 +3750,23 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			}
 		return bImage;
 	}
+	
+	public Graphics2D getBufferedImage(Graphics2D g) {
+		exportGraphics = g;
+		bImage = null;
+		forceBufferedImage = true;
+		draw();
+		long start = System.currentTimeMillis();
+		while (System.currentTimeMillis() - start < 2000 && bImage == null )
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				Logger.error("Caught exception waiting for buffered image", e);
+				break;
+			}
+		exportGraphics = null;
+		return g;
+	}
 
 	/**
 	 * Adds the specified PlotListener.
@@ -4750,7 +4769,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		int width = (getWidth() <= 0) ? 800 : getWidth();
 		int height = (getHeight() <= 0) ? 600 : getHeight();
 		
-		exportEPSImage(filename, width, height);
+		exportEPSImage(filename, getBufferedImage().getWidth(), getBufferedImage().getHeight());
 	}
 	
 	public void exportEPSImage(String filename, int width, int height) {
@@ -4768,78 +4787,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 		@Override
 		public void draw(Graphics2D g, Rectangle2D rect) {
-			// around plot window.
-
-			String sTitle1 = config.getSubtitle1();
-			String sTitle2 = config.getSubtitle2();
-			Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
-			Font sFont1 = config.getFont(PlotConfiguration.SUBTITLE_1_FONT);
-			Font sFont2 = config.getFont(PlotConfiguration.SUBTITLE_2_FONT);
-			int fontSize = (tFont == null) ? 20 : tFont.getSize();
-			int yOffset = 20 + fontSize;
-
-			if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
-				fontSize = (sFont1 == null) ? 20 : sFont1.getSize();
-				yOffset += fontSize + 6;
-			}
-
-			if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
-				fontSize = (sFont2 == null) ? 20 : sFont2.getSize();
-
-				if (sTitle1 == null || sTitle1.trim().isEmpty()) {
-					yOffset += 26;
-				}
-
-				yOffset += fontSize + 6;
-			}
-
-			final int xOffset = 100;
-
-			g.setColor(Color.white);
-			g.fillRect(0, 0, canvasWidth, canvasHeight);
-
-			// Draw legend-colored grid cells, axis, text labels and
-			// legend:
-
-			final Boolean showGridLines = (Boolean)
-				config.getObject( TilePlotConfiguration.SHOW_GRID_LINES );
-			final Color gridLineColor = (Color)
-				( ( showGridLines == null || showGridLines == false ) ? null
-					: config.getObject( TilePlotConfiguration.GRID_LINE_COLOR ) );
-				
-			final int stepsLapsed = timestep - (firstTimestep >= 0 ? firstTimestep : 0);
-			try {
-				tilePlot.drawBatchImage(g, xOffset, yOffset,
-							canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
-							lastRow, firstColumn, lastColumn, legendLevels,
-							legendColors, axisColor, labelColor, variable,
-							((units==null || units.trim().equals("")) ? "none" : units), config, map.getNumberFormat(), gridLineColor,
-							null);
-			} catch (Exception e) {
-				Logger.error("Exception in FastTilePlot.Draw (EpsRenderer's draw method): " + e.getMessage());
-				e.printStackTrace();
-				return;
-			}
-				
-			// Draw projected/clipped map border lines over grid cells:
-
-			g.setClip(xOffset, yOffset, screenWidth, screenHeight);
-			mapper.draw(domain, gridBounds, gridCRS,
-						g, xOffset, yOffset, tilePlot.getPlotWidth(),
-						tilePlot.getPlotHeight(), withHucs, withRivers, withRoads);
-			g.setClip(null);
-			
-			if (obsAnnotations != null) {
-				for (ObsAnnotation ann : obsAnnotations)
-					ann.draw(g, xOffset, yOffset, tilePlot.getPlotWidth(), tilePlot.getPlotHeight(), 
-							legendLevels, legendColors, gridCRS, domain, gridBounds);
-			}
-			
-			if (vectAnnotation != null) {
-				vectAnnotation.draw(g, xOffset, yOffset, tilePlot.getPlotWidth(), tilePlot.getPlotHeight(), 
-						firstRow, lastRow, firstColumn, lastColumn);
-			}
+			getBufferedImage(g);
 		}
+		
 	}
 	
 	public void addVectorAnnotation(VectorEvaluator eval) {

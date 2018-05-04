@@ -385,10 +385,12 @@ public class VerdiStyle implements Callable<Boolean> {
 				filterFactory.literal(1), 
 				filterFactory.literal(1));
 		// create a transparent fill
+		/*
 		Fill fill = styleFactory.createFill(
 				filterFactory.literal(Color.LIGHT_GRAY), 
 				filterFactory.literal(0));
-		PolygonSymbolizer sym = styleFactory.createPolygonSymbolizer(stroke, fill, null); // null means default geometry
+				*/
+		PolygonSymbolizer sym = styleFactory.createPolygonSymbolizer(stroke, null, null); // null means default geometry
 		Rule rule = styleFactory.createRule();
 		rule.symbolizers().add(sym);
 		FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
