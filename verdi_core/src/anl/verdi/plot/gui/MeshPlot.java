@@ -3663,7 +3663,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}
 
 	}
-	private void updateColorMap(ColorMap map) {
+	public void updateColorMap(ColorMap map) {
 		this.map = map;
 		
 		try {

@@ -108,6 +108,7 @@ import anl.verdi.plot.gui.MultiTimeSeriesPlotRequest;
 import anl.verdi.plot.gui.ObsAnnotation;
 import anl.verdi.plot.gui.PlotListener;
 import anl.verdi.plot.gui.TimeSeriesPlotRequest;
+import anl.verdi.plot.jfree.MPASXYBlockRenderer;
 import anl.verdi.plot.jfree.XYBlockRenderer;
 import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.util.PlotExporterAction;
@@ -1086,8 +1087,12 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		scaleAxis.setTickMarkPaint(Color.BLACK);
 		scaleAxis.setTickLabelFont(new Font("Dialog", Font.PLAIN, 9));
 
-		LookupPaintScale paintScale = createPaintScale(map, min, max);
-		renderer.setPaintScale(paintScale);
+		if (renderer instanceof MPASXYBlockRenderer) {
+			((MPASXYBlockRenderer)renderer).updateColorMap(map);
+		} else {
+			LookupPaintScale paintScale = createPaintScale(map, min, max);
+			renderer.setPaintScale(paintScale);
+		}
 
 		if (legendIndex == -1) {
 			PaintScaleLegend legend = new PaintScaleLegend(scaleAxis.getPaintScale(), scaleAxis);

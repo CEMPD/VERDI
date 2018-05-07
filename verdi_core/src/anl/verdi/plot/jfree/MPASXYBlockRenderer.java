@@ -1,6 +1,5 @@
 package anl.verdi.plot.jfree;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
@@ -12,6 +11,7 @@ import org.jfree.chart.renderer.xy.XYItemRendererState;
 import org.jfree.data.xy.XYDataset;
 
 import anl.verdi.data.DataFrame;
+import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.gui.MeshPlot;
 import anl.verdi.plot.types.VerticalCrossSectionPlot.CrossSectionType;
 
@@ -37,6 +37,9 @@ public class MPASXYBlockRenderer extends XYBlockRenderer {
 		timeStep = step;
 	}
 	
+	public void updateColorMap(ColorMap map) {
+		renderPlot.updateColorMap(map);
+	}
 	public void drawItem(Graphics2D g2, XYItemRendererState state,
             Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot,
             ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset,
