@@ -681,7 +681,10 @@ public class Target implements Area{
 		return handleAvgDeposition(calculateTotalDeposition(data, reader));
 	}
 	public float calculateAverageDeposition(float[][] data) {
-		return handleAvgDeposition(calculateTotalDeposition(data));
+		return calculateAverageDeposition(data, 0, 0);
+	}
+	public float calculateAverageDeposition(float[][] data, int xOffset, int yOffset) {
+		return handleAvgDeposition(calculateTotalDeposition(data, xOffset, yOffset));
 	}
 	public float handleAvgDeposition(float val) {
 
@@ -691,8 +694,12 @@ public class Target implements Area{
 		return val;
 	}
 	public float calcAverageDeposition(float[][] data) {
+		return calcAverageDeposition(data, 0, 0);
+	}
 
-		float val=calcTotalDeposition(data);
+	public float calcAverageDeposition(float[][] data, int xOffset, int yOffset) {
+
+		float val=calcTotalDeposition(data, xOffset, yOffset);
 
 		val= val/(float)(converterTargetGrid.convert((float)area));		// 2014 JEB
 //		val = val / (float)area;
@@ -709,6 +716,11 @@ public class Target implements Area{
 	}
 	
 	public float calcTotalDeposition(float[][] data) {
+		return calcTotalDeposition(data, 0, 0);
+	}
+
+	
+	public float calcTotalDeposition(float[][] data, int xOffset, int yOffset) {
 		int gridIndex=getCurrentGridNum();
 
 		int[]rows=rowIndex.get(gridIndex);
@@ -721,15 +733,21 @@ public class Target implements Area{
 
 			// sum up contributions from each cell
 			for (int i = 0; i < rows.length; i++) {
-				if(rows[i]<0||cols[i]<0){
+				int yPos = cols[i] - yOffset;
+				int xPos = rows[i] - xOffset;
+				if(xPos<0||yPos<0){
 					Logger.debug("stop here");
 					continue;
 				}
-				if(rows[i]>data.length){
+				if(xPos>data.length){
 					Logger.debug("stop here");
 					continue;		// 2014 nothing was done after previous line saying "stop here"
 				}
-				float dataPoint = data[ rows[i] ][ cols[i] ];
+				if(yPos> data[xPos].length) {
+					Logger.debug("stop here");
+					continue;
+				}
+				float dataPoint = data[ xPos ][ yPos ];
 				
 				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
 				{	// 2014 changed comparison to AMISS3 from == to <=
@@ -789,7 +807,11 @@ public class Target implements Area{
 		return handleCalculateTotalDeposition(calcTotalDeposition(data, reader));
 	}
 	public float calculateTotalDeposition(float[][] data) {
-		return handleCalculateTotalDeposition(calcTotalDeposition(data));
+		return calculateTotalDeposition(data, 0, 0);
+	}
+
+	public float calculateTotalDeposition(float[][] data, int xOffset, int yOffset) {
+		return handleCalculateTotalDeposition(calcTotalDeposition(data, xOffset, yOffset));
 	}
 	public float handleCalculateTotalDeposition(float dep) {
 

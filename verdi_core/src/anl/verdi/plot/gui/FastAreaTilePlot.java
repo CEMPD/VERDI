@@ -164,9 +164,9 @@ public class FastAreaTilePlot extends FastTilePlot {
       				geoPolygon.geometryChanged();
       				areas.add(geoPolygon);
 					if(showAverages)
-						values.add(target.calculateAverageDeposition(getLayerData()));
+						values.add(target.calculateAverageDeposition(getLayerData(), getFirstRow(), getFirstColumn()));
 					else
-						values.add(target.calculateTotalDeposition(getLayerData()));
+						values.add(target.calculateTotalDeposition(getLayerData(), getFirstRow(), getFirstColumn()));
 				}
 			}
 			GridShapefileWriter.write( baseFileName,

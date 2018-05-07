@@ -1773,6 +1773,14 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	// Copy current timestep, layer and row/column subset data from dataFrame
 	// into subsetlayerdata[][]:
+	
+	protected int getFirstRow() {
+		return firstRow;
+	}
+	
+	protected int getFirstColumn() {
+		return firstColumn;
+	}
 
 	private void copySubsetLayerData(boolean log) {
 		

@@ -243,7 +243,7 @@ public class TargetCalculator extends LongTask {
 	      			int l = row2 - row1;
 	      			squares = w * l;
 	      			totalSquares += squares;
-	      			dimension = " size " + w + "x" + l + ", " + w*l;
+	      			dimension = " size " + w + "x" + l + ", " + squares;
 	        		      			
 				// create the arrays to store the grid index data
 	            ArrayList<Integer> rowArray = new ArrayList<Integer>();

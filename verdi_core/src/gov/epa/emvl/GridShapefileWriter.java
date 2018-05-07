@@ -189,11 +189,13 @@ public final class GridShapefileWriter {
 	   */
 
 		public static void write( final String fileName,
-	                            final String variable,
+	                            String variable,
 	                            List<Polygon> areas,
 	                            List<Float> data,
 	                            final CoordinateReferenceSystem gridCRS ) throws IOException {
 
+			if (variable.length() > 0)
+				variable = variable.substring(0,  10);
 			// create the feature type
 			SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
 			typeBuilder.setName("Gridded Data Type");
