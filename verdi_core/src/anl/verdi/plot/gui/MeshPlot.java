@@ -4769,7 +4769,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		int width = (getWidth() <= 0) ? 800 : getWidth();
 		int height = (getHeight() <= 0) ? 600 : getHeight();
 		
-		exportEPSImage(filename, getBufferedImage().getWidth(), getBufferedImage().getHeight());
+		exportEPSImage(filename, width, height);
 	}
 	
 	public void exportEPSImage(String filename, int width, int height) {
