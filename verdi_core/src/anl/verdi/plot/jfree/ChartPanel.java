@@ -53,10 +53,13 @@ import org.jfree.chart.event.ChartChangeEvent;
 import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.event.ChartProgressEvent;
 import org.jfree.chart.event.ChartProgressListener;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.Zoomable;
+import org.jfree.chart.renderer.category.BarPainter;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.ui.ExtensionFileFilter;
 
 /**
@@ -1173,6 +1176,15 @@ public class ChartPanel extends JPanel
 
 	private void renderDirect(boolean scale, Rectangle2D chartArea, Rectangle2D available, Graphics2D g2) {
 		Rectangle2D bufferArea = new Rectangle2D.Double(0, 0, this.chartBufferWidth, this.chartBufferHeight);
+		Plot plot = chart.getPlot();
+		BarRenderer renderer = null;
+		BarPainter painter = null;
+		if (plot instanceof CategoryPlot && ((CategoryPlot)plot).getRenderer() instanceof BarRenderer) {
+			
+			renderer = (BarRenderer)((CategoryPlot)plot).getRenderer();
+			painter = renderer.getBarPainter();
+			renderer.setBarPainter(new VerdiGradientBarPainter());
+		}
 		if (scale) {
 			AffineTransform saved = g2.getTransform();
 			AffineTransform st = AffineTransform.getScaleInstance(this.scaleX, this.scaleY);
@@ -1181,6 +1193,9 @@ public class ChartPanel extends JPanel
 			g2.setTransform(saved);
 		} else
 			this.chart.draw(g2, bufferArea, this.anchor, this.info);
+		if (renderer != null) {
+			renderer.setBarPainter(painter);
+		}
 	}
 	
 	public void directPaintImage(Graphics2D g2) {
