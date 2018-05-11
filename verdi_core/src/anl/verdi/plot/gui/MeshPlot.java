@@ -1048,7 +1048,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 	public void stopThread() {
 		drawMode = DRAW_END;
-		waitObject.notifyAll();
+		synchronized (waitObject) {
+			waitObject.notifyAll();
+		}
 		draw();
 	}
 	
