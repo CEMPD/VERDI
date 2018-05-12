@@ -1032,7 +1032,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 
 		String units = null;
 		
-		int time_step = 0;
+		long time_step = 0;
 
 		if (xtime != null)
 			time_step = (int) getTimestepDuration(xtime, startCal);
@@ -1040,16 +1040,16 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		int steps = dataset.findDimension(timeName).getLength();
 
 
-		ArrayInt.D1 data = new ArrayInt.D1(steps);
+		ArrayDouble.D1 data = new ArrayDouble.D1(steps);
 		Double[] timeVals = new Double[steps];
 		for (int i = 0; i < steps; i++) {
-			data.set(i, i * time_step);
+			data.set(i, (long)i * time_step);
 			timeVals[i] = new Double(startCal.getTimeInMillis() + i * time_step);
 		}
 
 		// create the coord axis
 		CSVTimeAxis timeAxis = new CSVTimeAxis(timeVals, "Time", "Time");
-		CoordinateAxis1D timeCoord = new CoordinateAxis1D(dataset, null, "time", DataType.INT, timeName, units,
+		CoordinateAxis1D timeCoord = new CoordinateAxis1D(dataset, null, "time", DataType.DOUBLE, timeName, units,
 						"synthesized time coordinate from SDATE, STIME, STEP global attributes");
 		timeCoord.setCachedData(data, true);
 		timeCoord.addAttribute(new Attribute(ucar.nc2.constants._Coordinate.AxisType, ucar.nc2.constants.AxisType.Time.toString()));
