@@ -3204,6 +3204,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		if (projector != null)
 			projector.unproject(tx, ty, longitudeLatitude);
 		else { //LatLonProjection
+			if (projection instanceof LatLonProjection)
+				tx -= ((LatLonProjection)projection).getCenterLon();
 			longitudeLatitude[0] = tx;
 			longitudeLatitude[1] = ty;
 		}
