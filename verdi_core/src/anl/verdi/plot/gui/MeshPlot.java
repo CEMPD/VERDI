@@ -108,6 +108,7 @@ import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.swing.JMapPane;
 import org.geotools.swing.data.JFileDataStoreChooser;
+import org.jfree.data.Range;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import saf.core.ui.event.DockableFrameEvent;
@@ -1147,7 +1148,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		finder = null;
 		animationHandler = null;
 		
-		loadConfig.close();
+		if (loadConfig != null)
+			loadConfig.close();
+		if (saveConfig != null)
 		saveConfig.close();
 		rubberband.close();
 		
@@ -1399,7 +1402,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		return yCoord;
 	}
 	
-	private void zoom(boolean rightClick, boolean leftClick, boolean popZoomIn, boolean reset, boolean zoomOut, Rectangle bounds) {
+	public void zoom(boolean rightClick, boolean leftClick, boolean popZoomIn, boolean reset, boolean zoomOut, Rectangle bounds) {
 		if (reset) {
 			resetZooming();
 			return;
@@ -1903,6 +1906,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	double lonMax = Double.NEGATIVE_INFINITY;
 	boolean locChanged = true;
 	boolean dataChanged = true;
+	//Distance in radians image is panned
 	double panX = 0;
 	double panY = 0;
 	double previousPanX = 0;
@@ -1972,6 +1976,13 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		transformCells(canvasSize, xOrigin, yOrigin, 1, 1);
 	}
 	
+	/*
+	 * 
+	 *  xOrigin - x coordinate of top left corner of drawing area
+	 *  yOriign - y coordinate of top left corner of drawing area
+	 *  
+	 *  
+	 */
 	private void transformCells(/*Graphics gr, */ int canvasSize, int xOrigin, int yOrigin, double xScale, double yScale) {
 		long start = System.currentTimeMillis();
 		
@@ -5207,6 +5218,37 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		return null;
 	}
 	
+	private class CrossSectionZoomInfo {
+		double axisMin;
+		double axisMax;
+		int layerMin;
+		int layerMax;
+		int numLayers;
+		
+		public CrossSectionZoomInfo(Range domainRange, Range rangeRange) {
+			this(domainRange.getLowerBound(),
+					domainRange.getUpperBound(),
+					(int)Math.round(rangeRange.getLowerBound()),
+					(int)Math.round(rangeRange.getUpperBound()));
+		}
+		public CrossSectionZoomInfo(double axisMin, double axisMax, int layerMin, int layerMax) {
+			this.axisMin = axisMin;
+			this.axisMax = axisMax;
+			this.layerMin = layerMin;
+			this.layerMax = layerMax;
+			numLayers = layerMax - layerMin;
+		}
+		
+		public boolean equals(Object obj) {
+			if (obj == null || !(obj instanceof CrossSectionZoomInfo)) {
+				return false;
+			}
+			
+			CrossSectionZoomInfo section = (CrossSectionZoomInfo)obj;
+			return section.axisMin == axisMin && section.axisMax == axisMax && section.layerMin == layerMin && section.layerMax == layerMax;
+		}
+	}
+	
 	private class CrossSectionRenderInfo {
 		int startX;
 		int startY;
@@ -5216,6 +5258,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		String fixedAxis;
 		double sliceHeight;
 		double startDegree;
+		int startLayer;
+		int endLayer;
 		
 		public CrossSectionRenderInfo(int startX, int startY, int startWidth, int startHeight, String fixedAxis, double sliceDataHeightDeg, double startDegree) {
 			this.startX = startX;
@@ -5225,6 +5269,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			this.fixedAxis = fixedAxis;
 			this.sliceHeight = sliceDataHeightDeg;
 			this.startDegree = startDegree;
+			startLayer = 0;
+			endLayer = layers;
 		}
 
 		
@@ -5242,13 +5288,18 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	
 	CrossSectionRenderInfo renderInfo = null;
 	CrossSectionRenderInfo previousRenderInfo = null;
+	CrossSectionZoomInfo zoomInfo = null;
+	CrossSectionZoomInfo previousZoomInfo = null;
 	
 	/*
 	 * 
-	 * pxWidth            - width of area to display plot (not including labels, legend, etc
-	 * pxHeight           - height of area to display plot (not including labels, legend, etc
+	 * startX             - X coordinate of top left of plot display area (not including labels, legend, etc
+	 * startY             - Y coordinate of top left of plot display area (not including labels, legend, etc
+	 * startWidtdh        - width of plot display area
+	 * startHeight        - height of plot display area
+	 * fixedAxis          - axis that is being plotted
 	 * sliceDataHeightDeg - height in degrees of each slice
-	 * numLayers          - number of layers
+	 * step               - current timestep being rendered
 	 * startDegreee       - location to start plotting graph
 	 * 
 	 */
@@ -5256,19 +5307,24 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		previousRenderInfo = renderInfo;
 		this.timestep = step;
 		renderInfo = new CrossSectionRenderInfo(startX, startY, startWidth, startHeight, fixedAxis, sliceDataHeightDeg, startDegree);
-		if (renderInfo.equals(previousRenderInfo))
+		if (renderInfo.equals(previousRenderInfo) && (zoomInfo == null || zoomInfo.equals(previousZoomInfo)))
 			return;
+
 		reverseAxes = !fixedAxis.equals("y");
 		double yScale = 1;
 		double xScale = 1;
+		int numLayers = layers;
 		
 		int imgWidth = startWidth;
 		int imgHeight = startHeight;
 		crossXOrigin = startX;
-		crossYOrigin = startY;		
+		crossYOrigin = startY;
+		
+		if (zoomInfo != null)
+			numLayers = zoomInfo.numLayers;
 		
 		displayHeight = startHeight;		
-		layerHeight = startHeight / (double)layers;
+		layerHeight = startHeight / (double)numLayers;
 		
 		if (reverseAxes) {		
 			
@@ -5280,15 +5336,20 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			
 			zoomFactor = imgHeight / dataset.getExactHeight();
 
-			double displayLayerWidth = startHeight / (double)layers;
+			double displayLayerWidth = startHeight / (double)numLayers;
 			double zoomedLayerWidth = (Math.PI * 2 * zoomFactor ) * sliceDataHeightDeg / 360;
 			
 			xScale = displayLayerWidth / zoomedLayerWidth;
-			imgWidth = (int)Math.round(startHeight / (double)layers);
+			//if (zoomInfo != null)
+			//	yScale = 180 / (zoomInfo.axisMax - zoomInfo.aslasxisMin);
+			imgWidth = (int)Math.round(startHeight / (double)numLayers);
 		
 			rotatedImage = new BufferedImage(imgHeight, imgWidth, BufferedImage.TYPE_INT_RGB);
 
 
+		} else {
+			if (zoomInfo != null)
+				xScale = 360 / (zoomInfo.axisMax - zoomInfo.axisMin);
 		}
 
 		crossSectionImage = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_RGB);
@@ -5308,7 +5369,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			*/
 			//startDegree -= sliceDataHeightDeg;
 			startDegree = 179 - startDegree;
-			clippedDataRatio = screenWidth / (screenHeight / (double)layers);
+			clippedDataRatio = screenWidth / (screenHeight / (double)numLayers);
 		}
 		
 		startRad = startDegree / RAD_TO_DEG;
@@ -5316,11 +5377,20 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		panX = 0;
 		panY = 0;
 		
-		if (reverseAxes)
+		if (reverseAxes) {
 			panX = startRad;
+			if (zoomInfo != null) {
+				panY = (rowAxis.getRange().getUpperBound() - zoomInfo.axisMax) / RAD_TO_DEG;
+				yScale = (rowAxis.getRange().getExtent() - 1) / (zoomInfo.axisMax - zoomInfo.axisMin);
+			}
+		}
 		else {
-			yScale = (dataset.getExactHeight() * RAD_TO_DEG) / sliceDataHeightDeg / layers; 
+			yScale = (dataset.getExactHeight() * RAD_TO_DEG) / sliceDataHeightDeg / numLayers; 
 			panY = startRad;
+			if (zoomInfo != null) {
+				panX = (zoomInfo.axisMin - columnAxis.getRange().getLowerBound()) / RAD_TO_DEG;
+				xScale = (columnAxis.getRange().getExtent() - 1) / (zoomInfo.axisMax - zoomInfo.axisMin);
+			}
 		}
 		
 		//TODO - investigate locChanged / dataChanged optimizations here if needed
@@ -5342,6 +5412,45 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}*/
 		
 		
+	}
+	
+	public void zoomCrossSection(Range domainRange, Range rangeRange) {
+		previousZoomInfo = zoomInfo;
+		zoomInfo = new CrossSectionZoomInfo(domainRange, rangeRange);
+		
+		/*
+		double xScale = 1;
+		double yScale = 1;
+		
+		
+		int layerMin = layers - (int)Math.floor(yMax / (double)renderInfo.startHeight * layers);
+		int layerMax = layers - (int)Math.floor(yMin / (double)renderInfo.startHeight * layers) + 1;
+		int layers = layerMax - layerMin;
+		
+		renderInfo.startLayer = layerMin;
+		renderInfo.endLayer = layerMax;
+		
+		layerHeight = renderInfo.startHeight / (double)layers;
+		double sliceDataHeightDeg = 1.0;
+
+		if (reverseAxes) {
+			//panY = (axisMin + 89) / RAD_TO_DEG; 
+			
+			zoomFactor = renderInfo.startHeight / ((axisMax - axisMin) / RAD_TO_DEG);
+
+			double displayLayerWidth = renderInfo.startHeight / (double)layers;
+			double zoomedLayerWidth = (Math.PI * 2 * zoomFactor ) * sliceDataHeightDeg / 360;
+			
+			xScale = displayLayerWidth / zoomedLayerWidth;
+			
+		} else {
+			//panY = axisMin / RAD_TO_DEG;
+			zoomFactor = renderInfo.startHeight / ((axisMax - axisMin) / RAD_TO_DEG);
+			
+			yScale = (dataset.getExactHeight() * RAD_TO_DEG) / sliceDataHeightDeg / layers; 
+		}
+		transformCells(screenWidth, 0, 0, xScale, yScale);
+		*/
 	}
 		
 	private void buildTestPlotFrame() {
@@ -5395,7 +5504,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		Graphics2D rotateGraphics = null;
 		AffineTransform rotateTransform = null;
 		AffineTransform targetTransform = null;
-		g.setColor(Color.WHITE);
+		g.setColor(Color.GREEN);
+		g.fillRect(renderInfo.startX,  renderInfo.startY, renderInfo.startWidth, renderInfo.startHeight);
 		if (reverseAxes) {
 			rotateGraphics = crossSectionImage.createGraphics();
 			rotateGraphics.setColor(Color.WHITE);
@@ -5417,10 +5527,35 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		/*if (!reverseAxes) {
 			//targetGraphics.translate(0, 0);
 		}*/
+		
+		int startLayer;
+		int endLayer;
+		if (zoomInfo == null) {
+			startLayer = renderInfo.startLayer;
+			endLayer = renderInfo.endLayer;
+		} else {
+			startLayer = zoomInfo.layerMin;
+			endLayer = zoomInfo.layerMax;
+			if (startLayer > firstLayer) {
+				--startLayer;
+				--endLayer;
+			}
+		}
+		
+		if (startLayer < firstLayer) {
+			//Zoomed out beyond graph, translate to compensate
+			targetGraphics.translate(0,  layerHeight * -1 * (firstLayer - startLayer));
+		}
+		if (endLayer > lastLayer + 1) {
+			//Zoomed out beyond graph, translate to compensate
+			endLayer = lastLayer + 1;
+		}
 
-		for (int i = 0; i < layers; ++i) {
+		for (int i = startLayer; i < endLayer; ++i) {
 			targetGraphics.translate(0,  layerHeight * -1);
 
+			if (i < firstLayer)
+				continue;
 			layer = i;
 			updateCellColors();
 	        //xOffset has to be nonzero - normally will be anyway
@@ -5432,7 +5567,6 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				tmpImg.translate(0, -rotatedImage.getWidth());
 				tmpImg.drawImage(crossSectionImage, 0, 0, null);
 				
-				//targetGraphics.drawImage(rotatedImage,  crossXOrigin,  crossYOrigin,  null);
 				targetGraphics.drawImage(rotatedImage,  0,  0,  null);
 				
 				/*File io = new File("/tmp/out" + i + ".png");
@@ -5453,6 +5587,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				
 
 	        }
+			//if (!reverseAxes)
+			//	targetGraphics.translate(0,  layerHeight * -1);
+
 	        
 		}
 		if (!reverseAxes) {

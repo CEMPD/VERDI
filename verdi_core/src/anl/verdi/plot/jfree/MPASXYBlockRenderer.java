@@ -8,10 +8,13 @@ import org.jfree.chart.plot.CrosshairState;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRendererState;
+import org.jfree.data.Range;
 import org.jfree.data.xy.XYDataset;
 
+import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.plot.color.ColorMap;
+import anl.verdi.plot.data.IMPASDataset;
 import anl.verdi.plot.gui.MeshPlot;
 import anl.verdi.plot.types.VerticalCrossSectionPlot.CrossSectionType;
 
@@ -22,6 +25,9 @@ public class MPASXYBlockRenderer extends XYBlockRenderer {
 	DataFrame frame;
 	int startDeg;
 	int timeStep;
+	
+	int xOrigin;
+	int yOrigin;
 	
 	public MPASXYBlockRenderer(CrossSectionType type, DataFrame frame, int step, int constant) {
 		if (type == CrossSectionType.Y)
@@ -53,14 +59,39 @@ public class MPASXYBlockRenderer extends XYBlockRenderer {
 		//g2.fillRect(0,  0,  (int)dataArea.getWidth(), (int)dataArea.getHeight());	
 		//g2.fillRect((int)dataArea.getMinX(),  (int)dataArea.getMinY(),  (int)dataArea.getWidth(), (int)dataArea.getHeight());	
 		
-		renderPlot.initDisplayParameters((int)dataArea.getMinX(), (int)dataArea.getMinY(), (int)Math.round(dataArea.getWidth()), (int)Math.round(dataArea.getHeight()), axis, 1.0, timeStep, (double)startDeg);
+		xOrigin = (int)dataArea.getMinX();
+		yOrigin = (int)dataArea.getMinY();
+		renderPlot.initDisplayParameters(xOrigin, yOrigin, (int)Math.round(dataArea.getWidth()), (int)Math.round(dataArea.getHeight()), axis, 1.0, timeStep, (double)startDeg);
 		renderPlot.renderVerticalCrossSection(g2);
 		
 		//g2.translate(-dataArea.getMinX(), -dataArea.getMinY());
-
-		
-
 	
+	}
+	
+	public void doZoom(Range domainRange, Range rangeRange) {
+		renderPlot.zoomCrossSection(domainRange, rangeRange);
+	}
+	
+	public void close() {
+		renderPlot.viewClosed();
+	}
+	
+	public Range findDomainBounds(XYDataset dataset) {
+		IMPASDataset ds = (IMPASDataset)frame.getDataset().get(0);
+		if (axis.equals("y"))
+			return new Range(ds.getLonMin() * MeshPlot.RAD_TO_DEG, ds.getLonMax() * MeshPlot.RAD_TO_DEG);
+		else
+			return new Range(ds.getLatMin() * MeshPlot.RAD_TO_DEG, ds.getLatMax() * MeshPlot.RAD_TO_DEG);
+	}
+	
+	public Range findRangeBounds(XYDataset dataset) {		
+		CoordAxis zAxis = ((IMPASDataset)frame.getDataset().get(0)).getZAxis(frame.getVariable().getName());
+		if (zAxis != null) {
+			//return new Range(zAxis.getRange().getLowerBound() + getYOffset(), zAxis.getRange().getUpperBound() + getBlockHeight() + getYOffset());
+			return new Range(zAxis.getRange().getLowerBound(), zAxis.getRange().getUpperBound());
+		}
+				
+		return super.findRangeBounds(dataset);
 	}
 
 }

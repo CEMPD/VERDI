@@ -87,6 +87,7 @@ public class DataFrameIndex {
 	 */
 	public void setLayer(int layer) {
 
+		try {
 		if ( kIndex == -1 ) {
 
 			if ( layer > 0 ) {
@@ -95,6 +96,10 @@ public class DataFrameIndex {
 		} else {
 			indices[kIndex] = layer;
 			index.set(indices);
+		}
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw e;
 		}
 	}
 

@@ -219,12 +219,24 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	protected void chartEndPainting() {
 		timePanel.setEnabled(true);
 	}
+	
+	private void forceRedraw() {
+		//This causes the plot to redraw itself
+		chart.getTitle().setTextAlignment(chart.getTitle().getTextAlignment());		
+	}
 
 	private void performControlAction(Rectangle axisRect, Rectangle2D screenRect) {
 		switch (controlAction) {
 			case ZOOM:
 				if (screenRect.getWidth() < 0 || screenRect.getHeight() < 0) panel.restoreAutoBounds();
-				else panel.doZoom(screenRect);
+				else {
+					if (meshInput) {
+						XYPlot plot = (XYPlot) chart.getPlot();
+						panel.doZoom(screenRect);
+						((MPASXYBlockRenderer)renderer).doZoom(plot.getDomainAxis().getRange(), plot.getRangeAxis().getRange());						
+					} else
+						panel.doZoom(screenRect);
+				}
 				break;
 			case PROBE:
 				probe(axisRect);
@@ -389,10 +401,11 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		yAxis.setLowerMargin(0.0);
 		yAxis.setStandardTickUnits(createIntegerTickUnits());
 
+		org.jfree.data.Range range = null;
 		if (meshInput) {
-			yAxis.setAutoRange(false);
+			yAxis.setAutoRange(true);
 			if (hasZAxis()) {
-				yAxis.setRange(getZAxis().getRange().getOrigin() + 1, getZAxis().getRange().getExtent());
+				yAxis.setRange(getZAxis().getRange().getOrigin(), getZAxis().getRange().getExtent());
 			}
 			if (renderer == null)
 				renderer = new MPASXYBlockRenderer(type, frame, timeStep, constant);
@@ -630,6 +643,12 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		private Rectangle2D createRect(Point start, Point end) {
 			return new Rectangle2D.Double(start.x, start.y, end.x - start.x, end.y - start.y);
 		}
+	}
+	
+	public void viewClosed() {
+		if (meshInput)
+			((MPASXYBlockRenderer)renderer).close();
+		super.viewClosed();
 	}
 
 	private static class LayerAxisFormatter extends NumberFormat {

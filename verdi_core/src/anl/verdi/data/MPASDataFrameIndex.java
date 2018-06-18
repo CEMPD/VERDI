@@ -103,9 +103,14 @@ public class MPASDataFrameIndex extends DataFrameIndex {
 	 * @param cell the cell index
 	 */
 	public void set(int timeStep, int layer, int cell) {
+		try {
 		setTime( timeStep );
 		setLayer( layer );
 		setCell( cell );
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
 	}
 
 }

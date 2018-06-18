@@ -57,9 +57,11 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.PlotRenderingInfo;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.plot.Zoomable;
 import org.jfree.chart.renderer.category.BarPainter;
 import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.ui.ExtensionFileFilter;
 
 /**
@@ -418,6 +420,8 @@ public class ChartPanel extends JPanel
 	 * The factor used to zoom out on an axis range.
 	 */
 	private double zoomOutFactor = 2.0;
+	
+	private boolean zoomBoth = false;
 
 	/**
 	 * The resourceBundle for the localization.
@@ -1706,8 +1710,19 @@ public class ChartPanel extends JPanel
 	 * @param y the y value (in screen coordinates).
 	 */
 	public void zoomInBoth(double x, double y) {
+		zoomBoth = true;
 		zoomInDomain(x, y);
 		zoomInRange(x, y);
+		zoomBoth = false;
+		zoomRenderer();
+	}
+	
+	private void zoomRenderer() {
+		XYPlot plot = (XYPlot)this.getChart().getPlot();
+		XYItemRenderer renderer = plot.getRenderer();
+		if (renderer instanceof MPASXYBlockRenderer) {
+			((MPASXYBlockRenderer)renderer).doZoom(plot.getDomainAxis().getRange(), plot.getRangeAxis().getRange());
+		}		
 	}
 
 	/**
@@ -1723,7 +1738,9 @@ public class ChartPanel extends JPanel
 		if (p instanceof Zoomable) {
 			Zoomable plot = (Zoomable) p;
 			plot.zoomDomainAxes(this.zoomInFactor, this.info.getPlotInfo(),
-							translateScreenToJava2D(new Point((int) x, (int) y)));
+							translateScreenToJava2D(new Point((int) x, (int) y)), true);
+			if (!zoomBoth)
+				zoomRenderer();
 		}
 	}
 
@@ -1740,7 +1757,9 @@ public class ChartPanel extends JPanel
 		if (p instanceof Zoomable) {
 			Zoomable z = (Zoomable) p;
 			z.zoomRangeAxes(this.zoomInFactor, this.info.getPlotInfo(),
-							translateScreenToJava2D(new Point((int) x, (int) y)));
+							translateScreenToJava2D(new Point((int) x, (int) y)), true);
+			if (!zoomBoth)
+				zoomRenderer();
 		}
 	}
 
@@ -1751,8 +1770,11 @@ public class ChartPanel extends JPanel
 	 * @param y the y value (in screen coordinates).
 	 */
 	public void zoomOutBoth(double x, double y) {
+		zoomBoth = true;
 		zoomOutDomain(x, y);
 		zoomOutRange(x, y);
+		zoomBoth = false;
+		zoomRenderer();
 	}
 
 	/**
@@ -1768,7 +1790,9 @@ public class ChartPanel extends JPanel
 		if (p instanceof Zoomable) {
 			Zoomable z = (Zoomable) p;
 			z.zoomDomainAxes(this.zoomOutFactor, this.info.getPlotInfo(),
-							translateScreenToJava2D(new Point((int) x, (int) y)));
+							translateScreenToJava2D(new Point((int) x, (int) y)), true);
+			if (!zoomBoth)
+				zoomRenderer();
 		}
 	}
 
@@ -1785,7 +1809,9 @@ public class ChartPanel extends JPanel
 		if (p instanceof Zoomable) {
 			Zoomable z = (Zoomable) p;
 			z.zoomRangeAxes(this.zoomOutFactor, this.info.getPlotInfo(),
-							translateScreenToJava2D(new Point((int) x, (int) y)));
+							translateScreenToJava2D(new Point((int) x, (int) y)), true);
+			if (!zoomBoth)
+				zoomRenderer();
 		}
 	}
 
@@ -1835,8 +1861,11 @@ public class ChartPanel extends JPanel
 	 * Restores the auto-range calculation on both axes.
 	 */
 	public void restoreAutoBounds() {
+		zoomBoth = true;
 		restoreAutoDomainBounds();
 		restoreAutoRangeBounds();
+		zoomBoth = false;
+		zoomRenderer();
 	}
 
 	/**
@@ -1847,6 +1876,8 @@ public class ChartPanel extends JPanel
 		if (p instanceof Zoomable) {
 			Zoomable z = (Zoomable) p;
 			z.zoomDomainAxes(0.0, this.info.getPlotInfo(), this.zoomPoint);
+			if (!zoomBoth)
+				zoomRenderer();
 		}
 	}
 
@@ -1858,6 +1889,8 @@ public class ChartPanel extends JPanel
 		if (p instanceof Zoomable) {
 			Zoomable z = (Zoomable) p;
 			z.zoomRangeAxes(0.0, this.info.getPlotInfo(), this.zoomPoint);
+			if (!zoomBoth)
+				zoomRenderer();
 		}
 	}
 
