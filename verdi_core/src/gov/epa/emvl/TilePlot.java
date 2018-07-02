@@ -31,6 +31,7 @@ import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.gui.ObsAnnotation;
 import anl.verdi.plot.gui.ObsAnnotation.Symbol;
+import anl.verdi.util.ScriptManager;
 import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;		// 2014 to handle footer date/time correctly
 import ucar.unidata.geoloc.Projection;
@@ -586,9 +587,9 @@ public class TilePlot {
 //		final String title = (TITLE == null || TITLE.isEmpty() ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
 
 		if(TITLE == null || TITLE.length()<2)	// rest of fix for allowing user to blank out a title
-			title = defaultTitle; // TODO: needs more work
+			title = ScriptManager.parseScript(defaultTitle); // TODO: needs more work
 		else
-			title = TITLE.replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
+			title = ScriptManager.parseScript(TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
 		
 		Font currentFont = new Font(gFont.getFontName(), Font.BOLD, gFont.getSize() * 2);
 		tFont = (tFont == null ? currentFont : tFont);
@@ -620,6 +621,7 @@ public class TilePlot {
 		graphics.drawString(title, xTitle, yTitle);
 		
 		if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
+			sTitle1 = ScriptManager.parseScript(sTitle1);
 			graphics.setFont(sFont1);
 			graphics.setColor(sColor1);
 			FontMetrics sMetrx1 = graphics.getFontMetrics(sFont1);
@@ -629,6 +631,7 @@ public class TilePlot {
 		}
 
 		if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
+			sTitle2 = ScriptManager.parseScript(sTitle2);
 			graphics.setFont(sFont2);
 			graphics.setColor(sColor2);
 			FontMetrics sMetrx2 = graphics.getFontMetrics(sFont2);
