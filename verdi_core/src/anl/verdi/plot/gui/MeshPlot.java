@@ -5331,7 +5331,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			double screenRatio = startWidth / (double)startHeight;
 
 			imgHeight = startWidth;
-			imgWidth = (int)Math.round(imgHeight * screenRatio);
+			//imgWidth = (int)Math.round(imgHeight * screenRatio);
 			
 			
 			zoomFactor = imgHeight / dataset.getExactHeight();
@@ -5506,7 +5506,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		AffineTransform targetTransform = null;
 		g.setColor(Color.GREEN);
 		g.fillRect(renderInfo.startX,  renderInfo.startY, renderInfo.startWidth, renderInfo.startHeight);
+		int sliceHeight = crossSectionImage.getHeight();
 		if (reverseAxes) {
+			sliceHeight = crossSectionImage.getWidth();
 			rotateGraphics = crossSectionImage.createGraphics();
 			rotateGraphics.setColor(Color.WHITE);
 			rotateGraphics.fillRect(0,  0, crossSectionImage.getWidth(), crossSectionImage.getHeight());
@@ -5517,6 +5519,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			targetGraphics.translate(crossXOrigin, crossYOrigin);
 		}
 		else {
+			sliceHeight = (int)Math.floor(layerHeight);
 			targetGraphics = crossSectionImage.createGraphics();
 			targetGraphics.setColor(Color.WHITE);
 			targetGraphics.fillRect(0,  0, crossSectionImage.getWidth(), crossSectionImage.getHeight());
@@ -5551,8 +5554,26 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			endLayer = lastLayer + 1;
 		}
 
+		double renderErr = 0;
+		double renderDiff = layerHeight - sliceHeight;
+		//System.err.println("Slice height " + sliceHeight);
+		int base = 0 - sliceHeight;
 		for (int i = startLayer; i < endLayer; ++i) {
-			targetGraphics.translate(0,  layerHeight * -1);
+				
+			targetGraphics.translate(0,  sliceHeight * -1);
+			base += sliceHeight;
+			
+			//Compensate for rounding error in layer height
+			renderErr += renderDiff;
+			if (renderErr > 1.0) {
+				--renderErr;
+				--i;
+				targetGraphics.translate(0,  sliceHeight * 1 - 1);
+				base -= sliceHeight - 1;
+				
+			}
+			//System.err.println("Layer " + (i + 1) + " base " + base + " render err " + renderErr);
+	
 
 			if (i < firstLayer)
 				continue;
@@ -5561,6 +5582,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	        //xOffset has to be nonzero - normally will be anyway
 			
 	        renderCells(rotateGraphics, 1, 0, true);
+
 	        if (reverseAxes) {
 				Graphics2D tmpImg  = rotatedImage.createGraphics();
 				tmpImg.rotate(90 / RAD_TO_DEG);
@@ -5569,15 +5591,19 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				
 				targetGraphics.drawImage(rotatedImage,  0,  0,  null);
 				
-				/*File io = new File("/tmp/out" + i + ".png");
+				/*String idx = Integer.toString(i + 1);
+				if (idx.length() < 2)
+					idx = "0" + idx;
+				
+				File io = new File("/tmp/out" + idx + ".png");
 				try {
 					ImageIO.write(crossSectionImage, "png", io);
 				} catch (IOException e) {
 					e.printStackTrace();
-				}*/
+				}
 				
-				/*
-				File out = new File("/tmp/rot" + i + ".png");
+				
+				File out = new File("/tmp/rot" + idx + ".png");
 				try {
 					ImageIO.write(rotatedImage, "png", out);
 				} catch (IOException e) {
@@ -5598,12 +5624,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			targetGraphics.translate(crossXOrigin, crossYOrigin);
 			targetGraphics.drawImage(crossSectionImage,  0,  0,  null);
 		}
-		File io = new File("/tmp/out.png");
+		/*File io = new File("/tmp/out.png");
 		try {
 			ImageIO.write(crossSectionImage, "png", io);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		targetGraphics.setTransform(targetTransform);
 		if (rotateTransform != null)
 			rotateGraphics.setTransform(rotateTransform);
