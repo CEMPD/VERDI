@@ -3204,8 +3204,11 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		if (projector != null)
 			projector.unproject(tx, ty, longitudeLatitude);
 		else { //LatLonProjection
-			if (projection instanceof LatLonProjection)
-				tx -= ((LatLonProjection)projection).getCenterLon();
+			//This is fixes world_NOX_latlon.ncf and cpc_global_daily_precip.2016.nc
+			if (projection instanceof LatLonProjection && ((LatLonProjection)projection).getCenterLon() != 0) {
+				if (tx > 180)
+					tx -= 360;
+			}
 			longitudeLatitude[0] = tx;
 			longitudeLatitude[1] = ty;
 		}
