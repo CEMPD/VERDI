@@ -69,6 +69,7 @@ public class FormulaValidator {
 	}
 
 	private ValidationResult checkTime(List<AxisRange> ranges) throws IllegalFormulaException {
+		try {
 		if (variables.size() > 0) {
 			boolean rangeChanged = false;
 			FormulaVariable formulaVariable = variables.get(0);
@@ -143,10 +144,15 @@ public class FormulaValidator {
 								Utilities.formatDate(startDate) + " - " + Utilities.formatDate(endDate));
 			}
 		}
+		} catch (IllegalFormulaException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Formula Validation Failed", JOptionPane.ERROR_MESSAGE);
+			throw e;
+		}
 		return ValidationResult.pass();
 	}
 
 	private void checkTimeRange(List<AxisRange> ranges, Date startDate, Date endDate) throws IllegalFormulaException {
+		try {
 		AxisRange time = findAxisByType(AxisType.TIME, ranges);
 		if (time == null) return;
 		CoordAxis axis = time.getAxis();
@@ -180,6 +186,10 @@ public class FormulaValidator {
 			}
 		} else {
 			throw new IllegalFormulaException("Allowable time step range is outside of specified range");
+		}
+		} catch (IllegalFormulaException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Formula Validation Failed", JOptionPane.ERROR_MESSAGE);
+			throw e;
 		}
 	}
 

@@ -739,7 +739,6 @@ FormulaElementCreator, ListDataListener {
 			Exception ex = result.getException();
 			if (ex == null)
 				ex = new RuntimeException(result.getMessage());
-			VerdiGUI.displayError("Invalid Formula",  result.getMessage());
 			Logger.error("Formula '" + strFormula + "' is invalid", ex);
 			ok = false;
 		} else if (status == ValidationResult.Status.WARN) {
