@@ -1374,8 +1374,6 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		
 		originalCRS = coordinateAxes.getBoundingBoxer().getOriginalCRS();
 		
-		mapper = new Mapper(mapFileDirectory, projection, gridCRS);
-
 		// Initialize grid dimensions: timesteps, layers, rows, columns:
 
 		final DataFrameAxis timeAxis = axes.getTimeAxis();
@@ -1490,6 +1488,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		((TilePlotConfiguration) config).setColorMap(map);
 		((TilePlotConfiguration) config).setGridLines(false, Color.gray);
 		((TilePlotConfiguration) config).setSubtitle1(Tools.getDatasetNames(getDataFrame()));
+		((TilePlotConfiguration) config).setLayerColor(Color.black);
+		((TilePlotConfiguration) config).setLayerLineSize(1);
+		
+		mapper = new Mapper(mapFileDirectory, projection, gridCRS);
+		mapper.setLayerStyle((TilePlotConfiguration)config);
+		
+		
 
 		// Compute attributes derived from the above attributes and dataFrame:
 
@@ -2593,6 +2598,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		}
 
 		this.config = new TilePlotConfiguration(config);
+		mapper.setLayerStyle((TilePlotConfiguration)this.config);
 		this.draw();
 		
 		if (this.showGridLines != null) {

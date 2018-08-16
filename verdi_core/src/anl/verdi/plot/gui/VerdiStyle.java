@@ -62,6 +62,7 @@ public class VerdiStyle implements Callable<Boolean> {
 	private FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory(null);
 	static final Logger Logger = LogManager.getLogger(VerdiStyle.class.getName());
 	private Style vStyle = null;		// Style associated with this Shapefile
+	private Stroke vStroke = null;
 	private FeatureSource vFeatureSource = null;
 	private File vFile = null;			// File associated with this Shapefile
 	private String shpPath = null;		// path (as a String) to this Shapefile
@@ -134,6 +135,7 @@ public class VerdiStyle implements Callable<Boolean> {
 		vFeatureSource = null;
 		shpPath = null;
 		vStyle = null;
+		vStroke = null;
 		vCRS = null;
 		vLayer = null;
 		vStore = null;
@@ -229,6 +231,7 @@ public class VerdiStyle implements Callable<Boolean> {
 	{
 		Logger.debug("in createStyle; ready to create Style vStyle as null");		// JEB YES
 		vStyle = null;
+		vStroke = null;
 		File sld = toSLDFile();			// JEB YES, there & returned with a null
 		if(sld != null)
 		{
@@ -398,6 +401,7 @@ public class VerdiStyle implements Callable<Boolean> {
 		style.featureTypeStyles().add(fts);
 		Logger.debug("created polygon style: " + style.toString());
 		vStyle = style;
+		vStroke = stroke;
 	}
 	
 	private void createLineStyle()		// create a style to draw lines
@@ -413,6 +417,7 @@ public class VerdiStyle implements Callable<Boolean> {
 		style.featureTypeStyles().add(fts);
 		Logger.debug("created line style: " + style.toString());		// JEB YES StyleImp[ name=Default Styler]
 		vStyle = style;
+		vStroke = stroke;
 	}
 	
 	private void createPointStyle()	// create a style to draw points as circles
@@ -461,6 +466,13 @@ public class VerdiStyle implements Callable<Boolean> {
 	public void setStyle(Style aStyle)
 	{
 		vStyle = aStyle;			// set the style from another part of the program
+	}
+	
+	public void setLayerLine(Color color, int width) {
+		if (vStroke != null) {
+			vStroke.setColor(filterFactory.literal(color));
+			vStroke.setWidth(filterFactory.literal(width));
+		}
 	}
 	
 	public List<Layer> getLayers()			// get Layer based on FeatureSource and Style

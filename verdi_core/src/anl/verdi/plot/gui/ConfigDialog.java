@@ -196,7 +196,16 @@ public class ConfigDialog extends JDialog {
 				color = Color.BLACK;
 			otherPanel.initGridLines(color, showGrid);
 		}
-
+		Color color = config.getColor(TilePlotConfiguration.LAYER_LINE_COLOR);
+		if (color == null)
+			color = Color.BLACK;
+		Object size = config.getObject(TilePlotConfiguration.LAYER_LINE_SIZE);
+		if (size == null)
+			size = "1";
+		else
+			size = size.toString();
+		otherPanel.initGISLines(color, Integer.parseInt((String)size));
+		
 //		2014 removed old Vector Plot
 //		Color color = config.getColor(VectorPlotConfiguration.VECTOR_COLOR);
 //		if (color == null) {
@@ -205,7 +214,7 @@ public class ConfigDialog extends JDialog {
 //			otherPanel.initVector(color);
 //		}
 
-		Color color = config.getColor(TimeSeriesPlotConfiguration.SERIES_COLOR);
+		color = config.getColor(TimeSeriesPlotConfiguration.SERIES_COLOR);
 		if (color == null)
 			otherPanel.setSeriesColorEnabled(false);
 		else

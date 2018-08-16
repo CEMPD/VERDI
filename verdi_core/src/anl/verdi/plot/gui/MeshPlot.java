@@ -2190,7 +2190,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					currentDataFrame,
 					timestep,
 					layer,
-					cellsToRender);
+					cellsToRender,
+					gridCRS);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -3653,6 +3654,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		this.config = new TilePlotConfiguration(config);
 		updateConfigVariables();
+		mapper.setLayerStyle((TilePlotConfiguration)this.config);
 		this.draw();
 		
 		if (this.showGridLines != null) {

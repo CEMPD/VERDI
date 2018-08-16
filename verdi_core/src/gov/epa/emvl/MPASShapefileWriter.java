@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.data.shapefile.dbf.DbaseFileHeader;
 import org.geotools.data.shapefile.dbf.DbaseFileWriter;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import anl.verdi.data.ArrayReader;
 import anl.verdi.data.DataFrame;
@@ -80,7 +81,7 @@ public final class MPASShapefileWriter {
                             final String variable, final ArrayReader renderVariable, DataFrame dataFrame,
                             final int timestep,
                             final int layer,
-                            MeshCellInfo[] cells ) throws IOException {
+                            MeshCellInfo[] cells, CoordinateReferenceSystem crs ) throws IOException {
 
     // What it is NOT:  Many Java users and developers assume that a 64-bit implementation
     // means that many of the built-in Java types are doubled in size from 32 to 64.  
@@ -261,7 +262,7 @@ public final class MPASShapefileWriter {
 
     if ( variable != null && cells != null ) {
       writeDBF( fileName, variable, renderVariable, dataFrame, timestep, layer, cells );
-      writePRJ( fileName );
+      writePRJ( fileName, crs );
     }
   }
   
@@ -287,12 +288,13 @@ public final class MPASShapefileWriter {
       dbf.close();  
   }
 
-  private static void writePRJ( final String fileName ) {
-    final String contentString =
+  private static void writePRJ( final String fileName, CoordinateReferenceSystem crs ) {
+    /*String oldContentString =
       "GEOGCS[\"GCS_WGS_1984\"," +
       "DATUM[\"D_WGS_1984\"," +
       "SPHEROID[\"WGS_1984\",6378137.0,298.257223563]]," +
-      "PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]]";
+      "PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]]";*/
+    String contentString = crs.toWKT();
     FileOutputStream file = null;
 
     try {

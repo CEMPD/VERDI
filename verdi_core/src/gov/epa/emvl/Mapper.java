@@ -21,6 +21,7 @@ import org.geotools.map.MapContent;
 import org.geotools.swing.JMapPane;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.gui.VerdiBoundaries;
 import ucar.unidata.geoloc.Projection;
 
@@ -187,6 +188,22 @@ public class Mapper {
 //			Logger.debug("just did the showMap");			// OK here
 			graphics.setColor(mapColor); // to reset graphics color
 			Logger.debug("just reset graphics color to: " + mapColor);	// OK here
+		}
+	}
+	
+	public void setLayerStyle(TilePlotConfiguration config) {
+		Color color = config.getLayerColor();
+		int width = config.getLayerLineSize();
+		try {
+			getWorldMap(false).getVerdiStyle().setLayerLine(color, width);
+			getNorthAmericaMap(false).getVerdiStyle().setLayerLine(color, width);
+			getUsaStatesMap(false).getVerdiStyle().setLayerLine(color, width);
+			getUsaCountiesMap(false).getVerdiStyle().setLayerLine(color, width);
+			getUSHucMap(false).getVerdiStyle().setLayerLine(color, width);
+			getUSRiversMap(false).getVerdiStyle().setLayerLine(color, width);
+			getUSRoadsMap(false).getVerdiStyle().setLayerLine(color, width);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 		
