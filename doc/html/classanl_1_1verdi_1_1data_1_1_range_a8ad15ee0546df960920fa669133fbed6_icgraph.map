@@ -1,6 +1,0 @@
-<map id="anl.verdi.data.Range.getOrigin" name="anl.verdi.data.Range.getOrigin">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1data_1_1_axes_3_01_t_01extends_01_coord_axis_01_4.html#a12ba0480e07f766e2b4f3b1513bf78a7" title="anl.verdi.data.Axes\l\&lt; T extends CoordAxis\l \&gt;.getEndDate" alt="" coords="241,5,396,61"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1data_1_1_extend_axes_3_01_t_01extends_01_extend_coord_axis_01_4.html#a5ea125a83a44d47ee1cf93dace6f2e77" title="anl.verdi.data.ExtendAxes\l\&lt; T extends ExtendCoordAxis\l \&gt;.getEndDate" alt="" coords="221,85,417,141"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1loaders_1_1_extend_synthetic_time_axis.html#a2265debdcd062080114c4157a2152115" title="anl.verdi.loaders.Extend\lSyntheticTimeAxis.getTimeStep" alt="" coords="215,166,423,207"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1loaders_1_1_synthetic_time_axis.html#a9a6c217b7fbf38b5f8a1d5cd0da49808" title="anl.verdi.loaders.Synthetic\lTimeAxis.getTimeStep" alt="" coords="231,231,406,273"/>
-</map>

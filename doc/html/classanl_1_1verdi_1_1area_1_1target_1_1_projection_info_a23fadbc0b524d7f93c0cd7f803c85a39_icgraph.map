@@ -1,6 +1,0 @@
-<map id="anl.verdi.area.target.ProjectionInfo.update" name="anl.verdi.area.target.ProjectionInfo.update">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info.html#a6445ba062d72d715412b1c07fe806fcd" title="anl.verdi.area.target.Projection\lInfo.any_KeyReleased" alt="" coords="285,5,482,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info.html#afa71f9506c6dd686b5b4594e9774c78b" title="anl.verdi.area.target.Projection\lInfo.booleanCheckBox_ItemStateChanged" alt="" coords="251,71,516,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info.html#ab4fdaa5af6e5a5fb922db6d71882fd7d" title="anl.verdi.area.target.Projection\lInfo.dataComboBox2_ItemStateChanged" alt="" coords="255,136,511,177"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_panel.html#acefd92ab7ae30ab6d8f7c4ac05b3d16f" title="anl.verdi.area.target.Projection\lPanel.getProjection" alt="" coords="285,201,482,243"/>
-</map>

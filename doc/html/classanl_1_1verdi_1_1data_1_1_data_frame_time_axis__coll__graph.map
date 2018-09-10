@@ -1,7 +1,0 @@
-<map id="anl.verdi.data.DataFrameTimeAxis" name="anl.verdi.data.DataFrameTimeAxis">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1data_1_1_data_frame_axis.html" title="anl.verdi.data.DataFrameAxis" alt="" coords="137,196,329,223"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1data_1_1_axis_range.html" title="anl.verdi.data.AxisRange" alt="" coords="146,95,311,121"/>
-<area shape="rect" id="node4" href="$interfaceanl_1_1verdi_1_1data_1_1_coord_axis.html" title="anl.verdi.data.CoordAxis" alt="" coords="22,5,185,32"/>
-<area shape="rect" id="node6" href="$interfaceanl_1_1verdi_1_1data_1_1_time_coord_axis.html" title="anl.verdi.data.TimeCoordAxis" alt="" coords="5,145,196,172"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1data_1_1_range.html" title="anl.verdi.data.Range" alt="" coords="209,5,347,32"/>
-</map>

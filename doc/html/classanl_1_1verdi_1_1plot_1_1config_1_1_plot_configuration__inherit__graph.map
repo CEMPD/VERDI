@@ -1,5 +1,0 @@
-<map id="anl.verdi.plot.config.PlotConfiguration" name="anl.verdi.plot.config.PlotConfiguration">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_tile_plot_configuration.html" title="anl.verdi.plot.config.Tile\lPlotConfiguration" alt="" coords="216,5,372,47"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_time_series_plot_configuration.html" title="anl.verdi.plot.config.Time\lSeriesPlotConfiguration" alt="" coords="212,71,376,112"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_vert_cross_plot_configuration.html" title="anl.verdi.plot.config.Vert\lCrossPlotConfiguration" alt="" coords="424,5,584,47"/>
-</map>

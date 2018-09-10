@@ -1,8 +1,0 @@
-<map id="anl.verdi.plot.types.Contour3D.configure" name="anl.verdi.plot.types.Contour3D.configure">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_contour3_d.html#a6a51ddebed9dc113451e7a6d52e7e0a3" title="anl.verdi.plot.types.Contour3\lD.configure" alt="" coords="240,5,427,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_plot_configuration.html#a1e46b88cd5157989bcf7c5be3cccbf24" title="anl.verdi.plot.config.Plot\lConfiguration.getColor" alt="" coords="254,71,413,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_plot_configuration.html#a21a8654bc89e73061c78d8767d5d95ca" title="anl.verdi.plot.config.Plot\lConfiguration.getObject" alt="" coords="254,136,413,177"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1util_1_1_verdi_canvas3_d.html#af20e004716ab8c3814f4a2ec8257b0eb" title="anl.verdi.plot.util.Verdi\lCanvas3D.getSub1" alt="" coords="259,201,408,243"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1plot_1_1util_1_1_verdi_canvas3_d.html#ac66fb7c5abe2a8689cc1bc779883642d" title="anl.verdi.plot.util.Verdi\lCanvas3D.getSub2" alt="" coords="259,267,408,308"/>
-<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1plot_1_1util_1_1_verdi_canvas3_d.html#a5cb286f24e661f5d2dc015a4abc5a6c7" title="anl.verdi.plot.util.Verdi\lCanvas3D.getTitle" alt="" coords="259,332,408,373"/>
-</map>

@@ -1,6 +1,0 @@
-<map id="anl.verdi.plot.types.VerticalCrossSectionPlot" name="anl.verdi.plot.types.VerticalCrossSectionPlot">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_abstract_tile_plot.html" title="anl.verdi.plot.types.Abstract\lTilePlot" alt="" coords="121,169,304,211"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_abstract_plot.html" title="anl.verdi.plot.types.AbstractPlot" alt="" coords="5,87,212,114"/>
-<area shape="rect" id="node4" href="$interfaceanl_1_1verdi_1_1plot_1_1gui_1_1_plot.html" title="anl.verdi.plot.gui.Plot" alt="" coords="141,5,284,32"/>
-<area shape="rect" id="node5" href="$interfaceanl_1_1verdi_1_1plot_1_1types_1_1_time_animatable_plot.html" title="anl.verdi.plot.types.Time\lAnimatablePlot" alt="" coords="237,80,399,121"/>
-</map>

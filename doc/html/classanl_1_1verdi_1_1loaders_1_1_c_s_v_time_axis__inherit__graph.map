@@ -1,5 +1,0 @@
-<map id="anl.verdi.loaders.CSVTimeAxis" name="anl.verdi.loaders.CSVTimeAxis">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1loaders_1_1_c_s_v_coord_axis.html" title="anl.verdi.loaders.CSVCoordAxis" alt="" coords="5,80,212,107"/>
-<area shape="rect" id="node3" href="$interfaceanl_1_1verdi_1_1data_1_1_coord_axis.html" title="anl.verdi.data.CoordAxis" alt="" coords="138,5,301,32"/>
-<area shape="rect" id="node4" href="$interfaceanl_1_1verdi_1_1data_1_1_time_coord_axis.html" title="anl.verdi.data.TimeCoordAxis" alt="" coords="236,80,427,107"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="anl.verdi.gui.OKWindow" name="anl.verdi.gui.OKWindow">
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1gui_1_1_help_window_with_contents.html" title="anl.verdi.gui.HelpWindow\lWithContents" alt="" coords="573,19,740,61"/>
-<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1gui_1_1_o_k_cancel_window.html" title="anl.verdi.gui.OKCancelWindow" alt="" coords="557,85,756,112"/>
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1gui_1_1_extended_dialog.html" title="anl.verdi.gui.ExtendedDialog" alt="" coords="117,5,303,32"/>
-</map>

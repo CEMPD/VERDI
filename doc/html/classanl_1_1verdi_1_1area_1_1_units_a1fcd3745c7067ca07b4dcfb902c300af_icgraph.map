@@ -1,5 +1,0 @@
-<map id="anl.verdi.area.Units.isConcentration" name="anl.verdi.area.Units.isConcentration">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#a20c481fef9838049e60f8edb06390c10" title="anl.verdi.plot.gui.FastArea\lTilePlot.getMenuBar" alt="" coords="307,5,479,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#a110c9e40f8bef8ea6b98c8407998bfcf" title="anl.verdi.plot.gui.FastArea\lTilePlot.processMouseMotionEvent" alt="" coords="280,71,505,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1area_1_1target_1_1_target.html#af45e6cf5262d797ec1657a04b1b32cff" title="anl.verdi.area.target.Target.set\lUnitConverters" alt="" coords="294,136,491,177"/>
-</map>

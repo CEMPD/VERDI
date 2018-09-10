@@ -1,5 +1,0 @@
-<map id="anl.verdi.loaders.NetcdfTimeAxis" name="anl.verdi.loaders.NetcdfTimeAxis">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1loaders_1_1_net_cdf_coord_axis.html" title="anl.verdi.loaders.NetCdf\lCoordAxis" alt="" coords="220,95,379,136"/>
-<area shape="rect" id="node3" href="$interfaceanl_1_1verdi_1_1data_1_1_coord_axis.html" title="anl.verdi.data.CoordAxis" alt="" coords="47,5,210,32"/>
-<area shape="rect" id="node6" href="$interfaceanl_1_1verdi_1_1data_1_1_time_coord_axis.html" title="anl.verdi.data.TimeCoordAxis" alt="" coords="5,102,196,129"/>
-</map>

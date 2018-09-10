@@ -1,8 +1,0 @@
-<map id="org.libtiff.jai.codecimpl.XTIFFFaxTileCodec" name="org.libtiff.jai.codecimpl.XTIFFFaxTileCodec">
-<area shape="rect" id="node2" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_tile_codec_impl.html" title="org.libtiff.jai.codec.XTIFFTile\lCodecImpl" alt="" coords="1121,173,1304,215"/>
-<area shape="rect" id="node3" href="$interfaceorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_tile_codec.html" title="org.libtiff.jai.codec.XTIFFTile\lCodec" alt="" coords="793,5,976,47"/>
-<area shape="rect" id="node6" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_encode_param.html" title="org.libtiff.jai.codec.XTIFFEncode\lParam" alt="" coords="781,173,988,215"/>
-<area shape="rect" id="node9" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_decode_param.html" title="org.libtiff.jai.codec.XTIFFDecode\lParam" alt="" coords="781,291,988,332"/>
-<area shape="rect" id="node11" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_directory.html" title="org.libtiff.jai.codec.XTIFFDirectory" alt="" coords="464,345,679,371"/>
-<area shape="rect" id="node15" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_factory.html" title="org.libtiff.jai.codec.XTIFFFactory" alt="" coords="144,269,351,295"/>
-</map>

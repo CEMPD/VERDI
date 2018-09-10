@@ -1,7 +1,0 @@
-<map id="anl.verdi.data.ExtendTimeCoordAxis" name="anl.verdi.data.ExtendTimeCoordAxis">
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1data_1_1_extend_data_frame_time_axis.html" title="anl.verdi.data.ExtendData\lFrameTimeAxis" alt="" coords="475,5,645,47"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1loaders_1_1_extend_c_s_v_time_axis.html" title="anl.verdi.loaders.Extend\lCSVTimeAxis" alt="" coords="480,71,640,112"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1loaders_1_1_extend_netcdf_time_axis.html" title="anl.verdi.loaders.Extend\lNetcdfTimeAxis" alt="" coords="480,136,640,177"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1loaders_1_1_extend_synthetic_time_axis.html" title="anl.verdi.loaders.Extend\lSyntheticTimeAxis" alt="" coords="480,201,640,243"/>
-<area shape="rect" id="node2" href="$interfaceanl_1_1verdi_1_1data_1_1_extend_coord_axis.html" title="anl.verdi.data.ExtendCoordAxis" alt="" coords="5,111,208,138"/>
-</map>

@@ -1,6 +1,0 @@
-<map id="anl.verdi.data.AbstractDataset.getCoordAxes" name="anl.verdi.data.AbstractDataset.getCoordAxes">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1data_1_1_abstract_dataset.html#addb99d47c7884819b9abad4e2cb9ad8e" title="anl.verdi.data.AbstractDataset.has\lTimeAxis" alt="" coords="272,5,493,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1data_1_1_abstract_dataset.html#aac3123cb6253b933398a9e4271339d56" title="anl.verdi.data.AbstractDataset.has\lXAxis" alt="" coords="272,71,493,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1data_1_1_abstract_dataset.html#a6d2ae062821a63058e9f1c4a67f1d665" title="anl.verdi.data.AbstractDataset.has\lYAxis" alt="" coords="272,136,493,177"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1data_1_1_abstract_dataset.html#ab8f40137b9fb5947ce76dce0914fe516" title="anl.verdi.data.AbstractDataset.has\lZAxis" alt="" coords="272,201,493,243"/>
-</map>

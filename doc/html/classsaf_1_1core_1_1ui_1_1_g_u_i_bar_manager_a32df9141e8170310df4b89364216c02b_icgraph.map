@@ -1,5 +1,0 @@
-<map id="saf.core.ui.GUIBarManager.addMenu" name="saf.core.ui.GUIBarManager.addMenu">
-<area shape="rect" id="node2" href="$classsaf_1_1core_1_1ui_1_1_g_u_i_bar_manager.html#ade9eb73f89595ec2c391032e87838f2f" title="saf.core.ui.GUIBarManager.create\lHelpMenu" alt="" coords="288,5,507,47"/>
-<area shape="rect" id="node3" href="$classsaf_1_1core_1_1ui_1_1_g_u_i_bar_manager.html#a8b7b42c9b9bf3eb52858c993c3b91d7c" title="saf.core.ui.GUIBarManager.create\lPerspectiveMenu" alt="" coords="288,71,507,112"/>
-<area shape="rect" id="node4" href="$classsaf_1_1core_1_1ui_1_1_g_u_i_bar_manager.html#a80285f7774f3ceb84899326295455d90" title="saf.core.ui.GUIBarManager.create\lWindowMenu" alt="" coords="288,136,507,177"/>
-</map>

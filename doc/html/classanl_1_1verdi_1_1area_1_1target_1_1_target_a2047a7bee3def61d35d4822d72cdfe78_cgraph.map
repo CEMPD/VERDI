@@ -1,5 +1,0 @@
-<map id="anl.verdi.area.target.Target.computeAverageDepositionRange" name="anl.verdi.area.target.Target.computeAverageDepositionRange">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1area_1_1_area_tile_plot.html#aaeb01eb6ce68b3abc8eea6fa0ef352e6" title="anl.verdi.area.AreaTilePlot.get\lGridInfo" alt="" coords="284,5,479,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1area_1_1target_1_1_target.html#ae0eeb1e84d377ed43f439f026c912d2d" title="anl.verdi.area.target.Target.set\lCurrentGridInfo" alt="" coords="283,71,480,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1area_1_1target_1_1_target.html#a2ea4ab1563283339467c3635c108819d" title="anl.verdi.area.target.Target.set\lCurrentTilePlot" alt="" coords="283,136,480,177"/>
-</map>

@@ -1,6 +1,0 @@
-<map id="simphony.util.messages.MessageEvent.getMessage" name="simphony.util.messages.MessageEvent.getMessage">
-<area shape="rect" id="node2" href="$classsimphony_1_1util_1_1messages_1_1_log4j_message_listener.html#a08f926d13c15897fa8b156398fe53cba" title="simphony.util.messages.Log4j\lMessageListener.getMessage" alt="" coords="303,5,502,47"/>
-<area shape="rect" id="node4" href="$classsimphony_1_1util_1_1messages_1_1_task_message_listener.html#a4b4cd402fe5282b448d9174e36b55bea" title="simphony.util.messages.Task\lMessageListener.messageReceived" alt="" coords="287,71,518,112"/>
-<area shape="rect" id="node5" href="$classsimphony_1_1util_1_1messages_1_1_stack_task_message_listener.html#a94f26b9ce574b01e9277e6f494ffc7a5" title="simphony.util.messages.Stack\lTaskMessageListener.messageReceived" alt="" coords="273,136,532,177"/>
-<area shape="rect" id="node3" href="$classsimphony_1_1util_1_1messages_1_1_log4j_message_listener.html#a7ce6741ea188cd2b7cefe33942ba9f41" title="simphony.util.messages.Log4j\lMessageListener.messageReceived" alt="" coords="580,5,811,47"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="anl.verdi.plot.types.VerticalCrossSectionPlot.getToolBar" name="anl.verdi.plot.types.VerticalCrossSectionPlot.getToolBar">
-<area shape="rect" id="node2" href="$interfaceanl_1_1verdi_1_1data_1_1_data_frame.html#a08438569766e7e057ab3e40ec890e825" title="anl.verdi.data.DataFrame.getAxes" alt="" coords="789,16,1008,42"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1data_1_1_axis_range.html#ad55bc48041128da0583d260d8d07eb2f" title="anl.verdi.data.AxisRange.get\lOrigin" alt="" coords="271,31,458,72"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_vertical_cross_section_plot.html#afeaf036310996a6dc67d271193e39cbd" title="anl.verdi.plot.types.Vertical\lCrossSectionPlot.updateTimeStepAnd\lConstant" alt="" coords="243,97,487,153"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_vertical_cross_section_plot.html#acd5c2086bb8a4382465f49d692078ae6" title="anl.verdi.plot.types.Vertical\lCrossSectionPlot.createSubtitle" alt="" coords="535,86,741,127"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_vertical_cross_section_plot.html#ab1cce4e88327dc1cf3bf9b5e82beccb7" title="anl.verdi.plot.types.Vertical\lCrossSectionPlot.getMinMax" alt="" coords="803,86,994,127"/>
-</map>

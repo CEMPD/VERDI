@@ -1,7 +1,0 @@
-<map id="anl.verdi.plot.types.Contour3D.getMenuBar" name="anl.verdi.plot.types.Contour3D.getMenuBar">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_contour3_d.html#a6a51ddebed9dc113451e7a6d52e7e0a3" title="anl.verdi.plot.types.Contour3\lD.configure" alt="" coords="240,5,427,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_contour3_d.html#ad132c034376c273ad6697e7007a6066c" title="anl.verdi.plot.types.Contour3\lD.createPrintJob" alt="" coords="240,71,427,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_contour3_d.html#a5921cbd9f5b2cdfed534d8606e382088" title="anl.verdi.plot.types.Contour3\lD.getPlotConfiguration" alt="" coords="240,136,427,177"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_contour3_d.html#a886bfd3c09c81bd221979213aa5cc918" title="anl.verdi.plot.types.Contour3\lD.getTitlesLabelsConfig" alt="" coords="475,136,661,177"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_title.html#ad1dd0ec988a9948beb54031819a28f47" title="anl.verdi.plot.config.Title.get\lColor" alt="" coords="709,136,892,177"/>
-</map>

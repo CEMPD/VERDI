@@ -1,5 +1,0 @@
-<map id="anl.verdi.loaders.ExtendSyntheticTimeAxis.getTimeStep" name="anl.verdi.loaders.ExtendSyntheticTimeAxis.getTimeStep">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1loaders_1_1_extend_synthetic_time_axis.html#a2c0fc10c82be6f9607adf674228c8789" title="anl.verdi.loaders.Extend\lSyntheticTimeAxis.getDate" alt="" coords="261,5,441,47"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1data_1_1_range.html#a8ad15ee0546df960920fa669133fbed6" title="anl.verdi.data.Range.get\lOrigin" alt="" coords="271,71,432,112"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1loaders_1_1_extend_net_cdf_coord_axis.html#a8471b42de781300e41c02c3cbe0adfdd" title="anl.verdi.loaders.Extend\lNetCdfCoordAxis.getValue" alt="" coords="489,5,665,47"/>
-</map>

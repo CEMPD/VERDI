@@ -1,6 +1,0 @@
-<map id="org.libtiff.jai.codec.XTIFFTileCodecImpl.encode" name="org.libtiff.jai.codec.XTIFFTileCodecImpl.encode">
-<area shape="rect" id="node2" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_tile_codec_impl.html#a82a6fdc4946033638b06ec73481f0174" title="org.libtiff.jai.codec.XTIFFTile\lCodecImpl.encodeTilePixels" alt="" coords="256,5,441,47"/>
-<area shape="rect" id="node3" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_tile_codec_impl.html#a32f3c3e904fee6131b5dc3f4c0b9471a" title="org.libtiff.jai.codec.XTIFFTile\lCodecImpl.getTilePixels" alt="" coords="257,71,440,112"/>
-<area shape="rect" id="node4" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_tile_codec_impl.html#a8c73df40aea0fc1ea6d071bb77aa3f39" title="org.libtiff.jai.codec.XTIFFTile\lCodecImpl.setupBufferForEncoding" alt="" coords="236,136,461,177"/>
-<area shape="rect" id="node5" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_tile_codec_impl.html#aea8fd32e5de90acebd3aa14ac72cb269" title="org.libtiff.jai.codec.XTIFFTile\lCodecImpl.setupSourceImage" alt="" coords="251,201,446,243"/>
-</map>

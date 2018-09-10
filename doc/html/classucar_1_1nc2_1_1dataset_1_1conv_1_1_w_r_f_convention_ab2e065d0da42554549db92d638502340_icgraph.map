@@ -1,4 +1,0 @@
-<map id="ucar.nc2.dataset.conv.WRFConvention.isMine" name="ucar.nc2.dataset.conv.WRFConvention.isMine">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1loaders_1_1_netcdf_dataset_factory.html#a4765dec0c0313d72b747f46e71d3d67c" title="anl.verdi.loaders.Netcdf\lDatasetFactory.createWRFDatasets" alt="" coords="341,5,575,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1loaders_1_1_w_r_f_dataset.html#a18307d57cff247ed7f7c926e58afc69b" title="anl.verdi.loaders.WRFDataset.\lWRFDataset" alt="" coords="359,71,557,112"/>
-</map>

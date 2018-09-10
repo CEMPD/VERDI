@@ -1,6 +1,0 @@
-<map id="anl.verdi.plot.gui.ObsOverlayDialog.ObsOverlayDialog" name="anl.verdi.plot.gui.ObsOverlayDialog.ObsOverlayDialog">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_obs_overlay_dialog.html#a4cfbe4678e4fb41c7b0709b6377ede8e" title="anl.verdi.plot.gui.ObsOverlay\lDialog.addListeners" alt="" coords="240,37,427,79"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_obs_overlay_dialog.html#ad614c05043daeaecc529fe7f4e658a41" title="anl.verdi.plot.gui.ObsOverlay\lDialog.initComponents" alt="" coords="240,103,427,144"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_obs_overlay_dialog.html#aea65b84aa9f459fa9beb77cd0b6c95a6" title="anl.verdi.plot.gui.ObsOverlay\lDialog.getSelectedSymbol" alt="" coords="485,5,672,47"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1util_1_1_obs_time_checker.html#a73124d73eb6931dc0559ab9bf6e3a821" title="anl.verdi.util.ObsTimeChecker.is\lCompatible" alt="" coords="475,71,683,112"/>
-</map>

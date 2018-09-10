@@ -1,7 +1,0 @@
-<map id="anl.verdi.data.CoordAxis.getAxisType" name="anl.verdi.data.CoordAxis.getAxisType">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1data_1_1_data_frame_axis.html#a928e5f840ad629f80f485c849ffe43b2" title="anl.verdi.data.DataFrame\lAxis.createDataFrameAxis" alt="" coords="238,5,417,47"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1loaders_1_1_c_s_v_coord_axis.html#a5b3d98ab8b274c9f7c2d3e0b892a9465" title="anl.verdi.loaders.CSVCoord\lAxis.isCompatible" alt="" coords="237,71,417,112"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1loaders_1_1_net_cdf_coord_axis.html#a19e67b51f46498f26096c9cc170779b2" title="anl.verdi.loaders.NetCdf\lCoordAxis.isCompatible" alt="" coords="247,136,408,177"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1data_1_1_data_utilities.html#a0a8c349f3959c9b38fcfcfdd4eb40ac2" title="anl.verdi.data.DataUtilities.create\lDataFrame" alt="" coords="465,5,677,47"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1data_1_1_data_utilities.html#a323416f4c74a107bf82d4d4ba6481011" title="anl.verdi.data.DataUtilities.unit\lVectorTransform" alt="" coords="725,5,923,47"/>
-</map>

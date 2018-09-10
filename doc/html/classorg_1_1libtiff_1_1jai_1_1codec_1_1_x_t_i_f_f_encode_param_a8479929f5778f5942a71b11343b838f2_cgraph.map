@@ -1,5 +1,0 @@
-<map id="org.libtiff.jai.codec.XTIFFEncodeParam.XTIFFEncodeParam" name="org.libtiff.jai.codec.XTIFFEncodeParam.XTIFFEncodeParam">
-<area shape="rect" id="node2" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_encode_param.html#a71c2bf9c755aa3fa5af21e9444b615a0" title="org.libtiff.jai.codec.XTIFFEncode\lParam.initialize" alt="" coords="260,39,467,80"/>
-<area shape="rect" id="node3" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_encode_param.html#aab557cd9ae97420eaea54209206a0c81" title="org.libtiff.jai.codec.XTIFFEncode\lParam.setCompression" alt="" coords="515,5,721,47"/>
-<area shape="rect" id="node4" href="$classorg_1_1libtiff_1_1jai_1_1codec_1_1_x_t_i_f_f_encode_param.html#ab4e0c540b7e56add3e581d394036558b" title="org.libtiff.jai.codec.XTIFFEncode\lParam.setWriteTiled" alt="" coords="515,71,721,112"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="anl.verdi.plot.probe.ProbeEvent" name="anl.verdi.plot.probe.ProbeEvent">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1data_1_1_slice.html" title="anl.verdi.data.Slice" alt="" coords="275,36,406,63"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1data_1_1_range.html" title="anl.verdi.data.Range" alt="" coords="5,36,144,63"/>
-<area shape="rect" id="node4" href="$interfaceanl_1_1verdi_1_1plot_1_1gui_1_1_plot.html" title="anl.verdi.plot.gui.Plot" alt="" coords="269,87,412,113"/>
-<area shape="rect" id="node5" href="$interfaceanl_1_1verdi_1_1formula_1_1_formula.html" title="anl.verdi.formula.Formula" alt="" coords="257,137,424,164"/>
-<area shape="rect" id="node6" href="$interfaceanl_1_1verdi_1_1data_1_1_data_frame.html" title="anl.verdi.data.DataFrame" alt="" coords="257,188,424,215"/>
-</map>

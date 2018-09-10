@@ -1,5 +1,0 @@
-<map id="anl.verdi.plot.types.TilePlot.createSubtitle" name="anl.verdi.plot.types.TilePlot.createSubtitle">
-<area shape="rect" id="node2" href="$interfaceanl_1_1verdi_1_1data_1_1_data_frame.html#a08438569766e7e057ab3e40ec890e825" title="anl.verdi.data.DataFrame.getAxes" alt="" coords="208,5,427,32"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_abstract_tile_plot.html#a86e8aab97851dcdc5c742ac20c3f89a5" title="anl.verdi.plot.types.Abstract\lTilePlot.getLatLonForAxisPoint" alt="" coords="217,57,418,98"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_tile_plot.html#a87fbdc4d5fd2eb32ba63a91e0ed03873" title="anl.verdi.plot.types.Tile\lPlot.getMinMaxPoints" alt="" coords="240,122,395,163"/>
-</map>

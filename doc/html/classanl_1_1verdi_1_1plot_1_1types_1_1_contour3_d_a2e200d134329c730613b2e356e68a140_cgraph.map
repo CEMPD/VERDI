@@ -1,7 +1,0 @@
-<map id="anl.verdi.plot.types.Contour3D.getToolBar" name="anl.verdi.plot.types.Contour3D.getToolBar">
-<area shape="rect" id="node2" href="$interfaceanl_1_1verdi_1_1data_1_1_data_frame.html#a08438569766e7e057ab3e40ec890e825" title="anl.verdi.data.DataFrame.getAxes" alt="" coords="475,41,693,68"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1data_1_1_axis_range.html#a256e0693172ca281af9354ec2e096997" title="anl.verdi.data.AxisRange.get\lExtent" alt="" coords="240,27,427,69"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1data_1_1_axis_range.html#ad55bc48041128da0583d260d8d07eb2f" title="anl.verdi.data.AxisRange.get\lOrigin" alt="" coords="240,93,427,134"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_contour3_d.html#a621dfd17c9fa985e4f42e9d266ce95fc" title="anl.verdi.plot.types.Contour3\lD.updateTimeStepLayer" alt="" coords="240,158,427,199"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_plot_configuration.html#a29e9a53433beb962fed0a4578935e06f" title="anl.verdi.plot.config.Plot\lConfiguration.getTitle" alt="" coords="505,158,663,199"/>
-</map>
