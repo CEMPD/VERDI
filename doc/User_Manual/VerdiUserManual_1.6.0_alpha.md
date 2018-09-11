@@ -13,6 +13,8 @@ The University of North Carolina at Chapel Hill<br>
 Chapel Hill, NC 27599-1105<br>
 Date: Feb 28, 2017<br>
 
+<!---
+First comment line...
 **Contents**
 * 1 [Introduction](#introduction)
   * 1.1 [Background](#background)
@@ -135,10 +137,10 @@ Date: Feb 28, 2017<br>
 * 17 [VERDI Batch Script Editor](#-verdi-batch-script-editor)
   * 17.1 [Specify hour/time step formula in batch script mode](#specify-hourtime-step-formula-in-batch-script-mode)
   * 17.2 [Mathematical function capability in batch script mode](#mathematical-function-capability-in-batch-script-mode)
-    * 17.2.1 [Batch Script Example: Maximum Ozone – layer 1 (Figure 17-11)](#batch-script-example-maximum-ozone--layer-1-figure-17-11)
-    * 17.2.2 [Batch Script Example : Minimum Ozone – layer 1 (Figure 17-12)](#batch-script-example--minimum-ozone--layer-1-figure-17-12)
-    * 17.2.3 [Batch Script Example : Mean of Ozone – layer 1 (Figure 17-13)](#batch-script-example--mean-of-ozone--layer-1-figure-17-13)
-    * 17.2.4 [Batch Script Example : Sum of Ozone – layer 1 (Figure 17-14)](#batch-script-example--sum-of-ozone--layer-1-figure-17-14)
+    * 17.2.1 [Batch Script Example: Maximum Ozone – layer 1 (Figure 17-11)](#batch-script-example-maximum-ozone-layer-1-figure-17-11)
+    * 17.2.2 [Batch Script Example : Minimum Ozone – layer 1 (Figure 17-12)](#batch-script-example-minimum-ozone-layer-1-figure-17-12)
+    * 17.2.3 [Batch Script Example : Mean of Ozone – layer 1 (Figure 17-13)](#batch-script-example-mean-of-ozone-layer-1-figure-17-13)
+    * 17.2.4 [Batch Script Example : Sum of Ozone – layer 1 (Figure 17-14)](#batch-script-example-sum-of-ozone-layer-1-figure-17-14)
 * 18 [Command Line Scripting](#command-line-scripting)
    * 18.1 [Example Command Line Script for Linux Users](#example-command-line-script-for-linux-users)
    * 18.2 [Example Command Line Script for Windows Users](#example-command-line-script-for-windows-users)
@@ -147,9 +149,9 @@ Date: Feb 28, 2017<br>
 * [Acknowledgments](#acknowledgments)
 * [Data Contributions](#data-contributions)
 * [Data Reader Contributions](#data-reader-contributions)
-
+//
+//
 **Figures**
-
 * [Figure 1‑1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.](#Figure1-1)
 * [Figure 1‑2. Bottom of VERDI Page](#Figure1-2)
 * [Figure 1‑3. Downloading VERDI from the CMAS Web Site, Step 2.]((#Figure1-3)
@@ -249,9 +251,15 @@ Date: Feb 28, 2017<br>
 * [Figure 17‑14. Tile Plot of the Sum of Ozone (aggregated over 25 time steps)](#Figure17-14)
 * [Figure 18‑1. Location of run.bat script in Windows](#Figure18-1)
 * [Figure 18‑2. Submit run.bat script from Run command](#Figure18-2)
- 
+last comment line.
+-->
+
+<a name="Introduction">
+
 Introduction
 ============
+
+</a>
 
 Background
 -----------
@@ -306,6 +314,7 @@ You can download the latest version of VERDI from <https://www.cmascenter.org/ve
 <a id=Figure1-1></a>
 Figure 1‑1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.<br>
 <img src="media/image001.png"/>
+![Figure1-1](media/image001.png "Figure 1‑1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.")
 
 <a id=Figure1-2></a>
 Figure 1‑2. Bottom of VERDI Page<br>
@@ -438,7 +447,7 @@ If you are unable to install VERDI on your computer, please check to see whether
 
 After successfully installing VERDI you need to perform the following tasks under your home directory.
 
-1.  Locate your home directory. Your home directory is typically under C:\Users\yourloginid. So, if your login id is *staff*, your home directory is probably *C:\Users\staff*.
+1.  Locate your home directory. Your home directory is typically under ```csh C:\Users\yourloginid ```. So, if your login id is *staff*, your home directory is probably *C:\Users\staff*.
 
 2.  Create a new directory *verdi* under your home directory (e.g., *C:\Users\staff\verdi*).
 
