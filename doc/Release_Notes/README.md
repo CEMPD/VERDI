@@ -1,4 +1,21 @@
 -----------------------------
+RELEASE NOTES FOR VERDI V2.0 beta 
+------------------------------
+These notes describe the differences between the VERDI 2.0 beta release and the previous public release v1.6 alpha
+
+NEW FEATURES IN V2.0 beta:
+* 
+
+BUG FIXES IN 2.0 beta:
+*
+*
+
+KNOWN ISSUES IN 2.0 beat:
+*
+*
+
+
+-----------------------------
 RELEASE NOTES FOR VERDI V1.6 alpha
 ------------------------------
 
