@@ -33,14 +33,14 @@ The following sections are included in this manual:
 
 [Chapter 14 (Contributing to VERDI Development).](VERDI_ch14.md) How to make contributions to VERDI using GitHub. 
 
-[Chapter 15 (Known Bugs).](VERDI_ch015.md)  Known Bugs.
+[Chapter 15 (Known Bugs).](VERDI_ch15.md)  Known Bugs.
 
-[Chapter 16 (Mathematical Functions).](VERDI_ch016.md) Mathematical Functions.
+[Chapter 16 (Mathematical Functions).](VERDI_ch16.md) Mathematical Functions.
 
-[Chapter 17 (VERDI Batch Script Editor).](VERDI_ch017.md) How to use VERDI Batch Scripts.
+[Chapter 17 (VERDI Batch Script Editor).](VERDI_ch17.md) How to use VERDI Batch Scripts.
 
-[Chapter 18 (Command Line Scripting).](VERDI_ch018.md) How to use command line scripting to create plots using VERDI. 
+[Chapter 18 (Command Line Scripting).](VERDI_ch18.md) How to use command line scripting to create plots using VERDI. 
 
-[Chapter 19 (Areal Interpolation Calculations).](VERDI_ch019.md) How to VERDI does areal interpolation.
+[Chapter 19 (Areal Interpolation Calculations).](VERDI_ch19.md) How to VERDI does areal interpolation.
 
 [Chapter 20 (Licenses for JAVA Libraries used by VERDI).](VERDI_ch20.md) JAVA licenses used by VERDI.
