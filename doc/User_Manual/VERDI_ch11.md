@@ -150,7 +150,7 @@ To load a plot configuration file, first create a new plot that is of the same t
 
 Note that it is possible to load a saved configuration file that does not apply to the selected plot. VERDI may try to load what it can, which may result in something other than what you expected. Therefore, before loading a saved plot configuration check carefully to be sure the plot type and formula of the configuration file match those of the new plot.
 
-You can also load configuration files in batch or command line scripts by setting the parameter configFile (e.g., configFile=C:\\User\\username\\VERDI_1.6\\data\configs\o3_10bin.cfg).
+You can also load configuration files in batch or command line scripts by setting the parameter configFile (e.g., configFile=C:\\User\\username\\VERDI_2.0\\data\configs\o3_10bin.cfg).
 
 ###  Load Chart Theme
 
@@ -356,7 +356,7 @@ A selection of default maps—including World, North America. USA States, USA Co
 Figure 11‑24. Add Map Layers<br>
 <img src="media/image071.png"/>
 
-As of VERDI 1.6.0 alpha release, the Tile Plot and Areal Interpolation Plot use the Shapefile format for all maps and GIS layers, the bin format is no longer used.
+As of VERDI 1.6, the Tile Plot and Areal Interpolation Plot use the Shapefile format for all maps and GIS layers, the bin format is no longer used.
 
 ### Configure GIS Layers
 

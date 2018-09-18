@@ -7,9 +7,9 @@
 VERDI Installation Instructions
 ===============================
 
-<span id="_Toc197166117" class="anchor"><span id="_Toc292295001" class="anchor"></span></span>This chapter provides instructions for installing VERDI 1.6 alpha on a variety of computer platforms. The supporting libraries required by VERDI are included in the installation, along with a version of the JRE 7 for your convenience. If you already have JRE 7 installed on your computer, you will not need to uninstall it and you can choose to use that one.
+<span id="_Toc197166117" class="anchor"><span id="_Toc292295001" class="anchor"></span></span>This chapter provides instructions for installing VERDI 2.0 on a variety of computer platforms. The supporting libraries required by VERDI are included in the installation, along with a version of the JRE 7 for your convenience. If you already have JRE 7 installed on your computer, you will not need to uninstall it and you can choose to use that one.
 
-VERDI 1.6 alpha is distributed as a zip or gzip file, as appropriate, for each of the following supported platforms:
+VERDI 2.0 Beta is distributed as a zip or gzip file, as appropriate, for each of the following supported platforms:
 
 -   32-bit Windows 8
 
@@ -28,9 +28,9 @@ Installation Instructions for Linux and Mac
 
 Follow these instructions to install VERDI:
 
-1.  tar -xvf verdi_1.6_alpha.tar.gz into a location where you would like to install VERDI
+1.  tar -xvf verdi_2.0_beta.tar.gz into a location where you would like to install VERDI
 
-2.  Edit verdi_1.6_alpha/verdi.sh: Change the path for the VERDI_HOME variable to reflect the location where VERDI was installed (e.g., VERDI_HOME=/usr/local/verdi)
+2.  Edit verdi_2.0_beta/verdi.sh: Change the path for the VERDI_HOME variable to reflect the location where VERDI was installed (e.g., VERDI_HOME=/usr/local/verdi)
 
 3.  Create a directory *verdi* under your home directory.
 
@@ -45,7 +45,7 @@ Follow these instructions to install VERDI:
 Installation Instructions for Windows
 --------------------------------------
 
-To install VERDI for Windows, unzip the file to a local directory on your Windows 7 computer. NOTE: You do not need to install VERDI under a Program Files directory or in the root directory on one of your hard disk drives. Therefore, you should not need Administrator rights to install VERDI 1.6 alpha. If your system is under strict control from your Administrator, you may be able to unzip the VERDI distribution under your home directory or your documents directory; however, you may have problems if there is a space in the path to your VERDI installation directory.
+To install VERDI for Windows, unzip the file to a local directory on your Windows 7 computer. NOTE: You do not need to install VERDI under a Program Files directory or in the root directory on one of your hard disk drives. Therefore, you should not need Administrator rights to install VERDI 2.0 beta. If your system is under strict control from your Administrator, you may be able to unzip the VERDI distribution under your home directory or your documents directory; however, you may have problems if there is a space in the path to your VERDI installation directory.
 
 If you are unable to install VERDI on your computer, please check to see whether your user account is authorized to install software. You may need to request that a user with a computer administrator account install VERDI, or provide you with an account that has permission to install software. For more information about user account types, click Start and select Control Panel and then click on the User Account icon.
 
@@ -80,8 +80,8 @@ VERDI is configured via the config.properties file that you copied to your home/
 # Please use double backslash for Windows platform or slash for UNIX-like platforms
 # Please uncomment the following lines and modify them to suit your local settings
 # Windows example settings format
-# verdi.project.home=C:\\ Users\\yourusername\\VERDI_1.6_alpha\\project
-# verdi.config.home=C:\\ Users\\yourusername\\VERDI_1.6_alpha\\config
+# verdi.project.home=C:\\ Users\\yourusername\\VERDI_2.0_beta\\project
+# verdi.config.home=C:\\ Users\\yourusername\\VERDI_2.0_beta\\config
 # Linux example settings format
 
 verdi.project.home=../../data/project
