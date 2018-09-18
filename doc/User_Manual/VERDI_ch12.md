@@ -53,11 +53,11 @@ Figure 12‑6. Models-3 I/O API Map Projection Parameters for Lambert Conformal 
 
 <a id=Figure12-7></a>
 Figure 12‑7. Edited Example Projection File: camxproj.txt<br>
-<img src="media/image79.png"/>
+<img src="media/image079.png"/>
 
 <a id=Figure12-8></a>
 Figure 12‑8. CAMx Example Plot<br>
-<img src="media/image80.png" />
+<img src="media/image080.png" />
 
 
 <!-- BEGIN COMMENT -->
