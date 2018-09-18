@@ -320,7 +320,6 @@ You can download the latest version of VERDI from <https://www.cmascenter.org/ve
 
 <a id=Figure1-1></a>
 Figure 1‑1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.<br>
-<img src="media/image001.png"/>
 ![Figure1-1](media/image001.png "Figure 1‑1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.")
 
 <a id=Figure1-2></a>
