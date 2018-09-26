@@ -10,7 +10,7 @@ Requirements for Using VERDI
 Java Runtime Environment
 ------------------------
 
-VERDI requires version 7 or above of the Java Standard Edition Runtime Environment (JRE). The JRE<sup>TM</sup> 7 is provided as part of the VERDI release for 32- and 64-bit Linux and Windows. If your computer requires a different version, see Section 3.3. <span id="_Toc197166113" class="anchor"><span id="_Toc292294996" class="anchor"></span></span>
+VERDI requires version 7 or above of the Java SE Development Kit (JDK). The JDK<sup>TM</sup> 7 is provided as part of the VERDI release for 32- and 64-bit Linux and Windows. If your computer requires a different version, see Section 3.3. <span id="_Toc197166113" class="anchor"><span id="_Toc292294996" class="anchor"></span></span>
 
 Memory and CPU Requirements
 ---------------------------
