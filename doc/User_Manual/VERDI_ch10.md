@@ -71,6 +71,8 @@ VERDI calculates the grid cell time aggregate statistics as follows: For each ce
 
 -   MAXIMUM_8HOUR_MEAN: Ma (M1, M2, ..., Mn-8) where Mi = mean(var(i,j,k,t<sub>(i)</sub>), var(i,j,k,t<sub>(i)+1</sub>), var(i,j,k,t<sub>(i+2)</sub>), ...,var(i,j,k,t<sub>(i+8)</sub>), for i = 1..n-8
 
+-   fourth_max:  fourth highest value for each grid cell (used to obtain the 4th highest value of your rolling 8 hr maximum CMAQ output file)
+
 Areal Interpolation Plot
 ------------------------
 
@@ -106,7 +108,7 @@ Figure 10‑6. Areal Values for a Selected Polygon<br>
 
 ### View and Export Areal Interpolation Plot Data in Text Format
 
-To view the average and total interpolation values for selected formulas in a spreadsheet format, **right click** on the Areal Interpolation Plot and select **Area Information** ([Figure 10‑7](#Figure10-7)). The Area Information Spreadsheet contains four columns: the identification number from the name field for the polygon, the total area, average interpolated value, and total interpolated value ([Figure 10‑8](#Figure10-8)). At the top of the **Area Information** tab, the user may select **File&gt;Export** to export the data to a spreadsheet file ([Figure 10‑9](#Figure10-9)). The save popup window allows the user to specify with either a text (.txt) or comma-separated-values (\*.csv) format, also known as a comma-delimited text file ([Figure 10‑10](#Figure10-10).
+To view the average and total interpolation values for selected formulas in a spreadsheet format, **right click** on the Areal Interpolation Plot and select **Area Information** ([Figure 10‑7](#Figure10-7)), then click on the radio button next to All, to select all area regions, click on the Formula Name, then click on OK. The Area Information Spreadsheet contains four columns: the identification number from the name field for the polygon, the total area, average interpolated value, and total interpolated value ([Figure 10‑8](#Figure10-8)). At the top of the **Area Information** tab, the user may select **File&gt;Export** to export the data to a spreadsheet file ([Figure 10‑9](#Figure10-9)). The save popup window allows the user to specify with either a text (.txt) or comma-separated-values (\*.csv) format, also known as a comma-delimited text file ([Figure 10‑10](#Figure10-10).
 
 <a id=Figure10-7></a>
 Figure 10‑7. Right Click on Area Plot<br>

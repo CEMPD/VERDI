@@ -13,12 +13,12 @@ Prepared for: Donna Schwede<br>
 U.S. EPA, ORD/NERL/AMD/APMB<br>
 E243-04 USEPA Mailroom<br>
 Research Triangle Park, NC 27711<br>
-Prepared by: Liz Adams and Jo Ellen Brandmeyer<br>
+Prepared by: Liz Adams<br>
 Institute for the Environment<br>
 The University of North Carolina at Chapel Hill<br>
 100 Europa Drive, Suite 490,CB 1105 <br>
 Chapel Hill, NC 27599-1105<br>
-Date: Feb 28, 2017<br>
+Date: Sept 28, 2018<br>
 
 <!---
 First comment line...
@@ -297,9 +297,11 @@ The following are useful web links for obtaining VERDI downloads and support:
 
 Use pulldown menu to select VERDI product to view its FAQs.
 
-1.  To query M3USER listserv for VERDI related technical support questions and answers: <http://lists.unc.edu/read/?forum=m3user>
+1. To query and ask questions use the new CMAS User Forum, by selecting the VERDI category: <https://forum.cmascenter.org/c/verdi>
 
-2.  To query issues and submit bug reports, questions, and/or requests:
+1.  To query the older M3USER listserv for VERDI related technical support questions and answers: <http://lists.unc.edu/read/?forum=m3user>
+
+2.  To query bugs and submit bug reports, questions, and/or requests:
 
 <https://github.com/CEMPD/VERDI/issues>
 
