@@ -1374,6 +1374,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		
 		originalCRS = coordinateAxes.getBoundingBoxer().getOriginalCRS();
 		
+		VerdiApplication.getInstance().setLastCoordinateReferenceSystem(gridCRS);
+		
 		// Initialize grid dimensions: timesteps, layers, rows, columns:
 
 		final DataFrameAxis timeAxis = axes.getTimeAxis();
@@ -1410,6 +1412,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		firstColumn = 0;
 		lastColumn = firstColumn + columns - 1;
 		final Envelope envelope = axes.getBoundingBox(dataFrame.getDataset().get(0).getNetcdfCovn());
+		VerdiApplication.getInstance().setLastBounds((ReferencedEnvelope)envelope);
 
 		westEdge = envelope.getMinX(); // E.g., -420000.0.
 		southEdge = envelope.getMinY(); // E.g., -1716000.0.
@@ -1493,6 +1496,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		
 		mapper = new Mapper(mapFileDirectory, projection, gridCRS);
 		mapper.setLayerStyle((TilePlotConfiguration)config);
+		VerdiApplication.getInstance().setLastMapper(mapper);
 		
 		
 
@@ -1703,6 +1707,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			domain[LATITUDE][MINIMUM] = gridBounds[Y][MINIMUM];
 			domain[LATITUDE][MAXIMUM] = gridBounds[Y][MAXIMUM];
 		}
+		VerdiApplication.getInstance().setLastDomain(domain);
 	}
 	
 	public Projection getPojection() {

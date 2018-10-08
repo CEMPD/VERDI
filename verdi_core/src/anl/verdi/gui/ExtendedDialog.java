@@ -80,6 +80,8 @@ static Frame defaultParent=null;
 
   
   public void show(){
+	  super.show();
+	  /*Disabled - this calls itself recursively and overflows
     // code added to pop the parent window to the front
 	  if(isModal()){
       try{
@@ -100,6 +102,6 @@ static Frame defaultParent=null;
     }
     else{
       super.setVisible(true);			// 2014 deprecated show();
-    }
+    }*/
   }
 }

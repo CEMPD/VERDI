@@ -220,9 +220,13 @@ public class Mapper {
 			e.printStackTrace();
 		}
 	}
+	
+	public VerdiBoundaries chooseMap(final double[][] domain) {
+		return chooseMap(domain, false);
+	}
 
 	// Choose a map based on a domain.
-	private VerdiBoundaries chooseMap(final double[][] domain) {
+	public VerdiBoundaries chooseMap(final double[][] domain, boolean forceReturn) {
 		Logger.debug("in Mapper.chooseMap");	// 2015 after Mapper.draw function
 		final double yMinimum = domain[Y][MINIMUM];
 		Logger.debug("yMinimum = " + yMinimum);
@@ -302,7 +306,7 @@ public class Mapper {
 		boolean containsResult = layers.contains(result);
 		Logger.debug("getting ready to return from Mapper.chooseMap");
 		Logger.debug("layers.contains(result) == " + containsResult);	// says false: selected map is not already in layers
-		return containsResult ? null : result;		// if already contained map, return null; if not already contained map return the map as a VerdiBoundaries object
+		return containsResult && !forceReturn ? null : result;		// if already contained map, return null; if not already contained map return the map as a VerdiBoundaries object
 	}
 
 	public VerdiBoundaries getUSHucMap() {

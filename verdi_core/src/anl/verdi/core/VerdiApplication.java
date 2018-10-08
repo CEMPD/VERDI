@@ -1,5 +1,6 @@
 package anl.verdi.core;
 
+import gov.epa.emvl.Mapper;
 import gov.epa.emvl.RemoteFileReader;
 
 import java.io.File;
@@ -22,9 +23,11 @@ import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Level;
 import org.apache.logging.log4j.LogManager;	
-import org.apache.logging.log4j.Logger;	
+import org.apache.logging.log4j.Logger;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.MapContent;
 import org.jdesktop.swingx.JXTable;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import saf.core.ui.util.FileChooserUtilities;
 import simphony.util.messages.MessageCenter;
@@ -132,6 +135,40 @@ FormulaElementCreator, ListDataListener {
 
 	public VerdiGUI getGui() {
 		return gui;
+	}
+	
+	//TODO - write me
+	//TAH
+	Mapper mapper = null;
+	public Mapper getLastMapper() {
+		return mapper;
+	}	
+	public void setLastMapper(Mapper mapper) {
+		this.mapper = mapper;
+	}
+	
+	double[][] domain = null;
+	public double[][] getLastDomain() {
+		return domain;
+	}	
+	public void setLastDomain(double[][] domain) {
+		this.domain = domain;
+	}
+	
+	ReferencedEnvelope bounds = null;
+	public ReferencedEnvelope getLastBounds() {
+		return bounds;
+	}
+	public void setLastBounds(ReferencedEnvelope bounds) {
+		this.bounds = bounds;
+	}
+	
+	CoordinateReferenceSystem crs = null;
+	public CoordinateReferenceSystem getLastCoordinateReferenceSystem() {
+		return crs;
+	}
+	public void setLastCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
+		this.crs = crs;
 	}
 
 	public void init(VerdiGUI gui, Project project) {

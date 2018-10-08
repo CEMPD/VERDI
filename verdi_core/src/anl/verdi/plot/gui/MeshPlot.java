@@ -114,6 +114,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import saf.core.ui.event.DockableFrameEvent;
 import ucar.ma2.ArrayLogFactory;
 import ucar.ma2.InvalidRangeException;
+import ucar.unidata.geoloc.Projection;
 import ucar.unidata.geoloc.projection.LatLonProjection;
 import anl.map.coordinates.Decidegrees;
 import anl.verdi.area.MapPolygon;
@@ -378,6 +379,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private int displayHeight = 0;
 
 	private boolean forceBufferedImage = false;
+	boolean rescaleBuffer = false;
+	int bufferedWidth, bufferedHeight;
 	private static final Object lock = new Object();
 	private JPopupMenu popup;
 	protected Rectangle dataArea = new Rectangle();
@@ -393,6 +396,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private int currentClickedCell = 0;
 	private int previousClickedCell = 0;
 	private MeshCellInfo[] cellsToRender = null;
+	
+	Projection projection = new LatLonProjection();
 
 
 	//private static final boolean SHOW_ZOOM_LOCATION = true;
@@ -585,8 +590,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					Image offScreenImage = null;
 					
 					try {
-					offScreenImage =
-						repaintManager.getOffscreenBuffer(threadParent, canvasWidth, canvasHeight);
+						if (rescaleBuffer)
+							offScreenImage = new BufferedImage(bufferedWidth, bufferedHeight, BufferedImage.TYPE_INT_RGB);
+						else
+							offScreenImage = repaintManager.getOffscreenBuffer(threadParent, canvasWidth, canvasHeight);
 					} catch (NullPointerException e) {}
 
 					// offScreenImage = (Image) (offScreenImage.clone());
@@ -608,7 +615,15 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 							*/
 						continue;// graphics system is not ready
 					}
-
+					
+					if (rescaleBuffer) {
+						double factor = ((double)bufferedWidth) / ((double)getWidth());
+						if (factor > 0) {
+							offScreenGraphics.scale(factor, factor);
+							offScreenGraphics.setColor(Color.PINK);
+							offScreenGraphics.fillRect(0,  0,  canvasWidth,  canvasHeight);
+						}
+					}
 
 					if (tFont == null) {
 						tFont = offScreenGraphics.getFont();
@@ -842,7 +857,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 							if (canvasWidth > 0 && canvasHeight > 0) {
 								//bImage needed for animated gif support
 								if (forceBufferedImage) {
-									BufferedImage copiedImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
+									BufferedImage copiedImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, bufferedWidth, bufferedHeight);
 									bImage = copiedImage;
 									if (animationHandler != null) {
 										ActionEvent e = new ActionEvent(copiedImage, this.hashCode(), "");
@@ -851,7 +866,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 									else
 										forceBufferedImage = false;
 								}
-								VerdiGUI.showIfVisible(threadParent, graphics, offScreenImage);
+								if (!rescaleBuffer)
+									VerdiGUI.showIfVisible(threadParent, graphics, offScreenImage);
 							}
 						} finally {
 							graphics.dispose();
@@ -2275,7 +2291,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		gridCRS = coordinateAxes.getBoundingBoxer().getCRS();
 				
-		mapper = new Mapper(mapFileDirectory, new LatLonProjection(), gridCRS);
+		mapper = new Mapper(mapFileDirectory, projection, gridCRS);
 
 
 		timeAxis = axes.getTimeAxis();
@@ -3438,6 +3454,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				//showGISLayersDialog();
 				File selectFile = JFileDataStoreChooser.showOpenFile("shp", null);
 				VerdiBoundaries aVerdiBoundaries = new VerdiBoundaries();
+				aVerdiBoundaries.setProjection(projection, gridCRS);
 				aVerdiBoundaries.setFileName(selectFile.getAbsolutePath());
 				mapper.getLayers().add(aVerdiBoundaries);
 			}
@@ -3754,6 +3771,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	public BufferedImage getBufferedImage(int width, int height) {
 		bImage = null;
 		forceBufferedImage = true;
+		if (width != getWidth()) {
+			rescaleBuffer = true;
+			bufferedWidth = width;
+			bufferedHeight = bufferedWidth * getHeight() / getWidth();
+		}
 		draw();
 		long start = System.currentTimeMillis();
 		while (System.currentTimeMillis() - start < 2000 && bImage == null )
@@ -3763,6 +3785,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				Logger.error("Caught exception waiting for buffered image", e);
 				break;
 			}
+		if (rescaleBuffer) {
+			rescaleBuffer = false;
+			draw();
+		}
 		return bImage;
 	}
 	

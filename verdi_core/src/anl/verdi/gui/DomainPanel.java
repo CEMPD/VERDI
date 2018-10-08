@@ -35,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JToolBar;
 import javax.swing.border.TitledBorder;
 
 //import org.piccolo2d.event.PInputEvent;
@@ -67,10 +68,13 @@ import repast.simphony.gis.tools.PGISPanTool;
 import repast.simphony.gis.tools.PMarqueeZoomIn;
 import repast.simphony.gis.tools.PMarqueeZoomOut;
 import repast.simphony.gis.tools.ToolManager;
+import anl.verdi.core.VerdiAppConfigurator;
+import anl.verdi.core.VerdiApplication;
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.DatasetMetadata;
+import anl.verdi.plot.gui.VerdiBoundaries;
 import anl.verdi.util.Tools;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -145,14 +149,14 @@ public class DomainPanel extends JPanel {
 			}
 		};
 
-//		edit.putValue(Action.NAME, "Edit Me");		// Edit button is now throwing error that hangs VERDI completely
-//		Logger.debug("in DomainPanel, putValue 'Edit' Me");
-//		edit.setEnabled(false);
-//		JToolBar toolBar = piccoloMapPanel1.getToolBar();
-//		toolBar.add(edit);
-//		toolBar.setFloatable(false);
-//		toolBar.add(Box.createHorizontalGlue());
-//		toolBar.add(rangeLbl);
+		edit.putValue(Action.NAME, "Edit Me");		// Edit button is now throwing error that hangs VERDI completely
+		Logger.debug("in DomainPanel, putValue 'Edit' Me");
+		edit.setEnabled(false);
+		JToolBar toolBar = piccoloMapPanel1.getToolBar();
+		toolBar.add(edit);
+		toolBar.setFloatable(false);
+		toolBar.add(Box.createHorizontalGlue());
+		toolBar.add(rangeLbl);
 
 		info = new AbstractAction() {
 			/**
@@ -165,13 +169,13 @@ public class DomainPanel extends JPanel {
 					printInfo();
 			}
 		};
-//		info.putValue(Action.NAME, "Metadata Me");		// Metadata button is now throwing error
-//		Logger.debug("in DomainPanel, just putValue Metadata Me");
-//		info.setEnabled(false);
-//		toolBar.add(info);
-//		toolBar.setFloatable(false);
-//		toolBar.add(Box.createHorizontalGlue());
-//		toolBar.add(infoLb1);
+		info.putValue(Action.NAME, "Metadata Me");		// Metadata button is now throwing error
+		Logger.debug("in DomainPanel, just putValue Metadata Me");
+		info.setEnabled(false);
+		toolBar.add(info);
+		toolBar.setFloatable(false);
+		toolBar.add(Box.createHorizontalGlue());
+		toolBar.add(infoLb1);
 	}
 
 //	public void unsetDomainValues() {	// 2014 appears to not be used
@@ -239,15 +243,15 @@ public class DomainPanel extends JPanel {
 			StyleBuilder builder = new StyleBuilder();
 			Style style = builder.createStyle(builder.createPolygonSymbolizer(
 					builder.createStroke(), null));
-			URL url = new File("./data/map_na.shp").toURI().toURL();
 //			MapLayer layer = createLayer(url, new File("./data/states.sld"));
-			FeatureLayer layer = createLayer(url, new File("./data/states.sld"));
+			VerdiBoundaries boundaries = VerdiApplication.getInstance().getLastMapper().chooseMap(VerdiApplication.getInstance().getLastDomain(), true);
+			FeatureLayer layer = new FeatureLayer(boundaries.getVerdiStyle().getFeatureSource(), style);
 			layer.setStyle(style);
 			context.addLayer(layer);
-			url = new File("./data/map_counties.shp").toURI().toURL();
-			layer = createLayer(url, new File("./data/counties.sld"));
-			layer.setStyle(style);
-			context.addLayer(layer);
+			//url = new File("./data/map_counties.shp").toURI().toURL();
+			//layer = createLayer(url, new File("./data/counties.sld"));
+			//layer.setStyle(style);
+			//context.addLayer(layer);
 			// url = new File("data/majrdnet.shp").toURI().toURL();
 			// context.addLayer(createLayer(url, new
 			// File("data/majrdnet.sld")));
@@ -299,7 +303,7 @@ public class DomainPanel extends JPanel {
 		
 		public void deactivate()	// 2014 required to implement part of MapTool interface
 		{
-			this.deactivate();
+			//TODO - implement me
 		}
 
 	}
@@ -366,7 +370,7 @@ public class DomainPanel extends JPanel {
 		
 		public void deactivate()	// 2014 required to implement part of MapTool interface
 		{
-			this.deactivate();
+			//TODO - implement me
 		}
 
 	}
@@ -444,8 +448,9 @@ public class DomainPanel extends JPanel {
 //		PiccoloMapPanel panel = new PiccoloMapPanel(editContext);
 //		editContext.setAreaOfInterest(context.getAreaOfInterest());
 		MapContent editContext = new MapContent();
-		MapViewport aViewport = new MapViewport(context.getViewport().getBounds());
-		aViewport.setCoordinateReferenceSystem(context.getViewport().getCoordinateReferenceSystem());
+		//MapViewport aViewport = new MapViewport(context.getViewport().getBounds());
+		MapViewport aViewport = new MapViewport(VerdiApplication.getInstance().getLastBounds());
+		aViewport.setCoordinateReferenceSystem(VerdiApplication.getInstance().getLastCoordinateReferenceSystem());
 		editContext.setViewport(aViewport);
 		addMapBackground(editContext);
 		PiccoloMapPanel panel = new PiccoloMapPanel(editContext);
@@ -470,27 +475,36 @@ public class DomainPanel extends JPanel {
 		toolParams = new HashMap<String, Object>();
 		// toolParams.put(Action.NAME, "Zoom In");
 		toolParams.put(ToolManager.TOGGLE, true);
-		URL imageFile = PMarqueeZoomIn.class.getResource("MagnifyPlus.png");
-		Image image = Toolkit.getDefaultToolkit().getImage(imageFile);
+		
+		String pathName = Tools.getIconsDir();
+		String filePlus = new String(pathName + "plus.png");
+		
+		//URL imageFile = PMarqueeZoomIn.class.getResource("MagnifyPlus.png");
+		//Image image = Toolkit.getDefaultToolkit().getImage(imageFile);
+		Image image = new ImageIcon(filePlus).getImage();
 		toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
 		toolParams.put(Action.SHORT_DESCRIPTION, "Zoom In");
 		panel.addTool(new DomainZoomIn(context), toolParams);
 
+		String fileMinus = new String(pathName + "minus.png");
 		toolParams = new HashMap<String, Object>();
 		// toolParams.put(Action.NAME, "Zoom Out");
 		toolParams.put(ToolManager.TOGGLE, true);
-		imageFile = PMarqueeZoomOut.class.getResource("MagnifyMinus.png");
-		image = Toolkit.getDefaultToolkit().getImage(imageFile);
+		//imageFile = PMarqueeZoomOut.class.getResource("MagnifyMinus.png");
+		//image = Toolkit.getDefaultToolkit().getImage(imageFile);
+		image = new ImageIcon(fileMinus).getImage();
 		toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
 		toolParams.put(Action.SHORT_DESCRIPTION, "Zoom Out");
 		panel.addTool(new DomainZoomOut(context), toolParams);
 
+		String filePlusRemote = new String(pathName + "plus-remote.png");
 		toolParams = new HashMap<String, Object>();
 		toolParams.put(ToolManager.TOGGLE, true);
 		toolParams.put(ToolManager.SELECTED, true);
 		toolParams.put(Action.SHORT_DESCRIPTION, "Pan the map");
-		imageFile = PMarqueeZoomOut.class.getResource("Move.png");
-		image = Toolkit.getDefaultToolkit().getImage(imageFile);
+		//imageFile = PMarqueeZoomOut.class.getResource("Move.png");
+		//image = Toolkit.getDefaultToolkit().getImage(imageFile);
+		image = new ImageIcon(filePlusRemote).getImage();
 		toolParams.put(Action.SMALL_ICON, new ImageIcon(image));
 		toolParams.put("DEFAULT", new Boolean(true));
 		panel.addTool(new DomainPan(context, piccoloMapPanel1.getCanvas()),
@@ -694,6 +708,7 @@ public class DomainPanel extends JPanel {
 		// Generated using JFormDesigner non-commercial license
 		piccoloMapPanel1 = new PiccoloMapPanel(context);
 		CellConstraints cc = new CellConstraints();
+		piccoloMapPanel1.setBackground(Color.BLUE);
 
 		// ======== this ========
 		setBorder(new TitledBorder("Domain"));

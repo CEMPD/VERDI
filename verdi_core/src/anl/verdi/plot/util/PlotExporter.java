@@ -15,6 +15,7 @@ import javax.swing.filechooser.FileFilter;
 import org.apache.commons.io.FilenameUtils;
 
 import anl.verdi.plot.gui.FastTilePlot;
+import anl.verdi.plot.gui.ImageResolutionDialog;
 import anl.verdi.plot.gui.MeshPlot;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.io.TIFConvertImage;
@@ -131,9 +132,20 @@ public class PlotExporter {
 	
 	private void save(File file) throws IOException {
 		String ext = findExtension(file);
+		int width = -1, height = -1;
 
 		if (ext == null || !ext.equals(currentExt)) {
 			file = new File(file.getAbsolutePath() + "." + currentExt);
+		}
+		
+		if (currentExt.equals(EPS)) {
+			ImageResolutionDialog dlg = new ImageResolutionDialog(plot);
+			int res = dlg.showDialog();
+			if (res == -1)
+				return;
+			width = dlg.getXRes();
+			height = dlg.getYRes();
+			
 		}
 
 		if( plot instanceof MeshPlot && 
@@ -148,7 +160,7 @@ public class PlotExporter {
 			if (currentExt.equalsIgnoreCase(SHP))
 				((MeshPlot)plot).exportShapeFile(filename);
 			else if (currentExt.equalsIgnoreCase(EPS))
-				((MeshPlot)plot).exportEPSImage(filename);
+				((MeshPlot)plot).exportEPSImage(filename, width, height);
 			else if (currentExt.equalsIgnoreCase(ASC))
 				((MeshPlot)plot).exportASCIIGrid(filename);
 		}
@@ -164,7 +176,7 @@ public class PlotExporter {
 				filename = filename.substring(0, extPos);
 
 			if ( currentExt.equalsIgnoreCase(EPS) ) {
-				((FastTilePlot)plot).exportEPSImage(filename);
+				((FastTilePlot)plot).exportEPSImage(filename, width, height);
 			} else if ( currentExt.equals( SHP ) ) {
 				((FastTilePlot)plot).exportShapefile(filename);
 			} else {
@@ -183,22 +195,28 @@ public class PlotExporter {
 				filename = filename.substring(0, extPos);
 
 			if ( currentExt.equalsIgnoreCase(EPS) ) {
-				((EPSExporter)plot).exportEPSImage(filename);
+				((EPSExporter)plot).exportEPSImage(filename, width, height);
 			}
 			return;
 		}
 
-		
+		ImageResolutionDialog dlg = new ImageResolutionDialog(plot);
+		int res = dlg.showDialog();
+		if (res == -1)
+			return;
+		width = dlg.getXRes();
+		height = dlg.getYRes();
+
 		if (currentExt.equalsIgnoreCase(TIFF) || currentExt.equalsIgnoreCase(TIF)) {
 			if ( !Utilities.is64bitWindows()) {
-				BufferedImage image = plot.getBufferedImage();
+				BufferedImage image = plot.getBufferedImage(width, height);
 				TIFConvertImage.convert(image, file.getAbsolutePath());
 				return;
 			}
 		}
 		
 
-		BufferedImage image = plot.getBufferedImage();
+		BufferedImage image = plot.getBufferedImage(width, height);
 		ImageIO.write(image, currentExt, file);
 	}
 

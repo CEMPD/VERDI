@@ -57,7 +57,10 @@ public class PaletteSelectionPanel extends JPanel {
 				if (getPaletteType() == ColorBrewer.SEQUENTIAL) {
 					((SpinnerNumberModel) tileSpinner.getModel())
 							.setMaximum(64);
-				} else {
+				} else if (getPaletteType() == ColorBrewer.DIVERGING) {
+					((SpinnerNumberModel) tileSpinner.getModel())
+					.setMaximum(11);
+				}else {
 					((SpinnerNumberModel) tileSpinner.getModel())
 							.setMaximum(new Integer(12));
 				}
@@ -91,6 +94,7 @@ public class PaletteSelectionPanel extends JPanel {
 		Logger.debug("\ttileCount = " + tileCount);
 		PaletteType paletteType = getPaletteType();
 		Map<PaletteType, List<Palette>> paletteMap = paletteMapByCount.get(tileCount);
+		paletteMap = null; //TAH - turn off caching
 		if (paletteMap == null) {
 			paletteMap = new HashMap<PaletteType, List<Palette>>();
 			paletteMapByCount.put(tileCount,  paletteMap);
