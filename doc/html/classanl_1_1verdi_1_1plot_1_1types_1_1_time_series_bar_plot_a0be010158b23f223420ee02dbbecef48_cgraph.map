@@ -1,6 +1,0 @@
-<map id="anl.verdi.plot.types.TimeSeriesBarPlot.TimeSeriesBarPlot" name="anl.verdi.plot.types.TimeSeriesBarPlot.TimeSeriesBarPlot">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_time_series_bar_plot.html#a4972a925a0f981c96c0b81b6eaaf2be9" title="anl.verdi.plot.types.Time\lSeriesBarPlot.configure" alt="" coords="298,5,461,47"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_time_series_bar_plot.html#a30a886fc848ecf87adb687ca513158c8" title="anl.verdi.plot.types.Time\lSeriesBarPlot.getPlotConfiguration" alt="" coords="268,71,491,112"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_plot_configuration.html#ad04f8b3ca73548c95ff345444997e642" title="anl.verdi.plot.config.Plot\lConfiguration.getSubtitle1" alt="" coords="294,136,465,177"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_j_chart_titles_labels.html#aba7e18d533c44efd906dec1106e542b2" title="anl.verdi.plot.types.JChart\lTitlesLabels.getTitleConfigurator" alt="" coords="539,5,745,47"/>
-</map>

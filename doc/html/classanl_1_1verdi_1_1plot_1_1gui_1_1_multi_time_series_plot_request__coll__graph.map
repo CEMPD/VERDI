@@ -1,9 +1,0 @@
-<map id="anl.verdi.plot.gui.MultiTimeSeriesPlotRequest" name="anl.verdi.plot.gui.MultiTimeSeriesPlotRequest">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_abstract_plot_request.html" title="anl.verdi.plot.gui.Abstract\lPlotRequest" alt="" coords="556,102,724,143"/>
-<area shape="rect" id="node3" href="$interfaceanl_1_1verdi_1_1plot_1_1gui_1_1_plot_request.html" title="anl.verdi.plot.gui.PlotRequest" alt="" coords="289,64,480,91"/>
-<area shape="rect" id="node4" href="$interfaceanl_1_1verdi_1_1plot_1_1gui_1_1_plot_creator.html" title="anl.verdi.plot.gui.PlotCreator" alt="" coords="8,5,192,32"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1core_1_1_verdi_application.html" title="anl.verdi.core.VerdiApplication" alt="" coords="287,173,483,200"/>
-<area shape="rect" id="node6" href="$interfaceanl_1_1verdi_1_1plot_1_1gui_1_1_plot_listener.html" title="anl.verdi.plot.gui.PlotListener" alt="" coords="6,56,194,83"/>
-<area shape="rect" id="node7" href="$interfaceanl_1_1verdi_1_1gui_1_1_dataset_model_listener.html" title="anl.verdi.gui.DatasetModel\lListener" alt="" coords="13,107,187,149"/>
-<area shape="rect" id="node9" href="$interfaceanl_1_1verdi_1_1gui_1_1_formula_element_creator.html" title="anl.verdi.gui.FormulaElement\lCreator" alt="" coords="5,225,195,266"/>
-</map>

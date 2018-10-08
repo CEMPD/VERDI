@@ -1,8 +1,0 @@
-<map id="anl.verdi.plot.types.VerticalCrossSectionPlot.VerticalCrossSectionPlot" name="anl.verdi.plot.types.VerticalCrossSectionPlot.VerticalCrossSectionPlot">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_vertical_cross_section_plot.html#a40b783b14fad2156b3e51ae702d3b44c" title="anl.verdi.plot.types.Vertical\lCrossSectionPlot.configure" alt="" coords="341,5,520,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_abstract_tile_plot.html#a4c909311adf59a86645558a2f72ecf09" title="anl.verdi.plot.types.Abstract\lTilePlot.getPlotConfiguration" alt="" coords="584,35,769,76"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_vert_cross_plot_configuration.html#afa81bb03c9439f5cd7aeae75bbf79f98" title="anl.verdi.plot.config.Vert\lCrossPlotConfiguration.getCross\lSectionRowCol" alt="" coords="325,122,536,178"/>
-<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_plot_configuration.html#ad04f8b3ca73548c95ff345444997e642" title="anl.verdi.plot.config.Plot\lConfiguration.getSubtitle1" alt="" coords="345,203,516,244"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1types_1_1_abstract_tile_plot.html#a711f4699a27ecad0f8afee071a2092d4" title="anl.verdi.plot.types.Abstract\lTilePlot.getTitlesLabelsConfig" alt="" coords="817,35,1009,76"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_plot_configuration.html#a21a8654bc89e73061c78d8767d5d95ca" title="anl.verdi.plot.config.Plot\lConfiguration.getObject" alt="" coords="597,129,756,171"/>
-</map>

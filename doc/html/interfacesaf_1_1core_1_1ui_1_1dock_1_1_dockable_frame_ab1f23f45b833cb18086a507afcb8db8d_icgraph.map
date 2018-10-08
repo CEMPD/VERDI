@@ -1,5 +1,0 @@
-<map id="saf.core.ui.dock.DockableFrame.getID" name="saf.core.ui.dock.DockableFrame.getID">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1core_1_1_verdi_g_u_i.html#a96a1858394d0688d65b6c06aee51d411" title="anl.verdi.core.VerdiGUI.addPlot" alt="" coords="229,5,432,32"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1core_1_1_verdi_g_u_i.html#ab88dd495ced61530228d636db943e272" title="anl.verdi.core.VerdiGUI.dockable\lClosed" alt="" coords="225,57,436,98"/>
-<area shape="rect" id="node4" href="$classsaf_1_1core_1_1ui_1_1event_1_1_dockable_selection_support.html#a37856eca15348e2d2c609ca9fd340064" title="saf.core.ui.event.Dockable\lSelectionSupport.focusGained" alt="" coords="232,122,429,163"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="anl.verdi.plot.gui.FastAreaTilePlot.processMouseEvent" name="anl.verdi.plot.gui.FastAreaTilePlot.processMouseEvent">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_tile_plot.html#aca948fcee374e7309c02f84d5a3e3bae" title="anl.verdi.plot.gui.FastTile\lPlot.getLatLonFor" alt="" coords="243,5,409,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_tile_plot.html#ad138f72e7d7a6691e19408eb4f8b01c3" title="anl.verdi.plot.gui.FastTile\lPlot.isInDataArea" alt="" coords="243,71,409,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#a2b2093a6e046381971931ba13776f8bc" title="anl.verdi.plot.gui.FastArea\lTilePlot.repaintAll" alt="" coords="240,136,412,177"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#a7a59a7ae35c176c45b9912739b69c4aa" title="anl.verdi.plot.gui.FastArea\lTilePlot.selectingAreas" alt="" coords="240,201,412,243"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_tile_plot.html#a6e0092b02e301b6e860d66e1d56fa732" title="anl.verdi.plot.gui.FastTile\lPlot.draw" alt="" coords="460,136,625,177"/>
-</map>

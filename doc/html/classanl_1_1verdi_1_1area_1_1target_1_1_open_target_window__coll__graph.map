@@ -1,8 +1,0 @@
-<map id="anl.verdi.area.target.OpenTargetWindow" name="anl.verdi.area.target.OpenTargetWindow">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1area_1_1_w_d_t_wizard_window.html" title="anl.verdi.area.WDTWizard\lWindow" alt="" coords="1315,157,1487,198"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_card.html" title="anl.verdi.area.target.ProjectionCard" alt="" coords="1289,369,1513,396"/>
-<area shape="rect" id="node19" href="$classanl_1_1verdi_1_1area_1_1target_1_1_target_file_card.html" title="anl.verdi.area.target.Target\lFileCard" alt="" coords="1314,91,1489,133"/>
-<area shape="rect" id="node8" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info.html" title="anl.verdi.area.target.ProjectionInfo" alt="" coords="624,528,841,555"/>
-<area shape="rect" id="node18" href="$classanl_1_1verdi_1_1area_1_1_area_file_panel.html" title="anl.verdi.area.AreaFilePanel" alt="" coords="990,229,1173,256"/>
-<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_panel.html" title="anl.verdi.area.target.Projection\lPanel" alt="" coords="983,465,1180,506"/>
-</map>

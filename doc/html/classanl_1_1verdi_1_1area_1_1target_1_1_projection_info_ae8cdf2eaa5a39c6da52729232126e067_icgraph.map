@@ -1,6 +1,0 @@
-<map id="anl.verdi.area.target.ProjectionInfo.getAllEllipseData" name="anl.verdi.area.target.ProjectionInfo.getAllEllipseData">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info_1_1_lambert_c_c_projection_g_u_i_adaptor.html#af594fef2564620be0fc43f899a1aab26" title="anl.verdi.area.target.Projection\lInfo.LambertCCProjectionGUIAdaptor.initialize" alt="" coords="275,5,561,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info_1_1_mercator_projection_g_u_i_adaptor.html#a6be7e17d85804d38ca6d2ca262482f01" title="anl.verdi.area.target.Projection\lInfo.MercatorProjectionGUIAdaptor.initialize" alt="" coords="281,71,555,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info_1_1_p_s_projection_g_u_i_adaptor.html#a8f1e15f1c5e0f72ea307ec4281373f69" title="anl.verdi.area.target.Projection\lInfo.PSProjectionGUIAdaptor.initialize" alt="" coords="298,136,538,177"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1area_1_1target_1_1_projection_info_1_1_transverse_mercator_projection_g_u_i_adaptor.html#ab8c95b726d0de10b5a1d308a25ab305c" title="anl.verdi.area.target.Projection\lInfo.TransverseMercatorProjectionGUIAdaptor.initialize" alt="" coords="251,201,585,243"/>
-</map>

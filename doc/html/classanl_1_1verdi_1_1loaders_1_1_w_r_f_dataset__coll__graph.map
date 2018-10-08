@@ -1,5 +1,0 @@
-<map id="anl.verdi.loaders.WRFDataset" name="anl.verdi.loaders.WRFDataset">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1loaders_1_1_abstract_netcdf_dataset.html" title="anl.verdi.loaders.Abstract\lNetcdfDataset" alt="" coords="592,110,760,151"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1data_1_1_abstract_dataset.html" title="anl.verdi.data.AbstractDataset" alt="" coords="248,57,444,84"/>
-<area shape="rect" id="node4" href="$interfaceanl_1_1verdi_1_1data_1_1_dataset.html" title="anl.verdi.data.Dataset" alt="" coords="5,32,152,59"/>
-</map>

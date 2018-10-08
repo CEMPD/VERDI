@@ -1,5 +1,0 @@
-<map id="anl.verdi.data.ExtendCoordAxis.getAxisType" name="anl.verdi.data.ExtendCoordAxis.getAxisType">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1data_1_1_extend_data_frame_axis.html#abc55d9bbc7ebe6e76b7e444802f1619b" title="anl.verdi.data.ExtendData\lFrameAxis.createDataFrameAxis" alt="" coords="231,5,445,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1loaders_1_1_extend_c_s_v_coord_axis.html#afb8ff61182caee282d94e4807de30914" title="anl.verdi.loaders.Extend\lCSVCoordAxis.isCompatible" alt="" coords="244,71,432,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1loaders_1_1_extend_net_cdf_coord_axis.html#ab8dd1fcf99fa1b996d5e4a4b61a88f8b" title="anl.verdi.loaders.Extend\lNetCdfCoordAxis.isCompatible" alt="" coords="238,136,438,177"/>
-</map>

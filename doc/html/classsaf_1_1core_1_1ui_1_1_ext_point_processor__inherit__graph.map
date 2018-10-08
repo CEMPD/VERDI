@@ -1,7 +1,0 @@
-<map id="saf.core.ui.ExtPointProcessor" name="saf.core.ui.ExtPointProcessor">
-<area shape="rect" id="node2" href="$classsaf_1_1core_1_1ui_1_1_action_processor.html" title="saf.core.ui.ActionProcessor" alt="" coords="263,5,445,32"/>
-<area shape="rect" id="node3" href="$classsaf_1_1core_1_1ui_1_1_help_set_processor.html" title="saf.core.ui.HelpSetProcessor" alt="" coords="259,56,449,83"/>
-<area shape="rect" id="node4" href="$classsaf_1_1core_1_1ui_1_1_menu_processor.html" title="saf.core.ui.MenuProcessor" alt="" coords="265,107,443,133"/>
-<area shape="rect" id="node5" href="$classsaf_1_1core_1_1ui_1_1_perspective_processor.html" title="saf.core.ui.PerspectiveProcessor" alt="" coords="248,157,460,184"/>
-<area shape="rect" id="node6" href="$classsaf_1_1core_1_1ui_1_1_status_field_processor.html" title="saf.core.ui.StatusFieldProcessor" alt="" coords="249,208,459,235"/>
-</map>

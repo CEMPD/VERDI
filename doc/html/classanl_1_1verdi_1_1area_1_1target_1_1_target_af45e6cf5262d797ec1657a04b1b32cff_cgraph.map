@@ -1,8 +1,0 @@
-<map id="anl.verdi.area.target.Target.setUnitConverters" name="anl.verdi.area.target.Target.setUnitConverters">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1area_1_1_units.html#a3ad6ce4e55122f35432867052322fd80" title="anl.verdi.area.Units.get\lAreaUnit" alt="" coords="287,5,441,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1area_1_1target_1_1_target.html#a2d1a5bad6635994f74111cc894be78cf" title="anl.verdi.area.target.Target.get\lDefaultUnits" alt="" coords="265,71,463,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1area_1_1_units.html#a2a295d13d71239630d882311950a6dcb" title="anl.verdi.area.Units.get\lTopUnit" alt="" coords="287,136,441,177"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1area_1_1_units.html#a1fcd3745c7067ca07b4dcfb902c300af" title="anl.verdi.area.Units.isConcentration" alt="" coords="251,202,477,229"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1area_1_1_units.html#a8f09daf04cad8cd06b3d0bed69b3fc4b" title="anl.verdi.area.Units.isLength" alt="" coords="271,253,457,279"/>
-<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1area_1_1_units.html#a6ce10cdfa9f62d00451212990ed2a60b" title="anl.verdi.area.Units.isUnit\lPerArea" alt="" coords="279,304,449,345"/>
-</map>

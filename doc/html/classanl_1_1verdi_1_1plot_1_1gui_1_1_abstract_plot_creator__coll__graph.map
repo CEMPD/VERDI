@@ -1,9 +1,0 @@
-<map id="anl.verdi.plot.gui.AbstractPlotCreator" name="anl.verdi.plot.gui.AbstractPlotCreator">
-<area shape="rect" id="node2" href="$interfaceanl_1_1verdi_1_1plot_1_1gui_1_1_plot_creator.html" title="anl.verdi.plot.gui.PlotCreator" alt="" coords="293,8,477,35"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1config_1_1_plot_configuration.html" title="anl.verdi.plot.config.Plot\lConfiguration" alt="" coords="305,59,464,101"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1core_1_1_verdi_application.html" title="anl.verdi.core.VerdiApplication" alt="" coords="287,157,483,184"/>
-<area shape="rect" id="node7" href="$interfaceanl_1_1verdi_1_1plot_1_1gui_1_1_plot_listener.html" title="anl.verdi.plot.gui.PlotListener" alt="" coords="6,173,194,200"/>
-<area shape="rect" id="node8" href="$interfaceanl_1_1verdi_1_1gui_1_1_dataset_model_listener.html" title="anl.verdi.gui.DatasetModel\lListener" alt="" coords="13,225,187,266"/>
-<area shape="rect" id="node10" href="$interfaceanl_1_1verdi_1_1gui_1_1_formula_element_creator.html" title="anl.verdi.gui.FormulaElement\lCreator" alt="" coords="5,342,195,383"/>
-<area shape="rect" id="node12" href="$interfaceanl_1_1verdi_1_1formula_1_1_formula.html" title="anl.verdi.formula.Formula" alt="" coords="301,208,468,235"/>
-</map>

@@ -1,8 +1,0 @@
-<map id="simphony.util.messages.MessageCenter.fireMessageEvent" name="simphony.util.messages.MessageCenter.fireMessageEvent">
-<area shape="rect" id="node2" href="$classsimphony_1_1util_1_1messages_1_1_message_center.html#a45808b001790af3c162c57bd8a1fa5b0" title="simphony.util.messages.Message\lCenter.debug" alt="" coords="273,5,493,47"/>
-<area shape="rect" id="node3" href="$classsimphony_1_1util_1_1messages_1_1_message_center.html#ae62e101f761cca57d86abbf4de0207de" title="simphony.util.messages.Message\lCenter.error" alt="" coords="273,71,493,112"/>
-<area shape="rect" id="node4" href="$classsimphony_1_1util_1_1messages_1_1_message_center.html#ab2bca516771fbb42f421b65f215fb1c2" title="simphony.util.messages.Message\lCenter.fatal" alt="" coords="273,136,493,177"/>
-<area shape="rect" id="node5" href="$classsimphony_1_1util_1_1messages_1_1_message_center.html#a5982405200efcc1f83245bd94758b40f" title="simphony.util.messages.Message\lCenter.info" alt="" coords="273,201,493,243"/>
-<area shape="rect" id="node6" href="$classsimphony_1_1util_1_1messages_1_1_message_center.html#abf2523d06ba42a0738699103fb810b8b" title="simphony.util.messages.Message\lCenter.trace" alt="" coords="273,267,493,308"/>
-<area shape="rect" id="node7" href="$classsimphony_1_1util_1_1messages_1_1_message_center.html#aae6001a48f2b09b4dc3068d84cfaf6d1" title="simphony.util.messages.Message\lCenter.warn" alt="" coords="273,332,493,373"/>
-</map>

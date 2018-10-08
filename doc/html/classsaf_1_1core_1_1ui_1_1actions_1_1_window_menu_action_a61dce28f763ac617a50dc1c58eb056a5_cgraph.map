@@ -1,4 +1,0 @@
-<map id="saf.core.ui.actions.WindowMenuAction.actionPerformed" name="saf.core.ui.actions.WindowMenuAction.actionPerformed">
-<area shape="rect" id="node2" href="$interfacesaf_1_1core_1_1ui_1_1dock_1_1_dockable_frame.html#aeab5dedabd4064388b6940b20fc4f5a3" title="saf.core.ui.dock.Dockable\lFrame.isMinimized" alt="" coords="243,5,415,47"/>
-<area shape="rect" id="node3" href="$interfacesaf_1_1core_1_1ui_1_1dock_1_1_dockable_frame.html#a68de0d0939fe479e35a8ef4a456512db" title="saf.core.ui.dock.Dockable\lFrame.restore" alt="" coords="243,71,415,112"/>
-</map>

@@ -1,6 +1,0 @@
-<map id="anl.verdi.parser.SimpleCharStream.ExpandBuff" name="anl.verdi.parser.SimpleCharStream.ExpandBuff">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1parser_1_1_simple_char_stream.html#ae6fcdc72596732c20b694b7bcf2f8606" title="anl.verdi.parser.SimpleChar\lStream.FillBuff" alt="" coords="233,5,413,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1parser_1_1_simple_char_stream.html#a96b0a5633b2c8fbd74bcf831f196aded" title="anl.verdi.parser.SimpleChar\lStream.readChar" alt="" coords="461,5,641,47"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1parser_1_1_simple_char_stream.html#a16bd08d030931134ce5847e05b526eb9" title="anl.verdi.parser.SimpleChar\lStream.BeginToken" alt="" coords="689,5,869,47"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1parser_1_1_parser_token_manager.html#a0827feb7de971f24ff4b16e639365c0c" title="anl.verdi.parser.ParserToken\lManager.getNextToken" alt="" coords="917,5,1104,47"/>
-</map>

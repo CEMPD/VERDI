@@ -1,5 +1,0 @@
-<map id="anl.verdi.plot.gui.FastTilePlot" name="anl.verdi.plot.gui.FastTilePlot">
-<area shape="rect" id="node10" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html" title="anl.verdi.plot.gui.FastArea\lTilePlot" alt="" coords="643,175,815,217"/>
-<area shape="rect" id="node8" href="$interfaceanl_1_1verdi_1_1plot_1_1types_1_1_time_animatable_plot.html" title="anl.verdi.plot.types.Time\lAnimatablePlot" alt="" coords="196,361,359,402"/>
-<area shape="rect" id="node9" href="$interfaceanl_1_1verdi_1_1plot_1_1gui_1_1_plot.html" title="anl.verdi.plot.gui.Plot" alt="" coords="5,339,148,365"/>
-</map>

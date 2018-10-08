@@ -1,9 +1,0 @@
-<map id="anl.verdi.core.Project.createRanges" name="anl.verdi.core.Project.createRanges">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#a0b7272aea0900bc0855aa1c2545bce65" title="anl.verdi.gui.AbstractList\lElement.getLayerMax" alt="" coords="236,5,400,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#a34c5f799b1ab4bf70fd78fbabec293a2" title="anl.verdi.gui.AbstractList\lElement.getTimeMax" alt="" coords="236,71,400,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#a37ef8e3860eabc02e33fb09486343329" title="anl.verdi.gui.AbstractList\lElement.getXMax" alt="" coords="236,136,400,177"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#aaaf089ec7c0ae463996329e8c1c18255" title="anl.verdi.gui.AbstractList\lElement.getYMax" alt="" coords="236,201,400,243"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#a8fb2a08f90f80650228b43814cd1d11d" title="anl.verdi.gui.AbstractList\lElement.isLayerUsed" alt="" coords="236,267,400,308"/>
-<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#aa9fd1479a8ba9f9a6639ece40856cd71" title="anl.verdi.gui.AbstractList\lElement.isTimeUsed" alt="" coords="236,332,400,373"/>
-<area shape="rect" id="node8" href="$classanl_1_1verdi_1_1gui_1_1_abstract_list_element.html#a7930b9856ac7b503a1da3355ba31e93d" title="anl.verdi.gui.AbstractList\lElement.isXYUsed" alt="" coords="236,397,400,439"/>
-</map>

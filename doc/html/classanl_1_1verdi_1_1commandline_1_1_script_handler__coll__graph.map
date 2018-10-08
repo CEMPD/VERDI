@@ -1,6 +1,0 @@
-<map id="anl.verdi.commandline.ScriptHandler" name="anl.verdi.commandline.ScriptHandler">
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1core_1_1_verdi_application.html" title="anl.verdi.core.VerdiApplication" alt="" coords="320,153,516,180"/>
-<area shape="rect" id="node6" href="$interfaceanl_1_1verdi_1_1plot_1_1gui_1_1_plot_listener.html" title="anl.verdi.plot.gui.PlotListener" alt="" coords="6,111,194,137"/>
-<area shape="rect" id="node7" href="$interfaceanl_1_1verdi_1_1gui_1_1_dataset_model_listener.html" title="anl.verdi.gui.DatasetModel\lListener" alt="" coords="13,162,187,203"/>
-<area shape="rect" id="node9" href="$interfaceanl_1_1verdi_1_1gui_1_1_formula_element_creator.html" title="anl.verdi.gui.FormulaElement\lCreator" alt="" coords="5,279,195,321"/>
-</map>

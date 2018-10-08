@@ -1,9 +1,0 @@
-<map id="anl.verdi.plot.gui.FastAreaTilePlot.actionPerformed" name="anl.verdi.plot.gui.FastAreaTilePlot.actionPerformed">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#ab3665a99f9f358fa116c8d126ce02f41" title="anl.verdi.plot.gui.FastArea\lTilePlot.addProbe" alt="" coords="259,71,431,112"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#a43c7de9540fbad1e8b2f229ee726e189" title="anl.verdi.plot.gui.FastArea\lTilePlot.createTable" alt="" coords="259,136,431,177"/>
-<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_tile_plot.html#aa95878b1dfd97b51d60ab341c7ef1392" title="anl.verdi.plot.gui.FastTile\lPlot.getDataFrame" alt="" coords="757,165,923,207"/>
-<area shape="rect" id="node8" href="$classanl_1_1verdi_1_1core_1_1_verdi_application.html#a0c2b3005aaa1bb9d7dc39d46698360f6" title="anl.verdi.core.VerdiApplication.getGui" alt="" coords="225,253,464,279"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1area_1_1target_1_1_target.html#aed14c212843dd6b92b9dc8aef5ef67e6" title="anl.verdi.area.target.Target.get\lTargets" alt="" coords="512,5,709,47"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1area_1_1target_1_1_target.html#a2d1a5bad6635994f74111cc894be78cf" title="anl.verdi.area.target.Target.get\lDefaultUnits" alt="" coords="512,71,709,112"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_fast_area_tile_plot.html#a79033619c4bc8d73909d52a842f16190" title="anl.verdi.plot.gui.FastArea\lTilePlot.createTableName" alt="" coords="525,136,697,177"/>
-</map>

@@ -1,6 +1,0 @@
-<map id="anl.verdi.util.Tools.getUserHome" name="anl.verdi.util.Tools.getUserHome">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1util_1_1_tools.html#ac1b392d52dadddc396c215623b4339c6" title="anl.verdi.util.Tools.get\lPropertyFile" alt="" coords="200,35,347,76"/>
-<area shape="rect" id="node3" href="$classgov_1_1epa_1_1emvl_1_1_remote_file_reader.html#acb7b3d7ebd2d51857229d21351c50635" title="gov.epa.emvl.RemoteFileReader.get\lLocalCopyFileName" alt="" coords="395,5,624,47"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1core_1_1_verdi_plugin.html#a67e5007aadfd080106da43adaebb0586" title="anl.verdi.core.VerdiPlugin.run" alt="" coords="414,71,605,98"/>
-<area shape="rect" id="node4" href="$classgov_1_1epa_1_1emvl_1_1_remote_file_reader.html#a3f8a5ce7820c252500875a76aaa9e7db" title="gov.epa.emvl.RemoteFileReader.get\lLocalCopyFile" alt="" coords="672,5,901,47"/>
-</map>

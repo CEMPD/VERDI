@@ -1,5 +1,0 @@
-<map id="anl.verdi.plot.gui.VerticalCrossPlotCreator.doCreatePlot" name="anl.verdi.plot.gui.VerticalCrossPlotCreator.doCreatePlot">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1core_1_1_verdi_g_u_i.html#ae3169f87d84a65ab6da775009b88b283" title="anl.verdi.core.VerdiGUI.get\lFrame" alt="" coords="253,5,429,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_vertical_cross_dialog.html#a7a909939bdca0e9076e081d1fb034ba5" title="anl.verdi.plot.gui.Vertical\lCrossDialog.isCanceled" alt="" coords="260,71,423,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_vertical_cross_dialog.html#a342c8a9e35a589296df894579e6db598" title="anl.verdi.plot.gui.Vertical\lCrossDialog.isXSelected" alt="" coords="259,136,423,177"/>
-</map>

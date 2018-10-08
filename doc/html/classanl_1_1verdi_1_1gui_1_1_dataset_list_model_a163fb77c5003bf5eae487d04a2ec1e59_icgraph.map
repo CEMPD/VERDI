@@ -1,7 +1,0 @@
-<map id="anl.verdi.gui.DatasetListModel.elements" name="anl.verdi.gui.DatasetListModel.elements">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1gui_1_1_dataset_list_model.html#abbd1ec27a674adc8d736ce9e4d89e33b" title="anl.verdi.gui.DatasetList\lModel.addAll" alt="" coords="216,5,376,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1core_1_1_project.html#a2e26f52db27884159e23acdbb382b04b" title="anl.verdi.core.Project.get\lDatasetsAsList" alt="" coords="213,71,379,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1core_1_1_verdi_application.html#a3e06c167234b6b3797305faef8abe799" title="anl.verdi.core.VerdiApplication.load\lDataset" alt="" coords="435,37,659,79"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1core_1_1_verdi_application.html#a8786c995617f97952ea86e102d2ac53c" title="anl.verdi.core.VerdiApplication.overlay\lRequested" alt="" coords="427,103,667,144"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1core_1_1_verdi_application.html#ae2bf47acbc8bcf20937c3459a36ac2bb" title="anl.verdi.core.VerdiApplication.add\lDataset" alt="" coords="715,37,936,79"/>
-</map>

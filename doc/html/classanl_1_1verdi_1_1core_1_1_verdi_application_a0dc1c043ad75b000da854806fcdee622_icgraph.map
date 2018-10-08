@@ -1,9 +1,0 @@
-<map id="anl.verdi.core.VerdiApplication.getProject" name="anl.verdi.core.VerdiApplication.getProject">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1action_1_1_areal_interpolation.html#a27626837e217d039230f3ca67605b487" title="anl.verdi.plot.gui.action.\lArealInterpolation.actionPerformed" alt="" coords="289,5,509,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1commandline_1_1_script_handler.html#a396d6c046b4746bdc11a2eab60b677b8" title="anl.verdi.commandline.Script\lHandler.constructMap" alt="" coords="305,71,493,112"/>
-<area shape="rect" id="node5" href="$classanl_1_1verdi_1_1plot_1_1gui_1_1_default_plot_creator.html#a05c4a631282abf3bcccdfa2b2c25424c" title="anl.verdi.plot.gui.Default\lPlotCreator.doCreatePlot" alt="" coords="315,136,482,177"/>
-<area shape="rect" id="node6" href="$classanl_1_1verdi_1_1core_1_1_verdi_app_configurator.html#a30e4f5a50f17e1283bdb222ad8e59648" title="anl.verdi.core.VerdiAppConfigurator.post\lWindowOpen" alt="" coords="272,201,525,243"/>
-<area shape="rect" id="node7" href="$classanl_1_1verdi_1_1commandline_1_1task_1_1_time_series_plot_task.html#adb351845eed8d48d1e3e22af780dd762" title="anl.verdi.commandline.task.\lTimeSeriesPlotTask.run" alt="" coords="307,267,490,308"/>
-<area shape="rect" id="node8" href="$classanl_1_1verdi_1_1commandline_1_1task_1_1_tile_plot_task.html#a9b60d068b907f8ea9056f127d1e61005" title="anl.verdi.commandline.task.\lTilePlotTask.run" alt="" coords="307,332,490,373"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1commandline_1_1_script_handler.html#a6ce6f67f27459a558c811ee1095f67d5" title="anl.verdi.commandline.Script\lHandler.ScriptHandler" alt="" coords="573,71,761,112"/>
-</map>

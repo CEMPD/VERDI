@@ -10,7 +10,5 @@ The source code for a formal release will be archived in the tags folder of the 
 For example, the version verdi_1.6 sources will be found under tags/1.6
 
 Source code for the development versions are in individual branches.  
-Jo Ellen is working on development on the shapefile branch. 
-Qun He is working on development on the verdi_config_v1 branch.
 Branches contain the bleeding edge code where the latest features are being worked on. 
 Eventually this code will be become the next stable branch.  The trunk is a mirror of the stable branch.

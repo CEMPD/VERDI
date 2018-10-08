@@ -1,5 +1,0 @@
-<map id="anl.verdi.data.AbstractDataset.getAlias" name="anl.verdi.data.AbstractDataset.getAlias">
-<area shape="rect" id="node2" href="$classanl_1_1verdi_1_1loaders_1_1_grid_netcdf_dataset.html#a75b20ec83665e8af632acbd32b7feeab" title="anl.verdi.loaders.GridNetcdf\lDataset.setAlias" alt="" coords="289,5,469,47"/>
-<area shape="rect" id="node3" href="$classanl_1_1verdi_1_1loaders_1_1_models3_obs_dataset.html#a8f1a797486fd66d18ebd3054c3a74d76" title="anl.verdi.loaders.Models3\lObsDataset.setAlias" alt="" coords="295,71,463,112"/>
-<area shape="rect" id="node4" href="$classanl_1_1verdi_1_1loaders_1_1_c_s_v_dataset.html#a643d69b871434926ad6c71a982c33b38" title="anl.verdi.loaders.CSVDataset.set\lAlias" alt="" coords="272,136,485,177"/>
-</map>
