@@ -620,8 +620,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						double factor = ((double)bufferedWidth) / ((double)getWidth());
 						if (factor > 0) {
 							offScreenGraphics.scale(factor, factor);
-							offScreenGraphics.setColor(Color.PINK);
-							offScreenGraphics.fillRect(0,  0,  canvasWidth,  canvasHeight);
+							offScreenGraphics.fillRect(0,  0,  bufferedWidth,  bufferedHeight);
 						}
 					}
 
@@ -857,7 +856,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 							if (canvasWidth > 0 && canvasHeight > 0) {
 								//bImage needed for animated gif support
 								if (forceBufferedImage) {
-									BufferedImage copiedImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, bufferedWidth, bufferedHeight);
+									int w = canvasWidth, h = canvasHeight;
+									if (rescaleBuffer) {
+										w = bufferedWidth;
+										h = bufferedHeight;
+									}
+									BufferedImage copiedImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, w, h);
 									bImage = copiedImage;
 									if (animationHandler != null) {
 										ActionEvent e = new ActionEvent(copiedImage, this.hashCode(), "");
@@ -918,6 +922,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			restoreCursor();
 			if (currentDataFrame != null) { //Ignore errors if dataFrame is null - that means window is closing
 				Logger.error("Error rendering MeshPlot", t);
+				t.printStackTrace();
 				String errInfo = t.getClass().getName();
 				if (t.getMessage() != null && !t.getMessage().equals(""))
 					errInfo += ": " + t.getMessage();										
@@ -3769,6 +3774,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	 */
 
 	public BufferedImage getBufferedImage(int width, int height) {
+		return getBufferedImage(null, width, height);
+	}
+	
+	public BufferedImage getBufferedImage(Graphics2D g, int width, int height) {
+		exportGraphics = g;
 		bImage = null;
 		forceBufferedImage = true;
 		if (width != getWidth()) {
@@ -3778,7 +3788,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}
 		draw();
 		long start = System.currentTimeMillis();
-		while (System.currentTimeMillis() - start < 2000 && bImage == null )
+		//Allow more time when image is being rescaled
+		while ((rescaleBuffer || System.currentTimeMillis() - start < 2000) && bImage == null )
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -3787,26 +3798,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			}
 		if (rescaleBuffer) {
 			rescaleBuffer = false;
+			bufferedWidth = 0;
+			bufferedHeight = 0;
 			draw();
 		}
-		return bImage;
-	}
-	
-	public Graphics2D getBufferedImage(Graphics2D g) {
-		exportGraphics = g;
-		bImage = null;
-		forceBufferedImage = true;
-		draw();
-		long start = System.currentTimeMillis();
-		while (System.currentTimeMillis() - start < 2000 && bImage == null )
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				Logger.error("Caught exception waiting for buffered image", e);
-				break;
-			}
 		exportGraphics = null;
-		return g;
+		return bImage;
 	}
 
 	/**
@@ -4828,7 +4825,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 		@Override
 		public void draw(Graphics2D g, Rectangle2D rect) {
-			getBufferedImage(g);
+			getBufferedImage(g, canvasWidth, canvasHeight);
 		}
 		
 	}
