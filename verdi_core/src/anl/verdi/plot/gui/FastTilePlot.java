@@ -326,6 +326,8 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	private final JPanel threadParent = this;
 	private BufferedImage bImage;
 	private boolean forceBufferedImage = false;
+	boolean rescaleBuffer = false;
+	int bufferedWidth, bufferedHeight;
 	private static final Object lock = new Object();
 	protected java.util.List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
 	private JPopupMenu popup;
@@ -485,27 +487,36 @@ Logger.debug("set up drawing space, titles, fonts, etc.");
 					// Use off-screen graphics for double-buffering:
 					// don't start processing until graphics system is ready!
 Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
-					Image tmpOffScreenImage =	null; // get actual size after call to AddPlotListener
+					Image offScreenImage =	null; // get actual size after call to AddPlotListener
 					try {
-						tmpOffScreenImage =	repaintManager.getOffscreenBuffer(threadParent, canvasWidth, canvasHeight);
+						if (rescaleBuffer)
+							offScreenImage = new BufferedImage(bufferedWidth, bufferedHeight, BufferedImage.TYPE_INT_RGB);
+						else
+							offScreenImage = repaintManager.getOffscreenBuffer(threadParent, canvasWidth, canvasHeight);
 					} catch (NullPointerException e) {}
 
 					// offScreenImage = (Image) (offScreenImage.clone());	// commented out in 2/2014 version
 
-					if (tmpOffScreenImage == null) {
+					if (offScreenImage == null) {
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
 						continue;// graphics system is not ready
-					}
-					
-					final Image offScreenImage = tmpOffScreenImage;
+					}					
 
-					final Graphics offScreenGraphics = exportGraphics == null ? offScreenImage.getGraphics() : exportGraphics;
+					final Graphics2D offScreenGraphics = exportGraphics == null ? (Graphics2D)offScreenImage.getGraphics() : exportGraphics;
 
 					if (offScreenGraphics == null) {
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
 						continue;// graphics system is not ready
+					}
+					
+					if (rescaleBuffer) {
+						double factor = ((double)bufferedWidth) / ((double)getWidth());
+						if (factor > 0) {
+							offScreenGraphics.scale(factor, factor);
+							offScreenGraphics.fillRect(0,  0,  bufferedWidth,  bufferedHeight);
+						}
 					}
 
 					final Graphics graphics = threadParent.getGraphics();
@@ -662,14 +673,24 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 						try {
 							Logger.debug("ready to call toBufferedImage");
-							bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, canvasWidth, canvasHeight);
-							Logger.debug("back from toBufferedImage, ready to call VerdiGUI.showIfVisible");
-							VerdiGUI.showIfVisible(threadParent, graphics, bImage);
-							Logger.debug("back from VerdiGUI.showIfVisible");
-							if (animationHandler != null) {
-								ActionEvent e = new ActionEvent(bImage, this.hashCode(), "");
-								animationHandler.actionPerformed(e);
+							if (forceBufferedImage) {
+								int w = canvasWidth, h = canvasHeight;
+								if (rescaleBuffer) {
+									w = bufferedWidth;
+									h = bufferedHeight;
+								}
+								bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, w, h);
+								Logger.debug("back from toBufferedImage, ready to call VerdiGUI.showIfVisible");
+							
+								if (animationHandler != null) {
+									ActionEvent e = new ActionEvent(bImage, this.hashCode(), "");
+									animationHandler.actionPerformed(e);
+								} else
+									forceBufferedImage = false;
 							}
+							if (!rescaleBuffer)
+								VerdiGUI.showIfVisible(threadParent, graphics, offScreenImage);
+							Logger.debug("back from VerdiGUI.showIfVisible");
 						} finally {
 							graphics.dispose();
 							Logger.debug("just did graphics.dispose in finally block");
@@ -721,6 +742,11 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		}		// HERE FINALLY DREW FastTilePlot - NO MAP BOUNDARIES YET; waiting for user input (change time step, layer, etc.)
 				// end run()
 	};		// end Runnable()
+	
+	public void setAnimationHandler(ActionListener listener) {
+		super.setAnimationHandler(listener);
+		forceBufferedImage = true;
+	}
 	
 	private BufferedImage toBufferedImage(Image image, int type, int width, int height) {
 		// NEEDS COMPLETE REWRITE
@@ -2677,24 +2703,37 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	public BufferedImage getBufferedImage(int width, int height) {
 		Logger.debug("sending bImage in getBufferedImage member function");
-		return bImage;
+		return getBufferedImage(null, width, height);
 	}
 	
-	public Graphics2D getBufferedImage(Graphics2D g) {
+	
+	public BufferedImage getBufferedImage(Graphics2D g, int width, int height) {
 		exportGraphics = g;
 		bImage = null;
 		forceBufferedImage = true;
+		if (width != getWidth()) {
+			rescaleBuffer = true;
+			bufferedWidth = width;
+			bufferedHeight = bufferedWidth * getHeight() / getWidth();
+		}
 		draw();
 		long start = System.currentTimeMillis();
-		while (System.currentTimeMillis() - start < 2000 && bImage == null )
+		//Allow more time when image is being rescaled
+		while ((rescaleBuffer || System.currentTimeMillis() - start < 2000) && bImage == null )
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				Logger.error("Caught exception waiting for buffered image", e);
 				break;
 			}
+		if (rescaleBuffer) {
+			rescaleBuffer = false;
+			bufferedWidth = 0;
+			bufferedHeight = 0;
+			draw();
+		}
 		exportGraphics = null;
-		return g;
+		return bImage;
 	}
 
 	/**
@@ -3510,7 +3549,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		
 		@Override
 		public void draw(Graphics2D g, Rectangle2D rect) {
-			getBufferedImage(g);
+			getBufferedImage(g, canvasWidth, canvasHeight);
 		}
 		
 	}
