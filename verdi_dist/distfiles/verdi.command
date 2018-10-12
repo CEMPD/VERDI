@@ -6,7 +6,7 @@ DIR=$VERDI_HOME
 cd $VERDI_HOME/plugins/bootstrap
 
 
-JAVA=../../jre/Commands/java
+JAVA=../../jre/Contents/Home/jre/bin/java
 JAVAMAXMEM="-Xmx1024M"
 
 
