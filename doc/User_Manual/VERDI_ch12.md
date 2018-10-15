@@ -9,7 +9,7 @@ Supported Grid and Coordinate Systems (Map Projections)
 
 VERDI makes calls to the netCDF Java library to obtain the grid and coordinate system information about the data directly from the model data input files when the input data files are self-describing (CMAQ, SMOKE, WRF netCDF format files).
 
-I/O API-formatted Data
+I/O API Data Convention
 ----------------------
 
 For the I/O API, support for Lambert conformal conic (LCC) map projection, Universal Transverse Mercator (UTM) map projection, and polar stereographic map projection was added in VERDI 1.1., and Mercator projection in VERDI 1.2. The grid projections listed on the following website are supported, although not all have been tested: <https://www.cmascenter.org/ioapi/documentation/3.1/html/GRIDS.html>
@@ -33,8 +33,8 @@ Figure 12‑4. UTM Map Projection Example Plot<br>
 <img src="media/image076.png"/>
 
 
-CAMx Gridded Data
------------------
+CAMx Gridded Data Convention
+--------------------------
 
 The netCDF-java library used in VERDI includes support for CAMx UAM‑IV binary files using a preset default projection. CAMx or UAM binary files contain information about the x and y offsets from the center of the projection in meters, but do not contain information about the projection. The projection information is available in separate diagnostic files, which are part of the CAMx output along with the UAM binaries ([Figure 12‑5](#Figure12-5)).
 
@@ -58,6 +58,21 @@ Figure 12‑7. Edited Example Projection File: camxproj.txt<br>
 <a id=Figure12-8></a>
 Figure 12‑8. CAMx Example Plot<br>
 <img src="media/image080.png" />
+
+WRF netCDF Data Convention
+-------------------------
+The WRF netCDF data convention is supported in VERDI. https://www.mmm.ucar.edu/weather-research-and-forecasting-model
+Figure 12-9. WRF Example Plot of Height in Meters on a 1km Texas Domain<br>
+<img src="media/image100.png" />
+
+MPAS netCDF Data Convention
+--------------------------
+The MPAS netCDF data convention is supported in VERDI https://mpas-dev.github.io/.
+Figure 12-10. MPAS Example Plot of 2 meter Temperature on World Map
+<img src="media/image101.png" />
+
+Figure 12-11. MPAS Example Plot of 2 meter Temperature Zoomed in to California
+<img src="media/image102.png" />
 
 
 <!-- BEGIN COMMENT -->
