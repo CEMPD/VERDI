@@ -4,7 +4,7 @@
 	<property name="env" environment="env" value="env" />
 	<property name="JAVA_HOME" value="${jdk.home}" />
 	<property name="JRE_HOME" value="${JAVA_HOME}/jre" />
-	<!--property name="dist.dir" value="."/-->
+	<property name="dist.dir" value="."/>
 	<property name="plugins.dir" value="plugins"/>
 	<property name="plugins.dist.dir" value="${dist.dir}/${plugins.dir}"/>
 	<property name="plugins.home" value="${basedir}/.."/>
@@ -15,7 +15,7 @@
 	<property name="saf.core.ui.dir" value="${basedir}/../verdi_saf_ui"/>
 	
 	<property name="versiondir" value="../verdi_core/src/anl/verdi/util" />
-	<property name="versionbuild.dir" value="../verdi_core/bin/anl/verdi/util" />
+	<property name="versionbuild.dir" value="../verdi_core/bin" />
 
 	<path id="classpath">
 		<pathelement location="../verdi_core/bin/" />
@@ -29,6 +29,7 @@
                destdir="${versionbuild.dir}"
                classpathref="classpath"
                debug="on"
+        	   includeantruntime="false"
         />
 	</target>
 	
@@ -174,7 +175,7 @@
 		<unzip src="./distfiles/licenses.zip" dest="${dist.dir}"/>
 		<mkdir dir="${dist.dir}/data"/>
 		<copy todir="${dist.dir}/data">
-			<fileset dir="./distfiles/data"/>
+			<fileset dir="./distfiles/data/release"/>
 		</copy>
 	
 		<copy todir="${dist.dir}">
@@ -182,7 +183,6 @@
 			<fileset file="./distfiles/verdi.ini"/>
 			<fileset file="./distfiles/Functions.nsh"/>
 			<fileset file="./distfiles/config.properties.TEMPLATE"/>
-			<fileset file="./distfiles/win_shape2bin.zip"/>
 			<fileset file="./distfiles/RELEASE-NOTES.txt"/>
 			<fileset file="./distfiles/RemoteFileReader.tgz"/>
 		</copy>

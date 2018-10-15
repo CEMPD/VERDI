@@ -3,7 +3,7 @@
 	<property file="build.properties.mac" />
 	<property name="mac.dist.name" value="${app.name}_${app.version}"/>
 	<property name="dist.dmg.file" value="${mac.dist.name}.dmg"/>
-	<property name="dist.dir" value="${user.home}/${mac.dist.name}/${mac.dist.name}" />
+	<property name="dist.dir" value="${user.home}/${mac.dist.name}" />
 	<property name="install.home" value="${user.home}/${install.dir}" />
 	<property name="plugins.dir" value="plugins"/>
 	<property name="plugins.dist.dir" value="${dist.dir}/${plugins.dir}"/>
@@ -15,7 +15,7 @@
 	<property name="saf.core.ui.dir" value="${basedir}/../verdi_saf_ui"/>
 	
 	<property name="versiondir" value="../verdi_core/src/anl/verdi/util" />
-	<property name="versionbuild.dir" value="../verdi_core/bin/anl/verdi/util" />
+	<property name="versionbuild.dir" value="../verdi_core/bin" />
 
 <!--	<taskdef name="nsis" classname="net.sf.nsisant.Task">
 		<classpath location="./distlib/nsisant-1.2.jar"/>
@@ -33,6 +33,7 @@
                destdir="${versionbuild.dir}"
                classpathref="classpath"
                debug="on"
+        	   includeantruntime="false"
         />
 	</target>
 	
@@ -177,7 +178,7 @@
 	        <unzip src="./distfiles/licenses.zip" dest="${dist.dir}"/>
 			<mkdir dir="${dist.dir}/data"/>
 			<copy todir="${dist.dir}/data">
-				<fileset dir="./distfiles/data"/>
+				<fileset dir="./distfiles/data/release"/>
 			</copy>
 	    
 	        <copy todir="${dist.dir}">

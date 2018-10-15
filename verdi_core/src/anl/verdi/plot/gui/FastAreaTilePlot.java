@@ -1,5 +1,8 @@
 package anl.verdi.plot.gui;
 
+import gov.epa.emvl.GridShapefileWriter;
+import gov.epa.emvl.Numerics;
+import gov.epa.emvl.Projector;
 import gov.epa.emvl.TilePlot;
 
 import java.awt.BorderLayout;
@@ -28,9 +31,18 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.jdesktop.swingx.JXTable;
 //import org.jdesktop.swingx.decorator.Highlighter;
+import org.unitsofmeasurement.unit.Unit;
+
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
 
 import saf.core.ui.dock.DockableFrame;
 import saf.core.ui.dock.DockingManager;
+import ucar.unidata.geoloc.Projection;
+import ucar.unidata.geoloc.projection.LatLonProjection;
 import anl.map.coordinates.Decidegrees;
 import anl.verdi.area.AreaDataFrameTableModel;
 import anl.verdi.area.AreaTilePlot;
@@ -39,17 +51,21 @@ import anl.verdi.area.Units;
 import anl.verdi.area.target.DepositionRange;
 import anl.verdi.area.target.FormulaDialog;
 import anl.verdi.area.target.GridInfo;
+import anl.verdi.area.target.ShapeFileTableExporter;
 //import anl.verdi.area.target.ShapeFileTableExporter;	// 2014 disabling shapefile export in VERDI 1.5.0
 import anl.verdi.area.target.Target;
 import anl.verdi.area.target.TargetCalculator;
 import anl.verdi.area.target.TargetDeposition;
+import anl.verdi.area.target.TargetCalculator.CoordinateTransform;
 import anl.verdi.core.Project;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiConstants;
 import anl.verdi.data.Axes;
+import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataFrameIndex;
+import anl.verdi.data.Dataset;
 import anl.verdi.data.DataUtilities.MinMax;
 import anl.verdi.data.Variable;
 import anl.verdi.formula.Formula;
@@ -66,12 +82,12 @@ public class FastAreaTilePlot extends FastTilePlot {
 
 	static boolean ADD_SELECT_AREA_TO_CONTROL_MENU = false;
 
-	static boolean showSelectedOnly=false;
+	boolean showSelectedOnly=false;
 	JRadioButtonMenuItem showTotalButton;
 	public FastAreaTilePlot(VerdiApplication app,DataFrame dataFrame) {
 		super(app,dataFrame);
 		//app.getGui().setStatusOneText("Loading data. This may take a while please be patient...");
-		this.tilePlot=new AreaTilePlot(this,startDate,startTime,timestepSize,domain,gridBounds,projector);
+		this.tilePlot=new AreaTilePlot(this,startDate,timestepSize,domain,gridBounds,gridCRS);
 //		calculateAverageLevels();
 //		minMax=null;
 	}
@@ -106,10 +122,78 @@ public class FastAreaTilePlot extends FastTilePlot {
 		invalidate();
 		repaint();
 	}
+		
+	  public void exportShapefile(String baseFileName) throws IOException {
+	    try {
+	    	boolean showAverages = false;
+			ArrayList targets=Target.getTargets();
+			int mode = ((AreaTilePlot)tilePlot).getViewMode();
+			if (mode == AreaTilePlot.GRID) {
+				super.exportShapefile(baseFileName);
+				return;
+			}
+			if (mode == AreaTilePlot.AVERAGES)
+				showAverages = true;
+	    	TargetCalculator calc = new TargetCalculator();
+	    	// get all the polygons in the grid
+
+	    	Projection proj = null;
+	    	if (projector != null)
+	    		proj = projector.getProjection();
+			CoordinateTransform filter = calc.new CoordinateTransform(projector);
+			Target.setCurrentTilePlot((AreaTilePlot)tilePlot);
+			Target.setCurrentGridInfo(((AreaTilePlot)tilePlot).getGridInfo());
+			
+			ArrayList<Polygon> areas = new ArrayList<Polygon>();
+			ArrayList<Float> values = new ArrayList<Float>();
+			
+			//  get all the selected target polygons
+			for (int targetNum = 0; targetNum < targets.size(); targetNum++) {
+				Target target = ((Target)targets.get(targetNum));
+				if (isShowSelectedOnly() && !target.isSelectedPolygon())
+					continue;
+				Geometry poly = (Geometry)target.getGeometry(proj, gridCRS).clone();
+				for(int i=0;i<((MultiPolygon)poly).getNumGeometries();i++){
+					if (i > 0)
+						throw new UnsupportedOperationException("Multiple polygons per target not allowed");
+      				Geometry geo=((MultiPolygon)poly).getGeometryN(i);
+      				// get the vertices
+      				Polygon geoPolygon=(Polygon)geo;
+      				// transform the polygon
+      				geoPolygon.apply(filter);
+      				geoPolygon.geometryChanged();
+      				areas.add(geoPolygon);
+					if(showAverages)
+						values.add(target.calculateAverageDeposition(getLayerData(), getFirstRow(), getFirstColumn()));
+					else
+						values.add(target.calculateTotalDeposition(getLayerData(), getFirstRow(), getFirstColumn()));
+				}
+			}
+			GridShapefileWriter.write( baseFileName,
+					getVariableName(), areas, values, gridCRS );
+	        
+	    } catch (Exception e) {
+	      Logger.error("An exception occurred", e);
+	    }
+	}
+
+
+	
+	protected String getVariableName() {
+		int mode = ((AreaTilePlot)tilePlot).getViewMode();
+		switch (mode) {
+		case AreaTilePlot.AVERAGES:
+			return "Average " + super.getVariableName();
+		case AreaTilePlot.TOTALS:
+			return "Total " + super.getVariableName();
+		}
+		return super.getVariableName();
+	}
+	
 	public void configure(PlotConfiguration config) {
 		super.configure(config);
 	}
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
+	public void configure(PlotConfiguration config, Plot.ConfigSource source) {
 		super.configure(config, source);
 	}	
 	public void init(){
@@ -273,11 +357,10 @@ public class FastAreaTilePlot extends FastTilePlot {
 		if(vars.length<2)builder.append(vars[0].getName());
 		else builder.append("Formulas");
 		builder.append(" (");
-		int time = axes.getTimeAxis().getOrigin();
-		builder.append(time);
+		builder.append(timestep + 1);
 		builder.append(", ");
 		if (layer != -1) {
-			builder.append(layer);
+			builder.append(layer + 1);
 		}
 		builder.append(")"); 
 		return builder.toString();
@@ -295,7 +378,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 		ArrayList targets= selectedOnly ? Target.getSelectedTargets() : Target.getTargets();
 
 		// create the table
-		JXTable table = new JXTable(new AreaDataFrameTableModel(dataFrames,targets,vars));
+		JXTable table = new JXTable(new AreaDataFrameTableModel(dataFrames,targets,vars,timestep,layer));
 		table.setColumnControlVisible(true);
 		table.setHorizontalScrollEnabled(true);
 		table.setRolloverEnabled(true);
@@ -501,12 +584,12 @@ public class FastAreaTilePlot extends FastTilePlot {
 		return subsetLayerData;
 	}
 
-	public static boolean isShowSelectedOnly() {
+	public boolean isShowSelectedOnly() {
 		return showSelectedOnly;
 	}
 
-	public static void setShowSelectedOnly(boolean showSelectedOnly) {
-		FastAreaTilePlot.showSelectedOnly = showSelectedOnly;
+	public void setShowSelectedOnly(boolean showSelectedOnly) {
+		this.showSelectedOnly = showSelectedOnly;
 	}
 
 	public TilePlot getTilePlot() {
@@ -514,9 +597,10 @@ public class FastAreaTilePlot extends FastTilePlot {
 	}
 	public void recalculateAreas(){
 		// redo the area calculations because something changed with the areas 
-		TargetCalculator calc = new TargetCalculator();
+		Logger.debug("recalculating areas in FastAreaTilePlot.recalculateAreas");
+		//TargetCalculator calc = new TargetCalculator();
 		if(tilePlot==null||getDataFrame()==null)return;
-		calc.calculateIntersections(Target.getTargets(),getDataFrame(),(AreaTilePlot)tilePlot);
+//		calc.calculateIntersections(Target.getTargets(),getDataFrame(),(AreaTilePlot)tilePlot);
 	}
 	public void repaintAll(){
 		validate();
@@ -618,7 +702,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 					try {
 						double areaValue = target.getArea();
 
-						if(target.containsDeposition()){
+						if(target.depositionCalculated() && target.containsDeposition()){
 							float value = target.getDeposition();
 							float aveValue = target.getAverageDeposition();
 
@@ -668,39 +752,33 @@ public class FastAreaTilePlot extends FastTilePlot {
 		}
 	}
 	// show info on all selected areas
-//	private class ProbeExportShapeAction extends AbstractAction {
-//
-//		/**
-//		 * 
-//		 */
-//		private static final long serialVersionUID = 6184257759928589456L;
-//		private JTable table;
-//		private String title, rangeAxisName;
-//
-//		public ProbeExportShapeAction(String rangeAxisName, JTable table,
-//				String title) {
-//			super("Export Shape Files");
-//			this.rangeAxisName = rangeAxisName;
-//			this.table = table;
-//			this.title = title;
-//		}
-//
-//		public void actionPerformed(ActionEvent e) {	// 2014 disable shapefile export from VERDI 1.5.0
-//
-//			ShapeFileTableExporter exporter = new ShapeFileTableExporter(table, title,
-//					rangeAxisName);
-//			exporter.setExportHeader(true);
-//
-//			try {
-//				exporter.run();
-//			} catch (IOException ex) {
-//				//ctr.error("Error while exporting probed data", ex);
-//			}
-//		}
-//	}
+	private class ProbeExportShapeAction extends AbstractAction {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 6184257759928589456L;
+		private JTable table;
+
+		public ProbeExportShapeAction(JTable table) {
+			super("Export Shapefiles");
+			this.table = table;
+		}
+
+		public void actionPerformed(ActionEvent e) {
+
+			ShapeFileTableExporter exporter = new ShapeFileTableExporter(table);
+
+			try {
+				exporter.run();
+			} catch (IOException ex) {
+				//ctr.error("Error while exporting probed data", ex);
+			}
+		}
+	}
 	private int plotCount = 0;
 	public void addProbe(final JTable table, String name, String rangeAxisName) {
-		String viewId = name + plotCount++;
+		String viewId = replaceInvalidChars(name) + plotCount++;
 		JPanel panel = new JPanel(new BorderLayout());
 		JScrollPane pane = new JScrollPane(table);
 		// if (rowHeader != null) pane.setRowHeaderView(rowHeader);
@@ -711,7 +789,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 		JMenuBar bar = new JMenuBar();
 		JMenu menu = new JMenu("File");
 		menu.add(new ProbeExportAction(rangeAxisName, table, name));
-//		menu.add(new ProbeExportShapeAction(rangeAxisName, table, name));	// 2014 disable export shapefiles VERDI 1.5.0
+		menu.add(new ProbeExportShapeAction(table));
 		bar.add(menu);
 		top.add(bar, BorderLayout.NORTH);
 		top.add(title, BorderLayout.CENTER);
@@ -722,6 +800,20 @@ public class FastAreaTilePlot extends FastTilePlot {
 		view.setTitle(name);
 		viewManager.addDockableToGroup(VerdiConstants.PERSPECTIVE_ID, VerdiConstants.MAIN_GROUP_ID, view);
 		view.toFront();
+	}
+	
+	// copied from VerdiGUI for creating valid Dockable identifiers
+	private String replaceInvalidChars(String name) {
+		if (name == null || name.trim().isEmpty())
+			return "";
+		
+		for (int i = 0; i < name.length(); i++) {
+			if (!Character.isLetterOrDigit(name.charAt(i))) {
+				String random = Math.random() + "";
+				name = name.replace(name.charAt(i), random.charAt(random.length() - 1));
+			}
+		}
+		return name;
 	}
 
 	/*
@@ -793,7 +885,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 		}
 
 		return range;
-	}
+	}	
 
 	private void calcGlobalDepositionRange() {
 		for (int timestep=0; timestep<this.timesteps; timestep++) {

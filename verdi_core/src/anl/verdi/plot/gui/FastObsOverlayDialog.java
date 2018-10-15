@@ -180,10 +180,7 @@ public class FastObsOverlayDialog extends ObsOverlayDialog implements
 		overlayListPanel = new VerdiListPanel("Variable");
 		overlayListPanel.addPropertyChangeListener(VerdiConstants.VERDI_LIST_OBJECT, this);
 		overlayListPanel.addPropertyChangeListener(VerdiConstants.VERDI_LIST_OBJECT_NUMBER, this);
-		String verdiHome = Tools.getVerdiHome();		// 2014 new method for reading in an image file
-		String separator = "/";		// use forward slash only for constructor ImageIcon(String filename);
-		String pathName = verdiHome + separator + "plugins" + separator + "core" + separator + "icons"
-				 + separator;
+		String pathName = Tools.getIconsDir();
 		String fileCircle = new String(pathName + "circle.png");
 		String fileDiamond = new String(pathName + "diamond.png");
 		String fileSquare = new String(pathName + "square.png");

@@ -1,4 +1,4 @@
-/** AreaTilePlot.java - Draw a areal interpolation plot.
+/** AreaTilePlot.java - Draw an areal interpolation plot.
  * @author Mary Ann Bitz
  * @author Argonne National Lab
  */
@@ -7,12 +7,16 @@ package anl.verdi.area;
 
 import gov.epa.emvl.Projector;
 import gov.epa.emvl.TilePlot;
+import ucar.unidata.geoloc.Projection;
 
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.text.NumberFormat;
+import java.util.GregorianCalendar;
+
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import anl.verdi.area.target.GridInfo;
 import anl.verdi.area.target.Target;
@@ -44,19 +48,21 @@ public class AreaTilePlot extends TilePlot{
 
 	final double[][] domain;
 	final double[][] gridBounds;
-	final Projector projector;
 
-
-	protected static final int AVERAGES=0; 
-	protected static final int TOTALS=1; 
-	protected static final int GRID=2; 
+	public static final int AVERAGES=0; 
+	public static final int TOTALS=1; 
+	public static final int GRID=2; 
 	protected int currentView=AVERAGES;
 	protected FastAreaTilePlot tilePlotPanel;
 	protected GridInfo gridInfo;
+	MapPolygon mapPolygon = null;
 	
 	public boolean mouseOverOK = false;
 	
 	private Cursor oldCursor = null;
+	
+	protected CoordinateReferenceSystem gridCRS = null;	
+
 
 	/** Constructor - inputs 2D grid parameters.
 	 * @pre startDate >= 1900001
@@ -64,18 +70,32 @@ public class AreaTilePlot extends TilePlot{
 	 * @pre timestepSize > 0
 	 */
 
-	public AreaTilePlot(FastAreaTilePlot tilePlotPanel,int startDate, int startTime, int timestepSize, double[][] domain, double[][] gridBounds,
-			Projector projector) {
-		super(startDate,startTime,timestepSize);
+	public AreaTilePlot(FastAreaTilePlot tilePlotPanel, GregorianCalendar startDate, long timestepSize, double[][] domain, double[][] gridBounds,
+			CoordinateReferenceSystem gridCRS) {
+		super(startDate,timestepSize);
 		this.tilePlotPanel=tilePlotPanel;
 		this.domain=domain;
 		this.gridBounds=gridBounds;
-		this.projector=projector;
+		this.gridCRS=gridCRS;
 		gridInfo = new GridInfo(gridBounds,domain);
+		mapPolygon = new MapPolygon(this);
 	}
 
 	public GridInfo getGridInfo(){
 		return gridInfo;
+	}
+	
+	public synchronized void draw(final Graphics graphics, int xOffset, int yOffset,
+			int width, int height, int steplapse, int layer, int firstRow,
+			int lastRow, int firstColumn, int lastColumn, Projection projection,
+			final double[] legendLevels, final Color[] legendColors,
+			final Color axisColor, final Color labelColor,
+			final String variable, final String units,
+			PlotConfiguration config, NumberFormat format,
+			final Color gridLineColor, final float[][] data, final byte[][] colorIndexCache) {
+		draw(graphics, xOffset, yOffset, width, height, steplapse, layer, firstRow, lastRow,
+				firstColumn, lastColumn, projection, legendLevels, legendColors, axisColor, labelColor, variable,
+				units, config, format, gridLineColor, data);
 	}
 
 	/** draw - Draw a tile plot: colored rectangles with labels and legend.
@@ -113,6 +133,7 @@ public class AreaTilePlot extends TilePlot{
 			int timelapse, int layer,
 			int firstRow, int lastRow,
 			int firstColumn, int lastColumn,
+			Projection projection,
 			final double[] legendLevels,
 			final Color[] legendColors,
 			final Color axisColor,
@@ -125,11 +146,10 @@ public class AreaTilePlot extends TilePlot{
 		if (units==null || units.trim().equals(""))
 			units = "none";
 		
-		final int yHeightOffset = height + yOffset;
 		final int xMinimum = xOffset;
 		final int xMaximum = xOffset + width;
 		final int yMinimum = yOffset;
-		final int yMaximum = yHeightOffset;
+		final int yMaximum = yOffset + height;
 		this.config = config;
 		this.numberFormat = format;
 
@@ -139,9 +159,6 @@ public class AreaTilePlot extends TilePlot{
 		//Target.setUnitConverters("mg/m3");
 		//Target.setUnitConverters("PPM");
 		Target.setUnitConverters(units);
-
-
-
 
 		// set legend colors
 		// Draw grid boundary rectangle, labeled row/column axis and legend:
@@ -165,9 +182,6 @@ public class AreaTilePlot extends TilePlot{
 				timelapse, layer, firstRow, lastRow, firstColumn, lastColumn,
 				data );
 
-		// Draw legend-colored grid cells or polygons
-
-		MapPolygon mapPolygon=new MapPolygon();
 		//showBusyCursor();
 		switch(currentView){
 		case GRID:
@@ -177,16 +191,16 @@ public class AreaTilePlot extends TilePlot{
 					firstRow, lastRow, firstColumn, lastColumn,
 					legendLevels, legendColors, data );
 			// draw the area polygons
-			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
+			mapPolygon.draw(this, domain, gridBounds, gridCRS, projection, legendLevels,
 					legendColors,graphics, data,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView, FastAreaTilePlot.isShowSelectedOnly());
+					xOffset, yOffset, width, height,currentView, tilePlotPanel.isShowSelectedOnly());
 			break;
 		case AVERAGES:
 			float[][] allData=tilePlotPanel.getAllLayerData();
 			// draw the area polygons
-			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
+			mapPolygon.draw(this, domain, gridBounds, gridCRS, projection, legendLevels,
 					legendColors,graphics, allData,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView,FastAreaTilePlot.isShowSelectedOnly() );
+					xOffset, yOffset, width, height,currentView,tilePlotPanel.isShowSelectedOnly() );
 			mouseOverOK = true;
 //			tilePlotPanel.calculateAverageLevels();
 //			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
@@ -196,14 +210,14 @@ public class AreaTilePlot extends TilePlot{
 		case TOTALS:
 			float[][] allData2=tilePlotPanel.getAllLayerData();
 			// draw the area polygons
-			mapPolygon.calculateValues(this,domain, gridBounds, projector,legendLevels,
+			/*mapPolygon.calculateValues(this,domain, gridBounds, gridCRS,legendLevels,
 					legendColors,graphics, allData2,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView ,FastAreaTilePlot.isShowSelectedOnly() );
+					xOffset, yOffset, width, height,currentView ,tilePlotPanel.isShowSelectedOnly() );*/
 			mouseOverOK = true;
 //			tilePlotPanel.calculateTotalLevels();
-			mapPolygon.draw(this, domain, gridBounds, projector,legendLevels,
+			mapPolygon.draw(this, domain, gridBounds, gridCRS, projection, legendLevels,
 					legendColors,graphics, allData2,units,firstColumn,firstRow,
-					xOffset, yOffset, width, height,currentView,FastAreaTilePlot.isShowSelectedOnly() );
+					xOffset, yOffset, width, height,currentView,tilePlotPanel.isShowSelectedOnly() );
 			break;	
 		}
 
@@ -238,6 +252,10 @@ public class AreaTilePlot extends TilePlot{
 	public void showGrid() {
 		currentView=GRID;
 	}
+	
+	public int getViewMode() {
+		return currentView;
+	}
 
 	public void updatePlot(){
 		tilePlotPanel.recalculateAreas();
@@ -248,8 +266,6 @@ public class AreaTilePlot extends TilePlot{
 	public double[][] getDomain() {
 		return domain;
 	}
-
-
 
 	public double[][] getGridBounds() {
 		return gridBounds;
@@ -268,7 +284,3 @@ public class AreaTilePlot extends TilePlot{
 		}
 	}
 }
-
-
-
-

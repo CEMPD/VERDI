@@ -32,6 +32,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.swing.JMapPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.ChartTheme;
@@ -71,7 +72,6 @@ import anl.verdi.plot.config.SaveTheme;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 import anl.verdi.plot.config.UnitsConfigurator;
 import anl.verdi.plot.gui.LayerChartPanel;
-import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotFactory;
 import anl.verdi.plot.gui.PlotListener;
 import anl.verdi.plot.probe.PlotEventProducer;
@@ -79,6 +79,7 @@ import anl.verdi.plot.probe.ProbeEvent;
 import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.plot.util.PlotPrintAction;
 import anl.verdi.plot.util.PlotProperties;
+import anl.verdi.plot.gui.Plot;
 import anl.verdi.util.Tools;
 import anl.verdi.util.VUnits;
 
@@ -585,11 +586,6 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 	 * @param config the new plot configuration
 	 */
 	@Override
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
-		configure(config);
-	}
-	
-	@Override
 	public void configure(PlotConfiguration config) {
 		String configFile = config.getConfigFileName();
 		if (configFile != null) {
@@ -679,5 +675,9 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 	public String getTitle() {
 		return chart.getTitle().getText();
 	}
-
+	
+	public JMapPane getMapPane()		// required by interface
+	{
+		return null;
+	}
 }

@@ -1,0 +1,115 @@
+		####################################################################################
+		# NOTE: Batch Scripting Language                                                   
+		#                                                                                  
+		#    * All parameter/value pairs should be inside one of the two blocks --         
+		#        <Global/> or <Task/>                                                      
+		#    * Number of blocks is not limited                                             
+		#    * Only one <Global/> block is recommended. <Global/> blocks should            
+		#        contains different items if use multiple <Global/> blocks                 
+		#    * Parameter values in <Task/> blocks will override those in <Global/>         
+		#    * Currently supported parameters (keys, case insensitive):                    
+		#        configFile    -- configuration file full path                             
+		#        f             -- dataset file path/name                                   
+		#        dir           -- dataset file folder                                      
+		#        pattern       -- dataset file name pattern                                
+		#        gtype         -- plot type (tile, line, bar, vector)                      
+		#        vector        -- vector plot variables                                    
+		#        vectorTile    -- vector plot variables                                    
+		#        s             -- variable name                                            
+		#        ts            -- time step                                                
+		#        titleString   -- plot title                                               
+		#        subdomain     -- xmin ymin xmax ymax                                      
+		#        subTitle1     -- plot subtitle one                                        
+		#        subTitle2     -- plot subtitle two                                        
+		#        saveImage     -- image file type (png, jpeg, eps, etc.)                   
+		#        imageFile     -- image file path/name                                     
+		#        imageDir      -- image file folder                                        
+		#        drawGridLines -- draw grid lines on the tile plot if 'yes'                
+		#        imageWidth    -- image width                                              
+		#        imageHeight   -- image height                                             
+		#        unitString    -- units                                                    
+		#                                                                                  
+		#                                                                                  
+		# Author: IE, UNC at Chapel Hill                                                   
+		# Date: 10/27/2014                                                                   
+		# Version: 2                                                                       
+		####################################################################################
+
+
+		<Global>
+		configFile=../verdi_dist/distfiles/data/release/configs/o3_Calif_4km.cfg
+		dir=../verdi_dist/distfiles/data/release/model
+		pattern=*combine*
+		s=O3[1]
+		saveImage=jpeg
+		imageDir=../verdi_dist/distfiles/data/release/plots
+		subTitle1="Test SubTitle 1"
+		subTitle2="Test SubTitle 2"
+		</Global>
+
+		#######################
+		# Data files picked   #
+		# up from patterns    #
+		# specified for names #
+		#######################
+
+		<Task>
+		gtype=tile
+		</Task>
+
+		***********************
+		* Local file name     *
+		* overrides global    *
+		* specifications      *
+		***********************
+
+		<Task>
+		gtype=tile
+		f=GRIDCRO2D_mercator
+		s=DLUSE[1]
+		</Task>
+
+		*************************
+		*************************
+		** Multiple data files **
+		**  with formula tests **
+		*************************
+		*************************
+
+		<Task>
+		f=CCTM_combine.2008031.dave.nc.1
+		f=CCTM_combine.2008031.dave.nc.2
+		s=O3[1]+O3[2]
+		gtype=tile
+		saveImage=png
+		imageFile=Double_36k.O3
+		</Task>
+
+		<Task>
+		f=CCTM_combine.2008031.dave.nc.1
+		f=CCTM_combine.2008031.dave.nc.2
+		s=O3[1]-O3[2]
+		gtype=tile
+		saveImage=jpeg
+		imageFile=Zero_out_36k.O3
+		</Task>
+
+		<Task>
+		f=CCTM_combine.2008031.dave.nc.1
+		f=CCTM_combine.2008031.dave.nc.2
+		f=CCTM_combine.2008031.dave.nc.3
+		s=O3[1]-O3[2]+O3[3]*2
+		gtype=tile
+		saveImage=jpeg
+		imageFile=three_components_36k.O3
+		</Task>
+
+		<Task>
+		titleString="Test formula at 4 fold"
+		f=CCTM_combine.2008031.dave.nc.1
+		s=O3[1]*4
+		gtype=tile
+		imageFile=quaduple_36k.O3
+		imageWidth=400
+		imageHeight=1000
+		</Task>

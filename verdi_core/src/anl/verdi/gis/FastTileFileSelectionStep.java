@@ -1,13 +1,9 @@
 package anl.verdi.gis;
 
-import gov.epa.emvl.MapLines;
-
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -19,6 +15,8 @@ import org.pietschy.wizard.InvalidStateException;
 import org.pietschy.wizard.PanelWizardStep;
 import org.pietschy.wizard.WizardModel;
 
+import anl.verdi.plot.gui.VerdiBoundaries;
+
 /**
  * @author User #2
  * @version $Revision: 1.06 $ $Date: 2009/05/12 17:43:53 $
@@ -27,10 +25,7 @@ public class FastTileFileSelectionStep extends PanelWizardStep {
 	private static final long serialVersionUID = -343980766506758133L;
 	static final Logger Logger = LogManager.getLogger(FastTileFileSelectionStep.class.getName());
 
-//	private static MessageCenter msg = MessageCenter.getMessageCenter(FastTileFileSelectionStep.class);
-
 	private JFileChooser chooser;
-
 	private FastTileAddLayerWizardModel model;
 	
 	public FastTileFileSelectionStep() {
@@ -44,12 +39,12 @@ public class FastTileFileSelectionStep extends PanelWizardStep {
 		chooser = new JFileChooser(".");
 		chooser.setFileFilter(new FileFilter() {
 			public boolean accept(File pathname) {
-				return pathname.getName().endsWith(".bin")
+				return pathname.getName().endsWith(".shp")
 						|| pathname.isDirectory();
 			}
 
 			public String getDescription() {
-				return "Map files (.bin)";
+				return "Shapefiles (.shp)";
 			}
 		});
 
@@ -83,19 +78,18 @@ public class FastTileFileSelectionStep extends PanelWizardStep {
 
 	@Override
 	public void applyState() throws InvalidStateException {
+		VerdiBoundaries layer = new VerdiBoundaries();
 		File mapFile = chooser.getSelectedFile();
 		File modelMapFile = model.getMapFile();
 		if (modelMapFile == null
 				|| (modelMapFile != null && !mapFile.equals(modelMapFile))) {
-			// create a new default map layer from the shape file.
+			// create a new default map layer from the shapefile.
 			try {
-				MapLines layer = new MapLines(mapFile.getAbsolutePath());
+				layer.setFileName(mapFile.getAbsolutePath());
 				model.setLayer(layer);
 				model.setMapFile(mapFile);
-			} catch (MalformedURLException e) {
-				Logger.error("Error creating layer from map file " + e.getMessage());
-			} catch (IOException e) {
-				Logger.error("Error creating layer from map file " + e.getMessage());
+			} catch(Exception ex) {
+				Logger.error("Error creating layer from map file " + ex.getMessage());
 			}
 		}
 	}

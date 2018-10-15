@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrameAxis;
+import anl.verdi.data.MPASDataFrameIndex;
 import anl.verdi.util.Utilities;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -36,16 +37,18 @@ public class TimeConstantAxisPanel extends JPanel {
 			JSpinner source = (JSpinner)e.getSource();
       if (spinnersOn) {
 	      int val = ((Number)source.getValue()).intValue() - 1;
-	      if (axes != null) {
-		      GregorianCalendar date = axes.getDate(val);
+	      if (frameAxes != null) {
+		      GregorianCalendar date = frameAxes.getDate(val);
 		      timeLabel.setText(Utilities.formatShortDate(date));
 	      }
       }
 		}
 	}
 
-	private Axes<DataFrameAxis> axes;
+	private Axes axes;
+	private Axes frameAxes; //MPAS files need the separate axes
 	private boolean spinnersOn = false;
+	int displayIncrement = 1;
 
 	public TimeConstantAxisPanel() {
 		Logger.debug("in constructor for TimeConstantAxisPanel");
@@ -133,36 +136,42 @@ public class TimeConstantAxisPanel extends JPanel {
 	 * the displayed one which is offset by 1.
 	 */
 	public int getAxisValue() {
-		return ((Integer)axisSpinner.getValue()).intValue() - 1;
+		return ((Integer)axisSpinner.getValue()).intValue() - displayIncrement;
 	}
 
 	public void setTime(int time) {
 		timeSpinner.setValue(new Integer(time + 1));
 	}
 
-	public void init(Axes<DataFrameAxis> axes, DataFrameAxis constantAxis, int timeStep, int constant) {
+	public void init(Axes axes, CoordAxis constantAxis, Axes frameAxes, int timeStep, int constant) {
 		this.axes = axes;
+		this.frameAxes = frameAxes;
 		spinnersOn = false;
-		CoordAxis time = axes.getTimeAxis();
+		if (constantAxis.getClass().getName().indexOf("MPAS") != -1)
+			displayIncrement = 0;
+		CoordAxis time = frameAxes.getTimeAxis();
 		int min = (int) (time.getRange().getOrigin() + 1);
 		int max = min + (int) time.getRange().getExtent() - 1;
 		SpinnerNumberModel model = (SpinnerNumberModel) timeSpinner.getModel();
 		model.setMinimum(min);
 		model.setMaximum(max);
 		model.setValue(new Integer(timeStep + 1));
-		GregorianCalendar date = axes.getDate(timeStep);
+		GregorianCalendar date = frameAxes.getDate(timeStep);
 		Logger.debug("in TimeConstantAxisPanel init function, computed GregorianCalendar date" );
 		timeLabel.setText(Utilities.formatShortDate(date));
 
 		// we want the range to start with 1 rather than 0
-		// so we add 1.
-		min = (int) (constantAxis.getRange().getOrigin() + 1);
+		// so we add 1.  Not needed for MPAS - range is already adjusted
+		min = constant + displayIncrement;
 		max = min + (int) constantAxis.getRange().getExtent() - 1;
+		if (constantAxis.getClass().getName().indexOf("MPAS") != -1)
+			--max;
+
 		model = (SpinnerNumberModel) axisSpinner.getModel();
 		model.setMinimum(min);
 		model.setMaximum(max);
 		// offset by one so row / col seems to start at 1
-		model.setValue(new Integer(constant + 1));
+		model.setValue(new Integer(constant + displayIncrement));
 		spinnersOn = true;
 	}
 

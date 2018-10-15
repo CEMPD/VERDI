@@ -24,6 +24,7 @@ public interface VerdiConstants {
 
 	String TILE_BUTTON_ID = "anl.verdi.plot.gui.action.TilePlot";
 	String FAST_TILE_BUTTON_ID = "anl.verdi.plot.gui.action.FastTilePlot";
+//	String GT_TILE_BUTTON_ID = "anl.verdi.plot.gui.action.GTTilePlotAction";
 	String VERT_CROSS_BUTTON_ID = "anl.verdi.plot.gui.action.VerticalCrossSection";
 	String TIME_SERIES_LINE_BUTTON_ID = "anl.verdi.plot.gui.action.TimeSeriesPlot";
 	String TIME_SERIES_BAR_BUTTON_ID = "anl.verdi.plot.gui.action.TimeSeriesBarPlot";
@@ -71,7 +72,9 @@ public interface VerdiConstants {
 	String GRID_LINES = "drawGridLines".toUpperCase();
 	String UNIT_STRING = "unitString".toUpperCase();
 	String TIME_STEP = "ts".toUpperCase();
+	String LAYER = "layer".toUpperCase();
 
+	public static final float NC_FILL_FLOAT = 9.9692099683868690e+36f;		// 2014 changed from -9.999E36f to assist floating point comparison
 	public static final float BADVAL3 = -9.998E36f;		// 2014 changed from -9.999E36f to assist floating point comparison
 	public static final float AMISS3  = -8.999E36f;		// 2014 changed from -9.000E36f to assist floating point comparison
 	

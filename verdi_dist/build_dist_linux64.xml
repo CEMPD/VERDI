@@ -14,7 +14,7 @@
 	<property name="saf.core.ui.dir" value="${basedir}/../verdi_saf_ui"/>
 	
 	<property name="versiondir" value="../verdi_core/src/anl/verdi/util" />
-	<property name="versionbuild.dir" value="../verdi_core/bin/anl/verdi/util" />
+	<property name="versionbuild.dir" value="../verdi_core/bin" />
 
 	<!-- taskdef name="nsis" classname="net.sf.nsisant.Task">
 		<classpath location="./distlib/nsisant-1.2.jar"/>
@@ -32,6 +32,7 @@
                destdir="${versionbuild.dir}"
                classpathref="classpath"
                debug="on"
+        	   includeantruntime="false"
         />
 	</target>
 	
@@ -179,7 +180,7 @@
 	        <unzip src="./distfiles/licenses.zip" dest="${dist.dir}"/>
 			<mkdir dir="${dist.dir}/data"/>
 			<copy todir="${dist.dir}/data">
-				<fileset dir="./distfiles/data"/>
+				<fileset dir="./distfiles/data/release"/>
 			</copy>
 	    
 	        <copy todir="${dist.dir}">

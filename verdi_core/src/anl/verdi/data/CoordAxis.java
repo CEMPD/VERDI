@@ -3,7 +3,7 @@ package anl.verdi.data;
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
-
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Interface for classes implementing axis metadata.

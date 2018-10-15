@@ -61,5 +61,9 @@ public class SaveConfiguration extends AbstractAction {
 
 		return false;
 	}
+	
+	public void close() {
+		plot = null;
+	}
 
 }

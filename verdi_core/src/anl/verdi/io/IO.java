@@ -11,6 +11,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import anl.verdi.core.Project;
 import anl.verdi.data.DataManager;
 import anl.verdi.data.Dataset;
@@ -31,6 +34,7 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  */
 public class IO {
 
+	static final Logger Logger = LogManager.getLogger(IO.class.getName());
 	private static final String DATASET_ELEMENT_ALIAS = "dataset.element";
 	private static final String FORMULA_ELEMENT_ALIAS = "formula.element";
 	private static final String PROJECT_ALIAS = "project";
@@ -133,23 +137,33 @@ public class IO {
 	 * @throws IOException if there is an error during loading.
 	 */
 	public void load(File file, Project project, DataManager manager, FormulaElementCreator creator) throws IOException {
+		Logger.debug("in IO.load, ready to instantiate xstream");
 		XStream xstream = new XStream(new StaxDriver());
 		xstream.setClassLoader(ProjectDescriptor.class.getClassLoader());
+		Logger.debug("ready to set alias values in xstream");
 		xstream.alias(DATASET_ELEMENT_ALIAS, DatasetElementDescriptor.class);
 		xstream.alias(FORMULA_ELEMENT_ALIAS, FormulaElementDescriptor.class);
 		xstream.alias(PROJECT_ALIAS, ProjectDescriptor.class);
 
+		Logger.debug("ready to insantiate fileReader");
 		FileReader fileReader = new FileReader(file);
+		Logger.debug("setting descriptor = null");
 		ProjectDescriptor descriptor = null;
+		Logger.debug("ready to closeAllDatasets");
 		manager.closeAllDatasets();
+		Logger.debug("going to clear formulas and datasets");
 		project.getFormulas().clear();
 		project.getDatasets().clear();
 		
 		try {
+			Logger.debug("ready to cast xstream.fromXML to ProjectDescriptor");
 			descriptor = (ProjectDescriptor) xstream.fromXML(fileReader);
+			Logger.debug("have descriptor, now ready to set up dElements ArrayList");
 			List<DatasetListElement> dElements = new ArrayList<DatasetListElement>();
 			// group by URL
+			Logger.debug("now instantiating map as a new HashMap");
 			Map<URL, ElementSet> map = new HashMap<URL, ElementSet>();
+			Logger.debug("ready to go into for loop for DatasetElementDescriptor");
 			for (DatasetElementDescriptor desc : descriptor.datasetElements) {
 				URL url = desc.getDatasetURL();
 				ElementSet set = map.get(url);
@@ -159,7 +173,7 @@ public class IO {
 				}
 				set.addDescriptor(desc);
 			}
-
+			Logger.debug("done with that loop, now ready to go into for URL loop");
 			for (URL url : map.keySet()) {
 				List<Dataset> datasets = manager.createDatasets(url);
 				if (datasets.equals(DataManager.NULL_DATASETS)) throw new IOException("Cannot find dataset");
@@ -167,9 +181,12 @@ public class IO {
 				dElements.addAll(set.createElements(datasets, manager));
 			}
 
+			Logger.debug("done with that loop, now ready to add all elements to project");
 			project.getDatasets().addAll(dElements);
 
+			Logger.debug("now ready to instantiate fElements list");
 			List<FormulaListElement> fElements = new ArrayList<FormulaListElement>();
+			Logger.debug(" and into the for FormulaElementDescriptor loop");
 			for (FormulaElementDescriptor desc : descriptor.formulaElements) {
 				FormulaListElement element = creator.create(desc.getFormula());
 				element.setTimeMin(desc.getTimeMin());
@@ -181,8 +198,9 @@ public class IO {
 				fElements.add(element);
 			}
 			
+			Logger.debug("ready to addAll fElements to project");
 			project.getFormulas().addAll(fElements);
-
+			Logger.debug("and done with the load member function in IO");
 		} catch (Exception ex) {
 			project.getFormulas().clear();
 			project.getDatasets().clear();

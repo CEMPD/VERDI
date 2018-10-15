@@ -1,5 +1,5 @@
 /**
- * Rubberband - Used for mouse-based zoom of FastTilePlot.
+ * Rubberband - Used for mouse-based zoom of TilePlot-type charts.
  * @author cathey.tommy@epa.gov 2009-03-16
  * @version $Revision$ $Date$
  **/
@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
 public class Rubberband {
+	// TODO need to see where this is called, figure out how to use this with a GeoTools JMapPane raster/vector
 
     protected Point anchorPt = new Point(0, 0);
     protected Point stretchedPt = new Point(0, 0);
@@ -53,6 +54,11 @@ public class Rubberband {
 
     public void setActive(boolean b) {
         active = b;
+    }
+    
+    public void close() {
+    	setActive(false);
+    	component = null;
     }
 
     public void setComponent(Component c) {
@@ -179,6 +185,3 @@ public class Rubberband {
 	}
 	
 }
-
-
-

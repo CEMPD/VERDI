@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -54,7 +57,10 @@ public class PaletteSelectionPanel extends JPanel {
 				if (getPaletteType() == ColorBrewer.SEQUENTIAL) {
 					((SpinnerNumberModel) tileSpinner.getModel())
 							.setMaximum(64);
-				} else {
+				} else if (getPaletteType() == ColorBrewer.DIVERGING) {
+					((SpinnerNumberModel) tileSpinner.getModel())
+					.setMaximum(11);
+				}else {
 					((SpinnerNumberModel) tileSpinner.getModel())
 							.setMaximum(new Integer(12));
 				}
@@ -79,55 +85,55 @@ public class PaletteSelectionPanel extends JPanel {
 		else
 			return ColorBrewer.DIVERGING;
 	}
-
-//	public static void main(String[] args) {
-//		Logger.debug(flipDivergingPaletteDescription(""));
-//	}
-
-//	private static String flipDivergingPaletteDescription(String description) {
-//		
-//		//first look for first "to", then parse at that.
-//		
-//		int toPosIdx = description.indexOf(" to ");
-//		
-//		if (toPosIdx > 0) {
-//			return description.substring(0, toPosIdx) + " to " + description.substring(toPosIdx + 4);
-//		} else {
-//			String[] colors = description.split(", ");
-//			String tmp = "";
-//			for (int i = colors.length - 1; i > 0; i--) {
-//				tmp += (i < colors.length - 1 ? ", " : "") + colors[i];
-//			}
-//		}
-//		
-//		return description;
-//	}
+	
+	Map<Integer, Map<PaletteType, List<Palette>>> paletteMapByCount = new HashMap<Integer, Map<PaletteType, List<Palette>>>();;
 	
 	private void createPalettes() {
 		Logger.debug("in PaletteSelectionPanel.createPalettes");
 		int tileCount = ((Integer) tileSpinner.getValue()).intValue();
 		Logger.debug("\ttileCount = " + tileCount);
 		PaletteType paletteType = getPaletteType();
-		BrewerPalette[] pals = brewer.getPalettes(paletteType, tileCount);
-		Logger.debug("\tjust did brewer.getPalettes");
-		java.util.List<Palette> palettes = new ArrayList<Palette>();
-		
-//		//if diverging add custom INVERTED versions of the diverging palettes...
-//		if (paletteType.equals(ColorBrewer.DIVERGING)) {
-//			for (BrewerPalette pal : pals) {
-//				Color[] colors = pal.getColors(tileCount);
-//				palettes.add(new Palette(colors, pal.getDescription()));
-//			}
-//		}
-		for (BrewerPalette pal : pals) {
-			Color[] colors = pal.getColors(tileCount);
-			palettes.add(new Palette(colors, pal.getDescription(), false));
-			Logger.debug("for each BrewerPalette, palettes.add " + pal.getDescription());
+		Map<PaletteType, List<Palette>> paletteMap = paletteMapByCount.get(tileCount);
+		paletteMap = null; //TAH - turn off caching
+		if (paletteMap == null) {
+			paletteMap = new HashMap<PaletteType, List<Palette>>();
+			paletteMapByCount.put(tileCount,  paletteMap);
 		}
-
-		if (paletteType.equals(ColorBrewer.SEQUENTIAL)) {
-			Logger.debug("ColorBrewer is SEQUENTIAL, doing palettes.addAll for tileCount = " + tileCount);
-			palettes.addAll(palBrewer.createPalettes(tileCount));
+		java.util.List<Palette> palettes = paletteMap.get(paletteType);
+		if (palettes == null) {
+			palettes = new ArrayList<Palette>();
+	
+			BrewerPalette[] pals = brewer.getPalettes(paletteType, tileCount);
+			
+			Logger.debug("\tjust did brewer.getPalettes");
+			
+	//		//if diverging add custom INVERTED versions of the diverging palettes...
+	//		if (paletteType.equals(ColorBrewer.DIVERGING)) {
+	//			for (BrewerPalette pal : pals) {
+	//				Color[] colors = pal.getColors(tileCount);
+	//				palettes.add(new Palette(colors, pal.getDescription()));
+	//			}
+	//		}
+			for (BrewerPalette pal : pals) {
+				Color[] colors = pal.getColors(tileCount);
+				palettes.add(new Palette(colors, pal.getDescription(), false));
+				if (pal.getDescription().equals("dark red to light to dark blue")) {
+					colors = pal.getColors(tileCount);
+					if (tileCount %2 == 0) {
+						colors[tileCount / 2] = Color.WHITE;
+						colors[tileCount / 2 - 1] = Color.WHITE;
+					} else
+						colors[(int)Math.floor(tileCount / 2.0)] = Color.WHITE;
+					palettes.add(new Palette(colors, "dark red to white to dark blue", false));
+				}
+	//			Logger.debug("for each BrewerPalette, palettes.add " + pal.getDescription());
+			}
+	
+			if (paletteType.equals(ColorBrewer.SEQUENTIAL)) {
+	//			Logger.debug("ColorBrewer is SEQUENTIAL, doing palettes.addAll for tileCount = " + tileCount);
+				palettes.addAll(palBrewer.createPalettes(tileCount));
+			}
+			paletteMap.put(paletteType,  palettes);
 		}
 
 		palettePanel.setPalettes(palettes);
@@ -150,19 +156,13 @@ public class PaletteSelectionPanel extends JPanel {
 		palettePanel.initMap(map, minMax);
 	}
 	
-	public void setForFastTitle(boolean isForFastTitle) {
+	public void setForFastTitle() {
 		Logger.debug("in PaletteSelectionPanel.setForFastTitle");
 		if ( palettePanel != null) {
-			palettePanel.setForFastTitle( isForFastTitle );
+			palettePanel.setForFastTitle();
 		}
 	}	
 	
-//	public void setStateType( ColorMap.StatType statType) {
-//		if ( palettePanel != null) {
-//			palettePanel.setStatType( statType );
-//		}		
-//	}
-
 	private void initComponents() {
 		Logger.debug("in PaletteSelectionPanel.initComponents");
 		// JFormDesigner - Component initialization - DO NOT MODIFY

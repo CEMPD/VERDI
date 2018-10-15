@@ -18,11 +18,9 @@ import anl.verdi.data.CoordAxis;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-// NOTE: using old piccolo library because only class using this one is DomainPanel, which uses Repast Simphony
-// and requires the old piccolo library
-import edu.umd.cs.piccolo.PNode;
+import org.piccolo2d.PNode;
 //import org.piccolo2d.extras.util.PFixedWidthStroke;
-import edu.umd.cs.piccolo.util.PPaintContext;
+import org.piccolo2d.util.PPaintContext;
 //import org.piccolo2d.util.PPaintContext;
 //import org.piccolo2d.PNode;
 import edu.umd.cs.piccolox.util.PFixedWidthStroke;

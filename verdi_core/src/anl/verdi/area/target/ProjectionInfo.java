@@ -1,3 +1,4 @@
+// NOTE: This class uses GeoTools and OpenGis for Coordinate Referencing System (crs).
 package anl.verdi.area.target;
 
 import java.awt.event.ItemEvent;
@@ -24,8 +25,8 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.geotools.referencing.CRS;
+import javax.swing.JFrame;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 	/**
 	 * Generic GUI widget that allows user to enter parameters for the selected projection.<br>
 	 * Supported projections:
@@ -54,6 +55,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 		 * @version $Revision: 1.3 $
 		 */
 		public class LambertCCProjectionGUIAdaptor implements ProjectionGUIAdaptor {
+			final Logger Logger = LogManager.getLogger(LambertCCProjectionGUIAdaptor.class.getName());
 			/**
 			 * Constructor for GeoLambertCCProjectionGUIAdaptor
 			 */
@@ -168,8 +170,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 					
 					return CRS.parseWKT(coordString);
 				} catch (Exception ex) {
-					System.err.println(getClass().getName()+">>getProjection() "+projectionClass);
-					ex.printStackTrace(System.err);
+					Logger.error("Error returning CRS: " + getClass().getName()+">>getProjection() "+projectionClass);
+					Logger.error(ex.getStackTrace());
 				}
 				
 				return null;
@@ -221,6 +223,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 		 * @version $Revision: 1.3 $
 		 */
 		public class MercatorProjectionGUIAdaptor implements ProjectionGUIAdaptor {
+			final Logger Logger = LogManager.getLogger(MercatorProjectionGUIAdaptor.class.getName());
 			/**
 			 * Constructor for GeoMercatorProjectionGUIAdaptor
 			 */
@@ -323,8 +326,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 					
 					return CRS.parseWKT(coordString);
 				} catch (Exception ex) {
-					System.err.println(getClass().getName()+">>getProjection() "+projectionClass);
-					ex.printStackTrace(System.err);
+					Logger.error("Error getting CRS: " + getClass().getName()+">>getProjection() "+projectionClass);
 				}
 				//return d.getProjection(GeoLambertCCProjection.class,getArgs(d));
 				return null;
@@ -372,6 +374,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 		 * @version $Revision: 1.3 $
 		 */
 		public class PSProjectionGUIAdaptor implements ProjectionGUIAdaptor {
+			final Logger Logger = LogManager.getLogger(PSProjectionGUIAdaptor.class.getName());
 			/**
 			 * Constructor for GeoPSProjectionGUIAdaptor
 			 */
@@ -471,8 +474,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 					
 					return CRS.parseWKT(coordString);
 				} catch (Exception ex) {
-					System.err.println(getClass().getName()+">>getProjection() "+projectionClass);
-					ex.printStackTrace(System.err);
+					Logger.error("Error getting CRS: " + getClass().getName()+">>getProjection() "+projectionClass);
+					Logger.error(ex.getStackTrace());
 				}
 				//return d.getProjection(GeoLambertCCProjection.class,getArgs(d));
 				return null;
@@ -523,6 +526,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 		 * @version $Revision: 1.3 $
 		 */
 		public class TransverseMercatorProjectionGUIAdaptor implements ProjectionGUIAdaptor {
+			final Logger Logger = LogManager.getLogger(TransverseMercatorProjectionGUIAdaptor.class.getName());
 			/**
 			 * Constructor for GeoTransverseMercatorProjectionGUIAdaptor
 			 */
@@ -630,8 +634,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 					
 					return CRS.parseWKT(coordString);
 				} catch (Exception ex) {
-					System.err.println(getClass().getName()+">>getProjection() "+projectionClass);
-					ex.printStackTrace(System.err);
+					Logger.error("Error getting CRS: " + getClass().getName()+">>getProjection() "+projectionClass);
+					Logger.error(ex.getStackTrace());
 				}
 				//return d.getProjection(GeoLambertCCProjection.class,getArgs(d));
 				return null;
@@ -682,6 +686,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 		 * @version $Revision: 1.3 $
 		 */
 		public class XYProjectionGUIAdaptor implements ProjectionGUIAdaptor {
+			final Logger Logger = LogManager.getLogger(XYProjectionGUIAdaptor.class.getName());
 			/**
 			 * Constructor for GeoXYProjectionGUIAdaptor
 			 */
@@ -748,8 +753,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 					
 					return CRS.parseWKT(coordString);
 				} catch (Exception ex) {
-					System.err.println(getClass().getName()+">>getProjection() "+projectionClass);
-					ex.printStackTrace(System.err);
+					Logger.error("Error getting CRS: " + getClass().getName()+">>getProjection() "+projectionClass);
+					Logger.error(ex.getStackTrace());
 				}
 				//return d.getProjection(GeoLambertCCProjection.class,getArgs(d));
 				return null;
@@ -921,6 +926,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 	 * @version $Revision: 1.3 $
 	 */
 	class IvjEventHandler implements java.awt.event.ItemListener, java.awt.event.KeyListener {
+		final Logger Logger = LogManager.getLogger(IvjEventHandler.class.getName());
 			/**
 			 * Method itemStateChanged
 			 * @param e java.awt.event.ItemEvent
@@ -1703,8 +1709,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 	private void handleException(java.lang.Throwable exception) {
 
 		Logger.error("--------- EXCEPTION in anl.verdi.area.target.ProjectInfo ---------");
-		exception.printStackTrace(); 				// 2014 sends to stderr (normal)
-		exception.printStackTrace(System.out);
+		Logger.error(exception.getStackTrace());
 	}
 
 
@@ -1914,7 +1919,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 	 */
 	public static void main(java.lang.String[] args) {
 		try {
-			javax.swing.JFrame frame = new javax.swing.JFrame();
+			JFrame frame = new JFrame();
 			ProjectionInfo aJeoProjectionParameterDialog;
 			aJeoProjectionParameterDialog = new ProjectionInfo();
 			frame.setContentPane(aJeoProjectionParameterDialog);
@@ -1930,8 +1935,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 			frame.setSize(frame.getWidth() + insets.left + insets.right, frame.getHeight() + insets.top + insets.bottom);
 			frame.setVisible(true);
 		} catch (Throwable exception) {
-			System.err.println("Exception occurred in main() of javax.swing.JPanel");
-			exception.printStackTrace(System.out);
+			Logger.error("Exception occurred in main() of javax.swing.JPanel.");
+			Logger.error(exception.getStackTrace());
 		}
 	}
 
@@ -2053,6 +2058,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 		allowAutoZone = b;
 	}
 	static class EllipseData implements Comparable {
+		static final Logger Logger = LogManager.getLogger(EllipseData.class.getName());
 		/** The ellipsoid name */
 		String name;
 		/** The ellipsoid name - long version */
@@ -2235,7 +2241,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 	       	out.close();
 	       	
 	    }catch (Exception e){//Catch exception if any
-	      System.err.println("Error: " + e.getMessage());
+	    	Logger.error("Error: " + e.getMessage());
 	    }
 	}
 }

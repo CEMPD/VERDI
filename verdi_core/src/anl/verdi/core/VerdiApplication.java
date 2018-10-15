@@ -1,5 +1,6 @@
 package anl.verdi.core;
 
+import gov.epa.emvl.Mapper;
 import gov.epa.emvl.RemoteFileReader;
 
 import java.io.File;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -20,11 +22,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Level;
-//import org.geotools.map.DefaultMapContext;
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.apache.logging.log4j.LogManager;	
+import org.apache.logging.log4j.Logger;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.MapContent;
 import org.jdesktop.swingx.JXTable;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import saf.core.ui.util.FileChooserUtilities;
 import simphony.util.messages.MessageCenter;
@@ -104,7 +107,6 @@ FormulaElementCreator, ListDataListener {
 
 	private Project project;
 
-//	private MapContext domainPanelContext = new DefaultMapContext(DefaultGeographicCRS.WGS84);
 	private MapContent domainPanelContext = new MapContent();
 //	MapViewport viewport = new MapViewport();
 //	viewport.setCoordinateReferenceSystem((CoordinateReferenceSystem)DefaultGeographicCRS.WGS84);
@@ -121,6 +123,7 @@ FormulaElementCreator, ListDataListener {
 
 	public VerdiApplication(DataManager manager) {
 		this.manager = manager;
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		singleton = this;
 		Logger.debug("Msg #1: in VerdiApplication DataManager");
 	}
@@ -133,6 +136,40 @@ FormulaElementCreator, ListDataListener {
 	public VerdiGUI getGui() {
 		return gui;
 	}
+	
+	//TODO - write me
+	//TAH
+	Mapper mapper = null;
+	public Mapper getLastMapper() {
+		return mapper;
+	}	
+	public void setLastMapper(Mapper mapper) {
+		this.mapper = mapper;
+	}
+	
+	double[][] domain = null;
+	public double[][] getLastDomain() {
+		return domain;
+	}	
+	public void setLastDomain(double[][] domain) {
+		this.domain = domain;
+	}
+	
+	ReferencedEnvelope bounds = null;
+	public ReferencedEnvelope getLastBounds() {
+		return bounds;
+	}
+	public void setLastBounds(ReferencedEnvelope bounds) {
+		this.bounds = bounds;
+	}
+	
+	CoordinateReferenceSystem crs = null;
+	public CoordinateReferenceSystem getLastCoordinateReferenceSystem() {
+		return crs;
+	}
+	public void setLastCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
+		this.crs = crs;
+	}
 
 	public void init(VerdiGUI gui, Project project) {
 		Logger.debug("Msg #8: in VerdiApplication.init");
@@ -143,8 +180,7 @@ FormulaElementCreator, ListDataListener {
 				if (messageEvent != null) {
 					Logger.debug("Msg: " + messageEvent.getMessage());
 					if (messageEvent.getThrowable()!=null) {
-						Logger.error(" : throwable - "
-								+ messageEvent.getThrowable().getMessage());
+						Logger.error("Message throwable",  messageEvent.getThrowable());
 					}
 				}
 				if (messageEvent != null && messageEvent.getLevel().equals(Level.ERROR) &&
@@ -162,10 +198,7 @@ FormulaElementCreator, ListDataListener {
 			}
 		});
 
-		//File file = new File(Tools.getPropertyFile());
 		try {
-			//if (file.exists()) {
-			//System.getProperties().load(new FileInputStream(file));
 			String datasetHome = System.getProperty(Tools.DATASET_HOME);
 			String projectHome = System.getProperty(Tools.PROJECT_HOME);
 			String scriptHome = System.getProperty(Tools.SCRIPT_HOME);
@@ -214,7 +247,7 @@ FormulaElementCreator, ListDataListener {
 	public boolean exit() {
 		Logger.debug("in VerdiApplication.exit");
 		if (RemoteFileReader.TEMP_REMOTE_FILE_LIST.size()>0) {
-			int res = JOptionPane.showConfirmDialog(gui.getFrame(), "Do you want to delete the temparory files downloaded remotely?",
+			int res = JOptionPane.showConfirmDialog(gui.getFrame(), "Do you want to delete the temporary files downloaded remotely?",
 					"Delete Temp Files Warning", JOptionPane.YES_NO_OPTION);
 			if (res == JOptionPane.YES_OPTION) {
 				for (String filePath : RemoteFileReader.TEMP_REMOTE_FILE_LIST) {
@@ -232,7 +265,7 @@ FormulaElementCreator, ListDataListener {
 		try {
 			manager.closeAllDatasets();			
 		} catch (IOException e) {
-			Logger.error("Error closing datasets " + e.getMessage());
+			Logger.error("Error closing datasets", e);
 		}
 		return true;
 	}
@@ -271,7 +304,7 @@ FormulaElementCreator, ListDataListener {
 				io.load(file, project, manager, this);
 				currentFile = file;
 			} catch (IOException e) {
-				Logger.error("Error while loading project " + e.getMessage());
+				Logger.error("Error while loading project", e);
 			}
 		}
 	}
@@ -296,7 +329,7 @@ FormulaElementCreator, ListDataListener {
 				io.save(file, project);
 				currentFile = file;
 			} catch (IOException e) {
-				Logger.error("Error while saving project " + e.getMessage());
+				Logger.error("Error while saving project", e);
 			}
 		}
 	}
@@ -379,7 +412,7 @@ FormulaElementCreator, ListDataListener {
 				Exception ex = result.getException();
 				if (ex == null)
 					ex = new RuntimeException(result.getMessage());
-				Logger.error("Formula '" + strFormula + "' is invalid " + ex.getMessage());
+				Logger.error("Formula '" + strFormula + "' is invalid ", ex);
 				success = false;
 			} else if (status == ValidationResult.Status.WARN) {
 				Logger.warn(result.getMessage());
@@ -392,10 +425,12 @@ FormulaElementCreator, ListDataListener {
 				frame = formula.evaluate(manager, ranges, convertUnits);
 			}
 
-		} catch (IllegalFormulaException e) {
-			Logger.error("Error while evaluating formula " + e.getMessage());
 		} catch (Throwable e) {
-			Logger.error(e.toString(), new Exception("Error while evaluating formula."));
+			Logger.error("Error while evaluating formula", e);
+			String errInfo = e.getClass().getName();
+			if (e.getMessage() != null && !e.getMessage().equals(""))
+				errInfo += ": " + e.getMessage();
+			JOptionPane.showMessageDialog(getGui().getFrame(), "An error occured while evaluating the formula:\n" + errInfo + "\nPlease see the log for more details.", "Error", JOptionPane.ERROR_MESSAGE);			
 		}
 
 		return frame;
@@ -429,7 +464,7 @@ FormulaElementCreator, ListDataListener {
 				Exception ex = result.getException();
 				if (ex == null)
 					ex = new RuntimeException(result.getMessage());
-				Logger.error("Formula '" + strFormula + "' is invalid " + ex.getMessage());
+				Logger.error("Formula '" + strFormula + "' is invalid", ex);
 				success = false;
 			} else if (status == ValidationResult.Status.WARN) {
 				Logger.warn(result.getMessage());
@@ -443,12 +478,10 @@ FormulaElementCreator, ListDataListener {
 			}
 
 		} catch (IllegalFormulaException e) {
-			Logger.error("Error while evaluating formula " + e.getMessage());
+			Logger.error("Error while evaluating formula", e);
 		}
 		return frame;
 	}
-
-
 
 	/**
 	 * Called whenever an area in a plot is being selected.
@@ -476,30 +509,8 @@ FormulaElementCreator, ListDataListener {
 			JXTable table = new JXTable(creator.createTableModel());
 			table.setColumnControlVisible(true);
 			table.setHorizontalScrollEnabled(true);
-//			table.setHighlighters(new HighlighterPipeline(
-//					new Highlighter[]{AlternateRowHighlighter.classicLinePrinter}));
-//			table.getHighlighters().addHighlighter(new RolloverHighlighter(Color.BLACK, Color.WHITE));
 			table.setRolloverEnabled(true);
 			gui.addProbe(table, creator.getName(), creator.getRangeAxisName());
-
-			/*
-			 * int rowNameOffset = 0; List<String> rowHeaders = new ArrayList<String>();
-			 * if (frame.getAxes().getYAxis() != null) { // assume probe from
-			 * tile type plot if (slice.getYRange() != null) { rowNameOffset =
-			 * slice.getYRange().getOrigin(); } DataFrameAxis yAxis =
-			 * frame.getAxes().getYAxis(); int origin = yAxis.getOrigin();
-			 * 
-			 * for (int row = 0; row < yAxis.getRange().getExtent(); row++) {
-			 * rowHeaders.add(String.valueOf(row + origin + rowNameOffset)); } }
-			 * else { // assume time series type plot if (slice.getYRange() !=
-			 * null) { rowNameOffset = slice.getTimeRange().getOrigin(); }
-			 * DataFrameAxis timeAxis = frame.getAxes().getTimeAxis(); int
-			 * origin = timeAxis.getOrigin();
-			 * rowHeaders.add(String.valueOf(origin + rowNameOffset)); }
-			 * 
-			 * RowHeader rowHeader = new RowHeader(rowHeaders, table);
-			 */
-
 		}
 	}
 
@@ -530,8 +541,7 @@ FormulaElementCreator, ListDataListener {
 		if (plot.getType() == Formula.Type.TILE) {
 			int[] p = point;
 			if (point.length == 3) {
-				// must be no layer, but we want to
-				// add that with the NO_VALUE marker
+				// must be no layer, but we want to add that with the NO_VALUE marker
 				p = new int[4];
 				p[0] = point[0];
 				p[1] = TilePlot.NO_VAL;
@@ -564,7 +574,7 @@ FormulaElementCreator, ListDataListener {
 				buf.append((format != null) ? format.format(doubleValue) : doubleValue);
 			} else {
 				double logvalue = Math.log(frame.getDouble(index))/Math.log(logBase);
-				logvalue = (logvalue >  DataUtilities.BADVAL3) ? logvalue : DataUtilities.BADVAL3;
+				logvalue = (logvalue >  DataUtilities.BADVAL3 && logvalue < DataUtilities.NC_FILL_FLOAT) ? logvalue : DataUtilities.BADVAL3;
 				buf.append((format != null) ? format.format(logvalue) : logvalue);
 			}
 			gui.setStatusOneText(buf.toString());
@@ -631,6 +641,7 @@ FormulaElementCreator, ListDataListener {
 			}
 		}
 	}
+	
 	/**
 	 * Loads the specified area files.
 	 *
@@ -671,11 +682,13 @@ FormulaElementCreator, ListDataListener {
 		File[] files = FileChooserUtilities.getOpenFiles(currentDatasetFile);
 		if (files.length > 0) {
 			try {
+				getGui().showBusyCursor();
 				loadDataset(files);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			getGui().restoreCursor();
 			currentDatasetFile = files[0];
 		}
 	}
@@ -710,7 +723,6 @@ FormulaElementCreator, ListDataListener {
 				boolean enabled = selectedFormula.getAxes().getZAxis() != null;
 				gui.setVertCrossPlotEnabled(enabled);
 			}
-
 		}
 	}
 
@@ -727,7 +739,7 @@ FormulaElementCreator, ListDataListener {
 		try {
 			manager.closeDataset(set.getAlias());
 		} catch (IOException e) {
-			Logger.error("Error while closing dataset '" + set.getName() + "'" + e.getMessage());
+			Logger.error("Error while closing dataset '" + set.getName() + "'", e);
 		}
 	}
 
@@ -755,7 +767,7 @@ FormulaElementCreator, ListDataListener {
 		// and if it fails then error message.
 		FormulaFactory factory = new FormulaFactory();
 		Formula formula = factory.createTileFormula(strFormula, null);
-		// don't do any range checking here / that can wait until later
+		// don't do any range checking here - that can wait until later
 		// when we have an element created
 		ValidationResult result = formula.validate(manager, new ArrayList<AxisRange>());
 		ValidationResult.Status status = result.getStatus();
@@ -764,7 +776,7 @@ FormulaElementCreator, ListDataListener {
 			Exception ex = result.getException();
 			if (ex == null)
 				ex = new RuntimeException(result.getMessage());
-			Logger.error("Formula '" + strFormula + "' is invalid " + ex.getMessage());
+			Logger.error("Formula '" + strFormula + "' is invalid", ex);
 			ok = false;
 		} else if (status == ValidationResult.Status.WARN) {
 			Logger.warn(result.getMessage());
@@ -851,13 +863,6 @@ FormulaElementCreator, ListDataListener {
 			if (fastPlot != null) {
 				dialog.init(project.getFormulasAsList(), new VectorOverlayTimeChecker(project.getDatasetsAsList(),
 						fastPlot.getData().get(0)));
-				// 2015 FastTilePlot vector overlay; before next debug message printed messages from:
-				//		anl.verdi.core.Project - in Project getFormulasAsList
-				//		anl.verdi.gui.FormulaListModel - in FormulaListModel elements
-				//		anl.verdi.core.Project - in Project getDatasetAsList
-				//		anl.verdi.gui.DatasetListModel - in DatasetListModel elements
-				//		anl.verdi.util.VectorOverlayTimeChecker - in constructor for VectorOverlayTimeChecker
-				
 				Logger.debug("did dialog.init for fastPlot != null");
 			} else {
 				dialog.init(project.getFormulasAsList(), new VectorOverlayTimeChecker(project.getDatasetsAsList(),
@@ -866,11 +871,6 @@ FormulaElementCreator, ListDataListener {
 			}
 			dialog.pack();
 			dialog.setVisible(true);
-			// 2015 anl.verdi.gui.FormulaListElement - in FormulaListElement toString
-			//		anl.verdi.gui.FormulaListElement - in FormulaListElement getDataset
-			//			above 2 messages many times, followed by next message multiple times
-			//		anl.verdi.gui.FormulaListElement - in FormulaListElement getFormula
-			//			then toString/getDataset pairs 3 times followed by multiple getFormula
 			Logger.debug("dialog is now visible");
 
 			FormulaListElement xElement = dialog.getUElement();
@@ -883,9 +883,6 @@ FormulaElementCreator, ListDataListener {
 				DataFrame yFrame = evaluateFormula(Formula.Type.VECTOR); //, range);	// range
 				int vectorSamplingInc = dialog.getVectorSamplingInc();	// 2015 get input Vector Sampling Increment
 				Logger.debug("got vectorSamplingIncrement = " + vectorSamplingInc);
-				
-// for testing old code w/o vectorSamplingInc
-//				DataFrame[] frames = DataUtilities.unitVectorTransform(xFrame, yFrame);	// 2015 do not pass in vector sampling increment
 				
 				DataFrame[] frames = DataUtilities.unitVectorTransform(xFrame, yFrame, vectorSamplingInc);	// 2015 pass in vector sampling increment
 				Logger.debug("back from DataUtilities.unitVectorTransform");
@@ -907,13 +904,11 @@ FormulaElementCreator, ListDataListener {
 		}
 	}
 
-//	public MapContext getDomainPanelContext() {
 	public MapContent getDomainPanelContext() {
 		Logger.debug("Logger #5 & #7: in VerdiApplication.getDomainPanelContext");
 		return domainPanelContext;
 	}
 
-//	public void setDomainPanelContext(MapContext domainPanelContext) {
 	public void setDomainPanelContext(MapContent domainPanelContext) {
 		Logger.debug("in VerdiApplication setDomainPlanelContext");
 		this.domainPanelContext = domainPanelContext;
@@ -956,8 +951,6 @@ FormulaElementCreator, ListDataListener {
 			return;
 		helpDir = helpDir + "/help";
 
-		//String helpName = helpDir + "\\wdtUserManual.pdf";
-		//AcrobatHelpWindow.showContents(window, winTitle + ":Help Contents", helpName);
 		String helpName1 = helpDir + "/verdiUserManualIndex.htm";
 		String helpName2 = helpDir + "/verdiUserManual.htm";
 		HelpWindowWithContents.showContents(null, "VERDI Help", helpName1, helpName2);

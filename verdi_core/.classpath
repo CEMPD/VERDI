@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry excluding="org/geotools/verdi/referencing/" kind="src" path="src"/>
+	<classpathentry excluding="org/geotools/verdi/referencing/" kind="src" path="src">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="verdi_core/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/verdi_bootstrap"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/verdi_saf_ui"/>
@@ -28,10 +32,9 @@
 	<classpathentry exported="true" kind="lib" path="lib/piccolo2d-extras-3.0.jar" sourcepath="lib_src/piccolo2d-extras-3.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/piccolo2d-swt-3.0.jar" sourcepath="lib_src/piccolo2d-swt-3.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/GRIP.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jts-1.13.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jts-1.13.jar" sourcepath="/home/tahoward/Downloads/jts-1.13.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdom-2.0.5.jar" sourcepath="lib_src/jdom-2.0.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jide-oss-3.5.14.jar" sourcepath="lib_src/jide-oss-3.5.14-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/junit-4.11.jar" sourcepath="lib_src/junit-4.11-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swingx-all-1.6.5.jar" sourcepath="lib_src/swingx-all-1.6.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/velocity-1.7.jar" sourcepath="lib_src/velocity-1.7.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
@@ -49,11 +52,13 @@
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.uomo.xml_0.7.0.201404240011.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/verdi_saf_core_runtime"/>
 	<classpathentry kind="lib" path="lib/org.apache.commons.lang_2.6.0.v201205030909.jar"/>
-	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar" sourcepath="lib_src/commons-collections-3.2.1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jai_imageio_windows-i586.jar"/>
-	<classpathentry kind="lib" path="lib/j3dcore.jar"/>
+	<classpathentry kind="lib" path="lib/j3dcore.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="verdi_core/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/j3dutils.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/repast_simphony_gis_2_1_0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jsr-275-1.0-beta-2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/icu4j-50_1_1.jar" sourcepath="lib_src/icu4j-50_1_1-src.jar">
 		<attributes>
@@ -61,40 +66,42 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.osgi-3.9.1.v20130814-1242.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j-api-2.0-rc1.jar" sourcepath="/verdi_bootstrap/lib_src/log4j-api-2.0-rc1-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-api-2.0-rc1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-core-2.0-rc1.jar" sourcepath="/verdi_bootstrap/lib_src/log4j-core-2.0-rc1-sources.jar"/>
 	<classpathentry kind="lib" path="lib/clibwrapper_jiio-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jt-all-1.3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.19.jar" sourcepath="lib_src/jfreechart-1.0.19-sources.zip"/>
 	<classpathentry kind="lib" path="lib/netcdfAll-4.5.5-SNAPSHOT.jar" sourcepath="lib_src/thredds_4.5.5.zip"/>
 	<classpathentry kind="lib" path="lib/bufr-4.3.16.jar"/>
-	<classpathentry kind="lib" path="lib/gt-api-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-brewer-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-coverage-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-coverage-api-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-coveragetools-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-data-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-epsg-extension-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-epsg-hsql-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-epsg-wkt-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-feature-aggregate-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-feature-pregeneralized-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-geometry-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-grid-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-image-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-jts-wrapper-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-main-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-metadata-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-opengis-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-referencing-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-render-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-shapefile-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/gt-swing-12.2.jar"/>
-	<classpathentry kind="lib" path="lib/hsqldb-2.2.8.jar"/>
 	<classpathentry kind="lib" path="lib/jai_codec-1.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/jai_core-1.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/jai_imageio-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/jcommon-1.0.23.jar"/>
 	<classpathentry kind="lib" path="lib/vecmath-1.3.2.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.23.jar" sourcepath="lib_src/jcommon-1.0.23-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/miglayout-core-5.1-20150404.220010-96.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/miglayout-swing-5.1-20150404.220019-96.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gt-api-14.4.jar" sourcepath="lib_src/gt-api-14.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/gt-brewer-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-coverage-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-coverage-api-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-data-14.4.jar" sourcepath="lib_src/gt-data-14.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/gt-epsg-extension-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-epsg-wkt-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-feature-aggregate-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-feature-pregeneralized-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-geometry-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-grid-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-image-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-jts-wrapper-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-main-14.4.jar" sourcepath="lib_src/gt-main-14.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/gt-metadata-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-opengis-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-referencing-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-render-14.4.jar" sourcepath="lib_src/gt-render-14.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/gt-shapefile-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-swing-14.4.jar"/>
+	<classpathentry kind="lib" path="lib/gt-transform-14.4.jar" sourcepath="lib_src/gt-transform-14.4-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jt-all-1.4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/repast_simphony_gis_2_3_0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

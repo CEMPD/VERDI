@@ -1,0 +1,2305 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<metadata>
+	<idinfo>
+		<citation>
+			<citeinfo>
+				<origin>Steeves, Peter and Douglas Nebert</origin>
+				<pubdate>1994</pubdate>
+				<title Sync="TRUE">huc250k</title>
+				<edition>1</edition>
+				<geoform Sync="TRUE">vector digital data</geoform>
+				<serinfo>
+					<sername>Open-File Report</sername>
+					<issue>94-0236</issue>
+				</serinfo>
+				<pubinfo>
+					<pubplace>Reston, Virginia</pubplace>
+					<publish>U.S. Geological Survey</publish>
+				</pubinfo>
+				<onlink>http://water.usgs.gov/lookup/getspatial?huc250k</onlink>
+				<ftname Sync="TRUE">huc250k</ftname></citeinfo>
+		</citation>
+		<descript>
+			<abstract>
+The Geographic Information Retrieval and Analysis System (GIRAS)
+was developed in the mid 70s to put into digital form a number
+of data layers which were of interest to the USGS. One of these
+data layers was the Hydrologic Units. The map is based on the
+Hydrologic Unit Maps published by the U.S. Geological Survey
+Office of Water Data Coordination, together with the list
+descriptions and name of region, subregion, accounting units, and
+cataloging unit. The hydrologic units are encoded with an eight-
+digit number that indicates the hydrologic region (first two digits),
+hydrologic subregion (second two digits), accounting unit (third two
+digits), and cataloging unit (fourth two digits).
+
+The data produced by GIRAS was originally collected at a scale of
+1:250K.  Some areas, notably major cities in the west, were
+recompiled at a scale of 1:100K. In order to join the data together
+and use the data in a geographic information system (GIS) the data
+were processed in the ARC/INFO GUS software package.  Within the
+GIS, the data were edgematched and the neatline boundaries between
+maps were removed to create a single data set for the conterminous
+United States.
+
+NOTE: A version of this data theme that is more throughly
+checked (though based on smaller-scale maps) is available here:
+http://water.usgs.gov/lookup/getspatial?huc2m
+
+HUC, GIRAS, Hydrologic Units, 1:250
+</abstract>
+			<purpose>
+This data set was compiled originally to provide the National Water
+Quality Assessment (NAWQA) study units with an intermediate-
+scale river basin boundary for extracting other GIS data layers. The
+data can also be used for illustration purposes at intermediate or
+small scales (1:250,000 to 1:2 million).
+</purpose>
+			<supplinf>
+Procedures_Used:
+The data was recieved as compressed giras tar files representing
+either a 1:250,000-scale (1:250K) quadrangle or a 1:100,000-scale (1:100K)
+quadrangle.  Each file was named after its respective quadrangle.  A
+coverage of 1:250k quadrangles was used to divide the country up into
+four sections and get a list of names for each section.  Using GIRASARC2,
+an aml designed to create an ARC/INFO data set (coverage) from a GIRAS file
+and a corresponding neat line coverage, it was quickly discovered that many
+of the quad names were to long for the program (i.e. sault_saint_marie)
+and a generic naming system for files and coverages was incorporated.  In
+1 of 10 cases, the name of the quadrangle did not correspond with the name
+of the file.  These problems were traced down and corrected (after all four
+sections were converted there were many files left over...these wound up be
+all the 1:100k quads which did not have similar names to the 1:250k
+files).
+
+After the files for a given section were all converted into ARC/INFO
+format, a loop aml was run which copied a coverage and its neatline
+cover into temporary storage (there was not enough room in info to
+deal with a large number of files in one directory), attached to
+that directory, built line topology, and went into the editor, ARCEDIT.
+In ARCEDIT, the outer edge (original neatline) was selected and deleted an
+the mathematically-calculated neatline coverage from the GIRASNEAT AML
+program was copied in using the ARCEDIT GET command.  The original
+neatline was replaced with a calculated neatline because in all cases, the
+outline of the coverage quad never quite conformed to a "true" neatline
+causing overlaps and gapes between adjacent maps. The new neatline was
+connected to the internal arcs where they intersected.  Lines which did
+not quite join the new neatline were extended to the edge with a maximum
+tolerance of 500 meters.  All extensions were made within this tolerance.
+All arcs which extended beyond the new neatline were clipped off within
+a 500 meter tolerance as arguments to the CLEAN command into a separate
+directory. Both the neatline and huc coverages were deleted from the
+temporary space, and the program looped to the next coverage.
+
+Another program was then run which added an item to the .aat called OUTER,
+went into INFO, and populated the attribute for all arcs composing the
+new neatline.  This was done by reselecting for the identity of the polygon
+to the left or right of each arc whose value was "1", the identity of the
+outer "universe" polygon (reselect lpoly# = 1 or rpoly# = 1 in the .aat and
+calculated outer to = 1).  All coverages were checked for additional
+dangles and then a MAPJOIN was run using NET as the feature option.
+Finally, most map edge lines were removed from the MAPJOINed coverage
+using the DISSOLVE to create a seamless basin coverage with polygons
+(basins) and arcs (boundaries) with attributes.
+
+Quality control methods were applied to the resulting coverage by detecting
+and fixing node and label errors and remaining neat line arc problems
+(i.e. long neat lines still in the coverage).  Many more problems arose
+in the western part of the country than in the east.  Bordering HUC code
+disagreements between quads caused a number of cases in which neatlines
+did not dissolve.  These were provisionally corrected for the most part,
+however there were several cases that required external review and editing
+to fix, and are now incorporated in the final data set.  After all 1:250K
+sections were completed, the same procedure was run for the handful of
+1:100k quads.  These were mapjoined with the 1:250k quads to provide more
+detailed coverage where it was available.
+
+Revisions:
+Revision #1a.
+Process_Date  05/2006
+The total number of HUCs in the 1:250k, - there are 2111 cataloging units
+in the lower 48 states. The following:
+18 regions,
+204 subregions
+324 accounting units
+2111 cataloging units
+HUC 03100103 was added because it was missing. This HUC is on the Gulf coast near Tampa Fl.
+and the 1:2mil version was used as a digitizing guide.
+HUC 17100304 had to be split  in 2; the northern part retained the existing HUC code of 17100304
+and the southern portion was assigned 17100306.
+Huc Code 14060001 was assigned to 2 HUCs, one was correct and the other was reassigned to 14060002.
+I redefined the HUC codes to be character, so the leading zero of all regions less than 10 could
+be assigned. I also redefined the datatype of the REG, SUB, ACC anc CAT fields to
+all be character, so leading zeros could be assigned. I also redid the SUB, ACC and CAT assignments
+to reflect what they really are;  for example, a SUB region is suppose to consist of 4 characters
+but the original version only allowed 2, the ACC (accounting units) are suppose to consist of 6 characters,
+but the original version only allowed 2 and the CAT (cataloging units) are suppose to consists
+of all 8 characters, but the original version only allowed 2.
+
+The following is the link to the offical Alaska 1:250k HUC cover:
+http://agdc.usgs.gov/data/projects/anwr/metadata/akhuc.html
+
+Revision #1. See above for all the details
+Process_Date  10/92
+
+Revision #2. Seattle and Bakersfield quadrangles were missing
+from the composite supplied by Pete Steeves.  These were manually
+pasted in using Arcedit with small tolerances. Labelerrors were
+remedied and most dangles were removed using the Eliminate command.
+Process_Date    1/93
+
+Revision #3.  The following changes were made to a
+1:250,000-scale version derived from National Mapping Divisions
+Geographic Information Retrieval and Analysis System (GIRAS) data.
+The discrepancies in the hydrologic unit codes (HUCs) in California
+were changed because the California State Hydrologic Unit Map (HUM)
+was revised in 1978 but the 1:250,000-scale digital dataset was not.
+This has been reviewed by Bill Battaglin, Doug Nebert, and Paul
+Kapinos and is noted under Reviews (#6 below).
+
+The areas in which the HUC labels were incorrect in California were
+180701, 180702, 180703, 180600, 180300, and 180400.  Boundaries were
+added in 180702 and 180600 from the 1:2 million source.  Along the
+Oregon/California border, a boundary was added in 180102.  In Wyoming,
+a boundary was added in 100902 from the 1:2 million source.  Labels
+were corrected in these HUCs to reflect state updates, and where
+necessary, to add new labels to the newly-drawn boundaries.  Map edges
+were manually removed in Arkansas, California, and along the
+Oregon/California border.
+
+After the changes were made and saved in Arcedit, the build and clean
+commands were executed, followed by labelerrors.  Three polygons had
+duplicate labels and were corrected.  The labels were centered in the
+polygons by the centroidlabels command.  Verification of the coverage
+was done by the describe command.
+Process_Date  12/93.
+Revision #4.   The NAMES file was added to the data set and its
+attributes were defined in the ATT file of the documentaton.  This
+table is a lookup table to correlate the 8-digit numbers with verbose
+names officially assigned to the basins.
+Process_Date  3/94.
+Revision #5.  The following corrections were made to the 1:250,000-scale
+coverage of Hydrologic Unit Codes (HUC250):
+
+Valid HUC code, 7140103, added to HUC250.NAM.  Bourbeuse, Missouri.
+HUC250.NAM was sorted on HUC.
+
+HUC frequency &gt;1, tiny polygons were deleted that were erroneous:
+
+17010212   deleted small poly to NW of main poly
+10130305   deleted small poly to S of main poly
+10230005   deleted small poly to S of main poly
+14020001   deleted small poly to N of main poly
+15050201   deleted small poly to W of main poly
+04080203   deleted small poly to N of main poly
+03120001   deleted small poly to S of main poly
+
+Invalid HUC codes, not in names file, were corrected:
+
+18020023   HUC should be 18020111 (in N-central California)
+18070010   HUC should be 18070303 (in so. California)
+15010017   HUC should be 15010007, delete arc separating it
+(in nw Arizona)
+1870201    HUC should be 18070201 (in so. California, missing an 0)
+1870204    HUC should be 18070204 (in so. California, missing an 0)
+18060012   HUC should be 18060011 (in so. California,
+improper polygon closure)
+
+18060011   HUC label added after polygon closure of 18060011
+
+HUC frequency &gt;1, larger polys were checked and corrected:
+
+18020126   western poly is 18020108 in HUC2M             (CA)
+18050005   southern poly is 18050006 in HUC2M            (CA)
+18060006   split into 2 polys, no apparent reason, delete arc
+splitting polys                                    (CA)
+04110001 and 04100001 together are 04100001 in HUC2M     (MI)
+(MAPEDGE was deleted)
+02080108    northwestern poly is 02080208 in HUC2M       (VA)
+
+The invalid HUC codes, and 7140103 were found by relating to the
+HUC250.NAM file, and identifying polygons with no match in the names
+file.  The rest were found by looking at the 96 polygons which had
+HUC codes with frequencies &gt;1 in the PAT.  Most of these seemed to
+be correct, and were along the US-Canada boundary, or were islands
+along the coasts.
+
+These errors were found in the HUC250 coverage published as OFR 94-0326.
+Process_Date  12/94 &amp; 1/95
+Reviews_Applied_to_Data:
+Peer review, 10/18/93, Bill Battaglin, USGS-WRD, Lakewood, Co, memo to
+Doug Nebert:
+----------------------------------------------------------------------
+"I have completed a review of the 1:250,000 scale hydrologic units coverage
+(HUC) and found the digital data and metadata to be of high quality.  I
+have a few suggested improvements to the digital data and to the
+documentation. Below is a summary of the methods I used to check feature
+accuracy in the digital data base and the problems I found.
+
+Digital Features:
+
+The line work for the HUC coverage was checked against the line work from:
+
+(1) the 1:2,000,000 HUC coverage by plotting both data sets out on one large
+graphic (about 1:3,000,000).  No major discrepancies were found except in
+coastal areas where the 1:2,000,000 scale coverage had more detail than the
+1:250,000 scale coverage.
+
+(2) line work from 1:24,000 scale digitized drainage basins in Colorado,
+Illinois, and New Jersey.  The match was generally good with departures
+generally less than 2500 meters.  The biggest departures were in Colorado
+and were as large as 4000 meters.
+
+(3) line work from the 1:2,000,000 scale rivers coverage for the USA by
+plotting both data sets out on one large graphic (about 1:3,000,000).  In
+general the nesting of streams in HUCs was good and HUC boundaries inter-
+sected steams at stream intersections.  In some places (SE New Mexico,
+SE California and NW Utah), the streams coverage does not match the HUC
+coverage that well, but this could easily be because of the unusual nature
+of streams in these areas or because of inaccuracies in the streams coverage.
+
+(4) line work from 1:100,000 scale streams from Colorado, Illinois, and
+Kansas.  The nesting of streams in HUCs was very good.  Stream arcs for
+the most part did not cross HUC arcs except at stream intersections.  The
+error (distance from intersection to HUC line) between HUC lines and stream
+intersection was less than 500 meters at all intersections checked
+(about 25).
+
+Problems with Line work:
+
+(1) There was a very large number of very short arcs in the coverage (3211
+Lt 1000 meters long and 1729 Lt. 100 meters long).  Most of these arcs were
+internal (did not border on outside polygon) and coded as 250k edges(3)
+(almost 3000) but some were 250k (2) lines and one was a 2m dlg (4). Arcs
+with lengths of less than 100 meters (maybe even less than 1000 meters) are
+difficult to deal with when editing subsets of the coverage, and they also
+add to the overall size of the database.  I know many of these lines were
+created in the process of edgematching the quads, but I think the informa-
+tion content of these very short arcs is less valuable than the hassle and
+overhead involved in keeping them in the coverage.
+
+(2) The edit distance for the coverage was set to a very small value.
+This may have been required for earlier processing, however, it makes
+the finished coverage difficult to work with.  I had to reset the edit
+distance to a larger value when I wanted to select arcs in ARCEDIT
+interactively.  This, of course, will be one of the things users will
+want to do with the new HUC coverage.
+
+Polygon labels/attributes:
+
+(1) Label point accuracy was checked by making a point cover of polygon
+labels from the 1:2,000,000 HUC coverage and then doing an identify of
+those points in the 1:250,000 scale HUC polygon.  This procedure looked
+for both new or missing polygons, and was also used to check attribute
+values.  I also dissolved both coverages by accounting unit and compared
+the number and location of remaining polygons.
+
+Problems with labels/attributes:
+
+(1) I discovered a total of 649 places where the HUC codes from the label
+point of the 1:2,000,000 coverage did not match the HUC code for the
+1:250,000 HUC polygon that it fell within.  As you had indicated in the
+documentation, there were a lot of differences in California. The 2m HUC had
+lots of label points resulting from islands, bays, and estuaries that are
+not included in the 1:250,000 scale HUC coverages.  In other places the
+polygons seemed to be the same but the HUC codes were different.  For example
+HUC 18020111 in the 1:2,000,000 coverage is coded as HUC 18020023 in the
+1:250,000 coverage.  There were also many differences in the Great Lakes.
+It seems odd that the 1:2,000,000 coverage should have more detail with
+regard to coastal features than the 1:250,000 scale coverage has.  There
+were also internal polygon label differences in Minnesota (7100001 in 250k,
+70200001 in 2m), Colorado (10090204 in 250k, 10180007 in 2m), Illinois
+(mistake in the 2m HUC I think), and Louisiana (11140203 in 250k, 11140202
+in 2m).  Texas and Florida also have a few that look like they should be
+checked.
+
+(2) The dissolved 1:2,000,000 coverage contained 350 accounting unit
+polygons while the dissolved 1:250,000 HUC coverage only contained 177.
+There were large differences in the way the Accounting unit polygons
+looked in the Great Lakes Region, and in parts of California, Wyoming,
+and Florida.  Again, many of the differences result from the use of a
+cruder coastline in the 1:250,000 scale HUC coverage.
+
+Coverage Documentation:
+
+The coverage documentation was reviewed both editorially and for overall
+completeness.  The documentation was editorially sound and did not need any
+corrections.
+
+Problems with the Documentation:
+
+(1) The redefined items in the pat file were not defined in the data
+dictionary portion of the documentation file.
+
+(2) The complete reference to the source material for the data is not in the
+documentation file."
+
+Response to Peer review by Bill Battaglin, 1/5/93, Doug Nebert,USGS-WRD
+Reston
+----------------------------------------------------------------------
+
+Data were reviewed for attribute accuracy against a 1:2million base through
+random audit of polygon features.  Line attributes were verified by symbol-
+ization on the screen.  Regions were shaded in to verify correct polygon
+values for HUC at the Hydrologic Region level.  Documentation was updated.
+The short arcs along the quadrangle boundaries were kept in the data set
+due to the importance of maintaining as much original information as
+possible.  Basin codes were updated and additional erroneous neatlines
+removed.
+
+Peer review, 11/10/93, Doug Nebert, USGS-WRD, Reston, memo to Paul Kapinos:
+---------------------------------------------------------------------------
+"As you are aware, we have several digital versions of the hydrologic unit
+maps for the United States and I am in the process of verifying and publishi
+a 1:250,000-scale version derived from National Mapping Division Geographic
+Information Retrieval and Analysis System (GIRAS) data as part of their land
+use mapping program of the 1970s and early 1980s.
+
+In comparing the 1:250,000-scale data reviewers noticed differences in both
+basin definition and hydrologic unit codes in Southern California and in the
+San Joaquin valley.  The 1974 state map, at 1:500,000-scale agrees with the
+1:250,000-scale GIRAS data in boundaries and numbers, whereas the 1:2.5 mill
+"wall map" of the U.S. agrees with the 1:2,000,000 digital data set.  Both p
+maps are authoritative sources of information, but apparently something chan
+between the two maps.
+
+On a related note, it is worthwhile to mention that the 1:2.5 million-scale
+wall map for the western U.S. is being revised to include new Alaska hydrolo
+unit codes before reprinting.  It would be wise to be sure that the boundari
+depicted there are also the authoritative ones.
+
+I would appreciate your review and adjudication of the California hydrologic
+unit definitions in order for us to publish this digital data set.  Please
+provide a written response (e-mail and paper copy) and marked-up maps as to
+which basins and boundaries are current."
+
+Peer review, 11/29/93, Paul Kapinos, USGS-WRD, memo to Doug Nebert:
+-------------------------------------------------------------------
+"The discrepancies in the hydrologic unit codes (and some boundaries)
+in the State of California are due to the fact that the California
+State Hydrologic Unit Map (HUM) was revised in 1978 but the 1:250,000-scale
+digital data set was not.  The events that most likely occurred can be
+summarized as follows:
+
+o The 1:500,000-scale HUMs were published by OWDC over a period of about
+four years between 1974 and 1978.
+
+o The National Mapping Division (NMD) overlaid the hydrologic unit
+boundaries on their 1:250,000-scale land-use and land-cover map
+series after each State HUM was completed, and later digitized these
+boundaries and their respective codes.
+
+o In 1978, the State of California asked OWDC to revise the hydrologic
+unit boundaries and codes in the central valley.
+
+o The 1:500,000-scale California HUM was revised and reprinted but NMD
+was either not informed of the revisions or chose not to revise or
+redigitize their 1:250,000-scale overlays.
+
+o Once all the HUMs were printed (including the 1978 revisions of
+California and South Dakota), the 1980 1:2.5 million-scale United
+States wall map was published using the up-to-date (1978) boundaries
+and codes.
+
+Based on the above summary, I would recommend using the boundaries
+and codes from the 1:2.5 million-scale map and the 1:2,000,000 digital
+data set.  Please be aware that other hydrologic unit boundaries and/or
+codes may have been revised when individual State HUMs were reprinted
+by OWDC.  I doubt if there has been any attempt to update any of the
+digital data sets with these changes."
+
+Response to Peer Review by Paul Kapinos, Doug Nebert 2/14/94:
+-------------------------------------------------------------
+
+The areas in question in California were updated to reflect the more
+current information as contained in the 1:2 million data set.  Polygon
+hydrologic unit codes were updated in the Central Valley and in coastal
+Southern California.  Where necessary, 1:2 million-scale linework was
+substituted to define the correct basin boundaries where no corresponding
+information was available at a different scale.
+
+Related_Spatial_and_Tabular_Data_Sets:
+Any data set which has hydrologic unit codes as part of their data may
+be able to use this data.
+
+-------------------------------------------------------------
+Export format Update 10/20/2008
+
+Curtis Price (cprice@usgs.gov) created a "zip" version of this
+coverage as follows:
+
+1. Downloaded huc250k.e00.gz, gunzip
+2. arc import cover huc250k.e00 huc250k
+3. copy huc250k huc250k2 double
+4. build huc250k2 poly
+5. createworkspace distr\huc250k
+6. copy huc250k2 distr\huc250k\huc250k double
+7. Used MS Windows XP (right click send to zip file) to create
+file huc250k.zip from the distr folder
+
+Other_References_Cited:
+
+U.S. Geological Survey, 1990. Land Use and Land Cover Digital Data from
+1:250,000- and 1:100,000-Scale Maps. Data Users Guide 4, 33 pp, Reston
+Virginia.
+
+Notes:
+</supplinf>
+			<langdata Sync="TRUE">en</langdata></descript>
+		<timeperd>
+			<timeinfo>
+				<sngdate>
+					<caldate>1994</caldate>
+				</sngdate>
+			</timeinfo>
+			<current>
+(Here you put information defining how the time period of
+content information, on the DOC file, was determined)
+</current>
+		</timeperd>
+		<status>
+			<progress>Complete</progress>
+			<update>
+(Here you pick one of the following entries that describes
+how often changes or additions are made to the data set.
+Pick one, and delete the rest)
+
+Continually
+Daily
+Weekly
+Monthly
+Annually
+Unknown
+As Needed
+Irregular
+None planned
+</update>
+		</status>
+		<spdom>
+			<bounding>
+				<westbc Sync="TRUE">-127.906135</westbc>
+				<eastbc Sync="TRUE">-65.321907</eastbc>
+				<northbc Sync="TRUE">51.646272</northbc>
+				<southbc Sync="TRUE">22.875722</southbc>
+			</bounding>
+			<lboundng><leftbc Sync="TRUE">-2356125.000000</leftbc><rightbc Sync="TRUE">2258682.500000</rightbc><bottombc Sync="TRUE">269700.906250</bottombc><topbc Sync="TRUE">3176995.000000</topbc></lboundng></spdom>
+		<keywords>
+			<theme>
+				<themekt>None</themekt>
+				<themekey>hydrologic unit</themekey>
+				<themekey>watersheds</themekey>
+				<themekey>inlandWaters</themekey>
+			</theme>
+			<place>
+				<placekt>None</placekt>
+				<placekey>Conterminous United States</placekey>
+			</place>
+			<stratum>
+				<stratkt>None</stratkt>
+				<stratkey>None</stratkey>
+			</stratum>
+			<temporal>
+				<tempkt>None</tempkt>
+				<tempkey>None</tempkey>
+			</temporal>
+		</keywords>
+		<accconst>
+(describe any restrictions or legal prerequisites for accessing
+the data set.  Put "None" if there are no restrictions)
+</accconst>
+		<useconst>
+These data were digitized at a scale of 1:250,000 with some portions
+of coverage at 1:100,000- and 1:2 million scale. Limitations of
+the data strictly revolve around this scale input.  Use of these
+boundaries with larger scale data (i.e. 1:24k hydrography) is not
+recommended as it would be beyond the resolution capabilities of
+the data set.
+</useconst>
+		<datacred>
+(Here you acknowledge the agencies and organizations that gave
+you money, resources, and encouragement to digitize the data and
+to enter all this wonderful metadata.)
+</datacred>
+		<secinfo>
+			<secsys>None</secsys>
+			<secclass>Unclassified</secclass>
+			<sechandl>None</sechandl>
+		</secinfo>
+		<native Sync="TRUE">Microsoft Windows XP Version 5.1 (Build 2600) Service Pack 3; ESRI ArcCatalog 9.3.0.1770</native>
+		<natvform Sync="TRUE">Shapefile</natvform></idinfo>
+	<dataqual>
+		<attracc>
+			<attraccr>See Entity_Attribute_Information</attraccr>
+			<qattracc>
+				<attraccv>See Explanation</attraccv>
+				<attracce>
+Attribute accuracy is described, where present, with each
+attribute defined in the Entity and Attribute Section.
+</attracce>
+			</qattracc>
+		</attracc>
+		<logic>Polygon and chain-node topology present.</logic>
+		<complete>
+(Information in wordy narrative form describing omissions,
+selection criteria, generalization, definitions used, and other
+rules applied to derive the data set)
+</complete>
+		<posacc>
+			<horizpa>
+				<horizpar>
+(An explanation of the accuracy of the horizontal coordinate
+measurements and a description of tests used, if any, to
+determine horizontal positional accuracy.  This is different
+from horizontal resolution as reported in the DOC file.
+Positional accuracy defines how correctly the digital features
+match real-world features and woiuld be related to the concept
+of the National Map Accuracy Standard -- xx% of well-defined
+point features fall within xx units of their true position.
+The resolution is the smallest unit of measure the GIS can
+reliably manage without truncation or rounding.)
+</horizpar>
+			</horizpa>
+			<vertacc>
+				<vertaccr>
+(The same as above, but for vertical information that may
+be encoded with the 2-D features such as cell or contour
+estimates of a vertical dimension.  A description of the
+contour interval of input data and its basis could be described
+here.)
+</vertaccr>
+			</vertacc>
+		</posacc>
+		<lineage>
+			<srcinfo>
+				<srccite>
+					<citeinfo>
+						<origin>Unspecified</origin>
+						<pubdate>0000</pubdate>
+						<title>Unspecified</title>
+					</citeinfo>
+				</srccite>
+				<srcscale>250,000 and 100,000</srcscale>
+				<typesrc>Unspecified</typesrc>
+				<srctime>
+					<timeinfo>
+						<sngdate>
+							<caldate>0000</caldate>
+						</sngdate>
+					</timeinfo>
+					<srccurr>Unspecified</srccurr>
+				</srctime>
+				<srccitea>Unspecified</srccitea>
+				<srccontr>Unspecified</srccontr>
+			</srcinfo>
+			<procstep>
+				<procdesc>ELIMINATE HUC250E HUC250F KEEPEDGE POLY</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930107</procdate>
+				<proctime>0959</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>BUILD HUC250F LINE</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930107</procdate>
+				<proctime>1000</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>RENAME HUC250F HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930107</procdate>
+				<proctime>1156</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930107</procdate>
+				<proctime>1158</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930107</procdate>
+				<proctime>1237</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>COPY /HOME2A/RESDGS1/DDNEBERT/HUC250/HUC250 HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930107</procdate>
+				<proctime>1245</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>COPY HUC250 /DSDL1/CUSA/TILES/CUSA/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930111</procdate>
+				<proctime>0917</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>EXPORT COVER /DSDL1/CUSA/TILES/CUSA/HUC250 HUC250.E00</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930113</procdate>
+				<proctime>1030</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930713</procdate>
+				<proctime>1210</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930713</procdate>
+				<proctime>1211</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930713</procdate>
+				<proctime>1213</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930713</procdate>
+				<proctime>1219</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930713</procdate>
+				<proctime>1225</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930713</procdate>
+				<proctime>1228</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930713</procdate>
+				<proctime>1238</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19930713</procdate>
+				<proctime>1240</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>COPY /DSDL1/CUSA/TILES/CUSA/HUC250 HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931102</procdate>
+				<proctime>1403</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931129</procdate>
+				<proctime>1441</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931130</procdate>
+				<proctime>1444</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931130</procdate>
+				<proctime>1458</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931201</procdate>
+				<proctime>0848</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931201</procdate>
+				<proctime>0908</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931201</procdate>
+				<proctime>1317</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931206</procdate>
+				<proctime>0826</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931206</procdate>
+				<proctime>1111</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931206</procdate>
+				<proctime>1436</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931206</procdate>
+				<proctime>1503</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931207</procdate>
+				<proctime>0749</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931207</procdate>
+				<proctime>0825</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931207</procdate>
+				<proctime>0840</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931208</procdate>
+				<proctime>1119</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931208</procdate>
+				<proctime>1123</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931208</procdate>
+				<proctime>1138</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>TOLERANCE HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931208</procdate>
+				<proctime>1427</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>CLEAN HUC250 HUC250C 50 10</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931208</procdate>
+				<proctime>1509</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>LABELERRORS HUC250C</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931214</procdate>
+				<proctime>0753</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>ARCEDIT /DSDL2/JPORTER/HUC250C</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931214</procdate>
+				<proctime>0836</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>BUILD HUC250C</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931214</procdate>
+				<proctime>0843</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>LABELERRORS HUC250C</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931214</procdate>
+				<proctime>0843</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>CENTROIDLABELS HUC250C INSIDE</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931214</procdate>
+				<proctime>0850</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>RENAME HUC250C HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931220</procdate>
+				<proctime>1410</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>0934</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>1007</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>1105</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>1153</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>1222</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>1235</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>1324</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>1341</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>1401</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>1416</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>1422</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>1426</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19931221</procdate>
+				<proctime>1430</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>IMPORT COVER HUC250 HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19940117</procdate>
+				<proctime>1651</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19940117</procdate>
+				<proctime>1716</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19940117</procdate>
+				<proctime>1744</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>DOCUMENT HUC250 UPDATE DDNEBERT</procdesc>
+				<srcused>None</srcused>
+				<procdate>19940307</procdate>
+				<proctime>1259</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>EXPORT COVER HUC250 /DSDL1/CUSA/DATABASE/WAIS/HUC250.E00</procdesc>
+				<srcused>None</srcused>
+				<procdate>19940411</procdate>
+				<proctime>1056</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>EXPORT COVER /DSDL1/CUSA/TILES/CUSA/HUC250 HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19940411</procdate>
+				<proctime>1546</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>EXPORT COVER HUC250 HUC250_CUSA.E00</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941017</procdate>
+				<proctime>1112</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER COPY /DSDL1/CUSA/TILES/CUSA/HUC250 /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941220</procdate>
+				<proctime>1045</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941220</procdate>
+				<proctime>1242</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250 POLY</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941220</procdate>
+				<proctime>1246</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941220</procdate>
+				<proctime>1300</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250 POLY</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941220</procdate>
+				<proctime>1303</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941220</procdate>
+				<proctime>1308</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250 POLY</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941220</procdate>
+				<proctime>1311</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941220</procdate>
+				<proctime>1408</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250 POLY</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941220</procdate>
+				<proctime>1411</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941221</procdate>
+				<proctime>1043</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941221</procdate>
+				<proctime>1107</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941221</procdate>
+				<proctime>1245</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250 POLY</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941221</procdate>
+				<proctime>1248</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941221</procdate>
+				<proctime>1441</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250 POLY</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941221</procdate>
+				<proctime>1444</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER EXPORT COVER /HOME/GIS/JPORTER/HUC/HUC250 HUC250.DEC</procdesc>
+				<srcused>None</srcused>
+				<procdate>19941222</procdate>
+				<proctime>1203</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER EXPORT COVER /HOME/GIS/JPORTER/HUC/HUC250 HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950120</procdate>
+				<proctime>0821</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>0910</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER CLEAN HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>0930</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1010</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1012</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1015</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1033</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1036</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1050</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1053</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1115</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1118</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1356</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250 POLY</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1400</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1408</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250 POLY</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1411</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER IDEDIT HUC250 POLY</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950127</procdate>
+				<proctime>1544</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250 POLY</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950130</procdate>
+				<proctime>1022</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER EXPORT COVER /HOME/GIS/JPORTER/HUC/HUC250 HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950131</procdate>
+				<proctime>1013</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER ARCEDIT /HOME/GIS/JPORTER/HUC/HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950410</procdate>
+				<proctime>1033</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER BUILD HUC250 POLY</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950410</procdate>
+				<proctime>1038</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER DOCUMENT HUC250 UPDATE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950410</procdate>
+				<proctime>1048</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER   DOCUMENT HUC250 DELETE JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950410</procdate>
+				<proctime>1049</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>JPORTER   DOCUMENT HUC250 COPY   /DSDL1/CUSA/TILES/CUSA/HUC250 JPORTER</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950410</procdate>
+				<proctime>1051</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>MNEGRI COPY ~JPORTER/HUC/HUC250 HUC250</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950411</procdate>
+				<proctime>1310</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>MNEGRI ARCSDTS HUC250 HUC250SDTS.TGZ PREF</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950411</procdate>
+				<proctime>1424</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>MNEGRI ARCSDTS HUC250 HUC250.SDTS.TGZ PREF</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950412</procdate>
+				<proctime>0920</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>MNEGRI EXPORT COVER HUC250 HUC250.E00</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950412</procdate>
+				<proctime>0932</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>MNEGRI EXPORT COVER HUC250 HUC250.E00</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950428</procdate>
+				<proctime>0832</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>MNEGRI ARCSDTS HUC250 HUC250.SDTS.TGZ PREF</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950428</procdate>
+				<proctime>0951</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>MNEGRI   EXPORT COVER HUC250 /SCRATCH_AREA1/MNEGRI/HUC250.E00 NONE</procdesc>
+				<srcused>None</srcused>
+				<procdate>19950919</procdate>
+				<proctime>1725</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep>
+				<procdesc>cprice converted .e00 file to .zip archive (see Supplementary Information)</procdesc>
+				<srcused>None</srcused>
+				<procdate>20081020</procdate>
+				<proctime>1725</proctime>
+				<srcprod>None</srcprod>
+			</procstep>
+			<procstep><procdesc Sync="TRUE">Metadata imported.</procdesc><srcused Sync="TRUE">E:\TEMP\xml5C4B.tmp</srcused><procdate Sync="TRUE">20081020</procdate><proctime Sync="TRUE">16593300</proctime></procstep></lineage>
+	</dataqual>
+	<spdoinfo>
+		<direct Sync="TRUE">Vector</direct>
+		<ptvctinf>
+			<sdtsterm Name="huc250k">
+				<sdtstype Sync="TRUE">G-polygon</sdtstype>
+				<ptvctcnt Sync="TRUE">2158</ptvctcnt>
+			</sdtsterm>
+			<sdtsterm>
+				<sdtstype>String</sdtstype>
+				<ptvctcnt>14841</ptvctcnt>
+			</sdtsterm>
+			<sdtsterm>
+				<sdtstype>GT-polygon composed of chains</sdtstype>
+				<ptvctcnt>2157</ptvctcnt>
+			</sdtsterm>
+			<esriterm Name="huc250k"><efeatyp Sync="TRUE">Simple</efeatyp><efeageom Sync="TRUE">Polygon</efeageom><esritopo Sync="TRUE">FALSE</esritopo><efeacnt Sync="TRUE">2158</efeacnt><spindex Sync="TRUE">TRUE</spindex><linrefer Sync="TRUE">FALSE</linrefer></esriterm></ptvctinf>
+	</spdoinfo>
+	<spref>
+		<horizsys>
+			<planar>
+				<planci>
+					<plance Sync="TRUE">coordinate pair</plance>
+					<coordrep>
+						<absres Sync="TRUE">0.000000</absres>
+						<ordres Sync="TRUE">0.000000</ordres>
+					</coordrep>
+					<plandu Sync="TRUE">meters</plandu>
+				</planci>
+				<mapproj><mapprojn Sync="TRUE">Albers Conical Equal Area</mapprojn><albers><stdparll Sync="TRUE">29.500000</stdparll><stdparll Sync="TRUE">45.500000</stdparll><longcm Sync="TRUE">-96.000000</longcm><latprjo Sync="TRUE">23.000000</latprjo><feast Sync="TRUE">0.000000</feast><fnorth Sync="TRUE">0.000000</fnorth></albers></mapproj></planar>
+			<geodetic>
+				<horizdn Sync="TRUE">North American Datum of 1927</horizdn>
+				<ellips Sync="TRUE">Clarke 1866</ellips>
+				<semiaxis Sync="TRUE">6378206.400000</semiaxis>
+				<denflat Sync="TRUE">294.978698</denflat>
+			</geodetic>
+			<cordsysn><geogcsn Sync="TRUE">GCS_North_American_1927</geogcsn><projcsn Sync="TRUE">NAD_1927_Albers</projcsn></cordsysn></horizsys>
+	</spref>
+	<eainfo>
+		<detailed Name="huc250k">
+			<enttyp>
+				<enttypl Sync="TRUE">huc250k</enttypl>
+				<enttypd>HUC POLYGONS</enttypd>
+				<enttypds>GIRAS DATA</enttypds>
+				<enttypt Sync="TRUE">Feature Class</enttypt><enttypc Sync="TRUE">2158</enttypc></enttyp>
+			<attr><attrlabl Sync="TRUE">FID</attrlabl><attalias Sync="TRUE">FID</attalias><attrtype Sync="TRUE">OID</attrtype><attwidth Sync="TRUE">4</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale><attrdef Sync="TRUE">Internal feature number.</attrdef><attrdefs Sync="TRUE">ESRI</attrdefs><attrdomv><udom Sync="TRUE">Sequential unique whole numbers that are automatically generated.</udom></attrdomv></attr><attr><attrlabl Sync="TRUE">Shape</attrlabl><attalias Sync="TRUE">Shape</attalias><attrtype Sync="TRUE">Geometry</attrtype><attwidth Sync="TRUE">0</attwidth><atprecis Sync="TRUE">0</atprecis><attscale Sync="TRUE">0</attscale><attrdef Sync="TRUE">Feature geometry.</attrdef><attrdefs Sync="TRUE">ESRI</attrdefs><attrdomv><udom Sync="TRUE">Coordinates defining the features.</udom></attrdomv></attr><attr><attrlabl Sync="TRUE">AREA</attrlabl><attalias Sync="TRUE">AREA</attalias><attrtype Sync="TRUE">Float</attrtype><attwidth Sync="TRUE">19</attwidth><atnumdec Sync="TRUE">11</atnumdec></attr><attr><attrlabl Sync="TRUE">PERIMETER</attrlabl><attalias Sync="TRUE">PERIMETER</attalias><attrtype Sync="TRUE">Float</attrtype><attwidth Sync="TRUE">19</attwidth><atnumdec Sync="TRUE">11</atnumdec></attr><attr><attrlabl Sync="TRUE">HUC250K_</attrlabl><attalias Sync="TRUE">HUC250K_</attalias><attrtype Sync="TRUE">Number</attrtype><attwidth Sync="TRUE">9</attwidth></attr><attr><attrlabl Sync="TRUE">HUC250K_ID</attrlabl><attalias Sync="TRUE">HUC250K_ID</attalias><attrtype Sync="TRUE">Number</attrtype><attwidth Sync="TRUE">9</attwidth></attr><attr><attrlabl Sync="TRUE">HUC_CODE</attrlabl><attalias Sync="TRUE">HUC_CODE</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">8</attwidth></attr><attr><attrlabl Sync="TRUE">HUC_NAME</attrlabl><attalias Sync="TRUE">HUC_NAME</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">39</attwidth></attr><attr><attrlabl Sync="TRUE">REG</attrlabl><attalias Sync="TRUE">REG</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">2</attwidth></attr><attr><attrlabl Sync="TRUE">SUB</attrlabl><attalias Sync="TRUE">SUB</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">4</attwidth></attr><attr><attrlabl Sync="TRUE">ACC</attrlabl><attalias Sync="TRUE">ACC</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">6</attwidth></attr><attr><attrlabl Sync="TRUE">CAT</attrlabl><attalias Sync="TRUE">CAT</attalias><attrtype Sync="TRUE">String</attrtype><attwidth Sync="TRUE">8</attwidth></attr></detailed>
+		<detailed>
+			<enttyp>
+				<enttypl>HUC250.AAT</enttypl>
+				<enttypd>HYDROLOGIC UNIT LINEWORK</enttypd>
+				<enttypds>GIRAS DATA</enttypds>
+			</enttyp>
+			<attr>
+				<attrlabl>' FNODE#'</attrlabl>
+				<attrdef>Internal number of from-node</attrdef>
+				<attrdefs>Computed</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>Sequential unique positive integer</edomv>
+						<edomvd>unspecified</edomvd>
+						<edomvds>unspecified</edomvds>
+					</edom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>' TNODE#'</attrlabl>
+				<attrdef>Internal number of to-node</attrdef>
+				<attrdefs>Computed</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>Sequential unique positive integer</edomv>
+						<edomvd>unspecified</edomvd>
+						<edomvds>unspecified</edomvds>
+					</edom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>' LPOLY#'</attrlabl>
+				<attrdef>Internal number of polygon to left of arc</attrdef>
+				<attrdefs>Computed</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>Sequential unique positive integer</edomv>
+						<edomvd>unspecified</edomvd>
+						<edomvds>unspecified</edomvds>
+					</edom>
+				</attrdomv>
+				<atnumdec Sync="TRUE">11</atnumdec></attr>
+			<attr>
+				<attrlabl>RPOLY#</attrlabl>
+				<attrdef>Internal number of polygon to right of arc</attrdef>
+				<attrdefs>Computed</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>Sequential unique positive integer</edomv>
+						<edomvd>unspecified</edomvd>
+						<edomvds>unspecified</edomvds>
+					</edom>
+				</attrdomv>
+				<atnumdec Sync="TRUE">11</atnumdec></attr>
+			<attr>
+				<attrlabl>LENGTH</attrlabl>
+				<attrdef>Length of arc in coverage units</attrdef>
+				<attrdefs>Computed</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>Positive real numbers</edomv>
+						<edomvd>unspecified</edomvd>
+						<edomvds>unspecified</edomvds>
+					</edom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>HUC250#</attrlabl>
+				<attrdef>Internal feature number</attrdef>
+				<attrdefs>Computed</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>Sequential unique positive integer</edomv>
+						<edomvd>unspecified</edomvd>
+						<edomvds>unspecified</edomvds>
+					</edom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>HUC250-ID</attrlabl>
+				<attrdef>User-assigned feature number</attrdef>
+				<attrdefs>User-defined</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>Integer</edomv>
+						<edomvd>unspecified</edomvd>
+						<edomvds>unspecified</edomvds>
+					</edom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>SOURCE</attrlabl>
+				<attrdef>LINE CODING FOR UNIQUE CASES</attrdef>
+				<attrdefs>GIRAS AND 1:2M DLG DATA</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>1=100K 2=250K 3=250K EDGE 4=2MILLION DLG</edomv>
+						<edomvd>unspecified</edomvd>
+						<edomvds>unspecified</edomvds>
+					</edom>
+				</attrdomv>
+			</attr>
+		</detailed>
+		<detailed>
+			<enttyp>
+				<enttypl>HUC250.LEFTRIGHT</enttypl>
+				<enttypd>Names of Hydrologic Cataloging Units (HUC)</enttypd>
+				<enttypds>U.S. Geological Survey, Office of Water Data Coordination</enttypds>
+			</enttyp>
+			<attr>
+				<attrlabl>HUC</attrlabl>
+				<attrdef>Hydrologic Unit Code</attrdef>
+				<attrdefs>U.S. Geological Survey as FIPS standard</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>Integer 8-digit codes defined uniquely for each basin</edomv>
+						<edomvd>unspecified</edomvd>
+						<edomvds>unspecified</edomvds>
+					</edom>
+				</attrdomv>
+			</attr>
+			<attr>
+				<attrlabl>NAME</attrlabl>
+				<attrdef>Hydrologic Unit Name</attrdef>
+				<attrdefs>U.S. Geological Survey as FIPS standard</attrdefs>
+				<attrdomv>
+					<edom>
+						<edomv>Integer 8-digit codes defined uniquely for each basin</edomv>
+						<edomvd>unspecified</edomvd>
+						<edomvds>unspecified</edomvds>
+					</edom>
+				</attrdomv>
+			</attr>
+			<attr><atnumdec Sync="TRUE">11</atnumdec></attr><attr><atnumdec Sync="TRUE">11</atnumdec></attr></detailed>
+		<overview>
+			<eaover>
+For definition of drainage basins, there are two principal tabular
+data elements of interest.  The first, "HUC", stands for the Hydrologic
+Unit Code and includes the 8-digit cataloging unit as assigned to
+the basin polygon by the U.S. Geological Survey.  The second item,
+"SOURCE", is an attribute of each bounding line segment (arc) and
+incorporates a code to define the source and scale of the source
+linework.  Because this data set includes linework from different
+scale sources, it is important to recognize the presence and use
+of this item in quality evaluation.
+
+The SOURCE item has four special codes to describe the source linework.
+Code 1 stands for all arcs that were from 1:100,000 scale GIRAS files
+and were internal to the quadrangle (no neatlines). Code 2 stands for
+all arcs from the 1:250,000-scale GIRAS files which were internal to
+the quadrangle. Code 3 is for lines from either GIRAS source scale but
+were part of the neatline which may be used to connect arcs that
+dont join cleanly between quads.  Code 4 is for linework in the southern
+Central Valley and southern Coastal California where the GIRAS data
+were replaced with 1:2 million scale basin boundaries.
+
+A companion NAMES file (HUC250.NAMES) is provided with this data set
+to allow a user to perform a temporary join between the basin polygons
+and display or query basins based on their assigned text names rather
+than just the basin number (HUC).
+</eaover>
+			<eadetcit>Not Available</eadetcit>
+		</overview>
+	</eainfo>
+	<distinfo>
+		<distrib>
+			<cntinfo>
+				<cntorgp>
+					<cntorg>U.S. Geological Survey</cntorg>
+				</cntorgp>
+				<cntpos>Ask USGS - Water Webserver Team</cntpos>
+				<cntaddr>
+					<addrtype>mailing</addrtype>
+					<address>445 National Center</address>
+					<city>Reston</city>
+					<state>VA</state>
+					<postal>20192</postal>
+				</cntaddr>
+				<cntvoice>1-888-275-8747 (1-888-ASK-USGS)</cntvoice>
+				<cntemail>http://answers.usgs.gov/cgi-bin/gsanswers?pemail=h2oteam&amp;subject=GIS+Dataset+huc250k</cntemail>
+			</cntinfo>
+		</distrib>
+		<distliab>
+Although this data set has been used by the U.S. Geological
+Survey, U.S. Department of the Interior, no warranty expressed or
+implied is made by the U.S. Geological Survey as to the accuracy
+of the data and related materials. The act of distribution shall not
+constitute any such warranty, and no responsibility is assumed by
+the U.S. Geological Survey in the use of this data, software, or
+related materials.
+
+Any use of trade, product, or firm names is for descriptive
+purposes only and does not imply endorsement by the U.S.
+Government.
+</distliab>
+		<stdorder>
+			<digform>
+				<digtinfo>
+					<formname>ESRI shapefile</formname>
+					<formcont>folder of binary data files</formcont>
+					<filedec>zip</filedec>
+					<transize>20.6</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc250k_shp.zip</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Workspace (folder)</formname>
+					<formcont>ArcInfo Coverage (binary data files)</formcont>
+					<filedec>zip</filedec>
+					<transize>12.2</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc250k.zip</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>ArcInfo Coverage</formcont>
+					<filedec>zip</filedec>
+					<transize>16.5</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc250k.e00.zip</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>tar archive containing SDTS binary files</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>11.4</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 01 New England</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>443</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc01_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 01 New England (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>443</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc01_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 02 Mid-Atlantic</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>675</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc02_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 02 Mid-Atlantic (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>675</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc02_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 03 South Atlantic-Gulf</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>1150</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc03_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 03 South Atlantic-Gulf (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>1150</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc03_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 04 Great Lakes</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>968</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc04_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 04 Great Lakes (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>968</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc04_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 05 Ohio</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>954</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc05_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 05 Ohio (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>954</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc05_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 06 Tennessee</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>327</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc06_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 06 Tennessee (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>327</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc06_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 07 Upper Mississippi</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>1050</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc07_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 07 Upper Mississippi (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>1050</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc07_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 08 Lower Mississippi</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>570</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc08_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 08 Lower Mississippi (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>570</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc08_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 09 Souris-Red-Rainy</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>571</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc09_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 09 Souris-Red-Rainy (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>571</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc09_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 10 Missouri</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>2520</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc10_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 10 Missouri (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>2520</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc10_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 11 Arkansas-White-Red</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>1180</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc11_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 11 Arkansas-White-Red (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>1180</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc11_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 12 Texas-Gulf</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>861</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc12_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 12 Texas-Gulf (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>861</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc12_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 13 Rio Grande</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>660</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc13_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 13 Rio Grande (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>660</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc13_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 14 Upper Colorado</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>555</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc14_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 14 Upper Colorado (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>555</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc14_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 15 Lower Colorado</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>639</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc15_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 15 Lower Colorado (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>639</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc15_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 16 Great Basin</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>701</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc16_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 16 Great Basin (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>701</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc16_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 17 Pacific Northwest</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>1810</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc17_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 17 Pacific Northwest (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>1810</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc17_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>ArcInfo Interchange File (EXPORT, .e00)</formname>
+					<formcont>Region 18 California</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>949</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc18_250k.e00.gz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<digform>
+				<digtinfo>
+					<formname>Spatial Data Transfer Standard</formname>
+					<formcont>Region 18 California (tar archive of SDTS/TVP files)</formcont>
+					<filedec>GNU zip</filedec>
+					<transize>949</transize>
+					<dssize Sync="TRUE">50.856</dssize></digtinfo>
+				<digtopt>
+					<onlinopt>
+						<computer>
+							<networka>
+								<networkr>http://water.usgs.gov/GIS/dsdl/huc18_250k.sdts.tgz</networkr>
+							</networka>
+						</computer>
+					</onlinopt>
+				</digtopt>
+			</digform>
+			<fees>None. This dataset is provided by USGS as a public service.</fees>
+		</stdorder>
+		<resdesc Sync="TRUE">Downloadable Data</resdesc></distinfo>
+	<metainfo>
+		<metd Sync="TRUE">20081020</metd>
+		<metc>
+			<cntinfo>
+				<cntorgp>
+					<cntorg>U.S. Geological Survey</cntorg>
+					<cntper>REQUIRED: The person responsible for the metadata information.</cntper></cntorgp>
+				<cntpos>Ask USGS -- Water Webserver Team</cntpos>
+				<cntaddr>
+					<addrtype>mailing</addrtype>
+					<address>445 National Center</address>
+					<city>Reston</city>
+					<state>VA</state>
+					<postal>20192</postal>
+				</cntaddr>
+				<cntvoice>1-888-275-8747 (1-888-ASK-USGS)</cntvoice>
+				<cntemail>http://answers.usgs.gov/cgi-bin/gsanswers?pemail=h2oteam&amp;subject=GIS+Dataset+huc250k</cntemail>
+			</cntinfo>
+		</metc>
+		<metstdn Sync="TRUE">FGDC Content Standards for Digital Geospatial Metadata</metstdn>
+		<metstdv Sync="TRUE">FGDC-STD-001-1998</metstdv>
+		<langmeta Sync="TRUE">en</langmeta><mettc Sync="TRUE">local time</mettc><metextns><onlink Sync="TRUE">http://www.esri.com/metadata/esriprof80.html</onlink><metprof Sync="TRUE">ESRI Metadata Profile</metprof></metextns></metainfo>
+	<Esri><MetaID>{56496614-8F25-444F-AAF8-96678BDF90C2}</MetaID><CreaDate>20081020</CreaDate><CreaTime>16593300</CreaTime><SyncOnce>FALSE</SyncOnce><SyncDate>20081020</SyncDate><SyncTime>16593300</SyncTime><ModDate>20081020</ModDate><ModTime>16593300</ModTime></Esri><dataIdInfo><envirDesc Sync="TRUE">Microsoft Windows XP Version 5.1 (Build 2600) Service Pack 3; ESRI ArcCatalog 9.3.0.1770</envirDesc><dataLang><languageCode Sync="TRUE" value="en"></languageCode></dataLang><idCitation><resTitle Sync="TRUE">huc250k</resTitle><presForm><PresFormCd Sync="TRUE" value="005"></PresFormCd></presForm></idCitation><spatRpType><SpatRepTypCd Sync="TRUE" value="001"></SpatRepTypCd></spatRpType><dataExt><geoEle><GeoBndBox esriExtentType="native"><westBL Sync="TRUE">-2356125</westBL><eastBL Sync="TRUE">2258682.5</eastBL><northBL Sync="TRUE">3176995</northBL><southBL Sync="TRUE">269700.90625</southBL><exTypeCode Sync="TRUE">1</exTypeCode></GeoBndBox></geoEle></dataExt><geoBox esriExtentType="decdegrees"><westBL Sync="TRUE">-127.906135</westBL><eastBL Sync="TRUE">-65.321907</eastBL><northBL Sync="TRUE">51.646272</northBL><southBL Sync="TRUE">22.875722</southBL><exTypeCode Sync="TRUE">1</exTypeCode></geoBox></dataIdInfo><mdLang><languageCode Sync="TRUE" value="en"></languageCode></mdLang><mdStanName Sync="TRUE">ISO 19115 Geographic Information - Metadata</mdStanName><mdStanVer Sync="TRUE">DIS_ESRI1.0</mdStanVer><mdChar><CharSetCd Sync="TRUE" value="004"></CharSetCd></mdChar><mdHrLv><ScopeCd Sync="TRUE" value="005"></ScopeCd></mdHrLv><mdHrLvName Sync="TRUE">dataset</mdHrLvName><distInfo><distributor><distorTran><onLineSrc><orDesc Sync="TRUE">002</orDesc><linkage Sync="TRUE">file://\\IGSKMCCWWS057\E\work\huc250\distr\shape\huc250k.shp</linkage><protocol Sync="TRUE">Local Area Network</protocol></onLineSrc><transSize Sync="TRUE">50.856</transSize></distorTran><distorFormat><formatName Sync="TRUE">Shapefile</formatName></distorFormat></distributor></distInfo><refSysInfo><RefSystem><refSysID><identCode Sync="TRUE">NAD_1927_Albers</identCode></refSysID></RefSystem></refSysInfo><spatRepInfo><VectSpatRep><topLvl><TopoLevCd Sync="TRUE" value="001"></TopoLevCd></topLvl><geometObjs Name="huc250k"><geoObjTyp><GeoObjTypCd Sync="TRUE" value="001"></GeoObjTypCd></geoObjTyp><geoObjCnt Sync="TRUE">2158</geoObjCnt></geometObjs></VectSpatRep></spatRepInfo><mdDateSt Sync="TRUE">20081020</mdDateSt></metadata>

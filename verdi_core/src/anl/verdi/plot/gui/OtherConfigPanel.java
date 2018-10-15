@@ -35,6 +35,7 @@ public class OtherConfigPanel extends JPanel {
 //			config.putObject(VectorPlotConfiguration.VECTOR_COLOR, vectorPanel.getSelectedColor());
 //		}
 
+		config = gisLinePanel.fillConfiguration(config);
 		if (seriesColorPanel.isEnabled()) {
 			config.putObject(TimeSeriesPlotConfiguration.SERIES_COLOR, seriesColorPanel.getSelectedColor());
 		}
@@ -58,6 +59,10 @@ public class OtherConfigPanel extends JPanel {
 		gridLinePanel.init(color, showLines);
 	}
 
+	public void initGISLines(Color color, int width) {
+		gisLinePanel.init(color, width);
+	}
+
 //	public void initVector(Color color) {
 //		vectorPanel.init(color, "Vector Arrow Color");
 //	}
@@ -70,6 +75,7 @@ public class OtherConfigPanel extends JPanel {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner non-commercial license
 		gridLinePanel = new GridLinePanel();
+		gisLinePanel = new GISLinePanel();
 //		vectorPanel = new SimpleColorPanel();
 		seriesColorPanel = new SimpleColorPanel();
 		CellConstraints cc = new CellConstraints();
@@ -96,6 +102,10 @@ public class OtherConfigPanel extends JPanel {
 //					FormFactory.DEFAULT_ROWSPEC
 //				}));
 		add(gridLinePanel, cc.xy(1, 1));
+		
+		add(gisLinePanel, cc.xy(1, 3));
+		
+		//add(gridLinePanel, cc.xy(1,  5));
 
 //		//---- vectorPanel ----
 //		vectorPanel.setBorder(new TitledBorder("Vector Arrow Color"));
@@ -110,6 +120,7 @@ public class OtherConfigPanel extends JPanel {
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
 	// Generated using JFormDesigner non-commercial license
 	private GridLinePanel gridLinePanel;
+	private GISLinePanel gisLinePanel;
 //	private SimpleColorPanel vectorPanel;
 	private SimpleColorPanel seriesColorPanel;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables

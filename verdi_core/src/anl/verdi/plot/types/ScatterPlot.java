@@ -34,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JToolBar;
@@ -42,6 +43,7 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.swing.JMapPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartTheme;
 import org.jfree.chart.JFreeChart;
@@ -55,10 +57,13 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleEdge;
 
+
 //import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
+import anl.verdi.core.VerdiApplication;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataUtilities;
+import anl.verdi.data.Dataset;
 import anl.verdi.formula.Formula;
 import anl.verdi.plot.config.JFreeChartConfigurator;
 import anl.verdi.plot.config.LoadConfiguration;
@@ -69,8 +74,10 @@ import anl.verdi.plot.config.SaveConfiguration;
 import anl.verdi.plot.config.SaveTheme;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 import anl.verdi.plot.config.UnitsConfigurator;
+import anl.verdi.plot.data.IMPASDataset;
+import anl.verdi.plot.data.MinMaxInfo;
+import anl.verdi.plot.data.MinMaxLevelListener;
 import anl.verdi.plot.data.ScatterXYDataset;
-import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotListener;
 import anl.verdi.plot.gui.TimeLayerPanel;
 import anl.verdi.plot.probe.PlotEventProducer;
@@ -81,7 +88,7 @@ import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;
 import anl.verdi.util.VUnits;
 
-public class ScatterPlot extends AbstractPlot {
+public class ScatterPlot extends AbstractPlot implements MinMaxLevelListener {
 
 	static final Logger Logger = LogManager.getLogger(ScatterPlot.class.getName());
 //	private static final MessageCenter msg = MessageCenter.getMessageCenter(ScatterPlot.class);
@@ -100,7 +107,10 @@ public class ScatterPlot extends AbstractPlot {
 	private PlotConfiguration config;
 	private TextTitle subTitle;
 	private File curFolder;
-	
+	private boolean meshInput = false;
+	IMPASDataset xDs = null;
+	IMPASDataset yDs = null;
+		
 	public void viewClosed() {
 		
 		dataset = null;
@@ -130,9 +140,21 @@ public class ScatterPlot extends AbstractPlot {
 				|| yFrame.getAxes().getZAxis() == null;
 		this.xFrame = xFrame;
 		this.yFrame = yFrame;
+		List<Dataset> datasets = yFrame.getDataset();
+    	if (datasets != null && datasets.size() > 0 && datasets.get(0).getClass().getName().toLowerCase().indexOf("mpas") != -1) {
+    		meshInput = true;
+    		yDs = (IMPASDataset)datasets.get(0);
+    	}
+    	datasets = xFrame.getDataset();
+    	if (datasets != null && datasets.size() > 0 && datasets.get(0).getClass().getName().toLowerCase().indexOf("mpas") != -1) {
+    		meshInput = true;
+    		xDs = (IMPASDataset)datasets.get(0);
+    	}
 		dataset = new ScatterXYDataset();
 		dataset.addSeries(xFrame, yFrame, timeStep, layer);
 		chart = createChart(dataset);
+		if (chart == null)
+			return;
 		createSubtitle();
 		panel = new VerdiChartPanel(chart, true);
 		titlesLabels = new JChartTitlesLabels(chart);
@@ -375,13 +397,31 @@ public class ScatterPlot extends AbstractPlot {
 
 		try {
 			DataUtilities.MinMax minMax = null;
-			if (hasNoLayer) {
-				minMax = DataUtilities.minMax(xFrame, timeStep);
+			if (meshInput) {
+	    		MinMaxInfo info = null;
+	    		xDs.getPlotMinMax(xFrame,  this);
+	    		if (hasNoLayer)
+	    			info = xDs.getTimestepMinMax(xFrame, 0, timeStep);
+	    		else
+	    			info = xDs.getTimestepMinMax(xFrame, layer, timeStep);
+	    		minMax = new DataUtilities.MinMax(info.getMin(), info.getMax());
 			} else {
-				minMax = DataUtilities.minMax(xFrame, timeStep, layer);
+				if (hasNoLayer) {
+					minMax = DataUtilities.minMax(xFrame, timeStep);
+				} else {
+					minMax = DataUtilities.minMax(xFrame, timeStep, layer);
+				}
 			}
 			double interval = (minMax.getMax() - minMax.getMin()) / 10;
-			domainAxis.setRange(minMax.getMin(), minMax.getMax() + interval);
+			try {
+				domainAxis.setRange(minMax.getMin(), minMax.getMax() + interval);
+			} catch (IllegalArgumentException e) {
+				Logger.debug("No valid values in ScatterPlot for " + xFrame.getVariable(), e);
+				VerdiApplication app = VerdiApplication.getInstance();
+				if (app != null && app.getGui() != null)
+					JOptionPane.showMessageDialog(app.getGui().getFrame(), "No valid values were detected for " + xFrame.getVariable().getName() + ".", "Error", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
 			domainAxis.setTickUnit(new NumberTickUnit(interval,
 					new DecimalFormat("0.00E00")));
 		} catch (InvalidRangeException e) {
@@ -393,13 +433,31 @@ public class ScatterPlot extends AbstractPlot {
 
 		try {
 			DataUtilities.MinMax minMax = null;
-			if (hasNoLayer) {
-				minMax = DataUtilities.minMax(yFrame, timeStep);
+			if (meshInput) {
+	    		MinMaxInfo info = null;
+	    		yDs.getPlotMinMax(yFrame,  this);
+	    		if (hasNoLayer)
+	    			info = yDs.getTimestepMinMax(yFrame, 0, timeStep);
+	    		else
+	    			info = yDs.getTimestepMinMax(yFrame, layer, timeStep);
+	    		minMax = new DataUtilities.MinMax(info.getMin(), info.getMax());
 			} else {
-				minMax = DataUtilities.minMax(yFrame, timeStep, layer);
+				if (hasNoLayer) {
+					minMax = DataUtilities.minMax(yFrame, timeStep);
+				} else {
+					minMax = DataUtilities.minMax(yFrame, timeStep, layer);
+				}
 			}
 			double interval = (minMax.getMax() - minMax.getMin()) / 10;
-			rangeAxis.setRange(minMax.getMin(), minMax.getMax() + interval);
+			try {
+				rangeAxis.setRange(minMax.getMin(), minMax.getMax() + interval);
+			}  catch (IllegalArgumentException e) {
+				Logger.debug("No valid values in ScatterPlot for " + yFrame.getVariable(), e);
+				VerdiApplication app = VerdiApplication.getInstance();
+				if (app != null && app.getGui() != null)
+					JOptionPane.showMessageDialog(app.getGui().getFrame(), "No valid values were detected for " + yFrame.getVariable().getName() + ".", "Error", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
 			rangeAxis.setTickUnit(new NumberTickUnit(interval,
 					new DecimalFormat("0.00E00")));
 		} catch (InvalidRangeException e) {
@@ -446,16 +504,6 @@ public class ScatterPlot extends AbstractPlot {
 
 	/**
 	 * Configure this Plot according to the specified PlotConfiguration.
-	 *
-	 * @param config the new plot configuration
-	 */
-	@Override
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
-		configure(config);
-	}
-	
-	/**
-	 * Configure this Plot according to the specified PlotConfiguration.
 	 * 
 	 * @param config
 	 *            the new plot configuration
@@ -473,6 +521,7 @@ public class ScatterPlot extends AbstractPlot {
 		}
 
 		UnitsConfigurator unitsConfig = new UnitsConfigurator() {
+
 			public void configureUnits(Boolean showLegend, String text, Font font, Color color) {
 				LegendTitle legend = chart.getLegend();
 				legend.setVisible(showLegend);
@@ -502,7 +551,6 @@ public class ScatterPlot extends AbstractPlot {
 
 		this.config = config;
 	}
-	
 
 	/**
 	 * Gets this Plot's configuration data.
@@ -824,5 +872,31 @@ public class ScatterPlot extends AbstractPlot {
 	public String getTitle() {
 		return chart.getTitle().getText();
 	}
+	
+	public JMapPane getMapPane()		// required by interface
+	{
+		return null;
+	}
 
+	@Override
+	public void layerUpdated(int level, double min, int minIndex, double max, int maxIndex, double percentComplete,
+			boolean isLog) {
+		
+	}
+
+	@Override
+	public void datasetUpdated(double min, int minIndex, double max, int maxIndex, double percentComplete,
+			boolean isLog) {
+		
+	}
+
+	@Override
+	public long getRenderTime() {
+		return 0;
+	}
+
+	@Override
+	public boolean isAsyncListener() {
+		return false;
+	}
 }

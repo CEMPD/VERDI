@@ -31,6 +31,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.swing.JMapPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.ChartTheme;
@@ -71,7 +72,6 @@ import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 import anl.verdi.plot.config.UnitsConfigurator;
 import anl.verdi.plot.gui.AreaSelectionEvent;
 import anl.verdi.plot.gui.LayerChartPanel;
-import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotFactory;
 import anl.verdi.plot.gui.PlotListener;
 import anl.verdi.plot.probe.PlotEventProducer;
@@ -81,7 +81,6 @@ import anl.verdi.plot.util.PlotPrintAction;
 import anl.verdi.plot.util.PlotProperties;
 import anl.verdi.util.Tools;
 import anl.verdi.util.VUnits;
-//import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 
 /**
@@ -93,7 +92,6 @@ import ucar.ma2.InvalidRangeException;
 public class LinePlot extends AbstractPlot implements ChartProgressListener {
 
 	static final Logger Logger = LogManager.getLogger(LinePlot.class.getName());
-//	private static MessageCenter center = MessageCenter.getMessageCenter(LinePlot.class);
 	private TimeSeriesCollection dataset;
 
 	private java.util.List<DataFrame> frames;
@@ -614,11 +612,6 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 	 * @param config the new plot configuration
 	 */
 	@Override
-	public void configure(PlotConfiguration config, Plot.ConfigSoure source) {
-	configure(config);
-	}
-
-	@Override
 	public void configure(PlotConfiguration config) {
 		String configFile = config.getConfigFileName();
 		if (configFile != null) {
@@ -680,5 +673,10 @@ public class LinePlot extends AbstractPlot implements ChartProgressListener {
 	@Override
 	public String getTitle() {
 		return chart.getTitle().getText();
+	}
+	
+	public JMapPane getMapPane()		// required by interface
+	{
+		return null;
 	}
 }

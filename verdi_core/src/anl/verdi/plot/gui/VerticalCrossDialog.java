@@ -18,6 +18,8 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import anl.verdi.data.Axes;
+import anl.verdi.data.CoordAxis;
+import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 
 import com.jgoodies.forms.factories.Borders;
@@ -41,9 +43,12 @@ public class VerticalCrossDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = 3011350220615294692L;
 	private boolean canceled = false;
+	
+	private boolean meshInput = false;
 
-	public VerticalCrossDialog(Frame owner) {
+	public VerticalCrossDialog(Frame owner, boolean meshInput) {
 		super(owner);
+		this.meshInput = meshInput;
 		initComponents();
 		initButtons();
 		setTitle("Vertical Cross Section");
@@ -101,12 +106,21 @@ public class VerticalCrossDialog extends JDialog {
 		return canceled;
 	}
 
-	public void init(Axes<DataFrameAxis> axes) {
+	public void init(DataFrame frame) {
+		Axes axes = null;
+		if (meshInput)
+			axes = frame.getDataset().get(0).getCoordAxes();
+		else	
+			axes = frame.getAxes();
 		SpinnerNumberModel model = (SpinnerNumberModel) xSpinner.getModel();
-		DataFrameAxis axis = axes.getXAxis();
+		CoordAxis axis = axes.getXAxis();
 		// show axis starting at 1 rather than 0
 		int min = (int) (axis.getRange().getOrigin() + 1);
 		int max = min + (int) axis.getRange().getExtent() - 1;
+		if (meshInput) {
+			--min;
+			--max;
+		}
 		model.setMinimum(min);
 		model.setMaximum(max);
 		xSpinner.setValue(new Integer(min));
@@ -116,6 +130,10 @@ public class VerticalCrossDialog extends JDialog {
 		// show axis starting at 1 rather than 0
 		min = (int) (axis.getRange().getOrigin() + 1);
 		max = min + (int) axis.getRange().getExtent();
+		if (meshInput) {
+			--min;
+			--max;
+		}
 		model.setMinimum(min);
 		model.setMaximum(max);
 		ySpinner.setValue(new Integer(min));
@@ -222,7 +240,10 @@ public class VerticalCrossDialog extends JDialog {
 				contentPanel.add(rbX, cc.xywh(1, 3, 5, 1));
 
 				//---- lblColumn ----
-				lblColumn.setText("Column:");
+				if (meshInput)
+					lblColumn.setText("Longitude:");
+				else
+					lblColumn.setText("Column:");
 				contentPanel.add(lblColumn, cc.xy(3, 5));
 				contentPanel.add(xSpinner, cc.xy(5, 5));
 
@@ -231,7 +252,10 @@ public class VerticalCrossDialog extends JDialog {
 				contentPanel.add(rbY, cc.xywh(1, 7, 5, 1));
 
 				//---- lblRow ----
-				lblRow.setText("Row:");
+				if (meshInput)
+					lblRow.setText("Latitude:");
+				else
+					lblRow.setText("Row:");
 				contentPanel.add(lblRow, cc.xy(3, 9));
 				contentPanel.add(ySpinner, cc.xy(5, 9));
 				contentPanel.add(separator2, cc.xywh(1, 11, 7, 1));

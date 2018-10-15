@@ -4,8 +4,7 @@ import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-// import javax.measure.units.Unit;
-//import javax.measure.unit.Unit;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.unitsofmeasurement.unit.Unit;
 
 import ucar.ma2.Array;
@@ -129,4 +128,5 @@ public class NetCdfCoordAxis implements CoordAxis {
 	public AxisType getAxisType() {
 		return type;
 	}
+
 }

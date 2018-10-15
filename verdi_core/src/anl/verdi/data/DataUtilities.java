@@ -15,6 +15,7 @@ import ucar.ma2.Index4D;
 import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.core.VerdiConstants;
+import anl.verdi.plot.data.IMPASDataset;
 import anl.verdi.util.ArrayFactory;
 
 /**
@@ -24,6 +25,7 @@ import anl.verdi.util.ArrayFactory;
 public class DataUtilities {
 
 	public static final int NO_LAYER = -1;
+	public static float NC_FILL_FLOAT = VerdiConstants.NC_FILL_FLOAT;
 	public static double BADVAL3 = VerdiConstants.BADVAL3; 
 	public static double AMISS3 = VerdiConstants.AMISS3; 
 	static final Logger Logger = LogManager.getLogger(DataUtilities.class.getName());
@@ -171,8 +173,22 @@ public class DataUtilities {
 		Array array = frame.getArray().section(Arrays.asList(ranges));
 		return minMax(array);
 	}
+	
+	private static MinMax mpasMinMax(DataFrame frame, int timeStep, int layer) throws InvalidRangeException {
+		if (frame.getShape().length != 3) throw new InvalidRangeException("Frame rank does not equal 3");
+		Axes<DataFrameAxis> axes = frame.getAxes();
+		ucar.ma2.Range[] ranges = new ucar.ma2.Range[3];
+		ranges[axes.getZAxis().getArrayIndex()] = new ucar.ma2.Range(layer, layer);
+		DataFrameAxis cellAxis = axes.getCellAxis();
+		ranges[cellAxis.getArrayIndex()] = new ucar.ma2.Range(0, cellAxis.getExtent() - 1);
+		Array array = frame.getArray().section(Arrays.asList(ranges));
+		return minMax(array);
+	}
 
 	public static MinMax minMax(DataFrame frame, int timeStep, int layer) throws InvalidRangeException {
+		if (frame.getDataset().get(0) instanceof IMPASDataset) {
+			return mpasMinMax(frame, timeStep, layer);
+		}
 		if (frame.getShape().length != 4) throw new InvalidRangeException("Frame rank does not equal 4");
 		Axes<DataFrameAxis> axes = frame.getAxes();
 		ucar.ma2.Range[] ranges = new ucar.ma2.Range[4];
@@ -369,6 +385,8 @@ public class DataUtilities {
 			builder.addAxis(DataFrameAxis.createDataFrameAxis(axes.getXAxis(), axes.getXAxis().getArrayIndex()));
 		if (axes.getYAxis() != null)
 			builder.addAxis(DataFrameAxis.createDataFrameAxis(axes.getYAxis(), axes.getYAxis().getArrayIndex()));
+		if (axes.getCellAxis() != null)
+			builder.addAxis(DataFrameAxis.createDataFrameAxis(axes.getCellAxis(), axes.getCellAxis().getArrayIndex()));
 		return builder.createDataFrame();
 	}
 

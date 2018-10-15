@@ -15,38 +15,36 @@ public class Utilities {
 
 	private static NumberFormat nFormat = DecimalFormat.getInstance();
 	private static NumberFormat eFormat = new DecimalFormat("0.###E0");
+	private static SimpleDateFormat format = new SimpleDateFormat("MMMMM dd, yyyy HH:mm:ss z");
+	private static SimpleDateFormat formatMS = new SimpleDateFormat("MMMMM dd, yyyy HH:mm:ss.SSS z");
+	private static SimpleDateFormat formatShort = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
 	static {
 		nFormat.setMaximumFractionDigits(3);
+		format.setTimeZone(TimeZone.getTimeZone("UTC"));
+		formatMS.setTimeZone(TimeZone.getTimeZone("UTC"));
+		formatShort.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}
 
 	public static String formatDate(Date date) {
-		SimpleDateFormat format = new SimpleDateFormat("MMMMM dd, yyyy HH:mm:ss z");
-		format.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return format.format(date);
 	}
+	
 	public static String formatDate(GregorianCalendar date) {	// 2014 added to handle GregorianCalendar class
-		SimpleDateFormat formatSD = new SimpleDateFormat("MMMMM dd, yyyy HH:mm:ss z");
-		formatSD.setCalendar(date);
-		formatSD.setTimeZone(TimeZone.getTimeZone("UTC"));
-		String aString = formatSD.format(date.getTime());
-		return aString;
+		return format.format(date.getTime());
+	}
+
+	public static String formatDateMS(GregorianCalendar date) {	// 2014 added to handle GregorianCalendar class
+		return formatMS.format(date.getTime());
 	}
 
 	public static String formatShortDate(Date date) {
-		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		format.setTimeZone(TimeZone.getTimeZone("UTC"));
 		return format.format(date);
 	}
 	
-	public static String formatShortDate(GregorianCalendar date)
-	{	// 2014 add support for GregorianCalendar because many Date-related functions are deprecated
-		// NOTE: Make the following function calls in this order
-		SimpleDateFormat formatSD = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-		formatSD.setCalendar(date);
-		formatSD.setTimeZone(TimeZone.getTimeZone("UTC"));
-		String aString = formatSD.format(date.getTime());
-		return aString;
+	public static String formatShortDate(GregorianCalendar date) {
+		return formatShort.format(date.getTime());
 	}
 
 	public static String formatNumber(double val) {

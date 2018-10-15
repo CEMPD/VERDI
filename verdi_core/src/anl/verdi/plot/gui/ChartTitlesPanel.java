@@ -1,5 +1,8 @@
 package anl.verdi.plot.gui;
 
+// Appears to set up the configuration object config with string, font, and color for
+// title, subtitle1, and subtitle2
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -10,16 +13,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import anl.verdi.plot.config.PlotConfiguration;
-import anl.verdi.plot.util.PlotExporterAction;
 
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 
 /**
@@ -30,12 +29,8 @@ public class ChartTitlesPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = -3469212269628821152L;
-	static final Logger Logger = LogManager.getLogger(ChartTitlesPanel.class.getName());
-
 	public ChartTitlesPanel() {
-		Logger.debug("in constructor for ChartTitlesPanel, ready to call initComponents");
 		initComponents();
-		Logger.debug("back from initComponents; ready to go to subtitle1Panel.setBorder");
 		subtitle1Panel.setBorder(BorderFactory.createTitledBorder("Subtitle 1"));
 		subtitle2Panel.setBorder(BorderFactory.createTitledBorder("Subtitle 2"));
 	}
@@ -53,32 +48,35 @@ public class ChartTitlesPanel extends JPanel {
 	}
 
 	public PlotConfiguration fillConfiguration(PlotConfiguration config) {
-		Logger.debug("in fillConfiguration");
-		if (titlePanel.useTitle()) {
-			Logger.debug("titlePanel.useTitle == true");
+		if (titlePanel.useTitle() && (titlePanel.getTitle() != null || titlePanel.getTitle().length()>1)) {
+			config.setShowTitle("TRUE");	// Feb 2016 explicitly save value of checkbox
 			config.setTitle(titlePanel.getTitle());
-			Logger.debug("just set title to: " + titlePanel.getTitle());
 			config.putObject(PlotConfiguration.TITLE_FONT, titlePanel.getSelectedFont());
 			config.putObject(PlotConfiguration.TITLE_COLOR, titlePanel.getSelectedColor());
-		} else {
-			config.setTitle("");
-			Logger.debug("just setTitle to empty string");
+		} else { 	// Dec 2015 If user deselects the Show Title checkbox OR selects checkbox but either title is null or length < 1
+			titlePanel.setTitleNull();
+			config.setTitle(null);
+			config.setShowTitle("FALSE");	// Feb 2016 explicitly save value of checkbox
 		}
 
 		if (subtitle1Panel.useTitle()) {
+			config.setShowSubtitle1("TRUE");	// Feb 2016 explicitly save value of checkbox
 			config.setSubtitle1(subtitle1Panel.getTitle());
 			config.putObject(PlotConfiguration.SUBTITLE_1_FONT, subtitle1Panel.getSelectedFont());
 			config.putObject(PlotConfiguration.SUBTITLE_1_COLOR, subtitle1Panel.getSelectedColor());
 		} else {
 			config.setSubtitle1("");
+			config.setShowSubtitle1("FALSE");	// Feb 2016 explicitly save value of checkbox
 		}
 
 		if (subtitle2Panel.useTitle()) {
+			config.setShowSubtitle2("TRUE");	// Feb 2016 explicitly save value of checkbox
 			config.setSubtitle2(subtitle2Panel.getTitle());
 			config.putObject(PlotConfiguration.SUBTITLE_2_FONT, subtitle2Panel.getSelectedFont());
 			config.putObject(PlotConfiguration.SUBTITLE_2_COLOR, subtitle2Panel.getSelectedColor());
 		} else {
 			config.setSubtitle2("");
+			config.setShowSubtitle2("FALSE");	// Feb 2016 explicitly save value of checkbox
 		}
 
 		return config;
@@ -118,15 +116,6 @@ public class ChartTitlesPanel extends JPanel {
 										FormFactory.LINE_GAP_ROWSPEC,
 										FormFactory.DEFAULT_ROWSPEC
 						}));
-//		setLayout(new FormLayout(
-//				ColumnSpec.decodeSpecs("default:grow"),
-//				new RowSpec[]{
-//								FormFactory.DEFAULT_ROWSPEC,
-//								FormFactory.LINE_GAP_ROWSPEC,
-//								FormFactory.DEFAULT_ROWSPEC,
-//								FormFactory.LINE_GAP_ROWSPEC,
-//								FormFactory.DEFAULT_ROWSPEC
-//				}));
 		add(titlePanel, cc.xy(1, 1));
 		add(subtitle1Panel, cc.xy(1, 3));
 		add(subtitle2Panel, cc.xy(1, 5));

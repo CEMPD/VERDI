@@ -20,6 +20,7 @@ import javax.vecmath.Point4i;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.swing.JMapPane;
 import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -30,7 +31,6 @@ import org.jfree.data.xy.XYZDataset;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-//import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
@@ -60,9 +60,7 @@ import anl.verdi.util.Utilities;
  * @version $Revision$ $Date$
  */
 public class TilePlot extends AbstractTilePlot {
-	static final Logger Logger = LogManager.getLogger(AbstractTilePlot.class.getName());
-
-//	private static MessageCenter center = MessageCenter.getMessageCenter(TilePlot.class);
+	static final Logger Logger = LogManager.getLogger(TilePlot.class.getName());
 
 	private DataFrameXYZDataset dataset;
 	private boolean hasNoLayer = false;
@@ -339,7 +337,7 @@ public class TilePlot extends AbstractTilePlot {
 		yAxis.setNumberFormatOverride(new AxisNumberFormatter(new DecimalFormat()));
 
 		XYBlockRenderer renderer = new XYBlockRenderer();
-		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
+		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);	// JEB LOOK AT THIS
 		chart = new JFreeChart(createTitle(), plot);
 		chart.removeLegend();
 		chart.setBackgroundPaint(Color.white);
@@ -518,5 +516,10 @@ public class TilePlot extends AbstractTilePlot {
 	@Override
 	public String getTitle() {
 		return chart.getTitle().getText();
+	}
+	
+	public JMapPane getMapPane()		// required by interface
+	{
+		return null;
 	}
 }

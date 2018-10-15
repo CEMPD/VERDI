@@ -1,10 +1,11 @@
 #! /bin/sh
 export VERDI_HOME=${PWD}
+export VERDI_USER=$HOME
 DIR=`pwd`
 cd $VERDI_HOME/plugins/bootstrap
 
 JAVA=../../jre/bin/java
-JAVAMAXMEM="-Xmx6000M"
+JAVAMAXMEM="-Xmx6144M"
 
 # Limit the number of default spawned threads (eca):
 JAVAOPTS="-XX:+UseParallelGC -XX:ParallelGCThreads=1 -Duser.home=$HOME -Djava.library.path=../core/lib"

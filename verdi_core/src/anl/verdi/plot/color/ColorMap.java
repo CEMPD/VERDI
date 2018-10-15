@@ -7,6 +7,11 @@ import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
+import anl.verdi.plot.util.PrintfNumberFormat;
+
 /**
  * Maps colors to a range of values.
  * 
@@ -19,6 +24,9 @@ public class ColorMap implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	static final Logger Logger = LogManager.getLogger(ColorMap.class.getName());
+	
+	private static final String DEFAULT_NUMBER_FORMAT = "-2.3f";
 
 	public enum IntervalType {
 		CUSTOM, AUTOMATIC 
@@ -26,10 +34,6 @@ public class ColorMap implements Serializable {
 	
 	public enum ScaleType {
 		LINEAR, LOGARITHM
-	}
-	
-	public enum PlotType {
-		FAST_TILE, OTHER
 	}
 
 	public enum PaletteType {
@@ -69,15 +73,15 @@ public class ColorMap implements Serializable {
 	
 	private double logBase = 10.0; //Math.E;
 	private PaletteType paletteType = PaletteType.QUALITATIVE;
-	private DecimalFormat format;
+	private String formatString = null;
+	private NumberFormat printfFormat = null;
 	
 	private double logMin, logMax;
 	private double[] logIntervals;
 	
-	private PlotType plotType = PlotType.FAST_TILE;  
 	private IntervalType intervalType = IntervalType.AUTOMATIC;
 	private ScaleType scaleType = ScaleType.LINEAR;
-
+	
 	public ColorMap() {
 		palette = new Palette(new Color[0], "", false);
 	}
@@ -90,6 +94,7 @@ public class ColorMap implements Serializable {
 		calcIntervals(palette, this.min, this.max);
 		//default to something...
 		this.logIntervals = new double[palette.getColorCount() + 1];
+		Logger.debug("in constructor for ColorMap using Palette, min, max");
 	}	
 
 	private void calcIntervals(Palette palette, double min, double max) {
@@ -99,6 +104,7 @@ public class ColorMap implements Serializable {
 		for (int i = 0; i < colorCount; i++) {
 			intervals[i] = min + (i * interval);
 		}
+		Logger.debug("finished with calcIntervals using Palette, min, max");
 	}
 	
 	private void calcLogIntervals(Palette palette, double logMin, double logMax) {
@@ -108,9 +114,11 @@ public class ColorMap implements Serializable {
 		for (int i = 0; i < colorCount; i++) {
 			this.logIntervals[i] = this.logMin + (i * logInterval);
 		}			
+		Logger.debug("finished with calcLogIntervals using Palette, logMin, logMax");
 	}	
 	
 	public ColorMap(Palette palette, List<Double> steps, List<Double> logSteps, ScaleType scaleType) { // NOT for logarithm
+		Logger.debug("in ColorMap constructor including Palette, List steps, List logSteps, and ScaleType");
 		this.scaleType = scaleType;
 		//make sure and sort both of these in ascending fashion...could be defined incorrectly by config file
 		Collections.sort(steps);
@@ -149,93 +157,59 @@ public class ColorMap implements Serializable {
 	}
 
 	public double getStep(int index) throws Exception {
-		if ( this.plotType == PlotType.FAST_TILE) {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				if (index > logIntervals.length - 1)
-					return logIntervals[logIntervals.length - 1];
+		Logger.debug(" in getStep[index] for FAST_TILE");
+		if ( this.scaleType == ScaleType.LOGARITHM) {
+			if (index > logIntervals.length - 1)
+				return logIntervals[logIntervals.length - 1];
 
-				if (index < 0)
-					return logIntervals[0];
+			if (index < 0)
+				return logIntervals[0];
 
-				return logIntervals[index];			
-			} else {
-				if (index > intervals.length - 1)
-					return intervals[intervals.length - 1];
-
-				if (index < 0)
-					return intervals[0];
-
-				return intervals[index];
-			}			
+			return logIntervals[index];			
 		} else {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				
-				throw new Exception("Logarithm is not supported for PlotType " + plotType);
-		
-			} else {
-				if (index > intervals.length - 1)
-					return intervals[intervals.length - 1];
+			if (index > intervals.length - 1)
+				return intervals[intervals.length - 1];
 
-				if (index < 0)
-					return intervals[0];
+			if (index < 0)
+				return intervals[0];
 
-				return intervals[index];
-			}			
-		}
+			return intervals[index];
+		}			
 	}
 
-	public double getMax() throws Exception {
-		
-		if ( this.plotType == PlotType.FAST_TILE) {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				return logMax;
-			}		
-			return max;		
-		} else {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				throw new Exception("Logarithm is not supported for PlotType " + plotType);
-			}		
-			return max;
+	public double getMax() throws Exception {	
+		if ( this.scaleType == ScaleType.LOGARITHM) {
+			return logMax;
 		}		
+		return max;				
 	}
 
 	public double getMin() throws Exception {
-		if ( plotType == PlotType.FAST_TILE) {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				return logMin;
-			}		
-			return min;		
-		} else {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				throw new Exception("Logarithm is not supported for PlotType " + plotType);
-			}		
-			return min;
-		}
+		if ( this.scaleType == ScaleType.LOGARITHM) {
+			return logMin;
+		}		
+		return min;		
 	}
 
 	public double[] getIntervals() throws Exception {
-		if ( plotType == PlotType.FAST_TILE) {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				return logIntervals;
-			}		
-			return intervals;			
-		} else {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				throw new Exception("Logarithm is not supported for PlotType " + plotType);
-			}		
-			return intervals;
-		}
+		if ( this.scaleType == ScaleType.LOGARITHM) {
+			return logIntervals;
+		}		
+		return intervals;
 	}
 
 	public PaletteType getPaletteType() {
+		Logger.debug("returning PaletteType = " + paletteType);
 		return paletteType;
 	}
 
 	public void setPaletteType(PaletteType paletteType) {
 		this.paletteType = paletteType;
+		Logger.debug("just set PaletteType to " + this.paletteType);
 	}
 
 	public Palette getPalette() {
+		Logger.debug("in getPalette(), returning Palette = " + palette);
 		return palette;
 	}
 
@@ -263,85 +237,52 @@ public class ColorMap implements Serializable {
 	}
 
 	public double getIntervalStart(int index) throws Exception {
-		if ( plotType == PlotType.FAST_TILE) {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				return logIntervals[index];
-			}
-			return intervals[index];			
-		} else {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				throw new Exception("Logarithm is not supported for PlotType " + plotType);
-			}
-			return intervals[index];			
+		if ( this.scaleType == ScaleType.LOGARITHM) {
+			return logIntervals[index];
 		}
+		return intervals[index];			
+
 	}
 
 	public void setIntervalStart(int index, double start)
 			throws Exception { // since only for CUSTOM, do not add check for LOGARITHM
-		
-		if ( this.plotType == PlotType.FAST_TILE) {
-			if ( this.scaleType != ScaleType.LOGARITHM) {
-				int last = intervals.length - 1;
+		if ( this.scaleType != ScaleType.LOGARITHM) {
+			int last = intervals.length - 1;
 
-				if (paletteType == PaletteType.SEQUENTIAL && index > 0) {
-					if (index < last && start <= intervals[index - 1])
-						return;
+			if (paletteType == PaletteType.SEQUENTIAL && index > 0) {
+				if (index < last && start <= intervals[index - 1])
+					return;
 
-					if (index < last && start >= intervals[index + 1])
-						return;
+				if (index < last && start >= intervals[index + 1])
+					return;
 
-					if (index == 0)
-						min = start;
+				if (index == 0)
+					min = start;
 
-					if (index == last)
-						max = start + (start - intervals[index - 1]);
-				}
-
-				intervals[index] = start;
-			} else {
-				int last = logIntervals.length - 1;
-
-				if (paletteType == PaletteType.SEQUENTIAL && index > 0) {
-					if (index < last && start <= logIntervals[index - 1])
-						return;
-
-					if (index < last && start >= logIntervals[index + 1])
-						return;
-
-					if (index == 0)
-						min = start;
-
-					if (index == last)
-						max = start + (start - logIntervals[index - 1]);
-				}
-
-				logIntervals[index] = start;			
-			}			
-		} else {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				
-				throw new Exception("Logarithm is not supported for PlotType " + plotType);
-
-			} else {
-				int last = intervals.length - 1;
-
-				if (paletteType == PaletteType.SEQUENTIAL && index > 0) {
-					if (index < last && start <= intervals[index - 1])
-						return;
-
-					if (index < last && start >= intervals[index + 1])
-						return;
-
-					if (index == 0)
-						min = start;
-
-					if (index == last)
-						max = start + (start - intervals[index - 1]);
-				}
-
-				intervals[index] = start;
+				if (index == last)
+					max = start + (start - intervals[index - 1]);
 			}
-		}
+
+			intervals[index] = start;
+		} else {
+			int last = logIntervals.length - 1;
+
+			if (paletteType == PaletteType.SEQUENTIAL && index > 0) {
+				if (index < last && start <= logIntervals[index - 1])
+					return;
+
+				if (index < last && start >= logIntervals[index + 1])
+					return;
+
+				if (index == 0)
+					min = start;
+
+				if (index == last)
+					max = start + (start - logIntervals[index - 1]);
+			}
+
+			logIntervals[index] = start;			
+		}			
 	}
 
 	public IntervalType getIntervalType() {
@@ -367,61 +308,44 @@ public class ColorMap implements Serializable {
 	public void setLogBase(double base) {
 		this.logBase = base;
 //		calcLogIntervals(palette, logMin, logMax);
-	}	
-
+	}
+	
+	public String getFormatString() throws Exception {
+		return formatString;
+	}
+	
+	/*
+	 * 
+	 * Verdi uses printf style formatting strings.  However, code using java's NumberFormat.format() will
+	 * display incorrectly since it uses a different pattern api.  Instead, expose PrintfNumberFormat which
+	 * uses printf style patterns, and provide getInternalNumberFormat for code that needs the java style
+	 * formats.
+	 * 
+	 */
 	public NumberFormat getNumberFormat() throws Exception {
-		
-		if (format != null)
-			return format;
-		
-		if ( this.plotType == PlotType.FAST_TILE) {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				String strMin = String.valueOf(logMin);
-				String strMax = String.valueOf(logMax);
-
-				if (strMin.contains("E-") || strMax.contains("E-"))
-					return new DecimalFormat("0.000E0");
-
-				return new DecimalFormat("0.000");
+		if (formatString == null)
+			formatString = DEFAULT_NUMBER_FORMAT;
+		if (printfFormat == null) {
+			try {
+				printfFormat = new PrintfNumberFormat(formatString);
+			} catch (Throwable e) {
+				printfFormat = new DecimalFormat(formatString);
 			}
 			
-			String strMin = String.valueOf(min);
-			String strMax = String.valueOf(max);
-
-			if (strMin.contains("E-") || strMax.contains("E-"))
-				return new DecimalFormat("0.000E0");
-
-			return new DecimalFormat("0.000");			
-		} else {
-			if ( this.scaleType == ScaleType.LOGARITHM) {
-				throw new Exception("Logarithm is not supported for PlotType " + plotType);
-			}
-			
-			String strMin = String.valueOf(min);
-			String strMax = String.valueOf(max);
-
-			if (strMin.contains("E-") || strMax.contains("E-"))
-				return new DecimalFormat("0.000E0");
-
-			return new DecimalFormat("0.000");				
 		}
-
+		return printfFormat;
 	}
-
-	public void setNumberFormat(NumberFormat format) throws Exception {
-		if (!(format instanceof DecimalFormat))
-			throw new Exception("Number format: " + format.toString()
-					+ " is not supported.");
-
-		this.format = (DecimalFormat) format;
-	}
-
-	public void setPlotType(PlotType plotType) {
-		this.plotType = plotType;
-	}
-
-	public PlotType getPlotType() {
-		return plotType;
+	
+	/**
+	 * setNumberFormat	set the DecimalFormat in the colorMap to what the user entered
+	 * @param aNumberFormat
+	 */
+	public void setFormatString(String pattern)
+	{
+		if (pattern == null)
+			return;
+		formatString = pattern;
+		printfFormat = null;
 	}
 	
 	public void setMinMax(double min, double max) {

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -112,6 +113,11 @@ public class ScatterDialog extends JDialog {
 		});
 	}
 
+    public void setVisible(boolean b) {
+    	Point p = getLocation();
+    	setLocation(0, p.y);
+        super.setVisible(b);
+    }
 	private void findAxisFormulas() {
 		DefaultListModel model = (DefaultListModel) formulaList.getModel();
 		for (int i = 0; i < model.size(); i++) {

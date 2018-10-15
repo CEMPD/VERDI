@@ -10,9 +10,9 @@ import ucar.ma2.Index;
  */
 public class DataFrameIndex {
 
-	private final int xIndex, yIndex, tIndex, kIndex;
-	private final int[] indices;
-	/* private */ final Index index;
+	protected int xIndex, yIndex, tIndex, kIndex, cellIndex;
+	protected int[] indices;
+	/* private */ Index index;
 
 	/**
 	 * Creates a DataFrameIndex for the specified DataFrame.
@@ -51,6 +51,13 @@ public class DataFrameIndex {
 			kIndex = -1;
 		}
 
+		if (axes.getCellAxis() != null) {
+			cellIndex = axes.getCellAxis().getArrayIndex();
+			count++;
+		} else {
+			cellIndex = -1;
+		}
+
 		indices = new int[count];
 		index = frame.getArray().getIndex();
 	}
@@ -64,7 +71,7 @@ public class DataFrameIndex {
 
 		if ( tIndex == -1 ) {
 
-			if ( timeStep != 0 ) {
+			if ( timeStep > 0 ) {
 				throw new IllegalArgumentException( "Invalid call to DataFrameIndex.setTime( timeStep = " + timeStep + ")" );
 			}
 		} else {
@@ -80,14 +87,19 @@ public class DataFrameIndex {
 	 */
 	public void setLayer(int layer) {
 
+		try {
 		if ( kIndex == -1 ) {
 
-			if ( layer != 0 ) {
+			if ( layer > 0 ) {
 				throw new IllegalArgumentException( "Invalid call to DataFrameIndex.setLayer( layer = " + layer + ")" );
 			}
 		} else {
 			indices[kIndex] = layer;
 			index.set(indices);
+		}
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw e;
 		}
 	}
 

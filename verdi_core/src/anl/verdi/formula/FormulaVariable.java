@@ -8,10 +8,12 @@ import java.util.List;
 import org.unitsofmeasurement.unit.Unit;
 
 import anl.verdi.data.AxisRange;
+import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataManager;
 import anl.verdi.data.DataReader;
 import anl.verdi.data.Dataset;
+import anl.verdi.data.MultiAxisDataset;
 import anl.verdi.data.Range;
 import anl.verdi.data.Variable;
 
@@ -97,5 +99,11 @@ public class FormulaVariable {
 
 	public Unit getUnit() {
 		return variable.getUnit();
+	}
+	
+	public CoordAxis getZAxis() {
+		if (dataset instanceof MultiAxisDataset)
+			return ((MultiAxisDataset)dataset).getZAxis(name);
+		return dataset.getCoordAxes().getZAxis();
 	}
 }

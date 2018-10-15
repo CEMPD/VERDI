@@ -2,6 +2,7 @@ package anl.verdi.plot.types;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
@@ -37,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.vecmath.Point4i;
 
+
 //import org.geotools.styling.StyleFactoryFinder;	// replaced for GeoTools v10
 //import org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory;	// 2014 using shapefile-old jar to get this functionality
 //import org.geotools.map.DefaultMapContext;	// replaced for GeoTools v10
@@ -59,6 +61,7 @@ import org.geotools.map.MapViewport;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
+import org.geotools.swing.JMapPane;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.CategoryAxis;
@@ -75,12 +78,13 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 
-//import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
 import anl.verdi.data.Axes;
+import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataUtilities;
+import anl.verdi.data.Dataset;
 import anl.verdi.data.Slice;
 import anl.verdi.formula.Formula;
 import anl.verdi.gis.LayerEditor;
@@ -97,12 +101,14 @@ import anl.verdi.plot.config.SaveTheme;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.config.TitleConfigurator;
 import anl.verdi.plot.config.UnitsConfigurator;
+import anl.verdi.plot.data.IMPASDataset;
 import anl.verdi.plot.gui.ConfigDialog;
 import anl.verdi.plot.gui.MapAnnotation;
 import anl.verdi.plot.gui.MultiTimeSeriesPlotRequest;
 import anl.verdi.plot.gui.ObsAnnotation;
 import anl.verdi.plot.gui.PlotListener;
 import anl.verdi.plot.gui.TimeSeriesPlotRequest;
+import anl.verdi.plot.jfree.MPASXYBlockRenderer;
 import anl.verdi.plot.jfree.XYBlockRenderer;
 import anl.verdi.plot.probe.PlotEventProducer;
 import anl.verdi.plot.util.PlotExporterAction;
@@ -125,7 +131,6 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	private static final String NA_LAYER = "NA";
 
 	private NumberFormat format;
-//	private static MessageCenter center = MessageCenter.getMessageCenter(AbstractTilePlot.class);
 
 	protected DataFrame frame;
 	protected int timeStep;
@@ -135,11 +140,10 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	protected PlotEventProducer eventProducer = new PlotEventProducer();
 	protected ColorMap map;
 	protected Slice probedSlice;
-//	protected java.util.List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
 	protected List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
 	protected MapAnnotation mapAnnotation;
 	protected ControlAction controlAction = ControlAction.ZOOM;
-	private DataUtilities.MinMax minMax;
+	protected DataUtilities.MinMax minMax;
 	protected boolean showLatLon = false;
 	protected PlotConfiguration config;
 
@@ -150,7 +154,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	protected Map<String, FeatureLayer> mapLayers = new HashMap<String, FeatureLayer>();
 	
 	public void viewClosed() {
-		Logger.debug("in AbstractTilePlot.viewClosed");		
+		Logger.debug("in AbstractTilePlot.viewClosed");		// not output in log
 		format = null;
 		frame = null;
 		chart = null;
@@ -210,7 +214,10 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			requestTimeSeries(points.getMaxPoints(), "Max. cells ");
 		}
 	};
-
+	
+	public DataUtilities.MinMax calculateMinMax(DataFrame frame) {
+		return DataUtilities.minMax(frame);
+	}
 
 	public AbstractTilePlot(DataFrame frame) {
 		Logger.debug("in AbstractTilePlot constructor for a DataFrame");
@@ -218,7 +225,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		layer = 0;
 		timeStep = 0;
 		this.frame = frame;
-		minMax = DataUtilities.minMax(frame);
+		minMax = calculateMinMax(frame);
 		format = NumberFormat.getInstance();
 		format.setMaximumFractionDigits(4);
 	}
@@ -228,16 +235,18 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	 *
 	 * @return the data that this Plot plots.
 	 */
-//	public java.util.List<DataFrame> getData() {
 	public List<DataFrame> getData() {
-//		java.util.List<DataFrame> list = new ArrayList<DataFrame>();
 		List<DataFrame> list = new ArrayList<DataFrame>();
 		list.add(frame);
 		return list;
 	}
+	
+	protected Axes getAxes() {
+		return frame.getAxes();
+	}
 
 	/**
-	 * Configure this plot according to the specifed configure info.
+	 * Configure this plot according to the specified configure info.
 	 *
 	 * @param config the configuration data
 	 */
@@ -258,18 +267,21 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		if (map != null) updateColorMap(map);
 
 		TitleConfigurator titleConfig = new TitleConfigurator() {
-			public void configureSubtitle1(String text, Font font, Color color) {
+			public void configureSubtitle1(Boolean show, String text, Font font, Color color) {
 				TextTitle title = (TextTitle) chart.getSubtitle(subTitle1Index);
+				title.setVisible(show);
 				updateTextTitle(title, text, color, font);
 			}
 
-			public void configureSubtitle2(String text, Font font, Color color) {
+			public void configureSubtitle2(Boolean show, String text, Font font, Color color) {
 				TextTitle title = (TextTitle) chart.getSubtitle(subTitle2Index);
+				title.setVisible(show);
 				updateTextTitle(title, text, color, font);
 			}
 
-			public void configureTitle(String text, Font font, Color color) {
+			public void configureTitle(Boolean show, String text, Font font, Color color) {
 				TextTitle title = chart.getTitle();
+				title.setVisible(show);
 				updateTextTitle(title, text, color, font);
 			}
 		};
@@ -378,6 +390,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	 * @return a BufferedImage of the plot.
 	 */
 	public BufferedImage getBufferedImage() {
+		Logger.debug("in AbstractTilePlot.getBufferedImage()");
 		return getBufferedImage(panel.getWidth(), panel.getHeight());
 	}
 
@@ -389,6 +402,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	 * @return a BufferedImage of the plot.
 	 */
 	public BufferedImage getBufferedImage(int width, int height) {
+		Logger.debug("in AbstractTilePlot.getBufferedImage(width, height)");
 		return chart.createBufferedImage(width, height);
 	}
 
@@ -405,9 +419,9 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	}
 
 	protected GridCoverage2D getCoverage(DataFrame frame) {
-		Logger.debug("in AbstractTilePlot.getCoverage");
+		Logger.debug("in AbstractTilePlot.getCoverage(DataFrame)");
 
-		Axes<DataFrameAxis> axes = frame.getAxes();
+		Axes<DataFrameAxis> axes = getAxes();
 	//	GridCoverageFactory fac = new GridCoverageFactory();	// replaced for GeoTools v10
 		GridCoverageFactory fac = CoverageFactoryFinder.getGridCoverageFactory(null);
 		float[][] data = new float[axes.getXAxis().getExtent()][axes.getYAxis().getExtent()];
@@ -416,7 +430,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	}
 
 	protected FeatureLayer createLayer(File file, File styleFile) throws IOException {		// replaced MapLayer with FeatureLayer for GeoTools v10
-		Logger.debug("in AbstractTilePlot.createLayer");
+		Logger.debug("in AbstractTilePlot.createLayer(File, File)");
 		URL url = file.toURI().toURL();
 		Map<String, Serializable> params = new HashMap<String, Serializable>();
 //		params.put(IndexedShapefileDataStoreFactory.URLP.key, url);
@@ -432,7 +446,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		StyleBuilder builder = new StyleBuilder();
 		Style style = builder.createStyle(builder.createLineSymbolizer());
 		Query query = new Query();
-		query.setCoordinateSystemReproject(frame.getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());
+		query.setCoordinateSystemReproject(getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());
 //		MapLayer layer = new DefaultMapLayer(ds.getFeatureSource().getFeatures(query), style);	// replaced MapLayer and DefaultMapLayer with FeatureLayer for GeoTools v10
 		FeatureLayer layer = new FeatureLayer(ds.getFeatureSource().getFeatures(query), style);
 		layer.setTitle(file.getAbsolutePath());
@@ -448,9 +462,9 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			// of the frame, but the axes ranges refer to the range
 			// of the original dataset. So, the origin will always
 			// be 0 and the exent is the frame's exent.
-			slice.setTimeRange(0, frame.getAxes().getTimeAxis().getExtent());
-			DataFrameAxis frameAxis = frame.getAxes().getZAxis();
-			if (frameAxis != null) slice.setLayerRange(0, frameAxis.getExtent());
+			slice.setTimeRange(0, getAxes().getTimeAxis().getRange().getExtent());
+			CoordAxis frameAxis = getAxes().getZAxis();
+			if (frameAxis != null) slice.setLayerRange(0, (int)frameAxis.getRange().getExtent());
 			slice.setXRange(point.x, 1);
 			slice.setYRange(point.y, 1);
 			try {
@@ -470,9 +484,9 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		// of the frame, but the axes ranges refer to the range
 		// of the original dataset. So, the origin will always
 		// be 0 and the exent is the frame's exent.
-		slice.setTimeRange(0, frame.getAxes().getTimeAxis().getExtent());
-		DataFrameAxis frameAxis = frame.getAxes().getZAxis();
-		if (frameAxis != null) slice.setLayerRange(0, frameAxis.getExtent());
+		slice.setTimeRange(0, getAxes().getTimeAxis().getRange().getExtent());
+		CoordAxis frameAxis = getAxes().getZAxis();
+		if (frameAxis != null) slice.setLayerRange(0, (int)frameAxis.getRange().getExtent());
 		slice.setXRange(probedSlice.getXRange());
 		slice.setYRange(probedSlice.getYRange());
 
@@ -505,7 +519,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			title.setPosition(RectangleEdge.TOP);
 			chart.addSubtitle(title);
 			subTitle1Index = index++;
-			
+
 			title = new TextTitle();
 			title.setPosition(RectangleEdge.TOP);
 			chart.addSubtitle(title);
@@ -514,7 +528,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	}
 
 	protected Point2D getLatLonForAxisPoint(Point axisPoint) {
-		return frame.getAxes().getBoundingBoxer().axisPointToLatLonPoint(axisPoint.x, axisPoint.y);
+		return getAxes().getBoundingBoxer().axisPointToLatLonPoint(axisPoint.x, axisPoint.y);
 	}
 
 	/**
@@ -610,6 +624,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	}
 
 	public JPanel getPanel() {
+		Logger.debug("in AbstractTilePlot.getPanel(); returning a VerdiChartPanel as JPanel");
 		return panel;
 	}
 
@@ -621,8 +636,8 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 				// moved BoundingBox and CoordinateReferenceSystem to MapViewport object associated with the MapContent object
 		MapContent context = new MapContent();	//		frame.getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());
 
-		MapViewport aViewport = new MapViewport(frame.getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()));	// defined ReferencedEnvelope
-		aViewport.setCoordinateReferenceSystem(frame.getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());	// defined CRS
+		MapViewport aViewport = new MapViewport(getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()));	// defined ReferencedEnvelope
+		aViewport.setCoordinateReferenceSystem(getAxes().getBoundingBox(frame.getDataset().get(0).getNetcdfCovn()).getCoordinateReferenceSystem());	// defined CRS
 		context.setViewport(aViewport);	// assign Viewport (ReferencedEnvelope and BoundingBox) to MapContent object
 
 		String defaultMaps = System.getProperty("default.maps", "");
@@ -656,7 +671,6 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			Logger.warn("Unable to load map data " + e.getMessage());
 		}
 
-
 		StringTokenizer tok = new StringTokenizer(defaultMaps, ",");
 		while (tok.hasMoreTokens()) {
 			String shpFile = tok.nextToken().trim();
@@ -674,12 +688,11 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		}
 
 //		context.setAreaOfInterest(frame.getAxes().getBoundingBox(-1));	// function deprecated; already set ReferencedEnvelope above. Do we need to do it again here?
-		mapAnnotation = new MapAnnotation(context, frame.getAxes(), -1); 
+		mapAnnotation = new MapAnnotation(context, getAxes(), -1); 
 	}
 
 	/**
-	 * Enables / disables the menu items that work with
-	 * the currently probed point.
+	 * Enables / disables the menu items that work with the currently probed point.
 	 *
 	 * @param val true to enable
 	 */
@@ -723,10 +736,16 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			private static final long serialVersionUID = -7478330674957172004L;
 
 			public void actionPerformed(ActionEvent e) {
+				Logger.debug("in AbstractTilePlot.actionPerformed; ready to get frame from SwingUtilities.getWindowAncestor(panel)");
 				Window frame = SwingUtilities.getWindowAncestor(panel);
 				LayerEditor editor = null;
-				if (frame instanceof JFrame) editor = new LayerEditor((JFrame) frame);
-				else editor = new LayerEditor((JDialog) frame);
+				if (frame instanceof JFrame) 
+					editor = new LayerEditor((JFrame) frame);
+				else 
+					{
+					Logger.debug("casting frame to JDialog");
+					editor = new LayerEditor((JDialog) frame);
+					}
 				editor.init(mapAnnotation);
 				editor.setLocationRelativeTo(frame);
 				editor.pack();
@@ -798,7 +817,6 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 				Properties props = new Properties();
 				props.put("default.maps", defaultMaps);
 				try {
-//					File file = new File(System.getProperty(Tools.USER_HOME) + Tools.PROPERTY_FILE);
 					File file = new File(Tools.getPropertyFile());	// 2014 changed to use static function directly
 					props.store(new FileOutputStream(file), "");
 				} catch (IOException ex) {
@@ -926,7 +944,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 
 			public void actionPerformed(ActionEvent e) {
 				AnimationPanel panel = new AnimationPanel();
-				panel.init(frame.getAxes(), AbstractTilePlot.this);
+				panel.init(getAxes(), AbstractTilePlot.this);
 			}
 		}));
 
@@ -1045,7 +1063,8 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			min = minMax.getMin();
 			max = minMax.getMax();
 			Logger.debug("still in updateScaleAxis: ready to call PavePalletCreator");
-			map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), min, max);
+//			map = new ColorMap(new PavePaletteCreator().createPalettes(8).get(0), min, max);
+			map = new ColorMap(new PavePaletteCreator().createPavePalette(), min, max);
 			map.setPaletteType(ColorMap.PaletteType.SEQUENTIAL);
 		} else {
 			try {
@@ -1068,8 +1087,12 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		scaleAxis.setTickMarkPaint(Color.BLACK);
 		scaleAxis.setTickLabelFont(new Font("Dialog", Font.PLAIN, 9));
 
-		LookupPaintScale paintScale = createPaintScale(map, min, max);
-		renderer.setPaintScale(paintScale);
+		if (renderer instanceof MPASXYBlockRenderer) {
+			((MPASXYBlockRenderer)renderer).updateColorMap(map);
+		} else {
+			LookupPaintScale paintScale = createPaintScale(map, min, max);
+			renderer.setPaintScale(paintScale);
+		}
 
 		if (legendIndex == -1) {
 			PaintScaleLegend legend = new PaintScaleLegend(scaleAxis.getPaintScale(), scaleAxis);
@@ -1181,13 +1204,23 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 			Logger.debug("in AbstractTilePlot.doEditChartProperties");
 			Window window = SwingUtilities.getWindowAncestor(panel);
 			ConfigDialog dialog = null;
-			if (window instanceof JFrame) dialog = new ConfigDialog((JFrame) window);
-			else dialog = new ConfigDialog((JDialog) window);
+			if (window instanceof JFrame) 
+				dialog = new ConfigDialog((JFrame) window);
+			else 
+				dialog = new ConfigDialog((JDialog) window);
 			dialog.init(AbstractTilePlot.this, getCurrentMinMax());
-			dialog.setSize(500, 506);
 			dialog.setVisible(true);
 		}
+		
+		public void paintComponent(Graphics g) {
+			chartBeginPainting();
+			super.paintComponent(g);
+			chartEndPainting();
+		}
 	}
+	
+	protected void chartBeginPainting() {}
+	protected void chartEndPainting() {}
 
 	public PlotConfiguration getPlotConfiguration() {
 		Logger.debug("in AbstractTilePlot.getPlotConfiguration");
@@ -1232,16 +1265,19 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 
 	protected PlotConfiguration getTitlesLabelsConfig(PlotConfiguration config) {
 		Logger.debug("in AbstractTilePlot.getTitlesLabelsConfig");
+		config.setShowTitle(chart.getTitle().isVisible() ? "TRUE" : "FALSE");
 		config.setTitle(chart.getTitle().getText());
 		config.putObject(PlotConfiguration.TITLE_FONT, chart.getTitle().getFont());
 		config.putObject(PlotConfiguration.TITLE_COLOR, (Color) chart.getTitle().getPaint());
 
 		TextTitle title = (TextTitle) chart.getSubtitle(subTitle1Index);
+		config.setShowSubtitle1(title.isVisible() ? "TRUE" : "FALSE");
 		config.setSubtitle1(title.getText());
 		config.putObject(PlotConfiguration.SUBTITLE_1_FONT, title.getFont());
 		config.putObject(PlotConfiguration.SUBTITLE_1_COLOR, (Color) title.getPaint());
 
 		title = (TextTitle) chart.getSubtitle(subTitle2Index);
+		config.setShowSubtitle2(title.isVisible() ? "TRUE" : "FALSE");
 		config.setSubtitle2(title.getText());
 		config.putObject(PlotConfiguration.SUBTITLE_2_FONT, title.getFont());
 		config.putObject(PlotConfiguration.SUBTITLE_2_COLOR, (Color) title.getPaint());

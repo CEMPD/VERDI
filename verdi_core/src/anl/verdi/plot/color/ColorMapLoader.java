@@ -47,7 +47,7 @@ public class ColorMapLoader extends DefaultHandler2 {
 	private ColorMap map;
 	private String intervalType, scaleType, paletteType, logBase;
 	private double min, max;
-	private DecimalFormat format;
+	private String formatString;
 	private List<Color> colors = new ArrayList<Color>();
 	private List<Double> intervals = new ArrayList<Double>();
 	private List<Double> logIntervals = new ArrayList<Double>();
@@ -121,11 +121,7 @@ public class ColorMapLoader extends DefaultHandler2 {
 		} else if (qName.equals(STEP_EL)) {
 			scaleOn = true;
 		} else if (qName.equals(FORMAT_EL)) {
-			String type = attributes.getValue(FORMAT_TYPE);
-			String formatPattern = attributes.getValue(FORMAT_PATTERN);
-			
-			if (type.equalsIgnoreCase("java.text.DecimalFormat"))
-				format = new DecimalFormat(formatPattern);
+			formatString = attributes.getValue(FORMAT_PATTERN);
 		}
 	}
 
@@ -161,6 +157,7 @@ public class ColorMapLoader extends DefaultHandler2 {
 			map.setPaletteType(ColorMap.getPaletteType(paletteType));
 			map.setIntervalType(ColorMap.getIntervalType(intervalType));
 			map.setScaleType(scaleTypeObj);
+			map.setMinMax(min, max, true);
 			
 			try{
 				if (ColorMap.getScaleType(scaleType) == ColorMap.ScaleType.LOGARITHM) {
@@ -175,9 +172,9 @@ public class ColorMapLoader extends DefaultHandler2 {
 			}
 			
 			try {
-				map.setNumberFormat(format);
+				map.setFormatString(formatString);
 			} catch (Exception e) {
-				throw new SAXException(e.getMessage());
+				throw new SAXException(e);
 			}
 		}
 	}

@@ -1,11 +1,11 @@
 package anl.verdi.gis;
 
+import java.io.File;
+
 import org.geotools.map.FeatureLayer;
 //import org.geotools.map.MapLayer;	// GeoTools deprecated the MapLayer class; need to use FeatureLayer, GridCoverageLayer, or GridReaderLayer
 import org.pietschy.wizard.models.MultiPathModel;
 import org.pietschy.wizard.models.Path;
-
-import java.io.File;
 
 /**
  * @author Nick Collier

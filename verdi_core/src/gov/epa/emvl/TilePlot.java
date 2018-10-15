@@ -25,13 +25,16 @@ import javax.swing.ImageIcon;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
+import anl.verdi.area.target.GridInfo;
 import anl.verdi.data.DataUtilities;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.gui.ObsAnnotation;
 import anl.verdi.plot.gui.ObsAnnotation.Symbol;
+import anl.verdi.util.ScriptManager;
 import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;		// 2014 to handle footer date/time correctly
+import ucar.unidata.geoloc.Projection;
 
 /**
  * @invariant startDate >= 1900001
@@ -64,25 +67,30 @@ public class TilePlot {
 	private static final int MINIMUM = 0; // Index label.
 	private static final int MAXIMUM = 1; // Index label.
 
-	final private int startDate; // UTC date of first timestep, YYYYDDD.
-	final private int startTime; // UTC time of first timestep, HHMMSS.
-	final private int timestepSize; // Size of each timestep, HHMMSS.
+	final private GregorianCalendar startDate;
+	final private long timestepSize; // Size of each timestep, ms.
 
 	protected PlotConfiguration config;
 	protected NumberFormat numberFormat;
-	private int preLayer = 0;
+	protected int layer = 0;
+	protected int legendBoxWidth = 100;
 	private List<ObsAnnotation> obsAnnotations;
 	private boolean showObsLegend = false;
 	private String plotTitle;
-	private int footerYOffset = 0;
+	protected int footerYOffset = 0;
+	protected int titleOffset = 0;
+	protected int xMinimum = 0;
 	
 	private int plotWidth = 0;
 	private int plotHeight = 0;
 	
 	private boolean log = false;
 	private int logBase = 10; //Math.E;
+	protected int xTranslation = 0;
 	
-	static int callInx = 1;
+	Projection proj = null;
+	
+//	static int callInx = 1;
 
 	/**
 	 * Constructor - inputs 2D grid parameters.
@@ -92,9 +100,8 @@ public class TilePlot {
 	 * @pre timestepSize > 0
 	 */
 
-	public TilePlot(int startDate, int startTime, int timestepSize) {
+	public TilePlot(GregorianCalendar startDate, long timestepSize) {
 		this.startDate = startDate;
-		this.startTime = startTime;
 		this.timestepSize = timestepSize;
 	}
 	
@@ -102,7 +109,7 @@ public class TilePlot {
 		showObsLegend = showLegend;
 		obsAnnotations = obsAnnot;
 	}
-
+	
 	/**
 	 * draw - Draw a tile plot: colored rectangles with labels and legend.
 	 * @param numberFormat 
@@ -137,29 +144,48 @@ public class TilePlot {
 	
 	public synchronized void draw(final Graphics graphics, int xOffset, int yOffset,
 			int width, int height, int steplapse, int layer, int firstRow,
-			int lastRow, int firstColumn, int lastColumn,
+			int lastRow, int firstColumn, int lastColumn, Projection projection,
 			final double[] legendLevels, final Color[] legendColors,
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data) 
+			final Color gridLineColor, final float[][] data) {
+		draw(graphics, xOffset, yOffset, width, height, steplapse, layer, firstRow,
+				lastRow, firstColumn, lastColumn, projection, legendLevels, legendColors, axisColor,
+				labelColor, variable, units, config, format, gridLineColor, data, null);
+	}
+	
+	public synchronized void draw(final Graphics graphics, int xOffset, int yOffset,
+			int width, int height, int steplapse, int layer, int firstRow,
+			int lastRow, int firstColumn, int lastColumn, Projection projection,
+			final double[] legendLevels, final Color[] legendColors,
+			final Color axisColor, final Color labelColor,
+			final String variable, final String units,
+			PlotConfiguration config, NumberFormat format,
+			final Color gridLineColor, final float[][] data, final byte[][] colorIndexCache) 
 	{
 		Logger.debug("in gov.epa.emvl.TilePlot.draw(lots of parameters), thread = " + Thread.currentThread().toString());
+		//System.out.println("In TilePlot draw");
 		this.config = config;
 		this.numberFormat = format;
+		this.layer = layer;
 		this.plotWidth = width;
 		this.plotHeight = height;
-		final int xMinimum = xOffset;
+		xMinimum = xOffset;
+		//System.out.println("xMinimum" + xMinimum);
+		//System.out.println("width" + width);
 		final int xMaximum = xOffset + width;
 		final int yMinimum = yOffset;
 		final int yHeightOffset = yMinimum + height;
+		//System.out.println("yMinimum" + yMinimum);
+		//System.out.println("height" + height);
 		final int yMaximum = yHeightOffset;
 
 		// Draw grid boundary rectangle, labeled row/column axis and legend:
 		Logger.debug("ready to call graphics.setColor");
 		graphics.setColor(axisColor);
 		Logger.debug("ready to call drawGridBoundary");
-		drawGridBoundary(graphics, xMinimum, xMaximum, yMinimum, yMaximum);
+		drawGridBoundary(graphics, xMinimum, xMaximum, yMinimum, yMaximum);		// draw 4 lines
 		Logger.debug("ready to call drawAxis");
 		drawAxis(graphics, xMinimum, xMaximum, yMinimum, yMaximum, firstRow,
 				lastRow, firstColumn, lastColumn);
@@ -179,16 +205,17 @@ public class TilePlot {
 		Logger.debug("ready to call drawGridCells");
 		drawGridCells(graphics, xMinimum, xMaximum, yMinimum, yMaximum,
 				firstRow, lastRow, firstColumn, lastColumn, legendLevels,
-				legendColors, data);
+				legendColors, data, colorIndexCache);
 		
 		// Draw grid lines:
 
 		if ( gridLineColor != null ) {
 			Logger.debug("ready to call drawGridLines");	// 2015 not printed in log file for fast tile plot
-		  drawGridLines( graphics, xMinimum, xMaximum, yMinimum, yMaximum,
+															// apparently gridLineColor == null
+			drawGridLines( graphics, xMinimum, xMaximum, yMinimum, yMaximum,
 				         firstRow, lastRow, firstColumn, lastColumn, gridLineColor);
 		}
-		Logger.debug("all done with TilePlot.draw");
+		Logger.debug("all done with TilePlot.draw");	// 2015 OK to here
 	}
 	
 	public synchronized void drawBatchImage(final Graphics graphics, int xOffset, int yOffset,
@@ -198,7 +225,9 @@ public class TilePlot {
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data) {
+			final Color gridLineColor, final float[][] data
+			)
+	{
 
 		this.config = config;
 		this.numberFormat = format;
@@ -297,6 +326,9 @@ public class TilePlot {
 			int yMinimum, int yMaximum, int firstRow, int lastRow,
 			int firstColumn, int lastColumn) {
 
+		Integer dLabelCnt = (Integer) config.getObject(TilePlotConfiguration.DOMAIN_TICK_NUMBER);
+		Integer rLabelCnt = (Integer) config.getObject(TilePlotConfiguration.RANGE_TICK_NUMBER);
+
 		final int xAxisOffset = 5; // Pixel offset left of west edge of grid.
 		final int yAxisOffset = 5; // Pixel offset below south edge of grid.
 		final int xTicLength = 5; // Pixel legth of tic mark on X-axis.
@@ -314,8 +346,10 @@ public class TilePlot {
 
 		final float xDelta = labelWidth * 3;
 		final float yDelta = labelHeight * 2;
-		final int xTics = Math.min(columns, replaceRound(xRange / xDelta + 0.5f));
-		final int yTics = Math.min(rows, replaceRound(yRange / yDelta + 0.5f));
+		int xTics = Math.min(columns, replaceRound(xRange / xDelta + 0.5f));
+		int yTics = Math.min(rows, replaceRound(yRange / yDelta + 0.5f));
+		xTics = dLabelCnt != null ? Math.min(xTics, dLabelCnt) : xTics;
+		yTics = rLabelCnt != null ? Math.min(yTics,  rLabelCnt) : yTics;
 		final int columnStep = columns / xTics;
 		final int rowStep = rows / yTics;
 		final int fSize = graphics.getFont().getSize();
@@ -326,7 +360,6 @@ public class TilePlot {
 
 		String domainX = config.getString(PlotConfiguration.DOMAIN_LABEL);
 		Boolean dShowTick = (Boolean) config.getObject(PlotConfiguration.DOMAIN_SHOW_TICK);
-		Integer dLabelCnt = (Integer) config.getObject(TilePlotConfiguration.DOMAIN_TICK_NUMBER);
 		Color domainClr = config.getColor(PlotConfiguration.DOMAIN_COLOR);
 		Color domainTickClr = config.getColor(PlotConfiguration.DOMAIN_TICK_COLOR);
 		Font domainFont = config.getFont(PlotConfiguration.DOMAIN_FONT);
@@ -340,7 +373,6 @@ public class TilePlot {
 		Color rangeTickClr = config.getColor(PlotConfiguration.RANGE_TICK_COLOR);
 		Font rangeFont = config.getFont(PlotConfiguration.RANGE_FONT);
 		Font rangeTickFont = config.getFont(PlotConfiguration.RANGE_TICK_FONT);
-		Integer rLabelCnt = (Integer) config.getObject(TilePlotConfiguration.RANGE_TICK_NUMBER);
 		rShowTick = (rShowTick == null ? true : rShowTick);
 		boolean[] rLevelValues = getLevelValues(rLabelCnt == null ? yTics : rLabelCnt, rows / rowStep + 1);
 
@@ -357,7 +389,8 @@ public class TilePlot {
 		for (int row = firstRow; row <= lastRow; row += rowStep) {
 			final int offsetRow = row - firstRow;
 			final int yTic = yMaximum - replaceRound(offsetRow * rowSize + 0.5f);
-			final String label = Integer.toString(row + 1);
+			final String label;
+			label = Integer.toString(row + 1);
 			final int lblWidth = graphics.getFontMetrics().stringWidth(label);
 			final int xpostn = tickLblBase - lblWidth;
 			if (rShowTick && rLevelValues[i]) graphics.drawString(label, xpostn, yTic + fSize / 2);
@@ -398,7 +431,8 @@ public class TilePlot {
 			final int offsetColumn = column - firstColumn;
 			final int xTic = xMinimum
 					+ replaceRound(offsetColumn * columnSize + 0.5f);
-			final String label = Integer.toString(column + 1);
+			final String label;
+			label = Integer.toString(column + 1);
 			final int xpostn = xTic - graphics.getFontMetrics().stringWidth(label) / 2;
 			if (dShowTick && dLevelValues[i]) graphics.drawString(label, xpostn, dTickYBase + yspace);
 			if (dShowTick) graphics.drawLine(xTic, yAxis, xTic, dTickYBase);
@@ -518,20 +552,22 @@ public class TilePlot {
 			int xMaximum, int yMinimum, int yMaximum, final String variable,
 			int steplapse, int layer, int firstRow, int lastRow,
 			int firstColumn, int lastColumn, final float[][] data) {
+		// NOTE: steplapse = timestep - firstTimestep (from FastTilePlot.java code)
+		// where firstTimestep is either 0 or the origin of the time axis
 
 		final int xRange = xMaximum - xMinimum;
 		final int xCenter = xMinimum + xRange / 2;
 		final int space = 20; // Space between visual components
 		final Font gFont = graphics.getFont();
 		final Color gColor = graphics.getColor();
+		String title;
 		
 		// Title label:
 		String TITLE = config.getProperty(PlotConfiguration.TITLE);
-		final String titleStr = "Layer " + (layer + 1) + " " + variable;
-
+//		final String titleStr = "Layer " + (layer + 1) + " " + variable;	// do NOT want to recalculate title here
+																			// part of bug where user blanks title and it shows up again
+		String defaultTitle = "Layer " + (layer + 1) + " " + variable;
 		String theTitle = config.getTitle();
-		Logger.debug("in gov.epa.emvl.TilePlot.java: TITLE = " + TITLE + ", titleStr = " + titleStr + 
-				", theTitle = " + theTitle);
 		Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
 		Color tColor = config.getColor(PlotConfiguration.TITLE_COLOR);
 		tColor = (tColor == null) ? labelColor : tColor;
@@ -549,9 +585,11 @@ public class TilePlot {
 		//Keep with the pattern of Layer Number, i.e., Layer 1 then Layer 2 ....
 		//look for Layer 1, if present keep with the same trend but update with current the Layer Number
 //		final String title = (TITLE == null || TITLE.isEmpty() ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
-		// need to allow blank, but null is only the first time through this function; when user deletes title it is blank
-		final String title = (TITLE == null  ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
-		
+
+		if(TITLE == null || TITLE.length()<2)	// rest of fix for allowing user to blank out a title
+			title = ScriptManager.parseScript(defaultTitle); // TODO: needs more work
+		else
+			title = ScriptManager.parseScript(TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
 		
 		Font currentFont = new Font(gFont.getFontName(), Font.BOLD, gFont.getSize() * 2);
 		tFont = (tFont == null ? currentFont : tFont);
@@ -583,24 +621,30 @@ public class TilePlot {
 		graphics.drawString(title, xTitle, yTitle);
 		
 		if (sTitle1 != null && !sTitle1.trim().isEmpty()) {
+			sTitle1 = ScriptManager.parseScript(sTitle1);
 			graphics.setFont(sFont1);
 			graphics.setColor(sColor1);
 			FontMetrics sMetrx1 = graphics.getFontMetrics(sFont1);
 			int xsTitle = xCenter - sMetrx1.stringWidth(sTitle1) / 2;
+			titleOffset = sMetrx1.stringWidth(sTitle1) / 2;
 			graphics.drawString(sTitle1, xsTitle, yTitle + space + sFont1.getSize() / 2);
 		}
 
 		if (sTitle2 != null && !sTitle2.trim().isEmpty()) {
+			sTitle2 = ScriptManager.parseScript(sTitle2);
 			graphics.setFont(sFont2);
 			graphics.setColor(sColor2);
 			FontMetrics sMetrx2 = graphics.getFontMetrics(sFont2);
 			int xsTitle = xCenter - sMetrx2.stringWidth(sTitle2) / 2;
+			int title2Offset = xsTitle + sMetrx2.stringWidth(sTitle2);
+			if (title2Offset > titleOffset)
+				titleOffset = title2Offset;
 			graphics.drawString(sTitle2, xsTitle, yTitle + space * 2 + sFont2.getSize() / 2);
 		}
 
 		// Timestamp label:
 		final Font timestampFont = new Font(gFont.getFontName(), Font.BOLD, gFont.getSize());
-		final String timestamp = dateTime(startDate, startTime, timestepSize, steplapse);
+		final String timestamp = dateTime(startDate, timestepSize, steplapse);
 		final int yTimestamp = yMaximum + footerYOffset;
 		
 		if (footer1AutoText == null || footer1 == null || footer1.trim().isEmpty()) footer1AutoText = true;
@@ -617,6 +661,7 @@ public class TilePlot {
 			else graphics.setFont(f1Font);
 			
 			int xTimestamp = xCenter - graphics.getFontMetrics().stringWidth(footer1) / 2;
+
 			graphics.drawString(footer1, xTimestamp, yTimestamp);
 			graphics.setColor(gColor);
 			graphics.setFont(gFont);
@@ -624,17 +669,8 @@ public class TilePlot {
 
 		// Range label:
 
-		final int[] minimumCell = { 0, 0 };
-		final int[] maximumCell = { 0, 0 };
-		final float[] range = { 0.0f, 0.0f };
-
-		layerMinimumMaximum(firstRow, lastRow, firstColumn, lastColumn, data,
-				minimumCell, maximumCell, range);
-
-		final String minMaxLabel = "Min (" + (1 + minimumCell[COLUMN]) + ", "
-				+ (1 + minimumCell[ROW]) + ") = " + gFormat(range[0]) + ", "
-				+ "Max (" + (1 + maximumCell[COLUMN]) + ", "
-				+ (1 + maximumCell[ROW]) + ") = " + gFormat(range[1]);
+		String minMaxLabel = getMinMaxLabel(firstRow, lastRow, firstColumn, lastColumn, data);
+		
 		final int yMinMax = yTimestamp + graphics.getFontMetrics().getHeight() + 5;
 		footerYOffset += graphics.getFontMetrics().getHeight() + 5;
 
@@ -652,7 +688,7 @@ public class TilePlot {
 			else graphics.setFont(f2Font);
 			
 			int xMinMax = xCenter - graphics.getFontMetrics().stringWidth(footer2) / 2;
-			if (xMinMax < xMinimum/2) xMinMax = xMinimum/2;
+			if (xMinMax + xTranslation < xMinimum/2) xMinMax = xMinimum/2;
 			graphics.drawString(footer2, xMinMax, yMinMax);
 			graphics.setColor(gColor);
 			graphics.setFont(gFont);
@@ -668,13 +704,16 @@ public class TilePlot {
 
 		graphics.setFont(currentFont); // Restore original font.
 
+		config.setShowTitle("TRUE");
 		config.putObject(PlotConfiguration.TITLE, title);
 //		config.putObject(PlotConfiguration.TITLE, (!title.equals(titleStr) && preLayer == layer) ? title : "");
 		config.putObject(PlotConfiguration.TITLE_FONT, tFont);
 		config.putObject(PlotConfiguration.TITLE_COLOR, tColor);
+		config.setShowSubtitle1("TRUE");
 		config.putObject(PlotConfiguration.SUBTITLE_1, (sTitle1 == null) ? "" : sTitle1);
 		config.putObject(PlotConfiguration.SUBTITLE_1_COLOR, sColor1);
 		config.putObject(PlotConfiguration.SUBTITLE_1_FONT, sFont1);
+		config.setShowSubtitle2("TRUE");
 		config.putObject(PlotConfiguration.SUBTITLE_2, (sTitle2 == null) ? "" : sTitle2);
 		config.putObject(PlotConfiguration.SUBTITLE_2_COLOR, sColor2);
 		config.putObject(PlotConfiguration.SUBTITLE_2_FONT, sFont2);
@@ -682,17 +721,30 @@ public class TilePlot {
 		config.putObject(PlotConfiguration.FOOTER1_SHOW_LINE, showFooter1);
 		config.putObject(PlotConfiguration.FOOTER1_AUTO_TEXT, footer1AutoText);
 		config.putObject(PlotConfiguration.FOOTER1_COLOR, (f1Color == null) ? labelColor : f1Color);
-		config.putObject(PlotConfiguration.FOOTER1_FONT, (f1Font == null) ? gFont : f1Font);
+		config.putObject(PlotConfiguration.FOOTER1_FONT, (f1Font == null) ? timestampFont : f1Font);
 		config.putObject(PlotConfiguration.FOOTER2, footer2);
 		config.putObject(PlotConfiguration.FOOTER2_SHOW_LINE, showFooter2);
 		config.putObject(PlotConfiguration.FOOTER2_AUTO_TEXT, footer2AutoText);
 		config.putObject(PlotConfiguration.FOOTER2_COLOR, (f2Color == null) ? labelColor : f2Color);
-		config.putObject(PlotConfiguration.FOOTER2_FONT, (f2Font == null) ? gFont : f2Font);
+		config.putObject(PlotConfiguration.FOOTER2_FONT, (f2Font == null) ? timestampFont : f2Font);
 		config.putObject(PlotConfiguration.OBS_SHOW_LEGEND, showObs);
 		config.putObject(PlotConfiguration.OBS_LEGEND_COLOR, (obsColor == null) ? labelColor : obsColor);
 		config.putObject(PlotConfiguration.OBS_LEGEND_FONT, (obsFont == null) ? gFont : obsFont);
-		
-		this.preLayer = layer;
+	}
+	
+	protected String getMinMaxLabel(int firstRow, int lastRow,
+			int firstColumn, int lastColumn, final float[][] data) {
+		final int[] minimumCell = { 0, 0 };
+		final int[] maximumCell = { 0, 0 };
+		final float[] range = { 0.0f, 0.0f };
+
+		layerMinimumMaximum(firstRow, lastRow, firstColumn, lastColumn, data,
+				minimumCell, maximumCell, range);
+
+		return "Min (" + (1 + minimumCell[COLUMN]) + ", "
+				+ (1 + minimumCell[ROW]) + ") = " + gFormat(range[0]) + ", "
+				+ "Max (" + (1 + maximumCell[COLUMN]) + ", "
+				+ (1 + maximumCell[ROW]) + ") = " + gFormat(range[1]);
 	}
 
 	private void drawObsLegend(Graphics g, int xmin, int xmax, int ymin, int ymax, int top) {
@@ -701,10 +753,7 @@ public class TilePlot {
 		final int halfCharHeight = 4;
 		int legendLen = 0;
 		
-		String verdiHome = Tools.getVerdiHome();		// 2014 new method for reading in an image file
-		String separator = "/";		// use forward slash only for constructor ImageIcon(String filename);
-		String pathName = verdiHome + separator + "plugins" + separator + "core" + separator + "icons"
-				 + separator;
+		String pathName = Tools.getIconsDir();
 		String fileCircle = new String(pathName + "circle.png");
 		String fileDiamond = new String(pathName + "diamond.png");
 		String fileSquare = new String(pathName + "square.png");
@@ -719,12 +768,6 @@ public class TilePlot {
 		symbols.put(Symbol.STAR, new ImageIcon(fileStar));
 		symbols.put(Symbol.SUN, new ImageIcon(fileSun));
 		symbols.put(Symbol.TRIANGLE, new ImageIcon(fileTriangle));
-//		symbols.put(Symbol.CIRCLE, new ImageIcon(getClass().getResource("/circle.png")));
-//		symbols.put(Symbol.DIAMOND, new ImageIcon(getClass().getResource("/diamond.png")));
-//		symbols.put(Symbol.SQUARE, new ImageIcon(getClass().getResource("/square.png")));
-//		symbols.put(Symbol.STAR, new ImageIcon(getClass().getResource("/star.png")));
-//		symbols.put(Symbol.SUN, new ImageIcon(getClass().getResource("/sun.png")));
-//		symbols.put(Symbol.TRIANGLE, new ImageIcon(getClass().getResource("/triangle.png")));
 		
 		HashMap<String, ImageIcon> legends = new HashMap<String, ImageIcon>();
 		List<String> names = new ArrayList<String>();
@@ -747,6 +790,7 @@ public class TilePlot {
 		for (String name : names) {
 			ImageIcon icon = legends.get(name);
 			g.drawImage(icon.getImage(), startx, y, null);
+			System.out.println("In TilePlot - startx" + startx);
 			g.drawString(name, startx + icon.getIconWidth(), y + charHeight + halfCharHeight);
 			startx += (name.length()) * charWidth;
 		}
@@ -859,6 +903,11 @@ public class TilePlot {
 		
 		int maxLabelLen = graphics.getFontMetrics(labelFont == null ? gFont : labelFont).stringWidth(maxLenLabel);
 		
+		final int xRange = xMaximum - xMinimum;
+		final int xCenter = xMinimum + xRange / 2;
+		if (titleOffset != 0 && xMaximum < xCenter + titleOffset)
+			xMaximum = titleOffset + xCenter;
+		
 		final int x = xMaximum + xOffset;
 		int legendBoxX = x, legendBoxY = yMinimum - space;
 
@@ -918,10 +967,12 @@ public class TilePlot {
 		// Draw color bar:
 		int colorBarX = (uShowTick) ? xTic + ticSize : unitStrX + unitHeight + space;
 		
-		for (int color = 0; color < colors; ++color) {
-			final int y = yMaximum - (color + 1) * binHeight;
-			graphics.setColor(legendColors[color]);
-			if (showLegend) graphics.fillRect(colorBarX, y, binWidth, binHeight);
+		if (showLegend) {
+			for (int color = 0; color < colors; ++color) {
+				final int y = yMaximum - (color + 1) * binHeight;
+				graphics.setColor(legendColors[color]);
+				graphics.fillRect(colorBarX, y, binWidth, binHeight);
+			}
 		}
 
 		// Draw box around color bar:
@@ -929,11 +980,12 @@ public class TilePlot {
 		graphics.setColor(Color.BLACK);
 		if (showLegend) graphics.drawRect(colorBarX, y, binWidth, colors*binHeight);
 		
-		int legendBoxWidth = colorBarX - x + binWidth + unitHeight / 2;
+		legendBoxWidth = colorBarX - x + binWidth + unitHeight / 2;
 		int legendBoxHeight = space + yRange + halfCharHeight * 2 + 2 * space; //add space to top and bottom of the legend
 		
 		// Draw legend box
 		graphics.setColor(Color.BLACK);
+
 		if (showLegend) graphics.drawRect(legendBoxX, legendBoxY - halfCharHeight, legendBoxWidth, legendBoxHeight);
 		
 		graphics.setColor(currentColor); // Restore original color.
@@ -990,19 +1042,30 @@ public class TilePlot {
 	 * @pre data.length == (1 + lastRow - firstRow) * (1 +
 	 *      lastColumn-firstColumn)
 	 */
-
+	
 	public void drawGridCells(final Graphics graphics, int xMinimum,
 			int xMaximum, int yMinimum, int yMaximum, int firstRow,
 			int lastRow, int firstColumn, int lastColumn,
 			final double[] legendLevels, final Color[] legendColors,
 			final float[][] data) {
+		drawGridCells(graphics, xMinimum, xMaximum, yMinimum, yMaximum,
+				firstRow, lastRow, firstColumn, lastColumn, legendLevels,
+				legendColors, data, null);
+	}
+
+	public void drawGridCells(final Graphics graphics, int xMinimum,
+			int xMaximum, int yMinimum, int yMaximum, int firstRow,
+			int lastRow, int firstColumn, int lastColumn,
+			final double[] legendLevels, final Color[] legendColors,
+			final float[][] data, final byte[][] colorIndexCache) {
+		if (data == null)
+			return;
 
 		final int rows = 1 + lastRow - firstRow;
 		final int columns = 1 + lastColumn - firstColumn;
 		final float width = xMaximum - xMinimum;
 		final float height = yMaximum - yMinimum;
-		final float xDelta = width / columns; // Width in pixels of a grid
-		// cell.
+		final float xDelta = width / columns; // Width in pixels of a grid cell.
 		final float yDelta = height / rows; // Height in pixels of a grid cell.
 		final int rectangleHeight = replaceRound(yDelta + 0.5f);
 		float rectangleWidth = xDelta;
@@ -1011,14 +1074,13 @@ public class TilePlot {
 		Color previousCellColor = null;
 
 		// Color entire grid area with the lowest legend color then
-		// avoid drawing the (usually numerous) grid cells that have
-		// that color.
+		// avoid drawing the (usually numerous) grid cells that have that color.
 
 		graphics.setColor(backgroundColor);
 		
 		if (rows == 1 && columns == 1) {
 			float dat = data[0][0];
-			int index = indexOfValue(dat, legendLevels);
+			int index = colorIndexCache == null ? indexOfValue(dat, legendLevels) : colorIndexCache[0][0];
 			graphics.setColor(index == -1 ? Color.WHITE : legendColors[index]);
 		}
 		
@@ -1028,10 +1090,13 @@ public class TilePlot {
 		// Draw cells as rectangles whose width is extended to cover consecutive
 		// cells with the same color along a row so fewer rectangles are drawn.
 		
+		float yMaxAdj = yMaximum + 0.5f;
+		float xMinAdj = xMinimum + 0.5f;
+		float xDeltaAdj = xDelta + 0.5f;
+		final int lastRectangleWidth =replaceRound(xDeltaAdj);
 		for (int row = firstRow; row <= lastRow; ++row) {
 			final int dataRow = row - firstRow;
-			final int y = replaceRound(yMaximum - (1 + row - firstRow) * yDelta
-					+ 0.5f);
+			final int y = replaceRound(yMaxAdj - (1 + dataRow) * yDelta);
 			float x = xMinimum;
 			previousCellColor = null;
 
@@ -1040,12 +1105,12 @@ public class TilePlot {
 				//final 
 				float datum = data[dataRow][dataColumn];
 				
-				final int colorIndex = indexOfValue(datum, legendLevels);
+				final int colorIndex = colorIndexCache == null ? indexOfValue(datum, legendLevels) : colorIndexCache[dataRow][dataColumn];
+
 				final Color cellColor = (colorIndex == -1 ? Color.WHITE : legendColors[colorIndex]);
 				
 				if (column == lastColumn && cellColor != backgroundColor) { //draw the last cell of row
-					final int lastRectangleWidth = replaceRound(xDelta + 0.5f);
-					final int lastX = replaceRound(xMinimum + (column - firstColumn) * xDelta + 0.5f);
+					final int lastX = replaceRound(xMinAdj + dataColumn * xDelta);
 					graphics.setColor(cellColor);
 					graphics.fillRect(lastX, y, lastRectangleWidth, rectangleHeight);
 				}
@@ -1073,7 +1138,7 @@ public class TilePlot {
 
 					rectangleWidth = xDelta;
 					previousCellColor = cellColor;
-					x = xMinimum + (column - firstColumn) * xDelta;
+					x = xMinimum + dataColumn * xDelta;
 				} else {
 					rectangleWidth += xDelta; // Widen rectangle to draw later.
 				}
@@ -1083,6 +1148,14 @@ public class TilePlot {
 		graphics.setColor(Color.LIGHT_GRAY);
 		graphics.drawRect(xMinimum, yMinimum, (int) width, (int) height);
 		graphics.setColor(gColor);
+	}
+	
+	public byte[][] calculateColorIndices(final float[][] data, final double[] legendLevels) {
+		byte[][] indices = new byte[data.length][data[0].length];
+		for (int i = 0; i < data.length; ++i)
+			for (int j = 0; j < data[i].length; ++j)
+				indices[i][j] = indexOfValue(data[i][j], legendLevels);
+		return indices;
 	}
 	
 	/**
@@ -1150,8 +1223,8 @@ public class TilePlot {
 	 * @post value <= values[ return ]
 	 */
 
-	private static int indexOfValue(float value, final double[] values) { // TODO: log color legend: take log on value
-		if (new Float(value).toString().equals("NaN") || value <= DataUtilities.AMISS3 || value <= DataUtilities.BADVAL3)
+	private static byte indexOfValue(float value, final double[] values) { // TODO: log color legend: take log on value
+		if (new Float(value).toString().equals("NaN") || value <= DataUtilities.AMISS3 || value <= DataUtilities.BADVAL3 || value >= DataUtilities.NC_FILL_FLOAT)
 			return -1;
 		
 		final int count = values.length;
@@ -1161,10 +1234,10 @@ public class TilePlot {
 
 		for (int index = 1; index < count; index++) {
 			if (values[index] > value)
-				return index - 1;
+				return (byte)(index - 1);
 		}
 
-		return count - 2;
+		return (byte)(count - 2);
 	}
 	
 	/**
@@ -1176,147 +1249,36 @@ public class TilePlot {
 	 * @pre timestep >= 0
 	 * @post return != null
 	 */
+	
+	private static final int MS_IN_SECONDS = 1000;
+	private static final int SEC_IN_MIN = 60;
+	private static final int MIN_IN_HOUR = 60;
 
-	private static String dateTime(int startDate, int startTime,		// 2014 future version: replace this with GregorianCalendar functionality
-			int timestepSize, int steplapse) {
-		final int months = 12;
-		final int hoursPerDay = 24;
-		final int minutesPerHour = 60;
-		final int secondsPerMinute = 60;
-		final int yyyyddd = startDate;
-		final int yyyy = yyyyddd / 1000;
-		final int leap = ((yyyy % 4 == 0) && !(yyyy % 100 == 0 && yyyy % 400 != 0)) ? 1
-				: 0;
-		final int[] daysPerMonth = { 31, 28 + leap, 31, 30, 31, 30, 31, 31, 30,
-				31, 30, 31 };
-
-		// Compute year, month and dayOfMonth:
-
-		final int ddd = yyyyddd % 1000;
-		int dddRemaining = ddd;
-		int yearDays = 0;
-		int thisMonth = 0;
-		int month = 0;
-		int dayOfMonth = 0;
-		for (thisMonth = 0; thisMonth < months; ++thisMonth) {
-			final int daysThisMonth = daysPerMonth[thisMonth];
-			yearDays += daysThisMonth;
-
-			if (yearDays >= ddd) {
-				month = thisMonth + 1;
-				dayOfMonth = dddRemaining;
-				thisMonth = months;
-			}
-
-			dddRemaining -= daysThisMonth;
+	protected String dateTime(GregorianCalendar startDate, long timestepSize, int steplapse) {
+		GregorianCalendar endDate = new GregorianCalendar();
+		endDate.setTime(startDate.getTime());
+		if (timestepSize * timestepSize > Integer.MAX_VALUE) {
+			//prevent integer overflow
+			int ms = (int)(timestepSize % MS_IN_SECONDS);
+			long totalSec = timestepSize / MS_IN_SECONDS;
+			int sec = (int)totalSec % SEC_IN_MIN;
+			long totalMin = totalSec / SEC_IN_MIN;
+			int min = (int)totalMin % MIN_IN_HOUR;
+			int hour = (int)totalMin / MIN_IN_HOUR;
+			ms *= steplapse;
+			sec *= steplapse;
+			min *= steplapse;
+			hour *= steplapse;
+			endDate.add(Calendar.MILLISECOND, ms);
+			endDate.add(Calendar.SECOND, sec);
+			endDate.add(Calendar.MINUTE, min);
+			endDate.add(Calendar.HOUR, hour);
 		}
-
-		// Starting year, month, dayOfMonth, hour, minute, second:
-
-		final int year = startDate / 1000;
-		final int hour = startTime / 10000;
-		final int minute = startTime / 100 % 100;
-		final int second = startTime % 100;
-
-		// Additional days, hours, minutes, seconds:
-
-		final int totalSeconds = timestepSize % 100 * steplapse;
-		final int seconds = totalSeconds % secondsPerMinute;
-		final int extraMinutes = totalSeconds / secondsPerMinute;
-
-		final int totalMinutes = timestepSize / 100 % 100 * steplapse
-				+ extraMinutes;
-		final int minutes = totalMinutes % minutesPerHour;
-		final int extraHours = totalMinutes / minutesPerHour;
-
-		//NOTE: the following calculation is based on timestepSize being multiples of an hour
-		//      which could cause problems if the timestepSize is, say, 13000, which means 1.5hrs
-		final int totalHours = timestepSize / 10000 * steplapse + extraHours;
-		final int hours = totalHours % hoursPerDay;
-		final int extraDays = extraHours / hoursPerDay;
-
-		final int days = timestepSize / 10000 * steplapse / hoursPerDay	+ extraDays;
-
-		// Add (days, hours, minutes, seconds) to
-		// (year, month, dayOfMonth, hour, minute, second)
-		// to get result like "August 29, 2005 08:00:00 UTC":
-
-		final String result = endingDate(year, month, dayOfMonth, hour, minute,
-				second, days, hours, minutes, seconds);
-		return result;
-	}
-
-	/**
-	 * endingDate - create date-time string. "March 3, 2004 00:00:00 UTC" =
-	 * endingDate( 2004, 2, 27, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0 );
-	 * 
-	 * @pre year >= 1900
-	 * @pre year < 9999
-	 * @pre month >= 1
-	 * @pre month <= 12
-	 * @pre day >= 1
-	 * @pre day <= 31
-	 * @pre hour >= 0
-	 * @pre hour <= 23
-	 * @pre minute >= 0
-	 * @pre minute <= 59
-	 * @pre second >= 0
-	 * @pre second <= 59
-	 * @pre days >= 0
-	 * @pre days < 366
-	 * @pre hours >= 0
-	 * @pre hours <= 23
-	 * @pre minutes >= 0
-	 * @pre minutes <= 59
-	 * @pre seconds >= 0
-	 * @pre seconds <= 59
-	 * @post return != null
-	 */
-
-	private static String endingDate(int year, int month, int day, int hour,	// 2014 future version: replace this with GregorianCalendar functionality
-			int minute, int second, int days, int hours, int minutes,
-			int seconds) {
-
-		final int zero_based_offset = 1; // UGLY: Only month is zero-based!
-		final Calendar calendar = Calendar.getInstance();
-		final TimeZone timeZone = TimeZone.getTimeZone("GMT");
-		calendar.setTimeZone(timeZone);
-		calendar.set(Calendar.ZONE_OFFSET, 0);
-		calendar.set(year, month - zero_based_offset, day, hour, minute, second);
-
-//		final int unused = calendar.get(Calendar.HOUR_OF_DAY); // UGLY Java
-		// BUG:
-		// Must call get() so the previous set() takes effect before calling
-		// add()!
-		// Terrible design of java.util.Calendar! Violates CQSP and the primary
-		// design rule: make it easy to use correctly and hard to use
-		// incorrectly.
-
-		calendar.add(Calendar.DAY_OF_MONTH, days);
-		calendar.add(Calendar.HOUR_OF_DAY, hours);
-		calendar.add(Calendar.MINUTE, minutes);
-		calendar.add(Calendar.SECOND, seconds);
-
-		year = calendar.get(Calendar.YEAR);
-		month = calendar.get(Calendar.MONTH);
-		day = calendar.get(Calendar.DAY_OF_MONTH);
-		hour = calendar.get(Calendar.HOUR_OF_DAY);
-		minute = calendar.get(Calendar.MINUTE);
-		second = calendar.get(Calendar.SECOND);
-		// 2014 commented out next lines & replaced with GregorianCalendar & Utilities.formatDate
-//		final String[] monthNames = { "January", "February", "March", "April",
-//				"May", "June", "July", "August", "September", "October",
-//				"November", "December" };
-//		final String monthName = monthNames[month];
-//		final String h0 = hour < 10 ? "0" : "";
-//		final String m0 = minute < 10 ? "0" : "";
-//		final String s0 = second < 10 ? "0" : "";
-//		final String result = monthName + " " + day + ", " + year + " " + h0
-//				+ hour + ":" + m0 + minute + ":" + s0 + second + " UTC";
-//		return result;
-		GregorianCalendar aGregorianCalendar = new GregorianCalendar(year,month,day,hour,minute,second);
-		String result = Utilities.formatDate(aGregorianCalendar); 
-		return result;
+		else
+			endDate.add(Calendar.MILLISECOND, (int)timestepSize * steplapse);
+		if (timestepSize % 1000 == 0)
+			return Utilities.formatDate(endDate); 
+		return Utilities.formatDateMS(endDate);
 	}
 
 	/**
@@ -1373,7 +1335,7 @@ public class TilePlot {
 				final int dataColumn = column - firstColumn;
 				final float value = data[dataRow][dataColumn];
 
-				if (value <= DataUtilities.BADVAL3 || value <= DataUtilities.AMISS3)
+				if (value <= DataUtilities.BADVAL3 || value <= DataUtilities.AMISS3 || value >= DataUtilities.NC_FILL_FLOAT)
 					continue;
 				
 				if (value < minimumValue) {
@@ -1391,6 +1353,10 @@ public class TilePlot {
 		range[MINIMUM] = minimumValue;
 		range[MAXIMUM] = maximumValue;
 	}
+	
+	public GridInfo getGridInfo(){
+		return null;
+	}
 
 	/**
 	 * gFormat - %g-like formatted string of value.
@@ -1399,7 +1365,7 @@ public class TilePlot {
 	 * @post return.length() <= 11
 	 */
 
-	private String gFormat(double value) {
+	protected String gFormat(double value) {
 		return numberFormat.format(value);
 	}
 
@@ -1435,10 +1401,8 @@ public class TilePlot {
 		return plotHeight;
 	}
 	
-	private int replaceRound(float num) {
-		return 
-		//(int)Math.floor(num);
-		Math.round(num);
+	protected int replaceRound(float num) {
+		return Math.round(num);
 	}
 
 }

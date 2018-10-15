@@ -13,14 +13,15 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
+
+
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.Attribute;
-import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
-import ucar.nc2.Variable;
-import ucar.nc2.VariableSimpleIF;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dataset.conv.COARDSConvention;
 import ucar.nc2.dataset.conv.M3IOConvention;
+import ucar.nc2.dataset.conv.MPASConvention;
 import ucar.nc2.dataset.conv.WRFConvention;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
@@ -83,6 +84,44 @@ public class NetcdfDatasetFactory {
 
 	/**
 	 * Creates a list of Datasets from the specified URL. The url
+	 * should point to a netcdf file conforming to the MPAS convention.
+	 *
+	 * @param url a url that points to a netcdf file conforming to the
+	 *            Models-3 convention.
+	 * @return a list of Datasets from the specified URL
+	 * @throws IOException 
+	 */
+	public List<Dataset> createMPASDatasets(URL url) throws IOException {
+		Logger.debug("in NetcdfDatasetFactory.createModels3Datasets, url = " + url);
+		NetcdfDataset netcdfDataset = null;
+		List<Dataset> setList = new ArrayList<Dataset>();
+		try {
+			Logger.debug("ready to call openNetcdfGridDataset");
+			String urlString = url.toExternalForm();
+			netcdfDataset = NetcdfDataset.openDataset(urlString);
+			Logger.debug("in NetcdfDatasetFactory.createModels3Datasets, back from openNetcdfGridDataset");
+			//Already check in MPASLoader
+			/*if (!MPASConvention.isMine(netcdfDataset)) {
+				Logger.debug("MPASConvention.isMine == false");
+				throw new IOException("Loading non-mpas file into MPASDataset");
+			}*/
+			// if here then ok.
+			Logger.debug("isMine == true, returning createDatasets for url = " + url);
+			setList.add(new MPASDataset(url, netcdfDataset));
+		} catch (IOException ex) {
+			try {
+				if (netcdfDataset != null)
+					netcdfDataset.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			throw ex;
+		}
+		return setList;
+	}
+
+	/**
+	 * Creates a list of Datasets from the specified URL. The url
 	 * should point to a netcdf file conforming to the Models-3 convention.
 	 *
 	 * @param url a url that points to a netcdf file conforming to the
@@ -133,7 +172,6 @@ public class NetcdfDatasetFactory {
 //				public void setError(String msg) {}
 //				@Override
 //				public void setProgress(String arg0, int arg1) {
-//					// TODO Auto-generated method stub
 //					
 //				}
 //			});
@@ -170,6 +208,40 @@ public class NetcdfDatasetFactory {
 			// if here then ok.
 			Logger.debug("isMine == true, returning createDatasets for url = " + url);
 			return createDatasets(gridDataset, url, VerdiConstants.NETCDF_CONV_ARW_WRF);
+		} catch (Exception io) {
+			Logger.error("Error reading netcdf file " + io.getMessage());
+			try {
+				if (gridDataset != null)
+					gridDataset.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return new ArrayList<Dataset>();
+	}
+
+	/**
+	 * Creates a list of Datasets from the specified URL. The url
+	 * should point to a netcdf file conforming to the Models-3 convention.
+	 *
+	 * @param url a url that points to a netcdf file conforming to the
+	 *            COARDS convention.
+	 * @return a list of Datasets from the specified URL
+	 */
+	public List<Dataset> createCOARDSDatasets(URL url) {
+		Logger.debug("in NetcdfDatasetFactory.createCOARDSDatasets for url = " + url);
+		GridDataset gridDataset = null;
+		try {
+			Logger.debug("ready to call openNetcdfGridDataset");
+			gridDataset = openNetcdfGridDataset(url); // JIZHEN-SHIFT
+			Logger.debug("in NetcdfDatasetFactory.createCOARDSDatasets, back from openNetcdfGridDataset");
+			/*if (!COARDSConvention.isMine(gridDataset.getNetcdfDataset())) {
+				Logger.debug("isMine == false");
+				throw new IOException("Loading non-coards file into COARDSDataset");
+			}*/
+			// if here then ok.
+			Logger.debug("isMine == true, returning createDatasets for url = " + url);
+			return createDatasets(gridDataset, url, -1);
 		} catch (Exception io) {
 			Logger.error("Error reading netcdf file " + io.getMessage());
 			try {

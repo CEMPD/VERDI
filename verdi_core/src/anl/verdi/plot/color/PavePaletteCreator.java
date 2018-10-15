@@ -145,76 +145,42 @@ public class PavePaletteCreator {
 		list.add(createPalette(newtonmap, classes, "Newton RGB (AVS)"));
 		list.add(createPalette(jetmap, classes, "Newton RGB (InkJet)"));
 		list.add(createPalette(greymap, classes, "Grey Scale (AVS)"));
+		list.add(createPavePalette());
 		return list;
 	}
 
 	private Palette createPalette(int[] map, int classes, String description) {
-		Logger.debug("in PavePaletteCreator.createPalette");
+//		Logger.debug("in PavePaletteCreator.createPalette, classes = " + classes + ", description = " + description);
 		Color[] colors = new Color[classes];
 		for (int i = 0; i < classes; i++) {
 			int index = 0;
 			if (i == 0) index = 0;
 			else if (i == classes - 1) index = map.length - 1;
 			else index = i * (map.length / (classes - 1));
-//			Logger.debug("createPalette i=" + i + " classes=" + classes + " index=" + index);
 			Color color = new Color(map[index]);
 			colors[i] = color;
+//			Logger.debug("colors[" + i + "] = " + color.getRGB() + " : " + color.getRed()
+//					+ ", " + color.getGreen() + ", " + color.getBlue());
 		}
-//		if (map.equals(newtonmap) && classes == 8) {		// 2014 2 colors are identical, trying without this old hack
-//			Logger.debug("Prior specific setting for colors[3] only");
-//			colors[3] = new Color(0, 255, 221);
-//		}
 
 		return new Palette(colors, description, false);
 	}
 	
-	/*
-	private Palette createRainbow(int classes) {
-		Color[] colors = new Color[classes];
-		float interval = 1.0f / classes;
-		for (int i = 0; i < classes; i++) {
-			float val = interval * i;
-			float r = 1.0f;
-			float b = 1.0f;
-			float g = 1.0f;
-			if (val < .25) {
-				r = 0f;
-				g = 4 * val;
-			} else if (val < .5f) {
-				r = 0f;
-				b = 1 + 4 * (.25f - val);
-			} else if (val < .75f) {
-				r = 4 * (val - .5f);
-				b = 0;
-			} else {
-				g = 1 + 4 * (.75f - val);
-				b = 0f;
-			}
-			colors[i] = new Color(r, g, b);
-		}
-
-		return new Palette(colors, "Rainbow");
+	public Palette createPavePalette()	// create the old 8-color default PAVE color palette
+	{
+		Logger.debug("in PavePaletteCreator.createPavePalette");
+		Color[] colors = new Color[8];
+		colors[0] = new Color(223, 223, 223);
+		colors[1] = new Color(0,95,255);
+		colors[2] = new Color(0,143,255);
+		colors[3] = new Color(0,255,221);
+		colors[4] = new Color(70,255,0);
+		colors[5] = new Color(218,255,0);
+		colors[6] = new Color(255,147,0);
+		colors[7] = new Color(255,0,0);
+		return new Palette(colors,"Tile Plot default",false);
+		
 	}
-
-	private Palette createPalette(Color source, Color destination, int classes) {
-		Color[] colors = new Color[classes];
-		colors[0] = source;
-		colors[classes - 1] = destination;
-		if (classes > 2) {
-			int count = classes - 2;
-			float interval = 1.0f / count;
-			for (int i = 1; i < count + 1; i++) {
-				float val = interval * i;
-				float red = (float) (source.getRed() + (val * (destination.getRed() - source.getRed())));
-				float green = (float) (source.getGreen() + (val * (destination.getGreen() - source.getGreen())));
-				float blue = (float) (source.getBlue() + (val * (destination.getBlue() - source.getBlue())));
-				float alpha = (float) (source.getAlpha() + (val * (destination.getAlpha() - source.getAlpha())));
-				colors[i] = new Color(red / 255, green / 255, blue / 255, alpha / 255);
-			}
-		}
-		return new Palette(colors, "Foo");
-	}
-	*/
 	
 	public static void main(String[] args) {
 		Logger.debug("<table>");

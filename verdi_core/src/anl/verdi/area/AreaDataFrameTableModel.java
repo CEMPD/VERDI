@@ -31,7 +31,8 @@ public class AreaDataFrameTableModel extends AbstractDataFrameTableModel {
 	ArrayList areas;
 	ArrayList[] values,valuesAve;
 	Variable[] variables;
-	public AreaDataFrameTableModel(DataFrame[] frames,ArrayList areas,Variable[] vars) {
+	
+	public AreaDataFrameTableModel(DataFrame[] frames,ArrayList areas,Variable[] vars,int timestep, int layer) {
 		super(frames[0]);
 		// copy the values
 		values=new ArrayList[vars.length];
@@ -78,7 +79,7 @@ public class AreaDataFrameTableModel extends AbstractDataFrameTableModel {
 			TargetCalculator calc = new TargetCalculator();
 			calc.calculateIntersections(Target.getTargets(),frames[i],null);
 
-			float[][] data= getAllLayerData(frames[i],0,0,rows,cols);
+			float[][] data= getAllLayerData(frames[i],timestep,layer,rows,cols);
 
 			for(Target target:(ArrayList<Target>)areas){
 				// calculate the deposition and draw filled

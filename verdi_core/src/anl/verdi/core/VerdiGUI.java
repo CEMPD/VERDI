@@ -3,6 +3,8 @@ package anl.verdi.core;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -26,6 +29,9 @@ import javax.swing.JTable;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.geometry.jts.ReferencedEnvelope;
+//import org.geotools.swing.JMapFrame;
+import org.geotools.swing.JMapPane;
 
 import saf.core.ui.GUIBarManager;
 import saf.core.ui.GUIConstants;
@@ -58,6 +64,8 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	static final Logger Logger = LogManager.getLogger(VerdiGUI.class.getName());
 
 //	private static final MessageCenter ctr = MessageCenter.getMessageCenter(VerdiGUI.class);
+	
+	private static VerdiGUI instance = null;
 
 	private DockingManager manager;
 	private static int plotCount = 0;
@@ -66,12 +74,14 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	private AreaFilePanel areaPanel;
 	private java.util.List<String> viewList = new ArrayList<String>(); // amw
 																		// 02May07
-	private java.util.List<JFrame> framesToDisplay = new ArrayList<JFrame>(); // amw
+	private java.util.List<JFrame> framesToDisplay = new ArrayList<JFrame>(); // amw	// JEB try JFrame => JMapFrame
 																				// 02May07
 	private HashMap<String, PlotPanel> plotPanels = new HashMap<String, PlotPanel>();
 	private HashMap<String, JPanel> scriptPanels = new HashMap<String, JPanel>();
 	private static HashMap<Plot, DockableFrame> views = new HashMap<Plot, DockableFrame>();
 	private static boolean windowIsIconified = false;
+	
+	public static final ReentrantLock VISIBLE_LOCK = new ReentrantLock(true);
 
 //	private FormulasPanel formulasPanel;
 
@@ -81,7 +91,13 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 		this.manager = manager;
 		this.datasets = datasets;
 		this.areaPanel = areaPanel;
+		if (instance == null)
+			instance = this;
 //		this.formulasPanel = formulas;
+	}
+	
+	public VerdiGUI getInstance() {
+		return instance;
 	}
 
 	public void windowActivated(WindowEvent unused) {
@@ -162,7 +178,24 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	public void addPlot(PlotPanel plotPanel) {
 		setStatusTwoText("");
 		String name = plotPanel.getName();
+		
+		// BEGIN SECTION FOR TESTING
+		JMapPane aMapPane = plotPanel.getMapPane();
+		if(aMapPane != null)
+		{
+			Logger.debug("in VerdiGUI.addPlot; existing JMapPane in plotPanel = " + aMapPane.toString());
+			ReferencedEnvelope aMPReferencedEnvelope = aMapPane.getDisplayArea();
+			double minX = aMPReferencedEnvelope.getMinX();
+			double minY = aMPReferencedEnvelope.getMinY();
+			double maxX = aMPReferencedEnvelope.getMaxX();
+			double maxY = aMPReferencedEnvelope.getMaxY();
+			Logger.debug("and its ReferencedEnvelope = (" + minX + ", " + maxX + ", " + minY + ", " + maxY + ")");
+			Logger.debug("and its current CRS = " + aMPReferencedEnvelope.getCoordinateReferenceSystem());
+		}
+		// END SECTION FOR TESTING
+		
 		String viewId = replaceInvalidChars(name) + plotCount++;
+		plotPanel.setViewId(viewId);
 
 		if (plotPanel.getPlotType() == Formula.Type.CONTOUR) {
 			addContourPlot(viewId, name, plotPanel);
@@ -210,19 +243,38 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	// Is this plot either an unselected tab or is the GUI iconified?
 
 	public static boolean isHidden( Plot plot ) {
-		boolean result = windowIsIconified;
-		
-		if ( ! result ) {
-			final DockableFrame view = views.get( plot );
+		synchronized (VISIBLE_LOCK) {
+			boolean result = windowIsIconified;
 			
-			if ( view == null ) {
-				result = false;
-			} else {
-				result = view.isMinimized();
+			if ( ! result ) {
+				final DockableFrame view = views.get( plot );
+				
+				if ( view == null ) {
+					result = false;
+				} else {
+					result = view.isMinimized() || view.isHidden();
+				}
 			}
+	
+			return result;
 		}
-
-		return result;
+	}
+	
+	public static void showIfVisible(JPanel panel, Graphics graphics, Image offScreenImage) {
+		synchronized (VISIBLE_LOCK) {
+			if (!VerdiGUI.isHidden((Plot) panel))
+				graphics.drawImage(offScreenImage, 0, 0,panel);
+		}
+	}
+	
+	public static boolean lock() {
+		VISIBLE_LOCK.lock();
+		return true;
+	}
+	
+	public static void unlock() {
+		if (VISIBLE_LOCK.isHeldByCurrentThread())
+			VISIBLE_LOCK.unlock();
 	}
 
 	public void addScriptPane(JPanel scriptPanel) {
@@ -344,11 +396,19 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	}
 
 	public void setStatusTwoText(String text) {
+		// JEB 2016 altered function to compare new and existing strings and do nothing if they are the same
+		String currentText = manager.getBarManager().getStatusBarText("verdi.status.two");
+		if(currentText.equalsIgnoreCase(text))
+			return;
 		manager.getBarManager().setStatusBarText("verdi.status.two", text);
 		manager.getBarManager().getStatusBar().repaint();
 	}
 
 	public void setStatusOneText(String text) {
+		// JEB 2016 altered function to compare new and existing strings and do nothing if they are the same
+		String currentText = manager.getBarManager().getStatusBarText("verdi.status.one");
+		if(currentText.equalsIgnoreCase(text))
+			return;
 		manager.getBarManager().setStatusBarText("verdi.status.one", text);
 		manager.getBarManager().getStatusBar().repaint();
 	}
@@ -385,13 +445,16 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	}
 
 	public void setOtherPlotsEnabled(boolean enabled) {
+		Logger.debug("in VerdiGUI.setOtherPlotsEnabled");
 		GUIBarManager barManager = manager.getBarManager();
+		Logger.debug("just instantiated barManager");
 		barManager.getToolBarComponent(VerdiConstants.AREAL_INTERPOLATION_BUTTON_ID).setEnabled(enabled);
 //		barManager.getToolBarComponent(VerdiConstants.TILE_BUTTON_ID).setEnabled(enabled);
-		barManager.getToolBarComponent(VerdiConstants.FAST_TILE_BUTTON_ID).setEnabled(enabled);
 		barManager.getToolBarComponent(VerdiConstants.TIME_SERIES_LINE_BUTTON_ID).setEnabled(enabled);
 		barManager.getToolBarComponent(VerdiConstants.TIME_SERIES_BAR_BUTTON_ID).setEnabled(enabled);
 		barManager.getToolBarComponent(VerdiConstants.CONTOUR_BUTTON_ID).setEnabled(enabled);
+//		Logger.debug("VerdiConstants.GT_TILE_BUTTON_ID = " + VerdiConstants.GT_TILE_BUTTON_ID);
+		barManager.getToolBarComponent(VerdiConstants.FAST_TILE_BUTTON_ID).setEnabled(enabled);
 	}
 
 	/**
@@ -414,7 +477,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 	}
 
 	/**
-	 * Displays an message to the user.
+	 * Displays a message to the user.
 	 * 
 	 * @param title
 	 *            the title of the message
@@ -426,6 +489,24 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 	
+	/**
+	 * Displays an error message to the user.
+	 * 
+	 * @param title
+	 *            the title of the message
+	 * @param message
+	 *            the content of the message
+	 */
+	public void showError(String title, String message) {
+		JOptionPane.showMessageDialog(frame, message, title,
+				JOptionPane.ERROR_MESSAGE);
+	}
+	
+	public static void displayError(String title, String message) {
+		if (instance != null)
+			instance.showError(title, message);
+	}
+	
 	private Cursor oldCursor = null;
 	public void showBusyCursor() {
 		setStatusOneText("Loading data. This may take awhile; please be patient...");
@@ -435,6 +516,7 @@ public class VerdiGUI implements WindowListener, DockableFrameListener {
 		}
 	}
 	public void restoreCursor() {
+		setStatusOneText("");
 		if ( oldCursor != null && getFrame() != null) {
 			getFrame().setCursor(oldCursor);
 		} else {

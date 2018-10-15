@@ -8,6 +8,9 @@ import org.java.plugin.PluginLifecycleException;
 import org.java.plugin.registry.Extension;
 import org.java.plugin.registry.ExtensionPoint;
 
+import org.apache.logging.log4j.LogManager;		// 2014
+import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+
 import simphony.util.messages.MessageCenter;
 
 /**
@@ -15,6 +18,10 @@ import simphony.util.messages.MessageCenter;
  * @version $Revision: 1.6 $ $Date: 2006/02/07 20:39:51 $
  */
 public class CorePlugin extends Plugin {
+	
+	static final Logger Logger = LogManager.getLogger(CorePlugin.class.getName());
+//	protected static final MessageCenter msgCenter = MessageCenter.getMessageCenter(NetcdfDatasetFactory.class);
+
 
 	private static final String APP_RUN_ID = "IApplicationRunnable";
 	private IApplicationRunnable appRunner;
@@ -30,9 +37,17 @@ public class CorePlugin extends Plugin {
 
 	public void run(String[] args) {
 		try {
+//			System.out.println("in saf.core.runtime.CorePlugin.run");
+			Logger.debug("in saf.core.runtime.CorePlugin.run");
 			loadAppPlugin();
+			Logger.debug("back from loadAppPlugin");
+//			System.out.println("back from loadAppPlugin");
 			loadUIPlugin(args);		// added args
+			Logger.debug("back from loadUIPlug");
+//			System.out.println("back from loadUIPlug");
 			runApplicationRunnable(args);
+			Logger.debug("back from runApplicationRunnable");
+//			System.out.println("back from runApplicationRunnable");
 		} catch (Exception ex) {
 			MessageCenter.getMessageCenter(getClass()).error("Error instantiating plugins", ex);
 		}
@@ -79,7 +94,11 @@ public class CorePlugin extends Plugin {
 	}
 
 	private void runApplicationRunnable(String[] args) {
+//		System.out.println("into runApplicationRunnable");
+		Logger.debug("into runApplicationRunnable");
 		appRunner.run(args);
+//		System.out.println("did appRunner.run, returning");
+		Logger.debug("did appRunner.run, returning");
 	}
 }
 

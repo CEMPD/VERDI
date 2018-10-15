@@ -14,9 +14,13 @@ public class TilePlotConfiguration extends PlotConfiguration {
 
 	public static final String COLOR_MAP = TilePlotConfiguration.class.getName() + "_color_map";
 	public static final String SHOW_GRID_LINES = TilePlotConfiguration.class.getName() + "_show_grid_lines";
+	public static final String SHOW_WIND_VECTORS = TilePlotConfiguration.class.getName() + "_show_wind_vectors";
 	public static final String GRID_LINE_COLOR = TilePlotConfiguration.class.getName() + "_grid_line_color";
 	public static final String OBS_SHAPE_SIZE = TilePlotConfiguration.class.getName() + "_obs_shape_size";
 	public static final String OBS_STROKE_SIZE = TilePlotConfiguration.class.getName() + "_obs_stroke_size";
+	
+	public static final String LAYER_LINE_SIZE = TilePlotConfiguration.class.getName() + "_layer_line_size";
+	public static final String LAYER_LINE_COLOR = TilePlotConfiguration.class.getName() + "_layer_line_color";
 
 	public TilePlotConfiguration() {
 	}
@@ -53,4 +57,36 @@ public class TilePlotConfiguration extends PlotConfiguration {
 		putObject(SHOW_GRID_LINES, new Boolean(enable));
 		putObject(GRID_LINE_COLOR, lineColor);
 	}
+	
+	/**
+	 * Enable wind vectors
+	 * 
+	 * @param enable wind vector display on or off
+	 */
+	public void setWindVectors(boolean enable) {
+		putObject(SHOW_WIND_VECTORS, new Boolean(enable));
+	}
+	
+	public Color getLayerColor() {
+		return getColor(LAYER_LINE_COLOR);
+	}
+	
+	public int getLayerLineSize() {
+		Object value = getObject(LAYER_LINE_SIZE);
+		if (value == null)
+			value = "1";
+		if (value instanceof Integer)
+			return ((Integer)value).intValue();
+		return Integer.valueOf(value.toString());
+	}
+	
+	public void setLayerColor(Color color) {
+		putObject(LAYER_LINE_COLOR, color);
+	}
+	
+	public void setLayerLineSize(int thickness) {
+		putObject(LAYER_LINE_SIZE, new Integer(thickness));
+	}
+	
+
 }

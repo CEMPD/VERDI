@@ -432,7 +432,7 @@ public class LabelPanel extends JPanel {
 		//---- Orientation ----
 		orientation.setText("Orientation:");
 		add(orientation, cc.xy(3, 21));
-		add(orientationOption, cc.xy(5, 21));
+		add(orientationOption, cc.xyw(5, 21, 3));
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
 

@@ -45,8 +45,9 @@ public class TimeLayerPanel extends JPanel {
 		}
 	}
 
-	private Axes<DataFrameAxis> axes;
+	private Axes axes;
 	private boolean spinnersOn = false;
+	private boolean redrawing = false;
 
 
 	public TimeLayerPanel() {
@@ -115,7 +116,7 @@ public class TimeLayerPanel extends JPanel {
 		return noLayers;
 	}
 
-	public void init(Axes<DataFrameAxis> axes, int timeStep, int layer, boolean layerEnabled) {
+	public void init(Axes axes, int timeStep, int layer, boolean layerEnabled) {
 		this.axes = axes;
 		spinnersOn = false;
 		CoordAxis time = axes.getTimeAxis();
@@ -125,7 +126,9 @@ public class TimeLayerPanel extends JPanel {
 		model.setMinimum(min);
 		model.setMaximum(max);
 		model.setValue(new Integer(timeStep + 1));
-		GregorianCalendar date = axes.getDate(timeStep);
+		GregorianCalendar date = null;
+		if (time != null)
+			date = axes.getDate(timeStep);
 		Logger.debug("in TimeLayerPanel, init function, just computed GregorianCalendar date");
 		timeLabel.setText(Utilities.formatShortDate(date == null ? new GregorianCalendar() : date));
 
@@ -210,6 +213,25 @@ public class TimeLayerPanel extends JPanel {
 		add(label2, cc.xy(7, 1));
 		add(layerSpinner, cc.xy(9, 1));
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
+	}
+	
+	public void invalidate() {
+		if (!redrawing)
+			super.invalidate();
+	}
+	
+	public void revalidate() {
+		if (!redrawing)
+			super.revalidate();
+	}
+	
+	public void setRedrawing(boolean draw) {
+		redrawing = draw;
+	}
+	
+	public void close() {
+		removeAll();
+		axes = null;
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables

@@ -2,6 +2,7 @@ package saf.core.ui.dock;
 
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,12 @@ import javax.swing.JToolBar;
 
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.intern.DefaultCDockable;
+import bibliothek.gui.dock.common.intern.DefaultCommonDockable;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
+import bibliothek.gui.dock.station.stack.StackDockComponent;
+import bibliothek.gui.DockStation;
+import bibliothek.gui.Dockable;
+import bibliothek.gui.dock.StackDockStation;
 
 /**
  * Default implementation of a dockable frame delegating to
@@ -101,16 +107,50 @@ public class DefaultDockableFrame implements DockableFrame {
    * @return true if this DockableFrame is minimized, otherwise false.
    */
   public boolean isMinimized() {
-    return dockable.getExtendedMode().equals(ExtendedMode.MINIMIZED);
+    return ExtendedMode.MINIMIZED.equals(dockable.getExtendedMode());
   }
 
+  /**
+   * Gets whether or not this DockableFrame is hidden - possibly by another tab.
+   * Change made 2016 by MPAS team
+   *
+   * @return true if this DockableFrame is minimized, otherwise false.
+   */
+ 
+  public boolean isHidden() {
+	  boolean hidden = false;
+	  Object station = dockable.getWorkingArea().getStation();
+	  if (station instanceof DockStation) {
+		  Dockable front = ((DockStation)station).getFrontDockable();
+		  if (front == null) {
+			  Component parent = dockable.getContentPane().getParent();
+			  while (parent != null && !(parent instanceof StackDockComponent)) {
+				  parent = parent.getParent();
+			  }
+			  if (parent != null && parent instanceof StackDockComponent) {
+				  int index = ((StackDockComponent)parent).getSelectedIndex();
+				  Dockable selected = ((StackDockComponent)parent).getDockableAt(index);
+				  if (selected instanceof DefaultCommonDockable) {
+					  DefaultCDockable internal = (DefaultCDockable) ((DefaultCommonDockable)selected).getDockable();
+					  hidden = !dockable.equals(internal);
+				  }
+			  }
+		  }
+		  if (front instanceof StackDockStation) {
+			  hidden = !((StackDockStation)front).isVisible(dockable.intern());
+		  }
+	  }
+	  return hidden;
+  }
+  
   /**
    * Gets whether or not this DockableFrame is maximized.
    *
    * @return true if this DockableFrame is maximized, otherwise false.
    */
   public boolean isMaximized() {
-    return  dockable.getExtendedMode().equals(ExtendedMode.MAXIMIZED);
+    return ExtendedMode.MAXIMIZED.equals(dockable.getExtendedMode());
+
   }
 
   /**
@@ -119,7 +159,7 @@ public class DefaultDockableFrame implements DockableFrame {
    * @return true if this DockableFrame is floating, otherwise false.
    */
   public boolean isFloating() {
-    return dockable.getExtendedMode().equals(ExtendedMode.EXTERNALIZED);
+	  return ExtendedMode.EXTERNALIZED.equals(dockable.getExtendedMode());
   }
 
   /**

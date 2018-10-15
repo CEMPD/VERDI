@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.Point;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -41,6 +42,12 @@ public class MultPlotAnimationDialog extends JDialog {
 		animationPanel.init(startBtn, plots);
 	}
 
+    public void setVisible(boolean b) {
+    	Point p = getLocation();
+    	setLocation(0, p.y);
+        super.setVisible(b);
+    }
+    
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner non-commercial license

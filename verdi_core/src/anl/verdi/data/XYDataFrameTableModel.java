@@ -47,10 +47,10 @@ public class XYDataFrameTableModel extends AbstractDataFrameTableModel {
 			DataFrameIndex index = frame.getIndex();
 			index.setXY(columnIndex - 1, rowIndex - 1);
 			if ( !isLog) {
-				return frame.getDouble(index) > DataUtilities.BADVAL3 ? frame.getDouble(index) : DataUtilities.BADVAL3;
+				return (frame.getDouble(index) > DataUtilities.BADVAL3 && frame.getDouble(index) < DataUtilities.NC_FILL_FLOAT) ? frame.getDouble(index) : DataUtilities.BADVAL3;
 			} else {
 				double logvalue = Math.log(frame.getDouble(index)) / Math.log(logBase);
-				return logvalue > DataUtilities.BADVAL3 ? logvalue : DataUtilities.BADVAL3;
+				return (logvalue > DataUtilities.BADVAL3 && logvalue < DataUtilities.NC_FILL_FLOAT) ? logvalue : DataUtilities.BADVAL3;
 			}
 		}
 	}

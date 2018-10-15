@@ -7,15 +7,17 @@ REM      you can set it here (set USER_HOME=C:\Users\myUserName).
 REM      Your VERDI log file will be written in the verdi subdirectory.
 REM      Refer to your VERDI User's Guide for more information.
 SET USER_HOME=%USERPROFILE%
-set VERDI_USER=c:\users\ellenjo
+set VERDI_USER=%USER_HOME%
 
-REM Instructions: Set the following path to the location where you installed VERDI.
-SET VERDI_HOME=C:\\VERDI_test\\VERDI_1.5.2_test05112015
+set VERDI_HOME=%~dp0
+REM Change the following path if you are not using the version of Java installed with VERDI
+set JAVADIR=%VERDI_HOME%\jre1.7.0
+
 
 REM Do not edit below this line
 REM ************************************************************************
-CD .\plugins\bootstrap
-set JAVADIR=%VERDI_HOME%\jre1.7.0
+set PREVDIR=%CD%
+CD %VERDI_HOME%\plugins\bootstrap
 SET JAVA=%JAVADIR%\bin\java
 set CLASSPATH=%JAVADIR%/bin/*;%JAVADIR%/lib/*;%VERDI_HOME%/plugins/bootstrap/bootstrap.jar;%VERDI_HOME%/plugins/bootstrap/lib/;%VERDI_HOME%/plugins/bootstrap/lib/saf.core.runtime.jar;%VERDI_HOME%/plugins/bootstrap/lib/*;%VERDI_HOME%/plugins/core/lib/*
 
@@ -36,7 +38,7 @@ REM echo set to Win64 path
 
 :proc32
 REM path has been reset for DLLs; continue
-set JAVACMD=%JAVA% -Xmx1024M -classpath %CLASSPATH% saf.core.runtime.Boot
+set JAVACMD="%JAVA%" -Xmx1024M -classpath "%CLASSPATH%" saf.core.runtime.Boot
 
 IF "%1" == "-b" GOTO scripting
 
@@ -49,4 +51,4 @@ GOTO end
 %JAVACMD% %1 %BATCHFILE%
 
 :end
-CD ..\..\
+CD %PREVDIR%

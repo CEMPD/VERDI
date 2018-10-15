@@ -1,5 +1,6 @@
 #! /bin/sh
 export VERDI_HOME=.
+export VERDI_USER=$HOME
 DIR=`pwd`
 cd $VERDI_HOME/plugins/bootstrap
 

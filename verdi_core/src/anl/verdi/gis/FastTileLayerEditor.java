@@ -43,7 +43,7 @@ public class FastTileLayerEditor extends JDialog {
 	private Mapper mapper;
 	private boolean canceled = true;
 
-	public FastTileLayerEditor(Frame owner) {
+	public FastTileLayerEditor(Frame owner) {	// 2015 This is the constructor being used
 		super(owner);
 		initComponents();
 		Logger.debug("in FastTileLayerEditor constructor #1");

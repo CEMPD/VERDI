@@ -66,7 +66,7 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="repast" path="../core/lib/repast_simphony_gis_2_1_0.jar" type="code">
+		<library id="repast" path="../core/lib/repast_simphony_gis_2_3_0.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
@@ -147,85 +147,93 @@
 		</library>
 
 		<!-- GIS Libraries -->
-		<library id="gt-api" path="../core/lib/gt-api-12.2.jar" type="code">
+		<library id="gt-api" path="../core/lib/gt-api-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-coverage" path="../core/lib/gt-coverage-12.2.jar" type="code">
+		<library id="gt-coverage" path="../core/lib/gt-coverage-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-coverage-api" path="../core/lib/gt-coverage-api-12.2.jar" type="code">
+		<library id="gt-transform" path="../core/lib/gt-transform-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-image" path="../core/lib/gt-image-12.2.jar" type="code">
+		<library id="gt-coverage-api" path="../core/lib/gt-coverage-api-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-main" path="../core/lib/gt-main-12.2.jar" type="code">
+		<library id="gt-image" path="../core/lib/gt-image-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-referencing" path="../core/lib/gt-referencing-12.2.jar" type="code">
+		<library id="gt-main" path="../core/lib/gt-main-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-render" path="../core/lib/gt-render-12.2.jar" type="code">
+		<library id="gt-referencing" path="../core/lib/gt-referencing-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-shapefile" path="../core/lib/gt-shapefile-12.2.jar" type="code">
+		<library id="gt-render" path="../core/lib/gt-render-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-epsg-hsql" path="../core/lib/gt-epsg-hsql-12.2.jar" type="code">
+		<library id="gt-shapefile" path="../core/lib/gt-shapefile-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-epsg-ext" path="../core/lib/gt-epsg-extension-12.2.jar" type="code">
+		<library id="gt-swing" path="../core/lib/gt-swing-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-epsg-wkt" path="../core/lib/gt-epsg-wkt-12.2.jar" type="code">
+		<!--library id="gt-epsg-hsql" path="../core/lib/gt-epsg-hsql-14.4.jar" type="code">
+			<export prefix="*"/>
+		</library-->
+
+		<library id="gt-epsg-ext" path="../core/lib/gt-epsg-extension-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-coveraget" path="../core/lib/gt-coveragetools-12.2.jar" type="code">
+		<library id="gt-epsg-wkt" path="../core/lib/gt-epsg-wkt-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-geometry" path="../core/lib/gt-geometry-12.2.jar" type="code">
+		<library id="gt-coveraget" path="../core/lib/gt-coveragetools-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-grid" path="../core/lib/gt-grid-12.2.jar" type="code">
+		<library id="gt-geometry" path="../core/lib/gt-geometry-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-data" path="../core/lib/gt-data-12.2.jar" type="code">
+		<library id="gt-grid" path="../core/lib/gt-grid-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-jts-wrapper" path="../core/lib/gt-jts-wrapper-12.2.jar" type="code">
+		<library id="gt-data" path="../core/lib/gt-data-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-feature-ag" path="../core/lib/gt-feature-aggregate-12.2.jar" type="code">
+		<library id="gt-jts-wrapper" path="../core/lib/gt-jts-wrapper-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-feature-pr" path="../core/lib/gt-feature-pregeneralized-12.2.jar" type="code">
+		<library id="gt-feature-ag" path="../core/lib/gt-feature-aggregate-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-opengis" path="../core/lib/gt-opengis-12.2.jar" type="code">
+		<library id="gt-feature-pr" path="../core/lib/gt-feature-pregeneralized-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="hsqldb" path="../core/lib/hsqldb-2.2.8.jar" type="code">
+		<library id="gt-opengis" path="../core/lib/gt-opengis-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
+
+		<!--library id="hsqldb" path="../core/lib/hsqldb-2.2.8.jar" type="code">
+			<export prefix="*"/>
+		</library-->
 
 		<library id="jaramiko" path="../core/lib/jaramiko-151.jar" type="code">
 			<export prefix="*"/>
@@ -255,10 +263,6 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="piccolo" path="../core/lib/piccolo.jar" type="code">
-			<export prefix="*"/>
-		</library>
-
 		<library id="piccolox.jar" path="../core/lib/piccolox.jar" type="code">
 			<export prefix="*"/>
 		</library>
@@ -267,11 +271,11 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-metadata" path="../core/lib/gt-metadata-12.2.jar" type="code">
+		<library id="gt-metadata" path="../core/lib/gt-metadata-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="gt-brewer" path="../core/lib/gt-brewer-12.2.jar" type="code">
+		<library id="gt-brewer" path="../core/lib/gt-brewer-14.4.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
@@ -335,6 +339,13 @@
 			<export prefix="*"/>
 		</library>
 		
+		<library id="miglayout-core" path="../core/lib/miglayout-core-5.1-20150404.220010-96.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="miglayout-swing" path="../core/lib/miglayout-swing-5.1-20150404.220019-96.jar" type="code">
+			<export prefix="*"/>
+		</library>
 
 		
 		<!-- End Gis Imports -->
@@ -443,22 +454,12 @@
 			<parameter id="class" value=""/>
 		</parameter>
 
-        <!--
-		<parameter id="actionSpec">
-			<parameter id="actionID" value="anl.verdi.plot.gui.action.TilePlot"/>
-			<parameter id="label" value="Tile Plot"/>
-			<parameter id="class" value="anl.verdi.plot.gui.action.TilePlot"/>
-			<parameter id="groupID" value="runGraph"/>
-			<parameter id="tooltip" value="Tile Plot"/>
-		</parameter>
-		-->
-		
 		<parameter id="actionSpec">
           	<parameter id="actionID" value="anl.verdi.plot.gui.action.FastTilePlot"/>
-            <parameter id="label" value="Fast Tile Plot"/>
+            <parameter id="label" value="Tile Plot"/>
             <parameter id="class" value="anl.verdi.plot.gui.action.FastTilePlot"/>
             <parameter id="groupID" value="runGraph"/>
-            <parameter id="tooltip" value="Fast Tile Plot"/>
+            <parameter id="tooltip" value="Tile Plot"/>
         </parameter>
         
         <parameter id="actionSpec">
@@ -536,7 +537,7 @@
 
 		<parameter id="actionSpec">
 			<parameter id="actionID" value="anl.verdi.core.action.Help"/>
-			<parameter id="label" value="VERDI Help Docs"/>
+			<parameter id="label" value="VERDI Help Documents"/>
 			<parameter id="class" value="anl.verdi.core.action.Help"/>
 			<parameter id="menuID" value="help"/>
 		</parameter>

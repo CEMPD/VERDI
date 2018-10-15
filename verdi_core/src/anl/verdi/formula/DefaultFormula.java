@@ -84,6 +84,8 @@ public class DefaultFormula implements Formula {
 		List<VarFramePair> results = new ArrayList<VarFramePair>();
 		for (FormulaVariable var : variables) {
 			DataFrame frame = var.evaluate(ranges);
+			if (frame == null)
+				return null;
 			Logger.debug("var = " + var);
 			Logger.debug("units = " + var.getUnit());
 			// do the unit conversion
@@ -271,6 +273,8 @@ public class DefaultFormula implements Formula {
 		}
 		
 		List<VarFramePair> results = readData(ranges, convertUnits);
+		if (results == null)
+			return null;
 		// transformData(results);
 		DataFrame frame = results.get(0).frame;
 

@@ -47,7 +47,7 @@ public class JChartTitlesLabels {
 		title.setPosition(RectangleEdge.TOP);
 		chart.addSubtitle(title);
 		subTitle1Index = index++;
-		
+
 		title = new TextTitle();
 		title.setPosition(RectangleEdge.TOP);
 		chart.addSubtitle(title);
@@ -59,16 +59,19 @@ public class JChartTitlesLabels {
 	}
 
 	public PlotConfiguration getConfiguration(PlotConfiguration config) {
+		config.setShowTitle(chart.getTitle().isVisible() ? "TRUE" : "FALSE");
 		config.setTitle(chart.getTitle().getText());
 		config.putObject(PlotConfiguration.TITLE_FONT, chart.getTitle().getFont());
 		config.putObject(PlotConfiguration.TITLE_COLOR, (Color) chart.getTitle().getPaint());
 
 		TextTitle title = (TextTitle) chart.getSubtitle(subTitle1Index);
+		config.setShowSubtitle1(title.isVisible() ? "TRUE" : "FALSE");
 		config.setSubtitle1(title.getText());
 		config.putObject(PlotConfiguration.SUBTITLE_1_FONT, title.getFont());
 		config.putObject(PlotConfiguration.SUBTITLE_1_COLOR, (Color) title.getPaint());
 
 		title = (TextTitle) chart.getSubtitle(subTitle2Index);
+		config.setShowSubtitle2(title.isVisible() ? "TRUE" : "FALSE");
 		config.setSubtitle2(title.getText());
 		config.putObject(PlotConfiguration.SUBTITLE_2_FONT, title.getFont());
 		config.putObject(PlotConfiguration.SUBTITLE_2_COLOR, (Color) title.getPaint());
@@ -144,18 +147,21 @@ public class JChartTitlesLabels {
 
 	public TitleConfigurator getTitleConfigurator() {
 		return new TitleConfigurator() {
-			public void configureSubtitle1(String text, Font font, Color color) {
+			public void configureSubtitle1(Boolean show, String text, Font font, Color color) {
 				TextTitle title = (TextTitle) chart.getSubtitle(subTitle1Index);
+				if (title != null) title.setVisible(show);
 				updateTextTitle(title, text, color, font);
 			}
 
-			public void configureSubtitle2(String text, Font font, Color color) {
+			public void configureSubtitle2(Boolean show, String text, Font font, Color color) {
 				TextTitle title = (TextTitle) chart.getSubtitle(subTitle2Index);
+				if (title != null) title.setVisible(show);
 				updateTextTitle(title, text, color, font);
 			}
 
-			public void configureTitle(String text, Font font, Color color) {
+			public void configureTitle(Boolean show, String text, Font font, Color color) {
 				TextTitle title = chart.getTitle();
+				if (title != null) title.setVisible(show);
 				updateTextTitle(title, text, color, font);
 			}
 		};
@@ -172,5 +178,4 @@ public class JChartTitlesLabels {
 			}
 		}
 	}
-
 }

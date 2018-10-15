@@ -19,6 +19,7 @@ import anl.verdi.data.Axes;
 import anl.verdi.data.AxisRange;
 import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
+import anl.verdi.data.MultiAxisDataset;
 import anl.verdi.data.Range;
 import anl.verdi.data.Variable;
 import anl.verdi.util.DateRange;
@@ -68,6 +69,7 @@ public class FormulaValidator {
 	}
 
 	private ValidationResult checkTime(List<AxisRange> ranges) throws IllegalFormulaException {
+		try {
 		if (variables.size() > 0) {
 			boolean rangeChanged = false;
 			FormulaVariable formulaVariable = variables.get(0);
@@ -142,10 +144,15 @@ public class FormulaValidator {
 								Utilities.formatDate(startDate) + " - " + Utilities.formatDate(endDate));
 			}
 		}
+		} catch (IllegalFormulaException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Formula Validation Failed", JOptionPane.ERROR_MESSAGE);
+			throw e;
+		}
 		return ValidationResult.pass();
 	}
 
 	private void checkTimeRange(List<AxisRange> ranges, Date startDate, Date endDate) throws IllegalFormulaException {
+		try {
 		AxisRange time = findAxisByType(AxisType.TIME, ranges);
 		if (time == null) return;
 		CoordAxis axis = time.getAxis();
@@ -180,6 +187,10 @@ public class FormulaValidator {
 		} else {
 			throw new IllegalFormulaException("Allowable time step range is outside of specified range");
 		}
+		} catch (IllegalFormulaException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Formula Validation Failed", JOptionPane.ERROR_MESSAGE);
+			throw e;
+		}
 	}
 
 	// make sure all the variables in the formula can
@@ -204,7 +215,7 @@ public class FormulaValidator {
 
 	private void testLayer(CoordAxis layerAxis, FormulaVariable formulaVariable, FormulaVariable var)
 					throws IllegalFormulaException {
-		CoordAxis other = var.getDataset().getCoordAxes().getZAxis();
+		CoordAxis other = var.getZAxis();
 		
 		if (layerAxis == null && other == null)
 			return;
@@ -253,7 +264,7 @@ public class FormulaValidator {
 		if (variables.size() > 0) {
 			FormulaVariable formulaVariable = variables.get(0);
 			Axes<CoordAxis> axes = formulaVariable.getDataset().getCoordAxes();
-			CoordAxis layerAxis = axes.getZAxis();
+			CoordAxis layerAxis = formulaVariable.getZAxis();
 			CoordAxis xAxis = axes.getXAxis();
 			CoordAxis yAxis = axes.getYAxis();
 			

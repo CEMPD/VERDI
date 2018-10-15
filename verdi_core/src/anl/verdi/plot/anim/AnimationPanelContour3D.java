@@ -6,6 +6,7 @@ package anl.verdi.plot.anim;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,7 +35,6 @@ import anl.verdi.data.DataFrameAxis;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.util.AnimationListener;
 import anl.verdi.util.Utilities;
-import anl.verdi.plot.anim.PlotAnimator;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.factories.FormFactory;
@@ -321,12 +321,16 @@ public class AnimationPanelContour3D extends JPanel {
 
 		Window window = SwingUtilities.getWindowAncestor(plot.getPanel());
 
-		if (window instanceof JFrame) dialog = new JDialog((JFrame) window, "Animate Plot", false);
-		else dialog = new JDialog((JDialog) window, "Animate Plot", false);
+		if (window instanceof JFrame) 
+			dialog = new JDialog((JFrame) window, "Animate Plot", false);
+		else 
+			dialog = new JDialog((JDialog) window, "Animate Plot", false);
 
 		dialog.setLayout(new BorderLayout());
 		dialog.add(this, BorderLayout.CENTER);
 		dialog.setLocationRelativeTo(plot.getPanel());
+		Point p = dialog.getLocation();
+		dialog.setLocation(0, p.y);
 		dialog.pack();
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setVisible(true);
@@ -348,7 +352,7 @@ public class AnimationPanelContour3D extends JPanel {
 		movieChk.setEnabled(false); 	// 2014
 		maxDate = compFactory.createLabel("");
 		gifChk = new JCheckBox();
-		gifChk.setEnabled(false); 		// 2014
+		gifChk.setEnabled(true); 		// 2014
 		gifFileLbl = new JLabel();
 		gifFileBtn = new JButton();
 		aviChk = new JCheckBox();

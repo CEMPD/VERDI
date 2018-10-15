@@ -124,11 +124,11 @@ public class LabelsPanel extends JPanel {
 	}
 	
 	public void initFooter1(boolean show, String text, Font font, Color color) {
-		footersPanel.initLine1((text != null && !text.trim().isEmpty()), text, font, color);
+		footersPanel.initLine1(show && (text != null && !text.trim().isEmpty()), text, font, color);
 	}
 	
 	public void initFooter2(boolean show, String text, Font font, Color color) {
-		footersPanel.initLine2((text != null && !text.trim().isEmpty()), text, font, color);
+		footersPanel.initLine2(show && (text != null && !text.trim().isEmpty()), text, font, color);
 	}
 	
 	public void initObsLegend(boolean show, String text, Font font, Color color) {

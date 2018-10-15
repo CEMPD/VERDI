@@ -1,10 +1,12 @@
+// NOTE: This class uses Geotools and OpenGis for geometry, Coordinate Reference System (crs), and Reference Envelope
+// BUT uses ucar for projections.
 package anl.verdi.loaders;
 
 import java.awt.geom.Point2D;
 import java.io.IOException;
 
-import org.apache.logging.log4j.LogManager;		// 2014
-import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
@@ -16,8 +18,6 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-
-//import simphony.util.messages.MessageCenter;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
@@ -31,6 +31,7 @@ import ucar.unidata.geoloc.projection.Stereographic;
 import ucar.unidata.geoloc.projection.UtmProjection;
 import anl.verdi.core.VerdiConstants;
 import anl.verdi.data.BoundingBoxer;
+import gov.epa.emvl.Mapper;
 
 /**
  * Bounding boxer that uses netcdf to create the bounding box.
@@ -41,8 +42,6 @@ import anl.verdi.data.BoundingBoxer;
 public class NetcdfBoxer implements BoundingBoxer {
 	static final Logger Logger = LogManager.getLogger(NetcdfBoxer.class.getName());
 
-//	private static MessageCenter msg = MessageCenter.getMessageCenter(BoundingBoxer.class);
-
 //	MathTransformFactory mtFactory = FactoryFinder.getMathTransformFactory(null);
 	MathTransformFactory mtFactory = ReferencingFactoryFinder.getMathTransformFactory(null);
 
@@ -50,8 +49,32 @@ public class NetcdfBoxer implements BoundingBoxer {
 	ReferencingFactoryContainer factories = new ReferencingFactoryContainer(null);
 
 	private GridDatatype grid;
-	private CoordinateReferenceSystem crs;
-	private boolean isLatLon;
+	/** 
+	 * This is now a placeholder only, and is never used - any valid Geotools projection
+	 * could be created here.  Instead, VERDI's VerdiShapefileUtil converts all shapefiles
+	 * to lat/lon (if not already lat/lon, then uses the NetCDF projection to project the
+	 * lat/lon shapefiles into new ones that are actually used.  All instances of the 
+	 * Geotools CRS are set to the CRS created here, and Geotools won't try to do any 
+	 * further projections on the shapefiles since it thinks all CRSs are the same.  This 
+	 * allows us to use the Geotools framework to render shapefiles, while ensuring that 
+	 * they're projected properly to match the underlying NetCDF data.  We don't have to 
+	 * worry about making sure Geotools supports the NetCDF projection, or that the Geotools 
+	 * projection parameters are set to match the NetCDF ones.
+	 */
+	public static CoordinateReferenceSystem PLACEHOLDER_CRS = null;
+	static {
+		try {
+			PLACEHOLDER_CRS = CRS.decode("EPSG:4326");
+		} catch (Exception e) {
+			Logger.error("Could not create placeholder crs", e);
+		}
+	}
+	
+	CoordinateReferenceSystem origCRS = null;
+	protected boolean isLatLon;
+	
+	protected NetcdfBoxer() {
+	}
 
 	public NetcdfBoxer(GridDatatype grid) {
 		Logger.debug("in constructor for NetcdfBoxer for a GridDatatype");
@@ -89,7 +112,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 		if (isLatLon) {
 			return new Point2D.Double(xVal, yVal);
 		} else {
-			Projection proj = grid.getCoordinateSystem().getProjection();
+			Projection proj = getProjection();
 			LatLonPointImpl latLon = new LatLonPointImpl();
 			proj.projToLatLon(new ProjectionPointImpl(xVal, yVal), latLon);
 			return new Point2D.Double(latLon.getLongitude(), latLon
@@ -107,7 +130,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 	 */
 	public Point2D latLonToAxisPoint(double lat, double lon) {
 		Logger.info("in NetcdfBoxer.latLonToAxisPoint for lat = " + lat + ", lon = " + lon);
-		Projection proj = grid.getCoordinateSystem().getProjection();
+		Projection proj = getProjection();
 		ProjectionPointImpl point = new ProjectionPointImpl();
 		proj.latLonToProj(new LatLonPointImpl(lat, lon), point);
 
@@ -203,7 +226,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 		Logger.info("xStart = start + xMin * xInc = " + xStart );
 		xEnd = end - ((limit - xMax) * xInc);
 		Logger.info("xEnd = end - ((limit - xMax) * xInc) = " + xEnd);
-
+		Logger.debug("netcdfConv =" + netcdfConv);
 		if ( netcdfConv == VerdiConstants.NETCDF_CONV_ARW_WRF) { // JIZHEN-SHIFT
 			Logger.info("in recompute code section");
 			xStart = xStart - xaxis.getIncrement() * scaler * 0.5;
@@ -224,9 +247,14 @@ public class NetcdfBoxer implements BoundingBoxer {
 		Logger.info("yStart =start + yMin * yInc = " + yStart );
 		yEnd = end - ((limit - yMax) * yInc);
 		Logger.info("yEnd = end - ((limit - yMax) * yInc) = " + yEnd);
+		Logger.debug("netcdfConv=" + netcdfConv);
 		if ( netcdfConv == VerdiConstants.NETCDF_CONV_ARW_WRF) { // JIZHEN-SHIFT
 			Logger.info("within if block:");
+			Logger.debug("yStart before shift=" + yStart);
 			yStart = yStart - yaxis.getIncrement() * scaler * 0.5; // bottom_left
+			Logger.debug("yStart after shift=" + yStart);
+			Logger.debug("yaxis.getIncrement()=" + yaxis.getIncrement());
+			Logger.debug("scaler=" + scaler);
 			Logger.info("yStart = yStart - yaxis.getIncrement() * scaler * 0.5 = " + yStart);
 			//yEnd = yEnd - yaxis.getIncrement() * scaler * ( 0.5 + 1);
 			yEnd = yEnd - yaxis.getIncrement() * scaler * 0.5; // top_right
@@ -235,19 +263,25 @@ public class NetcdfBoxer implements BoundingBoxer {
 //		Hints hints = new Hints(Hints.COMPARISON_TOLERANCE, 1E-9);	// TODO: 2014  probably need to do in beginning of VERDI
 		Hints.putSystemDefault(Hints.COMPARISON_TOLERANCE, 10e-9);
 
-		Projection proj = grid.getCoordinateSystem().getProjection();
-
+		detectCRS();
+		return new ReferencedEnvelope(xStart, xEnd, yStart, yEnd, PLACEHOLDER_CRS);
+	}
+	
+	
+	private void detectCRS() {
+		Projection proj = getProjection();
+		Logger.debug("proj = " + proj.toString() + '\n' + "  projection is not checked yet");
 		if (proj instanceof LambertConformal) {
 			Logger.debug("proj = " + proj.toString() + '\n' + "  projection is of type LambertConformal");
-			if (crs == null) {
+			if (origCRS == null) {
 				Logger.info("NOTE: crs is null");
 				try {
 					Logger.info("within try/catch block");
 					String strCRS = new LambertWKTCreator().createWKT((LambertConformal) proj);
 					Logger.info("created strCRS = " + strCRS);
 					Logger.info("Ready to call CRS.parseWKT for LambertConformal");
-					crs = CRS.parseWKT(strCRS);	// NOTE: preferred method (docs.geotools.org/stable/userguide/library/referencing/crs.html)
-					Logger.info("parsed CRS: " + crs.toString());
+					origCRS = CRS.parseWKT(strCRS);	// NOTE: preferred method (docs.geotools.org/stable/userguide/library/referencing/crs.html)
+					Logger.info("parsed CRS: " + origCRS.toString()); // sphere radius is 6370000
 					Logger.info("done printing crs");
 				} catch (IOException ex) {
 					Logger.info("into exception handling");
@@ -260,66 +294,78 @@ public class NetcdfBoxer implements BoundingBoxer {
 			}
 		} else if (proj instanceof UtmProjection) {
 			Logger.debug("projection is of type UtmProjection");
-			if (crs == null) {
+			if (origCRS == null) {
 				Logger.info("NOTE: crs is null");
 				try {
 					Logger.info("within try/catch block");
 					String strCRS = new UtmWKTCreator().createWKT((UtmProjection) proj);
 					Logger.info("created strCRS = " + strCRS.toString());
 					Logger.info("Ready to call CRS.parseWKT for UTM Projection");
-					crs = CRS.parseWKT(strCRS);
+					origCRS = CRS.parseWKT(strCRS);
 				} catch (Exception ex) {
 					Logger.error("Error while creating CRS for UTM " + ex.getMessage());
 				}
 			}
 		} else if (proj instanceof Stereographic) {
 			Logger.debug("projection is of type Stereographic");
-			if (crs == null) {
+			if (origCRS == null) {
 				Logger.info("NOTE: crs is null");
 				try {
 					Logger.info("within try/catch block");
 					String strCRS = new PolarStereographicWKTCreator().createWKT((Stereographic) proj);
 					Logger.info("created strCRS = " + strCRS.toString());	// FAILURE CAUSE: PARAMETER["scale_factor", -98.0],
 					Logger.info("Ready to call CRS.parseWKT for Stereographic Projection");
-					crs = CRS.parseWKT(strCRS);		// FAILURE POINT
-					Logger.info("parsed CRS: " + crs.toString());
+					origCRS = CRS.parseWKT(strCRS);		// FAILURE POINT
+					Logger.info("parsed CRS: " + origCRS.toString());
 				} catch (Exception ex) {
 					Logger.error("Error while creating CRS for Stereographic " + ex.getMessage());
 				}
 			}
 		} else if (isLatLon) {
-			if (crs == null) {
+			if (origCRS == null) {
 				try {
 					String strCRS = new LatlonWKTCreator().createWKT((LatLonProjection)proj);
-					crs = CRS.parseWKT(strCRS);
+					origCRS = CRS.parseWKT(strCRS);
 				} catch (Exception ex) {
 					Logger.error("Error while creating CRS for Lat-Lon " + ex.getMessage());
 				}
 			}
-		} else if (proj instanceof Mercator) {
-			if (crs == null) {
+		} else if (proj instanceof Mercator) {			
+			if (origCRS == null) {
 				try {
 					String strCRS = new MercatorWKTCreator().createWKT((Mercator)proj);
-					crs = CRS.parseWKT(strCRS);
+					origCRS = CRS.parseWKT(strCRS);
 				} catch (Exception e) {
 					Logger.error("Error while creating CRS for Mercator " + e.getMessage());
 				}
-			}
+			} 
 		}
 
 		// TODO: add more projections here
 		else {
 			Logger.error("Projection is not recognized!!");
 		} 
-		return new ReferencedEnvelope(xStart, xEnd, yStart, yEnd, crs);
+
+		
+		
+	}
+	
+	
+	public CoordinateReferenceSystem getCRS() {
+		Logger.debug("in getCRS(): returning crs = " + PLACEHOLDER_CRS);
+		return PLACEHOLDER_CRS;
+	}
+	
+	public CoordinateReferenceSystem getOriginalCRS() {
+		return origCRS;
 	}
 
-	private CoordinateAxis1D getXAxis() {
+	protected CoordinateAxis1D getXAxis() {
 		GridCoordSystem gcs = grid.getCoordinateSystem();
 		return (CoordinateAxis1D) gcs.getXHorizAxis();
 	}
 
-	private CoordinateAxis1D getYAxis() {
+	protected CoordinateAxis1D getYAxis() {
 		GridCoordSystem gcs = grid.getCoordinateSystem();
 		return (CoordinateAxis1D) gcs.getYHorizAxis();
 	}

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import ucar.ma2.Array;
 import ucar.unidata.geoloc.Projection;
@@ -50,7 +51,7 @@ public class DataFrameBuilder {
 
 	// used to build the axes object and sort out
 	// the different axes
-	private static class AxesBuilder {
+	protected static class AxesBuilder {
 
 		List<DataFrameAxis> others = new ArrayList<DataFrameAxis>();
 
@@ -80,6 +81,14 @@ public class DataFrameBuilder {
 					public Point2D latLonToAxisPoint(double lat, double lon) {
 						return null;  //todo implement method
 					}
+					
+					public CoordinateReferenceSystem getCRS() {
+						return null;
+					}
+					
+					public CoordinateReferenceSystem getOriginalCRS() {
+						return null;
+					}
 				};
 			}
 			if (xAxis != null)
@@ -108,9 +117,13 @@ public class DataFrameBuilder {
 		}
 	}
 
-	private BuilderDataFrame frame = new BuilderDataFrame();
+	protected BuilderDataFrame frame = new BuilderDataFrame();
 
 	private AxesBuilder axesBuilder = new AxesBuilder();
+	
+	protected AxesBuilder getAxesBuilder() {
+		return axesBuilder;
+	}
 
 	private Set<Dataset> sets = new HashSet<Dataset>();
 
@@ -171,7 +184,7 @@ public class DataFrameBuilder {
 	 * @return this DataFrameBuilder
 	 */
 	public DataFrameBuilder addAxis(DataFrameAxis axis) {
-		axesBuilder.addAxis(axis);
+		getAxesBuilder().addAxis(axis);
 		return this;
 	}
 
@@ -193,7 +206,7 @@ public class DataFrameBuilder {
 			// they all must have the same bounding box.
 			env = sets.iterator().next().getCoordAxes().getBoundingBoxer();
 		}
-		frame.setAxes(axesBuilder.buildAxes(env));
+		frame.setAxes(getAxesBuilder().buildAxes(env));
 		return frame;
 	}
 

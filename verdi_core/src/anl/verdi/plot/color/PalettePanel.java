@@ -8,11 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -64,6 +64,9 @@ public class PalettePanel extends JPanel {
 	private int preScaleIndex = 0; 
 	private PaletteType paletteType;
 	
+	DataUtilities.MinMax defaultMinMax;
+	ColorMap defaultColorMap;
+	
 	// JFormDesigner - Variables declaration - DO NOT MODIFY
 	// //GEN-BEGIN:variables
 	// Generated using JFormDesigner non-commercial license
@@ -91,8 +94,7 @@ public class PalettePanel extends JPanel {
 	private JTextField fldLogBase;
 	private JLabel lblLogBase;	
 	private JButton reverseBtn;
-
-	private boolean isForFastTitle = false;
+	private JButton resetBtn;
 	
 	public void enableScale( boolean enable) {
 		this.scaleType.setEnabled( enable);
@@ -129,11 +131,12 @@ public class PalettePanel extends JPanel {
 		scrollPane2 = new JScrollPane();
 		paletteTable = new JTable();
 		reverseBtn = new JButton();
+		resetBtn = new JButton();
 		CellConstraints cc = new CellConstraints();
 
 		// ======== this ========
 		// 2014
-		ColumnSpec[] aColumnSpec = ColumnSpec.decodeSpecs("min(default;150dlu):grow");
+		ColumnSpec[] aColumnSpec = ColumnSpec.decodeSpecs("min(default;180dlu):grow");
 		RowSpec aRowSpec = new RowSpec(RowSpec.CENTER, Sizes.DEFAULT, 0.5);
 		RowSpec bRowSpec = new RowSpec(RowSpec.FILL, Sizes.DEFAULT, 0.5);
 		setLayout(new FormLayout(new ColumnSpec[] { FormFactory.PREF_COLSPEC,
@@ -174,9 +177,13 @@ public class PalettePanel extends JPanel {
 		}
 		add(scrollPane1, cc.xywh(1, 3, 5, 1));
 
-		// ---- rebuildBtn ----
+		// ---- reverseBtn ----
 		reverseBtn.setText("Reverse");
 		add(reverseBtn, cc.xy(1, 5));
+		
+		resetBtn.setText("Reset");
+		add(resetBtn, cc.xy(5, 5));
+
 
 		add(separator2, cc.xywh(1, 6, 5, 1));
 		
@@ -407,6 +414,7 @@ public class PalettePanel extends JPanel {
 				} else {
 					// report error
 				}
+				Logger.debug("in intervalType actionPerformed: intervalInx = " + intervalInx);
 				
 				if ( scaleIndex != preScaleIndex	) {
 					
@@ -445,6 +453,7 @@ public class PalettePanel extends JPanel {
 				}
 				
 				preScaleIndex = scaleIndex;
+				Logger.debug("in intervalType actionPerformed: minFld = " + minFld.getText() + ", maxFld = " + maxFld.getText());
 			}
 		});
 		
@@ -534,6 +543,8 @@ public class PalettePanel extends JPanel {
 					maxFld.setCaretPosition(0);	
 					
 					intervalInx = intervalType.getSelectedIndex();
+					Logger.debug("in fldLogBase actionPerformed; intervalInx = " + intervalInx);
+					Logger.debug("minFld = " + minFld.getText() + ", maxFld = " + maxFld.getText());
 					model.setIntervalEditEnabled( intervalInx); 
 					
 				} catch (NumberFormatException ex) {
@@ -557,6 +568,7 @@ public class PalettePanel extends JPanel {
 
 		rebuildBtn.addActionListener(new ActionListener() { // TODO: JIZHEN
 			public void actionPerformed(ActionEvent evt) {
+				Logger.debug("in rebuildBtn actionPerformed: intervalType.getSelectedIndex = " + intervalType.getSelectedIndex());
 				if ( intervalType.getSelectedIndex() != 2) {
 					String text = minFld.getText().trim();
 					double min, max;
@@ -585,16 +597,22 @@ public class PalettePanel extends JPanel {
 						max = min;
 						min = tmp;
 					}
-					Palette palette = (Palette) paletteList.getSelectedValue();
+
 					ColorMap oldMap = model.getColorMap();
-					ColorMap map = null; //new ColorMap(palette, sType, min, max);					
+					ColorMap map = null; //new ColorMap(palette, sType, min, max);	
+					boolean chgColorMap = false;	// default is to not change the color map
 					if ( oldMap != null) {
 						map = oldMap;
 					} else {
 						map = new ColorMap();
+						chgColorMap = true;
+						//Don't reset the color palette unless the user chnaged color maps- the user
+						//may have made changes
+						Palette palette = (Palette) paletteList.getSelectedValue();
+						map.setPalette(palette);
+						map.setPaletteType(getPaletteType());	
 					}
-					map.setPalette(palette);
-					map.setPaletteType(getPaletteType());					
+				
 					ColorMap.ScaleType sType = ColorMap.ScaleType.LINEAR;
 					if ( scaleType.getSelectedIndex() == 1) {
 						sType = ColorMap.ScaleType.LOGARITHM;
@@ -612,7 +630,8 @@ public class PalettePanel extends JPanel {
 						e.printStackTrace(); //let it be a best effort method.
 					}
 
-					model.resetColorMap(map);
+					if(chgColorMap)		// don't want to always reset the color map
+						model.resetColorMap(map);
 					model.setIntervalEditEnabled( intervalType.getSelectedIndex());	
 					paletteTable.revalidate();
 				} else {
@@ -646,7 +665,7 @@ public class PalettePanel extends JPanel {
 					maxFld.setCaretPosition(0);					
 					model.setIntervalEditEnabled( intervalType.getSelectedIndex());	
 				}
- 
+				Logger.debug("in rebuildBtn actionPerformed: minFld = " + minFld.getText() + ", maxFld = " + maxFld.getText());
 			}
 		});
 
@@ -659,6 +678,13 @@ public class PalettePanel extends JPanel {
 				}
 				paletteTable.revalidate();
 				paletteTable.repaint();
+			}
+		});
+		
+		resetBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				model.resetColors();
+				initMap(defaultColorMap,  defaultMinMax);
 			}
 		});
 	}
@@ -697,13 +723,19 @@ public class PalettePanel extends JPanel {
 
 	public void initMap(ColorMap colorMap, DataUtilities.MinMax minMax) {
 		Logger.debug("in PalettePanel.initMap");
+		defaultMinMax = minMax;
+		try {
+			defaultColorMap = new ColorMap(colorMap.getPalette(), colorMap.getMin(), colorMap.getMax());
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
 		ColorMap.IntervalType iType = colorMap.getIntervalType();
 		if (iType == ColorMap.IntervalType.AUTOMATIC) {
 			intervalType.setSelectedItem("Automatic");
 		} else if ( iType == ColorMap.IntervalType.CUSTOM) {
 			intervalType.setSelectedItem("Custom");
 		} else {
-			// TODO: report error
+			Logger.error("Error type of color map " + colorMap.getIntervalType().toString() + "is not recognized.");
 		}
 		
 		scaleType.setVisible( true);
@@ -722,8 +754,7 @@ public class PalettePanel extends JPanel {
 			index = 0;
 
 		paletteList.setSelectedIndex(index);
-		paletteList
-				.scrollRectToVisible(paletteList.getCellBounds(index, index));
+		paletteList.scrollRectToVisible(paletteList.getCellBounds(index, index));
 
 		String minConv = "f";
 		String maxConv = "f";
@@ -760,14 +791,19 @@ public class PalettePanel extends JPanel {
 			}
 		});
 		
-		formatFld.setText("%.3f");
+		formatFld.setText("%5.3f");
+		Logger.debug("formatFld just set to %5.3f");
 		
-		if (minConv.equals("e") || maxConv.equals("e"))
-			formatFld.setText("%.3e");
+		if (minConv.equalsIgnoreCase("e") || maxConv.equalsIgnoreCase("e") )
+		{
+			formatFld.setText("%5.3E");
+			Logger.debug("formatFld just set to %5.3E");
+		}
 		
 		try {
+			Logger.debug("ready to try and see if getNumberFormat returns null");
 			if (colorMap.getNumberFormat() != null)
-				formatFld.setText(getFormat(colorMap.getNumberFormat()));
+				formatFld.setText(colorMap.getFormatString());
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -792,70 +828,21 @@ public class PalettePanel extends JPanel {
 		return map;
 	}
 
+	/**
+	 * Take the format string input by the user, check the construction, create a proper Java pattern,
+	 * and apply it to the breakpoint values on the tile plot legend
+	 * @param map	the current ColorMap
+	 * @param format	the String entered by the user
+	 * @return
+	 * @throws Exception
+	 */
 	private ColorMap resetNumberFormat(ColorMap map, String format) throws Exception {
-		Logger.debug("in PalettePanel.resetNumberFormat");
-		if (format == null)
-			return map;
-		
-		String temp = format.trim();
-		Pattern p = Pattern.compile("^%\\d*\\.\\d*[eEfFgGdD]\\d*$");
-		Matcher m = p.matcher(temp);
-		
-		if (!m.matches())
-			throw new Exception("Number format '" + temp + "'is not valid.\n" +
-					"Example: 0.00123456 formatted with \"%2.3E\" yields \"12.345E-4\"");
-		
-		int exponent = temp.toUpperCase().indexOf("E");
-		int start = 0;
-		
-		while (!Character.isDigit(temp.charAt(start)) && temp.charAt(start) != '.')
-			start++;
-		
-		int dot = temp.indexOf(".");
-		int end = (dot == -1 ? start + 1 : dot + 1);
-		
-		while (Character.isDigit(temp.charAt(end)))
-			end++;
-		
-		String intStr = temp.substring(start, dot);
-		String decStr = temp.substring(dot+1, end);
-		int integer = Integer.valueOf(intStr == null || intStr.isEmpty()? 0+"" : intStr);
-		int decimal = Integer.valueOf(decStr == null || decStr.isEmpty()? 0+"" : decStr);
-		
-		String fmtStr = "";
-		
-		for (int i = 0; i < integer-1; i++)
-			fmtStr += "#";
-		
-		fmtStr += "0.";
-		
-		for (int i = 0; i < decimal; i++)
-			fmtStr += "0";
-		
-		if (exponent > 0)
-			fmtStr += "E0";
-		
-		map.setNumberFormat(new DecimalFormat(fmtStr));
-		
+		Logger.debug("in PalettePanel.resetNumberFormat, format = " + format);
+		map.setFormatString(format);
+		if (format == null) {
+			Logger.debug("format is null; returning map without changes");
+		}
 		return map;
-	}
-	
-	private String getFormat(NumberFormat numberFormat) {
-		Logger.debug("in PalettePanel.getFormat");
-		if (numberFormat == null)
-			return " %.3f";
-		
-		String format = ((DecimalFormat)numberFormat).toPattern().toUpperCase();
-		int exp = format.indexOf("E");
-		int dot = format.indexOf(".");
-		String forStr = "%" + dot + ".";
-		
-		if (exp > 0)
-			forStr += (exp - dot - 1) + "E";
-		else
-			forStr += (format.length() - 1 - dot) + "f";
-		
-		return  forStr;
 	}
 
 	private class CellRenderer extends DefaultTableCellRenderer {
@@ -890,7 +877,19 @@ public class PalettePanel extends JPanel {
 			//setEnabled(!autoInterval);
 			setEnabled(intervalInx == 1);
 		}
+		
+		public String getText() {
+			String text = super.getText();
+			return text;
+		}
+		
+	    public void setText(String text) {
+	    	super.setText(text);
+	    }
 	}
+	
+
+
 
 	public ColorMap.PaletteType getPaletteType() {
 		Logger.debug("in PalettePanel.getPaletteType");
@@ -909,18 +908,12 @@ public class PalettePanel extends JPanel {
 		model.resetPaletteType(getPaletteType());
 	}
 
-	public void setForFastTitle(boolean isForFastTitle) {
+	public void setForFastTitle() {
 		Logger.debug("in PalettePanel.setForFastTitle");
-		this.isForFastTitle = isForFastTitle;
 		ColorMap.IntervalType iType = ColorMap.IntervalType.AUTOMATIC;
 		ColorMap.ScaleType sType = ColorMap.ScaleType.LINEAR;
 		
 		if ( this.model != null && this.model.getColorMap() != null) {
-			if ( isForFastTitle ){
-				this.model.getColorMap().setPlotType( ColorMap.PlotType.FAST_TILE);
-			} else {
-				this.model.getColorMap().setPlotType( ColorMap.PlotType.OTHER);
-			}
 			sType = this.model.getColorMap().getScaleType();
 			iType = this.model.getColorMap().getIntervalType();
 		}
@@ -933,23 +926,15 @@ public class PalettePanel extends JPanel {
 			Logger.debug("Error: IntervalType should not be Logarithm");
 		}
 		
-		if ( this.isForFastTitle //&& this.model.getColorMap().getStatType() == ColorMap.StatType.NONE 
-		    ) {
-			this.labelScale.setVisible( true);
-			this.scaleType.setVisible( true);
-			if ( sType == ColorMap.ScaleType.LOGARITHM) {
-				this.scaleType.setSelectedIndex(1);
-			} else {
-				this.scaleType.setSelectedIndex(0);
-			}			
+
+		this.labelScale.setVisible( true);
+		this.scaleType.setVisible( true);
+		if ( sType == ColorMap.ScaleType.LOGARITHM) {
+			this.scaleType.setSelectedIndex(1);
 		} else {
-			this.labelScale.setVisible( false);
-			this.scaleType.setVisible( false);
-		}	
+			this.scaleType.setSelectedIndex(0);
+		}			
+	
 	}
 
-	public boolean isForFastTitle() {
-		Logger.debug("in PalettePanel.isForFastTitle");
-		return isForFastTitle;
-	}
 }

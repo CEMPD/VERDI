@@ -98,21 +98,8 @@ public class AreaFilePanel extends JPanel {
 				}
 			}
 		});
-
-		//		variableList.addMouseListener(new MouseAdapter() {
-		//			public void mousePressed(MouseEvent evt) {
-		//				if (evt.isPopupTrigger()) {
-		//					showVariablesPopup(evt);
-		//				}
-		//			}
-		//
-		//			public void mouseReleased(MouseEvent evt) {
-		//				if (evt.isPopupTrigger()) {
-		//					showVariablesPopup(evt);
-		//				}
-		//			}
-		//		});
 	}
+
 	private Action openAreaFileAction = new AbstractAction() {
 		/**
 		 * 
@@ -241,6 +228,7 @@ public class AreaFilePanel extends JPanel {
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				//				Object[] objs = areaFileList.getSelectedValues();	// replacing getSelectedValues()
+
 				List objs = areaFileList.getSelectedValuesList();
 				//				if (objs.length > 0) {
 				if (objs.size() > 0) {
@@ -354,10 +342,7 @@ public class AreaFilePanel extends JPanel {
 //						}));
 
 				// 2014 set up file names
-				String verdiHome = Tools.getVerdiHome();		// 2014 new method for reading in an image file
-				String separator = "/";		// use forward slash only for constructor ImageIcon(String filename);
-				String pathName = verdiHome + separator + "plugins" + separator + "core" + separator + "icons"
-						+ separator;
+				String pathName = Tools.getIconsDir();
 
 				//---- btnAdd ----
 				String filePlus = new String(pathName + "plus.png");
@@ -367,7 +352,7 @@ public class AreaFilePanel extends JPanel {
 				areaFiles.add(btnAdd, cc.xy(1, 1));
 
 				//---- btnDelete ----
-				String fileMinus = new String(pathName + "Minus.png");
+				String fileMinus = new String(pathName + "minus.png");
 				//				btnDelete.setIcon(new ImageIcon(getClass().getResource("/minus.png")));
 				btnDelete.setIcon(new ImageIcon(fileMinus));
 				btnDelete.setToolTipText("Delete Area File");
@@ -441,17 +426,17 @@ public class AreaFilePanel extends JPanel {
 		ArrayList<Area> areas = new ArrayList<Area>();
 
 		public Object getElementAt(int index) {
-			Logger.debug("in AreaFilePanel AreasModel getElementAt");
+			Logger.info("in AreaFilePanel AreasModel getElementAt");
 			return areas.get(index);
 		}
 
 		public Area getAreaAt(int index) {
-			Logger.debug("in AreaFilePanel AreasModel getAreaAt");
+			Logger.info("in AreaFilePanel AreasModel getAreaAt");
 			return areas.get(index);
 		}
 
 		public int getSize() {
-			Logger.debug("in AreaFilePanel AreasModel getSize");
+			Logger.info("in AreaFilePanel AreasModel getSize");
 			if (areas == null)
 				return 0;
 			return areas.size();
