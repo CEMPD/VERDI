@@ -4,13 +4,14 @@ RELEASE NOTES FOR VERDI V2.0 beta
 These notes describe the differences between the VERDI 2.0 beta release and the previous public release v1.6 alpha
 
 NEW FEATURES IN V2.0 beta:
-* 
+* support for MPAS netCDF files
+* updated world map 
 
 BUG FIXES IN 2.0 beta:
 *
 *
 
-KNOWN ISSUES IN 2.0 beat:
+KNOWN ISSUES IN 2.0 beta:
 *
 *
 
