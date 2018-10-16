@@ -1,6 +1,6 @@
 <!-- BEGIN COMMENT -->
   
-[<< Previous Chapter](VERDI_ch19.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch21.md)
+[<< Previous Chapter](VERDI_ch19.md) - [Home](README.md)
 
 <!-- END COMMENT -->
 
@@ -57,7 +57,7 @@ John Carron, Unidata, <http://www.unidata.ucar.edu/software/netcdf/index.html>
 
 <!-- BEGIN COMMENT -->
 
-[<< Previous Chapter](VERDI_ch19.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch21.md)<br>
+[<< Previous Chapter](VERDI_ch19.md) - [Home](README.md)<br>
 VERDI User Manual (c) 2018<br>
 
 <!-- END COMMENT -->

@@ -361,7 +361,7 @@ Figure 1‑6. VERDI Documentation on the CMAS Web Site<br>
 Help Desk Support for VERDI
 ---------------------------
 
-You are encouraged to search the [M3USER listserv](http://lists.unc.edu/read/search/results?forum=m3user&words=verdi&sb=1) for VERDI-related technical support questions; report errors and/or requests for enhancement to the m3user forum. The m3user forum is supported by the community and also by CMAS to help users resolve issues and identify and fix bugs found in supported software products.
+You are encouraged to search the new CMAS User Forum, by selecting the VERDI category: <https://forum.cmascenter.org/c/verdi> or using the old [M3USER listserv](http://lists.unc.edu/read/search/results?forum=m3user&words=verdi&sb=1) for VERDI-related technical support questions; report errors and/or requests for enhancement to the m3user forum. The m3user forum is supported by the community and also by CMAS to help users resolve issues and identify and fix bugs found in supported software products.
 
 Future VERDI Development
 ------------------------

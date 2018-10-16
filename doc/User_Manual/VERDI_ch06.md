@@ -10,9 +10,9 @@ Working with Gridded Datasets
 Gridded Input File Formats
 --------------------------
 
-###  Model Formats
+###  Model File Format Conventions
 
-VERDI currently supports visualizing files in the following file format conventions: CMAQ Input/Output Applications Programming Interface (I/O API) netCDF, WRF netCDF, CAMx (UAM-IV), and ASCII format (for observational data).<span id="IOAPI" class="anchor"></span> VERDI uses a customized version of the thredds/NetCDF Java library v4.5.5 (<http://www.unidata.ucar.edu/software/netcdf-java>).
+VERDI currently supports visualizing files in the following file format conventions: CMAQ Input/Output Applications Programming Interface (I/O API) netCDF, WRF netCDF, CAMx (UAM-IV), MPAS netCDF, and ASCII format (for observational data).<span id="IOAPI" class="anchor"></span> VERDI uses a customized version of the thredds/NetCDF Java library v4.5.5 (<http://www.unidata.ucar.edu/software/netcdf-java>).
 
 The CMAQ I/O API was designed as a high-level interface on top of the netCDF Java library. (see https://www.cmascenter.org/ioapi/ and <http://www.unidata.ucar.edu/software/netcdf/> for further information). The I/O API library provides a comprehensive programming interface to files for the air quality model developer and model-related tool developer, in both FORTRAN and C/C++. I/O API files are self-describing and include projection information within the gridded dataset. See Chapter 12 for additional information on what projections and gridded data file format conventions are currently supported by VERDI.
 
@@ -52,7 +52,7 @@ These datasets may be used to recreate example plots that are provided in this u
 
 <!-- -->
 
-1.  model – contains sample WRF and CMAQ I/O API datasets
+1.  model – contains sample WRF netCDF, MPAS netCDF, and CMAQ I/O API datasets
 
 2.  obs – contains an ASCII formatted observational dataset (Section 6.1.2), and an observational dataset created by airs2m3 converter (Chapter 13).
 
