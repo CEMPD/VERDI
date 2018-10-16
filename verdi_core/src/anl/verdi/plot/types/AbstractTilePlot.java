@@ -662,7 +662,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 		}
 
 		try {
-			File file = new File("data/map_world.shp");
+			File file = new File("data/Department_of_State_Valid_QGIS.shp");
 //			MapLayer layer = createLayer(file, new File("data/world.sld"));
 			FeatureLayer layer = createLayer(file, new File("data/world.sld"));
 			mapLayers.put(WORLD_LAYER, layer);

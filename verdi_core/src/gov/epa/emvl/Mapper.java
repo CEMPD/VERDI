@@ -36,7 +36,7 @@ public class Mapper {
 	private static final int MINIMUM = 0;
 	private static final int MAXIMUM = 1;
 	// 2015 removed ".bin" from hard-coded file names & replaced with ".shp"
-	private static final String worldMapFileName = "map_world/Department_of_State_Valid_QGIS.shp";		// OK as Shapefile	
+	private static final String worldMapFileName = "Department_of_State_Valid_QGIS.shp";		// OK as Shapefile	
 	private static final String northAmericaMapFileName = "ne_50m_admin_1_states_provinces_lakes/states_us_mexico.shp";	// OK as Shapefile
 	private static final String stateMapFileName = "map_state/cb_2014_us_state_500k.shp";		// match county boundary file
 	private static final String countyMapFileName = "map_county/cb_2014_us_county_500k.shp";	// OK as Shapefile

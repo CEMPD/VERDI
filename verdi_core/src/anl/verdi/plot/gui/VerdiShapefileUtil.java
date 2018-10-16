@@ -283,7 +283,7 @@ public class VerdiShapefileUtil {
       //If going east, add width
     //Add fake point
     //Pick up where you left off, adding the previous point first
-    private static LineString projectAndClipLineString(List<LineString> lineStringList, Coordinate[] sourceCoordinates, int startIndex, LatLonPointImpl latLon, ProjectionPointImpl xy, double factor, double widthh, Projection proj, int reverseMode) {
+    private static LineString projectAndClipLineString(List<LineString> lineStringList, Coordinate[] sourceCoordinates, int startIndex, LatLonPointImpl latLon, ProjectionPointImpl xy, double factor, Projection proj, int reverseMode) {
    
     	Coordinate[] targetCoordinates = new Coordinate[sourceCoordinates.length - startIndex];
     	LineString targetLineString = null;
@@ -342,7 +342,7 @@ public class VerdiShapefileUtil {
                 try {
                 	targetLineString = geometryFactory.createLineString(clippedSegment);
                 	lineStringList.add(targetLineString);
-            		projectAndClipLineString(lineStringList, sourceCoordinates, sourceIndex - 1, latLon, xy, factor, widthh, proj, reverseMode);
+            		projectAndClipLineString(lineStringList, sourceCoordinates, sourceIndex - 1, latLon, xy, factor, proj, reverseMode);
                 	return targetLineString;
                 } catch (Exception e) {
                 	e.printStackTrace();
@@ -375,7 +375,7 @@ public class VerdiShapefileUtil {
         LatLonPointImpl latLon = new LatLonPointImpl();
         ProjectionPointImpl xy = new ProjectionPointImpl();
         
-        return projectAndClipLineString(lineStringList, sourceCoordinates, 0, latLon, xy, factor, proj.getDefaultMapArea().getWidth() * factor, proj, 0);
+        return projectAndClipLineString(lineStringList, sourceCoordinates, 0, latLon, xy, factor, proj, 0);
     }
 
     private static Polygon projectPolygon(Geometry sourceGeometry, Projection proj) {

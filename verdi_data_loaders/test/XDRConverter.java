@@ -133,7 +133,7 @@ public class XDRConverter {
 
 	public static void main(String[] args) throws IOException {
 		XDRConverter converter = new XDRConverter();
-		String[] files = {"./map_data/map_na", "./map_data/map_counties", "./map_data/map_world"};
+		String[] files = {"./map_data/map_na", "./map_data/map_counties", "./map_data/Department_of_State_Valid_QGIS"};
 		for (String file : files) {
 			converter.run(file);
 		}
