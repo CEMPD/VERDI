@@ -163,6 +163,7 @@ public class PlotExporter {
 				((MeshPlot)plot).exportEPSImage(filename, width, height);
 			else if (currentExt.equalsIgnoreCase(ASC))
 				((MeshPlot)plot).exportASCIIGrid(filename);
+			return;
 		}
 		
 		if ( plot instanceof FastTilePlot &&
