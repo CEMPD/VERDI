@@ -397,6 +397,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private int previousClickedCell = 0;
 	private MeshCellInfo[] cellsToRender = null;
 	
+	private MeshCellInfo probedCell = null;
+	protected java.util.List<JMenuItem> probeItems = new ArrayList<JMenuItem>();
+	
 	Projection projection = new LatLonProjection();
 
 
@@ -428,6 +431,29 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	public static int MODE_CROSS_SECTION = 3;
 	
 	private boolean depositionRangeAlreadySet = false;
+	
+	
+	protected Action timeSeriesProbed = new AbstractAction(
+			"Time Series of Probed Cell") {
+		private static final long serialVersionUID = -2940008125642497962L;
+
+		public void actionPerformed(ActionEvent e) {
+			List<MeshCellInfo> probeList = new ArrayList<MeshCellInfo>();
+			probeList.add(probedCell);
+			requestTimeSeries(probeList, Formula.Type.TIME_SERIES_LINE);
+		}
+	};
+		
+	protected Action timeSeriesBarProbed = new AbstractAction(
+			"Time Series Bar of Probed Cell") {
+		private static final long serialVersionUID = -2940008125642497962L;
+
+		public void actionPerformed(ActionEvent e) {
+			List<MeshCellInfo> probeList = new ArrayList<MeshCellInfo>();
+			probeList.add(probedCell);
+			requestTimeSeries(probeList, Formula.Type.TIME_SERIES_BAR);
+		}
+	};
 	
 	protected Action timeSeriesSelected = new AbstractAction(
 			"Time Series of Visible Cell(s)") {
@@ -2171,7 +2197,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		else if (preStatIndex < 1)
 			gr.setColor(legendColors[cell.colorIndex]);
 		else {
+			try {
 			gr.setColor(legendColors[indexOfObsValue(statisticsData[preStatIndex - 1][0][cell.getId()], legendLevels)]);
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
 		}
 
 		gr.fillPolygon(cell.lonTransformed, cell.latTransformed, cell.lonTransformed.length);
@@ -2982,6 +3012,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		menu = new JMenu("Plot");
 		bar.add(menu);
+		JMenuItem item = menu.add(timeSeriesProbed);
+		item.setEnabled(false);
+		probeItems.add(item);
+		item = menu.add(timeSeriesBarProbed);
+		item.setEnabled(false);
+		probeItems.add(item);
 		menu.add(timeSeriesSelected);
 		menu.add(timeSeriesBarSelected);
 		menu.add(timeSeriesMin);
@@ -4529,6 +4565,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		return builder.toString();
 	}
 	
+	protected void enableProbeItems(boolean val) {
+		for (JMenuItem item : probeItems) {
+			item.setEnabled(val);
+		}
+	}
 	
 	public static void debugMain(String[] args) {
 		//ARGB String: Color 1 -16777194 color 2 -1677717 from 22 / 44
@@ -4703,6 +4744,17 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					mpEnd = new Point(getCol(e.getPoint()), getRow(e.getPoint()));
 					rect.width = mpEnd.x - rect.x;
 					rect.height = mpEnd.y - rect.y;
+					boolean leftClick = (e.getModifiers() & MouseEvent.BUTTON1_MASK) != 0;
+					if (leftClick) {
+						Point p = new Point(getCol(e.getPoint()), getRow(e.getPoint()));
+						Rectangle rect = new Rectangle(p.x, p.y, 0, 0);
+						
+						int clickedId = getCellIdByCoord(p.x, p.y);
+						probedCell = getCellInfo(clickedId).getSource();
+						enableProbeItems(true);
+						
+						app.getGui().setStatusOneText(createAreaString(rect));
+					}
 
 					if (probe)
 						probe(rect);
@@ -5029,6 +5081,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		updatedInfo[0] = min;
 		updatedInfo[1] = max;
 		updatedInfo[2] = percentComplete;
+		if (statisticsMenu != null)
+			statisticsMenu.setEnabled(!(percentComplete < 100));
+		if (percentComplete >= 100)
+			draw();
 		if (map != null) {
 			if (isLog)
 				map.setLogMinMax(min, max);
@@ -5070,7 +5126,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		} else {
 			computeDataRange(false);
 			localMinMax[0] = statMinMaxCache[0];
-			localMinMax[1] = statMinMaxCache[1];
+			localMinMax[1] = statMinMaxCache[3];
 		}
 		
 		

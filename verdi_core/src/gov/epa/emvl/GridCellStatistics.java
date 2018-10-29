@@ -425,7 +425,11 @@ public final class GridCellStatistics {
           final boolean oddNumberOfTimesteps = numberOfValidTimesteps % 2 != 0;
           final float firstValue  = data[ row ][ column ][ index          ];
           final float lastValue   = data[ row ][ column ][ index + last   ];
-          final float fourthMaxValue = data[ row ][ column ][ index + last - 3  ];
+
+          int fourthMaxIndex = index + last - 3;         
+          float fourthMaxValue = BADVAL3;
+          if (fourthMaxIndex < data[row][column].length && fourthMaxIndex >= 0)
+        		  fourthMaxValue = data[ row ][ column ][ fourthMaxIndex  ];
           final float middleValue = data[ row ][ column ][ index + middle ];
           final float lowerValue  = data[ row ][ column ][ index + lower  ];
           final float upperValue  = data[ row ][ column ][ index + upper  ];
