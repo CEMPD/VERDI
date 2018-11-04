@@ -379,6 +379,8 @@ public class VerdiShapefileUtil {
     }
 
     private static Polygon projectPolygon(Geometry sourceGeometry, Projection proj) {
+    	if (proj == null)
+    		return (Polygon)sourceGeometry;
     	double factor = 1000;
     	if (proj instanceof LatLonProjection)
     		factor = 1;
