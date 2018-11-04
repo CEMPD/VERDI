@@ -124,7 +124,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 	}
 		
 	  public void exportShapefile(String baseFileName) throws IOException {
-	    try {
+	   // try {
 	    	boolean showAverages = false;
 			ArrayList targets=Target.getTargets();
 			int mode = ((AreaTilePlot)tilePlot).getViewMode();
@@ -154,8 +154,8 @@ public class FastAreaTilePlot extends FastTilePlot {
 					continue;
 				Geometry poly = (Geometry)target.getGeometry(proj, gridCRS).clone();
 				for(int i=0;i<((MultiPolygon)poly).getNumGeometries();i++){
-					if (i > 0)
-						throw new UnsupportedOperationException("Multiple polygons per target not allowed");
+					//if (i > 0)
+					//	throw new UnsupportedOperationException("Multiple polygons per target not allowed");
       				Geometry geo=((MultiPolygon)poly).getGeometryN(i);
       				// get the vertices
       				Polygon geoPolygon=(Polygon)geo;
@@ -170,11 +170,11 @@ public class FastAreaTilePlot extends FastTilePlot {
 				}
 			}
 			GridShapefileWriter.write( baseFileName,
-					getVariableName(), areas, values, gridCRS );
+					getVariableName(), areas, values, originalCRS );
 	        
-	    } catch (Exception e) {
-	      Logger.error("An exception occurred", e);
-	    }
+	  //  } catch (Exception e) {
+	  //    Logger.error("An exception occurred", e);
+	  // }
 	}
 
 
