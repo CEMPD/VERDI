@@ -40,7 +40,7 @@ public class Axes<T extends CoordAxis> {
 		for (T axis : axes) {
 			if (axis.getAxisType() == AxisType.X_AXIS) this.xAxis = axis;
 			else if (axis.getAxisType() == AxisType.Y_AXIS) this.yAxis = axis;
-			else if (axis.getAxisType() == AxisType.TIME) this.timeAxis = axis;
+			else if (axis.getAxisType() == AxisType.TIME && this.timeAxis == null) this.timeAxis = axis;
 			else if (axis.getAxisType() == AxisType.LAYER) this.layerAxis = axis;
 			else if (axis.getAxisType() == AxisType.CELL_AXIS) this.cellAxis = axis;
 		}
