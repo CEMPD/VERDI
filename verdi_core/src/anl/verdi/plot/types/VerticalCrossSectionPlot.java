@@ -79,6 +79,8 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	private CoordAxis constantAxis, domainAxis;
 	private TimeConstantAxisPanel timePanel;
 	private boolean processTimeChange = true;
+	private String colString = "Column";
+	private String rowString = "Row";
 
 	public static enum CrossSectionType {
 		X, Y
@@ -142,6 +144,10 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	public VerticalCrossSectionPlot(DataFrame frame, CrossSectionType type, int constant, boolean meshInput) {
 		super(frame);
 		this.meshInput = meshInput;
+		if (meshInput) {
+			colString = "Longitude";
+			rowString = "Latitude";
+		}
 		Logger.debug("in alternate constructor for VerticalCrossSectionPlot");
 		this.type = type;
 		this.constant = constant;
@@ -359,8 +365,8 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	}
 
 	private String getRowOrCol() {
-		String val = "Column";
-		if (type == CrossSectionType.Y) val = "Row";
+		String val = colString;
+		if (type == CrossSectionType.Y) val = rowString;
 		return val;
 	}
 	
@@ -378,12 +384,12 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	}
 
 	private JFreeChart createChart(XYZDataset dataset) {
-		String val = "Column";
+		String val = colString;
 		// offset is for the title -- what the actual index for the constant col / row
 		// is
 		int offset = getOffset();
 		if (type == CrossSectionType.X)
-			val = "Row";
+			val = rowString;
 		
 		NumberAxis xAxis = new NumberAxis("Domain " + val);
 		xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
