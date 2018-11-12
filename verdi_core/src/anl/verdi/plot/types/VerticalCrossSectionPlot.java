@@ -413,6 +413,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 			if (hasZAxis()) {
 				yAxis.setRange(getZAxis().getRange().getOrigin(), getZAxis().getRange().getExtent());
 			}
+			timeStep = (int)frame.getAxes().getTimeAxis().getRange().getOrigin();
 			if (renderer == null)
 				renderer = new MPASXYBlockRenderer(type, frame, timeStep, constant);
 			else

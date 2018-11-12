@@ -2656,7 +2656,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		DataFrame dataFrame = getDataFrame(log);
 		final MPASDataFrameIndex dataFrameIndex = new MPASDataFrameIndex(dataFrame);
 			
-		for (int timestep = 0; timestep < timesteps; ++timestep) {
+		for (int timestep = firstTimestep; timestep <= lastTimestep; ++timestep) {
 			for (int cell = 0; cell < cellsToRender.length; ++cell) {
 					dataFrameIndex.set(timestep, layer, cell);
 					//float value = this.dataFrame.getFloat( dataFrameIndex ); // do not replace this one with getDataFrame()
