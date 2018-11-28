@@ -103,7 +103,7 @@ public class MPASMinMaxCalculator implements Runnable {
 	}
 	
 	private void calculateLayer(MPASDataFrameIndex index, int layer) {
-		for (int i = 0; i < numTimesteps; ++i) {
+		for (int i = timeOrigin; i < numTimesteps; ++i) {
 			getTimestep(index, layer, i);
 		}
 		return;
@@ -178,7 +178,7 @@ public class MPASMinMaxCalculator implements Runnable {
 	
 	public void run() {
 		final MPASDataFrameIndex index = new MPASDataFrameIndex(dataFrame);
-		for (int i = 0; i < numLayers; ++i) {
+		for (int i = layerOrigin; i < numLayers; ++i) {
 			calculateLayer(index, i);
 		}
 		synchronized(this) {

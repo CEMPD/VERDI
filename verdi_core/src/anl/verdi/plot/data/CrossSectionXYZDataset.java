@@ -116,7 +116,7 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 				domainExtent = (int)axes.getXAxis().getRange().getExtent() - 1;
 				domainOrigin = (int)axes.getXAxis().getRange().getOrigin();
 				if (ds.getZAxis(frame.getVariable().getName()) != null)
-					layerExtent = (int)ds.getZAxis(frame.getVariable().getName()).getRange().getExtent();
+					layerExtent = frame.getAxes().getZAxis().getExtent();
 				else
 					layerExtent = 1;
 			} else {
@@ -282,7 +282,7 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 	private static class ColSeriesData implements SeriesData {
 
 		DataFrame frame;
-		int domainExtent, domainOrigin, layerExtent;
+		int domainExtent, domainOrigin, layerOrigin, layerExtent;
 		int timeStep, col, colWithOrigin, colOrigin;
 		DataFrameIndex index;
 		
@@ -307,19 +307,27 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 				colWithOrigin = col + (int)axes.getXAxis().getRange().getOrigin();
 				domainExtent = (int)axes.getYAxis().getRange().getExtent() - 1;
 				domainOrigin = (int)axes.getYAxis().getRange().getOrigin();
-				if (ds.getZAxis(frame.getVariable().getName()) != null)
-					layerExtent = (int)ds.getZAxis(frame.getVariable().getName()).getRange().getExtent();
-				else
+				if (ds.getZAxis(frame.getVariable().getName()) != null) {
+					layerOrigin = (int)frame.getAxes().getZAxis().getRange().getOrigin();
+					layerExtent = (int)frame.getAxes().getZAxis().getRange().getExtent();
+				}
+				else {
+					layerOrigin = 0;
 					layerExtent = 1;
+				}
 			} else {
 				index = frame.getIndex();
 				index.set(timeStep, 0, col, 0);
 				domainExtent = frame.getAxes().getYAxis().getExtent();
 				domainOrigin = frame.getAxes().getYAxis().getOrigin();
-				if (frame.getAxes().getZAxis() != null)
+				if (frame.getAxes().getZAxis() != null) {
+					layerOrigin = frame.getAxes().getZAxis().getOrigin();
 					layerExtent = frame.getAxes().getZAxis().getExtent();
-				else
+				}
+				else {
+					layerOrigin = 0;
 					layerExtent = 1;
+				}
 			}
 		}
 
@@ -353,7 +361,7 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 	            reader.setTimestep(timeStep);
 	            double overlapArea = 0;
 	            double[] valueSum = new double[layerExtent];
-	            for (int i = 0; i < layerExtent; ++i)
+	            for (int i = layerOrigin; i < layerExtent; ++i)
 	            	valueSum[i] = 0;
 	            
         		Geometry env = TargetCalculator.getGeometryFactory().toGeometry(new Envelope(colWithOrigin, colWithOrigin + 1, frameY, frameY + 1));
@@ -384,7 +392,7 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
             				continue;
             			}
 	            		overlapArea += intersectionArea;
-	            		for (int i = 0; i < layerExtent; ++i) {
+	            		for (int i = layerOrigin; i < layerExtent; ++i) {
 	            			reader.setLayer(i);
 	            			valueSum[i] +=  intersectionArea * cell.getValue(reader);
 	            		}
@@ -392,7 +400,7 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 	            		//cell.getValue(reader);
 	            	}
 	            }
-	            for (int i = 0; i < layerExtent; ++i)
+	            for (int i = layerOrigin; i < layerExtent; ++i)
 	            	layerValues[i] = valueSum[i] / overlapArea; 
 				/*if (avgValue != avgValue) {
 					for (int i = 0; i < cells.length; ++i)
@@ -424,7 +432,7 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 		}
 
 		public int size() {
-			return domainExtent * layerExtent;
+			return domainExtent * (layerExtent - layerOrigin);
 		}
 
 		public String getName() {

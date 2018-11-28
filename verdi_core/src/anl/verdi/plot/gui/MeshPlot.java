@@ -5350,8 +5350,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			this.fixedAxis = fixedAxis;
 			this.sliceHeight = sliceDataHeightDeg;
 			this.startDegree = startDegree;
-			startLayer = 0;
-			endLayer = layers;
+			startLayer = firstLayer;
+			endLayer = startLayer + layers;
 		}
 
 		

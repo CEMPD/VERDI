@@ -371,6 +371,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	}
 	
 	protected Axes getAxes() {
+		//return frame.getAxes();//frame.getDataset().get(0).getCoordAxes();
 		return frame.getDataset().get(0).getCoordAxes();
 	}
 	
@@ -411,7 +412,9 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		if (meshInput) {
 			yAxis.setAutoRange(true);
 			if (hasZAxis()) {
-				yAxis.setRange(getZAxis().getRange().getOrigin(), getZAxis().getRange().getExtent());
+				int lower = (int)frame.getAxes().getZAxis().getRange().getOrigin();
+				int upper = lower + (int)frame.getAxes().getZAxis().getRange().getExtent();
+				yAxis.setRange(lower, upper);
 			}
 			timeStep = (int)frame.getAxes().getTimeAxis().getRange().getOrigin();
 			if (renderer == null)
@@ -440,15 +443,11 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	}
 	
 	private boolean hasZAxis() {
-		return getZAxis() != null;
+		return frame.getAxes().getZAxis() != null;
 	}
 
 	private CoordAxis getZAxis() {
-		if (meshInput) {
-			return ((IMPASDataset)frame.getDataset().get(0)).getZAxis(frame.getVariable().getName());
-		}
-		else
-			return frame.getAxes().getZAxis();
+		return frame.getAxes().getZAxis();
 	}
 
 	/**
@@ -459,7 +458,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	private TickUnitSource createIntegerTickUnits() {
 		TickUnits units = new TickUnits();
 		int layerOrigin = 1;
-		if (hasZAxis())
+		if (hasZAxis() && !meshInput)
 			layerOrigin = (int)getZAxis().getRange().getOrigin() + 1;
 		NumberFormat df0 = new LayerAxisFormatter(new DecimalFormat("0"), layerOrigin);
 		NumberFormat df1 = new LayerAxisFormatter(new DecimalFormat("#,##0"), layerOrigin);
