@@ -85,6 +85,10 @@ public class VerticalCrossPlotCreator extends AbstractPlotCreator {
 							vConfig.setCrossSectionType(VerticalCrossSectionPlot.CrossSectionType.Y);
 							vConfig.setCrossSectionRowCol(y);
 						}
+						if (dialog.displayLayer())
+							vConfig.setDisplayMode(MeshPlot.MODE_CROSS_SECTION_LAYER);
+						else
+							vConfig.setDisplayMode(MeshPlot.MODE_CROSS_SECTION_ELEVATION);
 						return createVertPlot(vConfig, frame, meshInput);
 					}
 				} else {

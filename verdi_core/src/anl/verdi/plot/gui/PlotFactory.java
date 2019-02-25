@@ -115,7 +115,7 @@ public class PlotFactory {
 	public PlotPanel getVerticalCrossPlot(String formula, DataFrame frame,
 	                                      CrossSectionType type, int constAxisIndex) {
 		String name = formula + " " + getTypeName(Type.VERTICAL_CROSS_SECTION);
-		Plot plot = new VerticalCrossSectionPlot(frame, type, constAxisIndex, false);
+		Plot plot = new VerticalCrossSectionPlot(frame, type, constAxisIndex, false, 0);
 		return new PlotPanel(plot, name);
 	}
 }

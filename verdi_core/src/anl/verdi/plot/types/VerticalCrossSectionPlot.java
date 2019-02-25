@@ -60,6 +60,7 @@ import anl.verdi.plot.data.IMPASDataset;
 import anl.verdi.plot.data.MinMaxInfo;
 import anl.verdi.plot.data.MinMaxLevelListener;
 import anl.verdi.plot.gui.AreaSelectionEvent;
+import anl.verdi.plot.gui.MeshPlot;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.TimeConstantAxisPanel;
 import anl.verdi.plot.jfree.MPASXYBlockRenderer;
@@ -81,6 +82,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	private boolean processTimeChange = true;
 	private String colString = "Column";
 	private String rowString = "Row";
+	MeshPlot renderPlot = null;
 
 	public static enum CrossSectionType {
 		X, Y
@@ -94,6 +96,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	private DataUtilities.MinMax rangedMinMax;
 	
 	boolean meshInput = false;
+	int displayMode = MeshPlot.MODE_CROSS_SECTION_LAYER;
 	
 	XYBlockRenderer renderer = null;
 
@@ -105,7 +108,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	 *               CrossSectionType and contant row/col
 	 */
 	public VerticalCrossSectionPlot(DataFrame frame, VertCrossPlotConfiguration config, boolean meshInput) {
-		this(frame, config.getCrossSectionType(), config.getCrossSectionRowCol(), meshInput);
+		this(frame, config.getCrossSectionType(), config.getCrossSectionRowCol(), meshInput, config.getDisplayMode());
 		Logger.debug("in constructor for VerticalCrossSectionPlot");
 		if (config.getSubtitle1() == null || config.getSubtitle1().trim().isEmpty())
 			config.setSubtitle1(Tools.getDatasetNames(frame));
@@ -141,9 +144,10 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	 * @param constant the constant column or row. Whether this is a column or row
 	 *                 is dependent on the cross section type.
 	 */
-	public VerticalCrossSectionPlot(DataFrame frame, CrossSectionType type, int constant, boolean meshInput) {
+	public VerticalCrossSectionPlot(DataFrame frame, CrossSectionType type, int constant, boolean meshInput, int displayMode) {
 		super(frame);
 		this.meshInput = meshInput;
+		this.displayMode = displayMode;
 		if (meshInput) {
 			colString = "Longitude";
 			rowString = "Latitude";
@@ -391,6 +395,11 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		int offset = getOffset();
 		if (type == CrossSectionType.X)
 			val = rowString;
+		if (meshInput) {
+			renderPlot = new MeshPlot(null, frame, MeshPlot.MODE_CROSS_SECTION);
+			renderPlot.setCrossSectionDisplayMode(displayMode);
+		}
+
 		
 		NumberAxis xAxis = new NumberAxis("Domain " + val);
 		xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -403,7 +412,9 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		if (!meshInput)
 			xAxis.setNumberFormatOverride(new AxisNumberFormatter(new DecimalFormat()));
 
-		NumberAxis yAxis = new NumberAxis("Layer");
+		NumberAxis yAxis = new NumberAxis("Elevation (m)");
+		if (displayMode == MeshPlot.MODE_CROSS_SECTION_LAYER)
+			yAxis.setLabel("Layer");
 		yAxis.setUpperMargin(0.0);
 		yAxis.setLowerMargin(0.0);
 		yAxis.setStandardTickUnits(createIntegerTickUnits());
@@ -415,10 +426,11 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 				int lower = (int)frame.getAxes().getZAxis().getRange().getOrigin();
 				int upper = lower + (int)frame.getAxes().getZAxis().getRange().getExtent();
 				yAxis.setRange(lower, upper);
+				//yAxis.setRange(1, 10000);
 			}
 			timeStep = (int)frame.getAxes().getTimeAxis().getRange().getOrigin();
 			if (renderer == null)
-				renderer = new MPASXYBlockRenderer(type, frame, timeStep, constant);
+				renderer = new MPASXYBlockRenderer(type, frame, renderPlot, timeStep, constant);
 			else
 				((MPASXYBlockRenderer)renderer).setPlotInfo(timeStep, constant);
 		}
@@ -457,11 +469,11 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	 */
 	private TickUnitSource createIntegerTickUnits() {
 		TickUnits units = new TickUnits();
-		int layerOrigin = 1;
+		int layerOrigin = 0;
 		if (hasZAxis() && !meshInput)
-			layerOrigin = (int)getZAxis().getRange().getOrigin() + 1;
-		NumberFormat df0 = new LayerAxisFormatter(new DecimalFormat("0"), layerOrigin);
-		NumberFormat df1 = new LayerAxisFormatter(new DecimalFormat("#,##0"), layerOrigin);
+			layerOrigin = (int)getZAxis().getRange().getOrigin();
+		NumberFormat df0 = new LayerAxisFormatter(new DecimalFormat("0"), layerOrigin, renderPlot);
+		NumberFormat df1 = new LayerAxisFormatter(new DecimalFormat("#,##0"), layerOrigin, renderPlot);
 		units.add(new NumberTickUnit(1, df0));
 		units.add(new NumberTickUnit(2, df0));
 		units.add(new NumberTickUnit(5, df0));
@@ -657,18 +669,40 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		super.viewClosed();
 	}
 
+	@SuppressWarnings("unused")
 	private static class LayerAxisFormatter extends NumberFormat {
 
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = -8645842600166219972L;
-		private int layerOrigin;
 		private DecimalFormat format;
+		
+		private double minElevation = -1;
+		private double maxElevation;
+		private int minLayer;
+		private int maxLayer;
+		private int renderMode = MeshPlot.MODE_CROSS_SECTION_LAYER;
+		
+		private int layerRange;
+		private double elevationRange;
+		
+		private MeshPlot renderer = null;
 
-		public LayerAxisFormatter(DecimalFormat format, int layerOrigin) {
+		public LayerAxisFormatter(DecimalFormat format, int minLayer, MeshPlot meshRenderer) {
 			this.format = format;
-			this.layerOrigin = layerOrigin;
+			this.minLayer = minLayer;
+			this.renderer = meshRenderer;
+			
+			if (renderer != null) {
+				renderMode = renderer.getCrossSectionMode();
+				maxLayer = (int)renderer.getDataFrame().getAxes().getZAxis().getRange().getExtent() + minLayer;
+				renderer.calculateLayerHeights(minLayer, maxLayer);
+				minElevation = renderer.getMinElevation();
+				maxElevation = renderer.getMaxElevation();
+				layerRange = maxLayer - minLayer;
+				elevationRange = maxElevation - minElevation;
+			}
 		}
 
 
@@ -687,17 +721,39 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		public boolean equals(Object obj) {
 			return format.equals(obj);
 		}
+		
+		private double convertNumber(double number) {
+			if (renderMode == MeshPlot.MODE_CROSS_SECTION_LAYER)
+				return number + minLayer + 1; //Format for 1 based instead of 0 based
+			double numberOrigin = number - minLayer;
+			double rawPercent = numberOrigin / layerRange;
+			double scaledElevation = rawPercent * elevationRange;
+			double rawElevation = scaledElevation + minElevation;
+			try {
+			for (int layerNum = minLayer; layerNum < maxLayer; ++layerNum) {
+				if (renderer.getLayerElevation(layerNum) >= rawElevation) {
+					if (layerNum == minLayer)
+						return 0;
+					return renderer.getLayerElevation(layerNum - 1);
+				}
+			}
+			} catch (Throwable t) {
+				t.printStackTrace();
+				throw t;
+			}
+			return renderer.getLayerElevation(maxLayer - 1);
+		}
 
 		public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition) {
-			return format.format(number + layerOrigin, result, fieldPosition);
+			return format.format(convertNumber(number ), result, fieldPosition);
 		}
 
 		public StringBuffer format(long number, StringBuffer result, FieldPosition fieldPosition) {
-			return format.format(number + layerOrigin, result, fieldPosition);
+			return format.format(convertNumber(number), result, fieldPosition);
 		}
 
 		public StringBuffer format(Object number, StringBuffer toAppendTo, FieldPosition pos) {
-			double val = ((Number) number).doubleValue() + layerOrigin;
+			double val = convertNumber(((Number) number).doubleValue());
 			return format.format(val, toAppendTo, pos);
 		}
 

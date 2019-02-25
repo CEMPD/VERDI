@@ -29,13 +29,13 @@ public class MPASXYBlockRenderer extends XYBlockRenderer {
 	int xOrigin;
 	int yOrigin;
 	
-	public MPASXYBlockRenderer(CrossSectionType type, DataFrame frame, int step, int constant) {
+	public MPASXYBlockRenderer(CrossSectionType type, DataFrame frame, MeshPlot renderPlot, int step, int constant) {
 		if (type == CrossSectionType.Y)
 			axis = "y";
 		this.frame = frame;
 		startDeg = constant;
 		timeStep = step;
-		renderPlot = new MeshPlot(null, frame, MeshPlot.MODE_CROSS_SECTION);
+		this.renderPlot = renderPlot;
 	}
 	
 	public void setPlotInfo(int step, int constant) {

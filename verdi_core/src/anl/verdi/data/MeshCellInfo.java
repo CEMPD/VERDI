@@ -62,6 +62,8 @@ public interface MeshCellInfo {
 	
 	public double getMaxY();
 	
+	public Double getElevationValue(String axisName, int currentLayer, int currentTimestep);
+	
 	public String getElevation(String axisName, int currentLayer, int currentTimestep);
 	
 	public double getZonal(int currentLayer, int currentTimestep);

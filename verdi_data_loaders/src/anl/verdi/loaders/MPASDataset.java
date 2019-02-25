@@ -223,24 +223,29 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 			return maxY;
 		}
 		
-		public String getElevation(String axisName, int currentLayer, int currentTimestep) {
-			String e = null;
+		public Double getElevationValue(String axisName, int currentLayer, int currentTimestep) {
+			Double e = null;
 			if (axisName != null) {
 				if (axisName.equals(VAR_ELEVATION)) {
 					double h1 = elevation.get(cellId, currentLayer);
 					double h2 = elevation.get(cellId, currentLayer + 1);
-					e = Long.toString(Math.round((h2 - h1) / 2 + h1));
+					e = (h2 - h1) / 2 + h1;
 				}
 				if (axisName.equals(VAR_DEPTH) && depth != null) {
 					double h1 = Math.round(depth.get(currentTimestep, cellId, currentLayer));
 					double h2 = Math.round(depth.get(currentTimestep, cellId, currentLayer + 1));
-					e = Long.toString(Math.round((h2 - h1) / 2 + h1));
+					e = (h2 - h1) / 2 + h1;
 
 				}
-				if (e != null)
-					return ", " + e + "m";
 			}
-			return "";
+			return e;
+		}
+		
+		public String getElevation(String axisName, int currentLayer, int currentTimestep) {
+			Double e = getElevationValue(axisName, currentLayer, currentTimestep);
+			if (e != null)
+				return ", " + Long.toString(Math.round(e)) + "m";
+			return "";		
 		}
 		
 		public double getZonal(int currentLayer, int currentTimestep) {
