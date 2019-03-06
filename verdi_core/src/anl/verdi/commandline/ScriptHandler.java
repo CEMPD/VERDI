@@ -199,7 +199,7 @@ public class ScriptHandler {
 					verdiApp.getProject().setSelectedFormula(e);
 				}
 				catch(NullPointerException e){
-					Logger.error("Null pointer exception in ScriptHandler.dataMap.put 'S': " + e.getMessage());
+					Logger.debug("Null pointer exception in ScriptHandler.dataMap.put 'S'", e);
 				}
 			}				
 		});
@@ -1636,7 +1636,7 @@ public class ScriptHandler {
 			}
 			in.close();
 		} catch (IOException e) {
-			Logger.error("IOException in ScriptHandler.loadAliasFile: " + e.getMessage());
+			Logger.debug("IOException in ScriptHandler.loadAliasFile: " + e.getMessage());
 		} catch (Exception e) {
 			Logger.error("Exception in ScriptHandler.loadAliasFile: " + e.getMessage());
 		} 

@@ -585,8 +585,13 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						} catch (Exception unused) {}
 					}
 
-					final int canvasWidth = getWidth();
-					final int canvasHeight = getHeight();
+					int canvasWidth = getWidth();
+					int canvasHeight = getHeight();
+					
+					if (canvasWidth == 0 && rescaleBuffer) {
+						canvasWidth = bufferedWidth;
+						canvasHeight = bufferedHeight;
+					}
 										
 					int width;
 					int height;
@@ -660,7 +665,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					
 					if (rescaleBuffer) {
 						double factor = ((double)bufferedWidth) / ((double)getWidth());
-						if (factor > 0) {
+						if (factor > 0 && canvasWidth != bufferedWidth) {
 							offScreenGraphics.scale(factor, factor);
 							offScreenGraphics.fillRect(0,  0,  bufferedWidth,  bufferedHeight);
 						}
@@ -715,7 +720,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 					final Graphics graphics = threadParent.getGraphics();
 
-					if (graphics == null) {
+					if (graphics == null && !rescaleBuffer) {
 						/*
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
@@ -916,7 +921,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 									VerdiGUI.showIfVisible(threadParent, graphics, offScreenImage);
 							}
 						} finally {
-							graphics.dispose();
+							if (graphics != null)
+								graphics.dispose();
 							offScreenGraphics.dispose();
 						}
 
@@ -3835,8 +3841,13 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		forceBufferedImage = true;
 		if (width != getWidth()) {
 			rescaleBuffer = true;
-			bufferedWidth = width;
-			bufferedHeight = bufferedWidth * getHeight() / getWidth();
+			if (getWidth() == 0) {
+				bufferedWidth = width;
+				bufferedHeight = height;
+			} else {
+				bufferedWidth = width;
+				bufferedHeight = bufferedWidth * getHeight() / getWidth();
+			}
 		}
 		draw();
 		long start = System.currentTimeMillis();

@@ -434,8 +434,12 @@ Logger.debug("within drawMode != DRAW_NONE && !VerdiGUI.isHidden((Plot) threadPa
 						} catch (Exception unused) {}
 					}
 Logger.debug("set up drawing space, titles, fonts, etc.");
-					final int canvasWidth = getWidth();
-					final int canvasHeight = getHeight();
+					int canvasWidth = getWidth();
+					int canvasHeight = getHeight();
+					if (canvasWidth == 0 && rescaleBuffer) {
+						canvasWidth = bufferedWidth;
+						canvasHeight = bufferedHeight;
+					}
 					float marginScale = 0.95f; // Controls whitespace margin around plot window.
 					String sTitle1 = config.getSubtitle1();
 					String sTitle2 = config.getSubtitle2();
@@ -513,7 +517,7 @@ Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
 					
 					if (rescaleBuffer) {
 						double factor = ((double)bufferedWidth) / ((double)getWidth());
-						if (factor > 0) {
+						if (factor > 0 && canvasWidth != bufferedWidth) {
 							offScreenGraphics.scale(factor, factor);
 							offScreenGraphics.fillRect(0,  0,  bufferedWidth,  bufferedHeight);
 						}
@@ -521,7 +525,7 @@ Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
 
 					final Graphics graphics = threadParent.getGraphics();
 
-					if (graphics == null) {
+					if (graphics == null && !rescaleBuffer) {
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
 						continue;// graphics system is not ready
@@ -692,7 +696,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 								VerdiGUI.showIfVisible(threadParent, graphics, offScreenImage);
 							Logger.debug("back from VerdiGUI.showIfVisible");
 						} finally {
-							graphics.dispose();
+							if (graphics != null)
+								graphics.dispose();
 							Logger.debug("just did graphics.dispose in finally block");
 							offScreenGraphics.dispose();
 							Logger.debug("just did offScreenGraphics.dispose in finally block");
@@ -2713,8 +2718,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		forceBufferedImage = true;
 		if (width != getWidth()) {
 			rescaleBuffer = true;
-			bufferedWidth = width;
-			bufferedHeight = bufferedWidth * getHeight() / getWidth();
+			if (getWidth() == 0) {
+				bufferedWidth = width;
+				bufferedHeight = height;
+			} else {
+				bufferedWidth = width;
+				bufferedHeight = bufferedWidth * getHeight() / getWidth();
+			}
 		}
 		draw();
 		long start = System.currentTimeMillis();
