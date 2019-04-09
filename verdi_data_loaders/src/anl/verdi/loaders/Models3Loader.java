@@ -78,7 +78,9 @@ public class Models3Loader implements DataLoader {
 //			if (dim.getName().equals("ROW")) hasRow = true;			// getName() is deprecated & no replacement suggested
 //			else if (dim.getName().equals("COL")) hasCol = true;	// Based on code examples selected getShortName()
 			if (dim.getShortName().equals("ROW")) hasRow = true;
+			else if (dim.getShortName().equals("ny")) hasRow = true;
 			else if (dim.getShortName().equals("COL")) hasCol = true;
+			else if (dim.getShortName().equals("nx")) hasCol = true;
 		}
 
 		return hasRow &&  hasCol;
