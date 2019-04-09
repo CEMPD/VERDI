@@ -42,7 +42,11 @@ import ucar.nc2.dataset.*;
 import ucar.unidata.geoloc.projection.*;
 import ucar.unidata.geoloc.ProjectionRect;
 
+import java.io.IOException;
 import java.util.*;
+
+import anl.verdi.loaders.GridNetcdfDataset;
+import anl.verdi.loaders.GridNetcdfReader;
 
 /**
  * Models-3/EDSS Input/Output netcf format.
@@ -102,20 +106,33 @@ public class M3IOConvention extends CoordSysBuilder {
 
   protected void constructCoordAxes(NetcdfDataset ds) {
 
-    Dimension dimx = ds.findDimension("COL");
+	String layer = "LAY";
+	String column = "COL";
+	String row = "ROW";
+	String time = "TSTEP";
+	
+    Dimension dimx = ds.findDimension(column);
+    if (dimx == null) {
+    	column = "nx";
+    	row = "ny";
+    	layer = "nz";
+    	time = "time";
+    	dimx = ds.findDimension(column);
+    }
+    
     int nx = dimx.getLength();
 
-    Dimension dimy = ds.findDimension("ROW");
+    Dimension dimy = ds.findDimension(row);
     int ny = dimy.getLength();
-
+    
     int projType = findAttributeInt(ds, "GDTYP");
     boolean isLatLon = (projType == 1);
     if (isLatLon) {
       //ds.addCoordinateAxis(  makeCoordAxis( ds, "lon", "COL", nx, "XORIG", "XCELL", "degrees east"));
       //ds.addCoordinateAxis(  makeCoordAxis( ds, "lat", "ROW", ny, "YORIG", "YCELL", "degrees north"));
 
-      ds.addCoordinateAxis(makeCoordLLAxis(ds, "lon", "COL", nx, "XORIG", "XCELL", "degrees east"));
-      ds.addCoordinateAxis(makeCoordLLAxis(ds, "lat", "ROW", ny, "YORIG", "YCELL", "degrees north"));
+      ds.addCoordinateAxis(makeCoordLLAxis(ds, "lon", column, nx, "XORIG", "XCELL", "degrees east"));
+      ds.addCoordinateAxis(makeCoordLLAxis(ds, "lat", row, ny, "YORIG", "YCELL", "degrees north"));
       ct = makeLatLongProjection(ds);
 
       VariableDS v = makeCoordinateTransformVariable(ds, ct);
@@ -123,8 +140,8 @@ public class M3IOConvention extends CoordSysBuilder {
       v.addAttribute(new Attribute(_Coordinate.Axes, "lon lat"));
 
     } else {
-      ds.addCoordinateAxis(makeCoordAxis(ds, "x", "COL", nx, "XORIG", "XCELL", "km"));
-      ds.addCoordinateAxis(makeCoordAxis(ds, "y", "ROW", ny, "YORIG", "YCELL", "km"));
+      ds.addCoordinateAxis(makeCoordAxis(ds, "x", column, nx, "XORIG", "XCELL", "km"));
+      ds.addCoordinateAxis(makeCoordAxis(ds, "y", row, ny, "YORIG", "YCELL", "km"));
 
       if (projType == 2)
         ct = makeLCProjection(ds);
@@ -152,8 +169,8 @@ public class M3IOConvention extends CoordSysBuilder {
       }
     }
 
-    makeZCoordAxis(ds, "LAY", "VGLVLS", "sigma");
-    makeTimeCoordAxis(ds, "TSTEP");
+    makeZCoordAxis(ds, layer, "VGLVLS", "sigma");
+    makeTimeCoordAxis(ds, time);
   }
 
   private CoordinateAxis makeCoordAxis(NetcdfDataset ds, String name, String dimName, int n,
@@ -214,39 +231,82 @@ public class M3IOConvention extends CoordSysBuilder {
     ds.addCoordinateAxis(v);
     ds.addCoordinateAxis(vedge);
   }
+  
+  private List<String> readString(NetcdfDataset ds, Variable var) throws IOException {
+	  ArrayList<String> values = new ArrayList<String>();
+	  int[] shape = var.getShape();
+	  Array arr = var.read();
+	  StringBuffer buf = null;
+	  int idx = 0;
+	  for (int i = 0; i < shape[0]; ++i) {
+		  buf = new StringBuffer();
+		  for (int j = 0; j < shape[1]; ++j)
+			  buf.append(arr.getChar(idx++));
+		  values.add(buf.toString());
+	  }
+	  return values;
+  }
 
   private void makeTimeCoordAxis(NetcdfDataset ds, String timeName) {
-    int start_date = findAttributeInt(ds, "SDATE");
-    int start_time = findAttributeInt(ds, "STIME");
-    int time_step = findAttributeInt(ds, "TSTEP");
+	int time_step = 0;
+	Date time1 = null;
+	Date time2 = null;
+	try {
+		Variable mtime = ds.findVariable("mtime");
+		if (mtime != null) {
+			List<String> times = readString(ds, mtime);
+			
+		    java.text.SimpleDateFormat dateFormatOut = new java.text.SimpleDateFormat("yyyy-MM-dd-HH:mm:ss z");
+		    
+		    time1 = dateFormatOut.parse(times.get(0) + " +0000");
+		    if (times.size() > 1) {
+		    	time2 = dateFormatOut.parse(times.get(1) + " +0000");
+		    	time_step = (int)((time2.getTime() - time1.getTime()) / 1000);
+		    }	    
 
-    int year = start_date / 1000;
-    int doy = start_date % 1000;
-    int hour = start_time / 10000;
-    start_time = start_time % 10000;
-    int min = start_time / 100;
-    int sec = start_time % 100;
+		}
+	} catch (Exception e) {
+		throw new RuntimeException(e);
+	}
+	
+	if (time1 == null) {
 
-    Calendar cal = new GregorianCalendar(new SimpleTimeZone(0, "GMT"));
-    cal.clear();
-    cal.set(Calendar.YEAR, year);
-    cal.set(Calendar.DAY_OF_YEAR, doy);
-    cal.set(Calendar.HOUR_OF_DAY, hour);
-    cal.set(Calendar.MINUTE, min);
-    cal.set(Calendar.SECOND, sec);
-    //cal.setTimeZone( new SimpleTimeZone(0, "GMT"));
+	    int start_date = findAttributeInt(ds, "SDATE");
+	    int start_time = findAttributeInt(ds, "STIME");
+	    time_step = findAttributeInt(ds, "TSTEP");
+	
+	    int year = start_date / 1000;
+	    int doy = start_date % 1000;
+	    int hour = start_time / 10000;
+	    start_time = start_time % 10000;
+	    int min = start_time / 100;
+	    int sec = start_time % 100;
+	
+	    Calendar cal = new GregorianCalendar(new SimpleTimeZone(0, "GMT"));
+	    cal.clear();
+	    cal.set(Calendar.YEAR, year);
+	    cal.set(Calendar.DAY_OF_YEAR, doy);
+	    cal.set(Calendar.HOUR_OF_DAY, hour);
+	    cal.set(Calendar.MINUTE, min);
+	    cal.set(Calendar.SECOND, sec);
+	    //cal.setTimeZone( new SimpleTimeZone(0, "GMT"));
+	    
+	    time1 = cal.getTime();
+	    
+	    // parse the time step
+	    hour = time_step / 10000;
+	    time_step = time_step % 10000;
+	    min = time_step / 100;
+	    sec = time_step % 100;
+	    time_step = hour * 3600 + min * 60 + sec;
+	}
 
     java.text.SimpleDateFormat dateFormatOut = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     dateFormatOut.setTimeZone(java.util.TimeZone.getTimeZone("GMT"));
 
-    String units = "seconds since " + dateFormatOut.format(cal.getTime()) + " UTC";
+    String units = "seconds since " + dateFormatOut.format(time1) + " UTC";
 
-    // parse the time step
-    hour = time_step / 10000;
-    time_step = time_step % 10000;
-    min = time_step / 100;
-    sec = time_step % 100;
-    time_step = hour * 3600 + min * 60 + sec;
+
 
     Dimension dimt = ds.findDimension(timeName);
     int nt = dimt.getLength();
