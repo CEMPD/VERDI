@@ -296,6 +296,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	private TimeLayerPanel timeLayerPanel;
 	private final JToolBar toolBar = new JToolBar();
 	private JComboBox statisticsMenu;
+	private String customPercentile = null;
 	private int preStatIndex = -1;
 	private JTextField threshold;
 	private boolean recomputeStatistics = false;
@@ -945,6 +946,28 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			increase_draw_once_requests();
 		}
 	}
+	
+	private void getCustomPercentile() {
+		VerdiApplication.getInstance().getGui().getFrame();
+		String s = (String)JOptionPane.showInputDialog(
+				VerdiApplication.getInstance().getGui().getFrame(),
+                "Enter the percentile you would like to plot:",
+                "Custom Percentile",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                customPercentile);
+		try {
+			Double.parseDouble(s);
+			customPercentile = s;
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(VerdiApplication.getInstance().getGui().getFrame(),
+				    "Please enter a numeric value.",
+				    "NumberFormatException",
+				    JOptionPane.ERROR_MESSAGE);
+			statisticsMenu.setSelectedIndex(preStatIndex);
+		}
+	}
 
 	// Buttons and fields:
 
@@ -954,6 +977,9 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		if ( source == statisticsMenu || source == threshold ) {
 			
 			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex) {
+				if (statisticsMenu.getSelectedItem().equals("custom_percentile") ) {
+					getCustomPercentile();
+				}
 				if( statisticsMenu.getSelectedIndex() != 0) {
 					recomputeStatistics = true;
 				} else {
@@ -1697,9 +1723,12 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		final double hoursPerTimestep = 1.0;
 		
 		try {
+			double percentile = 0;
+			if (customPercentile != null)
+				percentile = Double.parseDouble(customPercentile);
 			GridCellStatistics.computeStatistics( layerData,
 					threshold, hoursPerTimestep,
-					statisticsData, this.statisticsMenu.getSelectedIndex()-1 );
+					statisticsData, this.statisticsMenu.getSelectedIndex()-1 , percentile);
 			this.statError = false;
 		} catch ( Exception e) {
 			Logger.error("Error occurred during computing statistics", e);

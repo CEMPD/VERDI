@@ -40,7 +40,8 @@ public final class GridCellStatistics {
   public static final int MAXIMUM_8HOUR_MEAN      = 16;
   public static final int COUNT                   = 17;
   public static final int FOURTH_MAX              = 18;
-  public static final int STATISTICS              = 20;
+  public static final int CUSTOM_PERCENTILE       = 19;
+  public static final int STATISTICS              = 21;
 
   public static final float BADVAL3 = (float)DataUtilities.BADVAL3;
   public static final float AMISS3  = (float)DataUtilities.AMISS3;
@@ -70,7 +71,8 @@ public final class GridCellStatistics {
     { "hours_of_non_compliance",  "hours", "honc"      },
     { "maximum_8hour_mean",       null,    "max8hrAve" },
     { "count",                    "#",     "count"     },
-    { "fourth_max",               null,    "4thMax"    }
+    { "fourth_max",               null,    "4thMax"    },
+    { "custom_percentile",        null,    "custPer"   }
   };
 
   public static String name( final int statistic ) {
@@ -101,7 +103,8 @@ public final class GridCellStatistics {
                                         final double threshold,
                                         final double hoursPerTimestep,
                                         final float[][][] statistics,
-                                        final int statIndex) throws Exception {
+                                        final int statIndex,
+                                        final double customPercentileValue) throws Exception {
 	  
 	  boolean separate = true;
 	  //Logger.debug( "statIndex = " + statIndex);
@@ -134,7 +137,7 @@ public final class GridCellStatistics {
 		  if ( statIndex == 0 || statIndex == 1 || statIndex == 4 ||
 				  statIndex == 5 || statIndex == 6 ||
 				  statIndex == 10 || statIndex == 11 || 
-				  statIndex == 17 || statIndex == 18) {
+				  statIndex == 17 || statIndex == 18 || statIndex == 19) {
 			  computeQuartiles( data,
 					  statistics[ COUNT ],
 					  statistics[ MINIMUM ],
@@ -144,7 +147,9 @@ public final class GridCellStatistics {
 					  statistics[ THIRD_QUARTILE ],
 					  statistics[ RANGE ],
 					  statistics[ INTERQUARTILE_RANGE ],
-					  statistics[ FOURTH_MAX ]);
+					  statistics[ FOURTH_MAX ],
+					  statistics[ CUSTOM_PERCENTILE ],
+					  customPercentileValue);
 			  return;
 		  }
 
@@ -225,7 +230,9 @@ public final class GridCellStatistics {
 				  statistics[ THIRD_QUARTILE ],
 				  statistics[ RANGE ],
 				  statistics[ INTERQUARTILE_RANGE ],
-				  statistics[ FOURTH_MAX ]);
+				  statistics[ FOURTH_MAX ],
+				  statistics[ CUSTOM_PERCENTILE],
+				  customPercentileValue);
 
 		  computeSums( data, statistics[ COUNT ], statistics[ SUM ] );
 
@@ -393,7 +400,9 @@ public final class GridCellStatistics {
                                         final float[][] thirdQuartile,
                                         final float[][] range,
                                         final float[][] interquartileRange,
-                                        final float[][] fourthMax) {
+                                        final float[][] fourthMax,
+                                        final float[][] customPercentile,
+                                        final double customPercentileValue) {
     final int rows    = data.length;
     final int columns = data[ 0 ].length;
     final int timesteps = data[ 0 ][ 0 ].length;
@@ -404,6 +413,7 @@ public final class GridCellStatistics {
         final int numberOfValidTimesteps =
           (int) ( count[ row ][ column ] + 0.5 );
 
+        
         if ( numberOfValidTimesteps == 0 ) {
           minimum[            row ][ column ] = BADVAL3;
           maximum[            row ][ column ] = BADVAL3;
@@ -413,6 +423,7 @@ public final class GridCellStatistics {
           thirdQuartile[      row ][ column ] = BADVAL3;
           interquartileRange[ row ][ column ] = BADVAL3;
           fourthMax[          row ][ column ] = BADVAL3;
+          customPercentile[   row ][ column ] = BADVAL3;
         } else {
           final int index    = timesteps - numberOfValidTimesteps;
           final int last     = numberOfValidTimesteps - 1;
@@ -422,6 +433,8 @@ public final class GridCellStatistics {
           final int lower_1  = lower > 0 ? lower - 1 : 0;
           final int upper    = numberOfValidTimesteps * 3 / 4;
           final int upper_1  = upper > 0 ? upper - 1 : 0;
+          final int custom   = (int)Math.round(numberOfValidTimesteps * customPercentileValue / 100.0);
+          final int custom_l = custom > 0 ? custom - 1 : 0;
           final boolean oddNumberOfTimesteps = numberOfValidTimesteps % 2 != 0;
           final float firstValue  = data[ row ][ column ][ index          ];
           final float lastValue   = data[ row ][ column ][ index + last   ];
@@ -438,6 +451,7 @@ public final class GridCellStatistics {
           maximum[ row ][ column ] = lastValue;
           fourthMax[ row ][ column ] = fourthMaxValue;
           range[   row ][ column ] = lastValue - firstValue;
+          customPercentile[ row ][ column ] = data[ row ][ column ][ index + custom_l ];
 
           if ( oddNumberOfTimesteps ) {
             median[             row ][ column ] = middleValue;
