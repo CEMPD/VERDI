@@ -38,6 +38,7 @@ public class ImageResolutionDialog extends JDialog implements FocusListener {
 		private boolean cancelled = false;
 		private int xRes, yRes;
 		double aspect;
+		private Object lastSelectedField = null;
 
 		public ImageResolutionDialog(Plot plot) {
 			super.setTitle("Image Dimensions");
@@ -154,6 +155,7 @@ public class ImageResolutionDialog extends JDialog implements FocusListener {
 			JButton okButton = new JButton("OK");
 			okButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					updateAspectRatio(lastSelectedField);
 					cancelled = false;
 					dispose();
 				}
@@ -198,22 +200,34 @@ public class ImageResolutionDialog extends JDialog implements FocusListener {
 		}
 
 		@Override
-		public void focusGained(FocusEvent e) {			
+		public void focusGained(FocusEvent e) {	
+			lastSelectedField = e.getSource();
 		}
 
 		@Override
 		public void focusLost(FocusEvent e) { //Ensure aspect ratio is preserved
-			boolean isX = e.getSource().equals(xResField);
+			updateAspectRatio(e.getSource());
+		}
+		
+		private void updateAspectRatio(Object source) {
+			if (source == null)
+				return;
+			boolean isX = source.equals(xResField);
+			int x = 0;
+			int y = 0;
 			try {
 				if (isX) {
-					int x = Integer.valueOf(xResField.getText());
-					int y = (int)Math.round(((double)x) / aspect);
-					yResField.setText(Integer.toString(y));					
+					x = Integer.valueOf(xResField.getText());
+					y = (int)Math.round(((double)x) / aspect);
+					yResField.setText(Integer.toString(y));
+					yRes = y;
 				} else {
-					int y = Integer.valueOf(yResField.getText());
-					int x = (int)Math.round(aspect * ((double)y));
+					y = Integer.valueOf(yResField.getText());
+					x = (int)Math.round(aspect * ((double)y));
 					xResField.setText(Integer.toString(x));
+					xRes = x;
 				}
 			} catch (NumberFormatException ex) {}
+
 		}
 	}
