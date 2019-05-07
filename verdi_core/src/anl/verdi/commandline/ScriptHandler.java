@@ -549,12 +549,15 @@ public class ScriptHandler {
 									verdiApp.evaluateFormula( Formula.Type.TILE );
 
 							if ( dataFrame != null ) {
-								plot = new anl.verdi.plot.gui.FastTilePlot(verdiApp, dataFrame);
+								if (dataFrame.getDataset().get(0).getClass().getName().indexOf("MPASDataset") != -1)
+									plot = new anl.verdi.plot.gui.MeshPlot(verdiApp, dataFrame);
+								else
+									plot = new anl.verdi.plot.gui.FastTilePlot(verdiApp, dataFrame);
 
 								//assume the user is passing in the actual number of the 
 								//timestep 1-based
 								Axes<DataFrameAxis> axes = dataFrame.getAxes();
-								((anl.verdi.plot.gui.FastTilePlot)plot).updateTimeStep(selectedTimeStep - 1 - axes.getTimeAxis().getOrigin());
+								((anl.verdi.plot.types.TimeAnimatablePlot)plot).updateTimeStep(selectedTimeStep - 1 - axes.getTimeAxis().getOrigin());
 								plot.configure(new TilePlotConfiguration(config), Plot.ConfigSource.FILE);
 
 								PlotPanel panel = new PlotPanel( plot, "Tile: " + verdiApp.getProject().getSelectedFormula());
