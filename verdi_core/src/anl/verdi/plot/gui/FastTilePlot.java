@@ -62,6 +62,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -947,6 +948,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void getCustomPercentile() {
 		VerdiApplication.getInstance().getGui().getFrame();
 		String s = (String)JOptionPane.showInputDialog(
@@ -960,6 +962,10 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		try {
 			Double.parseDouble(s);
 			customPercentile = s;
+			int index = statisticsMenu.getSelectedIndex();
+			DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>)statisticsMenu.getModel();
+			model.insertElementAt("custom_percentile (" + s + ")", index);
+			model.removeElementAt(index + 1);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(VerdiApplication.getInstance().getGui().getFrame(),
 				    "Please enter a numeric value.",
@@ -976,8 +982,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		if ( source == statisticsMenu || source == threshold ) {
 			
-			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex) {
-				if (statisticsMenu.getSelectedItem().equals("custom_percentile") ) {
+			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex || statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile (")) {
+				if (statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile (") ) {
 					getCustomPercentile();
 				}
 				if( statisticsMenu.getSelectedIndex() != 0) {
@@ -988,7 +994,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 					copySubsetLayerData(this.log);
 				}
 				this.preStatIndex = statisticsMenu.getSelectedIndex();
-			}
+			} else if (source != threshold)
+				return;
 			
 			recomputeLegend = true;
 			

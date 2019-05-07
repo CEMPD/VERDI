@@ -66,6 +66,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -385,7 +386,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	
 	private double fixedLayerHeight = 0;
 	Map<Integer, Double> layerHeights = null;
-	Map<Integer, Double> layerAvgHeights = null;
+	Map<String, Double> layerAvgHeights = null;
 	double totalElevation = 0;
 	double minElevation = 0;
 	double maxElevation = 0;
@@ -1248,6 +1249,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		draw();
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void getCustomPercentile() {
 		VerdiApplication.getInstance().getGui().getFrame();
 		String s = (String)JOptionPane.showInputDialog(
@@ -1261,6 +1263,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		try {
 			Double.parseDouble(s);
 			customPercentile = s;
+			int index = statisticsMenu.getSelectedIndex();
+			DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>)statisticsMenu.getModel();
+			model.insertElementAt("custom_percentile (" + s + ")", index);
+			model.removeElementAt(index + 1);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(VerdiApplication.getInstance().getGui().getFrame(),
 				    "Please enter a numeric value.",
@@ -1277,8 +1283,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		if ( source == statisticsMenu || source == threshold ) {
 			
-			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex) {
-				if (statisticsMenu.getSelectedItem().equals("custom_percentile") ) {
+			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex || statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile (")) {
+				if (statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile (") ) {
 					getCustomPercentile();
 				}
 				if( statisticsMenu.getSelectedIndex() != 0) {
@@ -1288,7 +1294,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					copySubsetLayerData(this.log);
 				}
 				this.preStatIndex = statisticsMenu.getSelectedIndex();
-			}
+			} else if (source != threshold)
+					return;
 			
 			updateLegendLevels();
 			
@@ -2187,7 +2194,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		long renderStart = System.currentTimeMillis();
 		
 		if (xOffset != 0) {
-			if (!reverseAxes)
+			if (!reverseAxes && renderMode != MODE_CROSS_SECTION)
 				gr.setClip(xOffset, yOffset, screenWidth, screenHeight);
 		}
 		
@@ -4398,6 +4405,19 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				cellIdList.add(getCellIdByCoord(i, j));
 			}
 
+		//For cross Section, adjust from 0 based ranges
+		double startDegree = 0;
+		double endDegree = 0;
+		if (renderMode == MODE_CROSS_SECTION) {
+			startDegree = renderInfo.startDegree;
+			if (reverseAxes) 
+				startDegree -= 180;
+			else
+				startDegree -= 90;
+			endDegree = startDegree + renderInfo.sliceHeight;
+		}
+		//int totalCells = 0;
+		//int visibleCount = 0;
 		for (LocalCellInfo cell : cellInfo) {
 			MeshCellInfo meshCell = cell.getSource();
 			if (cellIdList.contains(cell.getId()))
@@ -4405,11 +4425,26 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			else if (cell.lonTransformed[meshCell.getMinXPosition() ]>= 0 && cell.lonTransformed[meshCell.getMaxXPosition()] <= width && 
 					cell.latTransformed[meshCell.getMinYPosition()] >=0 && cell.latTransformed[meshCell.getMaxYPosition()] <= height)
 				cell.visible = true;
-			else if (renderMode == MODE_CROSS_SECTION && reverseAxes && (
-					(cell.lonTransformed[meshCell.getMinXPosition()] <= width * 1.5 && cell.lonTransformed[meshCell.getMaxXPosition()] >= 0) &&
+			else if (renderMode == MODE_CROSS_SECTION) { //reverseAxes	
+				if (!reverseAxes && ((cell.getSource().getMinLatValue() >= startDegree - 2 &&
+						cell.getSource().getMinLatValue() <= endDegree + 2) ||
+						(cell.getSource().getMaxLatValue() >= startDegree - 2 &&
+						cell.getSource().getMaxLatValue() <= endDegree + 2)))
+					cell.visible = true;
+				if (reverseAxes && ((cell.getSource().getMinLonValue() >= startDegree &&
+						cell.getSource().getMinLonValue() <= endDegree + 1) ||
+						(cell.getSource().getMaxLonValue() >= startDegree &&
+						cell.getSource().getMaxLonValue() <= endDegree + 1)))
+					cell.visible = true;
+					
+						
+					/*(cell.lonTransformed[meshCell.getMinXPosition()] <= width * 2 && cell.lonTransformed[meshCell.getMaxXPosition()] >= 0) &&
 					(cell.latTransformed[meshCell.getMinYPosition()] <= height + 1 && cell.latTransformed[meshCell.getMaxYPosition()] >= 0)
 					))
 				cell.visible = true;
+			cell.visible = true;*/
+			}
+			//cell.visible = true;
 			
 			if (cell.visible && meshCell.getLon() >= minLon && meshCell.getLon() <= maxLon && meshCell.getLat() <= maxLat && meshCell.getLat() >= minLat) { //&& zoomFactor != 1) {
 				double value = cell.getValue();
@@ -4422,14 +4457,15 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					currentMinMaxCache[LEVELS_CACHE_MAX_LAT] = meshCell.getLat();
 					currentMinMaxCache[LEVELS_CACHE_MAX_LON] = meshCell.getLon();					
 				}
-			}
-
-			//	if (totalCells == 162396 ) //loses over -25
-			//	if (totalCells == 116959 ) //loses over -35
-			//if (totalCells == 2319) //black under 0 from 2016
+			} 
+			//	cell.visible = true;
 			//if (totalCells == 2367) //loses under 0 from 2016
 			//	cell.visible = true;
+			/*if (cell.visible)
+				++visibleCount;
+			++totalCells;*/
 		}
+		//System.err.println("Total cell count: " + totalCells + " visible " + visibleCount);
 		for (LocalCellInfo cell : splitCellInfo.keySet()) {
 			MeshCellInfo meshCell = cell.getSource();
 			if (cellIdList.contains(cell.getId()))
@@ -4437,7 +4473,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			else if (cell.lonTransformed[meshCell.getMinXPosition() ]>= 0 && cell.lonTransformed[meshCell.getMaxXPosition()] <= width && 
 					cell.latTransformed[meshCell.getMinYPosition()] >=0 && cell.latTransformed[meshCell.getMaxYPosition()] <= height)
 				cell.visible = true;
-			cell.visible = true; //TAH debug
+			//cell.visible = true; //TAH debug
 		}
 	}
 	
@@ -5484,7 +5520,28 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		return neededScale / currentScale;
 	}
 	
-	private double getCrossSectionScaleY(int layer, int lastDrawnLayer, int startLayer, int endLayer) {
+	private double getCrossSectionScaleY(int layer, int lastDrawnLayer, int startLayer, int endLayer, double pixelHeight, int remainingHeight) {
+		//Second try, ...
+		if (crossSectionMode == MODE_CROSS_SECTION_ELEVATION && !reverseAxes) {
+			int numLayers = layer - lastDrawnLayer;
+			double base;
+			if (lastDrawnLayer == -1) {
+				base = 0;
+				lastDrawnLayer = 0;
+			} else
+				base = getLayerElevation(lastDrawnLayer);
+			double top = getLayerElevation(endLayer - 1);
+			double currentScale = numLayers / (double)(endLayer - startLayer);
+			currentScale = pixelHeight / remainingHeight;
+			double neededScale = (getLayerElevation(layer) - base) / (top - base);
+			return neededScale / currentScale;
+			//needed scale = 1 / distance from top of undrawn to top of end layer
+		}
+		return 1;
+		
+	}	
+	
+	/*private double getCrossSectionScaleY(int layer, int lastDrawnLayer, int startLayer, int endLayer) {
 		//Second try, ...
 		if (crossSectionMode == MODE_CROSS_SECTION_ELEVATION && !reverseAxes) {
 			int numLayers = layer - lastDrawnLayer;
@@ -5501,33 +5558,35 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			//needed scale = 1 / distance from top of undrawn to top of end layer
 		}
 		return 1;
-		
-	}	
-	
-	/*private double getCrossSectionScaleY(int layer, int startLayer, int endLayer) {
-		if (crossSectionMode == MODE_CROSS_SECTION_LAYER || reverseAxes)
-			return 1;
-		double currentScale = 1 / (double)(endLayer - startLayer);
-		double layerHeight = getLayerElevation(layer);
-		if (layer > startLayer)
-			layerHeight -= getLayerElevation(layer - 1);
-		double neededScale = (layerHeight) / totalElevation;
-		return neededScale / currentScale;
 	}*/
 	
-	private double getLayerAvgHeight(int layer) {
-		if (layerAvgHeights.containsKey(layer))
-			return layerAvgHeights.get(layer);
+	private boolean isInCrossSection(LocalCellInfo cell, double startDegree, double dataWidth) {
+		if (reverseAxes) {
+			return cell.getSource().getMinLonValue() <= startDegree + dataWidth && cell.getSource().getMaxLonValue() >= startDegree;
+		} else {
+			return cell.getSource().getMinLatValue() <= startDegree + dataWidth && cell.getSource().getMaxLatValue() >= startDegree;
+		}
+	}
+	
+	//TODO - cache by start degree / data width
+	private double getLayerAvgHeight(int layer, double startDegree, double dataWidth) {
+		String key = Integer.toString(layer) + "." + Double.toString(startDegree) + "." + Double.toString(dataWidth);
+		if (layerAvgHeights.containsKey(key))
+			return layerAvgHeights.get(key);
+		if (reverseAxes) //Adjust from 0 based ranges
+			startDegree -= 180;
+		else
+			startDegree -= 90;
 		int layerCnt = 0;
 		double layerHeight = 0;
 		for (int i = 0; i < cellInfo.length; ++i) {
-			//if (cellInfo[i].visible) {
+			if (isInCrossSection(cellInfo[i], startDegree, dataWidth)) {
 				++layerCnt;
 				layerHeight += cellInfo[i].getSource().getElevationValue("nVertLevels", layer, 0);
-			//}
+			}
 		}
 		double avg = layerHeight / layerCnt;
-		layerAvgHeights.put(layer,  avg);
+		layerAvgHeights.put(key,  avg);
 		return avg;
 	}
 	
@@ -5545,35 +5604,30 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		return maxElevation;
 	}
 	
-	private void calculateFixedLayerHeight() {
-		int numLayers = layers;
-		if (zoomInfo != null)
-			numLayers = zoomInfo.numLayers;
-		fixedLayerHeight = crossImageHeight / (double)numLayers;
-	}
-	
 	//TODO - Make this cache
-	public void calculateLayerHeights(int startLayer, int endLayer) {
-		calculateFixedLayerHeight();
+	public void calculateLayerHeights(int startLayer, int endLayer, double startDegree, double sliceWidth) {
 		minElevation = Double.MAX_VALUE;
 		maxElevation = 0;
 		if (crossSectionMode == MODE_CROSS_SECTION_ELEVATION) {
 			//System.err.println("CalculateLayerHeights:");
 			layerHeights = new HashMap<Integer, Double>();
-			layerAvgHeights = new HashMap<Integer, Double>();
+			layerAvgHeights = new HashMap<String, Double>();
 			resetElevations();
 			for (int i = startLayer; i < endLayer; ++i) {
-				double height = getLayerAvgHeight(i);
+				double height = getLayerAvgHeight(i, startDegree, sliceWidth);
 				if (height > maxElevation)
 					maxElevation = height;
 				if (height < minElevation)
 					minElevation = height;
+				Double oldHeight = layerHeights.get(i);
+				if (oldHeight != null && !oldHeight.equals(height))
+					System.err.println("Height difference layer " + i + ": " + oldHeight + " vs " + height);
 				layerHeights.put(i, height);
 				//System.err.println("Layer: " + i + " height " + height + " max " + maxElevation + " min " + minElevation);
-			}	
+			}
 		
 			if (startLayer > 0)
-				totalElevation = maxElevation - getLayerAvgHeight(startLayer - 1);
+				totalElevation = maxElevation - getLayerAvgHeight(startLayer - 1, startDegree, sliceWidth);
 			else
 				totalElevation = maxElevation - 0; //TODO this assumes all layer 0s start at 0m - is this true?
 		}
@@ -5594,17 +5648,17 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		return layerHeights.get(layer);
 	}
 	
-	//TODO - reverseHeight is used for x scaled laye rheights.  Investigate other cases
-	private boolean createCrossImage(int layer, double xScale, double yScale, int lastDrawnLayer, int startLayer, int endLayer, int reverseHeight) { //build crossGraphics/crossImage x: 1deg scaled by screen height, y screen width x 1 deg scaled, crossGraphics, scaled, slice sized for x and y
+	//TODO - reverseHeight is used for x scaled layer heights.  Investigate other cases
+	private boolean createCrossImage(int layer, double xScale, double yScale) { //build crossGraphics/crossImage x: 1deg scaled by screen height, y screen width x 1 deg scaled, crossGraphics, scaled, slice sized for x and y
 		int width, height;
 		if (reverseAxes) {
-			width = (int)Math.floor(fixedLayerHeight * xScale);
+			width = (int)Math.round(fixedLayerHeight * xScale);
 			//width = reverseHeight;
 			height = crossImageHeight;
 		}
 		else {
 			width = crossImageWidth;
-			height = (int)Math.floor(fixedLayerHeight * getCrossSectionScaleY(layer, lastDrawnLayer, startLayer, endLayer));
+			height = (int)Math.round(fixedLayerHeight * yScale) + 1; //Increment to fix 1px horizontal white lines due to rounding differences
 		}
 
 		if (width <= 0 || height <= 0) {
@@ -5617,6 +5671,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		crossGraphics.scale(xScale, yScale);
 		return true;
 
+	}
+	
+	public void setReverseAxes(boolean reverse) {
+		reverseAxes = reverse;
 	}
 	
 	/*
@@ -5849,9 +5907,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		AffineTransform targetTransform = null;
 		g.setColor(Color.GREEN);
 		g.fillRect(renderInfo.startX,  renderInfo.startY, renderInfo.startWidth, renderInfo.startHeight);
-		int sliceHeight = crossSectionImage.getHeight();
 		if (reverseAxes) {
-			sliceHeight = crossSectionImage.getWidth(); //11, image is 11x585
 			rotateGraphics = crossSectionImage.createGraphics();
 			rotateGraphics.setColor(Color.WHITE);
 			rotateGraphics.fillRect(0,  0, crossSectionImage.getWidth(), crossSectionImage.getHeight());
@@ -5862,7 +5918,6 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			targetGraphics.translate(crossXOrigin, crossYOrigin);
 		}
 		else {
-			sliceHeight = (int)Math.floor(layerHeight);//10, image is 584x426
 			targetGraphics = crossSectionImage.createGraphics();
 			targetGraphics.setColor(Color.WHITE);
 			targetGraphics.fillRect(0,  0, crossSectionImage.getWidth(), crossSectionImage.getHeight());
@@ -5888,7 +5943,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			}
 		}
 		
-		calculateLayerHeights(startLayer, endLayer);
+		calculateLayerHeights(startLayer, endLayer, renderInfo.startDegree, renderInfo.sliceHeight);
 		
 		if (startLayer < firstLayer) {
 			//Zoomed out beyond graph, translate to compensate
@@ -5909,12 +5964,23 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 		int remainingHeight = displayHeight;
 		int lastLayerRendered = -1;
+		
+		layerHeight = displayHeight / (double)(endLayer - startLayer);
+		fixedLayerHeight = layerHeight;
+		AffineTransform trx = targetGraphics.getTransform();
 		for (int i = startLayer; i < endLayer; ++i) {
-			layerHeight = remainingHeight / (double)(endLayer - lastLayerRendered - 1);
+			if (!reverseAxes && crossSectionMode == MODE_CROSS_SECTION_ELEVATION)
+				targetGraphics.setTransform(trx);
+			if (reverseAxes) {
+				layerHeight = remainingHeight / (double)(endLayer - lastLayerRendered - 1);
+				fixedLayerHeight = layerHeight;
+			}
 			double v2_layerHeight = fixedLayerHeight;
 			crossScaleX = getCrossSectionScaleX(i, lastLayerRendered, startLayer, endLayer);
-			crossScaleY = getCrossSectionScaleY(i, lastLayerRendered, startLayer, endLayer);
+			crossScaleY = getCrossSectionScaleY(i, lastLayerRendered, startLayer, endLayer, fixedLayerHeight, remainingHeight);
 			
+			//System.err.println("Layer " + i + " scaled summed image height: " + runningTheoreticalSumDbg);
+
 			if (reverseAxes) { //TODO - should this only happen when scaled for layer height?
 				/*if (crossSectionMode == MODE_CROSS_SECTION_ELEVATION) {
 					double layerBase = 0;
@@ -5935,8 +6001,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				v2_layerHeight *= crossScaleY;
 			}
 			
-			int v2_layerImageHeight = (int)Math.floor(v2_layerHeight);
+			int v2_layerImageHeight = (int)Math.round(v2_layerHeight);
 			remainingHeight -= v2_layerImageHeight;
+			
+				
 			/*if (v2_layerImageHeight == 0) {
 				undrawnLayerHeight += getLayerHeight(layer);
 				continue;
@@ -5946,15 +6014,18 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			//undrawnLayerHeight = 0;
 			
 
-				
-			targetGraphics.translate(0,  v2_layerImageHeight * -1);
+			//TODO Translates based on layer height.  Should we do this for X as well?
+			if (!reverseAxes && crossSectionMode == MODE_CROSS_SECTION_ELEVATION) {
+				targetGraphics.translate(0,  -1 * Math.round(getLayerElevation(i) / getLayerElevation(endLayer - 1) * displayHeight));
+			} else
+				targetGraphics.translate(0,  v2_layerImageHeight * -1);
 			
 			//Compensate for rounding error in layer height
 			renderedLayerHeight += v2_layerImageHeight;
 			actualLayerHeight += v2_layerHeight;
 			if (actualLayerHeight - renderedLayerHeight > 1.0) {
 				//TODO - Don't do this for scaled or x axis, re-evaluate for  y layers
-				if (crossSectionMode == MODE_CROSS_SECTION_LAYER && !reverseAxes) {
+				if (crossSectionMode == MODE_CROSS_SECTION_LAYER && !reverseAxes && false) {
 				++renderedLayerHeight;
 				renderedLayerHeight -= v2_layerImageHeight;
 				actualLayerHeight -= v2_layerHeight;
@@ -5963,7 +6034,13 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				}
 				
 			}
-			//System.err.println("Layer " + (i + 1) + " base " + base + " render err " + renderErr);
+			
+			/*double layerPercent = (v2_layerImageHeight / (double)displayHeight * 100);
+			if (crossSectionMode == MODE_CROSS_SECTION_ELEVATION)
+				System.err.println("Layer " + i + " ele " + getLayerElevation(i) + " from " + lastLayerRendered + " height + " + v2_layerImageHeight + "px , " + layerPercent +  "% of " + displayHeight + ", " + renderedLayerHeight + " actual " + actualLayerHeight + " remaining " + remainingHeight);
+			else
+				System.err.println("Layer " + i + " from " + lastLayerRendered + " height + " + v2_layerImageHeight + "px , " + layerPercent +  "% of " + displayHeight + ", " + renderedLayerHeight + " actual " + actualLayerHeight + " remaining " + remainingHeight);
+			*///System.err.println("Layer " + (i + 1) + " base " + base + " render err " + renderErr);
 	
 
 			if (i < firstLayer)
@@ -5976,9 +6053,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						
 			layer = i;
 			
-			if (!createCrossImage(i, crossScaleX, crossScaleY, lastLayerRendered, startLayer, endLayer, height)) //build crossGraphics/crossImage x: 1deg scaled by screen height, y screen width x 1 deg scaled, crossGraphics, scaled, slice sized for x and y
+			if (!createCrossImage(i, crossScaleX, crossScaleY))  //build crossGraphics/crossImage x: 1deg scaled by screen height, y screen width x 1 deg scaled, crossGraphics, scaled, slice sized for x and y
 				continue;
-			
+						
 			updateCellColors();
 
 	        renderCells(crossGraphics, 1, 0, true);
