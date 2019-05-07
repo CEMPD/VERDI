@@ -91,6 +91,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 //	private static MessageCenter center = MessageCenter.getMessageCenter(VerticalCrossSectionPlot.class);
 
 	private int constant;
+	private int sliceSize;
 	private CrossSectionXYZDataset dataset;
 	private CrossSectionType type;
 	private DataUtilities.MinMax rangedMinMax;
@@ -151,6 +152,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		if (meshInput) {
 			colString = "Longitude";
 			rowString = "Latitude";
+			sliceSize = 1;
 		}
 		Logger.debug("in alternate constructor for VerticalCrossSectionPlot");
 		this.type = type;
@@ -398,6 +400,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		if (meshInput) {
 			renderPlot = new MeshPlot(null, frame, MeshPlot.MODE_CROSS_SECTION);
 			renderPlot.setCrossSectionDisplayMode(displayMode);
+			renderPlot.setReverseAxes(type == CrossSectionType.X);
 		}
 
 		
@@ -670,7 +673,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	}
 
 	@SuppressWarnings("unused")
-	private static class LayerAxisFormatter extends NumberFormat {
+	private class LayerAxisFormatter extends NumberFormat {
 
 		/**
 		 * 
@@ -678,14 +681,11 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		private static final long serialVersionUID = -8645842600166219972L;
 		private DecimalFormat format;
 		
-		private double minElevation = -1;
-		private double maxElevation;
 		private int minLayer;
 		private int maxLayer;
 		private int renderMode = MeshPlot.MODE_CROSS_SECTION_LAYER;
 		
 		private int layerRange;
-		private double elevationRange;
 		
 		private MeshPlot renderer = null;
 
@@ -697,12 +697,21 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 			if (renderer != null) {
 				renderMode = renderer.getCrossSectionMode();
 				maxLayer = (int)renderer.getDataFrame().getAxes().getZAxis().getRange().getExtent() + minLayer;
-				renderer.calculateLayerHeights(minLayer, maxLayer);
-				minElevation = renderer.getMinElevation();
-				maxElevation = renderer.getMaxElevation();
+				renderer.calculateLayerHeights(minLayer, maxLayer, constant, sliceSize);
 				layerRange = maxLayer - minLayer;
-				elevationRange = maxElevation - minElevation;
 			}
+		}
+		
+		private double getMinElevation() {
+			return renderer.getMinElevation();
+		}
+		
+		private double getMaxElevation() {
+			return renderer.getMaxElevation();
+		}
+		
+		private double getElevationRange() {
+			return getMaxElevation() - getMinElevation();
 		}
 
 
@@ -727,14 +736,15 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 				return number + minLayer + 1; //Format for 1 based instead of 0 based
 			double numberOrigin = number - minLayer;
 			double rawPercent = numberOrigin / layerRange;
-			double scaledElevation = rawPercent * elevationRange;
-			double rawElevation = scaledElevation + minElevation;
+			double scaledElevation = rawPercent * getElevationRange();
+			double rawElevation = scaledElevation + getMinElevation();
 			try {
 			for (int layerNum = minLayer; layerNum < maxLayer; ++layerNum) {
 				if (renderer.getLayerElevation(layerNum) >= rawElevation) {
 					if (layerNum == minLayer)
 						return 0;
-					return renderer.getLayerElevation(layerNum - 1);
+					//System.err.println("Tic " + number + " layer " + layerNum + " elevation " + renderer.getLayerElevation(layerNum));
+					return renderer.getLayerElevation(layerNum);
 				}
 			}
 			} catch (Throwable t) {
