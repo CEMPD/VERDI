@@ -663,7 +663,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						if (obsAnnotations != null) {
 							for (ObsAnnotation ann : obsAnnotations)
 								ann.draw(offScreenGraphics, xOffset, yOffset, width, height, 
-										legendLevels, legendColors, gridCRS, domain, gridBounds);
+										legendLevels, legendColors, originalCRS, domain, gridBounds);
 						}
 						
 						if (vectAnnotation != null) {
