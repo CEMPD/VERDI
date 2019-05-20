@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import anl.verdi.data.Axes;
@@ -143,6 +144,10 @@ public class VerticalCrossDialog extends JDialog {
 		model.setMinimum(min);
 		model.setMaximum(max);
 		ySpinner.setValue(new Integer(min));
+		model = (SpinnerNumberModel) sliceSize.getModel();
+		model.setMinimum(1);
+		model.setMaximum(10);
+		sliceSize.setValue(new Integer(1));
 	}
 
 	// return the true 0 based value
@@ -153,6 +158,10 @@ public class VerticalCrossDialog extends JDialog {
 	// return the true 0 based value
 	public int getRow() {
 		return ((Number)ySpinner.getValue()).intValue() - 1;
+	}
+	
+	public int getSliceSize() {
+		return ((Number)sliceSize.getValue()).intValue();
 	}
 
 	public boolean isXSelected() {
@@ -182,6 +191,8 @@ public class VerticalCrossDialog extends JDialog {
 		cancelButton = new JButton();
 		elevation = new JRadioButton();
 		layer = new JRadioButton();
+		lblSliceSize = new JLabel();
+		sliceSize = new JSpinner();
 		separator3 = compFactory.createSeparator("");
 		CellConstraints cc = new CellConstraints();
 
@@ -211,6 +222,8 @@ public class VerticalCrossDialog extends JDialog {
 						bColumnSpec
 					},
 					new RowSpec[] {
+						FormFactory.DEFAULT_ROWSPEC,
+						FormFactory.LINE_GAP_ROWSPEC,
 						FormFactory.DEFAULT_ROWSPEC,
 						FormFactory.LINE_GAP_ROWSPEC,
 						FormFactory.DEFAULT_ROWSPEC,
@@ -287,7 +300,11 @@ public class VerticalCrossDialog extends JDialog {
 				elevation.setText("Elevation");
 				contentPanel.add(elevation, cc.xywh(1, 15, 5, 1));
 				
-				contentPanel.add(separator3,  cc.xywh(1, 17, 7,  1));
+				lblSliceSize.setText("Cross Section Size (Degrees)");
+				contentPanel.add(lblSliceSize, cc.xy(3, 17));
+				contentPanel.add(sliceSize, cc.xy(5, 17));
+				
+				contentPanel.add(separator3,  cc.xywh(1, 19, 7,  1));
 			}
 			dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -347,5 +364,7 @@ public class VerticalCrossDialog extends JDialog {
 	private JRadioButton layer;
 	private JRadioButton elevation;
 	private JComponent separator3;
+	private JLabel lblSliceSize;
+	private JSpinner sliceSize;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }

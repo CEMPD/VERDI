@@ -109,7 +109,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	 *               CrossSectionType and contant row/col
 	 */
 	public VerticalCrossSectionPlot(DataFrame frame, VertCrossPlotConfiguration config, boolean meshInput) {
-		this(frame, config.getCrossSectionType(), config.getCrossSectionRowCol(), meshInput, config.getDisplayMode());
+		this(frame, config.getCrossSectionType(), config.getCrossSectionRowCol(), meshInput, config.getDisplayMode(), config.getCrossSectionSliceSize());
 		Logger.debug("in constructor for VerticalCrossSectionPlot");
 		if (config.getSubtitle1() == null || config.getSubtitle1().trim().isEmpty())
 			config.setSubtitle1(Tools.getDatasetNames(frame));
@@ -145,14 +145,14 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	 * @param constant the constant column or row. Whether this is a column or row
 	 *                 is dependent on the cross section type.
 	 */
-	public VerticalCrossSectionPlot(DataFrame frame, CrossSectionType type, int constant, boolean meshInput, int displayMode) {
+	public VerticalCrossSectionPlot(DataFrame frame, CrossSectionType type, int constant, boolean meshInput, int displayMode, int sliceHeight) {
 		super(frame);
 		this.meshInput = meshInput;
 		this.displayMode = displayMode;
 		if (meshInput) {
 			colString = "Longitude";
 			rowString = "Latitude";
-			sliceSize = 1;
+			sliceSize = sliceHeight;
 		}
 		Logger.debug("in alternate constructor for VerticalCrossSectionPlot");
 		this.type = type;
@@ -433,7 +433,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 			}
 			timeStep = (int)frame.getAxes().getTimeAxis().getRange().getOrigin();
 			if (renderer == null)
-				renderer = new MPASXYBlockRenderer(type, frame, renderPlot, timeStep, constant);
+				renderer = new MPASXYBlockRenderer(type, frame, renderPlot, timeStep, constant, sliceSize);
 			else
 				((MPASXYBlockRenderer)renderer).setPlotInfo(timeStep, constant);
 		}

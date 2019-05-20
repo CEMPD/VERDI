@@ -15,7 +15,9 @@ public class VertCrossPlotConfiguration extends TilePlotConfiguration {
 	public static final String CROSS_SECTION_INDEX =
 					VertCrossPlotConfiguration.class.getName() + ".cross_section_index";
 	public static final String CROSS_SECTION_DISPLAY_MODE =
-					VertCrossPlotConfiguration.class.getName() + ".cross_display_mode";
+			VertCrossPlotConfiguration.class.getName() + ".cross_display_mode";
+	public static final String CROSS_SECTION_SLICE_SIZE =
+			VertCrossPlotConfiguration.class.getName() + ".cross_slice_size";
 
 	public VertCrossPlotConfiguration() {
 
@@ -37,6 +39,14 @@ public class VertCrossPlotConfiguration extends TilePlotConfiguration {
 		putObject(CROSS_SECTION_INDEX, rowOrCol);
 	}
 	
+	public void setCrossSectionSliceSize(int sliceSize) {
+		putObject(CROSS_SECTION_SLICE_SIZE, sliceSize);
+	}
+	
+	
+	public Integer getCrossSectionSliceSize() {
+		return (Integer) getObject(CROSS_SECTION_SLICE_SIZE);
+	}
 
 	public Integer getCrossSectionRowCol() {
 		return (Integer) getObject(CROSS_SECTION_INDEX);

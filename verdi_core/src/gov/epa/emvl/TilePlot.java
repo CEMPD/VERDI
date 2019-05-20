@@ -790,7 +790,6 @@ public class TilePlot {
 		for (String name : names) {
 			ImageIcon icon = legends.get(name);
 			g.drawImage(icon.getImage(), startx, y, null);
-			System.out.println("In TilePlot - startx" + startx);
 			g.drawString(name, startx + icon.getIconWidth(), y + charHeight + halfCharHeight);
 			startx += (name.length()) * charWidth;
 		}
