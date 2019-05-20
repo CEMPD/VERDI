@@ -47,7 +47,7 @@ public class Models3ObsLoader implements DataLoader {
 				urlString = new URI(urlString).getPath();
 			}
 			file = NetcdfFile.open(urlString);
-			return M3IOConvention.isMine(file) && hasLatLon(file) && hasRowCol(file);
+			return M3IOConvention.isMine(file) && (hasLatLon(file) || hasRowCol(file));
 
 		} catch (IOException io) {
 			// just warn here because it be correct that
