@@ -208,8 +208,11 @@ public class ScriptHandler {
 			public void run(ArrayList<String> args){
 				Logger.debug("ScriptHandler.constructMap.F");
 				try{
-					File[] f = {new File(args.get(1))};
-					verdiApp.loadDataset(f);
+					int i = 0;
+					while (++i < args.size() && !args.get(i).startsWith("-")) {
+						File[] f = {new File(args.get(i))};
+						verdiApp.loadDataset(f);
+					}
 				}
 				catch(NullPointerException e){
 					Logger.error("Null Pointer Exception in ScriptHandler.dataMap.put 'F': " + e.getMessage());
