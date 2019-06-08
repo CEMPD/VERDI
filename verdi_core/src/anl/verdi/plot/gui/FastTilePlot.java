@@ -2608,7 +2608,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		}
 
 		this.draw();
-		this.config = new TilePlotConfiguration(config);
+		this.config.updateConfig(config);
 		
 		if (this.showGridLines != null) {
 			Boolean gridlines = (Boolean)config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
@@ -2669,7 +2669,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			} 
 		}
 
-		this.config = new TilePlotConfiguration(config);
+		this.config.updateConfig(config);
 		mapper.setLayerStyle((TilePlotConfiguration)this.config);
 		this.draw();
 		

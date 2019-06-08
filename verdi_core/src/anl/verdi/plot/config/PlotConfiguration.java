@@ -139,6 +139,17 @@ public class PlotConfiguration {
 		}
 	}
 	
+	public void updateConfig(PlotConfiguration config) {
+		Logger.debug("in Plot Configuration updateConfig");
+		try {
+			for (Object key : config.props.keySet()) {
+				props.put(key, DeepCopyUtil.copy(config.props.get(key)));
+			}
+		} catch (Exception e) {
+			Logger.error("Error in PlotConfiguration.updateConfig", e);
+		}
+	}
+	
 	/**
 	 * Initialize a PlotConfiguration object to the default contents and values for a TilePlot
 	 */

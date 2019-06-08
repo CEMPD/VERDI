@@ -3707,7 +3707,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		updateConfigVariables();
 		this.draw();
-		this.config = new TilePlotConfiguration(config);
+		this.config.updateConfig(config);
 		
 		if (this.showGridLines != null) {
 			Boolean gridlines = (Boolean)config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
@@ -3772,7 +3772,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			recomputeStatistics = true;	
 		}
 
-		this.config = new TilePlotConfiguration(config);
+		this.config.updateConfig(config);
 		updateConfigVariables();
 		mapper.setLayerStyle((TilePlotConfiguration)this.config);
 		this.draw();
