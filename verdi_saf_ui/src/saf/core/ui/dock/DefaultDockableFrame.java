@@ -129,10 +129,12 @@ public class DefaultDockableFrame implements DockableFrame {
 			  }
 			  if (parent != null && parent instanceof StackDockComponent) {
 				  int index = ((StackDockComponent)parent).getSelectedIndex();
+				  try {
 				  Dockable selected = ((StackDockComponent)parent).getDockableAt(index);
 				  if (selected instanceof DefaultCommonDockable) {
 					  DefaultCDockable internal = (DefaultCDockable) ((DefaultCommonDockable)selected).getDockable();
 					  hidden = !dockable.equals(internal);
+				  } } catch (ArrayIndexOutOfBoundsException t) {
 				  }
 			  }
 		  }
