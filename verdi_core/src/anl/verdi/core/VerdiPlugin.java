@@ -133,6 +133,8 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 			configurator = new VerdiAppConfigurator(verdi);
 			Workspace<VerdiApplication> workspace = new Workspace<VerdiApplication>(verdi);
 			ISAFDisplay display = GUICreator.createDisplay(configurator, workspace);
+			if (display.getFrame() == null)
+				verdi.setGuiAvailable(false);
 
 			if (batchmode) {
 				BatchScriptHandler bHandler = new BatchScriptHandler(args, verdi, true);

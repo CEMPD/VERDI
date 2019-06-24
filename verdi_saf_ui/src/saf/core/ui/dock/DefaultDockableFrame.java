@@ -119,6 +119,8 @@ public class DefaultDockableFrame implements DockableFrame {
  
   public boolean isHidden() {
 	  boolean hidden = false;
+	  if (dockable.getWorkingArea() == null)
+		  return false;
 	  Object station = dockable.getWorkingArea().getStation();
 	  if (station instanceof DockStation) {
 		  Dockable front = ((DockStation)station).getFrontDockable();

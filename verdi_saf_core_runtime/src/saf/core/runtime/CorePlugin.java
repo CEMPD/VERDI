@@ -64,15 +64,9 @@ public class CorePlugin extends Plugin {
 
 			aMethod.invoke(plugin);
 
-		} catch(InvocationTargetException itEx)
-		{
-			System.err.println("caught an InvocationTargetException in CorePlugin.loadUIPlugin; printing .getCause()");
-			System.err.print(itEx.getCause());
 		}
 		catch(Exception ex) {
-			System.err.println("Caught an Exception in CorePlugin.java");
-			System.err.print(ex.getCause());
-			System.err.println();
+			ex.printStackTrace();
 		}
 	}
 

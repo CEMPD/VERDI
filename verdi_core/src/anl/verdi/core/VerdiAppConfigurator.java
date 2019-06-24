@@ -56,6 +56,11 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	private DockingManager viewManager;
 	private SplashPanel splashPanel = null;
 	private SplashScreen screen = null;
+	
+	DatasetListModel datasetModel = new DatasetListModel();
+	FormulaListModel formulaModel = new FormulaListModel();
+	Project project = new Project(datasetModel, formulaModel);
+
 
 	private Action openDatasetAction = new AbstractAction() {
 		/**
@@ -78,6 +83,9 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 		Logger.debug("In VerdiAppConfigurator constructor");
 		System.setProperty("org.geotools.referencing.forceXY","true");
 		verdiApp = verdi;
+		
+		verdiApp.setProject(project);
+		formulaModel.addListDataListener(verdiApp);
 	}
 
 
@@ -90,21 +98,21 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 	 *            the ViewManager used to create the initial layout
 	 */
 	public void createLayout(DockingManager manager) {
+		AreaFilePanel areaPanel = null;
+		FormulasPanel formulasPanel = null;
+		DataSetPanel datasetPanel = null;
 		try {
 			this.viewManager = manager;
 
-			DatasetListModel datasetModel = new DatasetListModel();
-			FormulaListModel formulaModel = new FormulaListModel();
-			formulaModel.addListDataListener(verdiApp);
-			Project project = new Project(datasetModel, formulaModel);
 
-			AreaFilePanel areaPanel = new AreaFilePanel(project, verdiApp.getDomainPanelContext(),verdiApp);
+
+			areaPanel = new AreaFilePanel(project, verdiApp.getDomainPanelContext(),verdiApp);
 
 			DockableFrame view3 = viewManager.createDockable(VerdiConstants.AREA_VIEW, new JScrollPane(areaPanel));	// 2014 removed LEFT
 			view3.setTitle("Areas");
 			viewManager.addDockableToGroup(VerdiConstants.PERSPECTIVE_ID, VerdiConstants.FORMULA_DATASET_GROUP, view3);
 
-			FormulasPanel formulasPanel = new FormulasPanel(formulaModel);
+			formulasPanel = new FormulasPanel(formulaModel);
 			formulasPanel.addFormulaSelectionListener(verdiApp);
 			formulasPanel.setFormulaCreator(verdiApp);
 
@@ -112,7 +120,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 			view1.setTitle("Formulas");
 			viewManager.addDockableToGroup(VerdiConstants.PERSPECTIVE_ID, VerdiConstants.FORMULA_DATASET_GROUP, view1);
 			
-			DataSetPanel datasetPanel = new DataSetPanel(project, verdiApp.getDomainPanelContext());
+			datasetPanel = new DataSetPanel(project, verdiApp.getDomainPanelContext());
 			datasetPanel.addOpenDatasetAction(openDatasetAction);
 			datasetModel.addDatasetModelListener(verdiApp);
 			DockableFrame view2 = viewManager.createDockable(VerdiConstants.DATASET_VIEW, new JScrollPane(datasetPanel));	// 2014 removed LEFT
@@ -120,7 +128,6 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 			datasetPanel.addFormulaCallbacks(verdiApp, formulasPanel.getFormulaEditor());
 
 			viewManager.addDockableToGroup(VerdiConstants.PERSPECTIVE_ID, VerdiConstants.FORMULA_DATASET_GROUP, view2);
-
 			verdiApp.init(new VerdiGUI(viewManager, datasetPanel, formulasPanel,areaPanel), project);
 		} catch (Exception e) {
 			closeSplash();
