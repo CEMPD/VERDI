@@ -32,7 +32,7 @@ File Menu Options
 
 The **Save Project** and **Save Project As** options save dataset lists and associated formulas as a “project” for later use.
 
-Note that plots are not saved with a project; only datasets and formulas are saved. If you wish to save a plot configuration for later use, see Section 11.4.2, “Save Configuration.”
+Note that plots are not saved with a project; only datasets and formulas are saved. If you wish to save a plot configuration for later use, see Section (discussed further in [Chapter 11](VERDI_ch11.md#save-configuration)).
 
 ### View Script Editor
 
