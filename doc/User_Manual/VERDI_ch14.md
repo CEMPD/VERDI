@@ -15,9 +15,7 @@ Instructions on how to set up the Eclipse Development Environment and for runnin
 
 VERDI developers will test contributions to the source code and review the applicable documentation changes for inclusion in future VERDI releases. Note that anything you contribute either must have the same license as the rest of VERDI (i.e., GPL) or must be placed in the public domain.
 
-The CMAS Center Forum can be used to query known errors, bugs, suggested enhancements, or submitted code contributions using the following website: <https://forum.cmascenter.org/c/verdi> or the GitHub Issue list https://github.com/cempd/verdi/issues. First, search to see if your issue is already listed as a bug or request for enhancement. If you do not see a matching entry, please submit an issue to the CMAS Center Forum <https://forum.cmascenter.org/c/verdi>. If you are not yet a member, use the following web site to join:
-
-<http://www.cmascenter.org/help/listserves.cfm#m3user>
+The CMAS Center Forum can be used to query known errors, bugs, suggested enhancements, or submitted code contributions using the following website: <https://forum.cmascenter.org/c/verdi> or the GitHub Issue list https://github.com/cempd/verdi/issues. First, search to see if your issue is already listed as a bug or request for enhancement. If you do not see a matching entry, please submit an issue to the CMAS Center Forum <https://forum.cmascenter.org/c/verdi>.
 
 <!-- BEGIN COMMENT -->
 
