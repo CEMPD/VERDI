@@ -26,7 +26,7 @@ Follow these instructions to install VERDI:
 
 1.  tar -xvf verdi_2.0_beta.tar.gz into a location where you would like to install VERDI
 
-2.  Edit verdi_2.0_beta/verdi.sh: Change the path for the VERDI_HOME variable to reflect the location where VERDI was installed (e.g., VERDI_HOME=/usr/local/verdi)
+2.  Edit verdi_2.0_beta/verdi.sh: Change the path for the DIR variable to reflect the location where VERDI was installed (e.g., DIR=/proj/ie/apps/longleaf/VERDI_2.0_jun_23/VERDI_2.0_beta)
 
 3.  Create a directory *verdi* under your home directory.
 
