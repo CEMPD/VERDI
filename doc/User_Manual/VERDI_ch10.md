@@ -73,6 +73,8 @@ VERDI calculates the grid cell time aggregate statistics as follows: For each ce
 
 -   fourth_max:  fourth highest value for each grid cell (used to obtain the 4th highest value of your rolling 8 hr maximum CMAQ output file)
 
+-   custom_percentile: default is > .12 (use the text box to input a different value)
+
 Areal Interpolation Plot
 ------------------------
 
