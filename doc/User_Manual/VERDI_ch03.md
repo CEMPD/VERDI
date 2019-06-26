@@ -11,11 +11,7 @@ VERDI Installation Instructions
 
 VERDI 2.0 Beta is distributed as a zip or gzip file, as appropriate, for each of the following supported platforms:
 
--   32-bit Windows 8
-
 -   64-bit Windows 8
-
--   32-bit Linux
 
 -   64-bit Linux
 
