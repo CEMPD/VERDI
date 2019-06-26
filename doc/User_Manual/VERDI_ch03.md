@@ -36,7 +36,7 @@ Follow these instructions to install VERDI:
 
     VERDI should now run if you execute the verdi.sh executable script (e.g., ./verdi.sh).
 
-    Please continue with section 3.4.
+Please continue with (#verdi_preferences).
 
 Installation Instructions for Windows
 --------------------------------------
@@ -57,7 +57,7 @@ After successfully installing VERDI you need to perform the following tasks unde
 
 Note that VERDI writes a log file (i.e., *verdi.log*) as-needed to your *verdi* directory. This log file should remain small. However, if you need technical support we may ask for your log file. It will be a text file named verdi.log located in this verdi directory.
 
-Please continue with section 3.4.
+Please continue with (#verdi_preferences).
 
 Installation Instructions for computer that that requires a JRE<sup>TM</sup> 7 other than what was provided in the distribution
 -------------------------------------------------------------------------------------------------------------------------------
@@ -66,6 +66,7 @@ Installation Instructions for computer that that requires a JRE<sup>TM</sup> 7 o
 
 2.  Follow the installation instructions.
 
+<a id="verdi_preferences"></a>
 Setting VERDI Preferences
 -------------------------
 
