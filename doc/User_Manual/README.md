@@ -41,6 +41,6 @@ The following sections are included in this manual:
 
 [Chapter 18 (Command Line Scripting).](VERDI_ch18.md) How to use command line scripting to create plots using VERDI. 
 
-[Chapter 19 (Areal Interpolation Calculations).](VERDI_ch19.md) How to VERDI does areal interpolation.
+[Chapter 19 (Areal Interpolation Calculations).](VERDI_ch19.md) How VERDI does areal interpolation.
 
 [Chapter 20 (Licenses for JAVA Libraries used by VERDI).](VERDI_ch20.md) JAVA licenses used by VERDI.
