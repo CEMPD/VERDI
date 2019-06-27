@@ -13,3 +13,5 @@ For example, the version verdi_1.6 sources will be found under tags/1.6
 
 Source code for the development versions are in individual branches.  
 Branches contain the bleeding edge code where the latest features are being worked on. 
+
+The compiled release packages (VERDI_releaseID_platform_date_tar.gz) are available from the [CMASCenter](https://cmascenter.org) Software Download Page.  If you do not have a login, please [register](https://www.cmascenter.org/register/create_account.cfm).
