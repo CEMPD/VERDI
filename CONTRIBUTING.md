@@ -11,10 +11,10 @@ tracker](https://github.com/cempd/VERDI/issues), and tag them with 'bug'. Feel f
 
 Please include the following four things in your report:
 
-    Please include a small script and/or actions taken within the GUI to explain the problem.
-    What you did.
-    What you expected to happen.
-    What happened instead.
+Please include a small script and/or actions taken within the GUI to explain the problem.
+1. What you did.
+2. What you expected to happen.
+3. What happened instead.
 
 The more information the better.
 
@@ -22,12 +22,12 @@ The more information the better.
 
 It's easy to contribute code to VERDI:
 
-    Fork VERDI.
-    Create a topic branch - git checkout -b my_branch
-    Push to your branch - git push origin my_branch
-    Make sure the code follows the contributing guidelines below.
-    Create a [Pull Request](http://help.github.com/pull-requests/) from your branch.
-    That's it!
+1. Fork VERDI.
+2. Create a topic branch - git checkout -b my_branch
+3. Push to your branch - git push origin my_branch
+4. Make sure the code follows the contributing guidelines below.
+5. Create a [Pull Request](http://help.github.com/pull-requests/) from your branch.
+6. That's it!
 
 ## First Time VERDI Contributors to the Code and Documentation
 
@@ -37,9 +37,9 @@ If this is your first Open Source contribution, please mention it in your pull r
 ## Contributing Guidelines
 
     
-    Recommend editing within GitHub or using the [Atom Text Editor](https://atom.io).
-    Please pre-view your github markdown prior to committing changes.
+1. Recommend editing within GitHub or using the [Atom Text Editor](https://atom.io).
+2. Please pre-view your github markdown prior to committing changes.
     
-    For Java developers:
+### For Java developers:
     
-    Please use [well written](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html) git commit messages.
+1. Please use [well written](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html) git commit messages.
