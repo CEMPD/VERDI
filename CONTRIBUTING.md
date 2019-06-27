@@ -3,7 +3,9 @@ Contributing to VERDI
 First of all: Thank you!
 Bugs & Feature Requests
 
-You can file bugs on the issues tracker, and tag them with 'bug'. Feel free to discuss features there, too.
+You can file bugs on the [issues
+tracker](https://github.com/cempd/VERDI/issues), and tag them with 'bug'. Feel free to discuss features there, too.
+
 Good report structure
 
 Please include the following four things in your report:
@@ -23,7 +25,7 @@ It's easy to contribute code to VERDI:
     Create a topic branch - git checkout -b my_branch
     Push to your branch - git push origin my_branch
     Make sure the code follows the contributing guidelines below.
-    Create a Pull Request from your branch.
+    Create a [Pull Request](http://help.github.com/pull-requests/) from your branch.
     That's it!
 
 First Time VERDI Contributors to the Code and Documentation
