@@ -14,6 +14,7 @@ Please include the following four things in your report:
     What happened instead.
 
 The more information the better.
+
 Contributing Code and Documentation
 
 It's easy to contribute code to VERDI:
@@ -33,7 +34,8 @@ If this is your first Open Source contribution, please mention it in your pull r
 Contributing Guidelines
 
     
-    Recommend editing within GitHub or using the Atom text editor which allows you to preview your github markdown.
+    Recommend editing within GitHub or using the Atom text editor.
+    Please pre-view your github markdown prior to committing changes.
     
     For Java developers:
     
