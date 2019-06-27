@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import anl.verdi.data.Axes;
@@ -83,6 +84,10 @@ public class VerticalCrossDialog extends JDialog {
 			  lblRow.setEnabled(true);
 		  }
 		});
+		
+		ButtonGroup renderGroup = new ButtonGroup();
+		renderGroup.add(layer);
+		renderGroup.add(elevation);
 
 		okButton.addActionListener(new ActionListener() {
 		  public void actionPerformed(ActionEvent evt) {
@@ -100,6 +105,8 @@ public class VerticalCrossDialog extends JDialog {
 		rbX.setSelected(true);
 		ySpinner.setEnabled(false);
 		lblRow.setEnabled(false);
+		
+		layer.setSelected(true);
 	}
 
 	public boolean isCanceled() {
@@ -137,6 +144,10 @@ public class VerticalCrossDialog extends JDialog {
 		model.setMinimum(min);
 		model.setMaximum(max);
 		ySpinner.setValue(new Integer(min));
+		model = (SpinnerNumberModel) sliceSize.getModel();
+		model.setMinimum(1);
+		model.setMaximum(10);
+		sliceSize.setValue(new Integer(1));
 	}
 
 	// return the true 0 based value
@@ -148,9 +159,17 @@ public class VerticalCrossDialog extends JDialog {
 	public int getRow() {
 		return ((Number)ySpinner.getValue()).intValue() - 1;
 	}
+	
+	public int getSliceSize() {
+		return ((Number)sliceSize.getValue()).intValue();
+	}
 
 	public boolean isXSelected() {
 		return rbX.isSelected();
+	}
+	
+	public boolean displayLayer() {
+		return layer.isSelected();
 	}
 
 	private void initComponents() {
@@ -166,10 +185,15 @@ public class VerticalCrossDialog extends JDialog {
 		rbY = new JRadioButton();
 		lblRow = new JLabel();
 		ySpinner = new JSpinner();
-		separator2 = compFactory.createSeparator("");
+		separator2 = compFactory.createSeparator("Display Mode");
 		buttonBar = new JPanel();
 		okButton = new JButton();
 		cancelButton = new JButton();
+		elevation = new JRadioButton();
+		layer = new JRadioButton();
+		lblSliceSize = new JLabel();
+		sliceSize = new JSpinner();
+		separator3 = compFactory.createSeparator("");
 		CellConstraints cc = new CellConstraints();
 
 		//======== this ========
@@ -198,6 +222,14 @@ public class VerticalCrossDialog extends JDialog {
 						bColumnSpec
 					},
 					new RowSpec[] {
+						FormFactory.DEFAULT_ROWSPEC,
+						FormFactory.LINE_GAP_ROWSPEC,
+						FormFactory.DEFAULT_ROWSPEC,
+						FormFactory.LINE_GAP_ROWSPEC,
+						FormFactory.DEFAULT_ROWSPEC,
+						FormFactory.LINE_GAP_ROWSPEC,
+						FormFactory.DEFAULT_ROWSPEC,
+						FormFactory.LINE_GAP_ROWSPEC,
 						FormFactory.DEFAULT_ROWSPEC,
 						FormFactory.LINE_GAP_ROWSPEC,
 						FormFactory.DEFAULT_ROWSPEC,
@@ -256,9 +288,23 @@ public class VerticalCrossDialog extends JDialog {
 					lblRow.setText("Latitude:");
 				else
 					lblRow.setText("Row:");
+				
+				
 				contentPanel.add(lblRow, cc.xy(3, 9));
 				contentPanel.add(ySpinner, cc.xy(5, 9));
 				contentPanel.add(separator2, cc.xywh(1, 11, 7, 1));
+				
+				layer.setText("Layer");
+				contentPanel.add(layer, cc.xywh(1, 13, 5, 1));
+				
+				elevation.setText("Elevation");
+				contentPanel.add(elevation, cc.xywh(1, 15, 5, 1));
+				
+				lblSliceSize.setText("Cross Section Size (Degrees)");
+				contentPanel.add(lblSliceSize, cc.xy(3, 17));
+				contentPanel.add(sliceSize, cc.xy(5, 17));
+				
+				contentPanel.add(separator3,  cc.xywh(1, 19, 7,  1));
 			}
 			dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -315,5 +361,10 @@ public class VerticalCrossDialog extends JDialog {
 	private JPanel buttonBar;
 	private JButton okButton;
 	private JButton cancelButton;
+	private JRadioButton layer;
+	private JRadioButton elevation;
+	private JComponent separator3;
+	private JLabel lblSliceSize;
+	private JSpinner sliceSize;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }

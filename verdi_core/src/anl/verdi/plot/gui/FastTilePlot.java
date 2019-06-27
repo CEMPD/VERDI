@@ -62,6 +62,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -296,6 +297,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	private TimeLayerPanel timeLayerPanel;
 	private final JToolBar toolBar = new JToolBar();
 	private JComboBox statisticsMenu;
+	private String customPercentile = null;
 	private int preStatIndex = -1;
 	private JTextField threshold;
 	private boolean recomputeStatistics = false;
@@ -434,8 +436,12 @@ Logger.debug("within drawMode != DRAW_NONE && !VerdiGUI.isHidden((Plot) threadPa
 						} catch (Exception unused) {}
 					}
 Logger.debug("set up drawing space, titles, fonts, etc.");
-					final int canvasWidth = getWidth();
-					final int canvasHeight = getHeight();
+					int canvasWidth = getWidth();
+					int canvasHeight = getHeight();
+					if (canvasWidth == 0 && rescaleBuffer) {
+						canvasWidth = bufferedWidth;
+						canvasHeight = bufferedHeight;
+					}
 					float marginScale = 0.95f; // Controls whitespace margin around plot window.
 					String sTitle1 = config.getSubtitle1();
 					String sTitle2 = config.getSubtitle2();
@@ -513,7 +519,7 @@ Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
 					
 					if (rescaleBuffer) {
 						double factor = ((double)bufferedWidth) / ((double)getWidth());
-						if (factor > 0) {
+						if (factor > 0 && canvasWidth != bufferedWidth) {
 							offScreenGraphics.scale(factor, factor);
 							offScreenGraphics.fillRect(0,  0,  bufferedWidth,  bufferedHeight);
 						}
@@ -521,7 +527,7 @@ Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
 
 					final Graphics graphics = threadParent.getGraphics();
 
-					if (graphics == null) {
+					if (graphics == null && !rescaleBuffer) {
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
 						continue;// graphics system is not ready
@@ -657,7 +663,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						if (obsAnnotations != null) {
 							for (ObsAnnotation ann : obsAnnotations)
 								ann.draw(offScreenGraphics, xOffset, yOffset, width, height, 
-										legendLevels, legendColors, gridCRS, domain, gridBounds);
+										legendLevels, legendColors, originalCRS, domain, gridBounds);
 						}
 						
 						if (vectAnnotation != null) {
@@ -692,7 +698,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 								VerdiGUI.showIfVisible(threadParent, graphics, offScreenImage);
 							Logger.debug("back from VerdiGUI.showIfVisible");
 						} finally {
-							graphics.dispose();
+							if (graphics != null)
+								graphics.dispose();
 							Logger.debug("just did graphics.dispose in finally block");
 							offScreenGraphics.dispose();
 							Logger.debug("just did offScreenGraphics.dispose in finally block");
@@ -940,6 +947,33 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			increase_draw_once_requests();
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void getCustomPercentile() {
+		VerdiApplication.getInstance().getGui().getFrame();
+		String s = (String)JOptionPane.showInputDialog(
+				VerdiApplication.getInstance().getGui().getFrame(),
+                "Enter the percentile you would like to plot:",
+                "Custom Percentile",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                customPercentile);
+		try {
+			Double.parseDouble(s);
+			customPercentile = s;
+			int index = statisticsMenu.getSelectedIndex();
+			DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>)statisticsMenu.getModel();
+			model.insertElementAt("custom_percentile (" + s + ")", index);
+			model.removeElementAt(index + 1);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(VerdiApplication.getInstance().getGui().getFrame(),
+				    "Please enter a numeric value.",
+				    "NumberFormatException",
+				    JOptionPane.ERROR_MESSAGE);
+			statisticsMenu.setSelectedIndex(preStatIndex);
+		}
+	}
 
 	// Buttons and fields:
 
@@ -948,7 +982,10 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		if ( source == statisticsMenu || source == threshold ) {
 			
-			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex) {
+			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex || statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile (")) {
+				if (statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile (") ) {
+					getCustomPercentile();
+				}
 				if( statisticsMenu.getSelectedIndex() != 0) {
 					recomputeStatistics = true;
 				} else {
@@ -957,7 +994,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 					copySubsetLayerData(this.log);
 				}
 				this.preStatIndex = statisticsMenu.getSelectedIndex();
-			}
+			} else if (source != threshold)
+				return;
 			
 			recomputeLegend = true;
 			
@@ -1692,9 +1730,12 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		final double hoursPerTimestep = 1.0;
 		
 		try {
+			double percentile = 0;
+			if (customPercentile != null)
+				percentile = Double.parseDouble(customPercentile);
 			GridCellStatistics.computeStatistics( layerData,
 					threshold, hoursPerTimestep,
-					statisticsData, this.statisticsMenu.getSelectedIndex()-1 );
+					statisticsData, this.statisticsMenu.getSelectedIndex()-1 , percentile);
 			this.statError = false;
 		} catch ( Exception e) {
 			Logger.error("Error occurred during computing statistics", e);
@@ -2567,7 +2608,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		}
 
 		this.draw();
-		this.config = new TilePlotConfiguration(config);
+		this.config.updateConfig(config);
 		
 		if (this.showGridLines != null) {
 			Boolean gridlines = (Boolean)config.getObject(TilePlotConfiguration.SHOW_GRID_LINES);
@@ -2628,7 +2669,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			} 
 		}
 
-		this.config = new TilePlotConfiguration(config);
+		this.config.updateConfig(config);
 		mapper.setLayerStyle((TilePlotConfiguration)this.config);
 		this.draw();
 		
@@ -2664,7 +2705,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		try {
 			legendLevels[count] = map.getMax();
-			colorIndexCache = tilePlot.calculateColorIndices(subsetLayerData, legendLevels);
+			if (subsetLayerData != null && legendLevels != null)
+				colorIndexCache = tilePlot.calculateColorIndices(subsetLayerData, legendLevels);
 		} catch (Exception e) {
 			Logger.error("Exception in FastTilePlot.updateColorMap", e);
 			return;
@@ -2713,8 +2755,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		forceBufferedImage = true;
 		if (width != getWidth()) {
 			rescaleBuffer = true;
-			bufferedWidth = width;
-			bufferedHeight = bufferedWidth * getHeight() / getWidth();
+			if (getWidth() == 0) {
+				bufferedWidth = width;
+				bufferedHeight = height;
+			} else {
+				bufferedWidth = width;
+				bufferedHeight = bufferedWidth * getHeight() / getWidth();
+			}
 		}
 		draw();
 		long start = System.currentTimeMillis();

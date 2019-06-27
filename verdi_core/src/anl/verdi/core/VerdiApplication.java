@@ -112,6 +112,8 @@ FormulaElementCreator, ListDataListener {
 //	viewport.setCoordinateReferenceSystem((CoordinateReferenceSystem)DefaultGeographicCRS.WGS84);
 
 	private static VerdiApplication singleton = null;
+	
+	private boolean guiMode = true;
 
 	public boolean skipSplash() {
 		return showSplash;
@@ -170,11 +172,24 @@ FormulaElementCreator, ListDataListener {
 	public void setLastCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
 		this.crs = crs;
 	}
+	
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
+	public void setGuiAvailable(boolean gui) {
+		guiMode = gui;
+	}
+	
+	public boolean getGuiAvailable() {
+		return guiMode;
+	}
 
 	public void init(VerdiGUI gui, Project project) {
 		Logger.debug("Msg #8: in VerdiApplication.init");
 		this.gui = gui;
-		this.project = project;
+		if (project != null)
+			this.project = project;
 		MessageCenter.addMessageListener(new MessageEventListener() {
 			public void messageReceived(MessageEvent messageEvent) {
 				if (messageEvent != null) {
@@ -713,15 +728,17 @@ FormulaElementCreator, ListDataListener {
 		if (!e.getValueIsAdjusting()) {
 			FormulaListElement selectedFormula = (FormulaListElement) ((JList) e.getSource()).getSelectedValue();
 			project.setSelectedFormula(selectedFormula);
-			if (selectedFormula == null) {
-				gui.setCurrentFormula("    ");
-				gui.setOtherPlotsEnabled(false);
-				gui.setVertCrossPlotEnabled(false);
-			} else {
-				gui.setCurrentFormula(selectedFormula.getFormula());
-				gui.setOtherPlotsEnabled(true);
-				boolean enabled = selectedFormula.getAxes().getZAxis() != null;
-				gui.setVertCrossPlotEnabled(enabled);
+			if (guiMode) {
+				if (selectedFormula == null) {
+					gui.setCurrentFormula("    ");
+					gui.setOtherPlotsEnabled(false);
+					gui.setVertCrossPlotEnabled(false);
+				} else {
+					gui.setCurrentFormula(selectedFormula.getFormula());
+					gui.setOtherPlotsEnabled(true);
+					boolean enabled = selectedFormula.getAxes().getZAxis() != null;
+					gui.setVertCrossPlotEnabled(enabled);
+				}
 			}
 		}
 	}
@@ -751,7 +768,8 @@ FormulaElementCreator, ListDataListener {
 	 */
 	public void datasetAdded(Dataset set, DatasetListModel model) {
 		Logger.debug("in VerdiApplication.datasetAdded");
-		gui.setSaveEnabled(true);
+		if (guiMode)
+			gui.setSaveEnabled(true);
 	}
 
 	/**
@@ -922,7 +940,8 @@ FormulaElementCreator, ListDataListener {
 	public void intervalAdded(ListDataEvent e) {
 		Logger.debug("in VerdiApplication intervalAdded");
 		FormulaListModel model = (FormulaListModel) e.getSource();
-		gui.setDualElementPlotsEnabled(model.getSize() > 0);
+		if (guiMode)
+			gui.setDualElementPlotsEnabled(model.getSize() > 0);
 	}
 
 	public void intervalRemoved(ListDataEvent e) {

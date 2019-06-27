@@ -13,16 +13,22 @@ public class GUICreatorDelegate {	private static GUICreatorDelegate instance = 
 	static GUICreatorDelegate getInstance() {		return instance;	}
 	public void addBarItemDescriptor(BarItemDescriptor descriptor) {		descriptors.add(descriptor);	}
 	public DockingFactory getDockingFactory() {		return dockingFactory;	}
-	public ISAFDisplay createDisplay(IAppConfigurator configurator, Workspace workspace) 	{		final ISAFDisplay display = dockingFactory.getDisplay();		IWindowCustomizer wCustomizer = new WindowCustomizer(prefs);		boolean result = configurator.preWindowOpen(wCustomizer);		if (!result) return null;
+	public ISAFDisplay createDisplay(IAppConfigurator configurator, Workspace workspace) 	{		final ISAFDisplay display = dockingFactory.getDisplay();
+		IWindowCustomizer wCustomizer = new WindowCustomizer(prefs);		boolean result = configurator.preWindowOpen(wCustomizer);		if (!result) return null;
 		JToolBar toolBar = new JToolBar();		JMenuBar menuBar = new JMenuBar();		GUIBarManager barManager = new GUIBarManager(toolBar, menuBar);
+		if (display.getFrame() != null) {
 		display.init(wCustomizer, barManager);		FileChooserUtilities.init(display.getFrame());		ActionFactory.getInstance().registerAction(GUIConstants.EXIT_ACTION, new ExitAction(configurator, display.getFrame(), prefs));
 		display.getFrame().addWindowListener(new WindowAdapter() {			public void windowClosing(WindowEvent e) {				ActionFactory.getInstance().getAction(GUIConstants.EXIT_ACTION).actionPerformed(new ActionEvent(display, ActionEvent.ACTION_PERFORMED, "exit"));			}		});
-		DockingManager vManager = dockingFactory.getViewManager(barManager, perspectives);		workspace.setViewManager(vManager);		configurator.createLayout(vManager);														// FAILURE POINT		if (mtDescriptor != null) mtDescriptor.createMenus(barManager);		for (BarItemDescriptor descriptor : descriptors) {			descriptor.fillBars(barManager, workspace);		}
+		}
+		DockingManager vManager = dockingFactory.getViewManager(barManager, perspectives);		workspace.setViewManager(vManager);		configurator.createLayout(vManager);														// FAILURE POINT		if (mtDescriptor != null) mtDescriptor.createMenus(barManager);
+		if (display.getFrame() != null) {		for (BarItemDescriptor descriptor : descriptors) {			descriptor.fillBars(barManager, workspace);		}
 		if (statusBarDescriptor != null) {			statusBarDescriptor.fillBar(barManager);		}
 		configurator.fillBars(barManager);
 		if (help != null) {			JMenu menu = barManager.getMenu(GUIConstants.HELP_MENU_ID);			if (menu == null) {				menu = barManager.addMenu(GUIConstants.HELP_MENU_ID, "Help");				menu.setMnemonic('h');			}			barManager.addMenuItem(GUIConstants.HELP_TOPICS_ID, menu, help.createAction());		}
 		barManager.createPerspectiveMenu(vManager);		String windowMenuLabel = wCustomizer.getWindowsMenuLabel();		MenuOrder menuOrder = new MenuOrder(props);		menuOrder.orderItems(barManager, windowMenuLabel);		ToolBarOrder toolBarOrder = new ToolBarOrder(props);		barManager.setToolbarOrder(toolBarOrder);
-		vManager.init();		return display;	}
+		}
+		if (display.getFrame() != null)
+			vManager.init();		return display;	}
 	public void runDisplay(IAppConfigurator configurator, ISAFDisplay display) {		display.display();		configurator.postWindowOpen(display);	}
 	public void setMenuTreeDescriptor(MenuTreeDescriptor mtDescriptor) {		this.mtDescriptor = mtDescriptor;		for (BarItemDescriptor descriptor : descriptors) {			String menuID = descriptor.getMenuID();			if (menuID != null) {				if (menuID.equals(GUIConstants.HELP_MENU_ID)) {					mtDescriptor.addMenu(GUIConstants.HELP_MENU_ID, "&Help", null);					break;				}			}		}	}
 	public void setPerspectives(List<Perspective> perspectives) {		this.perspectives = perspectives;	}

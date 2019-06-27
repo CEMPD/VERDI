@@ -162,7 +162,8 @@ public class TimeConstantAxisPanel extends JPanel {
 
 		// we want the range to start with 1 rather than 0
 		// so we add 1.  Not needed for MPAS - range is already adjusted
-		min = constant + displayIncrement;
+		min = (int)constantAxis.getRange().getOrigin() + displayIncrement;
+		//min = constant + displayIncrement;
 		max = min + (int) constantAxis.getRange().getExtent() - 1;
 		if (constantAxis.getClass().getName().indexOf("MPAS") != -1)
 			--max;

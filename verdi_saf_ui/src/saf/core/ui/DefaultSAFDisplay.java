@@ -26,7 +26,9 @@ public class DefaultSAFDisplay implements ISAFDisplay {
    * Creates a DefaultSAFDisplay.
    */
   public DefaultSAFDisplay() {
-    frame = new JFrame();
+	  try {
+		  frame = new JFrame();
+	  } catch (Throwable t) {}
     control = new CControl(frame);
   }
 
@@ -59,6 +61,8 @@ public class DefaultSAFDisplay implements ISAFDisplay {
    * @param barManager the bar manager containing the menu, etc. bars
    */
   public void init(IWindowCustomizer customizer, GUIBarManager barManager) {
+	  if (frame == null)
+		  return;
 
     frame.setTitle(customizer.getTitle());
     frame.setBounds(customizer.getInitialBounds());

@@ -2,10 +2,16 @@ package anl.verdi.core;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.velocity.app.Velocity;
 import org.java.plugin.Plugin;
 import org.java.plugin.PluginLifecycleException;
@@ -49,7 +55,7 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 	}
 
 	public void run(String[] args) {
-		IAppConfigurator configurator = null;
+ 		IAppConfigurator configurator = null;
 
 		// 2014 from log4j/2.x/manual/configuration.html example
 		Logger.trace("Entering application at VerdiPlugin.run");
@@ -98,12 +104,25 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 			// The typical pattern for a SAF application is followed below.
 			boolean batchmode = false;
 			VerdiApplication verdi = new VerdiApplication(manager);
+			
+			if (args.length > 0) {
+				final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+				final Configuration config = ctx.getConfiguration();
+				Map<String, Appender> appenders = config.getAppenders();
+				Map<String, LoggerConfig> loggers = config.getLoggers();
+				
+				Appender consoleAppender = appenders.get("Console");
+				LoggerConfig rootLogger = loggers.get("");
+				if (rootLogger != null && consoleAppender != null)
+					rootLogger.addAppender(consoleAppender, Level.ERROR, null);
+			}
 
 			if (args.length > 0 && args[0].toLowerCase().startsWith("-b")) {
 				batchmode = true;
 				verdi.setSkipSplash(batchmode);
 			}
 
+			verdi.setSkipSplash(true);
 			if (args.length > 0 && (args[0].toLowerCase().startsWith("-help") || args[0].toLowerCase().startsWith("-version")) ) {
 				verdi.setSkipSplash(true);   //NOTE: just to skip the splash window if not running in real batch mode
 			}
@@ -114,6 +133,8 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 			configurator = new VerdiAppConfigurator(verdi);
 			Workspace<VerdiApplication> workspace = new Workspace<VerdiApplication>(verdi);
 			ISAFDisplay display = GUICreator.createDisplay(configurator, workspace);
+			if (display.getFrame() == null)
+				verdi.setGuiAvailable(false);
 
 			if (batchmode) {
 				BatchScriptHandler bHandler = new BatchScriptHandler(args, verdi, true);
@@ -134,7 +155,7 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 			//			Workspace<VerdiApplication> workspace = new Workspace<VerdiApplication>(verdi);
 			//			ISAFDisplay display = GUICreator.createDisplay(configurator, workspace);
 
-			if(args.length > 0) {
+			if(args.length > 0) {			
 				ScriptHandler sHandler = new ScriptHandler(args, verdi);
 				sHandler.run();
 			}
@@ -144,7 +165,7 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 			Logger.error("Error while loading core VERDI plugin " + e.getMessage());
 		} catch (Exception ex) {
 			if (configurator != null) ((VerdiAppConfigurator)configurator).closeSplash();
-			Logger.error("Error " + ex.getMessage());
+			Logger.error("Error ", ex);
 		}
 	}
 

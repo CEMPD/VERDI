@@ -29,13 +29,16 @@ public class MPASXYBlockRenderer extends XYBlockRenderer {
 	int xOrigin;
 	int yOrigin;
 	
-	public MPASXYBlockRenderer(CrossSectionType type, DataFrame frame, int step, int constant) {
+	double sliceSizeDeg;
+	
+	public MPASXYBlockRenderer(CrossSectionType type, DataFrame frame, MeshPlot renderPlot, int step, int constant, int sliceSize) {
 		if (type == CrossSectionType.Y)
 			axis = "y";
 		this.frame = frame;
 		startDeg = constant;
 		timeStep = step;
-		renderPlot = new MeshPlot(null, frame, MeshPlot.MODE_CROSS_SECTION);
+		sliceSizeDeg = sliceSize;
+		this.renderPlot = renderPlot;
 	}
 	
 	public void setPlotInfo(int step, int constant) {
@@ -61,7 +64,8 @@ public class MPASXYBlockRenderer extends XYBlockRenderer {
 		
 		xOrigin = (int)dataArea.getMinX();
 		yOrigin = (int)dataArea.getMinY();
-		renderPlot.initDisplayParameters(xOrigin, yOrigin, (int)Math.round(dataArea.getWidth()), (int)Math.round(dataArea.getHeight()), axis, 1.0, timeStep, (double)startDeg);
+
+		renderPlot.initDisplayParameters(xOrigin, yOrigin, (int)Math.round(dataArea.getWidth()), (int)Math.round(dataArea.getHeight()), axis, sliceSizeDeg, timeStep, (double)startDeg);
 		renderPlot.renderVerticalCrossSection(g2);
 		
 		//g2.translate(-dataArea.getMinX(), -dataArea.getMinY());

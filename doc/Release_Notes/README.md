@@ -5,7 +5,8 @@ These notes describe the differences between the VERDI 2.0 beta release and the 
 
 NEW FEATURES IN V2.0 beta:
 * support for MPAS netCDF files
-* updated world map 
+* updated world map
+* option to display elevation for vertical cross-section plots
 
 BUG FIXES IN 2.0 beta:
 *

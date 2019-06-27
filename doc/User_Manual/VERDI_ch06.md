@@ -20,7 +20,7 @@ NetCDF and I/O API files are portable across computing platforms. This means tha
 
 ###  Observational Data Formats
 
-VERDI can use observational data in either ASCII or Models-3 I/O API format. An ASCII file needs to have data in tab-separated columns. The first four columns need to be in the order shown in [Figure 6‑1](#Figure6-1). VERDI allows the user to specify an alphanumeric value (either numbers and/or letters) for the fourth column (Station ID). One or more additional columns must have the header format 'name(units)'. Spreadsheet programs can be used to edit and write the files by choosing ASCII output; be certain to designate **tab** as the delimiting character (instead of comma). Data within a column must be complete, because empty fields prevent VERDI from reading the observational data.
+VERDI can use observational data in either using ASCII file or created using Models-3 I/O API. An ASCII file needs to have data in tab-separated columns. The first four columns need to be in the order shown in [Figure 6‑1](#Figure6-1). VERDI allows the user to specify an alphanumeric value (either numbers and/or letters) for the fourth column (Station ID). One or more additional columns must have the header format 'name(units)'. Spreadsheet programs can be used to edit and write the files by choosing ASCII output; be certain to designate **tab** as the delimiting character (instead of comma). Data within a column must be complete, because empty fields prevent VERDI from reading the observational data.
 
 Observational data in ASCII format can be obtained from many data sources, including EPA’s Remote Sensing Information Gateway - RSIG (<https://www.epa.gov/hesc/remote-sensing-information-gateway>). To use a consistent set of units for the model data and the observational data, you may need to import the ASCII data into a tool (e.g., a spreadsheet or database program) and perform a unit conversion. VERDI doesn’t allow the user to use an observational variable to create a formula, so conversions to different units must be performed before loading the data into VERDI.
 
@@ -109,7 +109,7 @@ Figure 6‑6. Remote Dataset Labeled with Number at End of the Filename<br>
 
 ### Adding Additional Remote Hosts
 
-VERDI contains the RemoteFileUtility and ncvariable programs that enable VERDI to add your I/O API netCDF or WRF netCDF formatted dataset from a remote file system. A gzipped tar file is available in the $VERDI_HOME directory.
+VERDI contains the RemoteFileUtility and ncvariable programs that enable VERDI to add your I/O API netCDF or WRF netCDF dataset from a remote file system. A gzipped tar file is available in the $VERDI_HOME directory.
 
 1.  The RemoteFileUtility c-shell script and ncvariable binary need to be installed either in /usr/local/bin by the System Administrator, or you can place it in a different location and specify that location in the configure.properties file located in your $USER_HOME/verdi/ directory (see section 3.4 for the specific directory location that is used for each platform [Linux, Windows, Mac]). A template for the configure.properties file called configure.properties.TEMPLATE is provided in the distribution under the $VERDI_HOME directory.
 

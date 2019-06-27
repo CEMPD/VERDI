@@ -15,7 +15,11 @@ fi
 # Limit the number of default spawned threads (eca):
 JAVAOPTS="-XX:+UseParallelGC -XX:ParallelGCThreads=1 -XX:+HeapDumpOnOutOfMemoryError"
 
-JAVACMD="$JAVA $JAVAOPTS $JAVAMAXMEM -classpath ./bootstrap.jar:./lib/saf.core.runtime.jar:./lib/commons-logging.jar:./lib/jpf-boot.jar:./lib/jpf.jar:./lib/log4j-1.2.13.jar:../../jre/lib/jai_codec.jar:../../jre/lib/jai_core.jar:../../jre/lib/jai_imageio.jar:../../jre/lib/mlibwrapper_jai.jar saf.core.runtime.Boot"
+if [ "$DISPLAY" = "" ]; then
+  DISPOPTS="-Djava.awt.headless=true"
+fi
+
+JAVACMD="$JAVA $JAVAOPTS $JAVAMAXMEM $DISPOPTS -classpath ./bootstrap.jar:./lib/saf.core.runtime.jar:./lib/commons-logging.jar:./lib/jpf-boot.jar:./lib/jpf.jar:./lib/log4j-1.2.13.jar:../../jre/lib/jai_codec.jar:../../jre/lib/jai_core.jar:../../jre/lib/jai_imageio.jar:../../jre/lib/mlibwrapper_jai.jar saf.core.runtime.Boot"
 
 BATCHCMD=$1
 

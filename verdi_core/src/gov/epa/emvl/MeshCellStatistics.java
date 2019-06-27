@@ -16,10 +16,11 @@ public final class MeshCellStatistics {
               final double threshold,
               final double hoursPerTimestep,
               final float[][][] statistics,
-              final int statIndex) throws Exception {
+              final int statIndex,
+              double customPercentile) throws Exception {
 		  final float[][][] dat = new float[1][][];
 		  dat[0] = data;
-		  GridCellStatistics.computeStatistics(dat, threshold, hoursPerTimestep, statistics, statIndex);
+		  GridCellStatistics.computeStatistics(dat, threshold, hoursPerTimestep, statistics, statIndex, customPercentile);
 	  }
 
 };

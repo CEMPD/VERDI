@@ -11,11 +11,7 @@ VERDI Installation Instructions
 
 VERDI 2.0 Beta is distributed as a zip or gzip file, as appropriate, for each of the following supported platforms:
 
--   32-bit Windows 8
-
 -   64-bit Windows 8
-
--   32-bit Linux
 
 -   64-bit Linux
 
@@ -30,7 +26,7 @@ Follow these instructions to install VERDI:
 
 1.  tar -xvf verdi_2.0_beta.tar.gz into a location where you would like to install VERDI
 
-2.  Edit verdi_2.0_beta/verdi.sh: Change the path for the VERDI_HOME variable to reflect the location where VERDI was installed (e.g., VERDI_HOME=/usr/local/verdi)
+2.  Edit verdi_2.0_beta/verdi.sh: Change the path for the DIR variable to reflect the location where VERDI was installed (e.g., DIR=/proj/ie/apps/longleaf/VERDI_2.0_jun_23/VERDI_2.0_beta)
 
 3.  Create a directory *verdi* under your home directory.
 
@@ -40,7 +36,7 @@ Follow these instructions to install VERDI:
 
     VERDI should now run if you execute the verdi.sh executable script (e.g., ./verdi.sh).
 
-    Please continue with section 3.4.
+Please continue with [verdi_preferences](#verdi_preferences).
 
 Installation Instructions for Windows
 --------------------------------------
@@ -61,7 +57,7 @@ After successfully installing VERDI you need to perform the following tasks unde
 
 Note that VERDI writes a log file (i.e., *verdi.log*) as-needed to your *verdi* directory. This log file should remain small. However, if you need technical support we may ask for your log file. It will be a text file named verdi.log located in this verdi directory.
 
-Please continue with section 3.4.
+Please continue with [verdi_preferences](#verdi_preferences).
 
 Installation Instructions for computer that that requires a JRE<sup>TM</sup> 7 other than what was provided in the distribution
 -------------------------------------------------------------------------------------------------------------------------------
@@ -70,6 +66,7 @@ Installation Instructions for computer that that requires a JRE<sup>TM</sup> 7 o
 
 2.  Follow the installation instructions.
 
+<a id="verdi_preferences"></a>
 Setting VERDI Preferences
 -------------------------
 

@@ -94,8 +94,6 @@ public class DataSetPanel extends JPanel {
 	StyleBuilder builder = new StyleBuilder();
 
 	private final static String remoteHosts = readRemoteHosts();
-	private final RemoteFileReader remoteFileReader =
-		new RemoteFileReader( remoteHosts );
 
 	private static String readRemoteHosts() {
 		Logger.debug("in DataSetPanel [static] readRemoteHosts");
@@ -136,9 +134,11 @@ public class DataSetPanel extends JPanel {
 		variableList.setModel(new VariablesModel());
 		dataList.setModel(project.getDatasets());
 		dataList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		initListeners();
-		initializeButtons();
-		initializePopups();
+		try {
+			initListeners();
+			initializeButtons();
+			initializePopups();
+		} catch (java.awt.HeadlessException e) {}
 	}
 
 	public void addFormulaCallbacks(FormulaElementCreator creator,
@@ -418,6 +418,8 @@ public class DataSetPanel extends JPanel {
 			}
 		});
 
+		final RemoteFileReader remoteFileReader =
+				new RemoteFileReader( remoteHosts );
 		btnAddRemote.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent unused_) {
 				remoteFileReader.setVisible( true );
