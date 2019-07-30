@@ -1,8 +1,8 @@
 #! /bin/sh
-export VERDI_HOME=${PWD}
+export VERDI_HOME=`dirname "$0"`
 export VERDI_USER=$HOME
 DIR=`pwd`
-cd $VERDI_HOME/plugins/bootstrap
+cd "$VERDI_HOME/plugins/bootstrap"
 
 JAVA=../../jre/bin/java
 JAVAMAXMEM="-Xmx6144M"
