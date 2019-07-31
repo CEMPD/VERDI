@@ -5016,6 +5016,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			for (OverlayObject obs : obsData) {
 				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
 				ObsAnnotation ann = new ObsAnnotation(eval, axs, initDate, layer);
+				ann.update(timestep);
 				ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
 				obsAnnotations.add(ann);
 				Dataset ds = eval.getVariable().getDataset();

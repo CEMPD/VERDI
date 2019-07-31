@@ -1,8 +1,10 @@
 #! /bin/sh
-VERDI_HOME=.
+export VERDI_HOME=`dirname "$0"`
 export VERDI_USER=$HOME
+cd "$VERDI_HOME"
 DIR=`pwd`
-cd $VERDI_HOME/plugins/bootstrap
+VERDI_HOME="$DIR"
+cd "$VERDI_HOME/plugins/bootstrap"
 
 if [ "`uname -m`" = "ia64" ]; then
   JAVA=/usr/java/jdk/bin/java
