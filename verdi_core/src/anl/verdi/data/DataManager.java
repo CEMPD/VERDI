@@ -102,7 +102,7 @@ public class DataManager {
 			try {
 				if (loader.canHandle(url)) {
 					try {
-						Logger.debug("before creating dataset.");
+						Logger.debug("Loader " +loader.getClass().getName() + " creating dataset " + url);
 						List<Dataset> data = loader.createDatasets(url);
 						Logger.debug("after creating dataset. Dataset list size: " + data.size());
 						for (Dataset dataset : data) {

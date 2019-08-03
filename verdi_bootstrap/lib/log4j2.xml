@@ -4,6 +4,9 @@
 		<File name="MainLog" fileName="${env:VERDI_USER}/verdi/verdi.log">
 			<PatternLayout pattern="%d{yyyy.MM.dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
 		</File>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{yyyy.MM.dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+		</Console>
 	</Appenders>
 	<Loggers>
 		<Root level="ERROR">
