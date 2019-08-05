@@ -4,17 +4,25 @@ RELEASE NOTES FOR VERDI V2.0 beta
 These notes describe the differences between the VERDI 2.0 beta release and the previous public release v1.6 alpha
 
 NEW FEATURES IN V2.0 beta:
-* support for MPAS netCDF files
-* updated world map
-* option to display elevation for vertical cross-section plots
+* Support for MPAS netCDF files.
+* Updated world map.
+* Option to display elevation for vertical cross-section plots.
+* Can specify pixel size of exported raster (e.g., PNG) images.
+* New statistics: count, fourth maximum, and custom percentile.
+* Preliminary support for MCIP v5.0+ netCDF files.
+* Configure plot and set row/column/lat/lon ranges dialogue boxes open on left to avoid blocking view of plot window.
 
 BUG FIXES IN 2.0 beta:
-*
-*
+* Fixed geolocation problem.
+* Fixed dynamic release of computer memory.
+* Fixed interactive plot resizing on Linux when plot is undocked.
+* Fixed GIS layer wrap around for global data.
+* Fixed several problems when using command line scripts (e.g., wildcards for filenames).
 
 KNOWN ISSUES IN 2.0 beta:
-*
-*
+* Display of elevation for vertical cross sections only works for MPAS files.
+* Location and thickness of MPAS vertical cross sections are currently in whole degrees of longitude or latitude.
+* Contour plot data interpolation and configuration need improvement to reduce spiky appearance.
 
 
 -----------------------------
