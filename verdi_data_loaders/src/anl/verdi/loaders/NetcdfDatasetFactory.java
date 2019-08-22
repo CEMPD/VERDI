@@ -12,8 +12,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-
-
+import org.jfree.util.Log;
 
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.Attribute;
@@ -69,14 +68,13 @@ public class NetcdfDatasetFactory {
 			final List<Dataset> result = createDatasets(gridDataset, url, -1);
 			return result;
 		} catch (Exception io) {
-			io.printStackTrace();
-			Logger.error("Error reading netcdf file " + io.getMessage());
+			Logger.error("Error reading netcdf file", io);
 			try {
 				if (gridDataset != null)
 					gridDataset.close();
 	
 			} catch (IOException e) {
-				e.printStackTrace();
+				Logger.error("Error closing netcdf file", e);
 			}
 		}
 		return new ArrayList<Dataset>();
@@ -159,9 +157,10 @@ public class NetcdfDatasetFactory {
 		NetcdfDataset dataset = null;
 		try {
 			String urlString = url.toExternalForm();
-			if (url.getProtocol().equals("file")) {
-				urlString = new URI(urlString).getPath();
-			}
+			Logger.debug("External url string " + urlString + " path " + new URI(urlString).getPath());
+			//if (url.getProtocol().equals("file")) {  DEBUG
+				//urlString = new URI(urlString).getPath();
+			//}
 //			dataset = NetcdfDataset.openDataset(urlString, false, new CancelTask() {
 				// 2014 require implementation of interface functions isCancel() and setProgress()
 				// isCancel() previously implemented; no helpful information could be founc for setProgress()
@@ -178,9 +177,9 @@ public class NetcdfDatasetFactory {
 			dataset = NetcdfDataset.openDataset(urlString, false, null);
 			return new Models3ObsDataset(url, dataset);
 		} catch (URISyntaxException e) {
-			Logger.error("Error reading netcdf file " + e.getMessage());
+			Logger.error("Error reading netcdf file", e);
 		} catch (IOException e) {
-			Logger.error("Error reading netcdf file " + e.getMessage());
+			Logger.error("Error reading netcdf file", e);
 		}
 
 		return null;

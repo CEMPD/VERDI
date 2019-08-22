@@ -229,7 +229,7 @@ FormulaElementCreator, ListDataListener {
 			//}
 
 		} catch (Exception e) {
-			Logger.warn("Error while getting configuration properties " + e.getMessage());
+			Logger.warn("Error while getting configuration properties", e);
 		}
 	}
 
@@ -576,8 +576,7 @@ FormulaElementCreator, ListDataListener {
 			try {
 				format = ((TilePlotConfiguration) plot.getPlotConfiguration()).getColorMap().getNumberFormat();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.error("Error getting tile plot color map number format", e);
 			}
 
 			StringBuffer buf = new StringBuffer(status);
@@ -641,6 +640,7 @@ FormulaElementCreator, ListDataListener {
 					} catch (Exception e) {
 						gui.showMessage("Dataset Loading Error", "No dataset handler registered for '"
 								+ file.getAbsolutePath() + "':\n " + e.getMessage());
+						Logger.error("Dataset Loading Error", e);
 					}
 					if (datasets.equals(DataManager.NULL_DATASETS)) {
 						//gui.showMessage("Dataset Loading Error", "No dataset handler registered for '"
@@ -652,7 +652,7 @@ FormulaElementCreator, ListDataListener {
 					}
 				}
 			} catch (MalformedURLException e) {
-				e.printStackTrace();
+				Logger.error("Error loading dataset", e);
 			}
 		}
 	}
@@ -685,7 +685,7 @@ FormulaElementCreator, ListDataListener {
 					 */
 				}
 			} catch (MalformedURLException e) {
-				e.printStackTrace();
+				Logger.error("Error loading area file", e);
 			}
 		}
 	}
@@ -700,8 +700,7 @@ FormulaElementCreator, ListDataListener {
 				getGui().showBusyCursor();
 				loadDataset(files);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.error("Error adding dataset", e);
 			}
 			getGui().restoreCursor();
 			currentDatasetFile = files[0];
@@ -871,6 +870,7 @@ FormulaElementCreator, ListDataListener {
 				}
 			} catch (Exception e) {
 				JOptionPane.showMessageDialog(gui.getFrame(), "Please check if the overlay time steps match the underlying data.", "Overlay Error", JOptionPane.ERROR_MESSAGE, null);
+				Logger.error("Overlay Error", e);
 			}
 		} else if (request.getType() == OverlayRequest.Type.VECTOR) {
 			Logger.debug("in VerdiApplication. OverlayRequest.Type.VECTOR");
