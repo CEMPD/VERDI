@@ -1,8 +1,5 @@
-1. tar -xzvf verdi_1.5.tar.gz into the appropriate place.
+1. tar -xzvf VERDI_2.0_beta_mac_20190820.tar.gz into the appropriate place.
 
-2. Java is provided in verdi_1.5.tar.gz file
-
-3. Edit verdi_1.5.0/verdi.command
-   change path for VERDI_HOME variable to reflect where verdi has been installed,
+2. Java is provided in VERDI_2.0_beta_mac_20190820.tar.gz file
 
 3. VERDI can be run using the verdi.command executable script.
