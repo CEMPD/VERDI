@@ -5771,6 +5771,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		panY = 0;
 		
 		if (reverseAxes) {
+			xScale = xScale / sliceDataHeightDeg;
 			panX = startRad;
 			if (zoomInfo != null) {
 				panY = (rowAxis.getRange().getUpperBound() - zoomInfo.axisMax) / RAD_TO_DEG;

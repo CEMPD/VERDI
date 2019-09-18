@@ -144,10 +144,11 @@ public class VerticalCrossDialog extends JDialog {
 		model.setMinimum(min);
 		model.setMaximum(max);
 		ySpinner.setValue(new Integer(min));
-		model = (SpinnerNumberModel) sliceSize.getModel();
+		//sliceSize.setEnabled(true);
+		/*model = (SpinnerNumberModel) sliceSize.getModel();
 		model.setMinimum(1);
 		model.setMaximum(10);
-		sliceSize.setValue(new Integer(1));
+		sliceSize.setValue(new Integer(1));*/
 	}
 
 	// return the true 0 based value
@@ -160,8 +161,8 @@ public class VerticalCrossDialog extends JDialog {
 		return ((Number)ySpinner.getValue()).intValue() - 1;
 	}
 	
-	public int getSliceSize() {
-		return ((Number)sliceSize.getValue()).intValue();
+	public double getSliceSize() {
+		return ((Number)sliceSize.getValue()).doubleValue();
 	}
 
 	public boolean isXSelected() {
@@ -181,10 +182,12 @@ public class VerticalCrossDialog extends JDialog {
 		separator1 = compFactory.createSeparator("Select Cross Section");
 		rbX = new JRadioButton();
 		lblColumn = new JLabel();
-		xSpinner = new JSpinner();
+		xSpinner = new JSpinner(new DoubleSpinnerModel());
+		//xSpinner = new JSpinner();
 		rbY = new JRadioButton();
 		lblRow = new JLabel();
-		ySpinner = new JSpinner();
+		ySpinner = new JSpinner(new DoubleSpinnerModel());
+		//ySpinner = new JSpinner();
 		separator2 = compFactory.createSeparator("Display Mode");
 		buttonBar = new JPanel();
 		okButton = new JButton();
@@ -192,7 +195,13 @@ public class VerticalCrossDialog extends JDialog {
 		elevation = new JRadioButton();
 		layer = new JRadioButton();
 		lblSliceSize = new JLabel();
-		sliceSize = new JSpinner();
+		//DoubleSpinnerModel sliceModel = new DoubleSpinnerModel(1, 0, 100000);
+		DoubleSpinnerModel sliceModel = new DoubleSpinnerModel(2, 0, 100000, 1);
+		//DoubleSpinnerModel sliceModel = new DoubleSpinnerModel();
+		/*sliceModel.setMinimum(0.0);
+		sliceModel.setMaximum(100000.0);
+		sliceModel.setValue(2.0);*/
+		sliceSize = new JSpinner(sliceModel);
 		separator3 = compFactory.createSeparator("");
 		CellConstraints cc = new CellConstraints();
 
@@ -300,7 +309,7 @@ public class VerticalCrossDialog extends JDialog {
 				elevation.setText("Elevation");
 				contentPanel.add(elevation, cc.xywh(1, 15, 5, 1));
 				
-				lblSliceSize.setText("Cross Section Size (Degrees)");
+				lblSliceSize.setText("Cross Section Size");
 				contentPanel.add(lblSliceSize, cc.xy(3, 17));
 				contentPanel.add(sliceSize, cc.xy(5, 17));
 				

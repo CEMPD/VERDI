@@ -91,7 +91,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 //	private static MessageCenter center = MessageCenter.getMessageCenter(VerticalCrossSectionPlot.class);
 
 	private int constant;
-	private int sliceSize;
+	private double sliceSize;
 	private CrossSectionXYZDataset dataset;
 	private CrossSectionType type;
 	private DataUtilities.MinMax rangedMinMax;
@@ -145,7 +145,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	 * @param constant the constant column or row. Whether this is a column or row
 	 *                 is dependent on the cross section type.
 	 */
-	public VerticalCrossSectionPlot(DataFrame frame, CrossSectionType type, int constant, boolean meshInput, int displayMode, int sliceHeight) {
+	public VerticalCrossSectionPlot(DataFrame frame, CrossSectionType type, int constant, boolean meshInput, int displayMode, double sliceHeight) {
 		super(frame);
 		this.meshInput = meshInput;
 		this.displayMode = displayMode;
