@@ -57,7 +57,7 @@ Example Command Line Script for Windows Users
 
 Edit the run.bat script in the VERDI_2.0 directory by right clicking on the file and selecting edit.
 
-<img src="media/image096.png"/>
+<img src="media\image096.png"/>
 Figure ‑. Location of run.bat script in Windows
 
 The current run.bat in notepad contains a “%1” at the end that allows it to accept input following the run.bat script using the Windows run command. Unfortunately, this command does not accept directory names that have a space them, such as the “Program Files”. If you would like to enter the script command line options after run.bat, please move the data directory to C:\\VERDI\\data or some other similar location.
