@@ -382,12 +382,12 @@ Installation Instructions for Linux and Mac
 
 Follow these instructions to install VERDI:
 
-1.  tar -xvf verdi\_2.0\_beta.tar.gz into a location where you would
+1.  tar -xvf verdi\_2.0\.tar.gz into a location where you would
     like to install VERDI
 
-2.  Edit verdi\_2.0\_beta/verdi.sh: Change the path for the DIR variable
+2.  Edit verdi\_2.0\/verdi.sh: Change the path for the DIR variable
     to reflect the location where VERDI was installed (e.g.,
-    DIR=/proj/ie/apps/longleaf/VERDI\_2.0\_jun\_23/VERDI\_2.0\_beta)
+    DIR=/proj/ie/apps/longleaf/VERDI\_2.0\_jun\_23/VERDI\_2.0\)
 
 3.  Create a directory *verdi* under your home directory.
 
@@ -412,7 +412,7 @@ To install VERDI for Windows, unzip the file to a local directory on
 your Windows 7 computer. NOTE: You do not need to install VERDI under a
 Program Files directory or in the root directory on one of your hard
 disk drives. Therefore, you should not need Administrator rights to
-install VERDI 2.0 beta. If your system is under strict control from your
+install VERDI 2.0. If your system is under strict control from your
 Administrator, you may be able to unzip the VERDI distribution under
 your home directory or your documents directory; however, you may have
 problems if there is a space in the path to your VERDI installation
@@ -473,8 +473,8 @@ for saving project files. Contents of config.properties.TEMPLATE:
 # Please use double backslash for Windows platform or slash for UNIX-like platforms
 # Please uncomment the following lines and modify them to suit your local settings
 # Windows example settings format
-# verdi.project.home=C:// Users\\yourusername\\VERDI_2.0_beta\\project
-# verdi.config.home=C:// Users\\yourusername\\VERDI_2.0_beta\\config
+# verdi.project.home=C:// Users\\yourusername\\VERDI_2.0\\project
+# verdi.config.home=C:// Users\\yourusername\\VERDI_2.0\\config
 # Linux example settings format
 
 verdi.project.home=../../data/project
@@ -558,7 +558,7 @@ Notepad.
 
 VERDI\_HOME needs to point to the directory where VERDI is installed,
 which is also the directory containing the run.bat file. In this figure
-VERDI is installed in the directory C:\\ VERDI\\VERDI\_2.0beta.
+VERDI is installed in the directory C:\\ VERDI\\VERDI\_2.0.
 
 JAVADIR needs to point to the directory where your JRE7 is installed. In
 this figure JRE7 is installed in the jre1.7.0 directory under the
@@ -572,7 +572,7 @@ JAVADIR, so you should not need to change any of those.
 
 To start VERDI from Linux and other non-Windows JRE 7 Supported System
 Configurations, find the directory where VERDI was installed; then run
-the verdi.sh script. On a Mac go to the /Applications/verdi\_2.0beta
+the verdi.sh script. On a Mac go to the /Applications/verdi\_2.0
 directory and run the verdi.command script.
 
 Main Window
