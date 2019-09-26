@@ -19,7 +19,8 @@ Tile Plot
 The **Tile Plot** displays gridded data defined as time steps and layers. It can also display grid cell time aggregate statistics. [Figure 10‑1](#Figure10-1) provides an example of the **Tile Plot** window.
 
 Figure 10‑1. Tile Plot Example<br>
-<img src="media/image026.png"/>
+
+![Figure10-1](./media/image026.png)
 
 ### Time Selection and Animation Controls
 
@@ -86,19 +87,23 @@ The Areal Interpolation Plot menu contains an **Options** menu to allow the user
 
 <a id=Figure10-2></a>
 Figure 10‑2. Areal Interpolation Plot: Area Average<br>
-<img src="media/image027.png"/>
+
+![Figure10-2](./media/image027.png)
 
 <a id=Figure10-3></a>
 Figure 10‑3. Areal Interpolation Plot: Area Totals<br>
-<img src="media/image028.png"/>
+
+![Figure10-3](./media/image028.png)
 
 <a id=Figure10-4></a>
 Figure 10‑4. Areal Interpolation Plot: Show Gridded Data<br>
-<img src="media/image029.png"/>
+
+![Figure10-4](./media/image029.png)
 
 <a id=Figure10-5></a>
 Figure 10‑5. Areal Interpolation Plot: Show Selected Areas<br>
-<img src="media/image030.png"/>
+
+![Figure10-5](./media/image030.png)
 
 ### Areal Values for Polygon Segment
 
@@ -106,7 +111,8 @@ To view the area, total value, and average value for a selected polygon segment 
 
 <a id=Figure10-6></a>
 Figure 10‑6. Areal Values for a Selected Polygon<br>
-<img src="media/image031.png"/>
+
+![Figure10-6](./media/image031.png)
 
 ### View and Export Areal Interpolation Plot Data in Text Format
 
@@ -114,19 +120,23 @@ To view the average and total interpolation values for selected formulas in a sp
 
 <a id=Figure10-7></a>
 Figure 10‑7. Right Click on Area Plot<br>
-<img src="media/image032.png"/>
+
+![Figure10-7](./media/image032.png)
 
 <a id=Figure10-8></a>
 Figure 10‑8. Area Information in Columns<br>
-<img src="media/image033.png"/>
+
+![Figure10-8](./media/image033.png)
 
 <a id=Figure10-9></a>
 Figure 10‑9. Export to a Text File<br>
-<img src="media/image034.png"/>
+
+![Figure10-9](./media/image034.png)
 
 <a id=Figure10-10></a>
 Figure 10‑10. Name and Save the Text File<br>
-<img src="media/image035.png"/>
+
+![Figure10-10](./media/image035.png)
 
 ### Export Areal Interpolation Plot Data to Shapefiles
 
@@ -134,11 +144,13 @@ At the top of the **Area Information** tab ([Figure 10‑11](#Figure10-11)), the
 
 <a id=Figure10-11></a>
 Figure 10‑11. Export Shapefile<br>
-<img src="media/image036.png"/>
+
+![Figure10-11](./media/image036.png)
 
 <a id=Figure10-12></a>
 Figure 10‑12. Name and Save Shapefile<br>
-<img src="media/image037.png"/>
+
+![Figure10-12](./media/image037.png)
 
  Vertical Cross Section Plot
 ----------------------------
@@ -147,11 +159,13 @@ The **vertical cross section plot** allows you to show a slice of data ([Figure 
 
 <a id=Figure10-13></a>
 Figure 10‑13. Vertical Cross Section Plot<br>
-<img src="media/image038.png"/>
+
+![Figure10-13](./media/image038.png)
 
 <a id=Figure10-14></a>
 Figure 10‑14. Vertical Cross Section Dialog Box<br>
-<img src="media/image039.png"/>
+
+![Figure10-14](./media/image039.png)
 
 Time Series Plot
 ----------------
@@ -160,7 +174,9 @@ The **time series plot** shows a line graph with the average values over time ([
 
 <a id=Figure10-15></a>
 Figure 10‑15. Time Series Plot<br>
-<img src="media/image040.png"/>
+
+![Figure10-15](./media/image040.png)
+
 
 Time Series Bar Plot
 --------------------
@@ -169,7 +185,8 @@ The **time series bar plot** shows average values over time in a bar plot format
 
 <a id=Figure10-16></a>
 Figure 10‑16. Time Series Bar Plot<br>
-<img src="media/image041.png"/>
+
+![Figure10-16](./media/image041.png)
 
 Scatter Plot
 -------------
@@ -178,15 +195,18 @@ The **scatter plot** shows the relationship between two formulas using dots ([Fi
 
 <a id=Figure10-17></a>
 Figure 10‑17. Scatter Plot<br>
-<img src="media/image042.png"/>
+
+![Figure10-17](./media/image042.png)
 
 <a id=Figure10-18></a>
 Figure 10‑18. Scatter Plot Dialog Box<br>
-<img src="media/image043.png"/>
+
+![Figure10-18](./media/image043.png)
 
 <a id=Figure10-19></a>
 Figure 10‑19. Scatter Plot Export Data into a CSV file<br>
-<img src="media/image044.png"/>
+
+![Figure10-19](./media/image044.png)
 
 Contour Plot
 ------------
@@ -195,15 +215,18 @@ The **contour plot** shows a three-dimensional (3‑D) representation of values 
 
 <a id=Figure10-20></a>
 Figure 10‑20. Contour Plot<br>
-<img src="media/image045.png"/>
+
+![Figure10-20](./media/image045.png)
 
 <a id=Figure10-21></a>
 Figure 10‑21. Contour Plot Menu Options<br>
-<img src="media/image046.png"/>
+
+![Figure10-21](./media/image046.png)
 
 <a id=Figure10-22></a>
 Figure 10‑22. Rotated Contour Plot<br>
-<img src="media/image047.png"/>
+
+![Figure10-22](./media/image047.png)
 
 <!-- BEGIN COMMENT -->
 

@@ -18,7 +18,9 @@ Next, navigate to where you installed VERDI on your computer. You see the **run.
 
 <a id=Figure4-1></a>
 Figure 4‑1. Starting VERDI in Windows<br>
-<img src="media/image007.png"/>
+
+![Figure4-1](./media/image007.png)
+
 
 VERDI_HOME needs to point to the directory where VERDI is installed, which is also the directory containing the run.bat file. In this figure VERDI is installed in the directory C:\\ VERDI\\VERDI_2.0beta.
 
@@ -41,7 +43,8 @@ Below the icons and plot buttons, the VERDI window is divided into two main area
 
 <a id=Figure4-2></a>
 Figure 4‑2. VERDI Main Window<br>
-<img src="media/image008.png"/>
+
+![Figure4-2](./media/image008.png)
 
 The parameters area contains three tabbed panes:
 

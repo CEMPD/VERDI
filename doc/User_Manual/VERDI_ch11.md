@@ -56,8 +56,8 @@ The **Configure** pull-down menu contains the following options: Configure Plot,
 
 <a id=Figure11-1></a>
 Figure 11‑1. Configure Plot, Titles Tab<br>
-<img src="media/image048.png"/>
 
+![Figure11-1](./media/image048.png)
 
 -   **Text:** Enter the desired text directly in the textbox. You can enter text for the plot’s title and up to two optional subtitles.
 
@@ -69,8 +69,8 @@ Figure 11‑1. Configure Plot, Titles Tab<br>
 
 <a id=Figure11-2></a>
 Figure 11‑2. Configure Plot, Color Map Tab<br>
-<img src="media/image049.png"/>
 
+![Figure11-2](./media/image049.png)
 
 -   **Number of Tiles:** Start by selecting the number of tiles at the top of the pane. Options in some other selections, such as the available palettes and break points, change as you vary the number of tiles.
 
@@ -109,7 +109,8 @@ Figure 11‑2. Configure Plot, Color Map Tab<br>
 
 <a id=Figure11-3></a>
 Figure 11‑3. Configure Plot, Labels Tab<br>
-<img src="media/image050.png"/>
+
+![Figure11-3](./media/image050.png)
 
 
 -   **Domain Axis:** This tab has two parts: Label and Ticks. Use the Label panel the same way as the Titles tab (above) by editing the Text, Font, and Color. The Ticks panel allows you to change the labels associated with the ticks on the Domain Axis. The “Show Tick Labels” checkbox is typically checked, but you can uncheck it to not show any ticks or labels on this axis. Number allows you to decrease the number of tick labels. Note that you cannot increase the number of ticks via this screen and the values of the ticks do not change; you are effectively turning tick labels on/off via this checkbox. The Font and Color widgets work the same as for the Titles tab.
@@ -119,7 +120,9 @@ Figure 11‑3. Configure Plot, Labels Tab<br>
 <a id=Figure11-4></a>
 <center>
 Figure 11‑4. Example Plot with Selected Tick Marks for Range Axis and Legend<br>
-<img src="media/image052.png"/>
+
+![Figure11-4](./media/image052.png)
+
 </center>
 
 
@@ -132,7 +135,8 @@ Figure 11‑4. Example Plot with Selected Tick Marks for Range Axis and Legend<b
 
 <a id=Figure11-5></a>
 Figure 11‑5. Other Tab<br>
-<img src="media/image051.png"/>
+
+![Figure11-5](./media/image051.png)
 
 ###  Save Configuration
 
@@ -164,19 +168,23 @@ To edit a chart theme, select the **Configure** menu on the plot and then the **
 
 <a id=Figure11-6></a>
 Figure 11‑6. Top Portion of Edit Chart Theme Window<br>
-<img src="media/image053.png"/>
+
+![Figure11-6](./media/image053.png)
 
 <a id=Figure11-7></a>
 Figure 11‑7. Bottom Portion of Edit Chart Theme (Bg=background, Grdln=grid line)<br>
-<img src="media/image054.png"/>
+
+![Figure11-7](./media/image054.png)
 
 <a id=Figure11-8></a>
 Figure 11‑8. Select Font in Edit Chart Theme Window<br>
-<img src="media/image055.png"/>
+
+![Figure11-8](./media/image055.png)
 
 <a id=Figure11-9></a>
 Figure 11‑9. Select Color in Edit Chart Theme Window<br>
-<img src="media/image056.png"/>
+
+![Figure11-9](./media/image056.png)
 
 
 ###  Save Chart Theme
@@ -185,7 +193,8 @@ To edit a chart theme, select **Save Chart Theme** option from the Configure men
 
 <a id=Figure11-10></a>
 Figure 11‑10. Save Dialog<br>
-<img src="media/image057.png"/>
+
+![Figure11-10](./media/image057.png)
 
 
 Controls Menu
@@ -199,7 +208,8 @@ To zoom in and enlarge a subdomain of the plot, select the **Zoom** option. Then
 
 <a id=Figure11-11></a>
 Figure 11‑11. Right-Click on Tile Plot to Zoom Out<br>
-<img src="media/image058.png"/>
+
+![Figure11-11](./media/image058.png)
 
 The selections in the context menu are a little different for the time series plot. Zoom In and Zoom Out open another level of menus where you can select Both Axes, Domain Axis, or Range Axis. The Auto Range selection opens another submenu with the same 3 selections; use the Auto Range, Both Axes submenu to reset both axes to the full extent of both the domain and the range.
 
@@ -213,7 +223,8 @@ To probe a single data point, use the mouse to hover the cursor over a single po
 
 <a id=Figure11-12></a>
 Figure 11‑12. Click on Plot to Probe: Data Value Shown in Lower Left of VERDI, Latitude/Longitude Values Shown in Lower Right<br>
-<img src="media/image060.png"/>
+
+![Figure11-12](./media/image060.png)
 
 #### Probing a Domain Region of Data
 
@@ -221,7 +232,8 @@ When you have Probe selected you can examine the values of a region of locations
 
 <a id=Figure11-13></a>
 Figure 11‑13. Data Window Showing Probed Values for Region of Interest<br>
-<img src="media/image061.png"/>
+
+![Figure11-13](./media/image061.png)
 
 ### Set Row and Column Ranges
 
@@ -229,7 +241,8 @@ The **Controls&gt;Set Row and Column Ranges** menu item displays a popup window 
 
 <a id=Figure11-14></a>
 Figure 11‑14. Select Set Row and Column Ranges<br>
-<img src="media/image062.png"/>
+
+![Figure11-14](./media/image062.png)
 
 
 ### Show Grid Lines
@@ -238,7 +251,8 @@ Use the Show Grid Lines selection on the Controls menu if you want to have grid 
 
 <a id=Figure11-16></a>
 Figure 11‑16. Show Grid Lines on a Tile Plot<br>
-<img src="media/image063.png"/>
+
+![Figure11-16](./media/image063.png)
 
 ### Show Latitude and Longitude
 
@@ -246,7 +260,8 @@ To view the latitude and longitude values for a point on the plot, select the Sh
 
 <a id=Figure11-17></a>
 Figure 11‑17. Lat/Lon Values Shown in Lower Right of VERDI<br>
-<img src="media/image064.png"/>
+
+![Figure11-17](./media/image064.png)
 
 
  Plot Menu Options
@@ -256,7 +271,8 @@ The **Plot** pull-down menu ([Figure 11‑18](#Figure11-18)) contains the follow
 
 <a id=Figure11-18></a>
 Figure 11‑18. Plot Menu Options<br>
-<img src="media/image065.png"/>
+
+![Figure11-18](./media/image065.png)
 
 
 ### Time Series Plots
@@ -269,7 +285,8 @@ You can create an animated plot by selecting the Animate Plot option. The Time S
 
 <a id=Figure11-19></a>
 Figure 11‑19. Animate Plot Dialog Box<br>
-<img src="media/image066.png"/>
+
+![Figure11-19](./media/image066.png)
 
 ### Add Overlays
 
@@ -303,11 +320,13 @@ The center of the observational data point corresponds to the lat/lon value that
 
 <a id=Figure11-20></a>
 Figure 11‑20. Tile Plot Observation Dialog<br>
-<img src="media/image067.png"/>
+
+![Figure11-20](./media/image067.png)
 
 <a id=Figure11-21></a>
 Figure 11‑21. Tile Plot with Observational Data Overlay<br>
-<img src="media/image068.png"/>
+
+![Figure11-21](./media/image068.png)
 
 
 #### Vector Overlays
@@ -332,13 +351,15 @@ Currently, vectors are plotted in the center of the grid cell. UWIND and VWIND a
 
 <a id=Figure11-22></a>
 Figure 11‑22. Vector Overlay Dialog Box<br>
-<img src="media/image069.png"/>
+
+![Figure11-22](./media/image069.png)
 
 An example of an ozone concentration Tile Plot with a wind vector overlay is shown in Figure 11‑25. The length of each vector is proportional to its length. The direction of the vector is calculated from the direction and magnitudes of its two components. This figure illustrates how the wind changes speed and direction in this portion of the modeling domain for layer 1, time step 1.
 
 <a id=Figure11-23></a>
 Figure 11‑23. Wind Vector Overlay on an Ozone Tile Plot<br>
-<img src="media/image070.png"</a>
+
+![Figure11-23](./media/image070.png)
 
 
 GIS Layers
@@ -354,7 +375,8 @@ A selection of default maps—including World, North America. USA States, USA Co
 
 <a id=Figure11-24></a>
 Figure 11‑24. Add Map Layers<br>
-<img src="media/image071.png"/>
+
+![Figure11-24](./media/image071.png)
 
 As of VERDI 1.6, the Tile Plot and Areal Interpolation Plot use the Shapefile format for all maps and GIS layers, the bin format is no longer used.
 
@@ -364,7 +386,8 @@ To show an additional map on the plot, select the **Configure GIS Layers** optio
 
 <a id=Figure11-25></a>
 Figure 11‑25. Manage Layers Dialog Box<br>
-<img src="media/image072.png"/>
+
+![Figure11-25](./media/image072.png)
 
 -   To rearrange the order in which the GIS layers are displayed on the plot, select a layer in the Manage Layers dialog box, and then select Move Up or Move Down. Click the **OK** button to reposition the order of that layer within the list. If the layers that you are selecting are boundaries and were created to have a transparent fill, then rearranging the order of the layers will not change the look of the boundaries on the plot.
 

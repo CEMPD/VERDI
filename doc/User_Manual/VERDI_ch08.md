@@ -57,19 +57,23 @@ When you select the Areal Interpolation Plot, your selected formula is remapped 
 
 <a id=Figure8-1></a>
 Figure 8‑1. Areas Pane<br>
-<img src="media/image020.png"/>
+
+![Figure8-1](./media/image020.png)
 
 <a id=Figure8-2></a>
 Figure 8‑2. Open Area File Browser<br>
-<img src="media/image021.png"/>
+
+![Figure8-2](./media/image021.png)
 
 <a id=Figure8-3></a>
 Figure 8‑3. Open Area File: Select Name Field<br>
-<img src="media/image022.png"/>
+
+![Figure8-3](./media/image022.png)
 
 <a id=Figure8-4></a>
 Figure 8‑4. Area Name Fields in Current Shapefile<br>
-<img src="media/image023.png"/>
+
+![Figure8-4](./media/image023.png)
 
 <!-- BEGIN COMMENT -->
 

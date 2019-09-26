@@ -57,7 +57,8 @@ You can choose to animate a single plot, or animate multiple plots synchronously
 
 <a id=Figure5-1></a>
 Figure 5‑1. Selected plots must have matching time steps.<br>
-<img src="media/image009.png"/>
+
+![Figure5-1](./media/image009.png)
 
 After selecting your plots, **select the time range** by specifying both the **starting time step** and **ending time step** of the animation. The selected plots animate together over the selected time interval.
 
@@ -67,7 +68,9 @@ Creating a QuickTime movie is also an option, but this is not done through the *
 
 <a id=Figure5-2></a>
 Figure 5‑2 Animate Plots Dialog and Tile Plots<br>
-<img src="media/image010.png"/>
+
+![Figure5-2](./media/image010.png)
+
 
 Window Menu Options
 -------------------

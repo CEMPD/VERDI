@@ -16,7 +16,8 @@ The **Time Steps** panel ([Figure 9‑1](#Figure9-1)) displays the range of time
 
 <a id=Figure9-1></a>
 Figure 9‑1. Specify Time Step Range<br>
-<img src="media/image024.png"/>
+
+![Figure9-1](./media/image024.png)
 
 Specify Layer Range
 -------------------
@@ -25,7 +26,8 @@ Information on the range of vertical model layers included in a dataset is displ
 
 <a id=Figure9-2></a>
 Figure 9‑2. Edit Layer Range in Formula Pane<br>
-<img src="media/image025.png"/>
+
+![Figure9-2](./media/image025.png)
 
 Specify Domain Range
 --------------------

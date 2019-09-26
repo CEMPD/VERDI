@@ -26,7 +26,8 @@ Observational data in ASCII format can be obtained from many data sources, inclu
 
 <a id=Figure6-1></a>
 Figure 6‑1. Example observational data file showing format.
-<embed src="media/image011.png"/>
+
+![Figure6-1](./media/image011.png)
 
 
 Alternatively, you can use a converter such as AIRS2M3 (see Chapter 13) to convert ASCII observational data into I/O API "observational-data" files.
@@ -71,11 +72,13 @@ Datasets can be removed by highlighting the name of the dataset in the dataset l
 
 <a id=Figure6-2></a>
 Figure 6‑2. Open Dataset File Browser<br>
-<img src="media/image012.png"/>
+
+![Figure6-2](./media/image012.png)
 
 <a id=Figure6-3></a>
 Figure 6‑3. Datasets Pane Displaying Information about a Dataset<br>
-<img src="media/image013.png"/>
+
+![Figure6-3](./media/image013.png)
 
 Adding and Removing a Dataset from a Remote File System
 -------------------------------------------------------
@@ -84,7 +87,8 @@ VERDI provides users with the ability to select and add variables from datasets 
 
 <a id=Figure6-4></a>
 Figure 6‑4. Available Hosts in the Remote File Access Browser<br>
-<img src="media/image014.png"/>
+
+![Figure6-4](./media/image014.png)
 
 
 ### Remote File Browser
@@ -93,7 +97,8 @@ The top panel displays a listing of the home directory on the remote file system
 
 <a id=Figure6-5></a>
 Figure 6‑5. Select One or More Variables from Remote Dataset<br>
-<img src="media/image015.png"/>
+
+![Figure6-5](./media/image015.png)
 
 The variables read from the remote dataset will be displayed in the dataset and variable browser in the same way that variables from a local dataset are added and displayed within VERDI. The subsetted local dataset names are identical to the file names on the remote host, except for an additional extension that enumerates how many times the remote files were read and saved locally by VERDI (i.e., filename1, filename2, filename3, etc.), as shown in [Figure 6‑6](#Figure6-6). To add variables from the same remote dataset, click on the **plus remote** button, and repeat the above procedure.
 
@@ -105,7 +110,8 @@ Remote datasets can be removed from the dataset list in VERDI using the same pro
 
 <a id=Figure6-6></a>
 Figure 6‑6. Remote Dataset Labeled with Number at End of the Filename<br>
-<img src="media/image016.png"/>
+
+![Figure6-6](./media/image016.png)
 
 ### Adding Additional Remote Hosts
 
@@ -121,7 +127,8 @@ VERDI contains the RemoteFileUtility and ncvariable programs that enable VERDI t
 
 <a id=Figure6-7></a>
 Figure 6‑7. Edit configure.properties File to Add a Remote Host<br>
-<img src="media/image017.png"/>
+
+![Figure6-7](./media/image017.png)
 
 Variables List
 --------------
@@ -130,7 +137,8 @@ The variables list shows all of the variables contained in a loaded dataset (see
 
 <a id=Figure6-8></a>
 Figure 6‑8. Right-Click on Variable in Dataset Pane<br>
-<img src="media/image018.png"/>
+
+![Figure6-8](./media/image018.png)
 
 Time Steps and Layers Panels
 ----------------------------
