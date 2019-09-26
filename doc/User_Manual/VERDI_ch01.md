@@ -323,22 +323,22 @@ You can download the latest version of VERDI from <https://www.cmascenter.org/ve
 <a id=Figure1-1></a>
 Figure 1‑1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.<br>
 
-![Figure1-1](./media/image001.png){width=50%}
+![Figure1-1](./media/image001.png)
 
 <a id=Figure1-2></a>
 Figure 1‑2. Bottom of VERDI Page<br>
 
-![Figure1-2](./media/image002.png){width=50%}
+![Figure1-2](./media/image002.png)
 
 <a id=Figure1-3></a>
 Figure 1‑3. Downloading VERDI from the CMAS Web Site, Step 2.<br>
 
-![Figure1-3](./media/image003.png){width=50%}
+![Figure1-3](./media/image003.png)
 
 <a id=Figure1-4></a>
 Figure 1‑4. Downloading VERDI from the CMAS Web Site, Step 3<br>
 
-![Figure1-4](./media/image004.png){width=50%}
+![Figure1-4](./media/image004.png)
 
 Where to Obtain VERDI Documentation
 -----------------------------------
@@ -353,14 +353,16 @@ Documentation is available in several locations, described below. Each location 
 
 <a id=Figure1-5></a>
 Figure 1‑5. VERDI Documentation on the CMAS Web Site<br>
-<img src="./media/image005.png"/>{width=50%}
+
+![Figure1-5](./media/image005.png)
 
 
 -   To go directly to the most recent VERDI documentation click on DOCUMENTATION from the VERDI software: <http://www.cmascenter.org/verdi>. [Figure 1‑6](#Figure1-6) shows the list of documentation that is available for download for VERDI 2.0.
 
 <a id=Figure1-6></a>
 Figure 1‑6. VERDI Documentation on the CMAS Web Site<br>
-<img src="./media/image006.png"/>{width=50%}
+
+![Figure1-6](./media/image006.png)
 
 Help Desk Support for VERDI
 ---------------------------
