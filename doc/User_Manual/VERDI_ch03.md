@@ -47,9 +47,9 @@ If you are unable to install VERDI on your computer, please check to see whether
 
 After successfully installing VERDI you need to perform the following tasks under your home directory.
 
-1.  Locate your home directory. Your home directory is typically under ```csh C:\Users\yourloginid ```. So, if your login id is *staff*, your home directory is probably *C:\Users\staff*.
+1.  Locate your home directory. Your home directory is typically under ```csh C: //Users//yourloginid ```. So, if your login id is *staff*, your home directory is probably *C: //Users//staff*.
 
-2.  Create a new directory *verdi* under your home directory (e.g., *C:\Users\staff\verdi*).
+2.  Create a new directory *verdi* under your home directory (e.g., *C: //Users//staff//verdi*).
 
 3.  Create an empty text file, name it *verdi.alias* and save it in your *verdi* directory. When you look at the directory listing for this *verdi* directory, you should see the *verdi.alias* file with a length of 0.
 
@@ -77,8 +77,8 @@ VERDI is configured via the config.properties file that you copied to your home/
 # Please use double backslash for Windows platform or slash for UNIX-like platforms
 # Please uncomment the following lines and modify them to suit your local settings
 # Windows example settings format
-# verdi.project.home=C:\\ Users\\yourusername\\VERDI_2.0_beta\\project
-# verdi.config.home=C:\\ Users\\yourusername\\VERDI_2.0_beta\\config
+# verdi.project.home=C:// Users\\yourusername\\VERDI_2.0_beta\\project
+# verdi.config.home=C:// Users\\yourusername\\VERDI_2.0_beta\\config
 # Linux example settings format
 
 verdi.project.home=../../data/project
@@ -99,7 +99,7 @@ verdi.remote.ssh=/usr/bin/ssh
 
 # on local machine where VERDI is running. Used to hold temporary data file downloaded from a remote machine
 
-verdi.temporary.dir=C:\\Users\username\temp
+verdi.temporary.dir=C:\\ Users\username\temp
 ```
 
 The items in the config.properties.TEMPLATE file that is installed with VERDI are commented out. To specify default directories, uncommented these lines by removing the starting ‘#’ sign. Example settings that are provided in the default file show how to specify the paths to these locations, depending on whether the installation is for a Windows or Linux platform. Here are how the settings are used by VERDI. Note that VERDI stores the most recently used directory for each of these functions and will go to that directory when you repeat the load or save in the same session.

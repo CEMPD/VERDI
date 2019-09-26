@@ -18,7 +18,7 @@ Example Command Line Script for Linux Users
 
 Set an environment variable $VERDI_HOME by using
 
-setenv VERDI_HOME /home/a_username/VERDI_1.5
+setenv VERDI_HOME //home//a_username//VERDI_2.0
 
 Where a_username is your username.
 
@@ -32,7 +32,7 @@ Example script file (Note that quotes (as shown highlighted in red) may be neede
 
 #### 8hO3 Daily Max Plot
 
-setenv DIR /home/training/verdi_1.5/data/OBS
+setenv DIR //home//training//verdi_2.0//data/OBS
 
 ../../verdi.sh \
 
@@ -55,28 +55,28 @@ Note: Currently, the syntax for the command line script is slightly different th
 Example Command Line Script for Windows Users
 ---------------------------------------------
 
-Edit the run.bat script in the VERDI_1.5 directory by right clicking on the file and selecting edit.
+Edit the run.bat script in the VERDI_2.0 directory by right clicking on the file and selecting edit.
 
 <img src="media/image096.png"/>
 Figure ‑. Location of run.bat script in Windows
 
-The current run.bat in notepad contains a “%1” at the end that allows it to accept input following the run.bat script using the Windows run command. Unfortunately, this command does not accept directory names that have a space them, such as the “Program Files”. If you would like to enter the script command line options after run.bat, please move the data directory to C:\VERDI\data or some other similar location.
+The current run.bat in notepad contains a “%1” at the end that allows it to accept input following the run.bat script using the Windows run command. Unfortunately, this command does not accept directory names that have a space them, such as the “Program Files”. If you would like to enter the script command line options after run.bat, please move the data directory to C:\\VERDI\\data or some other similar location.
 
 Enter the following in the Run command: cmd
 
 When a command line window opens do the following:
 
-cd C:\Program Files\VERDI_1.5\
+cd C:\\Program Files\\VERDI_2.0\\
 
-run.bat "-f C:\\VERDI\\data\\CCTM46_P16.baseO2a.36k.O3MAX -s O3[1] -gtype tile"
+run.bat "-f C:\\VERDI\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX -s O3[1] -gtype tile"
 
-The other option is to place the script commands within the run.bat itself. Remove the “%1” statement at the end of the run.bat that is provided in the distribution, and add the script options that you would like to use. The following run.bat contains script options that will read in the file C:\\VERDI_1.5\data\CCTM46_P16.baseO2a.36k.O3MAX, select O3[1] as the formula, and create a Tile plot. The changes that you need to make to the run.bat are highlighted in red.
+The other option is to place the script commands within the run.bat itself. Remove the “%1” statement at the end of the run.bat that is provided in the distribution, and add the script options that you would like to use. The following run.bat contains script options that will read in the file C:\\VERDI_2.0\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX, select O3[1] as the formula, and create a Tile plot. The changes that you need to make to the run.bat are highlighted in red.
 
-cd .\plugins\bootstrap
+cd .\\plugins\\bootstrap
 
-SET JAVA=..\..\jre1.6.0\bin\java
+SET JAVA=..\\..\\jre1.6.0\\bin\\java
 
-%JAVA% -Xmx512M -classpath "./bootstrap.jar;./lib/saf.core.runtime.jar;./lib/commons-logging.jar;./lib/jpf-boot.jar;./lib/jpf.jar;./lib\log4j-1.2.13.jar" saf.core.runtime.Boot -f C:\\VERDI_1.5\data\CCTM46_P16.baseO2a.36k.O3MAX -s O3[1] -gtype fasttile
+%JAVA% -Xmx512M -classpath "./bootstrap.jar;./lib/saf.core.runtime.jar;./lib/commons-logging.jar;.//lib//jpf-boot.jar;.//lib//jpf.jar;.//lib\\log4j-1.2.13.jar" saf.core.runtime.Boot -f C:\\VERDI_2.0\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX -s O3[1] -gtype fasttile
 
 Run the run.bat script by clicking on Start, then selecting Run, then either using Browse to find the run.bat or typing it in (**Error! Reference source not found.**).
 

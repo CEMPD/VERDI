@@ -18,7 +18,7 @@ Institute for the Environment<br>
 The University of North Carolina at Chapel Hill<br>
 100 Europa Drive, Suite 490,CB 1105 <br>
 Chapel Hill, NC 27599-1105<br>
-Date: Sept 28, 2018<br>
+Date: September 26, 2019<br>
 
 <!---
 First comment line...
@@ -244,8 +244,8 @@ First comment line...
 * [Figure 12‑8. CAMx Example Plot](#Figure12-8)
 * [Figure 17‑1. File: View Script Editor](#Figure17-1)
 * [Figure 17‑2. Open Popup Window](#Figure17-2)
-* [Figure 17‑3. Top of Sample Script File – VERDI_1.5/data/scripts/file\_patterns.txt](#Figure17-3)
-* [Figure 17‑4. Bottom of Sample Script File – VERDI_1.5/data/scripts/tile_patterns.txt](#Figure17-4)
+* [Figure 17‑3. Top of Sample Script File – VERDI_2.0/data/scripts/file\_patterns.txt](#Figure17-3)
+* [Figure 17‑4. Bottom of Sample Script File – VERDI_2.0/data/scripts/tile_patterns.txt](#Figure17-4)
 * [Figure 17‑5. Close Datasets Warning Message](#Figure17-5)
 * [Figure 17‑6. Highlight Text to Select Task and Click Run](#Figure17-6)
 * [Figure 17‑7. Successful Batch Script Message](#Figure17-7)
@@ -308,7 +308,7 @@ Use pulldown menu to select VERDI product to view its FAQs.
  Where to Obtain VERDI
 ----------------------
 
-You can download the latest version of VERDI from <https://www.cmascenter.org/verdi/> (see [Figure 1‑1](#Figure1-1) and [Figure 1‑2](#Figure1-2). When you click on DOWNLOAD to download VERDI, you will be sent to the CMAS Model Download Center. To download and install VERDI, follow the instructions below, beginning at step 4. Alternatively, you may also begin at the CMAS web site <https://www.cmascenter.org>, and follow the instructions below:
+You can download the latest version of VERDI from <https://www.cmascenter.org/verdi/> (see [Figure 1‑1](#Figure1-1) and [Figure 1‑2](#Figure1-2)). When you click on DOWNLOAD to download VERDI, you will be sent to the CMAS Model Download Center. To download and install VERDI, follow the instructions below, beginning at step 4. Alternatively, you may also begin at the CMAS web site <https://www.cmascenter.org>, and follow the instructions below:
 
 1.  Log in using an existing CMAS account, or create a new CMAS account.
 

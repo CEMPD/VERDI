@@ -87,9 +87,9 @@ Figure 17‑8. Unsuccessful Batch Run
 
 NOTE: Click either the Save or the Save As… button to save your edits before exiting the Script Editor.
 
-After saving the script file (e.g. C:\verdi-script\myscript.txt), you can run the batch script directly from command lines without invoking the VERDI GUI. On a Windows computer, start a command window, navigate to the directory containing your run.bat file, and then run this command:
+After saving the script file (e.g. C:\\verdi-script\\myscript.txt), you can run the batch script directly from command lines without invoking the VERDI GUI. On a Windows computer, start a command window, navigate to the directory containing your run.bat file, and then run this command:
 
-run.bat –batch C:\verdi-script\myscript.txt
+run.bat –batch C:\\verdi-script\\myscript.txt
 
 On Linux/Mac platforms, change directory to where the Verdi.sh is located and execute this command (assuming your script file myscript.txt is saved in /home/user/verdi-script directory):
 

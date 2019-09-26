@@ -20,7 +20,7 @@ Next, navigate to where you installed VERDI on your computer. You see the **run.
 Figure 4‑1. Starting VERDI in Windows<br>
 <img src="media/image007.png"/>
 
-VERDI_HOME needs to point to the directory where VERDI is installed, which is also the directory containing the run.bat file. In this figure VERDI is installed in the directory C:\VERDI\VERDI_2.0beta.
+VERDI_HOME needs to point to the directory where VERDI is installed, which is also the directory containing the run.bat file. In this figure VERDI is installed in the directory C:\\ VERDI\\VERDI_2.0beta.
 
 JAVADIR needs to point to the directory where your JRE7 is installed. In this figure JRE7 is installed in the jre1.7.0 directory under the VERDI_HOME directory. If you are using a JRE in a different location on your computer, change the path in your run.bat file.
 

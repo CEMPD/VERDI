@@ -150,7 +150,7 @@ To load a plot configuration file, first create a new plot that is of the same t
 
 Note that it is possible to load a saved configuration file that does not apply to the selected plot. VERDI may try to load what it can, which may result in something other than what you expected. Therefore, before loading a saved plot configuration check carefully to be sure the plot type and formula of the configuration file match those of the new plot.
 
-You can also load configuration files in batch or command line scripts by setting the parameter configFile (e.g., configFile=C:\\User\\username\\VERDI_2.0\\data\configs\o3_10bin.cfg).
+You can also load configuration files in batch or command line scripts by setting the parameter configFile (e.g., configFile=C:\\User\\username\\VERDI_2.0\\data\\configs\\o3_10bin.cfg).
 
 ###  Load Chart Theme
 
