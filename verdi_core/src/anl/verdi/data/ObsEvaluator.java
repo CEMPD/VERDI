@@ -83,6 +83,17 @@ public class ObsEvaluator {
 		int timestep = timeAxis.getTimeStep(date);
 
 		return getObsDataList(dataset, reader, timestep);
+	}	
+	
+	public List<ObsData> evaluate(Date date, int timestep) {
+		Dataset dataset = var.getDataset();
+		DataReader reader = manager.getDataReader(dataset);
+		TimeCoordAxis timeAxis = (TimeCoordAxis)dataset.getCoordAxes().getTimeAxis();
+		int baseTimestep = 0;
+		if (date != null)
+			baseTimestep = timeAxis.getTimeStep(date);
+
+		return getObsDataList(dataset, reader, baseTimestep + timestep);
 	}
 
 	private List<ObsData> getObsDataList(Dataset dataset, DataReader reader,

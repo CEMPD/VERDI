@@ -39,13 +39,13 @@ public class VertCrossPlotConfiguration extends TilePlotConfiguration {
 		putObject(CROSS_SECTION_INDEX, rowOrCol);
 	}
 	
-	public void setCrossSectionSliceSize(int sliceSize) {
+	public void setCrossSectionSliceSize(double sliceSize) {
 		putObject(CROSS_SECTION_SLICE_SIZE, sliceSize);
 	}
 	
 	
-	public Integer getCrossSectionSliceSize() {
-		return (Integer) getObject(CROSS_SECTION_SLICE_SIZE);
+	public Double getCrossSectionSliceSize() {
+		return (Double) getObject(CROSS_SECTION_SLICE_SIZE);
 	}
 
 	public Integer getCrossSectionRowCol() {

@@ -60,6 +60,9 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	private static final int Y = 1;
 	private static final int MINIMUM = 0;
 	private static final int MAXIMUM = 1;
+	
+	Date baseDate = null;
+	int baseTimestep = 0;
 
 	public ObsAnnotation(ObsEvaluator eval, Axes<DataFrameAxis> axes,
 			int timeStep, int layer) {
@@ -73,6 +76,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 			Date date, int layer) {
 		this.eval = eval;
 		this.axes = axes;
+		baseDate = date;
 		update(date);
 	}
 
@@ -81,6 +85,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 		Logger.debug("in ObsAnnotation constructor using GregorianCalendar");
 		this.eval = eval;
 		this.axes = axes;
+		baseDate = aCalendar.getTime();
 		update(aCalendar.getTime());
 	}
 
@@ -114,7 +119,8 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	}
 
 	public synchronized void update(int timeStep) {
-		list = eval.evaluate(timeStep);
+		//System.out.println("ObsAnnotation timestep " + timeStep);
+		list = eval.evaluate(baseDate, timeStep);
 		updateList();
 	}
 
@@ -125,8 +131,11 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 
 	private void updateList() {
 		BoundingBoxer boxer = axes.getBoundingBoxer();
+		int values = 0;
 		for (Iterator<ObsData> iter = list.iterator(); iter.hasNext();) {
 			ObsData data = iter.next();
+			if (data.getValue() > 0.01)
+				++values;
 			Point2D p = boxer.latLonToAxisPoint(data.getLat(), data.getLon());
 			if (p.getX() < 0 || p.getY() < 0)
 				iter.remove();
@@ -135,6 +144,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 				data.setY(p.getY());
 			}
 		}
+		//System.out.println("ObsAnnotation updateList values: " + values);
 	}
 
 	@Override
@@ -214,6 +224,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 		final double xScale = width / xRange;
 		final double yScale = height / yRange;
 
+		int values = 0;
 		for (ObsData data : list) {
 			double[] point = new double[2];
 			double lon = data.getLon();
@@ -239,6 +250,8 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 			if (y <= yOffset || y >= yOffset + height)
 				continue;
 
+			if (data.getValue() > 0.01)
+				++values;
 			final int colorIndex = indexOfObsValue((float) data.getValue(), legendLevels);
 			
 			if (colorIndex == -1)
@@ -247,6 +260,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 			final Color cellColor = legendColors[colorIndex];
 			drawSymbol((Graphics2D) graphics, cellColor, data, x, y);
 		}
+		//System.out.println("ObsAnnotation draw values: " + values);
 
 		((Graphics2D) graphics).setStroke(stroke); // reset graphics stroke
 		graphics.setColor(defaultColor); // reset graphics color

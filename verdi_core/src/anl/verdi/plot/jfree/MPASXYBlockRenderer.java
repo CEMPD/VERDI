@@ -31,7 +31,7 @@ public class MPASXYBlockRenderer extends XYBlockRenderer {
 	
 	double sliceSizeDeg;
 	
-	public MPASXYBlockRenderer(CrossSectionType type, DataFrame frame, MeshPlot renderPlot, int step, int constant, int sliceSize) {
+	public MPASXYBlockRenderer(CrossSectionType type, DataFrame frame, MeshPlot renderPlot, int step, int constant, double sliceSize) {
 		if (type == CrossSectionType.Y)
 			axis = "y";
 		this.frame = frame;
