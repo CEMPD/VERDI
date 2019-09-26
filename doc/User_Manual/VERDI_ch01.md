@@ -6,7 +6,6 @@
 <!-- END COMMENT -->
 
 **Visualization Environment for Rich Data Interpretation (VERDI): User’s Manual**
-============
 
 U.S. EPA Contract No. EP-W-09-023, “Operation of the Center for Community Air Quality Modeling and Analysis (CMAS)”<br>
 Prepared for: Donna Schwede<br>
