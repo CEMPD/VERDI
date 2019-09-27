@@ -213,7 +213,7 @@ First comment line...
 * [Figure 53. Configure Plot, Labels Tab](#Figure53)
 * [Figure 54. Configure Plot, Other Tab](#Figure54)
 * [Figure 11-7. Example Plot with Selected Tick Marks for Range Axis and Legend](#Figure1-2)
-* [Figure 11-8. Top Portion of Edit Chart Theme Window](#Figure11-8)
+* [Figure 11-8. Top Portion of Edit Chart Theme Window](#Figure1-8)
 * [Figure 11-9. Bottom Portion of Edit Chart Theme (Bg=background, Grdln=grid line)](#Figure11-9)
 * [Figure 11-10. Select Font](#Figure11-10)
 * [Figure 11-11. Select Color](#Figure11-11)
@@ -307,7 +307,7 @@ Use pulldown menu to select VERDI product to view its FAQs.
  Where to Obtain VERDI
 ----------------------
 
-You can download the latest version of VERDI from <https://www.cmascenter.org/verdi/> (PDF see ([Fig 1-@fig:Figure1-1]) and ([Fig 1-@fig:Figure1-2])) (Github see: [Figure1-1](#Figure1-1) and [Figure 1-2](#Figure1-2)). When you click on DOWNLOAD to download VERDI, you will be sent to the CMAS Model Download Center. To download and install VERDI, follow the instructions below, beginning at step 4. Alternatively, you may also begin at the CMAS web site <https://www.cmascenter.org>, and follow the instructions below:
+You can download the latest version of VERDI from <https://www.cmascenter.org/verdi/> (PDF see ([Fig-@fig:Figure1]) and ([Fig -@fig:Figure2])) (Github see: [Figure1-1](#Figure1-1) and [Figure 1-2](#Figure1-2)). When you click on DOWNLOAD to download VERDI, you will be sent to the CMAS Model Download Center. To download and install VERDI, follow the instructions below, beginning at step 4. Alternatively, you may also begin at the CMAS web site <https://www.cmascenter.org>, and follow the instructions below:
 
 
 1.  Log in using an existing CMAS account, or create a new CMAS account.
@@ -320,24 +320,39 @@ You can download the latest version of VERDI from <https://www.cmascenter.org/ve
 
 5.  As shown in [Figure 4](#Figure4) ([Fig1-@fig:Figure4]))  follow the links to the appropriate version of the Linux, Mac, or Windows installation files. Links are also available for the current version of the documentation.
 
+<!-- BEGIN COMMENT -->
 
 <a id=Figure1></a>
 Figure 1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.<br>
 
+<!-- END COMMENT -->
+
 ![Top of VERDI Page](./media/image001.png){#fig:Figure1}
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure2></a>
 Figure 2. Bottom of VERDI Page<br>
 
+<!-- END COMMENT -->
+
 ![Bottom of VERDI Download Page](./media/image002.png){#fig:Figure2}
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure3></a>
 Figure 3. Downloading VERDI from the CMAS Web Site, Step 2.<br>
 
+<!-- END COMMENT -->
+
 ![Downloading VERDI from the CMAS Web Site, Step 2](./media/image003.png){#fig:Figure3}
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure4></a>
 Figure 4. Downloading VERDI from the CMAS Web Site, Step 3<br>
+
+<!-- END COMMENT -->
 
 ![Downloading VERDI from the CMAS Web Site, Step 3](./media/image004.png){#fig:Figure4}
 
@@ -352,16 +367,24 @@ Documentation is available in several locations, described below. Each location 
 
 -   On the left-hand side of the [www.cmascenter.org](http://www.cmascenter.org) web site, open the drop-down menu for Help and choose Documentation. Select the documentation for VERDI from the drop-down list and click Search. Select the model release from the drop-down list and click Search. The resulting documentation pane shows that the available documentation for the chosen release of VERDI GitHub:[Figure 5](#Figure5) or PDF:[Fig-@fig:Figure5].
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure5></a>
 Figure 5. VERDI Documentation on the CMAS Web Site<br>
+
+<!-- END COMMENT -->
 
 ![VERDI Documentation on the CMAS Web Site](./media/image005.png){#fig:Figure5}
 
 
 -   To go directly to the most recent VERDI documentation click on DOCUMENTATION from the VERDI software: <http://www.cmascenter.org/verdi>. [Figure 6](#Figure6) shows the list of documentation that is available for download for VERDI 2.0.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure6></a>
 Figure 6. VERDI Documentation on the CMAS Web Site<br>
+
+<!-- END COMMENT -->
 
 ![VERDI Documentation on the CMAS Web Site](./media/image006.png){#fig:Figure6}
 
