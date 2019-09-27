@@ -14,12 +14,12 @@ Starting VERDI
 
 If you have previously configured this VERDI installation, use Windows Explorer to navigate to your installation directory. Double-click on the file **run.bat** to start VERDI. Alternatively, you can open a command window. If you do not have a shortcut to launch a command window, press the Start button and type **cmd** in the *Search programs and files* textbox. If your window is too small, go to the window’s title bar and right-click; select Properties and then Layout and change your Screen Buffer Size and your Window Size appropriately.
 
-Next, navigate to where you installed VERDI on your computer. You see the **run.bat** file. Its contents are shown in [Figure 4-1](#Figure4-1). If you have previously executed this VERDI installation, just type **run** and press the **Enter** key. Otherwise, you may need to customize some of the settings in this file for your configuration. If so, edit your run.bat in a text editor such as Notepad.
+Next, navigate to where you installed VERDI on your computer. You see the **run.bat** file. Its contents are shown in PDF:([Fig-@fig:Figure7]) or GitHub:[Figure 7](#Figure7). If you have previously executed this VERDI installation, just type **run** and press the **Enter** key. Otherwise, you may need to customize some of the settings in this file for your configuration. If so, edit your run.bat in a text editor such as Notepad.
 
-<a id=Figure4-1></a>
-Figure 4-1. Starting VERDI in Windows<br>
+<a id=Figure7></a>
+Figure 7. Starting VERDI in Windows<br>
 
-![Figure4-1](./media/image007.png)
+![Starting VERDI in Windows](./media/image007.png){#fig:Figure7}
 
 
 VERDI_HOME needs to point to the directory where VERDI is installed, which is also the directory containing the run.bat file. In this figure VERDI is installed in the directory C:\\ VERDI\\VERDI_2.0.
@@ -35,16 +35,16 @@ To start VERDI from Linux and other non-Windows JRE 7 Supported System Configura
 Main Window
 ------------
 
-When VERDI starts it displays its title screen as it loads. The main window is then displayed ([Figure 4-2](#Figure4-2)). The top of the main window contains a menu bar with the main window options (**File, Plots, Window,** and **Help**). Below the menu bar are three icons that are shortcuts to some of the options available in the Main Window Menu Bar; the first is an **Open Project** icon, the second is a **Save Project** icon, the third is an icon that allows you to **Undock All Plots**. These shortcuts and the options available in the Main Window Menu Bar are discussed further in Chapter 5, “Navigating VERDI’s Main Menu Options.”
+When VERDI starts it displays its title screen as it loads. The main window is then displayed PDF:([Fig-@fig:Figure8]) or Github:([Figure 8](#Figure8)). The top of the main window contains a menu bar with the main window options (**File, Plots, Window,** and **Help**). Below the menu bar are three icons that are shortcuts to some of the options available in the Main Window Menu Bar; the first is an **Open Project** icon, the second is a **Save Project** icon, the third is an icon that allows you to **Undock All Plots**. These shortcuts and the options available in the Main Window Menu Bar are discussed further in Chapter 5, “Navigating VERDI’s Main Menu Options.”
 
 To the right of these three shortcut icons are buttons that list all of the available plot types. The **Selected Formula** is displayed on the far right. The Selected Formula refers to the formula that has been selected in the **Formula** pane (discussed briefly below and in detail in Chapter 7) and that will be used to create plots.
 
 Below the icons and plot buttons, the VERDI window is divided into two main areas: a parameters area consisting of tabbed panes on the left side and a plots area on the right side. You can resize the entire window with your mouse. You can also resize the tabbed pane separately from the plot area by placing your mouse over the dividing line between them and then moving it to the left or the right. If you want, you can separate the tabbed pane into 3 panes by using your mouse to hold onto the pane’s title bar and then move it slightly out of alignment. To reassemble the 3 panes into a tabbed pane, use your mouse to hold onto the title bar of one pane, drag it until its outline fills the outline of another pane, and then release the mouse.
 
-<a id=Figure4-2></a>
-Figure 4-2. VERDI Main Window<br>
+<a id=Figure8></a>
+Figure 8. VERDI Main Window<br>
 
-![Figure4-2](./media/image008.png)
+![VERDI Main Window](./media/image008.png){#fig:Figure8}
 
 The parameters area contains three tabbed panes:
 

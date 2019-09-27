@@ -307,7 +307,7 @@ Use pulldown menu to select VERDI product to view its FAQs.
  Where to Obtain VERDI
 ----------------------
 
-You can download the latest version of VERDI from <https://www.cmascenter.org/verdi/> (PDF see ([@fig:Figure1-1]) and ([@fig:Figure1-2])) (Github see: [Figure1-1](#Figure1-1) and [Figure 1-2](#Figure1-2)). When you click on DOWNLOAD to download VERDI, you will be sent to the CMAS Model Download Center. To download and install VERDI, follow the instructions below, beginning at step 4. Alternatively, you may also begin at the CMAS web site <https://www.cmascenter.org>, and follow the instructions below:
+You can download the latest version of VERDI from <https://www.cmascenter.org/verdi/> (PDF see ([Fig 1-@fig:Figure1-1]) and ([Fig 1-@fig:Figure1-2])) (Github see: [Figure1-1](#Figure1-1) and [Figure 1-2](#Figure1-2)). When you click on DOWNLOAD to download VERDI, you will be sent to the CMAS Model Download Center. To download and install VERDI, follow the instructions below, beginning at step 4. Alternatively, you may also begin at the CMAS web site <https://www.cmascenter.org>, and follow the instructions below:
 
 
 1.  Log in using an existing CMAS account, or create a new CMAS account.
@@ -316,9 +316,9 @@ You can download the latest version of VERDI from <https://www.cmascenter.org/ve
 
 3.  From the Software Download, Step 1 page go to the box Select Software to Download on the right side of the page. Use the drop-down list to select VERDI, and then click Submit.
 
-4.  Select the product you wish to download, as shown in [Figure 1-3](#Figure1-3). Also specify the type of computer on which you will run VERDI (i.e., Linux PC, Windows, or Other) from the items in the scroll list. Note that the compilers question is not relevant for VERDI so please select Not Applicable. Finally, click Submit.
+4.  Select the product you wish to download, as shown in [Figure 1-3](#Figure1-3) ([Fig1-@fig:Figure1-3])) . Also specify the type of computer on which you will run VERDI (i.e., Linux PC, Windows, or Other) from the items in the scroll list. Note that the compilers question is not relevant for VERDI so please select Not Applicable. Finally, click Submit.
 
-5.  As shown in [Figure 1-4](#Figure1-4) follow the links to the appropriate version of the Linux, Mac, or Windows installation files. Links are also available for the current version of the documentation.
+5.  As shown in [Figure 1-4](#Figure1-4) ([Fig1-@fig:Figure1-4]))  follow the links to the appropriate version of the Linux, Mac, or Windows installation files. Links are also available for the current version of the documentation.
 
 
 <a id=Figure1-1></a>
@@ -346,16 +346,16 @@ Where to Obtain VERDI Documentation
 
 Documentation is available in several locations, described below. Each location provides links to the available documentation for VERDI, which can be viewed in your web browser or downloaded and saved to your computer.
 
--   The main VERDI page (see [Figure 1-1](#Figure1-1)) has a link to Documentation.
+-   The main VERDI page has a link to Documentation.
 
--   The VERDI download page on the CMAS website (see [Figure 1-4](#Figure1-4)) contains links to all of the available documentation.
+-   The VERDI download page on the CMAS website contains links to all of the available documentation.
 
--   On the left-hand side of the [www.cmascenter.org](http://www.cmascenter.org) web site, open the drop-down menu for Help and choose Documentation. Select the documentation for VERDI from the drop-down list ([Figure 1-5](#Figure1-5)) and click Search. Select the model release from the drop-down list and click Search. The resulting documentation pane shows that the available documentation for the chosen release of VERDI (see [Figure 1-6](#Figure1-6)).
+-   On the left-hand side of the [www.cmascenter.org](http://www.cmascenter.org) web site, open the drop-down menu for Help and choose Documentation. Select the documentation for VERDI from the drop-down list and click Search. Select the model release from the drop-down list and click Search. The resulting documentation pane shows that the available documentation for the chosen release of VERDI GitHub:[Figure 1-5](#Figure1-5) or PDF:[Fig1-@fig:Figure1-5].
 
 <a id=Figure1-5></a>
 Figure 1-5. VERDI Documentation on the CMAS Web Site<br>
 
-![Figure1-5](./media/image005.png)
+![VERDI Documentation on the CMAS Web Site](./media/image005.png){#fig:Figure1-5}
 
 
 -   To go directly to the most recent VERDI documentation click on DOCUMENTATION from the VERDI software: <http://www.cmascenter.org/verdi>. [Figure 1-6](#Figure1-6) shows the list of documentation that is available for download for VERDI 2.0.
@@ -363,7 +363,7 @@ Figure 1-5. VERDI Documentation on the CMAS Web Site<br>
 <a id=Figure1-6></a>
 Figure 1-6. VERDI Documentation on the CMAS Web Site<br>
 
-![Figure1-6](./media/image006.png)
+![VERDI Documentation on the CMAS Web Site](./media/image006.png){#fig:Figure1-6}
 
 Help Desk Support for VERDI
 ---------------------------
