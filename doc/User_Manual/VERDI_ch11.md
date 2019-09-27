@@ -71,8 +71,12 @@ Figure 48. Configure Plot, Titles Tab<br>
 
 -   **Color Map** **tab:** This tab is available for only the Tile and Areal Interpolation Plots (see PDF:([Fig-@fig:Figure49]) or GitHub:[Figure 49](#Figure49)). This tab provides many widgets for you to configure your legend colors, break points, range, etc. You can select the number of tiles, the palette type to be used, the color interval, the number format, and the scale.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure49></a>
 Figure 49. Configure Plot, Color Map Tab<br>
+
+<!-- END COMMENT -->
 
 ![Configure Plot, Color Map Tab](./media/image049.png){#fig:Figure49}
 
@@ -111,8 +115,12 @@ Figure 49. Configure Plot, Color Map Tab<br>
 
 -   **Labels** **tab:** PDF:([Fig-@fig:Figure50]) or GitHub:[Figure 50](#Figure50)) shows widgets for you to edit more labels on your plot. There are four tabs through which you can edit the labels of the Domain Axis (x-axis), the Range Axis (y-axis), Legend, and Footer.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure50></a>
 Figure 50. Configure Plot, Labels Tab<br>
+
+<!-- END COMMENT -->
 
 ![Configure Plot, Labels Tab](./media/image050.png){#fig:Figure50}
 
@@ -121,9 +129,13 @@ Figure 50. Configure Plot, Labels Tab<br>
 
 -   **Range Axis:** All the widgets on this tab are the same as on the Domain Axis tab. You are just making the changes for the Range Axis. PDF:([Fig-@fig:Figure52]) or GitHub:[Figure 52](#Figure52)) shows an example plot where the number of Tick Labels has been reduced in both the Range Axis and the Legend, but the number of tick labels has not been reduced in the Domain Axis.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure52></a>
 <center>
 Figure 52. Example Plot with Selected Tick Marks for Range Axis and Legend<br>
+
+<!-- END COMMENT -->
 
 ![Example Plot with Selected Tick Marks for Range Axis and Legend](./media/image052.png){#fig:Figure52}
 
@@ -136,9 +148,12 @@ Figure 52. Example Plot with Selected Tick Marks for Range Axis and Legend<br>
 
 -   **Other** **tab:** As shown in PDF:([Fig-@fig:Figure51]) or GitHub:[Figure 51](#Figure51)), use the widgets on this tab to enable or disable showing the grid lines, to select the color of grid lines, and to select the series color.
 
+<!-- BEGIN COMMENT -->
 
 <a id=Figure51></a>
 Figure 51. Other Tab<br>
+
+<!-- END COMMENT -->
 
 ![Other Tab](./media/image051.png){#fig:Figure51}
 
@@ -170,23 +185,39 @@ To load a chart theme, select the **Configure** menu on the plot and then the **
 
 To edit a chart theme, select the **Configure** menu on the plot and then the **Edit Chart Theme** menu item. An **Edit Chart Theme** dialog frame opens. The top part of the Dialog is shown in PDF:([Fig-@fig:Figure53]) or GitHub:[Figure 53](#Figure53); use the slider to view the bottom portion of the Dialog as shown in PDF:([Fig-@fig:Figure54]) or Github:[Figure 54](#Figure54). Click **Select** next to the Text item you would like to change and a Select Font Dialog opens PDF:([Fig-@fig:Figure55]) or GitHub:([Figure 55](#Figure55)). To change the color of an item, click Select next to it, and a Select Color Dialog frame opens PDF:([Fig-@fig:Figure56]) or GitHub:([Figure 56](#Figure56)). Click Apply at any time to see your changes. When you are finished click OK to close the Edit Chart Theme window.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure53></a>
 Figure 53. Top Portion of Edit Chart Theme Window<br>
 
+<!-- END COMMENT -->
+
 ![Top Portion of Edit Chart Theme Window](./media/image053.png){#fig:Figure53}
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure54></a>
 Figure 54. Bottom Portion of Edit Chart Theme (Bg=background, Grdln=grid line)<br>
 
+<!-- END COMMENT -->
+
 ![Bottom Portion of Edit Chart Theme (Bg=background, Grdln=grid line)](./media/image054.png){#fig:Figure54}
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure55></a>
 Figure 55. Select Font in Edit Chart Theme Window<br>
 
+<!-- END COMMENT -->
+
 ![Select Font in Edit Chart Theme Window](./media/image055.png){#fig:Figure55}
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure56></a>
 Figure 56. Select Color in Edit Chart Theme Window<br>
+
+<!-- END COMMENT -->
 
 ![Select Color in Edit Chart Theme Window](./media/image056.png){#fig:Figure56}
 
@@ -195,8 +226,12 @@ Figure 56. Select Color in Edit Chart Theme Window<br>
 
 To edit a chart theme, select **Save Chart Theme** option from the Configure menu on the plot. A **Save** Dialog will open PDF:([Fig-@fig:Figure57]) or GitHub:([Figure 57](#Figure57))
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure57></a>
 Figure 57. Save Dialog<br>
+
+<!-- END COMMENT -->
 
 ![Save Dialog](./media/image057.png){#fig:Figure57}
 
@@ -210,8 +245,12 @@ The **Controls** pull-down menu contains the following options: Zoom, Probe, Set
 
 To zoom in and enlarge a subdomain of the plot, select the **Zoom** option. Then use your left mouse button to draw a rectangle around your region of interest on the plot. To zoom out click on the chart using your right mouse button to bring up the context menu PDF:([Fig-@fig:Figure58]) or GitHub:([Figure 58](#Figure58)). Move your cursor over either Zoom Out or Max Zoom Out and press the left mouse button. The Zoom Out selection performs a step zoom and the Max Zoom Out selection zooms out to the full extent of the plot.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure58></a>
 Figure 58. Right-Click on Tile Plot to Zoom Out<br>
+
+<!-- END COMMENT -->
 
 ![Right-Click on Tile Plot to Zoom Out](./media/image058.png){#fig:Figure58}
 
@@ -225,8 +264,12 @@ To determine the data value at a specific point or within a subregion, select th
 
 To probe a single data point, use the mouse to hover the cursor over a single point on the plot (e.g., one value on a time series plot, one grid cell on a tile plot); the coordinates of the point are shown in the lower right-hand side of the plot in the format (column, row) or (longitude, latitude) if you have selected Show Lat/Lon. Once you click on the grid point of interest, the value of the datum at that grid point is displayed in the lower left-hand area of VERDI main window PDF:([Fig-@fig:Figure60]) or GitHub:([Figure 60](#Figure60)) in the format (time step, layer, row, column):value.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure60></a>
 Figure 60. Click on Plot to Probe: Data Value Shown in Lower Left of VERDI, Latitude/Longitude Values Shown in Lower Right<br>
+
+<!-- END COMMENT -->
 
 ![Click on Plot to Probe: Data Value Shown in Lower Left of VERDI, Latitude/Longitude Values Shown in Lower Right](./media/image060.png){#fig:Figure60}
 
@@ -234,8 +277,12 @@ Figure 60. Click on Plot to Probe: Data Value Shown in Lower Left of VERDI, Lati
 
 When you have Probe selected you can examine the values of a region of locations. Use your mouse to draw a rectangle on the plot by clicking on a location, dragging the mouse to the opposite corner of your desired rectangle, and then releasing the mouse button. VERDI will create a data window displaying the grid values and will place it in the plot area of the VERDI main window as a tabbed window PDF:([Fig-@fig:Figure61]) or GitHub:([Figure 61](#Figure61)). The File&gt;Export menu option at the top of the spreadsheet allows you to save probed data as a comma-delimited text file (\*.csv).
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure61></a>
 Figure 61. Data Window Showing Probed Values for Region of Interest<br>
+
+<!-- END COMMENT -->
 
 ![Data Window Showing Probed Values for Region of Interest](./media/image061.png){#fig:Figure61}
 
@@ -243,8 +290,12 @@ Figure 61. Data Window Showing Probed Values for Region of Interest<br>
 
 The **Controls&gt;Set Row and Column Ranges** menu item displays a popup window that allows you to configure the minimum and maximum values used in the columns (\*x*-axis domain) and rows (\*y*-axis range) PDF:([Fig-@fig:Figure62]) or GitHub: ([Figure 62](#Figure62) and [Figure 62](#Figure62)). Specify the values and then click **OK** to redraw the plot.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure62></a>
 Figure 62. Select Set Row and Column Ranges<br>
+
+<!-- END COMMENT -->
 
 ![Select Set Row and Column Ranges](./media/image062.png){#fig:Figure62}
 
@@ -253,8 +304,12 @@ Figure 62. Select Set Row and Column Ranges<br>
 
 Use the Show Grid Lines selection on the Controls menu if you want to have grid lines overlaid on your plot. PDF:([Fig-@fig:Figure63]) or GitHub: [Figure 63](#Figure63) shows one reason for wanting grid lines. There is a set of grid cells with relatively high ozone values for the selected time step and layer. By zooming in on the plot and then showing the grid lines, the individual cells can be identified for further analysis.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure63></a>
 Figure 63. Show Grid Lines on a Tile Plot<br>
+
+<!-- END COMMENT -->
 
 ![Show Grid Lines on a Tile Plot](./media/image063.png){#fig:Figure63}
 
@@ -262,8 +317,12 @@ Figure 63. Show Grid Lines on a Tile Plot<br>
 
 To view the latitude and longitude values for a point on the plot, select the Show Lat/Lon option on the **Controls** menu. Then, hover your cursor over a location to see its latitude and longitude. The lat/lon coordinates are displayed in the lower right-hand side of the window PDF:([Fig-@fig:Figure64]) or GitHub: ([Figure 64](#Figure64)). The option to display the lat/lon coordinates may be selected, and works with either the Zoom or the Probe option.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure64></a>
 Figure 64. Lat/Lon Values Shown in Lower Right of VERDI<br>
+
+<!-- END COMMENT -->
 
 ![Lat/Lon Values Shown in Lower Right of VERDI](./media/image064.png){#fig:Figure64}
 
@@ -273,8 +332,12 @@ Figure 64. Lat/Lon Values Shown in Lower Right of VERDI<br>
 
 The **Plot** pull-down menu PDF:([Fig-@fig:Figure65]) or GitHub: ([Figure 65](#Figure65)) contains the following options: Time Series of Probed Cell(s), Time Series Bar of Probed Cell(s), Time Series of Min. Cell(s), Time Series of Max. Cell(s), Animate Plot, and Add Overlay. NOTE: The Time Series of Probed Cells and the Time Series Bar of Probed Cells selections are grayed out until you select a grid cell or multiple grid cells using the Controls&gt;Probe menu selection.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure65></a>
 Figure 65. Plot Menu Options<br>
+
+<!-- END COMMENT -->
 
 ![Plot Menu Options](./media/image065.png){#fig:Figure65}
 
@@ -287,8 +350,12 @@ The Time Series of Probed Cell(s) and Time Series Bar of Probed Cell(s) allows t
 
 You can create an animated plot by selecting the Animate Plot option. The Time Series and Time Series Bar Plots do not have an Animate Plot option. The plots that may be animated include: Tile, Areal Interpolation, Vertical Cross Section, and Contour Plot. An Animate Plot dialog box PDF:([Fig-@fig:Figure66]) or GitHub:([Figure 66](#Figure66)) appears, allowing you to save animations either as an animated GIF with a file extension of .gif or as a QuickTime movie with a file extension of .mov. This **Plot** menu option is plot-specific and so does not allow you to animate more than one plot at a time. To animate multiple plots, you will need to use the **Plots** pull-down menu at the top of the VERDI main window; see Section 5.2.2, “Animate Tile Plots.”
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure66></a>
 Figure 66. Animate Plot Dialog Box<br>
+
+<!-- END COMMENT -->
 
 ![Animate Plot Dialog Box](./media/image066.png){#fig:Figure66}
 
@@ -322,13 +389,21 @@ Repeat the above process to add multiple variables. To remove the symbols for a 
 
 The center of the observational data point corresponds to the lat/lon value that is provided in the I/O API observational data file. If observations are collocated, they are placed on top of one another. If that happens you may want to select different symbols or sizes for each dataset and place them from largest on the bottom to smallest on the top.<span id="_Ref401855228" class="anchor"></span>
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure67></a>
 Figure 67. Tile Plot Observation Dialog<br>
 
+<!-- END COMMENT -->
+
 ![Tile Plot Observation Dialog](./media/image067.png){#fig:Figure67}
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure68></a>
 Figure 68. Tile Plot with Observational Data Overlay<br>
+
+<!-- END COMMENT -->
 
 ![Tile Plot with Observational Data Overlay](./media/image068.png){#fig:Figure68}
 
@@ -353,15 +428,23 @@ NOTE: At this time you cannot control how the vectors are displayed, and there i
 
 Currently, vectors are plotted in the center of the grid cell. UWIND and VWIND are typically obtained from METCRO3D, which are defined at dot points or cell corners. Plotting the wind vector at their calculated locations will be added to the Tile Plot in a future release.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure69></a>
 Figure 69. Vector Overlay Dialog Box<br>
+
+<!-- END COMMENT -->
 
 ![Vector Overlay Dialog Box](./media/image069.png){#fig:Figure69}
 
 An example of an ozone concentration Tile Plot with a wind vector overlay is shown in Figure PDF:[Fig-@fig:Figure70] or GitHub:[Figure 70](#Figure70). The length of each vector is proportional to its length. The direction of the vector is calculated from the direction and magnitudes of its two components. This figure illustrates how the wind changes speed and direction in this portion of the modeling domain for layer 1, time step 1.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure70></a>
 Figure 70. Wind Vector Overlay on an Ozone Tile Plot<br>
+
+<!-- END COMMENT -->
 
 ![Wind Vector Overlay on an Ozone Tile Plot](./media/image070.png){#fig:Figure70}
 
@@ -377,8 +460,12 @@ Use the **Add Maps Layers** option in the **GIS Layers** menu to add maps to a T
 
 A selection of default maps—including World, North America. USA States, USA Counties, HUCs, Rivers, and Roads—can be selected or deselected by clicking on the respective menu selection. A check mark then appears or disappears next to the chosen map name, and the selected map appears on the plot.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure71></a>
 Figure 71. Add Map Layers<br>
+
+<!-- END COMMENT -->
 
 ![Add Map Layers](./media/image071.png){#fig:Figure71}
 
@@ -388,8 +475,12 @@ As of VERDI 1.6, the Tile Plot and Areal Interpolation Plot use the Shapefile fo
 
 To show an additional map on the plot, select the **Configure GIS Layers** option in the **GIS Layers** menu. When you click on this item, a dialog box titled Manage Layers gives you the following options: Move Up, Move Down, and Remove Layer PDF:([Fig-@fig:Figure72]) or GitHub:([Figure 72](#Figure72)). The Edit Layer option has been greyed out.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure72></a>
 Figure 72. Manage Layers Dialog Box<br>
+
+<!-- END COMMENT -->
 
 ![Manage Layers Dialog Box](./media/image072.png){#fig:Figure72}
 

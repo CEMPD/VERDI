@@ -16,23 +16,39 @@ For the I/O API, support for Lambert conformal conic (LCC) map projection, Unive
 
 Users that need VERDI to support other projections are encouraged to provide small input datasets as attachments to emails to the m3user listserv, or to github.com/CEMPD/VERDI/issues, for testing and to facilitate future development efforts. [Figure 12-1](#Figure12-1) through [Figure 12-4](#Figure12-4) illustrate sample plots generated for datasets with LCC, polar stereographic, Mercator, and UTM map projections, respectively.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure12-1></a>
 Figure 12-1. Lambert Conformal Conic Map Projection Example Plot<br>
 
+<!-- END COMMENT -->
+
 ![Figure12-1](./media/image073.png)
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure12-2></a>
 Figure 12-2. Polar Stereographic Map Projection Example Plot<br>
 
+<!-- END COMMENT -->
+
 ![Figure12-2](./media/image074.png)
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure12-3></a>
 Figure 12-3. Mercator Map Projection Example Plot<br>
 
+<!-- END COMMENT -->
+
 ![Figure12-3](./media/image075.png)
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure12-4></a>
 Figure 12-4. UTM Map Projection Example Plot<br>
+
+<!-- END COMMENT -->
 
 ![Figure12-4](./media/image076.png)
 
@@ -42,29 +58,44 @@ CAMx Gridded Data Convention
 
 The netCDF-java library used in VERDI includes support for CAMx UAM-IV binary files using a preset default projection. CAMx or UAM binary files contain information about the x and y offsets from the center of the projection in meters, but do not contain information about the projection. The projection information is available in separate diagnostic files, which are part of the CAMx output along with the UAM binaries ([Figure 12-5](#Figure12-5)).
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure12-5></a>
 Figure 12-5. Example CAMx diagnostic text file<br>
+
+<!-- END COMMENT -->
 
 ![Figure12-5](./media/image077.png)
 
 
 The netCDF-java library writes the default projection information to a text file in the directory where the CAMx binary (UAM-IV) file is located. You can then review and edit the projection information to make it consistent with the projection specified in the CAMx diagnostic text files. The definitions of the projection parameters used in the camxproj.txt file are defined using Models-3 I/O API format https://www.cmascenter.org/ioapi/documentation/3.1/html/GRIDS.html. You must edit the camxproj.txt file to match the grid description information provided in the corresponding camx.diag file. [Figure 12-6](#Figure12-6) shows the definition for the grid projection parameters for a Lambert conformal conic projection.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure12-6></a>
 Figure 12-6. Models-3 I/O API Map Projection Parameters for Lambert Conformal Conic Projection<br>
+
+<!-- END COMMENT -->
 
 ![Figure12-6](./media/image078.png)
 
 [Figure 12-7](#Figure12-7) shows the values of the camxproj.txt after editing it to match the values of the camx.diag file (**Error! Reference source not found.**) using the definitions of the Models-3 grid parameters (**Error! Reference source not found.**). [Figure 12-8](#Figure12-8) shows the resulting Tile Plot of the CAMx sample dataset.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure12-7></a>
 Figure 12-7. Edited Example Projection File: camxproj.txt<br>
 
+<!-- END COMMENT -->
+
 ![Figure12-7](./media/image079.png)
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure12-8></a>
 Figure 12-8. CAMx Example Plot<br>
 
+<!-- END COMMENT -->
 ![Figure12-8](./media/image080.png)
 
 WRF netCDF Data Convention

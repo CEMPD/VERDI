@@ -16,8 +16,12 @@ If you have previously configured this VERDI installation, use Windows Explorer 
 
 Next, navigate to where you installed VERDI on your computer. You see the **run.bat** file. Its contents are shown in PDF:([Fig-@fig:Figure7]) or GitHub:[Figure 7](#Figure7). If you have previously executed this VERDI installation, just type **run** and press the **Enter** key. Otherwise, you may need to customize some of the settings in this file for your configuration. If so, edit your run.bat in a text editor such as Notepad.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure7></a>
 Figure 7. Starting VERDI in Windows<br>
+
+<!-- END COMMENT -->
 
 ![Starting VERDI in Windows](./media/image007.png){#fig:Figure7}
 
@@ -41,8 +45,12 @@ To the right of these three shortcut icons are buttons that list all of the avai
 
 Below the icons and plot buttons, the VERDI window is divided into two main areas: a parameters area consisting of tabbed panes on the left side and a plots area on the right side. You can resize the entire window with your mouse. You can also resize the tabbed pane separately from the plot area by placing your mouse over the dividing line between them and then moving it to the left or the right. If you want, you can separate the tabbed pane into 3 panes by using your mouse to hold onto the pane’s title bar and then move it slightly out of alignment. To reassemble the 3 panes into a tabbed pane, use your mouse to hold onto the title bar of one pane, drag it until its outline fills the outline of another pane, and then release the mouse.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure8></a>
 Figure 8. VERDI Main Window<br>
+
+<!-- END COMMENT -->
 
 ![VERDI Main Window](./media/image008.png){#fig:Figure8}
 

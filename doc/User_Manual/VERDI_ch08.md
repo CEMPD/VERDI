@@ -55,23 +55,38 @@ Areal Interpolation
 
 When you select the Areal Interpolation Plot, your selected formula is remapped over the polygon areas that are listed in the **Areas** pane. To select a subset of the polygon areas, and view the average and total values for selected formulas, see Section 10.2: Areal Interpolation Plot.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure 20></a>
 Figure 20. Areas Pane<br>
 
+<!-- END COMMENT -->
+
 ![Areas Pane](./media/image020.png){#fig:Figure20}
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure21></a>
 Figure 21. Open Area File Browser<br>
 
+<!-- END COMMENT -->
 ![Open Area File Browser](./media/image021.png){#fig:Figure21}
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure22></a>
 Figure 22. Open Area File: Select Name Field<br>
 
+<!-- END COMMENT -->
+
 ![Open Area File: Select Name Field](./media/image022.png){#fig:Figure22}
+
+<!-- BEGIN COMMENT -->
 
 <a id=Figure23></a>
 Figure 23. Area Name Fields in Current Shapefile<br>
+
+<!-- END COMMENT -->
 
 ![Area Name Fields in Current Shapefile](./media/image023.png){#fig:Figure23}
 

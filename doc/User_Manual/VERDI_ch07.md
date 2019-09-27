@@ -14,8 +14,12 @@ Adding and Removing a Formula
 
 After loading the desired gridded datasets, you can use the variables in them to create formulas. To use a variable to create a simple formula, double click on the name of the variable. This will add the formula &lt;Variable Name&gt;[&lt;Dataset Number&gt;] to the formula list in the **Formulas** pane—for example, O3[1]. To add a variable to the formula editor window, highlight the variable, **right click** on the variable name in the **Datasets** pane, and select **Add Variable(s) to Formula Editor**. To add all or a subset of variables from the **Dataset** pane to the formula editor window, click on the first variable to highlight it, hold the Shift key down and click at the last variable that you want to include, then right click and select **Add Variables(s)**. The formulas that are highlighted using this method will be added to the formula editor PDF:([Fig-@fig:Figure19])) or GitHub:([Figure 19](#Figure19)).
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure19></a>
 Figure 19. Adding Multiple Variables to Formula Editor<br>
+
+<!-- END COMMENT -->
 
 ![Adding Multiple Variables to Formula Editor](./media/image019.png){#fig:Figure19}
 

@@ -55,8 +55,12 @@ Within the **Animate Plots** dialog box, you can **select plot(s)** to animate b
 
 You can choose to animate a single plot, or animate multiple plots synchronously. To view multiple animated plots synchronously, undock the plots (see Section 5.2.1) and arrange them so that they are located side by side for visual comparison during the animation. NOTE: The underlying number of time steps must match or the Start button will not activate (PDF:([Fig-@fig:Figure9])) or  GitHub: [Figure 9](#Figure9)).
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure9></a>
 Figure 9. Selected plots must have matching time steps.<br>
+
+<!-- END COMMENT -->
 
 ![Selected plots must have matching time steps](./media/image009.png){#fig:Figure9}
 
@@ -66,8 +70,12 @@ To create an animated GIF, check the **Make Animated GIF(s)** option in the **An
 
 Creating a QuickTime movie is also an option, but this is not done through the **Plots&gt;Animate Tile Plots** main menu option. Instead, use the **Plot** menu option found at the top of each individual plot to make a QuickTime movie.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure10></a>
 Figure 10 Animate Plots Dialog and Tile Plots<br>
+
+<!-- END COMMENT -->
 
 ![Animate Plots Dialog and Tile Plots](./media/image010.png){#fig:Figure10}
 

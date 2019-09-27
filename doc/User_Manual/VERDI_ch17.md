@@ -9,15 +9,23 @@
 
 To open the Script Editor, use File&gt;View Script Editor ([Figure 17-1](#Figure17-1)). Prior running a batch script, remove all datasets from the dataset list. To remove a dataset, click on each dataset in the dataset panel and press the yellow minus button.
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure17-1></a>
 Figure 17-1. File: View Script Editor<br>
+
+<!-- BEGIN COMMENT -->
 
 ![Figure17-1](./media/image081.png)
 
 An **Open** popup window will be displayed, click on a sample script file in the VERDI_2.0/data/scripts directory ([Figure 17-2](#Figure17-2)).
 
+<!-- BEGIN COMMENT -->
+
 <a id=Figure17-2></a>
 Figure 17-2. Open Popup Window<br>
+
+<!-- BEGIN COMMENT -->
 
 ![Figure17-2](./media/image082.png)
 
