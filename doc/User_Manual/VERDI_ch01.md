@@ -158,7 +158,7 @@ First comment line...
 //
 //
 **Figures**
-* [Figure 1‑1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.](#Figure1-1)
+* [Figure 1‑1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.](#Figure1/-1)
 * [Figure 1‑2. Bottom of VERDI Page](#Figure1-2)
 * [Figure 1‑3. Downloading VERDI from the CMAS Web Site, Step 2.]((#Figure1-3)
 * [Figure 1‑4. Downloading VERDI from the CMAS Web Site, Step 3](#Figure1-4)
@@ -307,7 +307,7 @@ Use pulldown menu to select VERDI product to view its FAQs.
  Where to Obtain VERDI
 ----------------------
 
-You can download the latest version of VERDI from <https://www.cmascenter.org/verdi/> (see [Figure 1‑1](#Figure1-1) and [Figure 1‑2](#Figure1-2)). When you click on DOWNLOAD to download VERDI, you will be sent to the CMAS Model Download Center. To download and install VERDI, follow the instructions below, beginning at step 4. Alternatively, you may also begin at the CMAS web site <https://www.cmascenter.org>, and follow the instructions below:
+You can download the latest version of VERDI from <https://www.cmascenter.org/verdi/> (see [Figure 1--1](#Figure1-1) and [Figure 1‑2](#Figure1-2)). When you click on DOWNLOAD to download VERDI, you will be sent to the CMAS Model Download Center. To download and install VERDI, follow the instructions below, beginning at step 4. Alternatively, you may also begin at the CMAS web site <https://www.cmascenter.org>, and follow the instructions below:
 
 1.  Log in using an existing CMAS account, or create a new CMAS account.
 
