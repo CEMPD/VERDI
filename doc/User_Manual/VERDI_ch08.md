@@ -43,12 +43,12 @@ Shapefiles for areal interpolation must use units of degrees (not meters) and sh
 Adding and Removing an Area File
 --------------------------------
 
-<span id="_Toc241299380" class="anchor"></span>To load a shapefile, press the yellow **plus** button at the top left corner of the **Areas** pane (Figure 8‑1). A file browser (Figure 8‑2) allows you to change directories and select a shapefile file for use in VERDI. Click on the shapefile name and click **Next**. The **Open Area** popup window is displayed next, allowing you to select the name of the field to read from the file. Use the pull-down menu and click on the Name Field (Figure 8‑3) to be used. Each shapefile has a projection file associated with it (e.g., myFile.shp also has myFile.prj). After specifying the Name Field, select **Finish**. The resulting plot will be in the same projection as the gridded information used in the plot.
+<span id="_Toc241299380" class="anchor"></span>To load a shapefile, press the yellow **plus** button at the top left corner of the **Areas** pane (Figure 8-1). A file browser (Figure 8-2) allows you to change directories and select a shapefile file for use in VERDI. Click on the shapefile name and click **Next**. The **Open Area** popup window is displayed next, allowing you to select the name of the field to read from the file. Use the pull-down menu and click on the Name Field (Figure 8-3) to be used. Each shapefile has a projection file associated with it (e.g., myFile.shp also has myFile.prj). After specifying the Name Field, select **Finish**. The resulting plot will be in the same projection as the gridded information used in the plot.
 
 Areas List
 ----------
 
-The shapefile name(s) are listed in the top panel of the **Areas** pane, and the name fields for the polygons provided in the shapefile(s) are listed in the panel underneath (see Figure 8‑4). The actual model data are not loaded until the Areal Interpolation plots are created. As additional shapefiles are added, the name fields associated with each shapefile are appended to the bottom of the Areas list. Use the scrollbar on the right side of the **Areas** pane to view the additional name fields that are available. To remove a shapefile, click on the name of the shapefile and press the yellow **minus** button at the top left corner of the **Areas** pane.
+The shapefile name(s) are listed in the top panel of the **Areas** pane, and the name fields for the polygons provided in the shapefile(s) are listed in the panel underneath (see Figure 8-4). The actual model data are not loaded until the Areal Interpolation plots are created. As additional shapefiles are added, the name fields associated with each shapefile are appended to the bottom of the Areas list. Use the scrollbar on the right side of the **Areas** pane to view the additional name fields that are available. To remove a shapefile, click on the name of the shapefile and press the yellow **minus** button at the top left corner of the **Areas** pane.
 
 Areal Interpolation
 -------------------
@@ -56,22 +56,22 @@ Areal Interpolation
 When you select the Areal Interpolation Plot, your selected formula is remapped over the polygon areas that are listed in the **Areas** pane. To select a subset of the polygon areas, and view the average and total values for selected formulas, see Section 10.2: Areal Interpolation Plot.
 
 <a id=Figure8-1></a>
-Figure 8‑1. Areas Pane<br>
+Figure 8-1. Areas Pane<br>
 
 ![Figure8-1](./media/image020.png)
 
 <a id=Figure8-2></a>
-Figure 8‑2. Open Area File Browser<br>
+Figure 8-2. Open Area File Browser<br>
 
 ![Figure8-2](./media/image021.png)
 
 <a id=Figure8-3></a>
-Figure 8‑3. Open Area File: Select Name Field<br>
+Figure 8-3. Open Area File: Select Name Field<br>
 
 ![Figure8-3](./media/image022.png)
 
 <a id=Figure8-4></a>
-Figure 8‑4. Area Name Fields in Current Shapefile<br>
+Figure 8-4. Area Name Fields in Current Shapefile<br>
 
 ![Figure8-4](./media/image023.png)
 
