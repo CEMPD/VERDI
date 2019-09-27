@@ -307,9 +307,7 @@ Use pulldown menu to select VERDI product to view its FAQs.
  Where to Obtain VERDI
 ----------------------
 
-You can download the latest version of VERDI from <https://www.cmascenter.org/verdi/> (see [Figure 1-1](#Figure1-2) and [Figure 1-2](#Figure1-2)). When you click on DOWNLOAD to download VERDI, you will be sent to the CMAS Model Download Center. To download and install VERDI, follow the instructions below, beginning at step 4. Alternatively, you may also begin at the CMAS web site <https://www.cmascenter.org>, and follow the instructions below:
-
-[Figure:lalune](#fig:lalune).
+You can download the latest version of VERDI from <https://www.cmascenter.org/verdi/> (see ([@fig:Figure1-1]) and [Figure 1-2](#Figure1-2)). When you click on DOWNLOAD to download VERDI, you will be sent to the CMAS Model Download Center. To download and install VERDI, follow the instructions below, beginning at step 4. Alternatively, you may also begin at the CMAS web site <https://www.cmascenter.org>, and follow the instructions below:
 
 
 1.  Log in using an existing CMAS account, or create a new CMAS account.
@@ -322,16 +320,11 @@ You can download the latest version of VERDI from <https://www.cmascenter.org/ve
 
 5.  As shown in [Figure 1-4](#Figure1-4) follow the links to the appropriate version of the Linux, Mac, or Windows installation files. Links are also available for the current version of the documentation.
 
-<div id="fig:lalune">
-![A voyage to the moon\label{fig:lalune}](lalune.jpg)
-
-</div>
-
 
 <a id=Figure1-1></a>
 Figure 1-1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.<br>
 
-![Figure 1-1](./media/image001.png)
+![VERDI Download Page](./media/image001.png){#fig:Figure1-1}
 
 <a id=Figure1-2></a>
 Figure 1-2. Bottom of VERDI Page<br>
