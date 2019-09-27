@@ -20,14 +20,14 @@ NetCDF and I/O API files are portable across computing platforms. This means tha
 
 ###  Observational Data Formats
 
-VERDI can use observational data in either using ASCII file or created using Models-3 I/O API. An ASCII file needs to have data in tab-separated columns. The first four columns need to be in the order shown in [Figure 6-1](#Figure6-1). VERDI allows the user to specify an alphanumeric value (either numbers and/or letters) for the fourth column (Station ID). One or more additional columns must have the header format 'name(units)'. Spreadsheet programs can be used to edit and write the files by choosing ASCII output; be certain to designate **tab** as the delimiting character (instead of comma). Data within a column must be complete, because empty fields prevent VERDI from reading the observational data.
+VERDI can use observational data in either using ASCII file or created using Models-3 I/O API. An ASCII file needs to have data in tab-separated columns. The first four columns need to be in the order shown in PDF:([Fig-@fig:Figure11])) or GitHub:[Figure 11](#Figure11). VERDI allows the user to specify an alphanumeric value (either numbers and/or letters) for the fourth column (Station ID). One or more additional columns must have the header format 'name(units)'. Spreadsheet programs can be used to edit and write the files by choosing ASCII output; be certain to designate **tab** as the delimiting character (instead of comma). Data within a column must be complete, because empty fields prevent VERDI from reading the observational data.
 
 Observational data in ASCII format can be obtained from many data sources, including EPA’s Remote Sensing Information Gateway - RSIG (<https://www.epa.gov/hesc/remote-sensing-information-gateway>). To use a consistent set of units for the model data and the observational data, you may need to import the ASCII data into a tool (e.g., a spreadsheet or database program) and perform a unit conversion. VERDI doesn’t allow the user to use an observational variable to create a formula, so conversions to different units must be performed before loading the data into VERDI.
 
-<a id=Figure6-1></a>
-Figure 6-1. Example observational data file showing format.
+<a id=Figure11></a>
+Figure 11. Example observational data file showing format.
 
-![Figure6-1](./media/image011.png)
+![Example observational data file showing format](./media/image011.png){#fig:Figure11}
 
 
 Alternatively, you can use a converter such as AIRS2M3 (see Chapter 13) to convert ASCII observational data into I/O API "observational-data" files.
@@ -64,43 +64,43 @@ These datasets may be used to recreate example plots that are provided in this u
 Adding and Removing a Dataset from a Local File System
 ------------------------------------------------------
 
-To load a data set from a local file system, press the yellow **plus** button at the top of the **Datasets** pane. A file browser ([Figure 6-2](#Figure6-2)) allows you to select a dataset for use in VERDI. Support for loading data from a remote file system was added beginning in version 1.4. The use of the yellow **plus remote** button will be discussed in Section 6.4.
+To load a data set from a local file system, press the yellow **plus** button at the top of the **Datasets** pane. A file browser PDF:([Fig-@fig:Figure12])) or GitHub:([Figure 12](#Figure12)) allows you to select a dataset for use in VERDI. Support for loading data from a remote file system was added beginning in version 1.4. The use of the yellow **plus remote** button will be discussed in Section 6.4.
 
-After you select a dataset, VERDI loads header information and displays the available variables, time steps, layers, and domain used by the file in the **Datasets** pane ([Figure 6-3](#Figure6-3)). (The actual model data are not loaded until later, when plots are created.) To view the variables for a particular dataset that has been loaded, click on the dataset name in the list to highlight it, and the variables will be listed in the panel below.
+After you select a dataset, VERDI loads header information and displays the available variables, time steps, layers, and domain used by the file in the **Datasets** pane PDF:([Fig-@fig:Figure13])) or GitHub:([Figure 13](#Figure13)). (The actual model data are not loaded until later, when plots are created.) To view the variables for a particular dataset that has been loaded, click on the dataset name in the list to highlight it, and the variables will be listed in the panel below.
 
 Datasets can be removed by highlighting the name of the dataset in the dataset list and pressing the yellow **minus** button. Note that although the dataset will be removed, the number that was assigned to that dataset will not be reused by VERDI during the current session (unless there had been only one dataset loaded, and it was removed; in that case the next dataset that is loaded will be labeled number 1).
 
-<a id=Figure6-2></a>
-Figure 6-2. Open Dataset File Browser<br>
+<a id=Figure12></a>
+Figure 12. Open Dataset File Browser<br>
 
-![Figure6-2](./media/image012.png)
+![Open Dataset File Browser](./media/image012.png){#fig:Figure12}
 
-<a id=Figure6-3></a>
-Figure 6-3. Datasets Pane Displaying Information about a Dataset<br>
+<a id=Figure13></a>
+Figure 13. Datasets Pane Displaying Information about a Dataset<br>
 
-![Figure6-3](./media/image013.png)
+![Datasets Pane Displaying Information about a Dataset](./media/image013.png){#fig:Figure13}
 
 Adding and Removing a Dataset from a Remote File System
 -------------------------------------------------------
 
-VERDI provides users with the ability to select and add variables from datasets on remote file systems. To do this, press the yellow **plus remote** (plus with a diagonal arrow) button at the top of the **Datasets** pane. In the Remote File Access Browser (Figure 6-4) that appears, enter your user name, choose a host from the list, and enter your password, then click **Connect**.
+VERDI provides users with the ability to select and add variables from datasets on remote file systems. To do this, press the yellow **plus remote** (plus with a diagonal arrow) button at the top of the **Datasets** pane. In the Remote File Access Browser PDF:([Fig-@fig:Figure14])) or GitHub:([Figure 14](#Figure 14)) that appears, enter your user name, choose a host from the list, and enter your password, then click **Connect**.
 
-<a id=Figure6-4></a>
-Figure 6-4. Available Hosts in the Remote File Access Browser<br>
+<a id=Figure14></a>
+Figure 14. Available Hosts in the Remote File Access Browser<br>
 
-![Figure6-4](./media/image014.png)
+![Available Hosts in the Remote File Access Browser](./media/image014.png)
 
 
 ### Remote File Browser
 
-The top panel displays a listing of the home directory on the remote file system, as shown in Figure 6-5. The current path is displayed in the text box and users can edit this information to change to another directory. An alternate way to navigate between directories is using the middle panel. In the middle panel, double click on a directory name to go into that directory, or click on the “../” at the top of the middle panel to navigate up a directory. As you enter a directory, the contents of the directory will be displayed as a list in the middle panel. Directory names are followed by a “/” symbol, while filenames do not have a “/” symbol after them. View the variables within each file of interest by double clicking on the netCDF filename listed in the middle panel. NOTE: if the selected file has a format that is not supported by VERDI then the following message will be displayed in the bottom panel: “Not a valid NetCDF file”. For supported netCDF files, VERDI will provide a list of variables that are available within the file in the bottom panel labeled “Select one or more variables”. To select variables from the list, use your mouse to click on a single variable, or use either the Shift key with the mouse to select a contiguous list of variables, or the Control key with the mouse to select a set of individual variables. Once the variables that you would like VERDI to read are highlighted, click on the **Read** button.
+The top panel displays a listing of the home directory on the remote file system, as shown in PDF:([Fig-@fig:Figure15])) or GitHub:([Figure 15](#Figure 15)). The current path is displayed in the text box and users can edit this information to change to another directory. An alternate way to navigate between directories is using the middle panel. In the middle panel, double click on a directory name to go into that directory, or click on the “../” at the top of the middle panel to navigate up a directory. As you enter a directory, the contents of the directory will be displayed as a list in the middle panel. Directory names are followed by a “/” symbol, while filenames do not have a “/” symbol after them. View the variables within each file of interest by double clicking on the netCDF filename listed in the middle panel. NOTE: if the selected file has a format that is not supported by VERDI then the following message will be displayed in the bottom panel: “Not a valid NetCDF file”. For supported netCDF files, VERDI will provide a list of variables that are available within the file in the bottom panel labeled “Select one or more variables”. To select variables from the list, use your mouse to click on a single variable, or use either the Shift key with the mouse to select a contiguous list of variables, or the Control key with the mouse to select a set of individual variables. Once the variables that you would like VERDI to read are highlighted, click on the **Read** button.
 
-<a id=Figure6-5></a>
-Figure 6-5. Select One or More Variables from Remote Dataset<br>
+<a id=Figure15></a>
+Figure 15. Select One or More Variables from Remote Dataset<br>
 
-![Figure6-5](./media/image015.png)
+![Select One or More Variables from Remote Dataset](./media/image015.png){#fig:Figure15}
 
-The variables read from the remote dataset will be displayed in the dataset and variable browser in the same way that variables from a local dataset are added and displayed within VERDI. The subsetted local dataset names are identical to the file names on the remote host, except for an additional extension that enumerates how many times the remote files were read and saved locally by VERDI (i.e., filename1, filename2, filename3, etc.), as shown in [Figure 6-6](#Figure6-6). To add variables from the same remote dataset, click on the **plus remote** button, and repeat the above procedure.
+The variables read from the remote dataset will be displayed in the dataset and variable browser in the same way that variables from a local dataset are added and displayed within VERDI. The subsetted local dataset names are identical to the file names on the remote host, except for an additional extension that enumerates how many times the remote files were read and saved locally by VERDI (i.e., filename1, filename2, filename3, etc.), as shown in PDF:([Fig-@fig:Figure16])) GitHub:[Figure 16](#Figure16). To add variables from the same remote dataset, click on the **plus remote** button, and repeat the above procedure.
 
 The Remote File Browser retains the login session and the directory that was last accessed by the user to facilitate ease of accessing remote datasets. VERDI increments the numerical extension to the dataset name to indicate that this subset file was created using the same remote dataset, but that the subset file with the new numerical extension may contain a different subset of variables. Note that VERDI does not check to see if the same variable from the same remote dataset has already been read. Also, subset files read in by VERDI are saved either to your home directory on your local file system (e.g., C:\\ Users\\username on a Windows 7 computer), or to the location that is specified in the config.properties file using the verdi.temporary.dir setting. Refer to Section 6.4.2 on how to edit and save the config.properties file.
 
@@ -108,10 +108,10 @@ The files are saved on your local machine to facilitate project management. To b
 
 Remote datasets can be removed from the dataset list in VERDI using the same procedure as for removing local datasets: highlight the name of the dataset in the dataset list and press the yellow **minus** button. Note that although the dataset will be removed from the dataset list, the number that was assigned to that dataset will not be reused by VERDI during the current session.
 
-<a id=Figure6-6></a>
-Figure 6-6. Remote Dataset Labeled with Number at End of the Filename<br>
+<a id=Figure16></a>
+Figure 16. Remote Dataset Labeled with Number at End of the Filename<br>
 
-![Figure6-6](./media/image016.png)
+![Remote Dataset Labeled with Number at End of the Filename](./media/image016.png){#fig:Figure16}
 
 ### Adding Additional Remote Hosts
 
@@ -123,22 +123,22 @@ VERDI contains the RemoteFileUtility and ncvariable programs that enable VERDI t
 
 <!-- -->
 
-1.  Copy the file configure.properties.TEMPLATE to configure.properties. Edit the configure.properties file in the $USER_HOME/verdi directory. Add the name or IP address of the Linux server, preceded by a comma, at the end of the list of machines defined as remote hosts in the configure.properties file, as shown in [Figure 6-7](#Figure6-7). You then need to restart VERDI in order for it to recognize a newly added remote host name.
+1.  Copy the file configure.properties.TEMPLATE to configure.properties. Edit the configure.properties file in the $USER_HOME/verdi directory. Add the name or IP address of the Linux server, preceded by a comma, at the end of the list of machines defined as remote hosts in the configure.properties file, as shown in PDF:([Fig-@fig:Figure17])) or GitHub:[Figure 17](#Figure17). You then need to restart VERDI in order for it to recognize a newly added remote host name.
 
-<a id=Figure6-7></a>
-Figure 6-7. Edit configure.properties File to Add a Remote Host<br>
+<a id=Figure17></a>
+Figure 17. Edit configure.properties File to Add a Remote Host<br>
 
-![Figure6-7](./media/image017.png)
+![Edit configure.properties File to Add a Remote Host](./media/image017.png){#fig:Figure17}
 
 Variables List
 --------------
 
-The variables list shows all of the variables contained in a loaded dataset (see Figure 6-8). To display a variables list, select the name of the dataset of interest in the **Datasets** pane. Each of the variables in the list can be used to create a formula in the **Formula** pane that can then be used to create plots. VERDI allows the user to automatically add a formula by double-clicking on the name of a variable. This automatically creates a formula that contains the variable for the loaded dataset and makes it the default formula for making plots. In addition, you may right-click on the name of the variable to show a popup menu as shown in the middle of the figure. From this menu you can either add the variable as a formula, or you can to add it into the formula editor so that it can be used to compose more complex formulas. Formulas are described in more detail in Chapter 7.
+The variables list shows all of the variables contained in a loaded dataset see PDF:([Fig-@fig:Figure18])) or GitHub:[Figure 18](#Figure18). To display a variables list, select the name of the dataset of interest in the **Datasets** pane. Each of the variables in the list can be used to create a formula in the **Formula** pane that can then be used to create plots. VERDI allows the user to automatically add a formula by double-clicking on the name of a variable. This automatically creates a formula that contains the variable for the loaded dataset and makes it the default formula for making plots. In addition, you may right-click on the name of the variable to show a popup menu as shown in the middle of the figure. From this menu you can either add the variable as a formula, or you can to add it into the formula editor so that it can be used to compose more complex formulas. Formulas are described in more detail in Chapter 7.
 
-<a id=Figure6-8></a>
-Figure 6-8. Right-Click on Variable in Dataset Pane<br>
+<a id=Figure18></a>
+Figure 18. Right-Click on Variable in Dataset Pane<br>
 
-![Figure6-8](./media/image018.png)
+![Right-Click on Variable in Dataset Pane](./media/image018.png){#fig:Figure18}
 
 Time Steps and Layers Panels
 ----------------------------

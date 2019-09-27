@@ -158,60 +158,60 @@ First comment line...
 //
 //
 **Figures**
-* [Figure 1-1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.](#Figure1-1)
-* [Figure 1-2. Bottom of VERDI Page](#Figure1-2)
-* [Figure 1-3. Downloading VERDI from the CMAS Web Site, Step 2.]((#Figure1-3)
-* [Figure 1-4. Downloading VERDI from the CMAS Web Site, Step 3](#Figure1-4)
-* [Figure 1-5. Getting Documentation on VERDI from the CMAS Web Site](#Figure1-5)
-* [Figure 1-6. VERDI Documentation on the CMAS Web Site](#Figure1-6)
-* [Figure 4-1. Starting VERDI in Windows](#Figure4-1)
-* [Figure 4-2. VERDI Main Window](#Figure4-2)
-* [Figure 5-1. VERDI Main Menu Options](#Figure5-1)
-* [Figure 5-2. Selected plots must have matching time steps.](#Figure5-2)
-* [Figure 5-3 Animate Plots Dialog and Tile Plots](#Figure5-3)
-* [Figure 6-1. Example observational data file showing format.](#Figure6-1)
-* [Figure 6-2. Open Dataset File Browser](#Figure6-2)
-* [Figure 6-3. Datasets Pane Displaying Information about a Dataset](#Figure6-3)
-* [Figure 6-4. Available Hosts in the Remote File Access Browser](#Figure6-4)
-* [Figure 6-5. Select One or More Variables from Remote Dataset](#Figure6-5)
-* [Figure 6-6. Remote Dataset Labeled with Number at End of the Filename](#Figure6-6)
-* [Figure 6-7. Edit configure.properties File to Add a Remote Host](#Figure6-7)
-* [Figure 6-8. Right-Click on Variable in Dataset Pane](#Figure6-8)
-* [Figure 7-1. Adding Multiple Variables to Formula Editor](#Figure7-1)
-* [Figure 8-1. Areas Pane](#Figure8-1)
-* [Figure 8-2. Open Area File Browser](#Figure8-2)
-* [Figure 8-3. Open Area File: Select Name Field](#Figure8-3)
-* [Figure 8-4. Area Name Fields in Current Shapefile](#Figure8-4)
-* [Figure 9-1. Specify Time Step Range](#Figure9-1)
-* [Figure 9-2. Edit Layer Range in Formula Pane](#Figure9-2)
-* [Figure 10-1. Tile Plot Example](#Figure10-1)
-* [Figure 10-2. Areal Interpolation Plot: Area Average](#Figure10-2)
-* [Figure 10-3. Areal Interpolation Plot: Area Totals](#Figure10-3)
-* [Figure 10-4. Areal Interpolation Plot: Show Gridded Data](#Figure10-4)
-* [Figure 10-5. Areal Interpolation Plot: Show Selected Areas](#Figure10-5)
-* [Figure 10-6. Areal Values for a Selected Polygon](#Figure10-6)
-* [Figure 10-7. Right Click on Area Plot](#Figure10-7)
-* [Figure 10-8. Area Information in Columns](#Figure10-8)
-* [Figure 10-9. Export to a Text File](#Figure10-9)
-* [Figure 10-10. Name and Save the Text File](#Figure10-10)
-* [Figure 10-11. Export Shapefile](#Figure10-11)
-* [Figure 10-12. Name and Save Shapefile](#Figure10-12)
-* [Figure 10-13. Vertical Cross Section Plot](#Figure10-13)
-* [Figure 10-14. Vertical Cross Section Dialog Box](#Figure10-14)
-* [Figure 10-15. Time Series Plot](#Figure10-15)
-* [Figure 10-16. Time Series Bar Plot](#Figure10-16)
-* [Figure 10-17. Scatter Plot](#Figure10-17)
-* [Figure 10-18. Scatter Plot Dialog Box](#Figure10-18)
-* [Figure 10-19. Scatter Plot Export Data into a CSV file](#Figure10-19)
-* [Figure 10-20. Contour Plot](#Figure10-20)
-* [Figure 10-21. Contour Plot Menu Options](#Figure10-21)
-* [Figure 10-22. Rotated Contour Plot](#Figure10-22)
-* [Figure 11-1. Tile and Areal Interpolation Plot Pull-down Menu Options](#Figure11-1)
-* [Figure 11-2. Vertical Cross Section, Time Series, Time Series Bar, Scatter Plot Pull-down Menu Options](#Figure11-2)
-* [Figure 11-3. Configure Plot, Titles Tab](#Figure11-3)
-* [Figure 11-4. Configure Plot, Color Map Tab](#Figure11-4)
-* [Figure 11-5. Configure Plot, Labels Tab](#Figure11-5)
-* [Figure 11-6. Configure Plot, Other Tab](#Figure11-6)
+* [Figure 1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.](#Figure1)
+* [Figure 2. Bottom of VERDI Page](#Figure2)
+* [Figure 3. Downloading VERDI from the CMAS Web Site, Step 2.]((#Figure3)
+* [Figure 4. Downloading VERDI from the CMAS Web Site, Step 3](#Figure4)
+* [Figure 5. Getting Documentation on VERDI from the CMAS Web Site](#Figure5)
+* [Figure 6. VERDI Documentation on the CMAS Web Site](#Figure6)
+* [Figure 7. Starting VERDI in Windows](#Figure7)
+* [Figure 8. VERDI Main Window](#Figure8)
+* [Figure 9. VERDI Main Menu Options](#Figure9)
+* [Figure 10. Selected plots must have matching time steps.](#Figure10)
+* [Figure 11. Animate Plots Dialog and Tile Plots](#Figure11)
+* [Figure 12. Example observational data file showing format.](#Figure12)
+* [Figure 13. Open Dataset File Browser](#Figure13)
+* [Figure 14. Datasets Pane Displaying Information about a Dataset](#Figure14)
+* [Figure 15. Available Hosts in the Remote File Access Browser](#Figure15)
+* [Figure 16. Select One or More Variables from Remote Dataset](#Figure16)
+* [Figure 17. Remote Dataset Labeled with Number at End of the Filename](#Figure17)
+* [Figure 18. Edit configure.properties File to Add a Remote Host](#Figure18)
+* [Figure 19. Right-Click on Variable in Dataset Pane](#Figure19)
+* [Figure 20. Adding Multiple Variables to Formula Editor](#Figure20)
+* [Figure 21. Areas Pane](#Figure21)
+* [Figure 22. Open Area File Browser](#Figure22)
+* [Figure 23. Open Area File: Select Name Field](#Figure23)
+* [Figure 24. Area Name Fields in Current Shapefile](#Figure24)
+* [Figure 25. Specify Time Step Range](#Figure25)
+* [Figure 26. Edit Layer Range in Formula Pane](#Figure26)
+* [Figure 27. Tile Plot Example](#Figure27)
+* [Figure 28. Areal Interpolation Plot: Area Average](#Figure28)
+* [Figure 29. Areal Interpolation Plot: Area Totals](#Figure29)
+* [Figure 30. Areal Interpolation Plot: Show Gridded Data](#Figure30)
+* [Figure 31. Areal Interpolation Plot: Show Selected Areas](#Figure31)
+* [Figure 32. Areal Values for a Selected Polygon](#Figure32)
+* [Figure 33. Right Click on Area Plot](#Figure33)
+* [Figure 34. Area Information in Columns](#Figure34)
+* [Figure 35. Export to a Text File](#Figure35)
+* [Figure 36. Name and Save the Text File](#Figure36)
+* [Figure 37. Export Shapefile](#Figure37)
+* [Figure 38. Name and Save Shapefile](#Figure38)
+* [Figure 39. Vertical Cross Section Plot](#Figure39)
+* [Figure 40. Vertical Cross Section Dialog Box](#Figure40)
+* [Figure 41. Time Series Plot](#Figure41)
+* [Figure 42. Time Series Bar Plot](#Figure42)
+* [Figure 43. Scatter Plot](#Figure43)
+* [Figure 44. Scatter Plot Dialog Box](#Figure44)
+* [Figure 45. Scatter Plot Export Data into a CSV file](#Figure45)
+* [Figure 46. Contour Plot](#Figure46)
+* [Figure 47. Contour Plot Menu Options](#Figure47)
+* [Figure 48. Rotated Contour Plot](#Figure48)
+* [Figure 49. Tile and Areal Interpolation Plot Pull-down Menu Options](#Figure49)
+* [Figure 50. Vertical Cross Section, Time Series, Time Series Bar, Scatter Plot Pull-down Menu Options](#Figure50)
+* [Figure 51. Configure Plot, Titles Tab](#Figure51)
+* [Figure 52. Configure Plot, Color Map Tab](#Figure52)
+* [Figure 53. Configure Plot, Labels Tab](#Figure53)
+* [Figure 54. Configure Plot, Other Tab](#Figure54)
 * [Figure 11-7. Example Plot with Selected Tick Marks for Range Axis and Legend](#Figure1-2)
 * [Figure 11-8. Top Portion of Edit Chart Theme Window](#Figure11-8)
 * [Figure 11-9. Bottom Portion of Edit Chart Theme (Bg=background, Grdln=grid line)](#Figure11-9)
@@ -316,30 +316,30 @@ You can download the latest version of VERDI from <https://www.cmascenter.org/ve
 
 3.  From the Software Download, Step 1 page go to the box Select Software to Download on the right side of the page. Use the drop-down list to select VERDI, and then click Submit.
 
-4.  Select the product you wish to download, as shown in [Figure 1-3](#Figure1-3) ([Fig1-@fig:Figure1-3])) . Also specify the type of computer on which you will run VERDI (i.e., Linux PC, Windows, or Other) from the items in the scroll list. Note that the compilers question is not relevant for VERDI so please select Not Applicable. Finally, click Submit.
+4.  Select the product you wish to download, as shown in [Figure 3](#Figure3) ([Fig1-@fig:Figure3])) . Also specify the type of computer on which you will run VERDI (i.e., Linux PC, Windows, or Other) from the items in the scroll list. Note that the compilers question is not relevant for VERDI so please select Not Applicable. Finally, click Submit.
 
-5.  As shown in [Figure 1-4](#Figure1-4) ([Fig1-@fig:Figure1-4]))  follow the links to the appropriate version of the Linux, Mac, or Windows installation files. Links are also available for the current version of the documentation.
+5.  As shown in [Figure 4](#Figure4) ([Fig1-@fig:Figure4]))  follow the links to the appropriate version of the Linux, Mac, or Windows installation files. Links are also available for the current version of the documentation.
 
 
-<a id=Figure1-1></a>
-Figure 1-1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.<br>
+<a id=Figure1></a>
+Figure 1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.<br>
 
-![Top of VERDI Page](./media/image001.png){#fig:Figure1-1}
+![Top of VERDI Page](./media/image001.png){#fig:Figure1}
 
-<a id=Figure1-2></a>
-Figure 1-2. Bottom of VERDI Page<br>
+<a id=Figure2></a>
+Figure 2. Bottom of VERDI Page<br>
 
-![Bottom of VERDI Download Page](./media/image002.png){#fig:Figure1-2}
+![Bottom of VERDI Download Page](./media/image002.png){#fig:Figure2}
 
-<a id=Figure1-3></a>
-Figure 1-3. Downloading VERDI from the CMAS Web Site, Step 2.<br>
+<a id=Figure3></a>
+Figure 3. Downloading VERDI from the CMAS Web Site, Step 2.<br>
 
-![Downloading VERDI from the CMAS Web Site, Step 2](./media/image003.png){#fig:Figure1-3}
+![Downloading VERDI from the CMAS Web Site, Step 2](./media/image003.png){#fig:Figure3}
 
-<a id=Figure1-4></a>
-Figure 1-4. Downloading VERDI from the CMAS Web Site, Step 3<br>
+<a id=Figure4></a>
+Figure 4. Downloading VERDI from the CMAS Web Site, Step 3<br>
 
-![Downloading VERDI from the CMAS Web Site, Step 3](./media/image004.png){#fig:Figure1-4}
+![Downloading VERDI from the CMAS Web Site, Step 3](./media/image004.png){#fig:Figure4}
 
 Where to Obtain VERDI Documentation
 -----------------------------------
@@ -350,20 +350,20 @@ Documentation is available in several locations, described below. Each location 
 
 -   The VERDI download page on the CMAS website contains links to all of the available documentation.
 
--   On the left-hand side of the [www.cmascenter.org](http://www.cmascenter.org) web site, open the drop-down menu for Help and choose Documentation. Select the documentation for VERDI from the drop-down list and click Search. Select the model release from the drop-down list and click Search. The resulting documentation pane shows that the available documentation for the chosen release of VERDI GitHub:[Figure 1-5](#Figure1-5) or PDF:[Fig1-@fig:Figure1-5].
+-   On the left-hand side of the [www.cmascenter.org](http://www.cmascenter.org) web site, open the drop-down menu for Help and choose Documentation. Select the documentation for VERDI from the drop-down list and click Search. Select the model release from the drop-down list and click Search. The resulting documentation pane shows that the available documentation for the chosen release of VERDI GitHub:[Figure 5](#Figure5) or PDF:[Fig-@fig:Figure5].
 
-<a id=Figure1-5></a>
-Figure 1-5. VERDI Documentation on the CMAS Web Site<br>
+<a id=Figure5></a>
+Figure 5. VERDI Documentation on the CMAS Web Site<br>
 
-![VERDI Documentation on the CMAS Web Site](./media/image005.png){#fig:Figure1-5}
+![VERDI Documentation on the CMAS Web Site](./media/image005.png){#fig:Figure5}
 
 
--   To go directly to the most recent VERDI documentation click on DOCUMENTATION from the VERDI software: <http://www.cmascenter.org/verdi>. [Figure 1-6](#Figure1-6) shows the list of documentation that is available for download for VERDI 2.0.
+-   To go directly to the most recent VERDI documentation click on DOCUMENTATION from the VERDI software: <http://www.cmascenter.org/verdi>. [Figure 6](#Figure6) shows the list of documentation that is available for download for VERDI 2.0.
 
-<a id=Figure1-6></a>
-Figure 1-6. VERDI Documentation on the CMAS Web Site<br>
+<a id=Figure6></a>
+Figure 6. VERDI Documentation on the CMAS Web Site<br>
 
-![VERDI Documentation on the CMAS Web Site](./media/image006.png){#fig:Figure1-6}
+![VERDI Documentation on the CMAS Web Site](./media/image006.png){#fig:Figure6}
 
 Help Desk Support for VERDI
 ---------------------------

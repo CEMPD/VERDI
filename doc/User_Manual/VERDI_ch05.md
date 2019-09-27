@@ -49,27 +49,27 @@ As with the **Dataset**, **Formula,** and **Area** panes (Section 4.3), plot pan
 
 ###  Animate Tile Plots
 
-This option opens an **Animate Plots** dialog box ([Figure 5-1](#Figure5-1)) that allows you to select one or more plots, select a subset of the time range, and create an animated GIF file. There is also a separate way to create a QuickTime movie instead of a GIF, if desired.
+This option opens an **Animate Plots** dialog box PDF:([Fig-@fig:Figure9])) or GitHub:([Figure 9](#Figure9)) that allows you to select one or more plots, select a subset of the time range, and create an animated GIF file. There is also a separate way to create a QuickTime movie instead of a GIF, if desired.
 
 Within the **Animate Plots** dialog box, you can **select plot(s)** to animate by clicking the check box beside each plot name.
 
-You can choose to animate a single plot, or animate multiple plots synchronously. To view multiple animated plots synchronously, undock the plots (see Section 5.2.1) and arrange them so that they are located side by side for visual comparison during the animation. NOTE: The underlying number of time steps must match or the Start button will not activate (see [Figure 5-1](#Figure5-1)).
+You can choose to animate a single plot, or animate multiple plots synchronously. To view multiple animated plots synchronously, undock the plots (see Section 5.2.1) and arrange them so that they are located side by side for visual comparison during the animation. NOTE: The underlying number of time steps must match or the Start button will not activate (PDF:([Fig-@fig:Figure9])) or  GitHub: [Figure 9](#Figure9)).
 
-<a id=Figure5-1></a>
-Figure 5-1. Selected plots must have matching time steps.<br>
+<a id=Figure9></a>
+Figure 9. Selected plots must have matching time steps.<br>
 
-![Figure5-1](./media/image009.png)
+![Selected plots must have matching time steps](./media/image009.png){#fig:Figure9}
 
 After selecting your plots, **select the time range** by specifying both the **starting time step** and **ending time step** of the animation. The selected plots animate together over the selected time interval.
 
-To create an animated GIF, check the **Make Animated GIF(s)** option in the **Animate Plots** dialog box. In the **Save** dialog box that appears, select the directory in which to store the file and the name to use for the animated GIF, then click the save button. When saving as an animated GIF, when multiple plots are selected, each animated plot will be saved to a separate animated GIF file. For example, if three plots were selected, the animated plots would be saved as &lt;filename&gt;-1.gif, &lt;filename&gt;-2.gif, &lt;filename&gt;-3.gif. You can view the animated GIF by opening the file in a web browser.
+To create an animated GIF, check the **Make Animated GIF(s)** option in the **Animate Plots** dialog box. In the **Save** dialog box that appears, select the directory in which to store the file and the name to use for the animated GIF, then click the save button. When saving as an animated GIF, when multiple plots are selected, each animated plot will be saved to a separate animated GIF file. For example, if three plots were selected, the animated plots would be saved as &lt;filename&gt;-1.gif, &lt;filename&gt;-2.gif, &lt;filename&gt;-3.gif. You can view the animated GIF by opening the file in a web browser. see (PDF:([Fig-@fig:Figure10])) or  GitHub: [Figure 10](#Figure10))
 
 Creating a QuickTime movie is also an option, but this is not done through the **Plots&gt;Animate Tile Plots** main menu option. Instead, use the **Plot** menu option found at the top of each individual plot to make a QuickTime movie.
 
-<a id=Figure5-2></a>
-Figure 5-2 Animate Plots Dialog and Tile Plots<br>
+<a id=Figure10></a>
+Figure 10 Animate Plots Dialog and Tile Plots<br>
 
-![Figure5-2](./media/image010.png)
+![Animate Plots Dialog and Tile Plots](./media/image010.png){#fig:Figure10}
 
 
 Window Menu Options
