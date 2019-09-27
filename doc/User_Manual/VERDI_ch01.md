@@ -307,7 +307,7 @@ Use pulldown menu to select VERDI product to view its FAQs.
  Where to Obtain VERDI
 ----------------------
 
-You can download the latest version of VERDI from <https://www.cmascenter.org/verdi/> (see [Figure1-1](#Figure1-1) ([@fig:Figure1-1]) and ([@fig:Figure1-2]) and [Figure 1-2](#Figure1-2)). When you click on DOWNLOAD to download VERDI, you will be sent to the CMAS Model Download Center. To download and install VERDI, follow the instructions below, beginning at step 4. Alternatively, you may also begin at the CMAS web site <https://www.cmascenter.org>, and follow the instructions below:
+You can download the latest version of VERDI from <https://www.cmascenter.org/verdi/> (PDF see ([@fig:Figure1-1]) and ([@fig:Figure1-2])) (Github see: [Figure1-1](#Figure1-1) and [Figure 1-2](#Figure1-2)). When you click on DOWNLOAD to download VERDI, you will be sent to the CMAS Model Download Center. To download and install VERDI, follow the instructions below, beginning at step 4. Alternatively, you may also begin at the CMAS web site <https://www.cmascenter.org>, and follow the instructions below:
 
 
 1.  Log in using an existing CMAS account, or create a new CMAS account.
@@ -324,7 +324,7 @@ You can download the latest version of VERDI from <https://www.cmascenter.org/ve
 <a id=Figure1-1></a>
 Figure 1-1. Top of VERDI Page; note DOWNLOAD and DOCUMENTATION links.<br>
 
-![VERDI Download Page](./media/image001.png){#fig:Figure1-1}
+![Top of VERDI Page](./media/image001.png){#fig:Figure1-1}
 
 <a id=Figure1-2></a>
 Figure 1-2. Bottom of VERDI Page<br>
@@ -334,12 +334,12 @@ Figure 1-2. Bottom of VERDI Page<br>
 <a id=Figure1-3></a>
 Figure 1-3. Downloading VERDI from the CMAS Web Site, Step 2.<br>
 
-![Figure1-3](./media/image003.png)
+![Downloading VERDI from the CMAS Web Site, Step 2](./media/image003.png){#fig:Figure1-3}
 
 <a id=Figure1-4></a>
 Figure 1-4. Downloading VERDI from the CMAS Web Site, Step 3<br>
 
-![Figure1-4](./media/image004.png)
+![Downloading VERDI from the CMAS Web Site, Step 3](./media/image004.png){#fig:Figure1-4}
 
 Where to Obtain VERDI Documentation
 -----------------------------------
