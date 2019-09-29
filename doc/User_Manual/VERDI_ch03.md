@@ -24,9 +24,9 @@ Installation Instructions for Linux and Mac
 
 Follow these instructions to install VERDI:
 
-1.  tar -xvf verdi_2.0_beta.tar.gz into a location where you would like to install VERDI
+1.  tar -xvf verdi_2.0.tar.gz into a location where you would like to install VERDI
 
-2.  Edit verdi_2.0_beta/verdi.sh: Change the path for the DIR variable to reflect the location where VERDI was installed (e.g., DIR=/proj/ie/apps/longleaf/VERDI_2.0_jun_23/VERDI_2.0_beta)
+2.  Edit verdi_2.0/verdi.sh: Change the path for the DIR variable to reflect the location where VERDI was installed (e.g., DIR=/proj/ie/apps/longleaf/VERDI_2.0)
 
 3.  Create a directory *verdi* under your home directory.
 
@@ -36,20 +36,19 @@ Follow these instructions to install VERDI:
 
     VERDI should now run if you execute the verdi.sh executable script (e.g., ./verdi.sh).
 
-Please continue with [verdi_preferences](#verdi_preferences).
 
 Installation Instructions for Windows
 --------------------------------------
 
-To install VERDI for Windows, unzip the file to a local directory on your Windows 7 computer. NOTE: You do not need to install VERDI under a Program Files directory or in the root directory on one of your hard disk drives. Therefore, you should not need Administrator rights to install VERDI 2.0 beta. If your system is under strict control from your Administrator, you may be able to unzip the VERDI distribution under your home directory or your documents directory; however, you may have problems if there is a space in the path to your VERDI installation directory.
+To install VERDI for Windows, unzip the file to a local directory on your Windows 7 computer. NOTE: You do not need to install VERDI under a Program Files directory or in the root directory on one of your hard disk drives. Therefore, you should not need Administrator rights to install VERDI 2.0. If your system is under strict control from your Administrator, you may be able to unzip the VERDI distribution under your home directory or your documents directory; however, you may have problems if there is a space in the path to your VERDI installation directory.
 
 If you are unable to install VERDI on your computer, please check to see whether your user account is authorized to install software. You may need to request that a user with a computer administrator account install VERDI, or provide you with an account that has permission to install software. For more information about user account types, click Start and select Control Panel and then click on the User Account icon.
 
 After successfully installing VERDI you need to perform the following tasks under your home directory.
 
-1.  Locate your home directory. Your home directory is typically under ```csh C:\Users\yourloginid ```. So, if your login id is *staff*, your home directory is probably *C:\Users\staff*.
+1.  Locate your home directory. Your home directory is typically under ```csh C: //Users//yourloginid ```. So, if your login id is *staff*, your home directory is probably *C: //Users//staff*.
 
-2.  Create a new directory *verdi* under your home directory (e.g., *C:\Users\staff\verdi*).
+2.  Create a new directory *verdi* under your home directory (e.g., *C: //Users//staff//verdi*).
 
 3.  Create an empty text file, name it *verdi.alias* and save it in your *verdi* directory. When you look at the directory listing for this *verdi* directory, you should see the *verdi.alias* file with a length of 0.
 
@@ -57,7 +56,6 @@ After successfully installing VERDI you need to perform the following tasks unde
 
 Note that VERDI writes a log file (i.e., *verdi.log*) as-needed to your *verdi* directory. This log file should remain small. However, if you need technical support we may ask for your log file. It will be a text file named verdi.log located in this verdi directory.
 
-Please continue with [verdi_preferences](#verdi_preferences).
 
 Installation Instructions for computer that that requires a JRE<sup>TM</sup> 7 other than what was provided in the distribution
 -------------------------------------------------------------------------------------------------------------------------------
@@ -77,8 +75,8 @@ VERDI is configured via the config.properties file that you copied to your home/
 # Please use double backslash for Windows platform or slash for UNIX-like platforms
 # Please uncomment the following lines and modify them to suit your local settings
 # Windows example settings format
-# verdi.project.home=C:\\ Users\\yourusername\\VERDI_2.0_beta\\project
-# verdi.config.home=C:\\ Users\\yourusername\\VERDI_2.0_beta\\config
+# verdi.project.home=C:// Users\\yourusername\\VERDI_2.0\\project
+# verdi.config.home=C:// Users\\yourusername\\VERDI_2.0\\config
 # Linux example settings format
 
 verdi.project.home=../../data/project
@@ -99,7 +97,7 @@ verdi.remote.ssh=/usr/bin/ssh
 
 # on local machine where VERDI is running. Used to hold temporary data file downloaded from a remote machine
 
-verdi.temporary.dir=C:\\Users\username\temp
+verdi.temporary.dir=C:\\ Users\username\temp
 ```
 
 The items in the config.properties.TEMPLATE file that is installed with VERDI are commented out. To specify default directories, uncommented these lines by removing the starting ‘#’ sign. Example settings that are provided in the default file show how to specify the paths to these locations, depending on whether the installation is for a Windows or Linux platform. Here are how the settings are used by VERDI. Note that VERDI stores the most recently used directory for each of these functions and will go to that directory when you repeat the load or save in the same session.

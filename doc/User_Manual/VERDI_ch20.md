@@ -7,7 +7,7 @@
 Licenses for JAVA Libraries used by VERDI
 =========================================
 
-VERDI has been developed using a number of open source Java libraries. Table 20‑1 contains a list of the jar files or Java libraries that are used by VERDI, a link to where each library may be acquired, a link to the location where the license is referenced by the documentation for each library, as well as a link to each license. The distribution for VERDI contains a sub-directory called licenses. This directory contains a copy of the licenses for the open source Java libraries used by VERDI.
+VERDI has been developed using a number of open source Java libraries. Table 20-1 contains a list of the jar files or Java libraries that are used by VERDI, a link to where each library may be acquired, a link to the location where the license is referenced by the documentation for each library, as well as a link to each license. The distribution for VERDI contains a sub-directory called licenses. This directory contains a copy of the licenses for the open source Java libraries used by VERDI.
 
 | **List of Java Libraries** | **Where to acquire software**                       | **Reference to Software License for Software**                                                   | **Link to license or the specific license number**      |
 |----------------------------|-----------------------------------------------------|--------------------------------------------------------------------------------------------------|---------------------------------------------------------|
@@ -24,7 +24,7 @@ VERDI has been developed using a number of open source Java libraries. Table 20�
 | Ucar_ma2                  | <http://www.unidata.ucar.edu/software/netcdf-java>  | <http://www.unidata.ucar.edu/software/netcdf-java/>                                              | <http://www.gnu.org/copyleft/lesser.html>               |
 | Repast symphony GIS        | <http://repast.sourceforge.net/>                    |                                                                                                  | <http://repast.sourceforge.net/repast-license.html>     |
 
-<span id="_Ref323231980" class="anchor"></span>Table ‑ JAVA Libraries used by VERDI
+<span id="_Ref323231980" class="anchor"></span>Table - JAVA Libraries used by VERDI
 
 Acknowledgments
 ===============
