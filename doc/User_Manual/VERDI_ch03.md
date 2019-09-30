@@ -9,7 +9,7 @@ VERDI Installation Instructions
 
 <span id="_Toc197166117" class="anchor"><span id="_Toc292295001" class="anchor"></span></span>This chapter provides instructions for installing VERDI 2.0 on a variety of computer platforms. The supporting libraries required by VERDI are included in the installation, along with a version of the JRE 7 for your convenience. If you already have JRE 7 installed on your computer, you will not need to uninstall it and you can choose to use that one.
 
-VERDI 2.0 Beta is distributed as a zip or gzip file, as appropriate, for each of the following supported platforms:
+VERDI 2.0 is distributed as a zip or gzip file, as appropriate, for each of the following supported platforms:
 
 -   64-bit Windows 8
 
