@@ -365,7 +365,7 @@ VERDI supports two types of overlays – observations and vectors. For both type
 
 #### Observational Data Overlays
 
-It is useful to visually compare the results contained in model output datasets with the data points in observational datasets. You can do this by creating a Tile Plot of the model output and then overlaying it with observational data points. The observational dataset needs to be in a csv- or tab-delimited format or an I/O API observational data format. See Chapter 13 for more information about how to convert AIRS observational data into this latter format.
+It is useful to visually compare the results contained in model output datasets with the data points in observational datasets. You can do this by creating a Tile Plot of the model output and then overlaying it with observational data points. The observational dataset needs to be in a csv- or tab-delimited format or a Models-3 I/O API observational data format. See Chapter 13 for more information about how to convert AIRS observational data into this latter format.
 
 Sample observational data are provided in the directory $VERDI_HOME/data/obs so you can create a sample Observational Data Overlay Plot. Follow these instructions to create your plot.
 
@@ -387,7 +387,7 @@ Sample observational data are provided in the directory $VERDI_HOME/data/obs so 
 
 Repeat the above process to add multiple variables. To remove the symbols for a variable on an observational data overlay, or to reset their size, shape, or stroke thickness, reopen the **Observation** dialog by using Add Overlay&gt;Observations, select the observational variable you want to adjust, and then change its stroke size, shape size, or symbol. You can also remove a variable or move it up or down in the list. When you are finished click the **OK** button.
 
-The center of the observational data point corresponds to the lat/lon value that is provided in the I/O API observational data file. If observations are collocated, they are placed on top of one another. If that happens you may want to select different symbols or sizes for each dataset and place them from largest on the bottom to smallest on the top.<span id="_Ref401855228" class="anchor"></span>
+The center of the observational data point corresponds to the lat/lon value that is provided in the Models-3 I/O API observational data file. If observations are collocated, they are placed on top of one another. If that happens you may want to select different symbols or sizes for each dataset and place them from largest on the bottom to smallest on the top.<span id="_Ref401855228" class="anchor"></span>
 
 <!-- BEGIN COMMENT -->
 
