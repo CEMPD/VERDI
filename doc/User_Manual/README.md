@@ -29,7 +29,7 @@ The following sections are included in this manual:
 
 [Chapter 12 (Supported Grid and Coordinate Systems (Map Projections)).](VERDI_ch12.md) Supported Grid and Coordinate Systems (Map Projections).
 
-[Chapter 13 (I/O API Utilities, Data Conversion Programs, and Libraries).](VERDI_ch13.md) I/O API Utilities, Data Conversion Programs, and Libraries.
+[Chapter 13 (Models-3 I/O API Utilities, Data Conversion Programs, and Libraries).](VERDI_ch13.md) Models-3 I/O API Utilities, Data Conversion Programs, and Libraries.
 
 [Chapter 14 (Contributing to VERDI Development).](VERDI_ch14.md) How to make contributions to VERDI using GitHub. 
 
