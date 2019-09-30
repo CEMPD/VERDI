@@ -12,11 +12,11 @@ Gridded Input File Formats
 
 ###  Model File Format Conventions
 
-VERDI currently supports visualizing files in the following file format conventions: CMAQ Input/Output Applications Programming Interface (I/O API) netCDF, WRF netCDF, CAMx (UAM-IV), MPAS netCDF, and ASCII format (for observational data).<span id="IOAPI" class="anchor"></span> VERDI uses a customized version of the thredds/NetCDF Java library v4.5.5 (<http://www.unidata.ucar.edu/software/netcdf-java>).
+VERDI currently supports visualizing files in the following file format conventions: CMAQ Models-3 Input/Output Applications Programming Interface (I/O API) netCDF, WRF netCDF, CAMx (UAM-IV), MPAS netCDF, and ASCII format (for observational data).<span id="IOAPI" class="anchor"></span> VERDI uses a customized version of the thredds/NetCDF Java library v4.5.5 (<http://www.unidata.ucar.edu/software/netcdf-java>).
 
-The CMAQ I/O API was designed as a high-level interface on top of the netCDF Java library. (see https://www.cmascenter.org/ioapi/ and <http://www.unidata.ucar.edu/software/netcdf/> for further information). The I/O API library provides a comprehensive programming interface to files for the air quality model developer and model-related tool developer, in both FORTRAN and C/C++. I/O API files are self-describing and include projection information within the gridded dataset. See Chapter 12 for additional information on what projections and gridded data file format conventions are currently supported by VERDI.
+The CMAQ Models-3 I/O API was designed as a high-level interface on top of the netCDF Java library. (see https://www.cmascenter.org/ioapi/ and <http://www.unidata.ucar.edu/software/netcdf/> for further information). The Models-3 I/O API library provides a comprehensive programming interface to files for the air quality model developer and model-related tool developer, in both FORTRAN and C/C++. Models-3 I/O API files are self-describing and include projection information within the gridded dataset. See Chapter 12 for additional information on what projections and gridded data file format conventions are currently supported by VERDI.
 
-NetCDF and I/O API files are portable across computing platforms. This means that these files can be read regardless of what computer type or operating system you are using. Routines are available to convert data to these formats or new code can be written and contributed to VERDI for use by the community. Discussion of the I/O API conversion programs and how to use them can be found in Chapter 13, “I/O API Utilities, Data Conversion Programs, and Libraries”. If you write a routine for VERDI to read gridded data from other formats, please consider contributing your code to the user community using GitHub, as described in Chapter 14.<span id="_Toc292295025" class="anchor"><span id="_Toc197166138" class="anchor"></span></span>
+NetCDF and Models-3 I/O API files are portable across computing platforms. This means that these files can be read regardless of what computer type or operating system you are using. Routines are available to convert data to these formats or new code can be written and contributed to VERDI for use by the community. Discussion of the Models-3 I/O API conversion programs and how to use them can be found in Chapter 13, “Models-3 I/O API Utilities, Data Conversion Programs, and Libraries”. If you write a routine for VERDI to read gridded data from other formats, please consider contributing your code to the user community using GitHub, as described in Chapter 14.<span id="_Toc292295025" class="anchor"><span id="_Toc197166138" class="anchor"></span></span>
 
 ###  Observational Data Formats
 
@@ -34,7 +34,7 @@ Figure 11. Example observational data file showing format.
 ![Example observational data file showing format](./media/image011.png){#fig:Figure11}
 
 
-Alternatively, you can use a converter such as AIRS2M3 (see Chapter 13) to convert ASCII observational data into I/O API "observational-data" files.
+Alternatively, you can use a converter such as AIRS2M3 (see Chapter 13) to convert ASCII observational data into Models-3 I/O API "observational-data" files.
 
 Example Datasets
 ----------------
@@ -57,7 +57,7 @@ These datasets may be used to recreate example plots that are provided in this u
 
 <!-- -->
 
-1.  model – contains sample WRF netCDF, MPAS netCDF, and CMAQ I/O API datasets
+1.  model – contains sample WRF netCDF, MPAS netCDF, and CMAQ Models-3 I/O API datasets
 
 2.  obs – contains an ASCII formatted observational dataset (Section 6.1.2), and an observational dataset created by airs2m3 converter (Chapter 13).
 
@@ -139,7 +139,7 @@ Figure 16. Remote Dataset Labeled with Number at End of the Filename<br>
 
 ### Adding Additional Remote Hosts
 
-VERDI contains the RemoteFileUtility and ncvariable programs that enable VERDI to add your I/O API netCDF or WRF netCDF dataset from a remote file system. A gzipped tar file is available in the $VERDI_HOME directory.
+VERDI contains the RemoteFileUtility and ncvariable programs that enable VERDI to add your Models-3 I/O API netCDF or WRF netCDF dataset from a remote file system. A gzipped tar file is available in the $VERDI_HOME directory.
 
 1.  The RemoteFileUtility c-shell script and ncvariable binary need to be installed either in /usr/local/bin by the System Administrator, or you can place it in a different location and specify that location in the configure.properties file located in your $USER_HOME/verdi/ directory (see section 3.4 for the specific directory location that is used for each platform [Linux, Windows, Mac]). A template for the configure.properties file called configure.properties.TEMPLATE is provided in the distribution under the $VERDI_HOME directory.
 
