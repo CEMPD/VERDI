@@ -225,6 +225,10 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 		final double yScale = height / yRange;
 
 		int values = 0;
+		
+		double maxLat, maxLon;
+		maxLat = 0;
+		maxLon = -700;
 		for (ObsData data : list) {
 			double[] point = new double[2];
 			double lon = data.getLon();
@@ -260,6 +264,8 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 			final Color cellColor = legendColors[colorIndex];
 			drawSymbol((Graphics2D) graphics, cellColor, data, x, y);
 		}
+		//System.out.println("OVerlay lat " + maxLat + " lon " + maxLon);
+
 		//System.out.println("ObsAnnotation draw values: " + values);
 
 		((Graphics2D) graphics).setStroke(stroke); // reset graphics stroke
@@ -373,6 +379,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 		try{
 		CRSAuthorityFactory crsFactory = CRS.getAuthorityFactory(true);
 		CoordinateReferenceSystem crs = crsFactory.createCoordinateReferenceSystem("EPSG:4326");
+
 		boolean lenient = true;
 		MathTransform transform = CRS.findMathTransform(crs, gridCRS, lenient);
 		Coordinate srcCoordinate = new Coordinate(lon, lat);

@@ -48,6 +48,10 @@ public class CSVBoxer implements BoundingBoxer {
 	public Point2D axisPointToLatLonPoint(int x, int y) {
 			return new Point2D.Double(x, y);
 	}
+	
+	public Point2D axisPointToLatLonPoint(double x, double y) {
+		return new Point2D.Double(x, y);
+	}
 
 	public Point2D CRSPointToAxis(double x, double y) {		
 		return new Point2D.Double(x, y);

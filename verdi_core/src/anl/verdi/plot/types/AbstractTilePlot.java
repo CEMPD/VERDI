@@ -130,7 +130,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	private static final String WORLD_LAYER = "WORLD";
 	private static final String NA_LAYER = "NA";
 
-	private NumberFormat format;
+	protected NumberFormat format;
 
 	protected DataFrame frame;
 	protected int timeStep;

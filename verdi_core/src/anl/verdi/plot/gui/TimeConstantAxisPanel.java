@@ -29,6 +29,8 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author User #2
  */
 public class TimeConstantAxisPanel extends JPanel {
+	
+	boolean doubleConstant = false;
 
 	private static final long serialVersionUID = -1747899384194778482L;
 	static final Logger Logger = LogManager.getLogger(TimeConstantAxisPanel.class.getName());
@@ -48,10 +50,11 @@ public class TimeConstantAxisPanel extends JPanel {
 	private Axes axes;
 	private Axes frameAxes; //MPAS files need the separate axes
 	private boolean spinnersOn = false;
-	int displayIncrement = 1;
+	double displayIncrement = 1;
 
-	public TimeConstantAxisPanel() {
+	public TimeConstantAxisPanel(boolean doubles) {
 		Logger.debug("in constructor for TimeConstantAxisPanel");
+		doubleConstant = doubles;
 		initComponents();
 		timeSpinner.addChangeListener(new SpinnerListener());
 	}
@@ -68,7 +71,10 @@ public class TimeConstantAxisPanel extends JPanel {
 		timeSpinner = new JSpinner();
 		timeLabel = new JLabel();
 		lblConstantAxis = new JLabel();
-		axisSpinner = new JSpinner();
+		if (doubleConstant)
+			axisSpinner = new JSpinner(new DoubleSpinnerModel());
+		else
+			axisSpinner = new JSpinner();
 		CellConstraints cc = new CellConstraints();
 
 		//======== this ========
@@ -135,26 +141,26 @@ public class TimeConstantAxisPanel extends JPanel {
 	 * @return the <b>true</b> true axis index rather than
 	 * the displayed one which is offset by 1.
 	 */
-	public int getAxisValue() {
-		return ((Integer)axisSpinner.getValue()).intValue() - displayIncrement;
+	public double getAxisValue() {
+		return ((Number)axisSpinner.getValue()).doubleValue() - displayIncrement;
 	}
 
 	public void setTime(int time) {
 		timeSpinner.setValue(new Integer(time + 1));
 	}
 
-	public void init(Axes axes, CoordAxis constantAxis, Axes frameAxes, int timeStep, int constant) {
+	public void init(Axes axes, CoordAxis constantAxis, Axes frameAxes, int timeStep, double constant) {
 		this.axes = axes;
 		this.frameAxes = frameAxes;
 		spinnersOn = false;
 		if (constantAxis.getClass().getName().indexOf("MPAS") != -1)
 			displayIncrement = 0;
 		CoordAxis time = frameAxes.getTimeAxis();
-		int min = (int) (time.getRange().getOrigin() + 1);
-		int max = min + (int) time.getRange().getExtent() - 1;
+		int minI = (int) (time.getRange().getOrigin() + 1);
+		int maxI = minI + (int) time.getRange().getExtent() - 1;
 		SpinnerNumberModel model = (SpinnerNumberModel) timeSpinner.getModel();
-		model.setMinimum(min);
-		model.setMaximum(max);
+		model.setMinimum(minI);
+		model.setMaximum(maxI);
 		model.setValue(new Integer(timeStep + 1));
 		GregorianCalendar date = frameAxes.getDate(timeStep);
 		Logger.debug("in TimeConstantAxisPanel init function, computed GregorianCalendar date" );
@@ -162,17 +168,17 @@ public class TimeConstantAxisPanel extends JPanel {
 
 		// we want the range to start with 1 rather than 0
 		// so we add 1.  Not needed for MPAS - range is already adjusted
-		min = (int)constantAxis.getRange().getOrigin() + displayIncrement;
+		double minD = constantAxis.getRange().getOrigin() + displayIncrement;
 		//min = constant + displayIncrement;
-		max = min + (int) constantAxis.getRange().getExtent() - 1;
+		double maxD = minD + constantAxis.getRange().getExtent() - 1;
 		if (constantAxis.getClass().getName().indexOf("MPAS") != -1)
-			--max;
+			--maxD;
 
 		model = (SpinnerNumberModel) axisSpinner.getModel();
-		model.setMinimum(min);
-		model.setMaximum(max);
+		model.setMinimum(minD);
+		model.setMaximum(maxD);
 		// offset by one so row / col seems to start at 1
-		model.setValue(new Integer(constant + displayIncrement));
+		model.setValue(new Double(constant + (double)displayIncrement));
 		spinnersOn = true;
 	}
 

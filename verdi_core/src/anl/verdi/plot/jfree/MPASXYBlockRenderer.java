@@ -23,7 +23,7 @@ public class MPASXYBlockRenderer extends XYBlockRenderer {
 	String axis = "x";
 	MeshPlot renderPlot = null;
 	DataFrame frame;
-	int startDeg;
+	double startDeg;
 	int timeStep;
 	
 	int xOrigin;
@@ -31,7 +31,7 @@ public class MPASXYBlockRenderer extends XYBlockRenderer {
 	
 	double sliceSizeDeg;
 	
-	public MPASXYBlockRenderer(CrossSectionType type, DataFrame frame, MeshPlot renderPlot, int step, int constant, double sliceSize) {
+	public MPASXYBlockRenderer(CrossSectionType type, DataFrame frame, MeshPlot renderPlot, int step, double constant, double sliceSize) {
 		if (type == CrossSectionType.Y)
 			axis = "y";
 		this.frame = frame;
@@ -41,7 +41,7 @@ public class MPASXYBlockRenderer extends XYBlockRenderer {
 		this.renderPlot = renderPlot;
 	}
 	
-	public void setPlotInfo(int step, int constant) {
+	public void setPlotInfo(int step, double constant) {
 		startDeg = constant;
 		timeStep = step;
 	}

@@ -25,9 +25,9 @@ public interface IMPASDataset extends Dataset {
 	 */
 	public MinMaxInfo getPlotMinMax(DataFrame variable, MinMaxLevelListener listener);
 	
-	public MinMaxInfo getPlotMinMaxX(DataFrame variable, int timestep, int x);
+	public MinMaxInfo getPlotMinMaxX(DataFrame variable, int timestep, double x, double sliceSize);
 
-	public MinMaxInfo getPlotMinMaxY(DataFrame variable, int timestep, int y);
+	public MinMaxInfo getPlotMinMaxY(DataFrame variable, int timestep, double y, double sliceSize);
 
 	/**
 	 * Returns min / max values for the given variable within the given layer.  Initially, values are only accurate for the

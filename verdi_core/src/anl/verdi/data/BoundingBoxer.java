@@ -44,6 +44,8 @@ public interface BoundingBoxer {
 	 */
 	Point2D axisPointToLatLonPoint(int x, int y);
 
+	Point2D axisPointToLatLonPoint(double x, double y);
+
 	/**
 	 * Converts the CRS coordinate to a grid Cell coordinate
 	 * 
