@@ -1,21 +1,27 @@
 package anl.verdi.plot.gui;
 
 import java.awt.geom.AffineTransform;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureWriter;
+import org.geotools.data.FileDataStore;
+import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.Transaction;
 import org.geotools.data.memory.MemoryDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.JTSFactoryFinder;
@@ -23,6 +29,7 @@ import org.geotools.referencing.CRS;
 import org.geotools.referencing.operation.transform.AffineTransform2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.Name;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -32,10 +39,13 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import anl.verdi.area.target.Target;
+import anl.verdi.data.ObsData;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.Projection;
 import ucar.unidata.geoloc.ProjectionPointImpl;
@@ -67,9 +77,11 @@ public class VerdiShapefileUtil {
 	static GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
 	
 	private static CoordinateReferenceSystem LAT_LON_CRS = null;
+	private static CoordinateReferenceSystem WEB_MERC_CRS = null;
 	static {
 		try {
 			LAT_LON_CRS = CRS.decode("EPSG:4326");
+			WEB_MERC_CRS = CRS.decode("EPSG:3857");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -88,6 +100,7 @@ public class VerdiShapefileUtil {
 		SimpleFeatureSource convertedSource = null;
         try {
 			CoordinateReferenceSystem sourceCRS = sourceShapefile.getSchema().getCoordinateReferenceSystem();
+			//Integer epsgCode = CRS.lookupEpsgCode(sourceCRS, true);
 			
 	        boolean lenient = true; // allow for some error due to different datums
 
@@ -95,9 +108,64 @@ public class VerdiShapefileUtil {
 			convertedSource = transformFeature(sourceShapefile, transform, mapTargets);
 		} catch (FactoryException e) {
 			e.printStackTrace();
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
         return convertedSource;
         
+	}
+	
+	public static void main(String[] args) {
+		try {
+			enumFeatures();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	static int[][] bounds = new int[4][2];
+	
+	public static void enumFeatures() throws IOException {
+		
+		//bounds[0][1] = Integer.MIN_VALUE;
+		//bounds[1][1] = Double.MAX_VALUE;
+		//bounds[2][0] = Double.MIN_VALUE;
+		
+		String vFileName = "/home/verdi/verdi-shapefile/VERDI/verdi_bootstrap/data/map_state/cb_2014_us_state_500k.shp";
+		java.io.File vFile = new File(vFileName);
+		FileDataStore vStore = FileDataStoreFinder.getDataStore(vFile);
+		SimpleFeatureSource sourceShapefile = (SimpleFeatureSource)vStore.getFeatureSource();
+		
+        SimpleFeatureCollection featureCollection = sourceShapefile.getFeatures();
+        SimpleFeatureIterator iterator = featureCollection.features();
+
+        while (iterator.hasNext()) {
+            SimpleFeature feature = iterator.next();
+            List<Object> attrs = feature.getAttributes();
+            if (attrs.contains("CT")) {
+            	System.out.println("Found CT");
+            
+
+	            
+	            Geometry geometry = (Geometry) feature.getDefaultGeometry();
+	
+	            double yMax = 0;
+	            int maxIndex = 0;
+            	System.err.println("VerdiShapefileLoader Found Connecticut"); //DBG
+            	Coordinate[] c1 = geometry.getCoordinates();
+            	for (int i = 0; i < c1.length; ++i) {
+            		if (c1[i].y > yMax) {
+            			yMax = c1[i].y;
+            			maxIndex = i;
+            		}
+            	}
+            	System.out.println("Max " + c1[maxIndex].x + ", " + c1[maxIndex].y);
+	            
+            }
+
+        }
+
 	}
 	
 	public static SimpleFeatureSource transformFeature(SimpleFeatureSource sourceShapefile, MathTransform transform, boolean mapTargets) {
@@ -109,6 +177,7 @@ public class VerdiShapefileUtil {
 	
 	        MemoryDataStore dataStore = new MemoryDataStore();
 	        SimpleFeatureType featureType = SimpleFeatureTypeBuilder.retype(sourceShapefile.getSchema(), LAT_LON_CRS);
+	        dataStore.setNamespaceURI(featureType.getName().getNamespaceURI());
 	        dataStore.createSchema(featureType);
 	
 	        //Get the name of the new Shapefile, which will be used to open the FeatureWriter
@@ -123,9 +192,41 @@ public class VerdiShapefileUtil {
 	                SimpleFeature feature = iterator.next();
 	                SimpleFeature copy = writer.next();
 	                copy.setAttributes(feature.getAttributes());
+
 	
 	                Geometry geometry = (Geometry) feature.getDefaultGeometry();
 	                Geometry geometry2 = JTS.transform(geometry, transform);
+	                
+	                double yMax = 0;
+	                int maxIndex = 0;
+	                List<Object> attrs = copy.getAttributes();
+	                /*System.out.println("Found " + attrs.size() + " attriutes");
+	                for (int i = 0; i < attrs.size(); ++i) {
+	                	Object attr = attrs.get(i);
+	                	if (attr instanceof MultiLineString) {
+	                		MultiLineString str = (MultiLineString)attr;
+	                		System.out.println(i + ": attr " + str.getClass().getName() + " points: " + str.getNumPoints()+ " length: " + str.getLength() + " gemometries: " + str.getNumGeometries() + " cooordinates: " + str.getCoordinates().length);
+	                	} else if (attr instanceof MultiPolygon) {
+	                		MultiPolygon str = (MultiPolygon) attr;
+	                		System.out.println(i + ": attr " + str.getClass().getName() + " length: " + str.getLength() + " geometries: " + str.getNumGeometries() + " numPoints: " + str.getNumPoints() + " coordinates: " + str.getCoordinates().length );
+	                	} else
+	                		System.out.println(i + ": attr " + attrs.get(i).getClass().getName() + " " + attrs.get(i));
+	                }*/
+	                if (copy.getAttributes().contains("CT")) {
+	                	System.err.println("Found Connecticut"); //DBG
+	                	Coordinate[] c1 = geometry.getCoordinates();
+	                	Coordinate[] c2 = geometry2.getCoordinates();
+	                	for (int i = 0; i < c1.length; ++i) {
+	                		if (c1[i].y != c2[i].y || c1[i].x != c2[i].x)
+	                			System.out.println("Found ct diff ");
+	                		if (c1[i].y > yMax) {
+	                			yMax = c1[i].y;
+	                			maxIndex = i;
+	                		}
+	                	}
+	                	System.out.println("Max  " + c1[maxIndex].x + ", " + c1[maxIndex].y);
+	                }
+	               // geometry2 = geometry; //DBG
 	
 	                copy.setDefaultGeometry(geometry2);
 	                if (mapTargets)
@@ -174,19 +275,22 @@ public class VerdiShapefileUtil {
     public static FeatureSource projectShapefile(String filename, SimpleFeatureSource sourceShapefile, Projection targetProjection, CoordinateReferenceSystem targetCRS) {
     	return projectShapefile(filename, sourceShapefile, targetProjection, targetCRS, false);
     }
+    
+	static Hashtable<String, String> PROJECTION_MAP = new Hashtable<String, String>();
 
     static SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
 	//targetProjection - NetCDF projection used to create map data
     //targetCRS - CRS that Verdi determines the map to be using
     public static FeatureSource projectShapefile(String filename, SimpleFeatureSource sourceShapefile, Projection targetProjection, CoordinateReferenceSystem targetCRS, boolean mapTargets) {
+    	System.out.println("Projecting " + filename);
     	//long start = System.currentTimeMillis();
     	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " "+ format.format( new Date()) + " " + filename + " to " + targetProjection.getName());
     	SimpleFeatureSource convertedSource = getCachedShapefile(filename, targetProjection, sourceShapefile);
-        if (convertedSource != null) {
+        /*if (convertedSource != null && false) { //DBG
         	//long duration = System.currentTimeMillis() - start;
         	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " " + duration + "ms "+ filename + " cached");
         	return convertedSource;
-        }
+        }*/
         
        // if (sourceShapefile.getSchema().getCoordinateReferenceSystem().getCoordinateSystem().toString().toLowerCase().indexOf("longitude") == -1) {
         if (sourceShapefile.getSchema().getCoordinateReferenceSystem().toString().indexOf("WGS84") == -1) {
@@ -194,7 +298,8 @@ public class VerdiShapefileUtil {
         	sourceShapefile = projectionToLatLon(sourceShapefile, mapTargets);
         } else if (targetProjection instanceof LatLonProjection && ((LatLonProjection)targetProjection).getCenterLon() == 0 ) {
         	//long duration = System.currentTimeMillis() - start;
-        	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " " + duration + "ms "+ filename + " already lat lon");       	
+        	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " " + duration + "ms "+ filename + " already lat lon");
+        	PROJECTION_MAP.put(sourceShapefile.toString(), filename);
         	return sourceShapefile;
         }
         
@@ -256,7 +361,7 @@ public class VerdiShapefileUtil {
 	                } else {
 	                	throw new IllegalArgumentException("Unsupported shapefile type: " + sourceGeometry.getClass());
 	                }
-	
+
 	                copy.setDefaultGeometry(targetGeometry);
 	                writer.write();
 	            }
@@ -273,6 +378,164 @@ public class VerdiShapefileUtil {
         	e.printStackTrace();
         }
         cacheShapefile(filename, targetProjection, convertedSource);
+    	//long duration = System.currentTimeMillis() - start;
+    	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " " + duration + "ms "+ filename + " projected");
+    	PROJECTION_MAP.put(convertedSource.toString(), filename);
+
+    	return convertedSource;
+    }
+    
+    public static FeatureSource projectObsData(Projection proj, List<ObsData> list, CoordinateReferenceSystem targetCRS) {
+    	//long start = System.currentTimeMillis();
+    	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " "+ format.format( new Date()) + " " + filename + " to " + targetProjection.getName());
+    	/*SimpleFeatureSource convertedSource = getCachedShapefile(filename, targetProjection, sourceShapefile);
+        if (convertedSource != null) {
+        	//long duration = System.currentTimeMillis() - start;
+        	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " " + duration + "ms "+ filename + " cached");
+        	return convertedSource;
+        }*/
+        
+
+        //targetCRS = WEB_MERC_CRS;
+        targetCRS = LAT_LON_CRS;
+        /*try {
+			targetCRS = CRS.decode("EPSG:3785");
+		} catch (NoSuchAuthorityCodeException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (FactoryException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		};*/
+        MemoryDataStore dataStore = null;
+        SimpleFeatureSource convertedSource = null;
+        
+        
+        
+        try {
+			//TODO - make this a memory object	
+			
+	        
+	        dataStore = new MemoryDataStore();
+	        Name name = new NameImpl("http://www.opengis.net/gml", "Location");
+	        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+	        builder.setName(name);
+	        //builder.setName("Location");
+	        builder.setCRS(targetCRS);
+	        builder.add("the_geom", Point.class);
+	        builder.add("number", Double.class);
+	        SimpleFeatureType featureType = builder.buildFeatureType(); //SimpleFeatureTypeBuilder.retype(sourceShapefile.getSchema(), targetCRS);
+	        dataStore.createSchema(featureType);
+	
+	        //Get the name of the new Shapefile, which will be used to open the FeatureWriter
+	        String createdName = dataStore.getTypeNames()[0];
+	        
+	        Transaction transaction = new DefaultTransaction("Reproject");
+	        
+
+	        try ( FeatureWriter<SimpleFeatureType, SimpleFeature> writer =
+	                        dataStore.getFeatureWriterAppend(createdName, transaction);
+	              ){
+	        	
+		        for (int i = 0; i < list.size(); ++i) {
+		        	ObsData data = list.get(i);
+		        
+		        	//Point point = geometryFactory.createPoint(new Coordinate(data.getLat(), data.getLon())); //Gives IllegalAgumentexxception: Exponent out of bounds
+		        	Point point = geometryFactory.createPoint(new Coordinate(data.getLon(), data.getLat()));
+		        	//TODO - this was making points vanish, why?
+		        	if (proj != null) {
+		        		point = projectPoint(point, proj);
+		        	}
+	                SimpleFeature copy = writer.next();
+	                copy.setDefaultGeometry(point);
+	                writer.write();
+		        }
+
+	        	
+	            transaction.commit();
+
+	            convertedSource = dataStore.getFeatureSource("Location");
+	            
+	            //convertedSource = projectionToLatLon(convertedSource, false);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            transaction.rollback();
+	        } finally {
+	            transaction.close();
+	        }
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        //cacheShapefile(filename, targetProjection, convertedSource);
+    	//long duration = System.currentTimeMillis() - start;
+    	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " " + duration + "ms "+ filename + " projected");
+    	return convertedSource;
+    }
+    
+    public static FeatureSource projectObsDataOld(List<ObsData> list, CoordinateReferenceSystem targetCRS) {
+    	//long start = System.currentTimeMillis();
+    	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " "+ format.format( new Date()) + " " + filename + " to " + targetProjection.getName());
+    	/*SimpleFeatureSource convertedSource = getCachedShapefile(filename, targetProjection, sourceShapefile);
+        if (convertedSource != null) {
+        	//long duration = System.currentTimeMillis() - start;
+        	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " " + duration + "ms "+ filename + " cached");
+        	return convertedSource;
+        }*/
+        
+
+        
+        MemoryDataStore dataStore = null;
+        SimpleFeatureSource convertedSource = null;
+        
+        
+        
+        try {
+			//TODO - make this a memory object	
+			
+	        
+	        dataStore = new MemoryDataStore();
+	        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+	        builder.setName("Location");
+	        builder.setCRS(targetCRS);
+	        builder.add("the_geom", MultiPoint.class);
+	        builder.add("number", Double.class);
+	        SimpleFeatureType featureType = builder.buildFeatureType(); //SimpleFeatureTypeBuilder.retype(sourceShapefile.getSchema(), targetCRS);
+	        dataStore.createSchema(featureType);
+	
+	        //Get the name of the new Shapefile, which will be used to open the FeatureWriter
+	        String createdName = dataStore.getTypeNames()[0];
+	        
+	        Transaction transaction = new DefaultTransaction("Reproject");
+	        Point[] points = new Point[list.size()];
+	        
+	        for (int i = 0; i < list.size(); ++i) {
+	        	ObsData data = list.get(i);
+	        
+	        	Point point = geometryFactory.createPoint(new Coordinate(data.getLat(), data.getLon()));
+	        	points[i] = point;
+	        }
+	        try ( FeatureWriter<SimpleFeatureType, SimpleFeature> writer =
+	                        dataStore.getFeatureWriterAppend(createdName, transaction);
+	              ){
+	        	Geometry targetGeometry = geometryFactory.createMultiPoint(points);
+                SimpleFeature copy = writer.next();
+                copy.setDefaultGeometry(targetGeometry);
+                writer.write();
+	        	
+	            transaction.commit();
+
+	            convertedSource = dataStore.getFeatureSource("Location");
+	            //convertedSource = dataStore.getFeatureSource();
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            transaction.rollback();
+	        } finally {
+	            transaction.close();
+	        }
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        //cacheShapefile(filename, targetProjection, convertedSource);
     	//long duration = System.currentTimeMillis() - start;
     	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " " + duration + "ms "+ filename + " projected");
     	return convertedSource;
@@ -377,6 +640,7 @@ public class VerdiShapefileUtil {
         
         return projectAndClipLineString(lineStringList, sourceCoordinates, 0, latLon, xy, factor, proj, 0);
     }
+  
 
     private static Polygon projectPolygon(Geometry sourceGeometry, Projection proj) {
     	if (proj == null)
@@ -398,6 +662,7 @@ public class VerdiShapefileUtil {
         for (int i = 0; i < sourceCoordinates.length; ++i) {
         	Coordinate source = sourceCoordinates[i];
         	latLon.set(source.y, source.x);
+        	//latLon.set(73.487559, 42.049);
         	proj.latLonToProj(latLon, xy);
         	targetCoordinates[i] = new Coordinate(xy.getX() * factor, xy.getY() * factor);
         }
@@ -406,6 +671,41 @@ public class VerdiShapefileUtil {
         
         try {
         	targetPolygon = geometryFactory.createPolygon(targetCoordinates);
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        return targetPolygon;   	
+    }
+
+    private static Point projectPoint(Point sourceGeometry, Projection proj) {
+    	if (proj == null)
+    		return sourceGeometry;
+    	double factor = 1000;
+    	if (proj instanceof LatLonProjection)
+    		factor = 1;
+    	Point targetPolygon = null;
+    	//valid polygons must end with the same coordinate that they start with.  Add if not present.
+
+    	Coordinate[] sourceCoordinates = sourceGeometry.getCoordinates();
+
+        Coordinate[] targetCoordinates = new Coordinate[sourceCoordinates.length];
+        LatLonPointImpl latLon = new LatLonPointImpl();
+        ProjectionPointImpl xy = new ProjectionPointImpl();
+        
+    	
+        for (int i = 0; i < sourceCoordinates.length; ++i) {
+        	Coordinate source = sourceCoordinates[i];
+        	latLon.set(source.y, source.x);
+        	//latLon.set(73.487559, 42.049);
+        	proj.latLonToProj(latLon, xy);
+        	targetCoordinates[i] = new Coordinate(xy.getX() * factor, xy.getY() * factor);
+        	//targetCoordinates[i] = new Coordinate(-16711049.005249446, 9000579.46370098); // - from map file, not shown onscreen
+        	//targetCoordinates[i] = new Coordinate(-109.0448, 37.0004); // Works - whatever renders is looking for lat/lon, not native
+        	
+        }
+        
+        try {
+        	targetPolygon = geometryFactory.createPoint(targetCoordinates[0]);
         } catch (Exception e) {
         	e.printStackTrace();
         }

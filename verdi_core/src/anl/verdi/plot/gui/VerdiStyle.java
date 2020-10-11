@@ -7,6 +7,8 @@
  */
 package anl.verdi.plot.gui;
 
+import gov.epa.emvl.Mapper;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -51,13 +53,15 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import anl.gui.color.MoreColor;
 import anl.verdi.area.RangeLevelFilter;
+import anl.verdi.plot.color.ColorMap;
+import anl.verdi.plot.gui.ObsAnnotation.Symbol;
 import ucar.unidata.geoloc.Projection;
 /**
  * @author Jo Ellen Brandmeyer, Institute for the Environment, 2015
  *
  */
 public class VerdiStyle implements Callable<Boolean> {
-
+	
 	private StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory(null);
 	private FilterFactory filterFactory = CommonFactoryFinder.getFilterFactory(null);
 	static final Logger Logger = LogManager.getLogger(VerdiStyle.class.getName());
@@ -183,12 +187,13 @@ public class VerdiStyle implements Callable<Boolean> {
 			waitForProjection();
 		}
 	}
-	
+		
 	private void projectShapefile(Projection proj, CoordinateReferenceSystem targetCRS) {
-		vFeatureSource = VerdiShapefileUtil.projectShapefile(vFile.getName(), (SimpleFeatureSource)vFeatureSource, proj, targetCRS);
+		if (proj != null && targetCRS != null)
+			vFeatureSource = VerdiShapefileUtil.projectShapefile(vFile.getName(), (SimpleFeatureSource)vFeatureSource, proj, targetCRS);
 		vProjection = proj;
 		vCRS = vFeatureSource.getSchema().getCoordinateReferenceSystem();
-		
+				
 		/*double xMin = targetCRS.getCoordinateSystem().getAxis(0).getMinimumValue();
 		double xMax = targetCRS.getCoordinateSystem().getAxis(0).getMaximumValue();
 		double panX = 0;
@@ -349,6 +354,16 @@ public class VerdiStyle implements Callable<Boolean> {
 			return;
 		}
 	}
+	
+	public Style getPointStyle() {
+		createPointStyle();
+		return vStyle;
+	}
+
+	public Style getObsStyle(int strokeSize, int shapeSize, ColorMap map, Symbol symbol) {
+		createObsStyle(strokeSize, shapeSize, map, symbol);
+		return vStyle;
+	}
 
 	private File toSLDFile()		// get existing SLD file
 	{
@@ -424,12 +439,11 @@ public class VerdiStyle implements Callable<Boolean> {
 	{
 		Graphic gr = styleFactory.createDefaultGraphic();
 		Mark mark = styleFactory.getCircleMark();
-		mark.setStroke(styleFactory.createStroke( 
-				filterFactory.literal(Color.BLACK), 
-				filterFactory.literal(1)));
-		mark.setFill(styleFactory.createFill(filterFactory.literal(Color.TRANSLUCENT)));
+		mark.setStroke(styleFactory.createStroke( 				filterFactory.literal(Color.BLACK), 
+				filterFactory.literal(1))); //1
+		mark.setFill(styleFactory.createFill(filterFactory.literal(Color.GREEN))); //Color.TRANSLUCENT)));
 		gr.graphicalSymbols().clear();gr.graphicalSymbols().add(mark);
-		gr.setSize(filterFactory.literal(5));
+		gr.setSize(filterFactory.literal(5)); //5
 		
 		PointSymbolizer sym = styleFactory.createPointSymbolizer(gr, null);	// null means default geometry
 		Rule rule = styleFactory.createRule();
@@ -438,6 +452,46 @@ public class VerdiStyle implements Callable<Boolean> {
 		Style style = styleFactory.createStyle();
 		style.featureTypeStyles().add(fts);
 		Logger.debug("created point style: " + style.toString());
+		vStyle = style;
+	}
+	
+	private void createObsStyle(int strokeSize, int shapeSize, ColorMap map, Symbol symbol)	// create a style to draw points as circles
+	{
+		Graphic gr = styleFactory.createDefaultGraphic();
+		Mark mark = styleFactory.getCircleMark();
+		switch (symbol) {
+		case CIRCLE:
+			mark = styleFactory.getCircleMark();
+			break;
+		case TRIANGLE:
+			mark = styleFactory.getTriangleMark();
+			break;
+		case SQUARE:
+			mark = styleFactory.getSquareMark();
+			break;
+		case STAR:
+			mark = styleFactory.getStarMark();
+			break;
+		case DIAMOND:
+		case SUN:
+			mark = styleFactory.getDefaultMark();
+			mark.setWellKnownName(filterFactory.literal("ttf://Dialog#0x25C7"));
+			break;
+			//, SUN
+		}
+		mark.setStroke(styleFactory.createStroke( 				filterFactory.literal(Color.BLACK), 
+				filterFactory.literal(strokeSize))); //1
+		mark.setFill(styleFactory.createFill(filterFactory.literal(Color.GREEN))); //Color.TRANSLUCENT)));
+		gr.graphicalSymbols().clear();gr.graphicalSymbols().add(mark);
+		gr.setSize(filterFactory.literal(shapeSize)); //5
+		
+		PointSymbolizer sym = styleFactory.createPointSymbolizer(gr, null);	// null means default geometry
+		Rule rule = styleFactory.createRule();
+		rule.symbolizers().add(sym);
+		FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
+		Style style = styleFactory.createStyle();
+		style.featureTypeStyles().add(fts);
+		Logger.debug("created obs style: " + style.toString());
 		vStyle = style;
 	}
 	
