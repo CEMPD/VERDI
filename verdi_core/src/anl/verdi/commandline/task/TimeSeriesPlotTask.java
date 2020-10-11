@@ -14,7 +14,9 @@ import org.apache.logging.log4j.Logger;			// 2015 replacing System.out.println w
 import anl.verdi.commandline.AbstractTask;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiConstants;
+import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
+import anl.verdi.data.DataFrameAxis;
 import anl.verdi.formula.Formula;
 import anl.verdi.gui.FormulaListElement;
 import anl.verdi.plot.config.PlotConfiguration;
@@ -82,6 +84,11 @@ public class TimeSeriesPlotTask implements AbstractTask {
 
 				plot = panel.getPlot();
 				Logger.debug("in TimeSeriesPlotTask.run(), back from panel.getPlot()");
+				
+				String aLayer = map.get(VerdiConstants.LAYER);			
+				if (aLayer != null)
+					PlotFactory.setLayer(dataFrame,  plot,  aLayer);
+
 			}
 		}
 
