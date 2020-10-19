@@ -212,7 +212,7 @@ public class VerdiShapefileUtil {
 	                	} else
 	                		System.out.println(i + ": attr " + attrs.get(i).getClass().getName() + " " + attrs.get(i));
 	                }*/
-	                if (copy.getAttributes().contains("CT")) {
+	                /*if (copy.getAttributes().contains("CT")) {
 	                	System.err.println("Found Connecticut"); //DBG
 	                	Coordinate[] c1 = geometry.getCoordinates();
 	                	Coordinate[] c2 = geometry2.getCoordinates();
@@ -225,7 +225,7 @@ public class VerdiShapefileUtil {
 	                		}
 	                	}
 	                	System.out.println("Max  " + c1[maxIndex].x + ", " + c1[maxIndex].y);
-	                }
+	                }*/
 	               // geometry2 = geometry; //DBG
 	
 	                copy.setDefaultGeometry(geometry2);
@@ -447,6 +447,7 @@ public class VerdiShapefileUtil {
 		        		point = projectPoint(point, proj);
 		        	}
 	                SimpleFeature copy = writer.next();
+	                point.setUserData(data.getValue());
 	                copy.setDefaultGeometry(point);
 	                writer.write();
 		        }

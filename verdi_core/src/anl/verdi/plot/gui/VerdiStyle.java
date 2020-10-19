@@ -261,7 +261,7 @@ public class VerdiStyle implements Callable<Boolean> {
 		Logger.debug("returning vStyle = " + vStyle.toString());
 		return;
 	}
-	
+		
 	public Style buildRangeStyle(double[] ranges, Color[] colors, boolean showSelectedOnly) {		
         // create a partially opaque outline stroke
         Stroke selectedStroke = styleFactory.createStroke(
@@ -361,8 +361,13 @@ public class VerdiStyle implements Callable<Boolean> {
 	}
 
 	public Style getObsStyle(int strokeSize, int shapeSize, ColorMap map, Symbol symbol) {
-		createObsStyle(strokeSize, shapeSize, map, symbol);
-		return vStyle;
+		try {
+			createObsStyle(strokeSize, shapeSize, map, symbol);
+			return vStyle;
+		} catch (Exception e) {
+			Logger.error("Error creating OBS style", e);
+			return null;
+		}
 	}
 
 	private File toSLDFile()		// get existing SLD file
@@ -455,7 +460,64 @@ public class VerdiStyle implements Callable<Boolean> {
 		vStyle = style;
 	}
 	
-	private void createObsStyle(int strokeSize, int shapeSize, ColorMap map, Symbol symbol)	// create a style to draw points as circles
+	private PointSymbolizer getObsSymbolizer(int index, int strokeSize, int shapeSize, ColorMap map, Symbol symbol)	// create a style to draw points as circles
+	{
+		Graphic gr = styleFactory.createDefaultGraphic();
+		Mark mark = styleFactory.getCircleMark();
+		switch (symbol) {
+		case CIRCLE:
+			mark = styleFactory.getCircleMark();
+			break;
+		case TRIANGLE:
+			mark = styleFactory.getTriangleMark();
+			break;
+		case SQUARE:
+			mark = styleFactory.getSquareMark();
+			break;
+		case STAR:
+			mark = styleFactory.getStarMark();
+			break;
+		case DIAMOND:
+		case SUN:
+			mark = styleFactory.getDefaultMark();
+			mark.setWellKnownName(filterFactory.literal("ttf://Dialog#0x25C7"));
+			break;
+			//, SUN
+		}
+		mark.setStroke(styleFactory.createStroke( 				filterFactory.literal(Color.BLACK), 
+				filterFactory.literal(strokeSize))); //1
+		
+		mark.setFill(styleFactory.createFill(filterFactory.literal(map.getColor(map.getColorCount() - index - 1)))); //Color.TRANSLUCENT)));
+		gr.graphicalSymbols().clear();gr.graphicalSymbols().add(mark);
+		gr.setSize(filterFactory.literal(shapeSize)); //5
+		
+		PointSymbolizer sym = styleFactory.createPointSymbolizer(gr, null);	// null means default geometry
+		return sym;
+	}
+	
+	private void createObsStyle(int strokeSize, int shapeSize, ColorMap map, Symbol symbol) throws Exception{	// create a style to draw points as circles
+
+		int numRules = map.getColorCount();
+		Rule[] rules = new Rule[numRules];
+		for (int i = 0; i < numRules; ++i) {
+			rules[i] = styleFactory.createRule();
+	        rules[i].setFilter(new RangeLevelFilter(map.getIntervalStart(numRules - i - 1), false));
+			rules[i].symbolizers().add(getObsSymbolizer(i, strokeSize, shapeSize, map, symbol));
+		}
+		
+
+        ((RangeLevelFilter)rules[0].getFilter()).setInitialFilter(true);
+        
+        FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(rules);
+        Style style = styleFactory.createStyle();
+        style.featureTypeStyles().add(fts);
+        
+        
+		Logger.debug("created obs style: " + style.toString());
+		vStyle = style;
+	}
+	
+	private void oldCreateObsStyle(int strokeSize, int shapeSize, ColorMap map, Symbol symbol)	// create a style to draw points as circles
 	{
 		Graphic gr = styleFactory.createDefaultGraphic();
 		Mark mark = styleFactory.getCircleMark();
@@ -488,6 +550,8 @@ public class VerdiStyle implements Callable<Boolean> {
 		PointSymbolizer sym = styleFactory.createPointSymbolizer(gr, null);	// null means default geometry
 		Rule rule = styleFactory.createRule();
 		rule.symbolizers().add(sym);
+		
+		
 		FeatureTypeStyle fts = styleFactory.createFeatureTypeStyle(new Rule[]{rule});
 		Style style = styleFactory.createStyle();
 		style.featureTypeStyles().add(fts);
