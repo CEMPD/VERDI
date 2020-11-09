@@ -488,7 +488,8 @@ public class VerdiStyle implements Callable<Boolean> {
 				filterFactory.literal(strokeSize))); //1
 		
 		mark.setFill(styleFactory.createFill(filterFactory.literal(map.getColor(map.getColorCount() - index - 1)))); //Color.TRANSLUCENT)));
-		gr.graphicalSymbols().clear();gr.graphicalSymbols().add(mark);
+		gr.graphicalSymbols().clear();
+		gr.graphicalSymbols().add(mark);
 		gr.setSize(filterFactory.literal(shapeSize)); //5
 		
 		PointSymbolizer sym = styleFactory.createPointSymbolizer(gr, null);	// null means default geometry

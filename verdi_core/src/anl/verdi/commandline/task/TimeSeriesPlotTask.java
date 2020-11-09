@@ -3,6 +3,7 @@ package anl.verdi.commandline.task;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -19,6 +20,9 @@ import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.formula.Formula;
 import anl.verdi.gui.FormulaListElement;
+import anl.verdi.plot.color.ColorMap;
+import anl.verdi.plot.color.Palette;
+import anl.verdi.plot.color.PavePaletteCreator;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
 //import anl.verdi.plot.config.VectorPlotConfiguration;		// 2014 removed old Vector Plot
@@ -107,6 +111,53 @@ public class TimeSeriesPlotTask implements AbstractTask {
 		}
 	}
 	
+	private void handleColorMap(Map<String, String> map) {
+		String legendBins = map.get(VerdiConstants.LEGEND_BINS);
+		ColorMap cmap = null;
+
+		String[] allItems = legendBins.split(",");
+
+		int numColors = allItems.length;
+		PavePaletteCreator p = new PavePaletteCreator();
+
+		if(allItems[0].equalsIgnoreCase("DEFAULT"))
+		{
+			cmap = null;
+
+			//resetConfigurationsWithoutColorMap();
+		}
+		else
+		{
+
+			List<Palette> paletteList = p.createPalettes(numColors - 1);
+
+			cmap = new ColorMap(paletteList.get(0), 
+					Double.parseDouble(allItems[0]), 
+					Double.parseDouble(allItems[allItems.length - 1]));
+
+			for(int i = 0; i < numColors - 1; i++)
+			{
+				try {
+					cmap.setIntervalStart(i, Double.parseDouble(allItems[i]));
+				} catch (NumberFormatException e) {
+					Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LEGENDBINS'", e);
+					e.printStackTrace();
+				} catch (Exception e) {
+					Logger.error("Exception in ScriptHandler.dataMap.put 'LEGENDBINS'", e);
+					e.printStackTrace();
+				}
+			}
+		}
+		
+
+
+		if(cmap!= null)
+		{
+			config.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
+			vConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
+		}
+	}
+
 	private void createConfig() {
 		config = new PlotConfiguration();
 		vConfig = new VertCrossPlotConfiguration();

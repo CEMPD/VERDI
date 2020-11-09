@@ -6,6 +6,7 @@ import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.Expression;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 import anl.verdi.area.target.Target;
 
@@ -63,6 +64,12 @@ public class RangeLevelFilter implements PropertyIsEqualTo {
 	public boolean matchRange(Object object) {
 		if (object instanceof SimpleFeature) {
 			Object attr = ((SimpleFeature)object).getAttribute("the_geom");
+			if (attr instanceof Point) {
+				Double obsValue = (Double)((Point)attr).getUserData();
+				if (obsValue != null) {
+					return obsValue >= cutoff;
+				}
+			}
 			if (attr instanceof Geometry) {
 				//TODO - need tgt to have correct data and type of map
 				Target tgt = Target.getTarget((Geometry)attr);

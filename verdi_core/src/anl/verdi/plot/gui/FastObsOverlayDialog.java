@@ -188,13 +188,13 @@ public class FastObsOverlayDialog extends ObsOverlayDialog implements
 		String fileSun = new String(pathName + "sun.png");
 		String fileTriangle = new String(pathName + "triangle.png");
 		
-		names = new Symbol[] {Symbol.CIRCLE, Symbol.DIAMOND, Symbol.SQUARE, Symbol.STAR, Symbol.SUN, Symbol.TRIANGLE};
+		names = new Symbol[] {Symbol.CIRCLE, /*Symbol.DIAMOND,*/ Symbol.SQUARE, Symbol.STAR, /*Symbol.SUN,*/ Symbol.TRIANGLE};
 		symbols = new Icon[] {
 				new ImageIcon(fileCircle),
-				new ImageIcon(fileDiamond),
+				//new ImageIcon(fileDiamond),
 				new ImageIcon(fileSquare),
 				new ImageIcon(fileStar),
-				new ImageIcon(fileSun),
+				//new ImageIcon(fileSun),
 				new ImageIcon(fileTriangle)
 //				new ImageIcon(getClass().getResource("/circle.png")),
 //				new ImageIcon(getClass().getResource("/diamond.png")),
