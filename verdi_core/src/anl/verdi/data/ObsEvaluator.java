@@ -105,8 +105,13 @@ public class ObsEvaluator {
 		}
 
 		DataFrame obsFrame = reader.getValues(dataset, range, var);
+		if (obsFrame == null)
+			throw new IllegalArgumentException("OBS data does not contain readings for the times within the data file.");		
 		DataFrame latFrame = reader.getValues(dataset, range, lat);
 		DataFrame lonFrame = reader.getValues(dataset, range, lon);
+		if (latFrame == null || lonFrame == null)
+			
+			throw new IllegalArgumentException("OBS data does not cover the are of the data file.");
 		Iterable<ObsData> iter = new ObsIterator(latFrame.getArray(), lonFrame.getArray(),
 						obsFrame.getArray(), var.getUnit());
 		List<ObsData> list = new ArrayList<ObsData>();
