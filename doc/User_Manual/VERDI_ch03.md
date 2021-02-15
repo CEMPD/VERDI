@@ -28,7 +28,7 @@ Follow these instructions to install VERDI:
 
 2.  VERDI home directory is set to be the current working directory in the executable script verdi_2.0/verdi.sh (e.g., DIR=`pwd`)
 
-3.  For Linux, VERDI should now run if you execute the verdi.sh executable script (e.g., ./verdi.sh or csh -f verdi.sh); For Mac, VERDI can be run by using the verdi.command executable script.
+3.  For Linux, VERDI can be run by executing the verdi.sh executable script (e.g., ./verdi.sh or csh -f verdi.sh); For Mac, VERDI can be run by using the verdi.command executable script.
 
 Installation Instructions for Windows
 --------------------------------------
