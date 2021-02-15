@@ -24,18 +24,11 @@ Installation Instructions for Linux and Mac
 
 Follow these instructions to install VERDI:
 
-1.  tar -xvf verdi_2.0.tar.gz into a location where you would like to install VERDI
+1.  tar -xzvf verdi_2.0.tar.gz into a location where you would like to install VERDI
 
-2.  Edit verdi_2.0/verdi.sh: Change the path for the DIR variable to reflect the location where VERDI was installed (e.g., DIR=/proj/ie/apps/longleaf/VERDI_2.0)
+2.  VERDI home directory is set to be the current working directory in the executable script verdi_2.0/verdi.sh (e.g., DIR=`pwd`)
 
-3.  Create a directory *verdi* under your home directory.
-
-4.  Create an empty text file, name it *verdi.alias* and save it in your *verdi* directory. When you look at the directory listing for this *verdi* directory, you should see the *verdi.alias* file with a length of 0.
-
-5.  Locate the file *config.properties.TEMPLATE* that is in your installation directory. Copy *config.properties.TEMPLATE* to your *verdi* directory and rename that file *config.properties* only.
-
-    VERDI should now run if you execute the verdi.sh executable script (e.g., ./verdi.sh).
-
+3.  For Linux, VERDI should now run if you execute the verdi.sh executable script (e.g., ./verdi.sh or csh -f verdi.sh); For Mac, VERDI can be run by using the verdi.command executable script.
 
 Installation Instructions for Windows
 --------------------------------------
