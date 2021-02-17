@@ -55,15 +55,13 @@ These datasets may be used to recreate example plots that are provided in this u
 
 3.  hucRegion – contains Hydrologic Unit Code (HUC) shapefiles for region 3 (southeast US)
 
-<!-- -->
+4.  model – contains sample WRF netCDF, MPAS netCDF, and CMAQ Models-3 I/O API datasets
 
-1.  model – contains sample WRF netCDF, MPAS netCDF, and CMAQ Models-3 I/O API datasets
+5.  obs – contains an ASCII formatted observational dataset (Section 6.1.2), and an observational dataset created by airs2m3 converter (Chapter 13).
 
-2.  obs – contains an ASCII formatted observational dataset (Section 6.1.2), and an observational dataset created by airs2m3 converter (Chapter 13).
+6.  plots – contains sample plots created by VERDI
 
-3.  plots – contains sample plots created by VERDI
-
-4.  scripts – contains sample batch scripts
+7.  scripts – contains sample batch scripts
 
 Adding and Removing a Dataset from a Local File System
 ------------------------------------------------------
