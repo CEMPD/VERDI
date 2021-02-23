@@ -44,7 +44,7 @@ To install VERDI for Windows, unzip the file to a local directory on your Window
 
 If you are unable to install VERDI on your computer, please check to see whether your user account is authorized to install software. You may need to request that a user with a computer administrator account install VERDI, or provide you with an account that has permission to install software. For more information about user account types, click Start and select Control Panel and then click on the User Account icon.
 
-After successfully installing VERDI you need to perform the following tasks under your home directory.
+After successfully installing VERDI, if you would like to record log files (optional), please perform the following tasks under your home directory.
 
 1.  Locate your home directory. Your home directory is typically under ```csh C: //Users//yourloginid ```. So, if your login id is *staff*, your home directory is probably *C: //Users//staff*.
 
@@ -58,7 +58,7 @@ Note that VERDI writes a log file (i.e., *verdi.log*) as-needed to your *verdi* 
 
 
 <a id="verdi_preferences"></a>
-Setting VERDI Preferences
+Setting VERDI Preferences (optional)
 -------------------------
 
 VERDI is configured via the config.properties file that you copied to your home/verdi directory. Edit this file to specify default directories for saving files, for placing the location of configuration files, and for saving project files. Contents of config.properties.TEMPLATE:
