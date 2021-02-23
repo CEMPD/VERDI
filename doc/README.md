@@ -2,7 +2,7 @@ VERDI Documents
 ==================
 
 This directory contains the documentation for [VERDI](https://www.cmascenter.org/verdi/)
-The following documents are available for the VERDI 2.0 Beta release:
+The following documents are available for the VERDI 2.0 release:
 
 - [Release Notes](Release_Notes/README.md): Technical notes on the new features and science in this release of CMAQ.  Release notes can be found under CMAQ/CCTM/docs.
 

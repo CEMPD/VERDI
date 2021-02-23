@@ -77,11 +77,11 @@ public class VerticalCrossPlotCreator extends AbstractPlotCreator {
 					if (!dialog.isCanceled()) {
 						VertCrossPlotConfiguration vConfig = createConfig();
 						if (dialog.isXSelected()) {
-							int x = dialog.getColumn();
+							double x = dialog.getColumn();
 							vConfig.setCrossSectionType(VerticalCrossSectionPlot.CrossSectionType.X);
 							vConfig.setCrossSectionRowCol(x);
 						} else {
-							int y = dialog.getRow();
+							double y = dialog.getRow();
 							vConfig.setCrossSectionType(VerticalCrossSectionPlot.CrossSectionType.Y);
 							vConfig.setCrossSectionRowCol(y);
 						}
@@ -90,6 +90,7 @@ public class VerticalCrossPlotCreator extends AbstractPlotCreator {
 						else
 							vConfig.setDisplayMode(MeshPlot.MODE_CROSS_SECTION_ELEVATION);
 						vConfig.setCrossSectionSliceSize(dialog.getSliceSize());
+						//vConfig.setCrossSectionSliceUnits(dialog.getSliceUnits());
 						return createVertPlot(vConfig, frame, meshInput);
 					}
 				} else {
@@ -110,12 +111,12 @@ public class VerticalCrossPlotCreator extends AbstractPlotCreator {
 		else	
 			axes = frame.getAxes();
 		if (config.getCrossSectionType() == VerticalCrossSectionPlot.CrossSectionType.X) {
-			int x = config.getCrossSectionRowCol() - (int)axes.getXAxis().getRange().getOrigin();
+			double x = config.getCrossSectionRowCol() - axes.getXAxis().getRange().getOrigin();
 			if (meshInput)
 				++x;
 			config.setCrossSectionRowCol(x);
 		} else {
-			int y = config.getCrossSectionRowCol() - (int)axes.getYAxis().getRange().getOrigin();
+			double y = config.getCrossSectionRowCol() - axes.getYAxis().getRange().getOrigin();
 			if (meshInput)
 				++y;
 			config.setCrossSectionRowCol(y);

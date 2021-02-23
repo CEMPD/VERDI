@@ -1419,19 +1419,21 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		return calculator;
 	}
 	
-	public MinMaxInfo getPlotMinMaxX(DataFrame frame, int timestep, int x) {
+	//Returns plot min/max across all y values for fixed x
+	public MinMaxInfo getPlotMinMaxX(DataFrame frame, int timestep, double x, double sliceSize) {
 		MeshCellInfo[] cells = getLonSortedCellsArray();
 		Comparator comp = LonCellComparator.getInstance();
-		return getPlotMinMaxSection(frame, timestep, x, comp, cells, true);
+		return getPlotMinMaxSection(frame, timestep, x, sliceSize, comp, cells, true);
 	}
 	
-	public MinMaxInfo getPlotMinMaxY(DataFrame frame, int timestep, int y) {
+	//Returns plot min/max across all x values for fixed y
+	public MinMaxInfo getPlotMinMaxY(DataFrame frame, int timestep, double y, double sliceSize) {
 		MeshCellInfo[] cells = getLatSortedCellsArray();
 		Comparator comp = LatCellComparator.getInstance();
-		return getPlotMinMaxSection(frame, timestep, y, comp, cells, false);
+		return getPlotMinMaxSection(frame, timestep, y, sliceSize, comp, cells, false);
 	}
 	
-	public MinMaxInfo getPlotMinMaxSection(DataFrame frame, int timestep, int selectedDimension, Comparator comp, MeshCellInfo[] cells, boolean useLon) {
+	public MinMaxInfo getPlotMinMaxSection(DataFrame frame, int timestep, double selectedDimension, double sliceSize, Comparator comp, MeshCellInfo[] cells, boolean useLon) {
 		boolean isLog = frame.getArray().getClass().getName().endsWith("Log");
 
 		CoordAxis axis = frame.getAxes().getTimeAxis();
@@ -1462,6 +1464,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 
         ArrayReader reader =  ArrayReader.getReader(frame.getArray());
         double border;
+        double sliceEnd = selectedDimension + sliceSize;
 		MinMaxInfo info = new MinMaxInfo(0);
 		for (int layer = layerOrigin; layer < numLayers; ++layer) {
 
@@ -1470,7 +1473,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 					border = cells[cell].getMinX();
 				else
 					border = cells[cell].getMinY();
-				if (Math.floor(border) != selectedDimension)
+				if (border > sliceEnd)
 					break;
 				double value = cells[cell].getValue(reader, frame, index, timestep, layer);
 				info.visitValue(value,  cell);

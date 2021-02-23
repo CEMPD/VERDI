@@ -11,7 +11,9 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 
 //import simphony.util.messages.MessageCenter;
 import visad.VisADException;
+import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
+import anl.verdi.data.DataFrameAxis;
 import anl.verdi.formula.Formula;
 import anl.verdi.formula.Formula.Type;
 import anl.verdi.plot.config.PlotConfiguration;
@@ -78,6 +80,26 @@ public class PlotFactory {
 		List<DataFrame> frames = new ArrayList<DataFrame>();
 		frames.add(frame);
 		return getPlot(type, formula, frames, config);
+	}
+	
+	public static void setLayer(DataFrame dataFrame, Plot plot, String strLayer) {
+		Axes<DataFrameAxis> axes = dataFrame.getAxes();
+		
+		int layer = 0;
+		if(strLayer == null)
+			layer = 0;
+		else
+			layer = Integer.parseInt(strLayer) - 1; //assume it is 1-based
+		layer = layer - axes.getZAxis().getOrigin();
+
+		if (plot instanceof LinePlot)
+			((LinePlot)plot).updateLayer(layer);
+		else if (plot instanceof TilePlot)
+			((TilePlot)plot).updateTimeStepLayer(((TilePlot)plot).getTimeStep(),  layer);
+		else if (plot instanceof TimeSeriesBarPlot)
+			((TimeSeriesBarPlot)plot).updateLayer(layer);
+		else if (plot instanceof Contour3D)
+			((Contour3D)plot).updateTimeStepLayer(((Contour3D)plot).getTimeStep(), layer);	
 	}
 
 	public PlotPanel getPlot(Formula.Type type, String formula, List<DataFrame> frames, PlotConfiguration config) {

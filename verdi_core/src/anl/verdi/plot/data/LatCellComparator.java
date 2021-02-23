@@ -5,6 +5,9 @@ import java.util.Comparator;
 import anl.verdi.data.MeshCellInfo;
 
 public class LatCellComparator implements Comparator {
+	
+	public double minLat = Double.MAX_VALUE;
+	public double maxLat = Double.MIN_VALUE;
 
 	private static LatCellComparator instance = new LatCellComparator();
 	
@@ -19,14 +22,24 @@ public class LatCellComparator implements Comparator {
 			v1 = (Double)o1;
 		else if (o1 instanceof Integer)
 			v1 = ((Integer)o1).intValue();
-		else
+		else {
 			v1 = ((MeshCellInfo)o1).getLat(((MeshCellInfo)o1).getMinYPosition());
+			if (v1 < minLat)
+				minLat = v1;
+			if (v1 > maxLat)
+				maxLat = v1;
+		}
 		if (o2 instanceof Double)
 			v2 = (Double)o2;
 		else if (o2 instanceof Integer)
 			v2 = ((Integer)o2).intValue();
-		else
+		else {
 			v2 = ((MeshCellInfo)o2).getLat(((MeshCellInfo)o2).getMinYPosition());
+			if (v2 < minLat)
+				minLat = v2;
+			if (v1 > maxLat)
+				maxLat = v2;
+		}
 		if (v1 == v2)
 			return 0;
 		if (v1 < v2)

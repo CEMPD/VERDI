@@ -21,6 +21,7 @@ import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
+import javax.vecmath.Point4d;
 import javax.vecmath.Point4i;
 
 import org.apache.logging.log4j.LogManager;		// 2014
@@ -44,7 +45,9 @@ import org.jfree.ui.RectangleInsets;
 
 //import simphony.util.messages.MessageCenter;
 import ucar.ma2.InvalidRangeException;
+import anl.verdi.core.VerdiConstants;
 import anl.verdi.data.Axes;
+import anl.verdi.data.BoundingBoxer;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
@@ -83,6 +86,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	private String colString = "Column";
 	private String rowString = "Row";
 	MeshPlot renderPlot = null;
+	
 
 	public static enum CrossSectionType {
 		X, Y
@@ -90,7 +94,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 
 //	private static MessageCenter center = MessageCenter.getMessageCenter(VerticalCrossSectionPlot.class);
 
-	private int constant;
+	private double constant;
 	private double sliceSize;
 	private CrossSectionXYZDataset dataset;
 	private CrossSectionType type;
@@ -129,13 +133,18 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		configure(defaultConfig);
 	}
 
+	//Only caller is not double aware
 	public int getConstant() {
-		return constant;
+		return (int)Math.round(constant);
 	}
 
 	public CrossSectionType getCrossSectionType() {
 		return type;
 	}
+	
+	/*public void getCircumferenceLat(double lat) {
+		double circ = 2 * Math.PI * VerdiConstants.EARTH_CIRC_MI * Math.cos(lat);
+	}*/
 
 	/**
 	 * Creates a VerticalCrossSectionPlot.
@@ -145,8 +154,14 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	 * @param constant the constant column or row. Whether this is a column or row
 	 *                 is dependent on the cross section type.
 	 */
-	public VerticalCrossSectionPlot(DataFrame frame, CrossSectionType type, int constant, boolean meshInput, int displayMode, double sliceHeight) {
+	public VerticalCrossSectionPlot(DataFrame frame, CrossSectionType type, double constant, boolean meshInput, int displayMode, double sliceHeight) {
 		super(frame);
+		/*if (VerdiConstants.UNITS_MI.equals(sliceUnits))
+			sliceSize = sliceHeight * 1;
+		else if (VerdiConstants.UNITS_KM.equals(sliceUnits)) 
+			sliceSize = sliceHeight * 1; 
+		else*/
+			sliceSize = sliceHeight;
 		this.meshInput = meshInput;
 		this.displayMode = displayMode;
 		if (meshInput) {
@@ -184,8 +199,8 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	 */
 	protected DataUtilities.MinMaxPoint getMinMaxPoints() {
 		try {
-			if (type == CrossSectionType.X) return DataUtilities.minMaxTXPoint(frame, timeStep, constant);
-			else return DataUtilities.minMaxTYPoint(frame, timeStep, constant);
+			if (type == CrossSectionType.X) return DataUtilities.minMaxTXPoint(frame, timeStep, (int)Math.round(constant));
+			else return DataUtilities.minMaxTYPoint(frame, timeStep, (int)Math.round(constant));
 		} catch (InvalidRangeException e) {
 			Logger.error("Error getting min max points " + e.getMessage());
 		}
@@ -203,17 +218,17 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 
 		JToolBar bar = new JToolBar();
 		bar.setFloatable(false);
-		timePanel = new TimeConstantAxisPanel();
+		timePanel = new TimeConstantAxisPanel(meshInput);
 		timePanel.setConstantAxisLabel(getRowOrCol() + ":");
-		int column = constant;
+		double column = constant;
 		timePanel.init(getAxes(), constantAxis, frame.getAxes(),
 						timeStep + frame.getAxes().getTimeAxis().getOrigin(),
-						column + (int)constantAxis.getRange().getOrigin());
+						column + (double)constantAxis.getRange().getOrigin());
 		ChangeListener changeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if (processTimeChange) {
 					int time = timePanel.getTime() - frame.getAxes().getTimeAxis().getOrigin();
-					int cons = timePanel.getAxisValue() - (int)constantAxis.getRange().getOrigin();
+					double cons = timePanel.getAxisValue() - constantAxis.getRange().getOrigin();
 					updateTimeStepAndConstant(time, cons);
 				}
 			}
@@ -266,11 +281,11 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		slice.setLayerRange(y, axisRect.height + 1);
 		int offset = getOffset();
 		if (type == CrossSectionType.X) {
-			slice.setXRange(constant, 1);
+			slice.setXRange((int)Math.round(constant), 1);
 			slice.setYRange(axisRect.x - offset, axisRect.width + 1);
 		} else {
 			slice.setXRange(axisRect.x - offset, axisRect.width + 1);
-			slice.setYRange(constant, 1);
+			slice.setYRange((int)Math.round(constant), 1);
 		}
 
 		try {
@@ -322,6 +337,41 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		return new Point((int) x, (int) y);
 	}
 
+	private Point4d getAxisCoordForMouseD(Point mousePoint) {
+		Point2D p = panel.translateScreenToJava2D(mousePoint);
+		XYPlot plot = (XYPlot) chart.getPlot();
+		ChartRenderingInfo info = panel.getChartRenderingInfo();
+		Rectangle2D dataArea = info.getPlotInfo().getDataArea();
+
+		ValueAxis domainAxis = plot.getDomainAxis();
+		RectangleEdge domainAxisEdge = plot.getDomainAxisEdge();
+		ValueAxis rangeAxis = plot.getRangeAxis();
+		RectangleEdge rangeAxisEdge = plot.getRangeAxisEdge();
+		double x = domainAxis.java2DToValue(p.getX(), dataArea,
+						domainAxisEdge);
+		double y = rangeAxis.java2DToValue(p.getY(), dataArea,
+						rangeAxisEdge);
+
+		Range domainRange = this.domainAxis.getRange();
+		if (x < domainRange.getOrigin()) x = domainRange.getOrigin();
+		else if (x > domainRange.getOrigin() + (domainRange.getExtent() - 1))
+			x = domainRange.getOrigin() + (domainRange.getExtent() - 1);
+
+		double origin = 0;
+		double extent = 1;
+		if (hasZAxis()) {
+			origin = getZAxis().getRange().getOrigin();
+			extent = getZAxis().getRange().getExtent();
+		}
+		
+		//Range yRange = getZAxis().getRange();
+		y += origin;
+		if (y < origin) y = origin;
+		else if (y > origin + (extent - 1)) y = origin + (extent - 1);
+
+		return new Point4d(x, y, 0, 0);
+	}
+
 	/**
 	 * Updates the plot to show the data at the new timestep.
 	 *
@@ -335,7 +385,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 
 	}
 
-	public void updateTimeStepAndConstant(int timeStep, int constant) {
+	public void updateTimeStepAndConstant(int timeStep, double constant) {
 		this.timeStep = timeStep;
 		this.constant = constant;
 		rangedMinMax = null;
@@ -346,13 +396,13 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 
 		if (meshInput) {
 			series = dataset.getMeshSeries();
-			//TODO = remove series changes, maybe series all together
-			series.setPlotData(timeStep, constant);
+			//TODO = remove series changes, maybe series all together - doesn't appear to be used
+			series.setPlotData(timeStep, (int)Math.round(constant));
 			((MPASXYBlockRenderer)renderer).setPlotInfo(timeStep, constant);
 		} 
 		if (series == null){
-			if (type == CrossSectionType.X) dataset.addColSeries(frame, timeStep, constant);
-			else dataset.addRowSeries(frame, timeStep, constant);
+			if (type == CrossSectionType.X) dataset.addColSeries(frame, timeStep, (int)constant);
+			else dataset.addRowSeries(frame, timeStep, (int)constant);
 		}
 		createSubtitle();
 
@@ -363,7 +413,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		//look for Row 12 or Column 34, if present keep with the same trend but update with current the Row/Column Number
 		String title = chart.getTitle().getText() != null ? chart.getTitle().getText() : "";
 		if (meshInput) {
-			title = title.replaceAll(getRowOrCol() + " -?\\d+", getRowOrCol() + " " + (constant + offset + 1));
+			title = title.replaceAll(getRowOrCol() + " -?[\\d.]+", getRowOrCol() + " " + (constant + offset + 1));
 		} else 
 		title = title.replaceAll("\\b(?i)" + getRowOrCol() + "\\b\\s\\b-?\\d+\\b", getRowOrCol() + " " + (constant + offset + 1));
 		chart.setTitle(title);
@@ -511,34 +561,110 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 
 		return units;
 	}
+	
+	protected String createAreaString(Rectangle rect) {
+		Point4d[] points = rectToPointsD(rect);
+		if (showLatLon) return createLonLatAreaString(points);
+		else return createAxisCoordAreaString(points);
+	}
+	
+	private String createAxisCoordAreaString(Point4d[] points) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(formatPoint(points[0]));
+		if (points[1] != null) {
+			builder.append(" - ");
+			builder.append(formatPoint(points[1]));
+		}
+		return builder.toString();
+	}
 
+	// rect is in axis coordinates
+	protected String createLonLatAreaString(Point4d[] points) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(formatPointLatLon(points[0]));
+		if (points[1] != null) {
+			builder.append(" - ");
+			builder.append(formatPointLatLon(points[1]));
+		}
+		return builder.toString();
+	}
+	
 	protected Point4i[] rectToPoints(Rectangle rect) {
-		Point4i[] points = new Point4i[2];
+		return null;
+	}
+	
+	protected Point4d[] rectToPointsD(Rectangle rect) {
+		Point4d[] points = new Point4d[2];
 		// rect is layer, row/col
 		Axes axes = getAxes();
 		int xOrigin = (int)axes.getXAxis().getRange().getOrigin();
 		int yOrigin = (int)axes.getYAxis().getRange().getOrigin();
 		if (type == CrossSectionType.X) {
 			// x is constant, layer is y
-			Point4i point = new Point4i(constant + xOrigin, rect.x, rect.y, NO_VAL);
+			Point4d point = new Point4d(constant + xOrigin, rect.x, rect.y, NO_VAL);
 			points[0] = point;
 		} else {
 			// y is constant, layer is y
-			Point4i point = new Point4i(rect.x, constant + yOrigin, rect.y, NO_VAL);
+			Point4d point = new Point4d(rect.x, constant + yOrigin, rect.y, NO_VAL);
 			points[0] = point;
 		}
 
 		if (rect.getWidth() > 0 || rect.getHeight() > 0) {
 			if (type == CrossSectionType.X) {
-				Point4i point = new Point4i(constant + xOrigin, rect.x + rect.width, rect.y - rect.height, NO_VAL);
+				Point4d point = new Point4d(constant + xOrigin, rect.x + rect.width, rect.y - rect.height, NO_VAL);
 				points[1] = point;
 			} else {
-				Point4i point = new Point4i(rect.x + rect.width, constant + yOrigin, rect.y - rect.height, NO_VAL);
+				Point4d point = new Point4d(rect.x + rect.width, constant + yOrigin, rect.y - rect.height, NO_VAL);
 				points[1] = point;
 			}
 		}
 		return points;
 	}
+	
+	private String formatPointLatLon(Point4d point) {
+		BoundingBoxer boxer = getAxes().getBoundingBoxer();
+		Point2D llul = boxer.axisPointToLatLonPoint(point.x, point.y);	// 2014 replaced .getX() with x and .getY() with y
+		StringBuilder builder = new StringBuilder("(");
+		double[] vals = new double[4];
+		vals[0] = point.w;		// 2014 getW();
+		vals[1] = point.z;		// 2014 getZ();
+		vals[2] = llul.getY();
+		vals[3] = llul.getX();
+		boolean addComma = false;
+		for (int i = 0; i < 4; i++) {
+			double val = vals[i];
+			if (val != NO_VAL) {
+				if (addComma) builder.append(", ");
+
+				if (i == 2) builder.append(Utilities.formatLat(val, 4));
+				else if (i == 3) builder.append(Utilities.formatLon(val, 4));
+				else builder.append(format.format(val));
+				addComma = true;
+			}
+		}
+		builder.append(")");
+		return builder.toString();
+	}
+
+	public String formatPoint(Point4d point) {
+		StringBuilder builder = new StringBuilder("(");
+		double[] vals = new double[4];
+		vals[0] = point.w;		// 2014 getW();
+		vals[1] = point.z;		// 2014 getZ();
+		vals[2] = point.x;		// 2014 getX();
+		vals[3] = point.y;		// 2014 getY();
+		boolean addComma = false;
+		for (double val : vals) {
+			if (val != NO_VAL) {
+				if (addComma) builder.append(", ");
+				builder.append(val + 1);
+				addComma = true;
+			}
+		}
+		builder.append(")");
+		return builder.toString();
+	}
+
 
 
 	/**
@@ -552,13 +678,13 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 				if (meshInput) {
 					MinMaxInfo info = null;
 					if (type == CrossSectionType.X)
-						info = ((IMPASDataset)frame.getDataset().get(0)).getPlotMinMaxY(frame, timeStep, constant + (int)domainAxis.getRange().getOrigin());
+						info = ((IMPASDataset)frame.getDataset().get(0)).getPlotMinMaxX(frame, timeStep, constant + constantAxis.getRange().getOrigin(), sliceSize);
 					else
-						info = ((IMPASDataset)frame.getDataset().get(0)).getPlotMinMaxX(frame, timeStep, constant + (int)domainAxis.getRange().getOrigin());
+						info = ((IMPASDataset)frame.getDataset().get(0)).getPlotMinMaxY(frame, timeStep, constant + constantAxis.getRange().getOrigin(), sliceSize);
 					rangedMinMax = new DataUtilities.MinMax(info.getMin(), info.getMax());
 				}
-				else if (type == CrossSectionType.X) rangedMinMax = DataUtilities.minMaxTX(frame, timeStep, constant);
-				else rangedMinMax = DataUtilities.minMaxTY(frame, timeStep, constant);
+				else if (type == CrossSectionType.X) rangedMinMax = DataUtilities.minMaxTX(frame, timeStep, (int)Math.round(constant));
+				else rangedMinMax = DataUtilities.minMaxTY(frame, timeStep, (int)Math.round(constant));
 			}
 		} catch (InvalidRangeException e) {
 			Logger.error("Error getting min max " + e.getMessage());

@@ -1,9 +1,12 @@
 package anl.verdi.commandline.task;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -12,6 +15,7 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 import anl.verdi.commandline.AbstractTask;
+import anl.verdi.commandline.CommandScript;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiConstants;
 import anl.verdi.data.Axes;
@@ -22,6 +26,8 @@ import anl.verdi.gui.DatasetListElement;
 import anl.verdi.gui.DatasetListModel;
 import anl.verdi.gui.FormulaListElement;
 import anl.verdi.plot.color.ColorMap;
+import anl.verdi.plot.color.Palette;
+import anl.verdi.plot.color.PavePaletteCreator;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
 //import anl.verdi.plot.config.VectorPlotConfiguration;		// 2014 removed old Vector Plot
@@ -178,6 +184,114 @@ public class TilePlotTask implements AbstractTask {
 		}
 	}
 	
+	/*private static void resetConfigurationsWithoutColorMap()
+	{
+		Logger.debug("ScriptHandler.resetConfigurationsWithoutColorMap");
+		config = new PlotConfiguration();
+		vConfig = new VertCrossPlotConfiguration();
+
+		if(configFile != null)
+		{
+			try{
+				config = new PlotConfiguration(new File(configFile));
+				vConfig = new VertCrossPlotConfiguration(new PlotConfiguration(new File(configFile)));
+			}catch(IOException e){
+				Logger.error("IOException in ScriptHandler.resetConfigurationsWithoutColorMap", e);
+			}
+		}
+		else{
+			config.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+			vConfig.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+
+			config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+			vConfig.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+
+			config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
+			vConfig.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
+
+			config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+			vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+
+			if(titleSize != -1)
+			{
+				config.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, titleSize));
+				vConfig.putObject(PlotConfiguration.TITLE_FONT, new Font("SansSerif", Font.PLAIN, titleSize));
+			}
+			if(subtitle1Size != -1)
+			{
+				config.putObject(PlotConfiguration.SUBTITLE_1_FONT, 
+						new Font("SansSerif", Font.PLAIN, subtitle1Size));
+				vConfig.putObject(PlotConfiguration.SUBTITLE_1_FONT, new Font("SansSerif", Font.PLAIN, subtitle1Size));
+			}
+			if(subtitle2Size != -1)
+			{
+				config.putObject(PlotConfiguration.SUBTITLE_2_FONT, 
+						new Font("SansSerif", Font.PLAIN, subtitle2Size));
+				vConfig.putObject(PlotConfiguration.SUBTITLE_2_FONT, new Font("SansSerif", Font.PLAIN, subtitle2Size));
+			}
+
+
+			config.setUnits(units);
+			vConfig.setUnits(units);
+
+			config.setTitle(title);
+			vConfig.setTitle(title);
+
+			config.setSubtitle2(subtitle2);
+			vConfig.setSubtitle2(subtitle2);
+
+			config.setSubtitle1(subtitle1);
+			vConfig.setSubtitle1(subtitle1);
+		}
+	}*/
+
+	
+	private void handleColorMap(Map<String, String> map) {
+		String legendBins = map.get(VerdiConstants.LEGEND_BINS);
+
+		String[] allItems = legendBins.split(",");
+
+		int numColors = allItems.length;
+		PavePaletteCreator p = new PavePaletteCreator();
+
+		if(allItems[0].equalsIgnoreCase("DEFAULT"))
+		{
+			cmap = null;
+
+			//resetConfigurationsWithoutColorMap();
+		}
+		else
+		{
+
+			List<Palette> paletteList = p.createPalettes(numColors - 1);
+
+			cmap = new ColorMap(paletteList.get(0), 
+					Double.parseDouble(allItems[0]), 
+					Double.parseDouble(allItems[allItems.length - 1]));
+
+			for(int i = 0; i < numColors - 1; i++)
+			{
+				try {
+					cmap.setIntervalStart(i, Double.parseDouble(allItems[i]));
+				} catch (NumberFormatException e) {
+					Logger.error("Number Format Exception in ScriptHandler.dataMap.put 'LEGENDBINS'", e);
+					e.printStackTrace();
+				} catch (Exception e) {
+					Logger.error("Exception in ScriptHandler.dataMap.put 'LEGENDBINS'", e);
+					e.printStackTrace();
+				}
+			}
+		}
+		
+
+
+		if(cmap!= null)
+		{
+			config.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
+			vConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
+		}
+	}
+	
 	private TilePlotConfiguration createConfig() {
 		config = new PlotConfiguration();
 		vConfig = new VertCrossPlotConfiguration();
@@ -196,12 +310,8 @@ public class TilePlotTask implements AbstractTask {
 				Logger.error("Exception in TilePlotTask.createConfig creating plot configuration: " + e.getMessage());
 			} 
 		}
-		
-		if(cmap != null) {
-			config.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
-			vConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
-//			vectorConfig.putObject(TilePlotConfiguration.COLOR_MAP, cmap);
-		}
+				
+		handleColorMap(map);
 		
 		String title = map.get(VerdiConstants.TITLE) == null ? "" : map.get(VerdiConstants.TITLE);
 		String subtitle1 = map.get(VerdiConstants.SUB_TITLE_ONE) == null ? "" : map.get(VerdiConstants.SUB_TITLE_ONE);

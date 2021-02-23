@@ -18,6 +18,8 @@ public class VertCrossPlotConfiguration extends TilePlotConfiguration {
 			VertCrossPlotConfiguration.class.getName() + ".cross_display_mode";
 	public static final String CROSS_SECTION_SLICE_SIZE =
 			VertCrossPlotConfiguration.class.getName() + ".cross_slice_size";
+	//public static final String CROSS_SECTION_SLICE_UNITS =
+	//		VertCrossPlotConfiguration.class.getName() + ".cross_slice_units";
 
 	public VertCrossPlotConfiguration() {
 
@@ -35,21 +37,28 @@ public class VertCrossPlotConfiguration extends TilePlotConfiguration {
 		return (VerticalCrossSectionPlot.CrossSectionType) getObject(CROSS_SECTION_TYPE);
 	}
 
-	public void setCrossSectionRowCol(int rowOrCol) {
+	public void setCrossSectionRowCol(double rowOrCol) {
 		putObject(CROSS_SECTION_INDEX, rowOrCol);
 	}
+	
+	/*public void setCrossSectionSliceUnits(String sliceUnits) {
+		putObject(CROSS_SECTION_SLICE_UNITS, sliceUnits);
+	}
+	
+	public String getCrossSectionSliceUnits() {
+		return (String) getObject(CROSS_SECTION_SLICE_UNITS);
+	}*/
 	
 	public void setCrossSectionSliceSize(double sliceSize) {
 		putObject(CROSS_SECTION_SLICE_SIZE, sliceSize);
 	}
 	
-	
 	public Double getCrossSectionSliceSize() {
 		return (Double) getObject(CROSS_SECTION_SLICE_SIZE);
 	}
 
-	public Integer getCrossSectionRowCol() {
-		return (Integer) getObject(CROSS_SECTION_INDEX);
+	public Double getCrossSectionRowCol() {
+		return (Double) getObject(CROSS_SECTION_INDEX);
 	}
 	
 	public void setDisplayMode(int displayMode) {

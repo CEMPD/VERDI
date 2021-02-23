@@ -130,7 +130,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 	private static final String WORLD_LAYER = "WORLD";
 	private static final String NA_LAYER = "NA";
 
-	private NumberFormat format;
+	protected NumberFormat format;
 
 	protected DataFrame frame;
 	protected int timeStep;
@@ -977,7 +977,7 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 
 		return bar;
 	}
-
+	
 	private void showLayer(String layerKey, boolean show) {
 //		MapLayer layer = mapLayers.get(layerKey);
 		FeatureLayer layer = mapLayers.get(layerKey);
@@ -1319,7 +1319,10 @@ public abstract class AbstractTilePlot extends AbstractPlot implements TimeAnima
 
 		return config;
 	}
-
+	
+	public int getTimeStep() {
+		return timeStep;
+	}
 
 	public int getLayer() {
 		Logger.debug("in AbstractTilePlot.getLayer");

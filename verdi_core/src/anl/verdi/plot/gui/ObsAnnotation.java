@@ -4,9 +4,9 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Date;
 import java.util.GregorianCalendar;		// added 2014
@@ -15,8 +15,16 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
+import org.geotools.data.FeatureSource;
 import org.geotools.geometry.jts.JTS;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.map.FeatureLayer;
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
 import org.geotools.referencing.CRS;
+import org.geotools.renderer.GTRenderer;
+import org.geotools.renderer.lite.StreamingRenderer;
+import org.geotools.styling.Style;
 import org.jfree.chart.annotations.AbstractXYAnnotation;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotRenderingInfo;
@@ -26,6 +34,9 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
+import anl.verdi.area.AreaTilePlot;
+import anl.verdi.area.MapPolygon;
+import anl.verdi.area.target.Target;
 import anl.verdi.data.Axes;
 import anl.verdi.data.BoundingBoxer;
 import anl.verdi.data.DataFrameAxis;
@@ -35,6 +46,7 @@ import anl.verdi.data.ObsData;
 import anl.verdi.data.ObsEvaluator;
 import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.util.Graphics2DShapesTool;
+import ucar.unidata.geoloc.Projection;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -130,8 +142,8 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	}
 
 	private void updateList() {
-		BoundingBoxer boxer = axes.getBoundingBoxer();
-		int values = 0;
+		/*BoundingBoxer boxer = axes.getBoundingBoxer();
+		//int values = 0;
 		for (Iterator<ObsData> iter = list.iterator(); iter.hasNext();) {
 			ObsData data = iter.next();
 			if (data.getValue() > 0.01)
@@ -143,7 +155,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 				data.setX(p.getX());
 				data.setY(p.getY());
 			}
-		}
+		}*/
 		//System.out.println("ObsAnnotation updateList values: " + values);
 	}
 
@@ -205,7 +217,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	 * @param legendLevels
 	 * @param legendColors
 	 */
-	public synchronized void draw(Graphics graphics, int xOffset, int yOffset, int width,
+	public synchronized void oldDraw(Graphics graphics, int xOffset, int yOffset, int width,
 			int height, double[] legendLevels, Color[] legendColors,
 			final CoordinateReferenceSystem gridCRS, final double[][] domain,
 			final double[][] gridBounds) {
@@ -225,6 +237,10 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 		final double yScale = height / yRange;
 
 		int values = 0;
+		
+		double maxLat, maxLon;
+		maxLat = 0;
+		maxLon = -700;
 		for (ObsData data : list) {
 			double[] point = new double[2];
 			double lon = data.getLon();
@@ -260,11 +276,102 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 			final Color cellColor = legendColors[colorIndex];
 			drawSymbol((Graphics2D) graphics, cellColor, data, x, y);
 		}
+		//System.out.println("OVerlay lat " + maxLat + " lon " + maxLon);
+
 		//System.out.println("ObsAnnotation draw values: " + values);
 
 		((Graphics2D) graphics).setStroke(stroke); // reset graphics stroke
 		graphics.setColor(defaultColor); // reset graphics color
 	}
+	
+	public synchronized void draw(Graphics graphics, int xOffset, int yOffset, int width,
+			int height, double[] legendLevels, Color[] legendColors,
+			final CoordinateReferenceSystem gridCRS, final double[][] domain,
+			final double[][] gridBounds) {
+		draw(graphics, xOffset, yOffset, width, height, legendLevels, legendColors, gridCRS, domain, gridBounds, null);		
+	}
+	
+	public synchronized void draw(Graphics graphics, int xOffset, int yOffset, int width,
+			int height, double[] legendLevels, Color[] legendColors,
+			final CoordinateReferenceSystem gridCRS, final double[][] domain,
+			final double[][] gridBounds, Projection proj) {
+	
+	/*public void draw( TilePlot plot,final double[][] domain, final double[][] gridBounds,
+			final CoordinateReferenceSystem gridCRS, Projection projection, double[] legendLevels,Color[] legendColors, 
+			final Graphics graphics,Object data, MeshDataReader reader, String units,int firstColumn,int firstRow,
+			int xOffset, int yOffset, int width, int height,int currentView, boolean showSelectedOnly ) {*/
+		
+		MapContent vMap = new MapContent();
+		//Shape oldclip = graphics.getClip();
+		//graphics.setClip(new Rectangle((int)xOffset, (int)yOffset, (int)width, (int)height));
+				
+
+		Style shapeStyle = null;
+
+
+		shapeStyle = new VerdiStyle().getObsStyle(strokeSize, shapeSize, map, symbol);
+
+			
+			//graphics.setColor(Color.BLACK); //TODO - vColor from VerdiBoundaries
+						
+		    FeatureSource source = VerdiShapefileUtil.projectObsData(proj, list, MapPolygon.PLACEHOLDER_CRS);
+		    		//VerdiShapefileUtil.projectShapefile(style.getShapePath(), (SimpleFeatureSource)source, projection, PLACEHOLDER_CRS, true);
+		    
+		    System.err.println("OBSAnnootation: " + source.getClass());
+			System.out.println(source.getSchema().getCoordinateReferenceSystem());
+			try {
+				System.out.println(source.getFeatures().features().next());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		    //source = Mapper.staticSource;
+			Layer aLayer = new FeatureLayer(source, shapeStyle);
+			vMap.addLayer(aLayer);
+			//vMap.getViewport().setCoordinateReferenceSystem(gridCRS);
+			vMap.getViewport().setCoordinateReferenceSystem(MapPolygon.PLACEHOLDER_CRS);
+			//TODO - this fails with NPE, workaround using placeholder CS
+			//vMap.getViewport().setCoordinateReferenceSystem(source.getSchema().getCoordinateReferenceSystem());
+			
+			//ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], gridCRS); // Use this when not projecting
+			ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], MapPolygon.PLACEHOLDER_CRS);
+			vMap.getViewport().setBounds(displayBounds);
+
+			//vMap = Mapper.staticMap.getMap();
+			//vMap.getViewport().setBounds(displayBounds);
+
+			GTRenderer renderer = new StreamingRenderer();
+			renderer.setMapContent(vMap);
+			Rectangle outputArea = new Rectangle(xOffset, yOffset, width, height);
+			
+			renderer.paint((Graphics2D)graphics, outputArea, vMap.getViewport().getBounds());
+			
+			//TODO - Once we figure out how to draw directly onto graphics without making the existing image fade out, uncomment
+			//this line and remove the d2d.drawImage() code.
+			
+			//renderer.paint((Graphics2D)graphics, outputArea, vMap.getViewport().getBounds());
+/*			Graphics2D g2d = (Graphics2D)graphics;
+			g2d.setComposite(((AlphaComposite)g2d.getComposite()).derive(AlphaComposite.SRC_OVER));
+			java.awt.image.BufferedImage shapefile =  new java.awt.image.BufferedImage(width + xOffset, height + yOffset,
+                    java.awt.image.BufferedImage.TYPE_INT_ARGB);
+			Graphics2D gShape = (Graphics2D)shapefile.getGraphics();
+
+			renderer.paint(gShape, outputArea, vMap.getViewport().getBounds());
+			g2d.drawImage(shapefile, 0,  0, null);
+			try {
+				ImageIO.write(shapefile,  "PNG",  new java.io.File("c:\\dump\\tmp\\obsdata" + System.currentTimeMillis() + ".png"));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+*/		
+		
+		//graphics.setClip(oldclip);
+		vMap.dispose();
+		
+	}
+
 
 	private void drawSymbol(Graphics2D g2d, Color color, ObsData data, int X,
 			int Y) {
@@ -373,6 +480,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 		try{
 		CRSAuthorityFactory crsFactory = CRS.getAuthorityFactory(true);
 		CoordinateReferenceSystem crs = crsFactory.createCoordinateReferenceSystem("EPSG:4326");
+
 		boolean lenient = true;
 		MathTransform transform = CRS.findMathTransform(crs, gridCRS, lenient);
 		Coordinate srcCoordinate = new Coordinate(lon, lat);

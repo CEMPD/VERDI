@@ -72,6 +72,13 @@ public class MPASBoxer implements BoundingBoxer {
 		proj.projToLatLon(world, result);
 		return new Point2D.Double(result.getLatitude(), (double)result.getLongitude());
 	}
+	
+	public Point2D axisPointToLatLonPoint(double x, double y) {
+		LatLonPointImpl result = new LatLonPointImpl();
+		ProjectionPointImpl world = new ProjectionPointImpl(x, y);
+		proj.projToLatLon(world, result);
+		return new Point2D.Double(result.getLatitude(), (double)result.getLongitude());
+	}
 
 	public Point2D CRSPointToAxis(double x, double y) {		
 		return new Point2D.Double(x, y);
@@ -95,7 +102,7 @@ public class MPASBoxer implements BoundingBoxer {
 	 */
 	@Override
 	public Projection getProjection() {
-		return proj;
+		return proj; //Try new LatLonProjection here
 	}
 
 	
