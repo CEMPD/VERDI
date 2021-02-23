@@ -11,7 +11,7 @@ VERDI Installation Instructions
 
 VERDI 2.0 is distributed as a zip or gzip file, as appropriate, for each of the following supported platforms:
 
--   64-bit Windows 8
+-   64-bit Windows 10
 
 -   64-bit Linux
 
@@ -26,7 +26,7 @@ Follow these instructions to install VERDI:
 
 1.  tar -xvf verdi_2.0.tar.gz into a location where you would like to install VERDI
 
-2.  Edit verdi_2.0/verdi.sh: Change the path for the DIR variable to reflect the location where VERDI was installed (e.g., DIR=/proj/ie/apps/longleaf/VERDI_2.0)
+2.  Edit verdi_2.0/verdi.sh: Change the path for the DIR variable to reflect the location where VERDI was installed (e.g., DIR=/proj/ie/apps/longleaf/VERDI_2.0). (Note: this allows you to run VERDI from any directory, not just from the directory where it has been installed).
 
 3.  Create a directory *verdi* under your home directory.
 
@@ -40,7 +40,7 @@ Follow these instructions to install VERDI:
 Installation Instructions for Windows
 --------------------------------------
 
-To install VERDI for Windows, unzip the file to a local directory on your Windows 7 computer. NOTE: You do not need to install VERDI under a Program Files directory or in the root directory on one of your hard disk drives. Therefore, you should not need Administrator rights to install VERDI 2.0. If your system is under strict control from your Administrator, you may be able to unzip the VERDI distribution under your home directory or your documents directory; however, you may have problems if there is a space in the path to your VERDI installation directory.
+To install VERDI for Windows, unzip the file to a local directory on your Windows computer. NOTE: You do not need to install VERDI under a Program Files directory or in the root directory on one of your hard disk drives. Therefore, you should not need Administrator rights to install VERDI 2.0. If your system is under strict control from your Administrator, you may be able to unzip the VERDI distribution under your home directory or your documents directory; however, you may have problems if there is a space in the path to your VERDI installation directory.
 
 If you are unable to install VERDI on your computer, please check to see whether your user account is authorized to install software. You may need to request that a user with a computer administrator account install VERDI, or provide you with an account that has permission to install software. For more information about user account types, click Start and select Control Panel and then click on the User Account icon.
 
@@ -56,13 +56,6 @@ After successfully installing VERDI you need to perform the following tasks unde
 
 Note that VERDI writes a log file (i.e., *verdi.log*) as-needed to your *verdi* directory. This log file should remain small. However, if you need technical support we may ask for your log file. It will be a text file named verdi.log located in this verdi directory.
 
-
-Installation Instructions for computer that that requires a JRE<sup>TM</sup> 7 other than what was provided in the distribution
--------------------------------------------------------------------------------------------------------------------------------
-
-1.  Download Java SE 7 or 8 for your platform from <http://www.java.com/en/download/manual.jsp>
-
-2.  Follow the installation instructions.
 
 <a id="verdi_preferences"></a>
 Setting VERDI Preferences
