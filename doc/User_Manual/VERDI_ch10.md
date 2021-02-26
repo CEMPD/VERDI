@@ -66,9 +66,9 @@ VERDI calculates the grid cell time aggregate statistics as follows: For each ce
 
 -   TIMESTEP_OF_MINIMUM: 0-based time step when cell contains its minimum value
 
--   TIMESTEP_OF_MAXIMUM: 0-based time step when cell contains its maimum value
+-   TIMESTEP_OF_MAXIMUM: 0-based time step when cell contains its maximum value
 
--   HOURS_OF_NON_COMPLIANCE: number of time steps that the cell value eceeds a given threshold |{Var(I,j,k,t(i))&gt;threshold}|
+-   HOURS_OF_NON_COMPLIANCE: number of time steps that the cell value exceeds a given threshold |{Var(I,j,k,t(i))&gt;threshold}|
 
 -   MAXIMUM_8HOUR_MEAN: Ma (M1, M2, ..., Mn-8) where Mi = mean(var(i,j,k,t<sub>(i)</sub>), var(i,j,k,t<sub>(i)+1</sub>), var(i,j,k,t<sub>(i+2)</sub>), ...,var(i,j,k,t<sub>(i+8)</sub>), for i = 1..n-8
 
