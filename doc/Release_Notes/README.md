@@ -1,6 +1,6 @@
 -----------------------------
 RELEASE NOTES FOR VERDI 2.1
-RELEASE NOTES FOR VERDI V2.0 beta
+-----------------------------
 
 These notes describe the differences between the VERDI 2.1 release and the previous public release VERDI 2.0 beta
 
