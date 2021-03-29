@@ -9,7 +9,7 @@ VERDI Installation Instructions
 
 <span id="_Toc197166117" class="anchor"><span id="_Toc292295001" class="anchor"></span></span>This chapter provides instructions for installing VERDI 2.0 on a variety of computer platforms. The supporting libraries required by VERDI are included in the installation, along with a version of the OpenJDK for your convenience. 
 
-VERDI 2.0 is distributed as a zip or gzip file, as appropriate, for each of the following supported platforms:
+VERDI 2.1 is distributed as a zip or gzip file, as appropriate, for each of the following supported platforms:
 
 -   64-bit Windows 10
 
@@ -24,9 +24,10 @@ Installation Instructions for Linux and Mac
 
 Follow these instructions to install VERDI:
 
-1.  tar -xvf verdi_2.0.tar.gz into a location where you would like to install VERDI
+1.  tar -xvf VERDI_2.1_<linux,mac>_<date>.tar.gz into a location where you would like to install VERDI
 
-2.  Edit verdi_2.0/verdi.sh: Change the path for the DIR variable to reflect the location where VERDI was installed (e.g., DIR=/proj/ie/apps/longleaf/VERDI_2.0)
+2.  The run script for Linux is: verdi_2.1/verdi.sh
+    The run script for Mac is: verdi_2.1/verdi.command
 
 3.  Create a directory *verdi* under your home directory.
 
@@ -34,7 +35,15 @@ Follow these instructions to install VERDI:
 
 5.  Locate the file *config.properties.TEMPLATE* that is in your installation directory. Copy *config.properties.TEMPLATE* to your *verdi* directory and rename that file *config.properties* only.
 
-    VERDI should now run if you execute the verdi.sh executable script (e.g., ./verdi.sh).
+6.  Add the path to the verdi run script to your .cshrc or .bash_profile so that the verdi.sh script can be found from any directory 
+
+    example .cshrc
+    set path = ($path /proj/ie/proj/CMAS/VERDI/VERDI_2.1) 
+
+7. Alternatively, use alias to point to full path to verdi.sh
+    alias verdi.sh /proj/ie/proj/CMAS/VERDI/VERDI_2.1/verdi.sh
+
+    VERDI should now run if you execute the verdi.sh executable script on linux, or executing the verdi.command script on mac. 
 
 
 Installation Instructions for Windows
@@ -68,8 +77,8 @@ VERDI is configured via the config.properties file that you copied to your home/
 # Please use double backslash for Windows platform or slash for UNIX-like platforms
 # Please uncomment the following lines and modify them to suit your local settings
 # Windows example settings format
-# verdi.project.home=C:// Users\\yourusername\\VERDI_2.0\\project
-# verdi.config.home=C:// Users\\yourusername\\VERDI_2.0\\config
+# verdi.project.home=C:// Users\\yourusername\\VERDI_2.1\\project
+# verdi.config.home=C:// Users\\yourusername\\VERDI_2.1\\config
 # Linux example settings format
 
 verdi.project.home=../../data/project
@@ -108,6 +117,6 @@ Starting in VERDI version 1.4, the ui.properties file was removed and the user-c
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch02.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch04.md)<br>
-VERDI User Manual (c) 2018<br>
+VERDI User Manual (c) 2021<br>
 
 <!-- END COMMENT -->

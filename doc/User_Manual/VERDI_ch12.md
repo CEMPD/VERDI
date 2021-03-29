@@ -120,7 +120,7 @@ Figure 12-11. MPAS Example Plot of 2 meter Temperature Zoomed in to California
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch11.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch13.md)<br>
-VERDI User Manual (c) 2018<br>
+VERDI User Manual (c) 2021<br>
 
 <!-- END COMMENT -->
 

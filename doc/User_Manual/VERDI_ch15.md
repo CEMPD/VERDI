@@ -12,6 +12,6 @@ As discussed in Section 1.4, you are encouraged to review the VERDI FAQ <http://
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch14.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch16.md)<br>
-VERDI User Manual (c) 2018<br>
+VERDI User Manual (c) 2021<br>
 
 <!-- END COMMENT -->

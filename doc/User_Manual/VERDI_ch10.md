@@ -315,6 +315,6 @@ Figure 47. Rotated Contour Plot<br>
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch09.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch11.md)<br>
-VERDI User Manual (c) 2018<br>
+VERDI User Manual (c) 2021<br>
 
 <!-- END COMMENT -->

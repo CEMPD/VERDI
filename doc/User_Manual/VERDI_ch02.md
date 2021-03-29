@@ -45,6 +45,6 @@ VERDI works best on screen displays that have been set to a high or perhaps the 
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch01.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch03.md)<br>
-VERDI User Manual (c) 2018<br>
+VERDI User Manual (c) 2021<br>
 
 <!-- END COMMENT -->

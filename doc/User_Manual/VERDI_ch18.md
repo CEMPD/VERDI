@@ -18,7 +18,7 @@ Example Command Line Script for Linux Users
 
 Set an environment variable $VERDI_HOME by using
 
-setenv VERDI_HOME //home//a_username//VERDI_2.0
+setenv VERDI_HOME //home//a_username//VERDI_2.1
 
 Where a_username is your username.
 
@@ -55,7 +55,7 @@ Note: Currently, the syntax for the command line script is slightly different th
 Example Command Line Script for Windows Users
 ---------------------------------------------
 
-Edit the run.bat script in the VERDI_2.0 directory by right clicking on the file and selecting edit.
+Edit the run.bat script in the VERDI_2.1 directory by right clicking on the file and selecting edit.
 
 ![Figure18-1](./media/image096.png)
 
@@ -67,17 +67,17 @@ Enter the following in the Run command: cmd
 
 When a command line window opens do the following:
 
-cd C:\\Program Files\\VERDI_2.0\\
+cd C:\\Program Files\\VERDI_2.1\\
 
 run.bat "-f C:\\VERDI\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX -s O3[1] -gtype tile"
 
-The other option is to place the script commands within the run.bat itself. Remove the “%1” statement at the end of the run.bat that is provided in the distribution, and add the script options that you would like to use. The following run.bat contains script options that will read in the file C:\\VERDI_2.0\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX, select O3[1] as the formula, and create a Tile plot. The changes that you need to make to the run.bat are highlighted in red.
+The other option is to place the script commands within the run.bat itself. Remove the “%1” statement at the end of the run.bat that is provided in the distribution, and add the script options that you would like to use. The following run.bat contains script options that will read in the file C:\\VERDI_2.1\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX, select O3[1] as the formula, and create a Tile plot. The changes that you need to make to the run.bat are highlighted in red.
 
 cd .\\plugins\\bootstrap
 
 SET JAVA=..\\..\\jre1.6.0\\bin\\java
 
-%JAVA% -Xmx512M -classpath "./bootstrap.jar;./lib/saf.core.runtime.jar;./lib/commons-logging.jar;.//lib//jpf-boot.jar;.//lib//jpf.jar;.//lib\\log4j-1.2.13.jar" saf.core.runtime.Boot -f C:\\VERDI_2.0\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX -s O3[1] -gtype fasttile
+%JAVA% -Xmx512M -classpath "./bootstrap.jar;./lib/saf.core.runtime.jar;./lib/commons-logging.jar;.//lib//jpf-boot.jar;.//lib//jpf.jar;.//lib\\log4j-1.2.13.jar" saf.core.runtime.Boot -f C:\\VERDI_2.1\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX -s O3[1] -gtype fasttile
 
 Run the run.bat script by clicking on Start, then selecting Run, then either using Browse to find the run.bat or typing it in (**Error! Reference source not found.**).
 
@@ -184,6 +184,6 @@ Script commands that can be used for command line scripting (listed in alphabeti
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch17.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch19.md)<br>
-VERDI User Manual (c) 2018<br>
+VERDI User Manual (c) 2021<br>
 
 <!-- END COMMENT -->

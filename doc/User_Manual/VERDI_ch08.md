@@ -93,6 +93,6 @@ Figure 23. Area Name Fields in Current Shapefile<br>
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch07.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch09.md)<br>
-VERDI User Manual (c) 2018<br>
+VERDI User Manual (c) 2021<br>
 
 <!-- END COMMENT -->
