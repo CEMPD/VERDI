@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -18,6 +19,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
+import anl.verdi.core.VerdiConstants;
 import anl.verdi.data.Axes;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
@@ -144,25 +146,30 @@ public class VerticalCrossDialog extends JDialog {
 		model.setMinimum(min);
 		model.setMaximum(max);
 		ySpinner.setValue(new Integer(min));
-		model = (SpinnerNumberModel) sliceSize.getModel();
+		//sliceSize.setEnabled(true);
+		/*model = (SpinnerNumberModel) sliceSize.getModel();
 		model.setMinimum(1);
 		model.setMaximum(10);
-		sliceSize.setValue(new Integer(1));
+		sliceSize.setValue(new Integer(1));*/
 	}
 
 	// return the true 0 based value
-	public int getColumn() {
-		return ((Number)xSpinner.getValue()).intValue() - 1;
+	public double getColumn() {
+		return ((Number)xSpinner.getValue()).doubleValue() - 1;
 	}
 
 	// return the true 0 based value
-	public int getRow() {
-		return ((Number)ySpinner.getValue()).intValue() - 1;
+	public double getRow() {
+		return ((Number)ySpinner.getValue()).doubleValue() - 1;
 	}
 	
-	public int getSliceSize() {
-		return ((Number)sliceSize.getValue()).intValue();
+	public double getSliceSize() {
+		return ((Number)sliceSize.getValue()).doubleValue();
 	}
+	
+	/*public String getSliceUnits() {
+		return (String)sliceUnits.getSelectedItem();
+	}*/
 
 	public boolean isXSelected() {
 		return rbX.isSelected();
@@ -175,16 +182,18 @@ public class VerticalCrossDialog extends JDialog {
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner non-commercial license
-		DefaultComponentFactory compFactory = DefaultComponentFactory.getInstance();
+		DefaultComponentFactory  compFactory = DefaultComponentFactory.getInstance();
 		dialogPane = new JPanel();
 		contentPanel = new JPanel();
 		separator1 = compFactory.createSeparator("Select Cross Section");
 		rbX = new JRadioButton();
 		lblColumn = new JLabel();
-		xSpinner = new JSpinner();
+		xSpinner = new JSpinner(new DoubleSpinnerModel());
+		//xSpinner = new JSpinner();
 		rbY = new JRadioButton();
 		lblRow = new JLabel();
-		ySpinner = new JSpinner();
+		ySpinner = new JSpinner(new DoubleSpinnerModel());
+		//ySpinner = new JSpinner();
 		separator2 = compFactory.createSeparator("Display Mode");
 		buttonBar = new JPanel();
 		okButton = new JButton();
@@ -192,7 +201,16 @@ public class VerticalCrossDialog extends JDialog {
 		elevation = new JRadioButton();
 		layer = new JRadioButton();
 		lblSliceSize = new JLabel();
-		sliceSize = new JSpinner();
+		//DoubleSpinnerModel sliceModel = new DoubleSpinnerModel(2, 0, 100000, 1);
+		DoubleSpinnerModel sliceModel = new DoubleSpinnerModel(1, 0, 100000, 1);
+		//DoubleSpinnerModel sliceModel = new DoubleSpinnerModel();
+		/*sliceModel.setMinimum(0.0);
+		sliceModel.setMaximum(100000.0);
+		sliceModel.setValue(2.0);*/
+		sliceSize = new JSpinner(sliceModel);
+		
+		//String[] availableUnits = new String[] { VerdiConstants.UNITS_DEG, VerdiConstants.UNITS_MI, VerdiConstants.UNITS_KM };
+		//sliceUnits = new JComboBox<String>(availableUnits);
 		separator3 = compFactory.createSeparator("");
 		CellConstraints cc = new CellConstraints();
 
@@ -299,10 +317,19 @@ public class VerticalCrossDialog extends JDialog {
 				
 				elevation.setText("Elevation");
 				contentPanel.add(elevation, cc.xywh(1, 15, 5, 1));
+				if (!meshInput) {
+					layer.setSelected(true);
+					layer.setEnabled(false);
+					elevation.setEnabled(false);
+				}
 				
-				lblSliceSize.setText("Cross Section Size (Degrees)");
+				lblSliceSize.setText("Cross Section Size");
 				contentPanel.add(lblSliceSize, cc.xy(3, 17));
+				//JPanel slicePanel = new JPanel();
+				//slicePanel.add(sliceSize);
+				//slicePanel.add(sliceUnits);
 				contentPanel.add(sliceSize, cc.xy(5, 17));
+				//contentPanel.add(sliceUnits, cc.xywh(7, 17,1,1));
 				
 				contentPanel.add(separator3,  cc.xywh(1, 19, 7,  1));
 			}
@@ -366,5 +393,6 @@ public class VerticalCrossDialog extends JDialog {
 	private JComponent separator3;
 	private JLabel lblSliceSize;
 	private JSpinner sliceSize;
+	//private JComboBox sliceUnits;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }

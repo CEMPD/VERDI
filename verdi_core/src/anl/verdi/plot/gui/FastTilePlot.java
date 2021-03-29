@@ -474,10 +474,15 @@ Logger.debug("set up drawing space, titles, fonts, etc.");
 
 					final int xOffset = 100;
 					final int legendWidth = 80 + xOffset;
-					final int canvasSize =
+					int canvasSize =
 						Math.round( Math.min( Math.max( 0, canvasWidth - legendWidth ), canvasHeight ) * marginScale );	// JEB canvasWidth and canvasHeight are both 0
 					final int subsetRows = 1 + lastRow - firstRow;
 					final int subsetColumns = 1 + lastColumn - firstColumn;
+					
+					if (subsetRows > subsetColumns)
+						canvasSize =
+						Math.round( Math.min( Math.max( 0, canvasWidth - legendWidth ), Math.max( 0, canvasHeight - (fontSize + 6) * 4) ) * marginScale );	// JEB canvasWidth and canvasHeight are both 0
+						
 					final float subsetMax = Math.max(subsetRows, subsetColumns);
 					final float rowScale = subsetRows / subsetMax;
 					final float columnScale = subsetColumns / subsetMax;
@@ -663,7 +668,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						if (obsAnnotations != null) {
 							for (ObsAnnotation ann : obsAnnotations)
 								ann.draw(offScreenGraphics, xOffset, yOffset, width, height, 
-										legendLevels, legendColors, originalCRS, domain, gridBounds);
+										legendLevels, legendColors, originalCRS, domain, gridBounds, projection);
 						}
 						
 						if (vectAnnotation != null) {
@@ -3631,6 +3636,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			for (OverlayObject obs : obsData) {
 				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
 				ObsAnnotation ann = new ObsAnnotation(eval, axs, initDate, layer);
+				ann.update(timestep);
 				ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
 				obsAnnotations.add(ann);
 				Dataset ds = eval.getVariable().getDataset();

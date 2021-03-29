@@ -91,6 +91,10 @@ public class NetcdfBoxer implements BoundingBoxer {
 		Logger.debug("in NetcdfBoxer.getProjection = " + grid.getCoordinateSystem().getProjection().getName());
 		return grid.getCoordinateSystem().getProjection();
 	}
+	
+	public Point2D axisPointToLatLonPoint(double x, double y) {
+		return axisPointToLatLonPoint((int)Math.round(x), Math.round(y));
+	}
 
 	/**
 	 * Converts the grid cell coordinate to a lat / lon coordinate.

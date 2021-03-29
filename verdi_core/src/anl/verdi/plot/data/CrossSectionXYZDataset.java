@@ -472,8 +472,8 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 		return data.getValue(x, y);
 	}
 
-	public void addColSeries(DataFrame frame, int timeStep, int constantCol) {
-		SeriesData seriesData = new ColSeriesData(frame, timeStep, constantCol);
+	public void addColSeries(DataFrame frame, int timeStep, double constantCol) {
+		SeriesData seriesData = new ColSeriesData(frame, timeStep, (int)Math.round(constantCol));
 		addSeriesData(seriesData);
 	}
 
@@ -490,8 +490,8 @@ public class CrossSectionXYZDataset extends AbstractDataset implements XYZDatase
 		notifyListeners(new DatasetChangeEvent(this, this));
 	}
 
-	public void addRowSeries(DataFrame frame, int timeStep, int constantRow) {
-		SeriesData seriesData = new RowSeriesData(frame, timeStep, constantRow);
+	public void addRowSeries(DataFrame frame, int timeStep, double constantRow) {
+		SeriesData seriesData = new RowSeriesData(frame, timeStep, (int)Math.round(constantRow));
 		addSeriesData(seriesData);
 	}
 

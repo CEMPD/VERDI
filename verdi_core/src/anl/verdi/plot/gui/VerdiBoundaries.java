@@ -157,8 +157,16 @@ public class VerdiBoundaries {
 		Logger.debug("set CRS of Viewport to gridCRS: " + gridCRS.toString());
 		ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], gridCRS);
 		vMap.getViewport().setBounds(displayBounds);
-		for (Layer layer : aVerdiStyle.getLayers())
+		for (Layer layer : aVerdiStyle.getLayers()) {
 			layer.setVisible(true);
+			/*System.out.println("VerdiBoundaries; " + layer.getClass());
+			System.err.println(layer.getFeatureSource().getSchema().getCoordinateReferenceSystem());
+			try {
+				System.out.println(layer.getFeatureSource().getFeatures().features().next());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}*/
+		}
 		
 		// set of math transform
 		// NOTE: next commented-out section is possibly the beginnings of writing out a shapefile in a given projection

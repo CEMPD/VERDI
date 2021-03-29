@@ -46,6 +46,9 @@ public class MPASDataFrameBuilder extends DataFrameBuilder {
 						return null;
 					}
 
+					public Point2D axisPointToLatLonPoint(double x, double y) {
+						return null;
+					}
 
 					public Point2D latLonToAxisPoint(double lat, double lon) {
 						return null;  //todo implement method

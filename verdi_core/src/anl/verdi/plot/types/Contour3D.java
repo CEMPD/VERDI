@@ -742,6 +742,10 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLev
 		bar.add(timeLayerPanel);
 		return bar;
 	}
+	
+	public int getTimeStep() {
+		return timeStep;
+	}
 
 	/**
 	 * Gets a menu bar for this Plot.

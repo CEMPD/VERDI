@@ -76,7 +76,10 @@ public class DataFrameBuilder {
 					public Point2D axisPointToLatLonPoint(int x, int y) {
 						return null;
 					}
-
+					
+					public Point2D axisPointToLatLonPoint(double x, double y) {
+						return null;
+					}
 
 					public Point2D latLonToAxisPoint(double lat, double lon) {
 						return null;  //todo implement method

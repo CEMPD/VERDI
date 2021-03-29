@@ -112,10 +112,11 @@ public class BatchScriptHandler {
 
 			String value = thisCommand.get(1);		// name of existing data file
 
-			if (!(new File(value).exists()))		// checks that file exists before looking for batch designation
+			File valueFile = new File(value);
+			if (!(valueFile.exists()))		// checks that file exists before looking for batch designation
 			{
-				Logger.error("Cannot find file: " + value + ".");
-				System.out.println("BatchScriptHandler: Cannot find file: " + value);
+				Logger.error("Cannot find file: " + valueFile.getAbsolutePath() + ".");
+				System.out.println("BatchScriptHandler: Cannot find file: " + valueFile.getAbsolutePath());
 			}
 
 			if (option.equalsIgnoreCase("-b") || option.equalsIgnoreCase("-batch")) {	// if not have existing file name but say batch, program proceeds ???
@@ -154,8 +155,9 @@ public class BatchScriptHandler {
 	}
 
 	private List<AbstractTask> processBatchFile(String batchfile) throws Exception {
+		File batchFile = new File(batchfile);
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(batchfile));
+			BufferedReader in = new BufferedReader(new FileReader(batchFile));
 			List<String> scripts = new ArrayList<String>();
 
 			String str;
@@ -170,7 +172,7 @@ public class BatchScriptHandler {
 
 			return processBatchScript(scripts.toArray(new String[0]));
 		} catch (IOException e) {
-			Logger.error("IOException in BatchScriptHandler.processBatchFile: " + e.getMessage());
+			Logger.error("IOException in  BatchScriptHandler.processBatchFile: " + batchFile.getAbsolutePath(), e);
 			System.out.println("BatchScriptHandler: IOException in BatchScriptHandler.processBatchFile: " + e.getMessage());
 			throw e;
 		}

@@ -69,6 +69,7 @@ public interface VerdiConstants {
 	String SUB_TITLE_ONE = "subTitle1".toUpperCase();
 	String SUB_TITLE_TWO = "subTitle2".toUpperCase();
 	String CONFIG_FILE = "configFile".toUpperCase();
+	String LEGEND_BINS = "legendBins".toUpperCase();
 	String GRID_LINES = "drawGridLines".toUpperCase();
 	String UNIT_STRING = "unitString".toUpperCase();
 	String TIME_STEP = "ts".toUpperCase();
