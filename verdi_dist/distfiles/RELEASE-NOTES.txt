@@ -1,4 +1,29 @@
 -----------------------------
+RELEASE NOTES FOR VERDI 2.1
+-----------------------------
+
+These notes describe the differences between the VERDI 2.1 release and the previous public release VERDI 2.0 beta
+
+NEW FEATURES IN V2.1
+* Enhanced user interface and interactive features related to observation overlays (e.g., preview feature, custom symbols)
+* Added support for setting legend levels from a batch script.
+* Improved error messaging (when an observation data set does not contain data for the map being shown)
+* Updated Java Runtime Environment to OpenJDK 15
+
+BUG FIXES IN 2.1
+* Improved geolocation of observation overlay sites.
+* Fixed bug where VERDI read map files as observations.
+* Fixed bug where map information is missing for certain aspect ratios (plot taller than wide).
+* Fixed problem in loading GRIDCRO2D files.
+* Fixed bug when VERDI exported WRF and CMAQ gridded data as shapefile
+* Added high resolution Map of United States
+
+KNOWN ISSUES IN 2.1
+* Display of elevation for vertical cross sections only works for MPAS files.
+* Location and thickness of MPAS vertical cross sections are currently in whole degrees of longitude or latitude.
+* Contour plot data interpolation and configuration need improvement to reduce spiky appearance.
+
+-----------------------------
 RELEASE NOTES FOR VERDI V2.0 beta 
 ------------------------------
 These notes describe the differences between the VERDI 2.0 beta release and the previous public release v1.6 alpha
