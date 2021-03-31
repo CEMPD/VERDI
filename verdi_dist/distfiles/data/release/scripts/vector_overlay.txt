@@ -36,10 +36,10 @@
 		####################################################################################
 
 		<Global>
-		configFile=../verdi_dist/distfiles/data/release/configs/o3_10bin.cfg
-		dir=../verdi_dist/distfiles/data/release/model
+		configFile=../../data/configs/o3_10bin.cfg
+		dir=../../data/model
 		saveImage=jpeg
-		imageDir=../verdi_dist/distfiles/data/release/plots
+		imageDir=../../data/plots
 		</Global>
 
 		###########################
