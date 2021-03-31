@@ -37,11 +37,11 @@
 
 
 		<Global>
-		dir=../verdi_dist/distfiles/data/release/model
+		dir=../../data/model
 		pattern=*METCRO*
 		s=TA[1]
 		saveImage=png
-		imageDir=../verdi_dist/distfiles/data/release/plots
+		imageDir=../../data/plots
 		layer=3
 		</Global>
 

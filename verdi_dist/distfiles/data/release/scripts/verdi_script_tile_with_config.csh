@@ -7,7 +7,7 @@ cd $cwd/../..
 foreach species ( O3 )
 ./verdi.sh \
          -f $cwd/data/model/CCTM46_P16.baseO2a.36k.O3MAX \
-          -configFile $cwd/data/configs/10bin_new_config \
+          -configFile $cwd/data/configs/o3_10bin.cfg \
          -titleString "CMAQv46 ${species} Layer 1" \
          -s "${species}[1]" \
          -g tile \

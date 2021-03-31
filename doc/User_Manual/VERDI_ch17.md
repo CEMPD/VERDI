@@ -18,7 +18,7 @@ Figure 17-1. File: View Script Editor<br>
 
 ![Figure17-1](./media/image081.png)
 
-An **Open** popup window will be displayed, click on a sample script file in the VERDI_2.0/data/scripts directory ([Figure 17-2](#Figure17-2)).
+An **Open** popup window will be displayed, click on a sample script file in the VERDI_2.1/data/scripts directory ([Figure 17-2](#Figure17-2)).
 
 <!-- BEGIN COMMENT -->
 
@@ -44,13 +44,13 @@ Figure 17-5) appears in the right-hand side of VERDI. Use the Script Editor to e
 ![Figure17-4](./media/image084.png)
 
 
-Figure 17-5. Top of Sample Script File – VERDI_2.0/data/scripts/file_patterns.txt<br>
+Figure 17-5. Top of Sample Script File – VERDI_2.1/data/scripts/file_patterns.txt<br>
 
 <a id=Figure17-5></a>
 
 ![Figure17-5](./media/image085.png)
 
-Figure 17-6. Bottom of Sample Script File – VERDI_2.0/data/scripts/tile_patterns.txt
+Figure 17-6. Bottom of Sample Script File – VERDI_2.1/data/scripts/tile_patterns.txt
 
 The Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
 
@@ -167,9 +167,9 @@ Batch Script Example:
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.0/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1/data/model/**
 
-**imageDir=$LOCAL_DIR/verdi_2.0/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
 
 **saveImage=jpeg**
 
@@ -216,11 +216,11 @@ The mathematical functions operate over all time steps at each grid cell. Exampl
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.0/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1/data/model/**
 
 **gtype=tile**
 
-**imageDir=$LOCAL_DIR/verdi_2.0/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
 
 **saveImage=jpeg**
 
@@ -244,11 +244,11 @@ Figure -. Tile Plot of Maximum Air Temperature (aggregated over 25 time steps)
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.0/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1/data/model/**
 
 **gtype=tile**
 
-**imageDir=$LOCAL_DIR/verdi_2.0/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
 
 **saveImage=jpeg**
 
@@ -272,11 +272,11 @@ Figure -. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.0/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1/data/model/**
 
 **gtype=tile**
 
-**imageDir=$LOCAL_DIR/verdi_2.0/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
 
 **saveImage=jpeg**
 
@@ -300,11 +300,11 @@ Figure -. Tile Plot of Mean Ozone (aggregated over 25 time steps)
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.0/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1/data/model/**
 
 **gtype=tile**
 
-**imageDir=$LOCAL_DIR/verdi_2.0/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
 
 **saveImage=jpeg**
 
@@ -327,6 +327,6 @@ Figure -. Tile Plot of the Sum of Ozone (aggregated over 25 time steps)
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch16.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch18.md)<br>
-VERDI User Manual (c) 2018<br>
+VERDI User Manual (c) 2021<br>
 
 <!-- END COMMENT -->
