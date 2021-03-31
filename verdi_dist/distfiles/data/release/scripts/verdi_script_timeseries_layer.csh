@@ -7,7 +7,7 @@ echo 'running verdi_script_timeseries_layer.csh'
 cd $cwd/../..
 echo directory `pwd`
  ./verdi.sh \
-   -f $cwd/data/model/METCRO3D_CMAS-Training.nc \
+   -f $cwd/data/model/METCRO3D_CMAS-Training \
    -s "TA[1]" \
    -layer 15 \
    -g line \
