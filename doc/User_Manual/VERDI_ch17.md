@@ -167,9 +167,9 @@ Batch Script Example:
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.0/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1/data/model/**
 
-**imageDir=$LOCAL_DIR/verdi_2.0/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
 
 **saveImage=jpeg**
 
@@ -216,11 +216,11 @@ The mathematical functions operate over all time steps at each grid cell. Exampl
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.0/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1/data/model/**
 
 **gtype=tile**
 
-**imageDir=$LOCAL_DIR/verdi_2.0/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
 
 **saveImage=jpeg**
 
@@ -244,11 +244,11 @@ Figure -. Tile Plot of Maximum Air Temperature (aggregated over 25 time steps)
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.0/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1/data/model/**
 
 **gtype=tile**
 
-**imageDir=$LOCAL_DIR/verdi_2.0/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
 
 **saveImage=jpeg**
 
@@ -272,11 +272,11 @@ Figure -. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.0/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1/data/model/**
 
 **gtype=tile**
 
-**imageDir=$LOCAL_DIR/verdi_2.0/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
 
 **saveImage=jpeg**
 
@@ -300,11 +300,11 @@ Figure -. Tile Plot of Mean Ozone (aggregated over 25 time steps)
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.0/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1/data/model/**
 
 **gtype=tile**
 
-**imageDir=$LOCAL_DIR/verdi_2.0/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
 
 **saveImage=jpeg**
 

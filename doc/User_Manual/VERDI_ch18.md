@@ -32,7 +32,7 @@ Example script file (Note that quotes (as shown highlighted in red) may be neede
 
 #### 8hO3 Daily Max Plot
 
-setenv DIR //home//training//verdi_2.0//data/OBS
+setenv DIR //home//training//verdi_2.1//data/OBS
 
 ../../verdi.sh \
 
