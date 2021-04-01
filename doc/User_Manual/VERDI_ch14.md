@@ -11,7 +11,7 @@ Contributing to VERDI Development
 
 If you have made an improvement to VERDI’s source code or documentation, please consider contributing it back to the community. You can start by requesting update notifications from VERDI’s GitHub site: <https://github.com/CEMPD/VERDI/>.
 
-Instructions on how to set up the Eclipse Development Environment and for running and building VERDI within Eclipse are available in the VERDI Developer Documentation on the official VERDI web site: <https://www.cmascenter.org/verdi/>. If you anticipate doing software development on VERDI, you should contact the members of the VERDI project via https://forum.cmascenter.org/c/verdi
+Instructions on how to set up the Eclipse Development Environment and for running and building VERDI within Eclipse are available in the VERDI Developer Documentation available here: <https://github.com/CEMPD/VERDI/blob/master/doc/Developer_Manual/VERDIDevInstructions.md> . If you anticipate doing software development on VERDI, you should contact the members of the VERDI project via https://forum.cmascenter.org/c/verdi
 
 VERDI developers will test contributions to the source code and review the applicable documentation changes for inclusion in future VERDI releases. Note that anything you contribute either must have the same license as the rest of VERDI (i.e., GPL) or must be placed in the public domain.
 
