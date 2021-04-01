@@ -57,7 +57,7 @@ Shapefile Export and High Resolution Background Map Contributions
 ------------------------------
 <span id="_Toc292295122" class="anchor"></span>**Identifying geolocation issue with shapefile export of gridded data**
 
-Michael, Geigert, Connecticut Department of Energy and Environmental Protection, www.ct.gov/deep
+Michael Geigert, Connecticut Department of Energy and Environmental Protection, www.ct.gov/deep
 
 
 
