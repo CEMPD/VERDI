@@ -50,7 +50,7 @@
 		gtype=tile
 		f=CCTM47_aac_spr06.12k.CONC.2006113.O3.ncf
                	f=metdot3d_12k.uwind.vwind
-		vectorTile=O3[1],UWIND[2],VWIND[2]
-               	titleString="Ozone with wind vector overlay (UWINDxVWIND)"
+		vectorTile=O3[1],UWIND[2],VWIND[2],5
+               	titleString=Ozone wind vector overlay (UWINDxVWIND)
 		imageFile=vector-tile-test.jpeg
 		</Task>
