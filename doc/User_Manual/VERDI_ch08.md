@@ -38,7 +38,9 @@ Examples of on-line data archives for these shapefiles include:
 Requirements for Shapefiles used in Areal Interpolation
 -------------------------------------------------------
 
-Shapefiles for areal interpolation must use units of degrees (not meters) and should use the following datum: DATUM[“unknown”, SPHEROID[“SPHERE”, 6370000.0, 0.0], TOWGS84[0,0,0]
+In previous versions there was a requirement for Shapefiles used for areal interpolation to use units of degrees (not meters) and should use the following datum: DATUM[“unknown”, SPHEROID[“SPHERE”, 6370000.0, 0.0], TOWGS84[0,0,0]
+This is no longer the case, the shapefile will be read into VERDI using the projection information that comes with  the shapefile. This was tested using the USA States shapefile from the Census Bureau: cb_2019_us_state_500k which uses the following projection string:
+GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]
 
 Adding and Removing an Area File
 --------------------------------
@@ -93,6 +95,6 @@ Figure 23. Area Name Fields in Current Shapefile<br>
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch07.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch09.md)<br>
-VERDI User Manual (c) 2018<br>
+VERDI User Manual (c) 2021<br>
 
 <!-- END COMMENT -->

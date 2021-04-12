@@ -1,1 +1,1 @@
-GEOGCS["unnamed ellipse",DATUM["D_unknown",SPHEROID["Unknown",6371007,0],TOWGS84[0,0,0]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]
+GEOGCS["unnamed ellipse",DATUM["D_unknown",SPHEROID["Unknown",6370000,0]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]

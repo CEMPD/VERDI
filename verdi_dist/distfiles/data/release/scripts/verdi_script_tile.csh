@@ -5,7 +5,7 @@
 echo 'running verdi_script_tile.csh'
 
 cd $cwd/../.. 
-foreach filename ( `ls $cwd/data/model/CCTM*.nc | xargs -n 1 basename` )
+foreach filename ( `ls $cwd/data/model/CCTM* | xargs -n 1 basename` )
   foreach species ( O3 )
   ./verdi.sh \
          -f $cwd/data/model/$filename \
