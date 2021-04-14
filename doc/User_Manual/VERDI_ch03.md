@@ -45,7 +45,6 @@ Follow these instructions to install VERDI:
 
     VERDI should now run if you execute the verdi.sh executable script on linux, or executing the verdi.command script on mac. 
 
-
 Installation Instructions for Windows
 --------------------------------------
 
