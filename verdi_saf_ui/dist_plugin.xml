@@ -16,6 +16,10 @@
       <export prefix="*"/>
     </library>
     
+    <library id="ajx" path="../saf.core.ui/lib/AppleJavaExtensions.jar" type="code">
+      <export prefix="*"/>
+    </library>
+    
     <!--library id="docking" path="../saf.core.ui/lib/dockingFrames-1.0.8p5c.jar" type="code">
       <export prefix="*"/>
     </library -->
@@ -41,10 +45,6 @@
     </library>
 
     <library id="l2f-common" path="../saf.core.ui/lib/l2fprod-common-all.jar" type="code">
-      <export prefix="*"/>
-    </library>
-
-    <library id="jgoodies" path="../saf.core.ui/lib/forms-1.0.5.jar" type="code">
       <export prefix="*"/>
     </library>
 

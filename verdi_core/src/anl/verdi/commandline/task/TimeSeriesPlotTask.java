@@ -115,12 +115,14 @@ public class TimeSeriesPlotTask implements AbstractTask {
 		String legendBins = map.get(VerdiConstants.LEGEND_BINS);
 		ColorMap cmap = null;
 
-		String[] allItems = legendBins.split(",");
+		String[] allItems = null;
+		if (legendBins != null)
+			allItems = legendBins.split(",");
 
 		int numColors = allItems.length;
 		PavePaletteCreator p = new PavePaletteCreator();
 
-		if(allItems[0].equalsIgnoreCase("DEFAULT"))
+		if(allItems == null || allItems[0].equalsIgnoreCase("DEFAULT"))
 		{
 			cmap = null;
 

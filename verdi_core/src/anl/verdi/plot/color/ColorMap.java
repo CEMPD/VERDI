@@ -328,6 +328,7 @@ public class ColorMap implements Serializable {
 		if (printfFormat == null) {
 			try {
 				printfFormat = new PrintfNumberFormat(formatString);
+				printfFormat.format(0.0);
 			} catch (Throwable e) {
 				printfFormat = new DecimalFormat(formatString);
 			}

@@ -414,8 +414,9 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		String title = chart.getTitle().getText() != null ? chart.getTitle().getText() : "";
 		if (meshInput) {
 			title = title.replaceAll(getRowOrCol() + " -?[\\d.]+", getRowOrCol() + " " + (constant + offset + 1));
-		} else 
-		title = title.replaceAll("\\b(?i)" + getRowOrCol() + "\\b\\s\\b-?\\d+\\b", getRowOrCol() + " " + (constant + offset + 1));
+		} else {
+			title = title.replaceAll("\\b(?i)" + getRowOrCol() + "\\b\\s\\b-?\\d+\\b", getRowOrCol() + " " + (((int)constant)+ offset + 1));
+		}
 		chart.setTitle(title);
 
 	}
@@ -491,7 +492,7 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 			renderer = new XYBlockRenderer();
 		XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
 
-		String title = getRowOrCol() + " " + (constant + offset + 1) + " " + frame.getVariable().getName();
+		String title = getRowOrCol() + " " + ((int)(constant + offset + 1)) + " " + frame.getVariable().getName();
 		chart = new JFreeChart(title, plot);
 		chart.removeLegend();
 		chart.setBackgroundPaint(Color.white);

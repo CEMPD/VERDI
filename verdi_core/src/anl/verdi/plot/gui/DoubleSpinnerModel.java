@@ -98,8 +98,9 @@ public class DoubleSpinnerModel extends SpinnerNumberModel {
 	public Object getNextValue() {
 		
 		Double prev = ((Number)getValue()).doubleValue();
+		Comparable max = (Comparable)getMaximum();
 		
-		if (getMaximum().compareTo(prev + 1) <= 0)
+		if (max.compareTo(prev + 1) <= 0)
 			return null;
 		
 		double next = prev + 1;
@@ -109,8 +110,9 @@ public class DoubleSpinnerModel extends SpinnerNumberModel {
 	@Override
 	public Object getPreviousValue() {
 		Double prev = ((Number)getValue()).doubleValue();
+		Comparable min = (Comparable)getMinimum();
 		
-		if (getMinimum().compareTo(prev - 1) >= 0)
+		if (min.compareTo(prev - 1) >= 0)
 				return null;
 
 		double next = prev - 1;

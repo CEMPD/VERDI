@@ -70,7 +70,7 @@ public class Models3ObsReader extends AbstractDataReader<Models3ObsDataset> {
 				// make sure the extent <= maximum shape vale in varDS
 				int maxExt = shape[dimIndex];
 				int ext = (axis.getExtent() > maxExt ? maxExt : axis.getExtent()); 
-
+				
 				if (slice.getDimension(0).getLength() > 1)
 					slice = slice.slice(0, ext);
 				

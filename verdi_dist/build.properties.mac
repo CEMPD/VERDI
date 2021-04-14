@@ -5,14 +5,15 @@
 # Properties for specify a local distribution directory
 
 # jdk home
-jdk.home=/System/Library/Frameworks/JavaVM.framework/Versions/Current/
+#jdk.home=/usr/local/mac/jdk1.8.0_271/
+jdk.home=/usr/local/mac/jdk-15.0.1.jdk/
 
 # app
 app.name=VERDI
-app.version=1.6.0_shapefile_mpas
+app.version=2.0
   
 # basic settings - use '/' as a separator
 
-user.home=/Users/lizadams
+user.home=/home/tahoward
 install.dir=verdi_install
 

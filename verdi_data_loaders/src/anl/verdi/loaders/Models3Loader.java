@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
+import ucar.nc2.Attribute;
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
@@ -45,7 +46,7 @@ public class Models3Loader implements DataLoader {
 				urlString = new URI(urlString).getPath();
 			}
 			file = NetcdfFile.open(urlString);
-			return M3IOConvention.isMine(file) && hasRowCol(file);
+			return M3IOConvention.isMine(file) && hasRowCol(file) && notCustom(file);
 
 		} catch (IOException io) {
 			//io.printStackTrace();
@@ -68,6 +69,18 @@ public class Models3Loader implements DataLoader {
 			} catch (IOException e) {}
 		}
 		return false;
+	}
+	
+	private boolean notCustom(NetcdfFile file) {
+		String id = file.getFileTypeId();
+		String version = file.getFileTypeVersion();
+		List<Attribute> attrs = file.getGlobalAttributes();
+		for (Attribute attr : attrs) {
+			if ("FTYPE".equals(attr.getFullName())) {
+				return (!Integer.valueOf(-1).equals(attr.getValue(0)));
+			}
+		}
+		return true;
 	}
 
 	private boolean hasRowCol(NetcdfFile file) {
@@ -92,7 +105,7 @@ public class Models3Loader implements DataLoader {
 	 * @param url the url of the data
 	 * @return a Dataset created from the data at the specified URL.
 	 */
-	public List<Dataset> createDatasets(URL url) {
+	public List<Dataset> createDatasets(URL url) throws IOException {
 		NetcdfDatasetFactory factory = new NetcdfDatasetFactory();
 		return factory.createModels3Datasets(url);
 	}

@@ -1,5 +1,6 @@
 package anl.verdi.plot.config;
 
+import anl.verdi.plot.gui.MeshPlot;
 import anl.verdi.plot.types.VerticalCrossSectionPlot;
 
 /**
@@ -66,6 +67,6 @@ public class VertCrossPlotConfiguration extends TilePlotConfiguration {
 	}
 
 	public Integer getDisplayMode() {
-		return (Integer) getObject(CROSS_SECTION_DISPLAY_MODE);
+		return (Integer) props.getOrDefault(CROSS_SECTION_DISPLAY_MODE, MeshPlot.MODE_CROSS_SECTION_LAYER);
 	}
 }

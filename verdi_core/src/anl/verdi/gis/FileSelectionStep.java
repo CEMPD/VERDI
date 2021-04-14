@@ -108,7 +108,8 @@ public class FileSelectionStep extends PanelWizardStep {
 			// create a new default map layer from the shape file.
 			try {
 //				URL url = shpFile.toURL();
-				URL url = DataUtilities.fileToURL(shpFile);
+				URL url = org.geotools.util.URLs.fileToUrl(shpFile);
+				//URL url = DataUtilities.fileToURL(shpFile);
 				Map<String, Serializable> params = new HashMap<String, Serializable>();
 //				params.put(IndexedShapefileDataStoreFactory.URLP.key, url);
 //				params.put(

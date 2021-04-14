@@ -3,13 +3,13 @@
 # Properties for specify a local distribution directory
 
 # jdk home
-jdk.home=/home/applications/jdk1.8.0_91
+jdk.home=/usr/local/jdk
 
 # app
 app.name=VERDI
-app.version=1.6.0_alpha
+app.version=2.0
   
 # basic settings - use '/' as a separator
-user.home=/home/lizadams
+user.home=/home/tahoward
 install.dir=verdi_install
 

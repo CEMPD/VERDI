@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 //import java.lang.reflect.Type;
@@ -241,6 +242,7 @@ Map<java.lang.String, Identity> map = pluginManager.publishPlugins(myLocations);
     if (integrityCheckReport.countErrors() > 0) {	// 2014 had been != 0
       // something wrong with the plugin set
     	for (ReportItem item : integrityCheckReport.getItems()) {
+    		System.err.println(item.getMessage());
     		Logger.error(item.getMessage());
     	}
       center.fatal(integrityCheckReport2str(integrityCheckReport), new RuntimeException("Invalid plugin configuration"));
@@ -320,8 +322,27 @@ Map<java.lang.String, Identity> map = pluginManager.publishPlugins(myLocations);
 
     return locations;
   }
+  
+  public static void disableAccessWarnings() {
+      try {
+          Class unsafeClass = Class.forName("sun.misc.Unsafe");
+          Field field = unsafeClass.getDeclaredField("theUnsafe");
+          field.setAccessible(true);
+          Object unsafe = field.get(null);
+
+          Method putObjectVolatile = unsafeClass.getDeclaredMethod("putObjectVolatile", Object.class, long.class, Object.class);
+          Method staticFieldOffset = unsafeClass.getDeclaredMethod("staticFieldOffset", Field.class);
+
+          Class loggerClass = Class.forName("jdk.internal.module.IllegalAccessLogger");
+          Field loggerField = loggerClass.getDeclaredField("logger");
+          Long offset = (Long) staticFieldOffset.invoke(unsafe, loggerField);
+          putObjectVolatile.invoke(unsafe, loggerClass, offset, null);
+      } catch (Exception ignored) {
+      }
+  }
 
   public static void main(String[] args) {
+	  disableAccessWarnings();
     Boot boot = new Boot();
   
     PluginManager manager = boot.init(args);

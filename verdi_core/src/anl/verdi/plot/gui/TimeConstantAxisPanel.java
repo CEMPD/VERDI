@@ -57,6 +57,7 @@ public class TimeConstantAxisPanel extends JPanel {
 		doubleConstant = doubles;
 		initComponents();
 		timeSpinner.addChangeListener(new SpinnerListener());
+		axisSpinner.addChangeListener(new SpinnerListener());
 	}
 
 	public void addSpinnerListeners(ChangeListener time, ChangeListener axis) {
@@ -175,8 +176,8 @@ public class TimeConstantAxisPanel extends JPanel {
 			--maxD;
 
 		model = (SpinnerNumberModel) axisSpinner.getModel();
-		model.setMinimum(minD);
-		model.setMaximum(maxD);
+		model.setMinimum((int)minD);
+		model.setMaximum((int)maxD);
 		// offset by one so row / col seems to start at 1
 		model.setValue(new Double(constant + (double)displayIncrement));
 		spinnersOn = true;

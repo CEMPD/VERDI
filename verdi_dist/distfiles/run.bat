@@ -11,7 +11,7 @@ set VERDI_USER=%USER_HOME%
 
 set VERDI_HOME=%~dp0
 REM Change the following path if you are not using the version of Java installed with VERDI
-set JAVADIR=%VERDI_HOME%\jre1.7.0
+set JAVADIR=%VERDI_HOME%\jre
 
 
 REM Do not edit below this line
@@ -38,7 +38,7 @@ REM echo set to Win64 path
 
 :proc32
 REM path has been reset for DLLs; continue
-set JAVACMD="%JAVA%" -Xmx1024M -classpath "%CLASSPATH%" saf.core.runtime.Boot
+set JAVACMD="%JAVA%" -Xmx1024M -classpath "%CLASSPATH%" --illegal-access=permit saf.core.runtime.Boot
 
 IF "%1" == "-b" GOTO scripting
 

@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import org.java.plugin.PluginClassLoader;
 import org.java.plugin.registry.PluginDescriptor;
 import org.java.plugin.standard.StandardPluginLifecycleHandler;
+import org.java.plugin.util.ExtendedProperties;
 
 /**
  * LifecycleHandler that creates PavePluginClassLoaders.
@@ -22,4 +23,5 @@ public class VerdiPluginLifecycleHandler extends StandardPluginLifecycleHandler 
 		Logger.debug("Creating PluginClassloader in VerdiPluginLifecycleHandler");
 		return new VerdiPluginClassLoader(getPluginManager(), descriptor, getClass().getClassLoader());
 	}
+
 }

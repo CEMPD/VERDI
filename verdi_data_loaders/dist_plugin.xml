@@ -42,6 +42,15 @@
 			<export prefix="*"/>
 		</library>
 		
+<!--		<library id="gt-metadata" path="../core/lib/geo-19/gt-metadata-19.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+		
+		<library id="gt-referencing" path="../core/lib/geo-19/gt-referencing-19.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+-->
+		
 	</runtime>
 
 	<!-- verdi extensions -->
@@ -54,6 +63,11 @@
 	           id="cf">
 		<parameter id="class" value="anl.verdi.loaders.CFLoader"/>
 		<parameter id="description" value="CF data loader"/>
+	</extension>
+	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
+	           id="bcon">
+		<parameter id="class" value="anl.verdi.loaders.BCONLoader"/>
+		<parameter id="description" value="BCON data loader"/>
 	</extension>
 	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
 	           id="models3">

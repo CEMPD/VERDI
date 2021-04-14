@@ -35,6 +35,7 @@ import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.config.VertCrossPlotConfiguration;
 import anl.verdi.plot.gui.DefaultPlotCreator;
+import anl.verdi.plot.gui.FastTilePlot;
 import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotPanel;
 import anl.verdi.plot.gui.ScatterPlotCreator;
@@ -97,6 +98,10 @@ public class ScriptHandler {
 	private static String aliasFileName = System.getProperty("user.home") +  File.separatorChar + "verdi" + File.separatorChar + "verdi.alias";
 	private static int layerMin = -1;	// minimum layer not set
 	private static int layerMax = -1;	// maximum layer not set
+	
+	static FormulaListElement uWindElement = null;
+	static FormulaListElement vWindElement = null;
+	static int vectorSamplingInc = 1;
 
 
 	private static final String HELPTEXT = "[ -alias <aliasname=definition> ]\n"
@@ -140,6 +145,8 @@ public class ScriptHandler {
 			+ "[ -ts <time step> ]\n"
 			+ "[ -unalias <aliasname> ]\n"
 			+ "[ -unitString \"<unit string>\" ]\n"
+			+ "[ -vector <uWind> <vWind> <samplingIncrement> ]\n"
+			+ "[ -vectorTile <formula> <uWind> <vWind> <samplingIncrement> ]\n"
 			+ "[ -version ]\n"
 			+ "[ -verticalCrossPlot X|Y <column/row> (NEW)]\n"
 			+ "[ -windowid ]";
@@ -1232,6 +1239,13 @@ public class ScriptHandler {
 				try{
 					String uWind = args.get(1);
 					String vWind = args.get(2);
+					String strSamplingIncrement = null;
+					if (args.size() > 3)
+						strSamplingIncrement = args.get(3);
+					int samplingIncrement =1;
+					if (strSamplingIncrement != null)
+						samplingIncrement = Integer.parseInt(strSamplingIncrement);
+
 					DatasetListModel dlm = verdiApp.getProject().getDatasets();
 					DatasetListElement dle = 
 							(DatasetListElement)dlm.getElementAt(dlm.getSize() - 1);
@@ -1287,6 +1301,10 @@ public class ScriptHandler {
 						config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 						vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 					}
+					
+					Plot plot = plotMap.get(curView);
+					verdiApp.addVectorOverlay(u, v,  samplingIncrement, (FastTilePlot)plot, null);
+
 
 				}catch(NullPointerException e){
 					Logger.error("Error in ScriptHandler.dataMap.put 'VECTOR'", e);
@@ -1299,7 +1317,13 @@ public class ScriptHandler {
 				try{
 					String formula = args.get(1);
 					String uWind = args.get(2);
-					String vWind = args.get(3);
+					String vWind = args.get(3);					
+					String strSamplingIncrement = null;
+					if (args.size() > 4)
+						strSamplingIncrement = args.get(4);
+					int samplingIncrement =1;
+					if (strSamplingIncrement != null)
+						samplingIncrement = Integer.parseInt(strSamplingIncrement);
 					DatasetListModel dlm = verdiApp.getProject().getDatasets();
 					DatasetListElement dle = 
 							(DatasetListElement)dlm.getElementAt(dlm.getSize() - 1);
@@ -1363,6 +1387,10 @@ public class ScriptHandler {
 						config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 						vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
 					}
+					
+					Plot plot = plotMap.get(curView);
+					verdiApp.addVectorOverlay(u, v,  samplingIncrement, (FastTilePlot)plot, null);
+
 
 				}catch(NullPointerException e){
 					Logger.error("Error in ScriptHandler.dataMap.put 'VECTORTILE'", e);

@@ -57,8 +57,10 @@ public class TilePlotTask implements AbstractTask {
 	private int xmax = 0;	// == last column
 	private int ymin = 0;	// == first row
 	private int ymax = 0;	// == last row
-	private int vectorSamplingIncr = 0;	// vector sampling increment for overlaying vectors
-			// NOTE: vector sampling increment cannot be implemented for commandline or batch VERDI until vector overlay is implemented as well
+	private int vectorSamplingIncr = 1;	// vector sampling increment for overlaying vectors
+
+	FormulaListElement uWindElement = null;
+	FormulaListElement vWindElement = null;
 	
 	public TilePlotTask(Map<String, String> map, File[] dataFiles, VerdiApplication vApp, String[] subDomainArgs) {
 		this.map = map;
@@ -88,8 +90,7 @@ public class TilePlotTask implements AbstractTask {
 		try {
 			verdiApp.loadDataset(datafiles);
 		} catch (Exception e1) {
-			Logger.error("Exception in TilePlotTask when calling loadDataset: " + e1.getMessage());
-			e1.printStackTrace();
+			Logger.error("Exception in TilePlotTask when calling loadDataset", e1);
 		}
 		Logger.debug("TilePlotTask: subDomainArgs = " + subDomainArgs);
 		if(subDomainArgs != null && subDomainArgs.length == 4) {	// make sure we have a subdomain (i.e., 4 strings here)
@@ -110,8 +111,7 @@ public class TilePlotTask implements AbstractTask {
 						+ ", ymin = " + ymin + ", ymax = " + ymax);
 //				dle.setDomain(xmin, xmax, ymin, ymax);	// no longer need this here - causes a subdomain of the subdomain
 			}catch(Exception e){
-				Logger.error("Exception in TilePlotTask when calling setDomain with a subDomain: " + e.getMessage());
-				e.printStackTrace();
+				Logger.error("Exception in TilePlotTask when calling setDomain with a subDomain", e);
 			}	
 		}
 		else {	// 2014 not using subdomain feature
@@ -126,8 +126,7 @@ public class TilePlotTask implements AbstractTask {
 				dle.setXYUsed(false); 	// not using subdomain
 				Logger.debug("TilePlotTask is NOT using subdomain");
 			}catch(Exception e){
-				Logger.error("Exception in TilePlotTask when calling setDomain and no subDomain: " + e.getMessage());
-				e.printStackTrace();
+				Logger.error("Exception in TilePlotTask when calling setDomain and no subDomain", e);
 			}	
 			
 		}
@@ -156,7 +155,7 @@ public class TilePlotTask implements AbstractTask {
 						timeStep = Integer.parseInt(map.get(VerdiConstants.TIME_STEP)) - 1; //assume it is 1-based
 					plot.updateTimeStep(timeStep - axes.getTimeAxis().getOrigin());
 				} catch (NumberFormatException e) {
-					Logger.error("Number Format Exception in TilePlotTask when calling updateTimeStep: " + e.getMessage());
+					Logger.error("Number Format Exception in TilePlotTask when calling updateTimeStep", e);
 				}
 				try {
 					Axes<DataFrameAxis> axes = dataFrame.getAxes();
@@ -167,17 +166,21 @@ public class TilePlotTask implements AbstractTask {
 						layer = Integer.parseInt(map.get(VerdiConstants.LAYER)) - 1; //assume it is 1-based
 					plot.updateLayer(layer - axes.getZAxis().getOrigin());
 				} catch (NumberFormatException e) {
-					Logger.error("Number Format Exception in TilePlotTask when calling updateTimeStep: " + e.getMessage());
+					Logger.error("Number Format Exception in TilePlotTask when calling updateTimeStep", e);
+				}
+				if (uWindElement != null) {
+					verdiApp.addVectorOverlay(uWindElement, vWindElement,  vectorSamplingIncr, plot, null);
 				}
 			}
 	    }
 
 		try {
-			if (plot != null)
+			if (plot != null) {
 				save(plot);
+				plot.stopThread();
+			}
 		} catch (Exception e) {
-			Logger.error("Error in TilePlotTask with saving plot: " + e.getMessage());
-			e.printStackTrace();
+			Logger.error("Error in TilePlotTask with saving plot", e);
 		} finally {
 			verdiApp.getProject().getFormulas().clear();
 			verdiApp.getProject().getDatasets().clear();
@@ -249,12 +252,13 @@ public class TilePlotTask implements AbstractTask {
 	private void handleColorMap(Map<String, String> map) {
 		String legendBins = map.get(VerdiConstants.LEGEND_BINS);
 
-		String[] allItems = legendBins.split(",");
+		String[] allItems = null;
+		if (legendBins != null)
+			allItems = legendBins.split(",");
 
-		int numColors = allItems.length;
 		PavePaletteCreator p = new PavePaletteCreator();
 
-		if(allItems[0].equalsIgnoreCase("DEFAULT"))
+		if (allItems == null || allItems[0].equalsIgnoreCase("DEFAULT"))
 		{
 			cmap = null;
 
@@ -262,6 +266,7 @@ public class TilePlotTask implements AbstractTask {
 		}
 		else
 		{
+			int numColors = allItems.length;
 
 			List<Palette> paletteList = p.createPalettes(numColors - 1);
 
@@ -307,7 +312,7 @@ public class TilePlotTask implements AbstractTask {
 				vConfig = new VertCrossPlotConfiguration(new PlotConfiguration(configFile));
 //				vectorConfig = new VectorPlotConfiguration(new PlotConfiguration(configFile));
 			} catch (Exception e) {
-				Logger.error("Exception in TilePlotTask.createConfig creating plot configuration: " + e.getMessage());
+				Logger.error("Exception in TilePlotTask.createConfig creating plot configuration", e);
 			} 
 		}
 				
@@ -368,12 +373,69 @@ public class TilePlotTask implements AbstractTask {
 
 	private void createFormula() {
 		try {
-			String formula = map.get(VerdiConstants.FORMULA).trim();
+			//check for vectorTile
+			String formula = map.get(VerdiConstants.VECTOR_TILE);
+			if (formula != null) {
+				String[] args = formula.split(",");
+				String variable = args[0];
+				String uWind = args[1];
+				String vWind = args[2];
+				String strSamplingIncrement = "1";
+				if (args.length > 3) {
+					strSamplingIncrement = args[3];
+					vectorSamplingIncr = Integer.parseInt(strSamplingIncrement);
+				}
+				
+				FormulaListElement form = verdiApp.create(variable);
+				verdiApp.getProject().getFormulas().addFormula(form);
+				verdiApp.getProject().setSelectedFormula(form);
+
+				uWindElement = verdiApp.create(uWind);
+				verdiApp.getProject().getFormulas().addFormula(uWindElement);
+
+				vWindElement = verdiApp.create(vWind);
+				verdiApp.getProject().getFormulas().addFormula(vWindElement);
+				
+				
+				return;
+			}
+			if (formula == null) {
+				formula = map.get(VerdiConstants.VECTOR);
+				if (formula != null) {			
+					String[] args = formula.split(",");
+					String uWind = args[0];
+					String vWind = args[1];
+					String strSamplingIncrement = "1";
+					if (args.length > 2) {
+						strSamplingIncrement = args[2];
+						vectorSamplingIncr = Integer.parseInt(strSamplingIncrement);
+					}
+	
+					uWindElement = verdiApp.create(uWind);
+					verdiApp.getProject().getFormulas().addFormula(uWindElement);
+					verdiApp.getProject().setSelectedFormula(uWindElement);
+	
+					vWindElement = verdiApp.create(vWind);
+					verdiApp.getProject().getFormulas().addFormula(vWindElement);
+					return;
+				}
+
+			}
+			if (formula == null) {		
+				formula = map.get(VerdiConstants.FORMULA);
+				if (formula != null)
+					formula = formula.trim();
+			}
+			if (formula == null) {
+				Logger.error("TilePlotTask.createFormula() could not determine formula from config file");
+				return;
+			}
+			formula = formula.trim();
 			FormulaListElement e = verdiApp.create(formula);
 			verdiApp.getProject().getFormulas().addFormula(e);
 			verdiApp.getProject().setSelectedFormula(e);
 		} catch (NullPointerException e) {
-			Logger.error("Null Pointer Exception in TilePlotTask.createFormula: " + e.getMessage());
+			Logger.error("Null Pointer Exception in TilePlotTask.createFormula", e);
 			e.printStackTrace();
 		}
 	}
@@ -386,7 +448,7 @@ public class TilePlotTask implements AbstractTask {
 			width = Integer.parseInt(map.get(VerdiConstants.IMAGE_WIDTH));
 			height = Integer.parseInt(map.get(VerdiConstants.IMAGE_HEIGHT));
 		} catch (Exception e) {
-			Logger.error("Exception in TilePlotTask.save: " + e.getMessage());
+			//Logger.error("Exception in TilePlotTask.save", e);
 		}
 		
 		String ext = map.get(VerdiConstants.IMAGE_TYPE);

@@ -110,6 +110,7 @@ public class M3IOConvention extends CoordSysBuilder {
 	String column = "COL";
 	String row = "ROW";
 	String time = "TSTEP";
+	boolean isBCON = false;
 	
     Dimension dimx = ds.findDimension(column);
     if (dimx == null) {
@@ -120,10 +121,27 @@ public class M3IOConvention extends CoordSysBuilder {
     	dimx = ds.findDimension(column);
     }
     
-    int nx = dimx.getLength();
 
-    Dimension dimy = ds.findDimension(row);
-    int ny = dimy.getLength();
+    
+    int nx = 0;
+    int ny = 0;
+    
+
+    if (dimx != null){
+    	nx = dimx.getLength();
+    	Dimension dimy = ds.findDimension(row);
+    	ny = dimy.getLength();
+    } else { //BCON attributes
+    	column = "PERIM";
+    	layer = "LAY";
+    	time = "TSTEP";
+    	dimx = ds.findDimension(column);    
+    	nx = findAttributeInt(ds, "NCOLS");
+    	ny = findAttributeInt(ds, "NROWS");
+    	column = null;
+    	row = null;
+    	isBCON = true;
+    }
     
     int projType = findAttributeInt(ds, "GDTYP");
     boolean isLatLon = (projType == 1);
@@ -140,8 +158,14 @@ public class M3IOConvention extends CoordSysBuilder {
       v.addAttribute(new Attribute(_Coordinate.Axes, "lon lat"));
 
     } else {
-      ds.addCoordinateAxis(makeCoordAxis(ds, "x", column, nx, "XORIG", "XCELL", "km"));
-      ds.addCoordinateAxis(makeCoordAxis(ds, "y", row, ny, "YORIG", "YCELL", "km"));
+    	
+    	if (isBCON) {
+    		ds.addCoordinateAxis(makeCoordBCONAxis(ds, "x", column, nx, "XORIG", "XCELL", "km"));
+        	ds.addCoordinateAxis(makeCoordBCONAxis(ds, "y", row, ny, "YORIG", "YCELL", "km"));
+    	} else {
+    		ds.addCoordinateAxis(makeCoordAxis(ds, "x", column, nx, "XORIG", "XCELL", "km"));
+        	ds.addCoordinateAxis(makeCoordAxis(ds, "y", row, ny, "YORIG", "YCELL", "km"));
+    	}
 
       if (projType == 2)
         ct = makeLCProjection(ds);
@@ -174,16 +198,28 @@ public class M3IOConvention extends CoordSysBuilder {
   }
 
   private CoordinateAxis makeCoordAxis(NetcdfDataset ds, String name, String dimName, int n,
-                                       String startName, String incrName, String unitName) {
+          String startName, String incrName, String unitName) {
 
-    double start = .001 * findAttributeDouble(ds, startName); // km
-    double incr = .001 * findAttributeDouble(ds, incrName); // km
+double start = .001 * findAttributeDouble(ds, startName); // km
+double incr = .001 * findAttributeDouble(ds, incrName); // km
 
-    CoordinateAxis v = new CoordinateAxis1D(ds, null, name, DataType.DOUBLE, dimName, unitName,
-            "synthesized coordinate from " + startName + " " + incrName + " global attributes");
-    v.setValues(n, start, incr);
-    return v;
-  }
+CoordinateAxis v = new CoordinateAxis1D(ds, null, name, DataType.DOUBLE, dimName, unitName,
+"synthesized coordinate from " + startName + " " + incrName + " global attributes");
+v.setValues(n, start, incr);
+return v;
+}
+
+  private CoordinateAxis makeCoordBCONAxis(NetcdfDataset ds, String name, String dimName, int n,
+          String startName, String incrName, String unitName) {
+
+double start = .001 * findAttributeDouble(ds, startName); // km
+double incr = .001 * findAttributeDouble(ds, incrName); // km
+
+CoordinateAxis v = new CoordinateAxis1D(ds, null, name, DataType.DOUBLE, dimName, unitName,
+"synthesized coordinate from " + startName + " " + incrName + " global attributes");
+//v.setValues(n, start, incr);
+return v;
+}
 
   private CoordinateAxis makeCoordLLAxis(NetcdfDataset ds, String name, String dimName, int n,
                                          String startName, String incrName, String unitName) {

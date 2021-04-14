@@ -12,7 +12,7 @@ JAVAMAXMEM="-Xmx1024M"
 
 
 # Limit the number of default spawned threads (eca):
-JAVAOPTS="-XX:+UseParallelGC -XX:ParallelGCThreads=1"
+JAVAOPTS="-XX:+UseParallelGC -XX:ParallelGCThreads=1 --illegal-access=permit"
 
 if [ "$DISPLAY" = "" ]; then
   DISPOPTS="-Djava.awt.headless=true"

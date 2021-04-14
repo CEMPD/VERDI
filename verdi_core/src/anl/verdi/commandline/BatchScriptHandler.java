@@ -212,7 +212,7 @@ public class BatchScriptHandler {
 
 			return getAllTasks(global, maps);		// value returned from getAllTasks is return value for processBatchScript
 		} catch (Exception e) {
-			Logger.error("error in BatchScriptHandler.processBatchScript: " + e.getMessage());
+			Logger.error("error in BatchScriptHandler.processBatchScript", e);
 			System.out.println("BatchScriptHandler: Error in BatchScriptHandler.processBatchScript: " + e.getMessage());
 			throw e;
 		}

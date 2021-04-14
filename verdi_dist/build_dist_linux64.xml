@@ -198,7 +198,7 @@
 			<chmod file="${dist.dir}/verdi.sh" perm="ug+x"/>
 		
 			<exec executable="cp">
-		  		<arg line="-p -R ${jdk.home}/jre ${dist.dir}/jre"/>
+		  		<arg line="-L -p -R ${jdk.home} ${dist.dir}/jre"/>
 			</exec>
 				
 	        <delete failonerror="false">

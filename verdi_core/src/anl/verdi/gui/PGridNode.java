@@ -23,7 +23,8 @@ import org.piccolo2d.PNode;
 import org.piccolo2d.util.PPaintContext;
 //import org.piccolo2d.util.PPaintContext;
 //import org.piccolo2d.PNode;
-import edu.umd.cs.piccolox.util.PFixedWidthStroke;
+import org.piccolo2d.extras.util.PFixedWidthStroke;
+
 
 public class PGridNode extends PNode {
 
