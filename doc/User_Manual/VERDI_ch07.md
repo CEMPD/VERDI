@@ -25,7 +25,7 @@ Figure 19. Adding Multiple Variables to Formula Editor<br>
 
 After the variable names are added to the Formula Editor, click on the formula pane and use the cursor and the keyboard to type in the mathematical functions and operators where needed to create a valid formula (see Section 7.2 and Chapter 16). After the formula has been created in the Formula Editor, click the **Add** button to place it in the list of formulas available in the **Formula** pane.
 
-To remove a formula from the formulas list, highlight the name in the list and press the yellow **minus** button. Note that removing a formula from the formula list does not remove plots that were created prior to the deletion of the formula.
+To remove a formula from the formulas list, highlight the name in the list and press the square-shaped button on the top-left corner with a tooltip saying "Delete formula". Note that removing a formula from the formula list does not remove plots that were created prior to the deletion of the formula.
 
 Example Formulas
 ----------------

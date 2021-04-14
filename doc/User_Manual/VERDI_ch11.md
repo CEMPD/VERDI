@@ -33,8 +33,8 @@ Table 11-2. Vertical Cross Section, Time Series, Time Series Bar, Scatter Plot P
 | Print           | Configure Plot     | Zoom         | Time Series of Probed Cell(s)   |
 | Export as Image  | Load Configuration | Probe       | Time Series Bar of Probed Cell(s)|
 |                 |  Save Configuration  | Show Lat/Lon| Time Series of Min. Cell(s)   |      
-|                 | Load Chart Theme   | Animate Plot | Time Series of Max. Cell(s)   |
-|                 | Edit Chart Theme   |              |                         |
+|                 | Load Chart Theme   |               | Time Series of Max. Cell(s)   |
+|                 | Edit Chart Theme   |              |   Animate Plot           |
 |                 | Save Chart Theme   |              |                                   |
 
 
