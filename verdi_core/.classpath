@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry excluding="org/geotools/verdi/referencing/" kind="src" path="src">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="verdi_core/lib"/>
@@ -28,11 +32,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/grib-8.0.29.jar" sourcepath="lib_src/grib-8.0.29-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jaramiko-151.jar" sourcepath="lib_src/jaramiko_java.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/javadbf-0.4.0.jar" sourcepath="lib_src/javadbf-0.4.0-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/piccolo2d-core-3.0.jar" sourcepath="lib_src/piccolo2d-core-3.0-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/piccolo2d-extras-3.0.jar" sourcepath="lib_src/piccolo2d-extras-3.0-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/piccolo2d-swt-3.0.jar" sourcepath="lib_src/piccolo2d-swt-3.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/GRIP.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jts-1.13.jar" sourcepath="/home/tahoward/Downloads/jts-1.13.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jdom-2.0.5.jar" sourcepath="lib_src/jdom-2.0.5-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jide-oss-3.5.14.jar" sourcepath="lib_src/jide-oss-3.5.14-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swingx-all-1.6.5.jar" sourcepath="lib_src/swingx-all-1.6.5-sources.jar"/>
@@ -40,8 +40,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xstream-1.4.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2-api-2.0-rc1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/piccolo.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/piccolox.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.4.jar" sourcepath="lib_src/commons-io-2.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/unit-api-0.6.1.jar" sourcepath="lib_src/unitsofmeasurement.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.uomo.core_0.7.0.201404240011.jar"/>
@@ -80,28 +78,29 @@
 	<classpathentry exported="true" kind="lib" path="lib/miglayout-core-5.1-20150404.220010-96.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/miglayout-swing-5.1-20150404.220019-96.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/gt-api-14.4.jar" sourcepath="lib_src/gt-api-14.4-sources.jar"/>
-	<classpathentry kind="lib" path="lib/gt-brewer-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-coverage-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-coverage-api-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-data-14.4.jar" sourcepath="lib_src/gt-data-14.4-sources.jar"/>
-	<classpathentry kind="lib" path="lib/gt-epsg-extension-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-epsg-wkt-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-feature-aggregate-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-feature-pregeneralized-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-geometry-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-grid-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-image-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-jts-wrapper-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-main-14.4.jar" sourcepath="lib_src/gt-main-14.4-sources.jar"/>
-	<classpathentry kind="lib" path="lib/gt-metadata-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-opengis-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-referencing-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-render-14.4.jar" sourcepath="lib_src/gt-render-14.4-sources.jar"/>
-	<classpathentry kind="lib" path="lib/gt-shapefile-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-swing-14.4.jar"/>
-	<classpathentry kind="lib" path="lib/gt-transform-14.4.jar" sourcepath="lib_src/gt-transform-14.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jt-all-1.4.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/repast_simphony_gis_2_3_0.jar"/>
+	<classpathentry kind="lib" path="lib/forms-1.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-brewer-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-coverage-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-main-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-metadata-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-opengis-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-referencing-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-shapefile-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/repast.simphony.bin_and_src.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-render-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-api-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-data-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/jts-core-1.14.0.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-swing-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/ejml-core-0.34.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/ejml-ddense-0.34.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/piccolo2d-core-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/piccolo2d-extras-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-epsg-extension-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-epsg-hsql-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-epsg-wkt-19.1.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/hsqldb-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/geo-19/gt-cql-19.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

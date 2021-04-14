@@ -130,6 +130,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 			viewManager.addDockableToGroup(VerdiConstants.PERSPECTIVE_ID, VerdiConstants.FORMULA_DATASET_GROUP, view2);
 			verdiApp.init(new VerdiGUI(viewManager, datasetPanel, formulasPanel,areaPanel), project);
 		} catch (Exception e) {
+			e.printStackTrace();
 			closeSplash();
 		}
 	}

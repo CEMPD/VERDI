@@ -679,7 +679,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		return null;
 	}
 	
-	private static HashMap<String, String> KNOWN_UNITS = new HashMap<String, String>();
+	public static HashMap<String, String> KNOWN_UNITS = new HashMap<String, String>();
 	
 	static {
 		KNOWN_UNITS.put("qv", "-");

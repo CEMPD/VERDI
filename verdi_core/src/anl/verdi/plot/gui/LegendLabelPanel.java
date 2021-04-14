@@ -97,6 +97,19 @@ public class LegendLabelPanel extends JPanel {
 		}
 	}
 	
+	public void enableLegend(boolean enabled) {
+		setEnabled(enabled);
+		if (!enabled) {
+			initLegend(enabled);
+			legendChk.setEnabled(enabled);
+			textFld.setEnabled(false);
+			fontFld.setEnabled(false);
+			fontBtn.setEnabled(false);
+			colorBtn.setEnabled(false);
+			disableTicks();
+		}
+	}
+	
 	public void initLegend(Boolean show) {
 		legendChk.setSelected(show);
 	}

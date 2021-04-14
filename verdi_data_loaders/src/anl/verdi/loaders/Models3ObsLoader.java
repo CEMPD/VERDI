@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
+import ucar.nc2.Attribute;
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
@@ -47,7 +48,7 @@ public class Models3ObsLoader implements DataLoader {
 				urlString = new URI(urlString).getPath();
 			}
 			file = NetcdfFile.open(urlString);
-			return M3IOConvention.isMine(file) && (hasLatLon(file) || hasRowCol(file));
+			return M3IOConvention.isMine(file) && (hasLatLon(file) || hasRowCol(file)) && isCustom(file);
 
 		} catch (IOException io) {
 			// just warn here because it be correct that
@@ -71,6 +72,17 @@ public class Models3ObsLoader implements DataLoader {
 		return false;
 	}
 
+	private boolean isCustom(NetcdfFile file) {
+		String id = file.getFileTypeId();
+		String version = file.getFileTypeVersion();
+		List<Attribute> attrs = file.getGlobalAttributes();
+		for (Attribute attr : attrs) {
+			if ("FTYPE".equals(attr.getFullName())) {
+				return (Integer.valueOf(-1).equals(attr.getValue(0)));
+			}
+		}
+		return true;
+	}
 
 	private boolean hasLatLon(NetcdfFile file) {
 		List<Variable> vars = file.getVariables();

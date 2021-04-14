@@ -182,6 +182,10 @@ public class GridNetcdfDataset extends AbstractDataset {
 		for (CoordinateAxis axis : (List<CoordinateAxis>) coords) {
 			ucar.nc2.constants.AxisType ncfType = axis.getAxisType();
 
+			if (axis instanceof ucar.nc2.dataset.CoordinateAxis1D) {
+				ucar.nc2.dataset.CoordinateAxis1D ax = (ucar.nc2.dataset.CoordinateAxis1D)axis;
+				ax.getRanges();
+			}
 			if (ncfType != null) {
 				AxisType type = types.get(ncfType);
 
@@ -191,10 +195,15 @@ public class GridNetcdfDataset extends AbstractDataset {
 					axes.add(new NetcdfTimeAxis((CoordinateAxis1DTime) axis));
 				} else {
 					axes.add(new NetCdfCoordAxis(axis, type));
+					NetCdfCoordAxis cax = new NetCdfCoordAxis(axis, type);
+					cax.getName();
+					cax.getUnits();
 				}
 			}
 		}
-		coordAxes = new Axes<CoordAxis>(axes, new NetcdfBoxer(grid));
+		NetcdfBoxer boxer = new NetcdfBoxer(grid);
+		//coordAxes = new Axes<CoordAxis>(axes, new NetcdfBoxer(grid));
+		coordAxes = new Axes<CoordAxis>(axes, boxer);
 	}
 
 	/**

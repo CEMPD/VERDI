@@ -10,6 +10,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
 import ucar.unidata.geoloc.projection.LambertConformal;
+import ucar.unidata.util.Parameter;
 
 /**
  * Creates a WKT for lambert conformal projection based on
@@ -37,6 +38,14 @@ public class LambertWKTCreator {
   PARAMETER["false_northing", 0.0],
   PARAMETER["standard_parallel_2", $standard_parallel_2],
   */
+		Double radius = 6378137.0;
+		java.util.List<Parameter> params = proj.getProjectionParameters();
+		for (Parameter param : params) {
+			if ("earth_radius".equals(param.getName())) {
+				radius = param.getNumericValue();
+			}
+		}
+		context.put("earth_radius", radius);
 		context.put("central_meridian", proj.getOriginLon());
 		context.put("latitude_of_origin", proj.getOriginLat());
 		context.put("standard_parallel_1", proj.getParallelOne());

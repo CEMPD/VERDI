@@ -117,7 +117,7 @@ public class VerdiShapefileUtil {
 	
 	public static void main(String[] args) {
 		try {
-			enumFeatures();
+			enumFeatures(args[0]);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,13 +126,13 @@ public class VerdiShapefileUtil {
 	
 	static int[][] bounds = new int[4][2];
 	
-	public static void enumFeatures() throws IOException {
+	public static void enumFeatures(String vFileName) throws IOException {
 		
 		//bounds[0][1] = Integer.MIN_VALUE;
 		//bounds[1][1] = Double.MAX_VALUE;
 		//bounds[2][0] = Double.MIN_VALUE;
 		
-		String vFileName = "/home/verdi/verdi-shapefile/VERDI/verdi_bootstrap/data/map_state/cb_2014_us_state_500k.shp";
+		//String vFileName = "/home/verdi/verdi-shapefile/VERDI/verdi_bootstrap/data/map_state/cb_2014_us_state_500k.shp";
 		java.io.File vFile = new File(vFileName);
 		FileDataStore vStore = FileDataStoreFinder.getDataStore(vFile);
 		SimpleFeatureSource sourceShapefile = (SimpleFeatureSource)vStore.getFeatureSource();
@@ -282,7 +282,7 @@ public class VerdiShapefileUtil {
 	//targetProjection - NetCDF projection used to create map data
     //targetCRS - CRS that Verdi determines the map to be using
     public static FeatureSource projectShapefile(String filename, SimpleFeatureSource sourceShapefile, Projection targetProjection, CoordinateReferenceSystem targetCRS, boolean mapTargets) {
-    	System.out.println("Projecting " + filename);
+    	//System.out.println("Projecting " + filename);
     	//long start = System.currentTimeMillis();
     	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " "+ format.format( new Date()) + " " + filename + " to " + targetProjection.getName());
     	SimpleFeatureSource convertedSource = getCachedShapefile(filename, targetProjection, sourceShapefile);

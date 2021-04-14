@@ -101,6 +101,10 @@ public class LabelsPanel extends JPanel {
 	public void initLegend(boolean show) {
 		unitsPanel.initLegend(show);
 	}
+	
+	public void enableLegend(boolean enabled) {
+		unitsPanel.enableLegend(enabled);
+	}
 
 	public void initUnits(String title, Font font, Color color) {
 		unitsPanel.initLabel(title, font, color);

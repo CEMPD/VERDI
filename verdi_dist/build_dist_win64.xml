@@ -3,7 +3,7 @@
 	<property file="build.properties.win64" />
 	<property name="env" environment="env" value="env" />
 	<property name="JAVA_HOME" value="${jdk.home}" />
-	<property name="JRE_HOME" value="${JAVA_HOME}/jre" />
+	<property name="JRE_HOME" value="${JAVA_HOME}" />
 	<property name="dist.dir" value="."/>
 	<property name="plugins.dir" value="plugins"/>
 	<property name="plugins.dist.dir" value="${dist.dir}/${plugins.dir}"/>
@@ -169,7 +169,7 @@
 
 	<target name="build.win.dist" depends="prep.dist">
 		
-		<copy todir="${dist.dir}/jre1.7.0">
+		<copy todir="${dist.dir}/jre">
 			<fileset dir="${JRE_HOME}"/>
 		</copy>
 		<unzip src="./distfiles/licenses.zip" dest="${dist.dir}"/>

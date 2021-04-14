@@ -42,15 +42,14 @@ public class MercatorWKTCreator {
 			Thread.currentThread().setContextClassLoader(loader);
 		}
 		String wkt = writer.toString();
-		wkt = wkt.replace("r=6370000", "r=" + Math.round(proj.getEarthRadius() * 1000));
-		wkt = wkt.replace("\"SPHERE\", 6370000.0", "\"SPHERE\", " + proj.getEarthRadius() * 1000);
-		wkt = wkt.replace("\"false_easting\", 500000", "\"false_easting\", " + Math.round(proj.getFalseEasting()));
-		wkt = wkt.replace("\"false_northing\", 0", "\"false_northing\", " + Math.round(proj.getFalseNorthing()));
-		wkt = wkt.replace("\"central_meridian\", 0", "\"central_meridian\", " + Math.round(proj.getOriginLon()));
+		wkt = wkt.replace("e_radius", Double.toString(proj.getEarthRadius() * 1000));
+		wkt = wkt.replace("f_easting", Double.toString(proj.getFalseEasting()));
+		wkt = wkt.replace("f_northing", Double.toString(proj.getFalseNorthing()));
+		wkt = wkt.replace("c_meridian", Double.toString(proj.getOriginLon()));
 		Logger.debug("in MercatorWKTcreate: proj.EarthRadius returns " + proj.getEarthRadius()*1000);
 		Logger.debug("in MercatorWKTcreate: proj.getFalseEasting returns " + proj.getFalseEasting());
 		Logger.debug("in MercatorWKTcreate: proj.getFalseNorthing returns " + proj.getFalseNorthing());
-		Logger.debug("in MercatorWKTcreate: central_meridian proj.getOriginLon returns " + proj.getOriginLon());
+		//Logger.debug("in MercatorWKTcreate: central_meridian proj.getOriginLon returns " + proj.getOriginLon());
 
 		
 		return wkt;

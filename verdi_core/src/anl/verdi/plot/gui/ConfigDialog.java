@@ -238,9 +238,8 @@ public class ConfigDialog extends JDialog {
 		
 		String domainLabelFormat = config.getString(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT);
 		
-		if (plottype != null && plottype == Formula.Type.TIME_SERIES_BAR) {
+		if (plottype != null && plottype == Formula.Type.TIME_SERIES_BAR)
 			domainLabelFormat = config.getString(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT_4CAT);
-		}
 		
 		labelsPanel.initDomainTick((Boolean) config
 				.getObject(PlotConfiguration.DOMAIN_SHOW_TICK), config
@@ -292,6 +291,8 @@ public class ConfigDialog extends JDialog {
 		} else {
 			labelsPanel.removeZ();
 		}
+		if (plottype != null && plottype == Formula.Type.TIME_SERIES_BAR)
+			labelsPanel.enableLegend(false);
 	}
 
 	private void initTitles(PlotConfiguration config) {

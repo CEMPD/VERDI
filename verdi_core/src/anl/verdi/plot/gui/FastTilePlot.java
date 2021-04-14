@@ -474,22 +474,26 @@ Logger.debug("set up drawing space, titles, fonts, etc.");
 
 					final int xOffset = 100;
 					final int legendWidth = 80 + xOffset;
-					int canvasSize =
-						Math.round( Math.min( Math.max( 0, canvasWidth - legendWidth ), canvasHeight ) * marginScale );	// JEB canvasWidth and canvasHeight are both 0
+					
+					int availCanvasWidth = canvasWidth - legendWidth;
+					int availCanvasHeight = canvasHeight - yOffset;
 					final int subsetRows = 1 + lastRow - firstRow;
 					final int subsetColumns = 1 + lastColumn - firstColumn;
 					
-					if (subsetRows > subsetColumns)
-						canvasSize =
-						Math.round( Math.min( Math.max( 0, canvasWidth - legendWidth ), Math.max( 0, canvasHeight - (fontSize + 6) * 4) ) * marginScale );	// JEB canvasWidth and canvasHeight are both 0
-						
-					final float subsetMax = Math.max(subsetRows, subsetColumns);
-					final float rowScale = subsetRows / subsetMax;
-					final float columnScale = subsetColumns / subsetMax;
-					final int width = Math.round(canvasSize * columnScale);	// JEB canvasSize = 0, so width and height = 0
-					final int height = Math.round(canvasSize * rowScale);
+					double canvasRatio = (double) availCanvasWidth / availCanvasHeight;
+					double plotRatio = (double)subsetColumns / subsetRows;
+					
+					int width = 0;
+					int height = 0;
+					if (canvasRatio > plotRatio) { // canvas is wider than plot 
+						height = Math.round(availCanvasHeight * marginScale); //data height = canvas height, scale data width
+						width = (int)Math.round(height * subsetColumns / (double)subsetRows);  
+					} else { // canvas is narrower than plot
+						width = Math.round(availCanvasWidth * marginScale);//data width = canvas width, scale data height
+						height = (int)Math.round(width * subsetRows / (double)subsetColumns);
+					}
 
-					if (canvasSize == 0) {
+					if (width == 0 || height == 0) {
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
 						continue;
@@ -561,6 +565,7 @@ Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
 						}
 //					}						// commented out in 2/2014 version
 Logger.debug("calling copySubsetLayerData from FastTilePlot.Runnable.run");
+
 					copySubsetLayerData(log); // Based on current timestep and layer.
 
 					
@@ -641,7 +646,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
 									subsetLayerData, colorIndexCache);
 						} catch (Exception e) {
-							Logger.error("FastTilePlot's run method", e);
+							Logger.debug("FastTilePlot's run method", e);
 						}
 // by this point drew panel, panel title (O3[1]), panel menu, and panel bar (time step, layer, etc.)
 						dataArea.setRect(xOffset, yOffset, width, height);	// same 4 values sent to tilePlot.draw(...)
@@ -730,6 +735,9 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 					VerdiGUI.unlock();
 					
 				} else {
+					if ( drawMode == DRAW_ONCE) {
+						decrease_draw_once_requests();
+					}
 					try {
 						Thread.sleep(100); /* ms. */
 					} catch (Exception unused) {}
@@ -987,8 +995,10 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		if ( source == statisticsMenu || source == threshold ) {
 			
-			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex || statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile (")) {
-				if (statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile (") ) {
+			//TAH
+			System.err.println("Stat index " + statisticsMenu.getSelectedIndex() + " pre " + preStatIndex + " item " + statisticsMenu.getSelectedItem());
+			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex || statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile")) {
+				if (statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile") ) {
 					getCustomPercentile();
 				}
 				if( statisticsMenu.getSelectedIndex() != 0) {
@@ -1868,15 +1878,16 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		
 		final int selection = statisticsMenu.getSelectedIndex();
 
-		if (prevFirstRow == firstRow &&
+		if (prevFirstRow == firstRow && !recomputeLegend &&
 				prevLastRow == lastRow &&
 				prevFirstColumn == firstColumn &&
 				prevLastColumn == lastColumn &&
 				prevSelection == selection &&
 				prevTimestep == timestep &&
 				prevLayer == layer &&
-				prevLog == log)
+				prevLog == log) {
 			return;
+		}
 
 		// Reallocate the subsetLayerData[][] only if needed:
 
@@ -2307,7 +2318,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	}
 	
 	protected void resetMenuItems(JMenu addLayers) {
-		if (addLayers == null) return;
+		if (addLayers == null || addLayers.getItemCount() == 0) return;
 		
 		JCheckBoxMenuItem world = (JCheckBoxMenuItem)addLayers.getItem(0);
 		JCheckBoxMenuItem na = (JCheckBoxMenuItem)addLayers.getItem(1);
@@ -2610,6 +2621,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			}
 			updateColorMap(map);
 			recomputeStatistics = true;
+			
+			if (obsAnnotations != null) {
+				for (ObsAnnotation ann : obsAnnotations) {
+					ann.updateDrawingParams(map);
+				}
+			}
+
 		}
 
 		this.draw();
@@ -2676,6 +2694,11 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 		this.config.updateConfig(config);
 		mapper.setLayerStyle((TilePlotConfiguration)this.config);
+		if (obsAnnotations != null) {
+			for (ObsAnnotation ann : obsAnnotations) {
+				ann.updateDrawingParams(map);
+			}
+		}
 		this.draw();
 		
 		if (this.showGridLines != null) {
@@ -3621,7 +3644,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		showObsLegend = showLegend;
 		obsAnnotations = new ArrayList<ObsAnnotation>();
 		Axes<DataFrameAxis> axs = getDataFrame().getAxes();
-		GregorianCalendar initDate = getDataFrame().getAxes().getDate(timestep);
+		GregorianCalendar initDate = getDataFrame().getAxes().getDate(0);
 		List<String> subtitles = new ArrayList<String>();
 		String subtitle1 = "";
 		boolean showST1 = false;
@@ -3635,7 +3658,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		try {
 			for (OverlayObject obs : obsData) {
 				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
-				ObsAnnotation ann = new ObsAnnotation(eval, axs, initDate, layer);
+				ObsAnnotation ann = new ObsAnnotation(eval, axs, initDate, layer, obs);
 				ann.update(timestep);
 				ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
 				obsAnnotations.add(ann);

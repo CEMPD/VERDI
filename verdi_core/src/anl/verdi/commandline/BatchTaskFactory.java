@@ -1,6 +1,8 @@
 package anl.verdi.commandline;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,8 +42,17 @@ public class BatchTaskFactory {
 		boolean useFilePattern = dataFiles.length == 0;
 		File[] files = useFilePattern ? getFilesByPattern(dir, pattern) : dataFiles;
 		
-		if (files == null || files.length == 0)
-			return null;
+		if (files == null || files.length == 0) {
+			Path currentRelativePath = Paths.get("");
+
+			String s = currentRelativePath.toAbsolutePath().toString();
+			String strErr = null;
+			if (useFilePattern)
+				strErr = "No files found in dir " + dir + " pattern " + pattern + " Current dir " + s;
+			else
+				strErr = "No files found using " + f + " in dir " + dir + " Current dir " + s;
+			throw new RuntimeException(strErr);
+		}
 		
 		return constructTasks(map, app, useFilePattern, gtype, files, subDomain);
 	}

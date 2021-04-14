@@ -892,34 +892,41 @@ FormulaElementCreator, ListDataListener {
 			Logger.debug("dialog is now visible");
 
 			FormulaListElement xElement = dialog.getUElement();
+			
 			if (xElement != null) {
-				Logger.debug("xElement != null");
-				FormulaListElement oldElement = project.getSelectedFormula();
-				project.setSelectedFormula(xElement);
-				DataFrame xFrame = evaluateFormula(Formula.Type.VECTOR); //, range);	// domain
-				project.setSelectedFormula(dialog.getVElement());
-				DataFrame yFrame = evaluateFormula(Formula.Type.VECTOR); //, range);	// range
+				FormulaListElement yElement = dialog.getVElement();
 				int vectorSamplingInc = dialog.getVectorSamplingInc();	// 2015 get input Vector Sampling Increment
-				Logger.debug("got vectorSamplingIncrement = " + vectorSamplingInc);
-				
-				DataFrame[] frames = DataUtilities.unitVectorTransform(xFrame, yFrame, vectorSamplingInc);	// 2015 pass in vector sampling increment
-				Logger.debug("back from DataUtilities.unitVectorTransform");
-				xFrame = frames[0];
-				yFrame = frames[1];
-				project.setSelectedFormula(dialog.getVElement());
-				Logger.debug("back from project.setSelectedFormula");
-
-				if (fastPlot != null) {
-					fastPlot.addVectorAnnotation(new VectorEvaluator(xFrame, yFrame));
-					Logger.debug("did addVectorAnnotation for new VectorEvaluator (fastPlot)");
-				} else{
-					request.getPlot().addVectorAnnotation(new VectorEvaluator(xFrame, yFrame));
-					Logger.debug("did addVectorAnnotation for new VectorEvaluator (NOT fastPlot)");
-				}
-
-				project.setSelectedFormula(oldElement);
+				addVectorOverlay(xElement, yElement, vectorSamplingInc, fastPlot, request);
 			}
 		}
+	}
+	
+	public void addVectorOverlay(FormulaListElement xElement, FormulaListElement yElement, int vectorSamplingInc, FastTilePlot fastPlot, OverlayRequest request) {
+		Logger.debug("xElement != null");
+		FormulaListElement oldElement = project.getSelectedFormula();
+		project.setSelectedFormula(xElement);
+		DataFrame xFrame = evaluateFormula(Formula.Type.VECTOR); //, range);	// domain
+		project.setSelectedFormula(yElement);
+		DataFrame yFrame = evaluateFormula(Formula.Type.VECTOR); //, range);	// range
+		Logger.debug("got vectorSamplingIncrement = " + vectorSamplingInc);
+		
+		DataFrame[] frames = DataUtilities.unitVectorTransform(xFrame, yFrame, vectorSamplingInc);	// 2015 pass in vector sampling increment
+		Logger.debug("back from DataUtilities.unitVectorTransform");
+		xFrame = frames[0];
+		yFrame = frames[1];
+		project.setSelectedFormula(yElement);
+		Logger.debug("back from project.setSelectedFormula");
+
+		if (fastPlot != null) {
+			fastPlot.addVectorAnnotation(new VectorEvaluator(xFrame, yFrame));
+			Logger.debug("did addVectorAnnotation for new VectorEvaluator (fastPlot)");
+		} else{
+			request.getPlot().addVectorAnnotation(new VectorEvaluator(xFrame, yFrame));
+			Logger.debug("did addVectorAnnotation for new VectorEvaluator (NOT fastPlot)");
+		}
+
+		project.setSelectedFormula(oldElement);
+
 	}
 
 	public MapContent getDomainPanelContext() {

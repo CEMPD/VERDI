@@ -44,6 +44,7 @@ import anl.verdi.data.DataUtilities;
 import anl.verdi.data.Dataset;
 import anl.verdi.data.ObsData;
 import anl.verdi.data.ObsEvaluator;
+import anl.verdi.gis.OverlayObject;
 import anl.verdi.plot.color.ColorMap;
 import anl.verdi.plot.util.Graphics2DShapesTool;
 import ucar.unidata.geoloc.Projection;
@@ -75,6 +76,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	
 	Date baseDate = null;
 	int baseTimestep = 0;
+	OverlayObject overlay = null;
 
 	public ObsAnnotation(ObsEvaluator eval, Axes<DataFrameAxis> axes,
 			int timeStep, int layer) {
@@ -93,12 +95,19 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	}
 
 	public ObsAnnotation(ObsEvaluator eval, Axes<DataFrameAxis> axes,
-			GregorianCalendar aCalendar, int layer) {
+			GregorianCalendar aCalendar, int layer, OverlayObject overlay) {
 		Logger.debug("in ObsAnnotation constructor using GregorianCalendar");
 		this.eval = eval;
 		this.axes = axes;
+		this.overlay = overlay;
 		baseDate = aCalendar.getTime();
 		update(aCalendar.getTime());
+	}
+	
+	public void updateDrawingParams(ColorMap cmap) {
+		if (overlay == null)
+			return;
+		setDrawingParams(overlay.getSymbol(), overlay.getStrokeSize(), overlay.getShapeSize(), cmap);
 	}
 
 	public void setDrawingParams(int stroke, int size, ColorMap cMap) {
@@ -133,6 +142,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	public synchronized void update(int timeStep) {
 		//System.out.println("ObsAnnotation timestep " + timeStep);
 		list = eval.evaluate(baseDate, timeStep);
+		//list = eval.evaluate(null, timeStep);
 		updateList();
 	}
 

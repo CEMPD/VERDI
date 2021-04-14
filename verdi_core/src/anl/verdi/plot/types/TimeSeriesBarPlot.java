@@ -614,7 +614,7 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 		//NOTE: do the category label update here since there is no handle in the domain axis object for the label format
 		try {
 			dateFormat.applyPattern(config.getString(PlotConfiguration.DOMAIN_TICK_LABEL_FORMAT_4CAT));
-			refreshCategoryLabelFormat();
+			refreshCategoryLabelFormat(config);
 		} catch (Exception e) {
 			// NOTE: if new date format doesn't format, there is no action is needed.
 		}
@@ -632,17 +632,20 @@ public class TimeSeriesBarPlot extends AbstractPlot {
 	/***
 	 * Refresh the domain axis label so to take the new date format
 	 */
-	private void refreshCategoryLabelFormat() {
+	private void refreshCategoryLabelFormat(PlotConfiguration config) {
 		dataset.clear();
 		Axes<DataFrameAxis> axes = frame.getAxes();
 		DataFrameAxis time = axes.getTimeAxis();
 		int origin = time.getOrigin();
 		DataFrameIndex index = frame.getIndex();
 		index.setLayer(layer);
+		String label = config.getString(PlotConfiguration.DOMAIN_LABEL);
+		if (label == null)
+			label = "Series 1";
 		for (int t = 0; t < time.getExtent(); t++) {
 			index.setTime(t);
 			GregorianCalendar date = axes.getDate(t + origin);		// 2014 changed Date to GregorianCalendar
-			dataset.addValue(frame.getDouble(index), "Series 1", dateFormat.format(date.getTimeInMillis()));
+			dataset.addValue(frame.getDouble(index), label, dateFormat.format(date.getTimeInMillis()));
 		}
 	}
 	

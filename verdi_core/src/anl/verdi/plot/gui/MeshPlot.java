@@ -1283,8 +1283,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 		if ( source == statisticsMenu || source == threshold ) {
 			
-			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex || statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile (")) {
-				if (statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile (") ) {
+			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex || statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile")) {
+				if (statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile") ) {
 					getCustomPercentile();
 				}
 				if( statisticsMenu.getSelectedIndex() != 0) {
@@ -3703,6 +3703,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			}
 			updateColorMap(map);
 			recomputeStatistics = true;
+			
+			if (obsAnnotations != null) {
+				for (ObsAnnotation ann : obsAnnotations) {
+					ann.updateDrawingParams(map);
+				}
+			}
 		}
 
 		updateConfigVariables();
@@ -3775,6 +3781,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		this.config.updateConfig(config);
 		updateConfigVariables();
 		mapper.setLayerStyle((TilePlotConfiguration)this.config);
+		if (obsAnnotations != null) {
+			for (ObsAnnotation ann : obsAnnotations) {
+				ann.updateDrawingParams(map);
+			}
+		}
 		this.draw();
 		
 		if (this.showGridLines != null) {
@@ -5015,7 +5026,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		try {
 			for (OverlayObject obs : obsData) {
 				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
-				ObsAnnotation ann = new ObsAnnotation(eval, axs, initDate, layer);
+				ObsAnnotation ann = new ObsAnnotation(eval, axs, initDate, layer, obs);
 				ann.update(timestep);
 				ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
 				obsAnnotations.add(ann);

@@ -271,7 +271,8 @@ public class ScriptPanel extends JPanel {
 		BatchScriptHandler bHandler = new BatchScriptHandler(args, vApp, false);
 		
 		try {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			VerdiApplication.getInstance().getGui().busyCursor();
+
 			bHandler.run();
 
 			if (vGui != null)
@@ -286,7 +287,7 @@ public class ScriptPanel extends JPanel {
 								exc == null || exc.getMessage() == null ? "Error running batch script file: "
 								+ curFile.getAbsolutePath() + "." : exc.getMessage());
 		} finally {
-			setCursor(Cursor.getDefaultCursor());
+			VerdiApplication.getInstance().getGui().getFrame().setCursor(Cursor.getDefaultCursor());
 		}
 	}
 

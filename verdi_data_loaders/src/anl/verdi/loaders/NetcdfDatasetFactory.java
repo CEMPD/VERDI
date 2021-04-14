@@ -118,6 +118,35 @@ public class NetcdfDatasetFactory {
 		return setList;
 	}
 
+	public List<Dataset> createBCONDatasets(URL url) throws IOException {
+		Logger.debug("in NetcdfDatasetFactory.createModels3Datasets, url = " + url);
+		NetcdfDataset netcdfDataset = null;
+		List<Dataset> setList = new ArrayList<Dataset>();
+		try {
+			Logger.debug("ready to call openNetcdfGridDataset");
+			String urlString = url.toExternalForm();
+			netcdfDataset = NetcdfDataset.openDataset(urlString);
+			Logger.debug("in NetcdfDatasetFactory.createModels3Datasets, back from openNetcdfGridDataset");
+			//Already check in MPASLoader
+			/*if (!MPASConvention.isMine(netcdfDataset)) {
+				Logger.debug("MPASConvention.isMine == false");
+				throw new IOException("Loading non-mpas file into MPASDataset");
+			}*/
+			// if here then ok.
+			Logger.debug("isMine == true, returning createDatasets for url = " + url);
+			//setList.add(new BCONDataset(url, netcdfDataset));
+		} catch (IOException ex) {
+			try {
+				if (netcdfDataset != null)
+					netcdfDataset.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			throw ex;
+		}
+		return setList;
+	}
+
 	/**
 	 * Creates a list of Datasets from the specified URL. The url
 	 * should point to a netcdf file conforming to the Models-3 convention.
