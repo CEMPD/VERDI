@@ -24,7 +24,7 @@ Where a_username is your username.
 
 The following script options will read in the file as the first dataset, select O3[1] as the formula from dataset 1, and create a tile plot of the O3[1].
 
-./verdi.sh -f “$VERDI_HOME/data/model/CCTM46_P16.baseO2a.36k.O3MAX -s O3[1] -gtype tile
+./verdi.sh -f $VERDI_HOME/data/model/CCTM46_P16.baseO2a.36k.O3MAX -s "O3[1]" -gtype tile
 
 Example script file (Note that quotes (as shown highlighted in red) may be needed around the entire list of parameters” :
 
@@ -42,13 +42,13 @@ setenv DIR //home//training//verdi_2.1//data/OBS
 
 -configFile /home/training/config.txt \
 
--s O3[1] \
+-s "O3[1]" \
 
--s O38[2]*1000"
+-s "O38[2]*1000" \
 
 Note: Currently, the syntax for the command line script is slightly different than the syntax for the batch script. For example, the batch script method supports requesting a plot of hour 12 using the notation O3[1]:12, but the command line script option requires the variable name and time step be specified independently:
 
--s O3[1]
+-s "O3[1]"
 
 -ts 12
 
