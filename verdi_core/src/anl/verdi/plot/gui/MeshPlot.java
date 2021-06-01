@@ -1287,15 +1287,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				if (statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile") ) {
 					getCustomPercentile();
 				}
-				//computeDataRange(false);
-				//computeDataRange(true);
-				//double[] minmax = { 0.0, 0.0 };
-
 				if( statisticsMenu.getSelectedIndex() != 0) {
 					recomputeStatistics = true;
-					//minmax[0] = statMinMaxCache[LEVELS_CACHE_MIN_VALUE];
-					//minmax[1] = statMinMaxCache[LEVELS_CACHE_MAX_VALUE];
-
 				} else {
 					//reset to no statistics...
 					copySubsetLayerData(this.log);
