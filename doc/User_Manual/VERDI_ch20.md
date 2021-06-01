@@ -56,7 +56,10 @@ John Carron, Unidata, <http://www.unidata.ucar.edu/software/netcdf/index.html>
 Shapefile Export and High Resolution Background Map Contributions
 ------------------------------
 <span id="_Toc292295122" class="anchor"></span>**Identifying geolocation issue with shapefile export of gridded data**
-Michael, Geigert, Connecticut Department of Energy and Environmental Protection, www.ct.gov/deep
+
+Michael Geigert, Connecticut Department of Energy and Environmental Protection, www.ct.gov/deep
+
+
 
 [1] Schwede, D., N. Collier, J. Dolph, M.A. Bitz Widing, T. Howe, 2007: A New Tool for Analyzing CMAQ Modeling Results: Visualization Environment for Rich Data Interpretation (VERDI). Proceedings, CMAS 2007 Conference.
 
