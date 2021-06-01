@@ -1287,17 +1287,50 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				if (statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile") ) {
 					getCustomPercentile();
 				}
+				//computeDataRange(false);
+				//computeDataRange(true);
+				//double[] minmax = { 0.0, 0.0 };
+
 				if( statisticsMenu.getSelectedIndex() != 0) {
 					recomputeStatistics = true;
+					//minmax[0] = statMinMaxCache[LEVELS_CACHE_MIN_VALUE];
+					//minmax[1] = statMinMaxCache[LEVELS_CACHE_MAX_VALUE];
+
 				} else {
 					//reset to no statistics...
 					copySubsetLayerData(this.log);
+					/*if (log) {
+						minmax[0] = logPlotMinMaxCache[0];
+						minmax[1] = logPlotMinMaxCache[1];
+					} else {
+						minmax[0] = plotMinMaxCache[0];
+						minmax[1] = plotMinMaxCache[1];
+					}*/
 				}
 				this.preStatIndex = statisticsMenu.getSelectedIndex();
+				
+				updateLegendLevels();
+				
+				/*defaultPalette = (map.getPalette() != null) ? map.getPalette() : new PavePaletteCreator().createPavePalette(); // new PavePaletteCreator().createPalettes(8).get(0);
+				map.setPalette(defaultPalette);
+
+				map.setMinMax( minmax[0], minmax[1]);
+				
+
+				legendColors = defaultPalette.getColors();
+				final double minimum = minmax[0];
+				final double maximum = minmax[1];
+				minMax = new DataUtilities.MinMax(minimum, maximum);
+				int count = legendColors.length + 1;
+				final double delta = (minmax[1] - minmax[0]) / (count - 1);
+				legendLevels = new double[count];
+				for (int level = 0; level < count; ++level) {
+					legendLevels[level] = minmax[0] + level * delta;
+				}
+				config.setUnits("");*/
+				
 			} else if (source != threshold)
-					return;
-			
-			updateLegendLevels();
+					return;			
 			
 	    } else if (source == playStopButton) {
 
@@ -2919,6 +2952,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					statMinMaxCache[LEVELS_CACHE_MAX_LAT] = cellsToRender[cell].getLat();
 				}
 			}
+			System.err.println("MeshPlot log " + log + " stat " + statistic + " min " + statMinMaxCache[LEVELS_CACHE_MIN_VALUE] + " Max " + statMinMaxCache[LEVELS_CACHE_MAX_VALUE]);
 		}	
 	}
 	
@@ -3682,7 +3716,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				//we need to also populate the non log intervals to some default range...
 				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
 				//so we need to make sure and pre populate just in case user changes between linear and log scales
-				computeDataRange(false);
+				computeDataRange(this.log);
 				map.setMinMax( minmax[0], minmax[1]);
 				try {
 					valueFormat = map.getNumberFormat();
@@ -3698,7 +3732,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				//we need to also populate the log intervals to some default range...
 				//a new map object is created and doesn't keep the interval ranges that was created in one of the constructors
 				//so we need to make sure and pre populate just in case user changes between linear and log scales
-				computeDataRange(true);
+				computeDataRange(this.log);
 				map.setLogMinMax( minmax[0], minmax[1]);
 			}
 			updateColorMap(map);
@@ -4016,10 +4050,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				return CANCEL_OPTION;
 
 			try {
-				lonLow = Integer.valueOf(fLonField.getText());
-				lonHigh = Integer.valueOf(lLonField.getText());
-				latLow = Integer.valueOf(fLatField.getText());
-				latHigh = Integer.valueOf(lLatField.getText());
+				lonLow = (int)Math.round(Double.parseDouble(fLonField.getText()));
+				lonHigh = (int)Math.round(Double.parseDouble(lLonField.getText()));
+				latLow = (int)Math.round(Double.parseDouble(fLatField.getText()));
+				latHigh = (int)Math.round(Double.parseDouble(lLatField.getText()));
 				if (lonLow > lonHigh) {
 					int temp = lonLow;
 					lonLow = lonHigh;
@@ -5264,6 +5298,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			localLogMinMax[1] = statMinMaxCache[1];
 		}
 		map.setLogMinMax( localLogMinMax[0], localLogMinMax[1]);
+		computeDataRange(this.log);
 		try {
 			valueFormat = map.getNumberFormat();
 		} catch (Exception e) {

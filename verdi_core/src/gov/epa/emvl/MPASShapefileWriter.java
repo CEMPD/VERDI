@@ -95,10 +95,14 @@ public final class MPASShapefileWriter {
 	//Debug - export subset
 	ArrayList<MeshCellInfo> newCells = new ArrayList<MeshCellInfo>();
 	for (int i = 0; i < cells.length; ++i) {
-		if (cells[i].getMinX() >= minLon &&
+		/*if (cells[i].getMinX() >= minLon &&
 				cells[i].getMaxX() <= maxLon &&
 				cells[i].getMinY() >= minLat &&
-				cells[i].getMaxY() <= maxLat)
+				cells[i].getMaxY() <= maxLat)*/ //Only captures cells fully onscreen
+		if (cells[i].getMinX() <= maxLon &&
+			cells[i].getMaxX() >= minLon &&
+			cells[i].getMinY() <= maxLat &&
+			cells[i].getMaxY() >= minLat)  //Captures all cells visible at all
 			newCells.add(cells[i]);
 	}
 	

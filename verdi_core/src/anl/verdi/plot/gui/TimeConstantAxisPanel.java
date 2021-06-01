@@ -41,6 +41,7 @@ public class TimeConstantAxisPanel extends JPanel {
 	      int val = ((Number)source.getValue()).intValue() - 1;
 	      if (frameAxes != null) {
 		      GregorianCalendar date = frameAxes.getDate(val);
+		      if (date == null)System.err.println("TimeConstantAxisPanel date null");
 		      timeLabel.setText(Utilities.formatShortDate(date));
 	      }
       }
