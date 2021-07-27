@@ -173,7 +173,7 @@ Figure 18. Right-Click on Variable in Dataset Pane<br>
 Time Steps and Layers Panels
 ----------------------------
 
-The range that is available for the dataset is listed in the Time Steps or Layers Panel in parenthesis next to the label for the panel. [Figure 6-8](#Figure6-8) shows that the dataset has 25 time steps with the range displayed as: Time Steps (1-25). You can use a subset of the full time step range by clicking on the Use Time Range checkbox, and then using the Min and Max spinner controls to set a new minimum or maximum value, for example choosing time step 2 as the minimum time step and time step 4 as the maximum. When a tile plot is created, it will only display time steps 2-4. Detailed instructions for using the **Time Steps** and **Layers** panels are discussed in Chapter 9, “Subsetting Spatial and Temporal Data.”
+The range that is available for the dataset is listed in the Time Steps or Layers Panel in parenthesis next to the label for the panel. PDF:([Fig-@fig:Figure18])) or GitHub:[Figure 18](#Figure18) shows that the dataset has 25 time steps with the range displayed as: Time Steps (1-25). You can use a subset of the full time step range by clicking on the Use Time Range checkbox, and then using the Min and Max spinner controls to set a new minimum or maximum value, for example choosing time step 2 as the minimum time step and time step 4 as the maximum. When a tile plot is created, it will only display time steps 2-4. Detailed instructions for using the **Time Steps** and **Layers** panels are discussed in Chapter 9, “Subsetting Spatial and Temporal Data.”
 
 Saving Projects
 ---------------
