@@ -14,12 +14,12 @@ Table 11-1. Tile and Areal Interpolation Plot Pull-down Menu Options
 
 | **File**         | **Configure**          | **Controls**         | **Plot**                       | **GIS Layers** |
 |---------------------|--------------------|---------------------------|----------------------------|------------|
-| Print   | Configure Plot                 | Zoom                      | Time Series of Probed Cell(s) | Add Map Layers |
-| Export as Image/GIS  | Load Configuration | Probe          | Time Series Bar of Probed Cell(s)|Configure GIS Layers  |
+| Print   | Configure Plot                 | Zoom (not for MPAS netCDF)            | Time Series of Probed Cell(s) | Add Map Layers |
+| Export as Image/GIS  | Load Configuration | Probe (not for MPAS netCDF)          | Time Series Bar of Probed Cell(s)|Configure GIS Layers  |
 |                      | Save Configuration  |Set Row and Column Ranges|Time Series of Min. Cell(s)|Set Current Maps as Plot Default |
-|                      |                   |  Show Grid Lines          |Time Series of Max. Cell(s) |  |
-|                     |                    | Show Lat/Lon              | Animate Plot               |  |
-|                     |                    |                           | Add Overlay                |  |
+|                      |                   |  Show Grid Lines (For MPAS:Show Cell Borders)|Time Series of Max. Cell(s) |  |
+|                     |                    | Show Lat/Lon (For MPAS:Show Wind Vectors)    | Animate Plot               |  |
+|                     |                    |                           | Add Overlay (not for MPAS netCDF)               |  |
 
 
 The menu options at the top of the Vertical Cross Section, Time Series, Time Series Bar Plot and Scatter Plot include those shown in [Table 11-2](#Table11-2). Most options are common to all plots, and function in the same way (unless the option is grayed out). Therefore, this chapter is organized by menu instead of by plot type.
@@ -28,14 +28,14 @@ The menu options at the top of the Vertical Cross Section, Time Series, Time Ser
 Table 11-2. Vertical Cross Section, Time Series, Time Series Bar, Scatter Plot Pull-down Menu Options
 
 
-| **File**        | **Configure**      | **Controls** | **Plot**                         |
-|-----------------|--------------------|--------------|---------------------------------|
-| Print           | Configure Plot     | Zoom         | Time Series of Probed Cell(s)   |
-| Export as Image  | Load Configuration | Probe       | Time Series Bar of Probed Cell(s)|
-|                 |  Save Configuration  | Show Lat/Lon| Time Series of Min. Cell(s)   |      
-|                 | Load Chart Theme   |               | Time Series of Max. Cell(s)   |
-|                 | Edit Chart Theme   |              |   Animate Plot           |
-|                 | Save Chart Theme   |              |                                   |
+| **File**        | **Configure**      | **Controls** |
+|-----------------|--------------------|--------------|
+| Print           | Configure Plot     | Zoom         |
+| Export as Image  | Load Configuration | Probe       |
+|                 |  Save Configuration  | Show Lat/Lon|     
+|                 | Load Chart Theme   |               |
+|                 | Edit Chart Theme   |              |
+|                 | Save Chart Theme   |              |
 
 
 File Menu
