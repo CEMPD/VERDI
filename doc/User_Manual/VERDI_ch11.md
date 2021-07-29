@@ -344,7 +344,7 @@ Figure 65. Plot Menu Options<br>
 
 ### Time Series Plots
 
-The Time Series of Probed Cell(s) and Time Series Bar of Probed Cell(s) allows the user to select a set of cells, and then produce a time series or time series bar plot of the chosen subset of probed cells. The Time Series of Min. [or Max.] Cell(s) option creates a time series plot using data for the currently selected formula at that formula’s domain, layer range, and time step range. The minimum [or maximum] value of that formula over the domain and layer range at that time step is calculated by VERDI and used for each of the time step’s data points. For examples of the Time Series Plot and the Time Series Bar Plot see PDF:([Fig-@fig:Figure53]) or GitHub: [Figure 10-15](#Figure10-15) and [Figure 10-16](#Figure10-16), respectively.
+The Time Series of Probed Cell(s) and Time Series Bar of Probed Cell(s) allows the user to select a set of cells, and then produce a time series or time series bar plot of the chosen subset of probed cells. The Time Series of Min. [or Max.] Cell(s) option creates a time series plot using data for the currently selected formula at that formula’s domain, layer range, and time step range. The minimum [or maximum] value of that formula over the domain and layer range at that time step is calculated by VERDI and used for each of the time step’s data points. For examples of the Time Series Plot and the Time Series Bar Plot see PDF:([Fig-@fig:Figure41]) or GitHub: [Figure 40](#Figure40) and [Figure 41](#Figure41), respectively.
 
 ### Animate Plots
 
