@@ -80,7 +80,7 @@ Figure 12-6. Models-3 I/O API Map Projection Parameters for Lambert Conformal Co
 
 ![Figure12-6](./media/image078.png)
 
-[Figure 12-7](#Figure12-7) shows the values of the camxproj.txt after editing it to match the values of the camx.diag file (**Error! Reference source not found.**) using the definitions of the Models-3 grid parameters (**Error! Reference source not found.**). [Figure 12-8](#Figure12-8) shows the resulting Tile Plot of the CAMx sample dataset.
+[Figure 12-7](#Figure12-7) shows the values of the camxproj.txt after editing it to match the values of the camx.diag file and using the definitions of the Models-3 grid parameters. [Figure 12-8](#Figure12-8) shows the resulting Tile Plot of the CAMx sample dataset.
 
 <!-- BEGIN COMMENT -->
 
