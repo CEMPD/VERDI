@@ -288,7 +288,7 @@ Figure 61. Data Window Showing Probed Values for Region of Interest<br>
 
 ### Set Row and Column Ranges
 
-The **Controls&gt;Set Row and Column Ranges** menu item displays a popup window that allows you to configure the minimum and maximum values used in the columns (\*x*-axis domain) and rows (\*y*-axis range) PDF:([Fig-@fig:Figure62]) or GitHub: ([Figure 62](#Figure62) and [Figure 62](#Figure62)). Specify the values and then click **OK** to redraw the plot.
+The **Controls&gt;Set Row and Column Ranges** menu item displays a popup window that allows you to configure the minimum and maximum values used in the columns (\*x*-axis domain) and rows (\*y*-axis range) PDF:([Fig-@fig:Figure62]) or GitHub: ([Figure 62](#Figure62)). Specify the values and then click **OK** to redraw the plot.
 
 <!-- BEGIN COMMENT -->
 
