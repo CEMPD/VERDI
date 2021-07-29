@@ -239,7 +239,7 @@ Figure 57. Save Dialog<br>
 Controls Menu
 --------------
 
-The **Controls** pull-down menu contains the following options: Zoom, Probe, Set Row and Column Ranges, Show Grid Lines, and Show Lat/Lon.
+The **Controls** pull-down menu contains the following options: Zoom (not available for MPAS netCDF), Probe(not available for MPAS netCDF), Set Row and Column Ranges, Show Grid Lines (or Show Cell Borders for MPAS netCDF), and Show Lat/Lon (or Show Wind Vectors for MPAS netCDF).
 
 ### Zoom
 
