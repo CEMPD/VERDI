@@ -23,6 +23,7 @@ An **Open** popup window will be displayed, click on a sample script file in the
 <!-- BEGIN COMMENT -->
 
 <a id=Figure17-2></a>
+
 Figure 17-2. Open Popup Window<br>
 
 <!-- BEGIN COMMENT -->
@@ -42,7 +43,6 @@ Figure 17-3) appears in the right-hand side of VERDI. Use the Script Editor to e
 <a id=Figure17-4></a>
 
 ![Figure17-4](./media/image084.png)
-
 
 Figure 17-3. Top of Sample Script File – VERDI_2.1/data/scripts/file_patterns.txt<br>
 
@@ -255,6 +255,7 @@ Figure 17-12. Tile Plot of Ozone at Time step 17, Layer 1
 **&lt;/Task&gt;**
 
 ![Figure17-13](./media/image093.png)
+
 Figure 17-13. Tile Plot of Maximum Ozone (aggregated over 25 time steps)
 ### Batch Script Example : Mean of Ozone – layer 1 (Figure 17-13)
 
@@ -281,6 +282,7 @@ Figure 17-13. Tile Plot of Maximum Ozone (aggregated over 25 time steps)
 **&lt;/Task&gt;**
 
 ![Figure17-14](./media/image094.png)
+
 Figure 17-14. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
 ### Batch Script Example : Sum of Ozone – layer 1 (Figure 17-14)
 
@@ -307,6 +309,7 @@ s=sum(O3[1])
 &lt;/Task&gt;
 
 ![Figure17-15](./media/image095.png)
+
 Figure 17-15. Tile Plot of Mean Ozone (aggregated over 25 time steps)
 
 <!-- BEGIN COMMENT -->
