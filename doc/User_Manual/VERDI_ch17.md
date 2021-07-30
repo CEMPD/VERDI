@@ -181,10 +181,6 @@ Batch Script Example:
 
 **&lt;/Task&gt;**
 
-![Figure17-12](./media/image091.png)
-
-Figure 17-12. Tile Plot of Ozone at Time step 17, Layer 1
-
 Mathematical function capability in batch script mode
 -----------------------------------------------------
 
@@ -230,9 +226,9 @@ The mathematical functions operate over all time steps at each grid cell. Exampl
 
 **&lt;/Task&gt;**
 
-![Figure17-13](./media/image092.png)
+![Figure17-12](./media/image092.png)
 
-Figure 17-13. Tile Plot of Maximum Air Temperature (aggregated over 25 time steps)
+Figure 17-12. Tile Plot of Ozone at Time step 17, Layer 1
 
 ### Batch Script Example : Minimum Ozone – layer 1 (Figure 17-12)
 
@@ -258,10 +254,8 @@ Figure 17-13. Tile Plot of Maximum Air Temperature (aggregated over 25 time step
 
 **&lt;/Task&gt;**
 
-![Figure17-14](./media/image093.png)
-
-Figure 17-14. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
-
+![Figure17-13](./media/image093.png)
+Figure 17-13. Tile Plot of Maximum Ozone (aggregated over 25 time steps)
 ### Batch Script Example : Mean of Ozone – layer 1 (Figure 17-13)
 
 **&lt;Global&gt;**
@@ -286,10 +280,8 @@ Figure 17-14. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
 
 **&lt;/Task&gt;**
 
-![Figure17-15](./media/image094.png)
-
-Figure 17-15. Tile Plot of Mean Ozone (aggregated over 25 time steps)
-
+![Figure17-14](./media/image094.png)
+Figure 17-14. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
 ### Batch Script Example : Sum of Ozone – layer 1 (Figure 17-14)
 
 **&lt;Global&gt;**
@@ -314,9 +306,8 @@ s=sum(O3[1])
 
 &lt;/Task&gt;
 
-![Figure17-16](./media/image095.png)
-
-Figure 17-16. Tile Plot of the Sum of Ozone (aggregated over 25 time steps)
+![Figure17-15](./media/image095.png)
+Figure 17-15. Tile Plot of Mean Ozone (aggregated over 25 time steps)
 
 <!-- BEGIN COMMENT -->
 
