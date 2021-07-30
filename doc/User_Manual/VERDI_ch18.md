@@ -57,10 +57,6 @@ Example Command Line Script for Windows Users
 
 Edit the run.bat script in the VERDI_2.1 directory by right clicking on the file and selecting edit.
 
-![Figure18-1](./media/image096.png)
-
-Figure -. Location of run.bat script in Windows
-
 The current run.bat in notepad contains a “%1” at the end that allows it to accept input following the run.bat script using the Windows run command. Unfortunately, this command does not accept directory names that have a space them, such as the “Program Files”. If you would like to enter the script command line options after run.bat, please move the data directory to C:\\VERDI\\data or some other similar location.
 
 Enter the following in the Run command: cmd
@@ -79,11 +75,11 @@ SET JAVA=..\\..\\jre1.6.0\\bin\\java
 
 %JAVA% -Xmx512M -classpath "./bootstrap.jar;./lib/saf.core.runtime.jar;./lib/commons-logging.jar;.//lib//jpf-boot.jar;.//lib//jpf.jar;.//lib\\log4j-1.2.13.jar" saf.core.runtime.Boot -f C:\\VERDI_2.1\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX -s O3[1] -gtype fasttile
 
-Run the run.bat script by clicking on Start, then selecting Run, then either using Browse to find the run.bat or typing it in (**Error! Reference source not found.**).
+Run the run.bat script by clicking on Start, then selecting Run, then either using Browse to find the run.bat or typing it in.
 
 ![Figure18-2](./media/image097.png)
 
-Figure -. Submit run.bat script from Run command
+Figure 18-2. Submit run.bat script from Run command
 
 Script commands that can be used for command line scripting (listed in alphabetical order) are described below. Adding support for these script commands in the Script Editor is planned for a future VERDI release.
 
