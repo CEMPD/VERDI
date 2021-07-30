@@ -37,28 +37,22 @@ Unload all datasets before running a batch script within the Script Editor. If a
 
 ![Figure17-3](./media/image083.png)
 
-Figure 17-5) appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.
+Figure 17-3) appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.
 
 <a id=Figure17-4></a>
 
 ![Figure17-4](./media/image084.png)
 
 
-Figure 17-5. Top of Sample Script File – VERDI_2.1/data/scripts/file_patterns.txt<br>
+Figure 17-3. Top of Sample Script File – VERDI_2.1/data/scripts/file_patterns.txt<br>
 
 <a id=Figure17-5></a>
 
 ![Figure17-5](./media/image085.png)
 
-Figure 17-6. Bottom of Sample Script File – VERDI_2.1/data/scripts/tile_patterns.txt
+Figure 17-4. Bottom of Sample Script File – VERDI_2.1/data/scripts/tile_patterns.txt
 
 The Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
-
-Unload all datasets before running a batch script within the Script Editor. If any dataset is not unloaded a warning message will pop up (Figure 17-5) requesting that you close all datasets before running your batch script.
-
-![Figure17-6](./media/image084.png)
-
-Figure 17-8. Close Datasets Warning Message
 
 The multifiles.txt sample script that is provided as part of the VERDI release demonstrates how to create a tile plot using a mathematical combination of variables. An excerpt of that script is shown below.
 
@@ -98,9 +92,9 @@ Use the left mouse button to highlight the task that you would like to run and t
 
 ![Figure17-7](./media/image087.png)
 
-Figure -. Highlight Text to Select Task and Click Run
+Figure 17-7. Highlight Text to Select Task and Click Run
 
-If you select Run without highlighting a Text Block, then the entire batch script executes and generates the plots. To edit the batch script, highlight a segment that you would like to copy and use Ctrl-C to copy the text; then click in an area where you want to paste the text and use Ctrl-V to insert the copied text. Test your changes to the script by highlighting the text block and click run. When your script executes successfully VERDI displays the popup window shown in If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in **Error! Reference source not found.**.
+If you select Run without highlighting a Text Block, then the entire batch script executes and generates the plots. To edit the batch script, highlight a segment that you would like to copy and use Ctrl-C to copy the text; then click in an area where you want to paste the text and use Ctrl-V to insert the copied text. Test your changes to the script by highlighting the text block and click run. When your script executes successfully VERDI displays the popup window shown in If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in Figure 17-8.
 
 ![Figure17-8](./media/image088.png)
 
@@ -116,7 +110,7 @@ On Linux/Mac platforms, change directory to where the Verdi.sh is located and ex
 
 ./verdi.sh –batch /home/user/verdi-script/myscript.txt
 
-(Note: the full path to the batch script must be specified. Neglecting to provide the full path along with the batch script name generates the following error: No such file or directory.) The batch script usage (see **Error! Reference source not found.**) will also be displayed from the command line after typing the following command:
+(Note: the full path to the batch script must be specified. Neglecting to provide the full path along with the batch script name generates the following error: No such file or directory.) The batch script usage will also be displayed from the command line after typing the following command:
 
 (Windows)
 
@@ -130,21 +124,21 @@ run.bat –batch
 
 Figure -. Successful Batch Script Message
 
-If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in **Error! Reference source not found.**.
+If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in Figure 17-10.
 
 ![Figure17-10](./media/image088.png)
 
-Figure -. Unsuccessful Batch Script Message: File not found
+Figure 17-10. Unsuccessful Batch Script Message: File not found
 
 The VERDI Batch Editor checks to see if the path specified by the user as the imageDir exists. If the path does not exist, VERDI displays the error message:
 
 “java.io.FileNotFoundException: with the path and filename listed”
 
-followed by the message “(No such file or directory).” Verify that you supplied the correct path and filename. The directory specified as the image directory must exist prior to running the batch command. Double-click on the file in the imageDir directory to load and view the image file in your default visualization software. **Error! Reference source not found.** illustrates the tile plot image that was generated by running the highlighted text block.
+followed by the message “(No such file or directory).” Verify that you supplied the correct path and filename. The directory specified as the image directory must exist prior to running the batch command. Double-click on the file in the imageDir directory to load and view the image file in your default visualization software. Figure 17-11 illustrates the tile plot image that was generated by running the highlighted text block.
 
 ![Figure17-11](./media/image090.png)
 
-Figure -. Plot Image Generated by Task Block
+Figure 17-11. Plot Image Generated by Task Block
 
 Specify hour/time step formula in batch script mode
 ---------------------------------------------------
@@ -189,7 +183,7 @@ Batch Script Example:
 
 ![Figure17-12](./media/image091.png)
 
-Figure -. Tile Plot of Ozone at Time step 17, Layer 1
+Figure 17-12. Tile Plot of Ozone at Time step 17, Layer 1
 
 Mathematical function capability in batch script mode
 -----------------------------------------------------
@@ -238,7 +232,7 @@ The mathematical functions operate over all time steps at each grid cell. Exampl
 
 ![Figure17-13](./media/image092.png)
 
-Figure -. Tile Plot of Maximum Air Temperature (aggregated over 25 time steps)
+Figure 17-13. Tile Plot of Maximum Air Temperature (aggregated over 25 time steps)
 
 ### Batch Script Example : Minimum Ozone – layer 1 (Figure 17-12)
 
@@ -266,7 +260,7 @@ Figure -. Tile Plot of Maximum Air Temperature (aggregated over 25 time steps)
 
 ![Figure17-14](./media/image093.png)
 
-Figure -. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
+Figure 17-14. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
 
 ### Batch Script Example : Mean of Ozone – layer 1 (Figure 17-13)
 
@@ -294,7 +288,7 @@ Figure -. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
 
 ![Figure17-15](./media/image094.png)
 
-Figure -. Tile Plot of Mean Ozone (aggregated over 25 time steps)
+Figure 17-15. Tile Plot of Mean Ozone (aggregated over 25 time steps)
 
 ### Batch Script Example : Sum of Ozone – layer 1 (Figure 17-14)
 
@@ -322,7 +316,7 @@ s=sum(O3[1])
 
 ![Figure17-16](./media/image095.png)
 
-Figure -. Tile Plot of the Sum of Ozone (aggregated over 25 time steps)
+Figure 17-16. Tile Plot of the Sum of Ozone (aggregated over 25 time steps)
 
 <!-- BEGIN COMMENT -->
 
