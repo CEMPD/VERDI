@@ -122,7 +122,7 @@ run.bat –batch
 
 ![Figure17-9](./media/image089.png)
 
-Figure -. Successful Batch Script Message
+Figure 17-9. Successful Batch Script Message
 
 If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in Figure 17-10.
 
