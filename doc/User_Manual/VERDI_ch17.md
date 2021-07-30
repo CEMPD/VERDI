@@ -312,6 +312,11 @@ s=sum(O3[1])
 
 Figure 17-15. Tile Plot of Mean Ozone (aggregated over 25 time steps)
 
+![Figure17-16](./media/image096.png)
+
+Figure 17-16. Tile Plot of Sum Ozone (aggregated over 25 time steps)
+
+
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch16.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch18.md)<br>
