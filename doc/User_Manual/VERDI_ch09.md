@@ -4,7 +4,7 @@
 
 <!-- END COMMENT -->
 
-`Subsetting Spatial and Temporal Data
+Subsetting Spatial and Temporal Data
 ====================================
 
 Both the **Dataset** pane and the **Formula** pane include the three panels discussed in Sections 9.1 through 9.3: **Time Steps, Layers,** and **Domain**, respectively. Section 9.4 then discusses the precedence rules for subsetting data that determine whether **Datasets** or **Formulas** take priority.
