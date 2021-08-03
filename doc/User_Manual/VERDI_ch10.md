@@ -138,7 +138,7 @@ Figure 31. Areal Values for a Selected Polygon<br>
 
 ### View and Export Areal Interpolation Plot Data in Text Format
 
-To view the average and total interpolation values for selected formulas in a spreadsheet format, **right click** on the Areal Interpolation Plot and select **Area Information** PDF:([Fig-@fig:Figure32])) or GitHub:([Figure 32](#Figure32)), then click on the radio button next to All, to select all area regions, click on the Formula Name, then click on OK. The Area Information Spreadsheet contains four columns: the identification number from the name field for the polygon, the total area, average interpolated value, and total interpolated value PDF: ([Fig-@fig:Figure33])) or GitHub:([Figure 33](#Figure33)). At the top of the **Area Information** tab, the user may select **File&gt;Export** to export the data to a spreadsheet file ([Figure 34](#Figure34)). The save popup window allows the user to specify with either a text (.txt) or comma-separated-values (\*.csv) format, also known as a comma-delimited text file ([Figure 35](#Figure35).
+To view the average and total interpolation values for selected formulas in a spreadsheet format, **right click** on the Areal Interpolation Plot and select **Area Information** PDF:([Fig-@fig:Figure32])) or GitHub:([Figure 32](#Figure32)), then click on the radio button next to All, to select all area regions, click on the Formula Name, then click on OK. The Area Information Spreadsheet contains four columns: the identification number from the name field for the polygon, the total area, average interpolated value, and total interpolated value PDF: ([Fig-@fig:Figure33])) or GitHub:([Figure 33](#Figure33)). At the top of the **Area Information** tab, the user may select **File&gt;Export** to export the data to a spreadsheet file ([Figure 34](#Figure34)). The save popup window allows the user to specify with either a text (.txt) or comma-separated-values (\*.csv) format, also known as a comma-delimited text file ([Figure 35](#Figure35)).
 
 <!-- BEGIN COMMENT -->
 
@@ -239,7 +239,7 @@ Figure 40. Time Series Plot<br>
 Time Series Bar Plot
 --------------------
 
-The **time series bar plot** shows average values over time in a bar plot format ([Figure 41](#Figure41)) rather than a line format ([Figure 42](#Figure42)). Other than that, the description of this plot type is the same as for the time series line plot (see Section 10.4).
+The **time series bar plot** shows average values over time in a bar plot format ([Figure 41](#Figure41)) rather than a line format ([Figure 40](#Figure40)). Other than that, the description of this plot type is the same as for the time series line plot (see Section 10.4).
 
 <!-- BEGIN COMMENT -->
 

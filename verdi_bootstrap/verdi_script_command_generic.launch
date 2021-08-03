@@ -12,7 +12,7 @@
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="saf.core.runtime.Boot"/>
 <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="verdi_bootstrap"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-f &quot;../verdi_dist/distfiles/data/release/model/wrf_usgs_tx1km_04112012.nc&quot; -s LU_INDEX[1] -g tile"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-f ../verdi_dist/distfiles/data/release/model/CCTM46_P16.baseO2a.36k.O3MAX -s &quot;O3[1]&quot; -verticalCrossPlot Y 1"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="verdi_bootstrap"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xmx1024m -Dj3d.rend=d3d"/>
 </launchConfiguration>

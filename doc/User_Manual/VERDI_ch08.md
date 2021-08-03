@@ -33,7 +33,7 @@ Examples of on-line data archives for these shapefiles include:
 
 <http://datagateway.nrcs.usda.gov>
 
-<https://www.census.gov/geo/maps-data/index.html>
+<https://www.census.gov/geographies/mapping-files.html>
 
 Requirements for Shapefiles used in Areal Interpolation
 -------------------------------------------------------

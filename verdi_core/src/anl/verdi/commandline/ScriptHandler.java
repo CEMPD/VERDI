@@ -1420,6 +1420,11 @@ public class ScriptHandler {
 					}
 
 					vConfig.setCrossSectionRowCol(Integer.parseInt(args.get(2)));
+					
+					if (args.size() > 3)
+						vConfig.setCrossSectionSliceSize(Integer.parseInt(args.get(3)));
+					else
+						vConfig.setCrossSectionSliceSize(1);
 
 					//					vConfig.setTitle("My Vert Cross");
 					Plot plot = new VerticalCrossPlotCreator(verdiApp, vConfig).createPlot();

@@ -106,9 +106,9 @@ public class TilePlotTask implements AbstractTask {
 				xmax = Integer.parseInt(subDomainArgs[2]);
 				ymin = Integer.parseInt(subDomainArgs[1]);
 				ymax = Integer.parseInt(subDomainArgs[3]);
-				dle.setXYUsed(true); 	// using subdomain
-				Logger.debug("TilePlotTask using subdomain: xmin = " + xmin + ", xmax = " + xmax
-						+ ", ymin = " + ymin + ", ymax = " + ymax);
+				dle.setXYUsed(false); 	// using subdomain
+		//		Logger.debug("TilePlotTask using subdomain: xmin = " + xmin + ", xmax = " + xmax
+		//				+ ", ymin = " + ymin + ", ymax = " + ymax);
 //				dle.setDomain(xmin, xmax, ymin, ymax);	// no longer need this here - causes a subdomain of the subdomain
 			}catch(Exception e){
 				Logger.error("Exception in TilePlotTask when calling setDomain with a subDomain", e);
@@ -441,8 +441,8 @@ public class TilePlotTask implements AbstractTask {
 	}
 
 	private void save(Plot plot) throws IOException {
-		int width = 800;
-		int height = 600;
+		int width = 1024;
+		int height = 768;
 		
 		try {
 			width = Integer.parseInt(map.get(VerdiConstants.IMAGE_WIDTH));

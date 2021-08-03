@@ -14,12 +14,12 @@ Table 11-1. Tile and Areal Interpolation Plot Pull-down Menu Options
 
 | **File**         | **Configure**          | **Controls**         | **Plot**                       | **GIS Layers** |
 |---------------------|--------------------|---------------------------|----------------------------|------------|
-| Print   | Configure Plot                 | Zoom                      | Time Series of Probed Cell(s) | Add Map Layers |
-| Export as Image/GIS  | Load Configuration | Probe          | Time Series Bar of Probed Cell(s)|Configure GIS Layers  |
+| Print   | Configure Plot                 | Zoom (not for MPAS netCDF)            | Time Series of Probed Cell(s) | Add Map Layers |
+| Export as Image/GIS  | Load Configuration | Probe (not for MPAS netCDF)          | Time Series Bar of Probed Cell(s)|Configure GIS Layers  |
 |                      | Save Configuration  |Set Row and Column Ranges|Time Series of Min. Cell(s)|Set Current Maps as Plot Default |
-|                      |                   |  Show Grid Lines          |Time Series of Max. Cell(s) |  |
-|                     |                    | Show Lat/Lon              | Animate Plot               |  |
-|                     |                    |                           | Add Overlay                |  |
+|                      |                   |  Show Grid Lines (For MPAS:Show Cell Borders)|Time Series of Max. Cell(s) |  |
+|                     |                    | Show Lat/Lon (For MPAS:Show Wind Vectors)    | Animate Plot               |  |
+|                     |                    |                           | Add Overlay (not for MPAS netCDF)               |  |
 
 
 The menu options at the top of the Vertical Cross Section, Time Series, Time Series Bar Plot and Scatter Plot include those shown in [Table 11-2](#Table11-2). Most options are common to all plots, and function in the same way (unless the option is grayed out). Therefore, this chapter is organized by menu instead of by plot type.
@@ -28,14 +28,14 @@ The menu options at the top of the Vertical Cross Section, Time Series, Time Ser
 Table 11-2. Vertical Cross Section, Time Series, Time Series Bar, Scatter Plot Pull-down Menu Options
 
 
-| **File**        | **Configure**      | **Controls** | **Plot**                         |
-|-----------------|--------------------|--------------|---------------------------------|
-| Print           | Configure Plot     | Zoom         | Time Series of Probed Cell(s)   |
-| Export as Image  | Load Configuration | Probe       | Time Series Bar of Probed Cell(s)|
-|                 |  Save Configuration  | Show Lat/Lon| Time Series of Min. Cell(s)   |      
-|                 | Load Chart Theme   |               | Time Series of Max. Cell(s)   |
-|                 | Edit Chart Theme   |              |   Animate Plot           |
-|                 | Save Chart Theme   |              |                                   |
+| **File**        | **Configure**      | **Controls** |
+|-----------------|--------------------|--------------|
+| Print           | Configure Plot     | Zoom         |
+| Export as Image  | Load Configuration | Probe       |
+|                 |  Save Configuration  | Show Lat/Lon|     
+|                 | Load Chart Theme   |               |
+|                 | Edit Chart Theme   |              |
+|                 | Save Chart Theme   |              |
 
 
 File Menu
@@ -239,7 +239,7 @@ Figure 57. Save Dialog<br>
 Controls Menu
 --------------
 
-The **Controls** pull-down menu contains the following options: Zoom, Probe, Set Row and Column Ranges, Show Grid Lines, and Show Lat/Lon.
+The **Controls** pull-down menu contains the following options: Zoom (not available for MPAS netCDF), Probe(not available for MPAS netCDF), Set Row and Column Ranges, Show Grid Lines (or Show Cell Borders for MPAS netCDF), and Show Lat/Lon (or Show Wind Vectors for MPAS netCDF).
 
 ### Zoom
 
@@ -288,7 +288,7 @@ Figure 61. Data Window Showing Probed Values for Region of Interest<br>
 
 ### Set Row and Column Ranges
 
-The **Controls&gt;Set Row and Column Ranges** menu item displays a popup window that allows you to configure the minimum and maximum values used in the columns (\*x*-axis domain) and rows (\*y*-axis range) PDF:([Fig-@fig:Figure62]) or GitHub: ([Figure 62](#Figure62) and [Figure 62](#Figure62)). Specify the values and then click **OK** to redraw the plot.
+The **Controls&gt;Set Row and Column Ranges** menu item displays a popup window that allows you to configure the minimum and maximum values used in the columns (\*x*-axis domain) and rows (\*y*-axis range) PDF:([Fig-@fig:Figure62]) or GitHub: ([Figure 62](#Figure62)). Specify the values and then click **OK** to redraw the plot.
 
 <!-- BEGIN COMMENT -->
 
@@ -344,7 +344,7 @@ Figure 65. Plot Menu Options<br>
 
 ### Time Series Plots
 
-The Time Series of Probed Cell(s) and Time Series Bar of Probed Cell(s) allows the user to select a set of cells, and then produce a time series or time series bar plot of the chosen subset of probed cells. The Time Series of Min. [or Max.] Cell(s) option creates a time series plot using data for the currently selected formula at that formula’s domain, layer range, and time step range. The minimum [or maximum] value of that formula over the domain and layer range at that time step is calculated by VERDI and used for each of the time step’s data points. For examples of the Time Series Plot and the Time Series Bar Plot see PDF:([Fig-@fig:Figure53]) or GitHub: [Figure 10-15](#Figure10-15) and [Figure 10-16](#Figure10-16), respectively.
+The Time Series of Probed Cell(s) and Time Series Bar of Probed Cell(s) allows the user to select a set of cells, and then produce a time series or time series bar plot of the chosen subset of probed cells. The Time Series of Min. [or Max.] Cell(s) option creates a time series plot using data for the currently selected formula at that formula’s domain, layer range, and time step range. The minimum [or maximum] value of that formula over the domain and layer range at that time step is calculated by VERDI and used for each of the time step’s data points. For examples of the Time Series Plot and the Time Series Bar Plot see PDF:([Fig-@fig:Figure41]) or GitHub: [Figure 40](#Figure40) and [Figure 41](#Figure41), respectively.
 
 ### Animate Plots
 

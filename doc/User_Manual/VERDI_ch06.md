@@ -142,9 +142,8 @@ VERDI contains the RemoteFileUtility and ncvariable programs that enable VERDI t
 
 2.  A README file provided with the software contains instructions on how to compile the source code if the binaries provided do not match your operating system.
 
-<!-- -->
 
-1.  Copy the file configure.properties.TEMPLATE to configure.properties. Edit the configure.properties file in the $USER_HOME/verdi directory. Add the name or IP address of the Linux server, preceded by a comma, at the end of the list of machines defined as remote hosts in the configure.properties file, as shown in PDF:([Fig-@fig:Figure17])) or GitHub:[Figure 17](#Figure17). You then need to restart VERDI in order for it to recognize a newly added remote host name.
+3.  Copy the file configure.properties.TEMPLATE to configure.properties. Edit the configure.properties file in the $USER_HOME/verdi directory. Add the name or IP address of the Linux server, preceded by a comma, at the end of the list of machines defined as remote hosts in the configure.properties file, as shown in PDF:([Fig-@fig:Figure17])) or GitHub:[Figure 17](#Figure17). You then need to restart VERDI in order for it to recognize a newly added remote host name.
 
 <!-- BEGIN COMMENT -->
 
@@ -172,7 +171,8 @@ Figure 18. Right-Click on Variable in Dataset Pane<br>
 Time Steps and Layers Panels
 ----------------------------
 
-The range that is available for the dataset is listed in the Time Steps or Layers Panel in parenthesis next to the label for the panel. [Figure 18](#Figure18) shows that the dataset has 25 time steps with the range displayed as: Time Steps (1-25). You can use a subset of the full time step range by clicking on the Use Time Range checkbox, and then using the Min and Max spinner controls to set a new minimum or maximum value, for example choosing time step 2 as the minimum time step and time step 4 as the maximum. When a tile plot is created, it will only display time steps 2-4. Detailed instructions for using the **Time Steps** and **Layers** panels are discussed in Chapter 9, “Subsetting Spatial and Temporal Data.”
+The range that is available for the dataset is listed in the Time Steps or Layers Panel in parenthesis next to the label for the panel. PDF:([Fig-@fig:Figure18])) or GitHub:[Figure 18](#Figure18) shows that the dataset has 25 time steps with the range displayed as: Time Steps (1-25). You can use a subset of the full time step range by clicking on the Use Time Range checkbox, and then using the Min and Max spinner controls to set a new minimum or maximum value, for example choosing time step 2 as the minimum time step and time step 4 as the maximum. When a tile plot is created, it will only display time steps 2-4. Detailed instructions for using the **Time Steps** and **Layers** panels are discussed in Chapter 9, “Subsetting Spatial and Temporal Data.”
+
 
 Saving Projects
 ---------------

@@ -57,9 +57,9 @@ Example Command Line Script for Windows Users
 
 Edit the run.bat script in the VERDI_2.1 directory by right clicking on the file and selecting edit.
 
+
 ![Figure18-1](./media/image096.png){#fig:Figure18-1}
 
-[Figure 18-1](#Figure18-1) Ozone Figure 
 
 The current run.bat in notepad contains a “%1” at the end that allows it to accept input following the run.bat script using the Windows run command. Unfortunately, this command does not accept directory names that have a space them, such as the “Program Files”. If you would like to enter the script command line options after run.bat, please move the data directory to C:\\VERDI\\data or some other similar location.
 
@@ -89,7 +89,9 @@ Run the run.bat script by clicking on Start, then selecting Run, then either usi
 
 ![Location of the run.bat script](./media/image097.png){#fig:Figure18-2}
 
-[Figure 18-2](#Figure18-2). Shows the location of the run.bat script in Windows. 
+
+[Figure 18-2](#Figure18-2). Submit run.bat script from the Run command. 
+
 
 Script commands that can be used for command line scripting (listed in alphabetical order) are described below. Adding support for these script commands in the Script Editor is planned for a future VERDI release.
 

@@ -442,6 +442,9 @@ Logger.debug("set up drawing space, titles, fonts, etc.");
 						canvasWidth = bufferedWidth;
 						canvasHeight = bufferedHeight;
 					}
+					if (canvasWidth > 0) {
+						canvasWidth *= 1;
+					}
 					float marginScale = 0.95f; // Controls whitespace margin around plot window.
 					String sTitle1 = config.getSubtitle1();
 					String sTitle2 = config.getSubtitle2();
@@ -738,8 +741,11 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 					if ( drawMode == DRAW_ONCE) {
 						decrease_draw_once_requests();
 					}
+					long sleep = 100;
+					if (drawMode == DRAW_NONE)
+						sleep = 1000;					
 					try {
-						Thread.sleep(100); /* ms. */
+						Thread.sleep(sleep); /* ms. */
 					} catch (Exception unused) {}
 				}
 			} while (drawMode != DRAW_END);		// drawMode set to DRAW_END in stopThread()
