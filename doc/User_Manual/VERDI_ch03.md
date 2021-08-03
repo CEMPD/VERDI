@@ -41,6 +41,7 @@ Follow these instructions to install VERDI:
     set path = ($path /proj/ie/proj/CMAS/VERDI/VERDI_2.1) 
 
 7. Alternatively, use alias to point to full path to verdi.sh
+
     alias verdi.sh /proj/ie/proj/CMAS/VERDI/VERDI_2.1/verdi.sh
 
     VERDI should now run if you execute the verdi.sh executable script on linux, or executing the verdi.command script on mac. 
@@ -54,7 +55,11 @@ If you are unable to install VERDI on your computer, please check to see whether
 
 After successfully installing VERDI you may need to perform the following tasks under your home directory.
 
-1.  Locate your home directory. Your home directory is typically under ```csh C: //Users//yourloginid ```. So, if your login id is *staff*, your home directory is probably *C: //Users//staff*.
+1.  Locate your home directory. 
+
+Your home directory is typically under ```csh C: //Users//yourloginid ```. 
+
+So, if your login id is *staff*, your home directory is probably *C: //Users//staff*.
 
 2.  Create a new directory *verdi* under your home directory (e.g., *C: //Users//staff//verdi*).
 
@@ -92,11 +97,13 @@ verdi.hucData=../../data/hucRegion/
 
 # For VERDI to access remote big netCDF data files
 
-verdi.remote.hosts=terrae.nesc.epa.gov,vortex.rtpnc.epa.gov,garnet01.rtpnc.epa.gov,tulip.rtpnc.epa.gov
+verdi.remote.hosts=terrae.nesc.epa.gov,vortex.rtpnc.epa.gov,garnet01.rtpnc.epa.gov
 remote.file.util=/usr/local/bin/RemoteFileUtility
 verdi.remote.ssh=/usr/bin/ssh
 
-# on local machine where VERDI is running. Used to hold temporary data file downloaded from a remote machine
+# on local machine where VERDI is running. 
+
+Used to hold temporary data file downloaded from a remote machine
 
 verdi.temporary.dir=C:\\ Users\username\temp
 ```
