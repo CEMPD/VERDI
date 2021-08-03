@@ -93,8 +93,7 @@ Figure 13. Datasets Pane Displaying Information about a Dataset<br>
 Adding and Removing a Dataset from a Remote File System
 -------------------------------------------------------
 
-VERDI provides users with the ability to select and add variables from datasets on remote file systems. To do this, press the yellow **plus remote** (plus with a diagonal arrow) button at the top of the **Datasets** pane. In the Remote File Access Browser PDF:([Fig-@fig:Figure14])) or GitHub:([Figure 14](#Figure 14)) that appears, enter your user name, choose a host from the list, and enter your password, then click **Connect**.
-
+VERDI provides users with the ability to select and add variables from datasets on remote file systems. To do this, press the yellow **plus remote** (plus with a diagonal arrow) button at the top of the **Datasets** pane. In the Remote File Access Browser PDF:([Fig-@fig:Figure14])) or GitHub:([Figure 14](#Figure14)) that appears, enter your user name, choose a host from the list, and enter your password, then click **Connect**.
 <!-- BEGIN COMMENT -->
 
 <a id=Figure14></a>
@@ -102,7 +101,7 @@ Figure 14. Available Hosts in the Remote File Access Browser<br>
 
 <!-- END COMMENT -->
 
-![Available Hosts in the Remote File Access Browser](./media/image014.png)
+![Available Hosts in the Remote File Access Browser](./media/image014.png){#fig:Figure14}
 
 
 ### Remote File Browser
@@ -173,6 +172,7 @@ Time Steps and Layers Panels
 ----------------------------
 
 The range that is available for the dataset is listed in the Time Steps or Layers Panel in parenthesis next to the label for the panel. PDF:([Fig-@fig:Figure18])) or GitHub:[Figure 18](#Figure18) shows that the dataset has 25 time steps with the range displayed as: Time Steps (1-25). You can use a subset of the full time step range by clicking on the Use Time Range checkbox, and then using the Min and Max spinner controls to set a new minimum or maximum value, for example choosing time step 2 as the minimum time step and time step 4 as the maximum. When a tile plot is created, it will only display time steps 2-4. Detailed instructions for using the **Time Steps** and **Layers** panels are discussed in Chapter 9, “Subsetting Spatial and Temporal Data.”
+
 
 Saving Projects
 ---------------
