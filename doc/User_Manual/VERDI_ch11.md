@@ -20,6 +20,7 @@ Table 11-1. Tile and Areal Interpolation Plot Pull-down Menu Options
 |                      |                   |  Show Grid Lines (For MPAS:Show Cell Borders)|Time Series of Max. Cell(s) |  |
 |                     |                    | Show Lat/Lon (For MPAS:Show Wind Vectors)    | Animate Plot               |  |
 |                     |                    |                           | Add Overlay (not for MPAS netCDF)               |  |
+|                     |                    | For MPAS: Show Wind Vectors|                                                |
 
 
 The menu options at the top of the Vertical Cross Section, Time Series, Time Series Bar Plot and Scatter Plot include those shown in [Table 11-2](#Table11-2). Most options are common to all plots, and function in the same way (unless the option is grayed out). Therefore, this chapter is organized by menu instead of by plot type.
