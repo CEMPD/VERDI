@@ -15,35 +15,31 @@ Listed in order of precedence, the functions and operators are:
 
 1.  abs, sqr, sqrt, exp, log, ln, sin, cos, tan, sind, cosd, tand, mean, sum, min, max
 
-<!-- -->
+2.  **\*\*** (power)
 
-1.  **\*\*** (power)
+3.  **/, \***
 
-2.  **/, \***
+4.  **+, -**
 
-3.  **+, -**
+5.  **&lt;, &lt;=, &gt;, &gt;=**
 
-4.  **&lt;, &lt;=, &gt;, &gt;=**
+6.  ==, !=
 
-5.  ==, !=
+7.  &&
 
-6.  &&
-
-7.  **||**
+8.  **||**
 
 VERDI also supports the following constants:
 
 1.  E 2.7182818284590452354
 
-<!-- -->
+2.  PI 3.14159265358979323846
 
-1.  PI 3.14159265358979323846
+3.  NROWS Number of rows in the formula’s currently selected domain
 
-2.  NROWS Number of rows in the formula’s currently selected domain
+4.  NCOLS Number of columns in the formula’s currently selected domain
 
-3.  NCOLS Number of columns in the formula’s currently selected domain
-
-4.  NLEVELS Number of levels in the formula’s currently selected domain
+5.  NLEVELS Number of levels in the formula’s currently selected domain
 
 Unary Functions
 ---------------

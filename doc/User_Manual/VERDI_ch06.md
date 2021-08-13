@@ -22,7 +22,12 @@ NetCDF and Models-3 I/O API files are portable across computing platforms. This 
 
 VERDI can use observational data in either using ASCII file or created using Models-3 I/O API. An ASCII file needs to have data in tab-separated columns. The first four columns need to be in the order shown in PDF:([Fig-@fig:Figure11])) or GitHub:[Figure 11](#Figure11). VERDI allows the user to specify an alphanumeric value (either numbers and/or letters) for the fourth column (Station ID). One or more additional columns must have the header format 'name(units)'. Spreadsheet programs can be used to edit and write the files by choosing ASCII output; be certain to designate **tab** as the delimiting character (instead of comma). Data within a column must be complete, because empty fields prevent VERDI from reading the observational data.
 
-Observational data in ASCII format can be obtained from many data sources. Data can be downloaded from the CMAS Center Google Drive (https://drive.google.com/drive/u/1/folders/1YIcmYtPH_DRyN51dDEQDh3r5Q_4iNLuu) or  EPA’s Remote Sensing Information Gateway - RSIG (<https://www.epa.gov/hesc/remote-sensing-information-gateway>). To use a consistent set of units for the model data and the observational data, you may need to import the ASCII data into a tool (e.g., a spreadsheet or database program) and perform a unit conversion. VERDI doesn’t allow the user to use an observational variable to create a formula, so conversions to different units must be performed before loading the data into VERDI.
+Observational data in ASCII format can be obtained from many data sources. Data can be downloaded 
+from the CMAS Center Google Drive 
+(https://drive.google.com/drive/u/1/folders/1YIcmYtPH_DRyN51dDEQDh3r5Q_4iNLuu) 
+or  EPA’s Remote Sensing Information Gateway - RSIG
+(<https://www.epa.gov/hesc/remote-sensing-information-gateway>). 
+To use a consistent set of units for the model data and the observational data, you may need to import the ASCII data into a tool (e.g., a spreadsheet or database program) and perform a unit conversion. VERDI doesn’t allow the user to use an observational variable to create a formula, so conversions to different units must be performed before loading the data into VERDI.
 
 <!-- BEGIN COMMENT -->
 
