@@ -7,7 +7,7 @@ cd $VERDI_HOME/plugins/bootstrap
 
 
 JAVA=java
-JAVAMAXMEM="-Xmx1024M"
+JAVAMAXMEM="-Xmx4096M"
 
 
 # Limit the number of default spawned threads (eca):
