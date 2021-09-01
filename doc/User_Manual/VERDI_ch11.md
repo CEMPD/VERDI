@@ -12,15 +12,15 @@ Each VERDI plot contains a menu bar with options specific to that type of plot. 
 <a id=Table11-1></a>
 Table 11-1. Tile and Areal Interpolation Plot Pull-down Menu Options
 
-| **File**         | **Configure**          | **Controls**         | **Plot**                       | **GIS Layers** |
-|---------------------|--------------------|---------------------------|----------------------------|------------|
-| Print   | Configure Plot                 | Zoom (not for MPAS netCDF)            | Time Series of Probed Cell(s) | Add Map Layers |
-| Export as Image/GIS  | Load Configuration | Probe (not for MPAS netCDF)          | Time Series Bar of Probed Cell(s)|Configure GIS Layers  |
-|                      | Save Configuration  |Set Row and Column Ranges|Time Series of Min. Cell(s)|Set Current Maps as Plot Default |
-|                      |                   |  Show Grid Lines (For MPAS:Show Cell Borders)|Time Series of Max. Cell(s) |  |
-|                     |                    | Show Lat/Lon (For MPAS:Show Wind Vectors)    | Animate Plot               |  |
-|                     |                    |                           | Add Overlay (not for MPAS netCDF)               |  |
-|                     |                    | For MPAS: Show Wind Vectors|                                                |
+| **File**            | **Configure**      | **Controls**                | **Plot**                   | **GIS Layers** |
+|---------------------|--------------------|-----------------------------|----------------------------|----------------|
+| Print               | Configure Plot     | Zoom (not for MPAS netCDF)  | Time Series of Probed Cell(s) | Add Map Layers |
+| Export as Image/GIS | Load Configuration | Probe (not for MPAS netCDF) | Time Series Bar of Probed Cell(s) | Configure GIS Layers  |
+|                     | Save Configuration | Set Row and Column Ranges   |Time Series of Min. Cell(s) | Set Current Maps as Plot Default |
+|                     |                    |  Show Grid Lines (MPAS:Show Cell Borders) | Time Series of Max. Cell(s) |  |
+|                     |                    | Show Lat/Lon (MPAS:Show Wind Vectors)    | Animate Plot               |  |
+|                     |                    |                           | Add Overlay (not for MPAS netCDF)         |  |
+|                     |                    | For MPAS: Show Wind Vectors|                              |              |
 
 
 The menu options at the top of the Vertical Cross Section, Time Series, Time Series Bar Plot and Scatter Plot include those shown in [Table 11-2](#Table11-2). Most options are common to all plots, and function in the same way (unless the option is grayed out). Therefore, this chapter is organized by menu instead of by plot type.
@@ -32,9 +32,9 @@ Table 11-2. Vertical Cross Section, Time Series, Time Series Bar, Scatter Plot P
 | **File**        | **Configure**      | **Controls** |
 |-----------------|--------------------|--------------|
 | Print           | Configure Plot     | Zoom         |
-| Export as Image  | Load Configuration | Probe       |
-|                 |  Save Configuration  | Show Lat/Lon|     
-|                 | Load Chart Theme   |               |
+| Export as Image | Load Configuration | Probe        |
+|                 | Save Configuration | Show Lat/Lon |     
+|                 | Load Chart Theme   |              |
 |                 | Edit Chart Theme   |              |
 |                 | Save Chart Theme   |              |
 
@@ -47,7 +47,7 @@ Options in the **File** menu include printing a plot and exporting a plot to an 
  Configure Menu
 ----------------
 
-The **Configure** pull-down menu contains the following options: Configure Plot, Load Configuration, and Save Configuration. <span id="_Toc197166164" class="anchor"></span>When you want to see your changes on the plot, press the **Apply** button. When you have finalized the settings for your plot, click the **OK** button to close the Configure Plot dialog box.
+The **Configure** pull-down menu contains the following options: Configure Plot, Load Configuration, and Save Configuration. When you want to see your changes on the plot, press the **Apply** button. When you have finalized the settings for your plot, click the **OK** button to close the Configure Plot dialog box.
 
 ### Configure Plot
 
@@ -380,7 +380,7 @@ Sample observational data are provided in the directory $VERDI_HOME/data/obs so 
 
 -   Select Add Overlay&gt;Observations from the tile plot’s **Plot** menu to view observational data as an overlay on a tile plot.
 
--   An **Observation** dialog box PDF:([Fig-@fig:Figure67]) or GitHub: ([Figure 67](#Figure67)) appears containing the variables that are available in the observational dataset. <span id="_Toc197166234" class="anchor"></span>Select the observational variable to overlay on the Tile Plot from the Observation Details list. Multiple observational dataset variables can be overlaid on a Tile Plot.
+-   An **Observation** dialog box PDF:([Fig-@fig:Figure67]) or GitHub: ([Figure 67](#Figure67)) appears containing the variables that are available in the observational dataset. Select the observational variable to overlay on the Tile Plot from the Observation Details list. Multiple observational dataset variables can be overlaid on a Tile Plot.
 
 -   You can control the appearance of the symbols representing the observational data. The stroke size controls the thickness of the line used to draw the symbols; the shape size controls their diameter. You can use up to six different open-area shapes—circle, diamond, square, star, sun, and triangle—to distinguish among multiple observational datasets. A circle is the default symbol shape.
 
@@ -388,7 +388,7 @@ Sample observational data are provided in the directory $VERDI_HOME/data/obs so 
 
 Repeat the above process to add multiple variables. To remove the symbols for a variable on an observational data overlay, or to reset their size, shape, or stroke thickness, reopen the **Observation** dialog by using Add Overlay&gt;Observations, select the observational variable you want to adjust, and then change its stroke size, shape size, or symbol. You can also remove a variable or move it up or down in the list. When you are finished click the **OK** button.
 
-The center of the observational data point corresponds to the lat/lon value that is provided in the Models-3 I/O API observational data file. If observations are collocated, they are placed on top of one another. If that happens you may want to select different symbols or sizes for each dataset and place them from largest on the bottom to smallest on the top.<span id="_Ref401855228" class="anchor"></span>
+The center of the observational data point corresponds to the lat/lon value that is provided in the Models-3 I/O API observational data file. If observations are collocated, they are placed on top of one another. If that happens you may want to select different symbols or sizes for each dataset and place them from largest on the bottom to smallest on the top.
 
 <!-- BEGIN COMMENT -->
 
