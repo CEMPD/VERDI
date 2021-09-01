@@ -72,28 +72,28 @@ WRF netCDF Data Convention
 -------------------------
 The WRF netCDF data convention is supported in VERDI. https://www.mmm.ucar.edu/weather-research-and-forecasting-model
 
-Figure 81. WRF Lambert Conformal (MAP_PROJ = 1) Plot of Height in Meters on a 1km Texas Domain<br>
+Figure 100. WRF Lambert Conformal (MAP_PROJ = 1) Plot of Height in Meters on a 1km Texas Domain<br>
 
 ![WRF Example Plot of Height in Meters on a 1km Texas Domain](./media/image100.png){#fig:Figure100}
 
 MPAS netCDF Data Convention
 --------------------------
 The MPAS netCDF data convention is supported in VERDI https://mpas-dev.github.io/.
-Figure 82. MPAS Example Plot of 2 meter Temperature on World Map
+Figure 101. MPAS Example Plot of 2 meter Temperature on World Map
 
 ![MPAS Plot of 2 meter Temperature on World Map](./media/image101.png){#fig:Figure101}
 
-Figure 83. MPAS Plot of 2 meter Temperature Zoomed in to California
+Figure 102. MPAS Plot of 2 meter Temperature Zoomed in to California
 
 ![MPAS Plot of 2 meter Temperature Zoomed in to California](./media/image102.png){#fig:Figure102}
 
-Figure 84. MPAS Plot of the 3-d Zonal and Meridional Wind components from a daily MPAS-A output file (history file) along with the necessary mesh definition data zoomed into North America. Load the mpas_UV_only.2016-07-04.nc file, double click on the "uReconstructMeridional" variable, select Tile Plot, then select Controls > Show Wind Vectors. Zoom into an area over North America, or other location to view the wind vectors.  
+Figure 103. MPAS Plot of the 3-d Zonal and Meridional Wind components from a daily MPAS-A output file (history file) along with the necessary mesh definition data zoomed into North America. Load the mpas_UV_only.2016-07-04.nc file, double click on the "uReconstructMeridional" variable, select Tile Plot, then select Controls > Show Wind Vectors. Zoom into an area over North America, or other location to view the wind vectors.  
 Note, the mpas_UV_only.2016-07-04.nc file is too large to be distributed with VERDI due to the github 100 Mb file size limit. It may be downloaded from the google drive link: https://drive.google.com/file/d/1i9aP7s63cz-BRxD6s0AMVsSUeYjRxVIb/view?usp=sharing
 
 ![MPAS Plot of the 3-d Zonal and Meridional Wind Components and Control Option to Show Wind Vectors](./media/image103.png){#fig:Figure103}
 
 
-Figure 85. MPAS Plot of the 3-d Zonal and Meridional Wind components from a daily MPAS-A output file (history file) Zoomed into North America 
+Figure 104. MPAS Plot of the 3-d Zonal and Meridional Wind components from a daily MPAS-A output file (history file) Zoomed into North America 
 ![MPAS Plot of the 3-d Zonal and Meridional Wind Components and Control Option to Show Wind Vectors](./media/image104.png){#fig:Figure104}
 
 
