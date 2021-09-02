@@ -1,1 +1,3 @@
 pandoc -s -N -F pandoc-crossref -F pandoc-citeproc --number-offset=0 --template=./templates/mytemplate.tex -f markdown-shortcut_reference_links --filter ./filter/comments.py --variable mainfont="Times New Roman" --variable sansfont="Helvetica" --variable monofont="Menlo" --variable fontsize=12pt --variable version=2.1 --variable title="VERDI 2.1 User Manual" --variable subtitle="09/02/2021" --toc --variable geometry:margin=1in --pdf-engine=xelatex -s -o ./PDF/VERDIUserManual.pdf VERDI_ch*.md
+
+# note this requires installation see https://github.com/lierdakil/pandoc-crossref and https://github.com/jgm/pandocfilters
