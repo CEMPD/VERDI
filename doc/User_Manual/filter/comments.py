@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env /usr/local/bin/python3
+import pandocfilters
 from pandocfilters import toJSONFilter
 import re
 

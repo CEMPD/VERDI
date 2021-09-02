@@ -7,37 +7,37 @@
  VERDI Batch Script Editor
 ==========================
 
-To open the Script Editor, use File&gt;View Script Editor ([Figure 17-1](#Figure17-1)). Prior running a batch script, remove all datasets from the dataset list. To remove a dataset, click on each dataset in the dataset panel and press the yellow minus button.
+To open the Script Editor, use File&gt;View Script Editor ([Figure 85](#Figure85)). Prior running a batch script, remove all datasets from the dataset list. To remove a dataset, click on each dataset in the dataset panel and press the yellow minus button.
 
-Figure 74. File: View Script Editor<br>
+Figure 85. File: View Script Editor<br>
 
-![File: View Script Editor](./media/image081.png){#fig:Figure81}
-
-
-An **Open** popup window will be displayed, click on a sample script file in the VERDI_2.1/data/scripts directory ([Figure 17-2](#Figure17-2)).
+![File: View Script Editor](./media/image081.png){#fig:Figure85}
 
 
-Figure 17-2. Open Popup Window<br>
+An **Open** popup window will be displayed, click on a sample script file in the VERDI_2.1/data/scripts directory ([Figure 86](#Figure86)).
 
-![Open Popup Window](./media/image082.png){#fig:Figure82}
 
-After you select a script file and click Open in the Open popup window, the Script Editor window ([Figure 17-3](#Figure17-3)), the Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
+Figure 86. Open Popup Window<br>
+
+![Open Popup Window](./media/image082.png){#fig:Figure86}
+
+After you select a script file and click Open in the Open popup window, the Script Editor window ([Figure 87](#Figure87)), the Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
 
 Unload all datasets before running a batch script within the Script Editor. If any dataset is not unloaded a warning message will pop up see Figure 85. requesting that you close all datasets before running your batch script.
 
-Figure 83. Top of Sample Script File – VERDI_2.1/data/scripts/file_patterns.txt<br>
+Figure 87. Top of Sample Script File – VERDI_2.1/data/scripts/file_patterns.txt<br>
 
-![Top of Sample Script File of file_patterns.txt](./media/image083.png){#fig:Figure83}
+![Top of Sample Script File of file_patterns.txt](./media/image083.png){#fig:Figure87}
 
-Figure 84 appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.
+Figure 88 appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.
 
-Figure 84. Bottom of Sample Script File – VERDI_2.1/data/scripts/tile_patterns.txt
+Figure 88. Bottom of Sample Script File – VERDI_2.1/data/scripts/tile_patterns.txt
 
-![Bottom of Sample Script File: file_patterns.txt](./media/image084.png){#fig:Figure84}
+![Bottom of Sample Script File: file_patterns.txt](./media/image084.png){#fig:Figure88}
 
-Figure 85. Script Editor Dataset Warning
+Figure 89. Script Editor Dataset Warning
 
-![Script Editor Dataset Warning](./media/image085.png){#fig:Figure85}
+![Script Editor Dataset Warning](./media/image085.png){#fig:Figure89}
 
 
 The Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
@@ -76,11 +76,11 @@ The output directory where the images will be stored is specified by setting the
 
 The image file name is specified by setting the parameter *imageFile*; imageFile=three_components_36k.O3MAX.
 
-Use the left mouse button to highlight the task that you would like to run and then click **Run** in the Script Editor window. A popup window then appears to indicate the task ran successfully (Figure 17-6). In this example the title and subtitle were obtained from the definition in the global block. Aspects of the plot defined in the global block are used for multiple tasks and are applied even if only a highlighted task is run.
+Use the left mouse button to highlight the task that you would like to run and then click **Run** in the Script Editor window. A popup window then appears to indicate the task ran successfully (Figure 90). In this example the title and subtitle were obtained from the definition in the global block. Aspects of the plot defined in the global block are used for multiple tasks and are applied even if only a highlighted task is run.
 
-![Script Editor ](./media/image087.png){#fig:Figure87}
+![Script Editor ](./media/image087.png){#fig:Figure90}
 
-Figure 17-7. Highlight Text to Select Task and Click Run
+Figure 91. Highlight Text to Select Task and Click Run
 
 If you select Run without highlighting a Text Block, then the entire batch script executes and generates the plots. To edit the batch script, highlight a segment that you would like to copy and use Ctrl-C to copy the text; then click in an area where you want to paste the text and use Ctrl-V to insert the copied text. Test your changes to the script by highlighting the text block and click run. When your script executes successfully VERDI displays the popup window shown in If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in Figure 88.
 
@@ -105,12 +105,12 @@ run.bat –batch
 
 ./verdi.sh –batch
 
-![Successful Batch Script Run Message](./media/image089.png){#fig:Figure89}
+![Successful Batch Script Run Message](./media/image089.png){#fig:Figure92}
 
 
 If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in Figure 88.
 
-![Unsuccessful Batch Script Message: File not found](./media/image088.png){#fig:Figure88}
+![Unsuccessful Batch Script Message: File not found](./media/image088.png){#fig:Figure91}
 
 
 The VERDI Batch Editor checks to see if the path specified by the user as the imageDir exists. If the path does not exist, VERDI displays the error message:
@@ -119,9 +119,9 @@ The VERDI Batch Editor checks to see if the path specified by the user as the im
 
 followed by the message “(No such file or directory).” Verify that you supplied the correct path and filename. The directory specified as the image directory must exist prior to running the batch command. Double-click on the file in the imageDir directory to load and view the image file in your default visualization software. Figure 90 illustrates the tile plot image that was generated by running the highlighted text block.
 
-Figure 90. Plot Image Generated by Task Block
+Figure 93. Plot Image Generated by Task Block
 
-![Plot Image Generated by Task Block](./media/image090.png){#fig:Figure90}
+![Plot Image Generated by Task Block](./media/image090.png){#fig:Figure93}
 
 
 Specify hour/time step formula in batch script mode
@@ -131,7 +131,7 @@ Specify the timestep using the format:
 
 VARIABLE[dataset number]:timestep.
 
-The batch script notation used to specify an hour/time step involves specifying the formula then the hour: O3[1]:17 will result in Ozone for hour 17 from a given file in scripting mode (see Figure 93).
+The batch script notation used to specify an hour/time step involves specifying the formula then the hour: O3[1]:17 will result in Ozone for hour 17 from a given file in scripting mode (see Figure 94).
 
 The batch script can be used to generate plots of a specific hour or time step using the formula
 
@@ -186,7 +186,7 @@ For example:
 
 The mathematical functions operate over all time steps at each grid cell. Examples for the batch script notation and the images produced are provided in the following sections.
 
-### Batch Script Example: Maximum Ozone – layer 1 (Figure 17-11)
+### Batch Script Example: Maximum Ozone – layer 1 (Figure 94)
 
 **&lt;Global&gt;**
 
@@ -210,12 +210,12 @@ The mathematical functions operate over all time steps at each grid cell. Exampl
 
 **&lt;/Task&gt;**
 
-Figure 92. Tile Plot of Ozone at Time step 17, Layer 1
+Figure 94. Tile Plot of Ozone at Time step 17, Layer 1
 
-![Tile Plot of Ozone at Time step 17, Layer 1](./media/image092.png){#fig:Figure92}
+![Tile Plot of Ozone at Time step 17, Layer 1](./media/image092.png){#fig:Figure94}
 
 
-### Batch Script Example : Minimum Ozone – layer 1 (Figure 17-12)
+### Batch Script Example : Minimum Ozone – layer 1 (Figure 95)
 
 **&lt;Global&gt;**
 
@@ -239,11 +239,11 @@ Figure 92. Tile Plot of Ozone at Time step 17, Layer 1
 
 **&lt;/Task&gt;**
 
-Figure 93. Tile Plot of Maximum Ozone (aggregated over 25 time steps)
+Figure 95. Tile Plot of Maximum Ozone (aggregated over 25 time steps)
 
-![Tile Plot of Ozone (aggregated over 25 time steps)](./media/image093.png){#fig:Figure93}
+![Tile Plot of Ozone (aggregated over 25 time steps)](./media/image093.png){#fig:Figure95}
 
-### Batch Script Example : Mean of Ozone – layer 1 (Figure 17-13)
+### Batch Script Example : Mean of Ozone – layer 1 (Figure 96)
 
 **&lt;Global&gt;**
 
@@ -267,11 +267,11 @@ Figure 93. Tile Plot of Maximum Ozone (aggregated over 25 time steps)
 
 **&lt;/Task&gt;**
 
-![Tile Plot of Minimum Ozone (aggregated over 25 time steps)](./media/image094.png){#fig:Figure94}
+![Tile Plot of Minimum Ozone (aggregated over 25 time steps)](./media/image094.png){#fig:Figure96}
 
-Figure 17-14. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
+Figure 97. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
 
-### Batch Script Example : Sum of Ozone – layer 1 (Figure 17-14)
+### Batch Script Example : Sum of Ozone – layer 1 (Figure 97)
 
 **&lt;Global&gt;**
 
@@ -295,13 +295,13 @@ s=sum(O3[1])
 
 &lt;/Task&gt;
 
-Figure 95. Tile Plot of Mean Ozone (aggregated over 25 time steps)
+Figure 97. Tile Plot of Mean Ozone (aggregated over 25 time steps)
 
-![Tile Plot of Mean Ozone (aggregated over 25 time steps)](./media/image095.png){#fig:Figure95}
+![Tile Plot of Mean Ozone (aggregated over 25 time steps)](./media/image095.png){#fig:Figure97}
 
-Figure 96. Tile Plot of Sum Ozone (aggregated over 25 time steps)
+Figure 98. Tile Plot of Sum Ozone (aggregated over 25 time steps)
 
-![Tile Plot of Sum Ozone (aggregated over 25 time steps)](./media/image096.png){#fig:Figure96}
+![Tile Plot of Sum Ozone (aggregated over 25 time steps)](./media/image096.png){#fig:Figure98}
 
 
 <!-- BEGIN COMMENT -->
