@@ -18,8 +18,8 @@ Memory:
 		change the value of the heapSize property in the verdi.ini file.
 		
 	- Linux / Unix / Mac
-		Edit verdi.sh and replace the 1024M in -Xmx1024MM with
-		the new value. For example, -Xmx2048M.
+		Edit verdi.sh and replace the 4096M in -Xmx4096M with
+		the new value.
 		
 Known Issues:
 
