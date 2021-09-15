@@ -10,7 +10,7 @@ Requirements for Using VERDI
 Java
 ------------------------
 
-VERDI uses OpenJDK version "15.0.1". The OpenJDK<sup>TM</sup> is provided as part of the VERDI release for 32- and 64-bit Linux and Windows. If your computer requires a different version, see Section 3.3. <span id="_Toc197166113" class="anchor"><span id="_Toc292294996" class="anchor"></span></span>
+VERDI uses OpenJDK version "16.0.2". The OpenJDK<sup>TM</sup> is provided as part of the VERDI release for 32- and 64-bit Linux and Windows. If your computer requires a different version, see Section 3.3. <span id="_Toc197166113" class="anchor"><span id="_Toc292294996" class="anchor"></span></span>
 
 Memory and CPU Requirements
 ---------------------------
