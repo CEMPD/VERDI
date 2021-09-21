@@ -1,6 +1,6 @@
 #!/bin/csh -f
   
-#script for testing command line options
+#script for testing command timeseries bar options
 
 echo 'running verdi_script_timeseries_bar.csh'
 
@@ -11,8 +11,8 @@ foreach filename ( `ls $cwd/data/model/CCTM* | xargs -n 1 basename` )
          -f $cwd/data/model/$filename \
          -s "${species}[1]" \
          -g bar \
-         -saveImage "png" $cwd/data/plots/${filename}_timeseries_line_$species.png \
+         -saveImage "png" $cwd/data/plots/${filename}_timeseries_bar_$species.png \
          -quit
-   echo 'check outputfile' `ls -lrt $cwd/data/plots/${filename}_timeseries_line_$species.png`
+   echo 'check outputfile' `ls -lrt $cwd/data/plots/${filename}_timeseries_bar_$species.png`
    end
  end
