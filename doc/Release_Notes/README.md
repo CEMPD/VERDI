@@ -23,6 +23,7 @@ KNOWN ISSUES IN 2.1
 * Location and thickness of MPAS vertical cross sections are currently in whole degrees of longitude or latitude.
 * Contour plot data interpolation and configuration need improvement to reduce spiky appearance.
 * Tile plot of WRF data created using the polar stereographic projection (MAP_PROJ=2) is incorrectly plotted - is shifted geographically, LU_INDEX does not match the coastline 
+* Contour plot for the MacOS version has a fatal error that will be fixed in a future patch.
 
 -----------------------------
 RELEASE NOTES FOR VERDI V2.0 beta 
