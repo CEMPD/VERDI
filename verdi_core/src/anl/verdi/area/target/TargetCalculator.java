@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -332,6 +333,7 @@ public class TargetCalculator extends LongTask {
 	    return didCalcs;	// 2014 had returned true; now calling program can test for success
 	  }
   
+ public static  Map<String, Map<Integer, MeshCellInfo>> intersectionList = new HashMap<String, Map<Integer, MeshCellInfo>>();
   private static Geometry calculateIntersection(Geometry g1, Geometry g2) {
 	  Geometry result = null;
 	  RuntimeException e = null;
@@ -444,9 +446,11 @@ public class TargetCalculator extends LongTask {
 			
 	      //  get all the selected target polygons
 	      for (int targetNum = 0; targetNum < targets.size(); targetNum++) {
+	    	  Map<Integer, MeshCellInfo> cellInfoMap = new HashMap<Integer, MeshCellInfo>();
 	        
 	        current = targetNum;
 	        Target target = ((Target)targets.get(targetNum));
+	        intersectionList.put(target.toString(), cellInfoMap);
 	        // update the message
 	        statMessage = "Polygon " + target + " (" + (targetNum + 1) + " of " + targets.size() + ")";
 	        Logger.debug(statMessage);
@@ -482,7 +486,7 @@ public class TargetCalculator extends LongTask {
 				// create the arrays to store the grid index data
 	            ArrayList<Integer> rowArray = new ArrayList<Integer>();
 	            ArrayList<Integer> colArray = new ArrayList<Integer>();*/
-		  	    ArrayList<Integer> cellArray = new ArrayList<Integer>();
+		  	    List<MeshCellInfo> meshCellArray = new ArrayList<MeshCellInfo>();
 	            ArrayList<Float> areas = new ArrayList<Float>(); 
 	            /* if(col1<0&&col2<0)
 	            	continue;
@@ -537,19 +541,20 @@ public class TargetCalculator extends LongTask {
 	               }
 	                if (intersectionArea > 0) {
 	                  // get the area of the intersection
-		              cellArray.add(potentialCells.get(cellInfo));
+		              meshCellArray.add(cellInfo);
+		              cellInfoMap.put(cellInfo.getId(), cellInfo);
 	                  areas.add(new Float(intersectionArea));
 	                }
 
 	              }
 //	            }
 	            // if there were some cells, make the arrays
-	            if (!cellArray.isEmpty()) {
+	            if (!meshCellArray.isEmpty()) {
 	            	
-	              int[] cellIndex = new int[cellArray.size()];
-	              float[] overlapArea = new float[cellArray.size()];
-	              for (int i = 0; i < cellArray.size(); i++) {
-	                cellIndex[i] = ((Integer)cellArray.get(i)).intValue();
+	              List<MeshCellInfo> cellIndex = new ArrayList<MeshCellInfo>();
+	              float[] overlapArea = new float[meshCellArray.size()];
+	              for (int i = 0; i < meshCellArray.size(); i++) {
+	                cellIndex.add(meshCellArray.get(i));
 	                // convert the area
 	                overlapArea[i] = ((Float)areas.get(i)).floatValue() * (float)areaConversion;
 	                didCalcs = true;

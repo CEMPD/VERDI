@@ -54,8 +54,8 @@ public class ChartTitlesPanel extends JPanel {
 			config.putObject(PlotConfiguration.TITLE_FONT, titlePanel.getSelectedFont());
 			config.putObject(PlotConfiguration.TITLE_COLOR, titlePanel.getSelectedColor());
 		} else { 	// Dec 2015 If user deselects the Show Title checkbox OR selects checkbox but either title is null or length < 1
-			titlePanel.setTitleNull();
-			config.setTitle(null);
+			//titlePanel.setTitleNull();
+			config.setTitle(titlePanel.getTitle());
 			config.setShowTitle("FALSE");	// Feb 2016 explicitly save value of checkbox
 		}
 

@@ -324,11 +324,11 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 			
 			//graphics.setColor(Color.BLACK); //TODO - vColor from VerdiBoundaries
 						
-		    FeatureSource source = VerdiShapefileUtil.projectObsData(proj, list, MapPolygon.PLACEHOLDER_CRS);
+		    FeatureSource source = VerdiShapefileUtil.projectObsData(proj, list, gridCRS);
 		    		//VerdiShapefileUtil.projectShapefile(style.getShapePath(), (SimpleFeatureSource)source, projection, PLACEHOLDER_CRS, true);
 		    
-		    System.err.println("OBSAnnootation: " + source.getClass());
-			System.out.println(source.getSchema().getCoordinateReferenceSystem());
+		    //System.err.println("OBSAnnootation: " + source.getClass());
+			//System.out.println(source.getSchema().getCoordinateReferenceSystem());
 			try {
 				System.out.println(source.getFeatures().features().next());
 			} catch (Exception e) {
@@ -339,12 +339,12 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 			Layer aLayer = new FeatureLayer(source, shapeStyle);
 			vMap.addLayer(aLayer);
 			//vMap.getViewport().setCoordinateReferenceSystem(gridCRS);
-			vMap.getViewport().setCoordinateReferenceSystem(MapPolygon.PLACEHOLDER_CRS);
+			vMap.getViewport().setCoordinateReferenceSystem(gridCRS);
 			//TODO - this fails with NPE, workaround using placeholder CS
 			//vMap.getViewport().setCoordinateReferenceSystem(source.getSchema().getCoordinateReferenceSystem());
 			
 			//ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], gridCRS); // Use this when not projecting
-			ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], MapPolygon.PLACEHOLDER_CRS);
+			ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], gridCRS);
 			vMap.getViewport().setBounds(displayBounds);
 
 			//vMap = Mapper.staticMap.getMap();

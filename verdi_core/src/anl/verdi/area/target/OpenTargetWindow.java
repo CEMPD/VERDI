@@ -4,6 +4,8 @@ import java.awt.Frame;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import org.apache.logging.log4j.LogManager;		// 2015
 import org.apache.logging.log4j.Logger;			// 2015 replacing System.out.println with logger messages
 
@@ -80,7 +82,10 @@ public class OpenTargetWindow extends WDTWizardWindow {
         if(fileName.endsWith(".shp")||fileName.endsWith("SHP")){
           int len = fileName.length();
           fileDBF=fileName.substring(0,len-3)+"dbf";
-        }else return;
+        }else {
+        	JOptionPane.showMessageDialog(this, "Please select a valid shapefile ending in .shp", "Invalid Selection", JOptionPane.ERROR_MESSAGE);
+        	return;
+        }
         
         try{
         projectionCard.initialize(fileDBF,fileName);

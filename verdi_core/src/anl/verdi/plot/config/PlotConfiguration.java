@@ -141,6 +141,7 @@ public class PlotConfiguration {
 	
 	public void updateConfig(PlotConfiguration config) {
 		Logger.debug("in Plot Configuration updateConfig");
+		config.props.get(PlotConfiguration.TITLE);
 		try {
 			for (Object key : config.props.keySet()) {
 				props.put(key, DeepCopyUtil.copy(config.props.get(key)));

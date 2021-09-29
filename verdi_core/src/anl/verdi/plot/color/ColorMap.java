@@ -359,6 +359,8 @@ public class ColorMap implements Serializable {
 		this.min = min;
 		this.max = max;
 		if (keepOverridenIntervals) {
+			if (intervals[intervals.length - 1] == 0)
+				intervals[intervals.length - 1]  = max;
 			return;
 		}
 		calcIntervals(palette, min, max);
@@ -374,6 +376,8 @@ public class ColorMap implements Serializable {
 		this.logMin = min;
 		this.logMax = max;	
 		if (keepOverridenIntervals) {
+			if (logIntervals[logIntervals.length - 1] == 0)
+				logIntervals[logIntervals.length - 1]  = max;
 			return;
 		}
 		calcLogIntervals(palette, logMin, logMax);

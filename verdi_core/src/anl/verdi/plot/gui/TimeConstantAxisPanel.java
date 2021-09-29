@@ -39,7 +39,7 @@ public class TimeConstantAxisPanel extends JPanel {
 			JSpinner source = (JSpinner)e.getSource();
       if (spinnersOn) {
 	      int val = ((Number)source.getValue()).intValue() - 1;
-	      if (frameAxes != null) {
+	      if (frameAxes != null && timeSpinner.equals(source)) {
 		      GregorianCalendar date = frameAxes.getDate(val);
 		      if (date == null)System.err.println("TimeConstantAxisPanel date null");
 		      timeLabel.setText(Utilities.formatShortDate(date));

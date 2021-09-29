@@ -569,103 +569,7 @@ public class PalettePanel extends JPanel {
 		rebuildBtn.addActionListener(new ActionListener() { // TODO: JIZHEN
 			public void actionPerformed(ActionEvent evt) {
 				Logger.debug("in rebuildBtn actionPerformed: intervalType.getSelectedIndex = " + intervalType.getSelectedIndex());
-				if ( intervalType.getSelectedIndex() != 2) {
-					String text = minFld.getText().trim();
-					double min, max;
-					try {
-						min = Double.valueOf(text);
-					} catch (NumberFormatException ex) {
-						JOptionPane.showMessageDialog(PalettePanel.this, "'" + text
-								+ " is not a valid number", "Color Map Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					text = maxFld.getText().trim();
-
-					try {
-						max = Double.valueOf(text);
-					} catch (NumberFormatException ex) {
-						JOptionPane.showMessageDialog(PalettePanel.this, "'" + text
-								+ " is not a valid number", "Color Map Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-
-					if (min > max) {
-						double tmp = max;
-						max = min;
-						min = tmp;
-					}
-
-					ColorMap oldMap = model.getColorMap();
-					ColorMap map = null; //new ColorMap(palette, sType, min, max);	
-					boolean chgColorMap = false;	// default is to not change the color map
-					if ( oldMap != null) {
-						map = oldMap;
-					} else {
-						map = new ColorMap();
-						chgColorMap = true;
-						//Don't reset the color palette unless the user chnaged color maps- the user
-						//may have made changes
-						Palette palette = (Palette) paletteList.getSelectedValue();
-						map.setPalette(palette);
-						map.setPaletteType(getPaletteType());	
-					}
-				
-					ColorMap.ScaleType sType = ColorMap.ScaleType.LINEAR;
-					if ( scaleType.getSelectedIndex() == 1) {
-						sType = ColorMap.ScaleType.LOGARITHM;
-					} 
-					map.setScaleType(sType);
-					if ( sType == ColorMap.ScaleType.LINEAR ) {
-						map.setMinMax(min, max);
-					} else {
-						map.setLogMinMax(min,max);
-					}
-
-					try {
-						map = resetNumberFormat(map, formatFld.getText());
-					} catch (Exception e) {
-						e.printStackTrace(); //let it be a best effort method.
-					}
-
-					if(chgColorMap)		// don't want to always reset the color map
-						model.resetColorMap(map);
-					model.setIntervalEditEnabled( intervalType.getSelectedIndex());	
-					paletteTable.revalidate();
-				} else {
-					double baseValue = Math.E;
-					String base = fldLogBase.getText();
-					if ( !base.trim().equalsIgnoreCase("E")) {
-						baseValue = Double.parseDouble( fldLogBase.getText());
-					}
-					model.setLogBase( base);
-					double min=0, max=0;
-					try {
-						min = model.getColorMap().getMin();
-						max = model.getColorMap().getMax();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-					String minConv = "f";
-					String maxConv = "f";
-
-					if (Math.abs(min) < 0.001)
-						minConv = "e";
-
-					if (Math.abs(max) < 0.001)
-						maxConv = "e";
-
-					minFld.setText(String.format("%.6" + minConv, min));
-					maxFld.setText(String.format("%.6" + maxConv, max));
-					minFld.setCaretPosition(0);
-					maxFld.setCaretPosition(0);					
-					model.setIntervalEditEnabled( intervalType.getSelectedIndex());	
-				}
-				Logger.debug("in rebuildBtn actionPerformed: minFld = " + minFld.getText() + ", maxFld = " + maxFld.getText());
+				rebuild();
 			}
 		});
 
@@ -687,6 +591,109 @@ public class PalettePanel extends JPanel {
 				initMap(defaultColorMap,  defaultMinMax);
 			}
 		});
+	}
+	
+	public void rebuild() {
+		if (!rebuildBtn.isEnabled())
+			return;
+		if ( intervalType.getSelectedIndex() != 2) {
+			String text = minFld.getText().trim();
+			double min, max;
+			try {
+				min = Double.valueOf(text);
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(PalettePanel.this, "'" + text
+						+ " is not a valid number", "Color Map Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			text = maxFld.getText().trim();
+
+			try {
+				max = Double.valueOf(text);
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(PalettePanel.this, "'" + text
+						+ " is not a valid number", "Color Map Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			if (min > max) {
+				double tmp = max;
+				max = min;
+				min = tmp;
+			}
+
+			ColorMap oldMap = model.getColorMap();
+			ColorMap map = null; //new ColorMap(palette, sType, min, max);	
+			boolean chgColorMap = false;	// default is to not change the color map
+			if ( oldMap != null) {
+				map = oldMap;
+			} else {
+				map = new ColorMap();
+				chgColorMap = true;
+				//Don't reset the color palette unless the user chnaged color maps- the user
+				//may have made changes
+				Palette palette = (Palette) paletteList.getSelectedValue();
+				map.setPalette(palette);
+				map.setPaletteType(getPaletteType());	
+			}
+		
+			ColorMap.ScaleType sType = ColorMap.ScaleType.LINEAR;
+			if ( scaleType.getSelectedIndex() == 1) {
+				sType = ColorMap.ScaleType.LOGARITHM;
+			} 
+			map.setScaleType(sType);
+			if ( sType == ColorMap.ScaleType.LINEAR ) {
+				map.setMinMax(min, max);
+			} else {
+				map.setLogMinMax(min,max);
+			}
+
+			try {
+				map = resetNumberFormat(map, formatFld.getText());
+			} catch (Exception e) {
+				e.printStackTrace(); //let it be a best effort method.
+			}
+
+			if(chgColorMap)		// don't want to always reset the color map
+				model.resetColorMap(map);
+			model.setIntervalEditEnabled( intervalType.getSelectedIndex());	
+			paletteTable.revalidate();
+		} else {
+			double baseValue = Math.E;
+			String base = fldLogBase.getText();
+			if ( !base.trim().equalsIgnoreCase("E")) {
+				baseValue = Double.parseDouble( fldLogBase.getText());
+			}
+			model.setLogBase( base);
+			double min=0, max=0;
+			try {
+				min = model.getColorMap().getMin();
+				max = model.getColorMap().getMax();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			String minConv = "f";
+			String maxConv = "f";
+
+			if (Math.abs(min) < 0.001)
+				minConv = "e";
+
+			if (Math.abs(max) < 0.001)
+				maxConv = "e";
+
+			minFld.setText(String.format("%.6" + minConv, min));
+			maxFld.setText(String.format("%.6" + maxConv, max));
+			minFld.setCaretPosition(0);
+			maxFld.setCaretPosition(0);					
+			model.setIntervalEditEnabled( intervalType.getSelectedIndex());	
+		}
+		Logger.debug("in rebuildBtn actionPerformed: minFld = " + minFld.getText() + ", maxFld = " + maxFld.getText());
+
 	}
 
 	public void setPalettes(List<Palette> palettes) {

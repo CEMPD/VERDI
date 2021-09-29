@@ -1419,7 +1419,7 @@ public class ScriptHandler {
 						vConfig.setCrossSectionType(VerticalCrossSectionPlot.CrossSectionType.Y);
 					}
 
-					vConfig.setCrossSectionRowCol(Integer.parseInt(args.get(2)));
+					vConfig.setCrossSectionRowCol(Integer.parseInt(args.get(2)) - 1);
 					
 					if (args.size() > 3)
 						vConfig.setCrossSectionSliceSize(Integer.parseInt(args.get(3)));
@@ -1433,7 +1433,7 @@ public class ScriptHandler {
 					Axes<DataFrameAxis> axes = frame.getAxes();
 
 					//assume the user is passing in the actual number of the timestep
-					((VerticalCrossSectionPlot)plot).updateTimeStep(selectedTimeStep - axes.getTimeAxis().getOrigin());
+					((VerticalCrossSectionPlot)plot).updateTimeStep(selectedTimeStep - axes.getTimeAxis().getOrigin() - 1);
 
 					List<String> viewList = verdiApp.getGui().getViewList();
 					curView = viewList.get(viewList.size() - 1);

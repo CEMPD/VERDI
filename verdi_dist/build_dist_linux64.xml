@@ -180,7 +180,9 @@
 	        <unzip src="./distfiles/licenses.zip" dest="${dist.dir}"/>
 			<mkdir dir="${dist.dir}/data"/>
 			<copy todir="${dist.dir}/data">
-				<fileset dir="./distfiles/data/release"/>
+				<fileset dir="./distfiles/data/release">
+	                		<exclude name="**/history_qv_only.2016-07-04_00UTC.nc.gz" />
+				</fileset>
 			</copy>
 	    
 	        <copy todir="${dist.dir}">

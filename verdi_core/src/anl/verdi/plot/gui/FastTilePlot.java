@@ -6,14 +6,6 @@
 
 package anl.verdi.plot.gui;
 
-import gov.epa.emvl.ASCIIGridWriter;
-import gov.epa.emvl.GridCellStatistics;
-import gov.epa.emvl.GridShapefileWriter;
-import gov.epa.emvl.Mapper;
-import gov.epa.emvl.Numerics;
-import gov.epa.emvl.Projector;
-import gov.epa.emvl.TilePlot;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -33,7 +25,6 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -85,10 +76,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.vecmath.Point4i;	// 4 integers (x, y, z, w coordinates)
 
-import net.sf.epsgraphics.ColorMode;
-import net.sf.epsgraphics.Drawable;
-import net.sf.epsgraphics.EpsTools;
-
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.data.DataStoreFactorySpi;
@@ -106,11 +93,8 @@ import org.geotools.swing.JMapPane;			// JEB Sept 2015; for mapping support in G
 import org.geotools.swing.data.JFileDataStoreChooser;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import saf.core.ui.event.DockableFrameEvent;
-import ucar.ma2.IndexIterator;
-import ucar.ma2.InvalidRangeException;
-import ucar.unidata.geoloc.Projection;
-import ucar.unidata.geoloc.projection.LatLonProjection;
+import com.vividsolutions.jts.geom.Envelope;
+
 import anl.map.coordinates.Decidegrees;
 import anl.verdi.core.VerdiApplication;
 import anl.verdi.core.VerdiGUI;
@@ -147,8 +131,21 @@ import anl.verdi.plot.util.PlotExporter;
 import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;
-
-import com.vividsolutions.jts.geom.Envelope;
+import gov.epa.emvl.ASCIIGridWriter;
+import gov.epa.emvl.GridCellStatistics;
+import gov.epa.emvl.GridShapefileWriter;
+import gov.epa.emvl.Mapper;
+import gov.epa.emvl.Numerics;
+import gov.epa.emvl.Projector;
+import gov.epa.emvl.TilePlot;
+import net.sf.epsgraphics.ColorMode;
+import net.sf.epsgraphics.Drawable;
+import net.sf.epsgraphics.EpsTools;
+import saf.core.ui.event.DockableFrameEvent;
+import ucar.ma2.IndexIterator;
+import ucar.ma2.InvalidRangeException;
+import ucar.unidata.geoloc.Projection;
+import ucar.unidata.geoloc.projection.LatLonProjection;
 
 public class FastTilePlot extends AbstractPlotPanel implements ActionListener, Printable,
 		ChangeListener, ComponentListener, MouseListener,
@@ -676,7 +673,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						if (obsAnnotations != null) {
 							for (ObsAnnotation ann : obsAnnotations)
 								ann.draw(offScreenGraphics, xOffset, yOffset, width, height, 
-										legendLevels, legendColors, originalCRS, domain, gridBounds, projection);
+										legendLevels, legendColors, gridCRS, domain, gridBounds, projection);
 						}
 						
 						if (vectAnnotation != null) {

@@ -76,7 +76,7 @@ public class VerdiShapefileUtil {
 	
 	static GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
 	
-	private static CoordinateReferenceSystem LAT_LON_CRS = null;
+	public static CoordinateReferenceSystem LAT_LON_CRS = null;
 	private static CoordinateReferenceSystem WEB_MERC_CRS = null;
 	static {
 		try {
@@ -293,7 +293,7 @@ public class VerdiShapefileUtil {
         }*/
         
        // if (sourceShapefile.getSchema().getCoordinateReferenceSystem().getCoordinateSystem().toString().toLowerCase().indexOf("longitude") == -1) {
-        if (sourceShapefile.getSchema().getCoordinateReferenceSystem().toString().indexOf("WGS84") == -1) {
+        if (sourceShapefile.getSchema().getCoordinateReferenceSystem().toString().indexOf("WWGS84") == -1) {
         	//Not in lat/lon, reproject
         	sourceShapefile = projectionToLatLon(sourceShapefile, mapTargets);
         } else if (targetProjection instanceof LatLonProjection && ((LatLonProjection)targetProjection).getCenterLon() == 0 ) {
@@ -397,7 +397,7 @@ public class VerdiShapefileUtil {
         
 
         //targetCRS = WEB_MERC_CRS;
-        targetCRS = LAT_LON_CRS;
+        //targetCRS = LAT_LON_CRS;
         /*try {
 			targetCRS = CRS.decode("EPSG:3785");
 		} catch (NoSuchAuthorityCodeException e1) {

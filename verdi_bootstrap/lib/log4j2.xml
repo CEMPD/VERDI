@@ -9,6 +9,10 @@
 		</Console>
 	</Appenders>
 	<Loggers>
+		<Logger name="org.geotools.io" level="off">
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="MainLog"/>
+		</Logger>
 		<Root level="ERROR">
 			<AppenderRef ref="MainLog"/>
 		</Root>

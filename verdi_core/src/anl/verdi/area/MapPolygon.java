@@ -61,14 +61,14 @@ public class MapPolygon {
 	
 	private boolean cachedShowSelectedOnly = false;
 
-	public static CoordinateReferenceSystem PLACEHOLDER_CRS = null;
+	/*public static CoordinateReferenceSystem PLACEHOLDER_CRS = null;
 	static {
 		try {
 			PLACEHOLDER_CRS = CRS.decode("EPSG:4326");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
 	public MapPolygon(TilePlot plot){
 		tilePlot = plot;
@@ -129,7 +129,7 @@ public class MapPolygon {
 			//graphics.setColor(Color.BLACK); //TODO - vColor from VerdiBoundaries
 						
 			FeatureSource source = style.getFeatureSource();
-		    source = VerdiShapefileUtil.projectShapefile(style.getShapePath(), (SimpleFeatureSource)source, projection, PLACEHOLDER_CRS, true);
+		    source = VerdiShapefileUtil.projectShapefile(style.getShapePath(), (SimpleFeatureSource)source, projection, gridCRS, true);
 
 			Layer aLayer = new FeatureLayer(source, shapeStyle);
 			vMap.addLayer(aLayer);

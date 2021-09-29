@@ -125,6 +125,10 @@ FormulaElementCreator, ListDataListener {
 
 	public VerdiApplication(DataManager manager) {
 		this.manager = manager;
+		try {
+			org.geotools.util.logging.Logging.ALL.setLoggerFactory("org.geotools.util.logging.CommonsLoggerFactory");
+		} catch (Exception e) {}
+		
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		singleton = this;
 		Logger.debug("Msg #1: in VerdiApplication DataManager");

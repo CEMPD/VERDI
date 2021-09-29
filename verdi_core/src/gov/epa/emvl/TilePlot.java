@@ -563,11 +563,12 @@ public class TilePlot {
 		String title;
 		
 		// Title label:
-		String TITLE = config.getProperty(PlotConfiguration.TITLE);
+		String TITLE = "";
+		if (!"FALSE".equals(config.getShowTitle()))
+			TITLE = config.getProperty(PlotConfiguration.TITLE);
 //		final String titleStr = "Layer " + (layer + 1) + " " + variable;	// do NOT want to recalculate title here
 																			// part of bug where user blanks title and it shows up again
 		String defaultTitle = "Layer " + (layer + 1) + " " + variable;
-		String theTitle = config.getTitle();
 		Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
 		Color tColor = config.getColor(PlotConfiguration.TITLE_COLOR);
 		tColor = (tColor == null) ? labelColor : tColor;
@@ -586,7 +587,7 @@ public class TilePlot {
 		//look for Layer 1, if present keep with the same trend but update with current the Layer Number
 //		final String title = (TITLE == null || TITLE.isEmpty() ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
 
-		if(TITLE == null || TITLE.length()<2)	// rest of fix for allowing user to blank out a title
+		if((TITLE == null || TITLE.length()<2) && !"FALSE".equals(config.getShowTitle()))	// rest of fix for allowing user to blank out a title
 			title = ScriptManager.parseScript(defaultTitle); // TODO: needs more work
 		else
 			title = ScriptManager.parseScript(TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
@@ -704,16 +705,17 @@ public class TilePlot {
 
 		graphics.setFont(currentFont); // Restore original font.
 
-		config.setShowTitle("TRUE");
-		config.putObject(PlotConfiguration.TITLE, title);
+		//config.setShowTitle("TRUE");
+		if (title != null && !title.equals(""))
+			config.putObject(PlotConfiguration.TITLE, title);
 //		config.putObject(PlotConfiguration.TITLE, (!title.equals(titleStr) && preLayer == layer) ? title : "");
 		config.putObject(PlotConfiguration.TITLE_FONT, tFont);
 		config.putObject(PlotConfiguration.TITLE_COLOR, tColor);
-		config.setShowSubtitle1("TRUE");
+		//config.setShowSubtitle1("TRUE");
 		config.putObject(PlotConfiguration.SUBTITLE_1, (sTitle1 == null) ? "" : sTitle1);
 		config.putObject(PlotConfiguration.SUBTITLE_1_COLOR, sColor1);
 		config.putObject(PlotConfiguration.SUBTITLE_1_FONT, sFont1);
-		config.setShowSubtitle2("TRUE");
+		//config.setShowSubtitle2("TRUE");
 		config.putObject(PlotConfiguration.SUBTITLE_2, (sTitle2 == null) ? "" : sTitle2);
 		config.putObject(PlotConfiguration.SUBTITLE_2_COLOR, sColor2);
 		config.putObject(PlotConfiguration.SUBTITLE_2_FONT, sFont2);

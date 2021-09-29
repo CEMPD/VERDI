@@ -4755,12 +4755,49 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}
 	}
 	
+	private String getArealDisplayValue(double lonCoord, double latCoord) {
+		Target target=MapPolygon.getTargetWithin(latCoord, lonCoord);
+		String ret = "";
+
+		if(target!=null){
+			String units = getDataFrame().getVariable().getUnit().toString();
+			if (units==null || units.trim().equals(""))
+				units = "none";
+			String massUnit = Units.getTotalVariable(units);
+			String areaUnit = (Units.getAreaUnit(units) != null ? Units.getAreaUnit(units).toString() : "");
+			if(Units.isConcentration(units))massUnit=null;
+
+			try {
+				double areaValue = target.getArea();
+
+				if(target.depositionCalculated() && target.containsDeposition()){
+					float value = target.getDeposition();
+					float aveValue = target.getAverageDeposition();
+
+					if(massUnit!=null)
+						ret = " Area "+target.toString()+": " + areaValue + " " + areaUnit + ", Total: "+value+" "+massUnit+", Average: "+aveValue+" "+units;
+					else
+						ret = " Area "+target.toString()+": " + areaValue + " " + areaUnit + ", Average: "+aveValue+" "+units;
+				}else app.getGui().setStatusOneText("Area "+target.toString()+": " + areaValue  + " " + areaUnit + ".");
+			} catch ( Exception e) {
+				//
+			}
+		}
+		return ret;
+
+	}
+	
 	private String formatLatLon(double lonCoord, double latCoord, int hoveredId, boolean extendedFormat, int xCoord, int yCoord) {	
 
 		String ret = "(" + coordFormat.format(lonCoord) + "\u00B0, " + coordFormat.format(latCoord) + "\u00B0";
 		if (!extendedFormat)
 			return ret + ")";
 		//ret += " xy " + xCoord + "," + yCoord;
+
+		if (renderMode == MODE_INTERPOLATION) {
+			ret += getArealDisplayValue(lonCoord, latCoord);
+			return ret;
+		}
 
 		try {
 			LocalCellInfo localCell = getCellInfo(hoveredId);

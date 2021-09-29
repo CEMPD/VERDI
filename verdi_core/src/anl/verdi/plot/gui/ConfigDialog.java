@@ -108,6 +108,7 @@ public class ConfigDialog extends JDialog {
 
 	// writes the plot configuration to the PlotConfiguration object (read and used by other parts of VERDI)
 	private void commit() throws Exception {
+		colorMapPanel.rebuild();
 		PlotConfiguration config = new PlotConfiguration();
 		config.putObject(PlotConfiguration.PLOT_TYPE, plot.getType()); //NOTE: to differentiate plot types
 		if (tabbedPanel.indexOfTab("Color Map") != -1) {
@@ -307,7 +308,7 @@ public class ConfigDialog extends JDialog {
 
 		bShowTitle = true;
 		String showSubTitle1 = config.getShowSubtitle1();
-		if (showSubTitle1.compareTo("FALSE") == 0)
+		if (showSubTitle1 != null && showSubTitle1.compareTo("FALSE") == 0)
 			bShowTitle = false;
 		titlesPanel.initSubTitle1(bShowTitle,	// config.getSubtitle1().trim().length() > 0,
 				config.getSubtitle1(), 
@@ -316,7 +317,7 @@ public class ConfigDialog extends JDialog {
 
 		bShowTitle = true;
 		String showSubTitle2 = config.getShowSubtitle2();
-		if(showSubTitle2.compareTo("FALSE") == 0)
+		if(showSubTitle2 != null && showSubTitle2.compareTo("FALSE") == 0)
 			bShowTitle = false;
 		titlesPanel.initSubTitle2(bShowTitle,	// config.getSubtitle2().trim().length() > 0,
 				config.getSubtitle2(), 

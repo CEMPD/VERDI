@@ -236,6 +236,10 @@ public class PaletteSelectionPanel extends JPanel {
 	private PalettePanel palettePanel;
 
 	// JFormDesigner - End of variables declaration //GEN-END:variables
+	
+	public void rebuild() {
+		palettePanel.rebuild();
+	}
 
 	public ColorMap getColorMap() throws Exception {
 		Logger.debug("in PaletteSelectionPanel.getColorMap");

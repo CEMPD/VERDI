@@ -103,16 +103,27 @@ public class Tools {
 	
 	public static String getIconsDir() {
 		if (iconsDir == null) {
+			String icons = System.getenv("VERDI_HOME") + File.separator + "plugins" + File.separator + "core" + File.separator + "icons" + File.separator;
 			// Standalone path
-			String icons = ".." + File.separator + "core" + File.separator + "icons" + File.separator;
-			if (new File(icons).exists())
+			if (new File(icons).exists()) {
 				iconsDir = icons;
-			else {
-				// Path when running from eclipse
-				icons = ".." + File.separator + "verdi_core" + File.separator + "icons" + File.separator;
-				if (new File(icons).exists())
-					iconsDir = icons;
+				return iconsDir;
 			}
+			icons = ".." + File.separator + "core" + File.separator + "icons" + File.separator;
+			if (new File(icons).exists()) {
+				iconsDir = icons;
+				return iconsDir;
+			}
+			// Path when running from eclipse
+			icons = ".." + File.separator + "verdi_core" + File.separator + "icons" + File.separator;
+			if (new File(icons).exists()) {
+					iconsDir = icons;
+					return iconsDir;
+			}
+			//standalone path relative to root
+			icons = "plugins" + File.separator + "core" + File.separator + "icons" + File.separator;
+			iconsDir = icons;
+
 		}
 		return iconsDir;
 	}

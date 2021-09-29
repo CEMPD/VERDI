@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.commons.io.FilenameUtils;
@@ -85,7 +86,29 @@ public class PlotExporter {
 	 * the image or saving the plot.
 	 */
 	public void run() throws IOException {
-		JFileChooser chooser = (previousFolder != null ? new JFileChooser(previousFolder) : new JFileChooser());
+		JFileChooser chooser = new JFileChooser() {
+			public void approveSelection() {
+				File f = getSelectedFile();
+				String name = f.getName();
+				if (name.indexOf(".") == -1)
+					f = new File(f.getAbsolutePath() + "." + currentExt);
+				if (f.exists()) {
+					int result = JOptionPane.showConfirmDialog(this, f.getName() +  " exists, overwrite?", "Existing file", JOptionPane.YES_NO_CANCEL_OPTION);
+					switch (result) {
+					case JOptionPane.YES_OPTION:
+						super.approveSelection();
+						return;
+					case JOptionPane.CANCEL_OPTION:
+						cancelSelection();
+						return;
+					default:
+						return;
+					}
+				}
+				super.approveSelection();				
+			}
+		};
+		chooser.setCurrentDirectory(previousFolder);
 		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.addChoosableFileFilter(new ImageFileFilter("BMP Image (*.bmp)", BMP));
 		chooser.addChoosableFileFilter(new ImageFileFilter("JPEG Image (*.jpg, *.jpeg)", JPG, JPEG));
