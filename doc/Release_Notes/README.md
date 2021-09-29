@@ -8,7 +8,7 @@ NEW FEATURES IN V2.1
 * Enhanced user interface and interactive features related to observation overlays (e.g., preview feature, custom symbols)
 * Added support for setting legend levels from a batch script.
 * Improved error messaging (when an observation data set does not contain data for the map being shown)
-* Updated Java Runtime Environment to OpenJDK 15
+* Updated Java Runtime Environment to OpenJDK 16.02
 
 BUG FIXES IN 2.1
 * Improved geolocation of observation overlay sites.
