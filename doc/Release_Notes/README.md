@@ -24,6 +24,7 @@ KNOWN ISSUES IN 2.1
 * Contour plot data interpolation and configuration need improvement to reduce spiky appearance.
 * Tile plot of WRF data created using the polar stereographic projection (MAP_PROJ=2) is incorrectly plotted - is shifted geographically, LU_INDEX does not match the coastline 
 * Contour plot for the MacOS version has a fatal error that will be fixed in a future patch.
+* MacOS version is not currently packaged as a MacOS Bundle with a Apple Developer Signature. This requires the user to allow the application to run using System Preferences > Security and Privacy > allow VERDI 2.1. A signed MacOS VERDI 2.1 will be provided in a future patch.
 
 -----------------------------
 RELEASE NOTES FOR VERDI V2.0 beta 
