@@ -9,7 +9,7 @@ jdk.home=/usr/local/win/jdk-15.0.1
 
 # app
 app.name=VERDI
-app.version=2.1
+app.version=2.1.1
   
 # basic settings - use '/' as a separator
 
