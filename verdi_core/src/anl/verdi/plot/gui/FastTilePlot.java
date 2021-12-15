@@ -999,7 +999,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		if ( source == statisticsMenu || source == threshold ) {
 			
 			//TAH
-			System.err.println("Stat index " + statisticsMenu.getSelectedIndex() + " pre " + preStatIndex + " item " + statisticsMenu.getSelectedItem());
+//			System.err.println("Stat index " + statisticsMenu.getSelectedIndex() + " pre " + preStatIndex + " item " + statisticsMenu.getSelectedItem());
 			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex || statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile")) {
 				if (statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile") ) {
 					getCustomPercentile();
