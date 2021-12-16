@@ -60,7 +60,10 @@ public class Stereographic extends ProjectionImpl {
    */
   static public Stereographic factory(double latt, double lont, double latTrue) {
     double scale = (1.0 + Math.sin(Math.toRadians(latTrue))) / 2.0;
+<<<<<<< HEAD
     
+=======
+>>>>>>> refs/remotes/origin/master
 //    System.out.println("in Stereographic: factory calculated scale " + scale);
     return new Stereographic(latt, lont, scale);
   }
@@ -130,7 +133,7 @@ public class Stereographic extends ProjectionImpl {
    */
   public Stereographic(double latt, double lont, double scale, double false_easting, double false_northing, double radius) {
     super("Stereographic", false);
-    System.out.println("in Stereographic: constructor scale from argument " + scale);
+//    System.out.println("in Stereographic: constructor scale from argument " + scale);
     this.latt = Math.toRadians(latt);
     this.lont = Math.toRadians(lont);
     this.earthRadius = radius;
@@ -242,7 +245,7 @@ public class Stereographic extends ProjectionImpl {
   }
   
   public double getCentralMeridian() {
-		System.out.println("in Stereographic: getCentralMeridian central_meridian= " + central_meridian);
+//		System.out.println("in Stereographic: getCentralMeridian central_meridian= " + central_meridian);
 	    return central_meridian;
 	  }
 
@@ -284,7 +287,7 @@ public class Stereographic extends ProjectionImpl {
    */
   public void setScale(double scale) {
     this.scale = earthRadius * scale;
-    System.out.println("in Stereographic: IDV setter this.scale " + this.scale);
+//    System.out.println("in Stereographic: IDV setter this.scale " + this.scale);
   }
 
   /**
