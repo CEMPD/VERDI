@@ -77,7 +77,7 @@
 //import javax.swing.event.ChangeEvent;
 //import javax.swing.event.ChangeListener;
 //import javax.swing.event.MouseInputAdapter;
-//import javax.vecmath.Point4i;
+//import org.jogamp.vecmath.Point4i;
 //
 //import org.apache.log4j.LogManager;
 //import org.apache.log4j.Logger;

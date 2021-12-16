@@ -36,7 +36,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.vecmath.Point4i;
+import org.jogamp.vecmath.Point4i;
 
 
 //import org.geotools.styling.StyleFactoryFinder;	// replaced for GeoTools v10

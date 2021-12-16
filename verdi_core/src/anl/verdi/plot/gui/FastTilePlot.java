@@ -74,7 +74,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
-import javax.vecmath.Point4i;	// 4 integers (x, y, z, w coordinates)
+import org.jogamp.vecmath.Point4i;	// 4 integers (x, y, z, w coordinates)
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages

@@ -47,11 +47,12 @@ public class Boot {
 	
 	static final Logger Logger = LogManager.getLogger(Boot.class.getName());
 //	protected static final MessageCenter msgCenter = MessageCenter.getMessageCenter(NetcdfDatasetFactory.class);
+	
+	public static final String VERDI_BASE = "verdi.install.home";
 
 
   private static final String PLUGIN_FOLDER_PROP = "pluginFolders";
   private static final String PLUGIN_DESCRIPTOR_PROP = "plugin.descriptors";
-  private static String RUNTIME_DIR_ROOT = "./";
   private static String PLUGIN_RESTRICT_PREFIX = "plugin.restrict.";
 
   private static final String CORE_PLUGIN_ID = "saf.core.runtime";
@@ -63,18 +64,29 @@ public class Boot {
   }
 
   public PluginManager init(String[] args) {
+	  //File tempLog = new File(System.getProperty("user.home") + File.separator +  "verdi.txt");
+	  //java.io.PrintWriter writer = null;
+
+
+
 
     // load properties
 //    if (args.length > 1)		// commented out a do-nothing block
 //    {
 //    //  RUNTIME_DIR_ROOT = args[1];
 //    }
-    System.setProperty("applicationRoot", RUNTIME_DIR_ROOT);
-    center = MessageCenter.getMessageCenter(Boot.class);
+    System.setProperty("applicationRoot", getAppHome());
     try {
+  	  //writer =  new java.io.PrintWriter(new java.io.FileWriter(tempLog));
+  	  
+      center = MessageCenter.getMessageCenter(Boot.class);
+
+  	  //writer.println("Got message center");
       Properties props = new Properties();
-      File file = new File(RUNTIME_DIR_ROOT, "boot.properties");
+      File file = new File(getAppHome() + File.separator + "plugins" + File.separator + "bootstrap", "boot.properties");
       InputStream strm;
+      if (!file.exists())
+          file = new File(getAppHome() + File.separator + "boot.properties");   	  
       if (file.exists()) {
     	strm = new FileInputStream(file);
       } else {
@@ -94,10 +106,15 @@ public class Boot {
       props.put("applicationRoot", new File(".").getCanonicalPath());
      // props.put("applicationRoot", RUNTIME_DIR_ROOT);
 
+      //writer.println("Initting plugin manager");
       return initializePluginManager(findPluginLocations(props), props);	
 
-    } catch (Exception ex) {
+    } catch (Throwable ex) {
+    	//writer.println("Error building plugin mgr: " + ex);
       center.error(ex.getMessage(), ex);
+      ex.printStackTrace();
+    } finally {
+    	//writer.close();
     }
     return null;
   }
@@ -281,6 +298,21 @@ Map<java.lang.String, Identity> map = pluginManager.publishPlugins(myLocations);
     buf.append("-------------- REPORT END -----------------");
     return buf.toString();
   }
+  
+	public static String getAppHome() 
+	{	// 2014
+		String vHome = System.getProperty("VERDI_HOME");
+		if (vHome == null || vHome.trim().equals(""))
+			vHome = System.getenv("VERDI_HOME");
+		if(vHome == null || vHome.isEmpty())
+		{
+			vHome = System.getProperty(VERDI_BASE);
+		}
+		File pluginFolder = new File( vHome + "plugins");
+		if (!pluginFolder.exists()) //Running from Eclipse
+			vHome = ".";
+		return vHome + File.separator;
+	}
 
   private Collection findPluginLocations(Properties props) throws Exception {
     DefaultPluginsCollector collector = new DefaultPluginsCollector();
@@ -291,7 +323,7 @@ Map<java.lang.String, Identity> map = pluginManager.publishPlugins(myLocations);
       eprops.put("org.java.plugin.boot.pluginsLocationsDescriptors",
           props.getProperty(PLUGIN_DESCRIPTOR_PROP));
     } else {
-      String pluginFolder = RUNTIME_DIR_ROOT + props.getProperty(PLUGIN_FOLDER_PROP);
+      String pluginFolder = getAppHome() + props.getProperty(PLUGIN_FOLDER_PROP);
       eprops.put("org.java.plugin.boot.pluginsRepositories", pluginFolder);
     }
     collector.configure(eprops);
@@ -341,7 +373,9 @@ Map<java.lang.String, Identity> map = pluginManager.publishPlugins(myLocations);
       }
   }
 
+
   public static void main(String[] args) {
+	  System.setProperty("log4j.debug","false");
 	  disableAccessWarnings();
     Boot boot = new Boot();
   

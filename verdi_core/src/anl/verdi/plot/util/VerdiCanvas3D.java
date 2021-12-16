@@ -6,7 +6,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 
-import javax.media.j3d.J3DGraphics2D;
+import org.jogamp.java3d.J3DGraphics2D;
 
 import visad.VisADException;
 import visad.java3d.DisplayRendererJ3D;

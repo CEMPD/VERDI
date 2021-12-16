@@ -193,6 +193,9 @@
 	        </copy>	       	        
 		
 			<exec executable="cp">
+		  		<arg line="-p ./distfiles/verdi_mac.jar ${dist.dir}/verdi.jar"/>
+			</exec>
+			<exec executable="cp">
 		  		<arg line="-p ./distfiles/verdi.command ${dist.dir}/verdi.command"/>
 			</exec>
 			<chmod file="${dist.dir}/verdi.command" perm="ug+x"/>

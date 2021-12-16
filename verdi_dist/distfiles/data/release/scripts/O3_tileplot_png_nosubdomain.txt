@@ -43,7 +43,6 @@
 		s=O3[1]
 		saveImage=png
 		imageDir=../../data/plots
-                imageFile=CCTM46_P16.baseO2a.36k.O3MAX_tile_full
 		ts=1
 		</Global>
 

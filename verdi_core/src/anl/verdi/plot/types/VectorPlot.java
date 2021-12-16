@@ -25,7 +25,7 @@ package anl.verdi.plot.types;
 //import javax.swing.event.ChangeEvent;
 //import javax.swing.event.ChangeListener;
 //import javax.swing.event.MouseInputAdapter;
-//import javax.vecmath.Point4i;
+//import org.jogamp.vecmath.Point4i;
 //
 //import org.jfree.chart.ChartRenderingInfo;
 //import org.jfree.chart.JFreeChart;

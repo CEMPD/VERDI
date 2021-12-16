@@ -1,16 +1,4 @@
 -----------------------------
-RELEASE NOTES FOR VERDI 2.1.1
------------------------------
-
-Hot Patch for VERDI with log4j 2.0.16 to remove message lookup capability to eliminate the log4shell security vulnerability: https://logging.apache.org/log4j/2.x/security.html
-
-**REPLACE ALL PRIOR** versions of VERDI with this patched release version.
-
-Additional bug fixes with this patched version.
-
-* Fixed Polar Stereographic Projection Issue for Tile Plot Display of WRF Files.
-
------------------------------
 RELEASE NOTES FOR VERDI 2.1
 -----------------------------
 
@@ -20,7 +8,7 @@ NEW FEATURES IN V2.1
 * Enhanced user interface and interactive features related to observation overlays (e.g., preview feature, custom symbols)
 * Added support for setting legend levels from a batch script.
 * Improved error messaging (when an observation data set does not contain data for the map being shown)
-* Updated Java Runtime Environment to OpenJDK 16.02
+* Updated Java Runtime Environment to OpenJDK 15
 
 BUG FIXES IN 2.1
 * Improved geolocation of observation overlay sites.
@@ -35,8 +23,6 @@ KNOWN ISSUES IN 2.1
 * Location and thickness of MPAS vertical cross sections are currently in whole degrees of longitude or latitude.
 * Contour plot data interpolation and configuration need improvement to reduce spiky appearance.
 * Tile plot of WRF data created using the polar stereographic projection (MAP_PROJ=2) is incorrectly plotted - is shifted geographically, LU_INDEX does not match the coastline 
-* Contour plot for the MacOS version has a fatal error that will be fixed in a future patch.
-* MacOS version is not currently packaged as a MacOS Bundle with a Apple Developer Signature. This requires the user to allow the application to run using System Preferences > Security and Privacy > allow VERDI 2.1. A signed MacOS VERDI 2.1 will be provided in a future patch.
 
 -----------------------------
 RELEASE NOTES FOR VERDI V2.0 beta 

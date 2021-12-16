@@ -38,7 +38,7 @@ REM echo set to Win64 path
 
 :proc32
 REM path has been reset for DLLs; continue
-set JAVACMD="%JAVA%" -Xmx1024M -classpath "%CLASSPATH%" --illegal-access=permit saf.core.runtime.Boot
+set JAVACMD="%JAVA%" --illegal-access=permit -Xmx6144M -Dlog4j.debug=false -classpath "%CLASSPATH%" saf.core.runtime.Boot
 
 IF "%1" == "-b" GOTO scripting
 

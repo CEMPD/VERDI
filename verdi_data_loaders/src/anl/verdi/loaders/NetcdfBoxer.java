@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.geotools.factory.Hints;
+import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 //import org.geotools.referencing.FactoryFinder;
@@ -16,13 +17,17 @@ import org.geotools.referencing.ReferencingFactoryFinder;
 import org.geotools.referencing.factory.ReferencingFactoryContainer;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
+
+import com.vividsolutions.jts.geom.Coordinate;
 
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.Projection;
+import ucar.unidata.geoloc.ProjectionImpl;
 import ucar.unidata.geoloc.ProjectionPointImpl;
 import ucar.unidata.geoloc.projection.LambertConformal;
 import ucar.unidata.geoloc.projection.LatLonProjection;
@@ -31,6 +36,7 @@ import ucar.unidata.geoloc.projection.Stereographic;
 import ucar.unidata.geoloc.projection.UtmProjection;
 import anl.verdi.core.VerdiConstants;
 import anl.verdi.data.BoundingBoxer;
+import anl.verdi.plot.gui.VerdiShapefileUtil;
 import gov.epa.emvl.Mapper;
 
 /**
@@ -61,14 +67,14 @@ public class NetcdfBoxer implements BoundingBoxer {
 	 * worry about making sure Geotools supports the NetCDF projection, or that the Geotools 
 	 * projection parameters are set to match the NetCDF ones.
 	 */
-	public static CoordinateReferenceSystem PLACEHOLDER_CRS = null;
+	/*public static CoordinateReferenceSystem PLACEHOLDER_CRS = null;
 	static {
 		try {
 			PLACEHOLDER_CRS = CRS.decode("EPSG:4326");
 		} catch (Exception e) {
 			Logger.error("Could not create placeholder crs", e);
 		}
-	}
+	}*/
 	
 	CoordinateReferenceSystem origCRS = null;
 	protected boolean isLatLon;
@@ -268,7 +274,46 @@ public class NetcdfBoxer implements BoundingBoxer {
 		Hints.putSystemDefault(Hints.COMPARISON_TOLERANCE, 10e-9);
 
 		detectCRS();
-		return new ReferencedEnvelope(xStart, xEnd, yStart, yEnd, PLACEHOLDER_CRS);
+		/*ProjectionPointImpl raw = new ProjectionPointImpl(xStart / scaler, yEnd / scaler);
+		LatLonPointImpl latlon = new LatLonPointImpl();
+		getProjection().projToLatLon(raw, latlon);
+		//getProjection().latLonToProj(latlon,  raw);
+		System.err.println("Top Left Raw: " + xStart / scaler + ", " + yEnd / scaler + " Top left LatLon: " + latlon);
+		raw = new ProjectionPointImpl(xEnd / scaler, yStart / scaler);
+		getProjection().projToLatLon(raw, latlon);
+		System.err.println("Bottom Right Raw: " + xEnd / scaler + ", " + yStart / scaler + " Bottom Right LatLon: " + latlon);
+
+		
+
+		Coordinate source = new Coordinate(xEnd, yEnd);
+		Coordinate dest = new Coordinate();
+		
+		MathTransform transform;
+		try {
+			transform = CRS.findMathTransform(origCRS, VerdiShapefileUtil.LAT_LON_CRS, true);
+			JTS.transform(source,  dest, transform);
+			System.out.println("Transform  " + source + " to " + dest);
+			//origCRS = null;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}*/
+		/*double latStart = 5.656792;
+		double latEnd = 54.0231;
+		double lonStart = -63.23495;*/
+		//double lonEnd = -148.2617;
+		//latlon = new LatLonPointImpl(latEnd, lonEnd);
+		//getProjection().latLonToProj(latlon,  raw);
+		//System.err.println("Top Left Mod LatLon: " + raw);
+//		xStart = raw.getX() * scaler;
+//		yStart = raw.getY() * scaler;
+		//latlon = new LatLonPointImpl(latStart, lonStart);
+		//getProjection().latLonToProj(latlon,  raw);
+		//System.err.println("Bottm Right Mod LatLon: " + raw);
+//		xEnd = raw.getX() * scaler;
+//		yEnd = raw.getY() * scaler;
+		//return new ReferencedEnvelope(xStart, xEnd, yStart, yEnd, PLACEHOLDER_CRS);
+		return new ReferencedEnvelope(xStart, xEnd, yStart, yEnd, origCRS);
 	}
 	
 	
@@ -299,7 +344,7 @@ public class NetcdfBoxer implements BoundingBoxer {
 		} else if (proj instanceof UtmProjection) {
 			Logger.debug("projection is of type UtmProjection");
 			if (origCRS == null) {
-				Logger.info("NOTE: crs is null");
+				Logger.info("NOTE: crs is null ");
 				try {
 					Logger.info("within try/catch block");
 					String strCRS = new UtmWKTCreator().createWKT((UtmProjection) proj);
@@ -356,8 +401,9 @@ public class NetcdfBoxer implements BoundingBoxer {
 	
 	
 	public CoordinateReferenceSystem getCRS() {
-		Logger.debug("in getCRS(): returning crs = " + PLACEHOLDER_CRS);
-		return PLACEHOLDER_CRS;
+		//Logger.debug("in getCRS(): returning crs = " + PLACEHOLDER_CRS);
+		//return PLACEHOLDER_CRS;
+		return origCRS;
 	}
 	
 	public CoordinateReferenceSystem getOriginalCRS() {
