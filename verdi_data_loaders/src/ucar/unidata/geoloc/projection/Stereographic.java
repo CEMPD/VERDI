@@ -60,10 +60,7 @@ public class Stereographic extends ProjectionImpl {
    */
   static public Stereographic factory(double latt, double lont, double latTrue) {
     double scale = (1.0 + Math.sin(Math.toRadians(latTrue))) / 2.0;
-<<<<<<< HEAD
-    
-=======
->>>>>>> refs/remotes/origin/master
+   
 //    System.out.println("in Stereographic: factory calculated scale " + scale);
     return new Stereographic(latt, lont, scale);
   }
