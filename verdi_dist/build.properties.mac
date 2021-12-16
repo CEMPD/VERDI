@@ -6,11 +6,15 @@
 
 # jdk home
 #jdk.home=/usr/local/mac/jdk1.8.0_271/
-jdk.home=/usr/local/mac/jdk-15.0.1.jdk/
+#jdk.home=/usr/local/mac/jdk-15.0.1.jdk/
+#signed
+#jdk.home=/usr/local/mac/jdk-16.0.2.jdk
+#original
+jdk.home=/usr/local/mac/jdk-16.0.2+7
 
 # app
 app.name=VERDI
-app.version=2.1
+app.version=2.1.1
   
 # basic settings - use '/' as a separator
 

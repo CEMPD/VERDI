@@ -125,7 +125,25 @@ public class FileChooserUtilities {
 	 * @return the selected file or null if no file was selected.
 	 */
 	public static File getSaveFile(Component parent, File dir, FileFilter filter) {
-		JFileChooser chooser = new JFileChooser(dir);
+		JFileChooser chooser = new JFileChooser(dir) {
+			public void approveSelection() {
+				File f = getSelectedFile();
+				if (f.exists()) {
+					int result = JOptionPane.showConfirmDialog(this, f.getName() +  " exists, overwrite?", "Existing file", JOptionPane.YES_NO_CANCEL_OPTION);
+					switch (result) {
+					case JOptionPane.YES_OPTION:
+						super.approveSelection();
+						return;
+					case JOptionPane.CANCEL_OPTION:
+						cancelSelection();
+						return;
+					default:
+						return;
+					}
+				}
+				super.approveSelection();				
+			}
+		};
 		if (filter != null) chooser.setFileFilter(filter);
 		int res = chooser.showSaveDialog(parent);
 		if (res == JFileChooser.APPROVE_OPTION) return chooser.getSelectedFile();

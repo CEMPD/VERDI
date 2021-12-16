@@ -1,6 +1,7 @@
 package anl.verdi.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -103,7 +104,8 @@ public class Tools {
 	
 	public static String getIconsDir() {
 		if (iconsDir == null) {
-			String icons = System.getenv("VERDI_HOME") + File.separator + "plugins" + File.separator + "core" + File.separator + "icons" + File.separator;
+			String home = getVerdiHome();
+			String icons = home + File.separator + "plugins" + File.separator + "core" + File.separator + "icons" + File.separator;
 			// Standalone path
 			if (new File(icons).exists()) {
 				iconsDir = icons;
@@ -128,11 +130,12 @@ public class Tools {
 		return iconsDir;
 	}
 	
-	// Nothing should use this method directly since filesystem layout varies between Eclipse and stanalone.  Use getIconsDir()
-	// or another helper instead.
-	private static String getVerdiHome() 
+	// Callers should be aware of filesystem differences between Eclipse and standalone.
+	public static String getVerdiHome() 
 	{	// 2014
-		String vHome =  System.getenv(VERDI_HOME);
+		String vHome = System.getProperty("VERDI_HOME");
+		if (vHome == null || vHome.trim().equals(""))
+			vHome = System.getenv("VERDI_HOME");
 		if(vHome == null || vHome.isEmpty())
 		{
 			vHome = System.getProperty(VERDI_BASE);

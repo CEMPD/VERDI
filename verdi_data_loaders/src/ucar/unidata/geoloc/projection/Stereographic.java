@@ -46,6 +46,8 @@ import ucar.unidata.geoloc.*;
 
 public class Stereographic extends ProjectionImpl {
 
+	   private static final double earth_radius = 6370.000; // km
+
   /**
    * Construct a Stereographic Projection using latitude of true scale and calculating scale factor.
    * <p> Since the scale factor at lat = k = 2*k0/(1+sin(lat))  [Snyder,Working Manual p157]
@@ -58,7 +60,8 @@ public class Stereographic extends ProjectionImpl {
    */
   static public Stereographic factory(double latt, double lont, double latTrue) {
     double scale = (1.0 + Math.sin(Math.toRadians(latTrue))) / 2.0;
-    System.out.println("in Stereographic: factory calculated scale " + scale);
+    
+//    System.out.println("in Stereographic: factory calculated scale " + scale);
     return new Stereographic(latt, lont, scale);
   }
 
@@ -101,7 +104,7 @@ public class Stereographic extends ProjectionImpl {
    * @param scale scale factor at tangent point, "normally 1.0 but may be reduced"
    */
   public Stereographic(double latt, double lont, double scale) {
-    this(latt, lont, scale, 0, 0, EARTH_RADIUS);
+    this(latt, lont, scale, 0, 0, earth_radius);
   }
 
   /**
@@ -112,7 +115,7 @@ public class Stereographic extends ProjectionImpl {
    * @param scale scale factor at tangent point, "normally 1.0 but may be reduced"
    */
   public Stereographic(double latt, double lont, double scale, double false_easting, double false_northing) {
-    this(latt, lont, scale, false_easting, false_northing, EARTH_RADIUS);
+    this(latt, lont, scale, false_easting, false_northing, earth_radius);
   }
 
   /**
@@ -166,7 +169,7 @@ public class Stereographic extends ProjectionImpl {
     this.lont = Math.toRadians(lont_deg);
     this.isPolar = true;
     this.isNorth = north;
-    this.earthRadius = EARTH_RADIUS;
+    this.earthRadius = earth_radius;
     this.falseEasting = 0;
     this.falseNorthing = 0;
 

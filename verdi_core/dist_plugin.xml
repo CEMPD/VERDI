@@ -49,23 +49,23 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="log4j-1.2" path="../core/lib/log4j-1.2-api-2.0-rc1.jar" type="code">
+		<library id="log4j-1.2" path="../core/lib/log4j-1.2-api-2.16.0.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="log4j-api" path="../core/lib/log4j-api-2.0-rc1.jar" type="code">
+		<library id="log4j-api" path="../core/lib/log4j-api-2.16.0.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="log4j-core" path="../core/lib/log4j-core-2.0-rc1.jar" type="code">
+		<library id="log4j-core" path="../core/lib/log4j-core-2.16.0.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="log4j-jcl" path="../core/lib/log4j-jcl-2.0-rc1.jar" type="code">
+		<library id="log4j-jcl" path="../core/lib/log4j-jcl-2.16.0.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
-		<library id="log4j-taglib" path="../core/lib/log4j-taglib-2.0-rc1.jar" type="code">
+		<library id="log4j-taglib" path="../core/lib/log4j-taglib-2.16.0.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
@@ -279,6 +279,10 @@
 		</library>
 
 		<library id="omj3d" path="../core/lib/omj3d.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jogamp-fat" path="../core/lib/jogamp-fat.jar" type="code">
 			<export prefix="*"/>
 		</library>
 

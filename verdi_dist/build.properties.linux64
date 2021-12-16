@@ -7,7 +7,7 @@ jdk.home=/usr/local/jdk
 
 # app
 app.name=VERDI
-app.version=2.1
+app.version=2.1.1
   
 # basic settings - use '/' as a separator
 user.home=/home/tahoward

@@ -182,10 +182,10 @@ public class MultiPlotAnimation extends JPanel implements AnimationListener {
 		Logger.debug("in constructor for MultiPlotAnimation.java");
 		initComponents();
 
-		((SpinnerNumberModel) startSpinner.getModel()).setMinimum(0);
-		((SpinnerNumberModel) startSpinner.getModel()).setMaximum(0);
-		((SpinnerNumberModel) endSpinner.getModel()).setMaximum(0);
-		((SpinnerNumberModel) endSpinner.getModel()).setMaximum(0);
+		((SpinnerNumberModel) startSpinner.getModel()).setMinimum(1);
+		((SpinnerNumberModel) startSpinner.getModel()).setMaximum(1);
+		((SpinnerNumberModel) endSpinner.getModel()).setMaximum(1);
+		((SpinnerNumberModel) endSpinner.getModel()).setMaximum(1);
 
 		addListeners();
 	}
@@ -193,14 +193,14 @@ public class MultiPlotAnimation extends JPanel implements AnimationListener {
 	private void addListeners() {
 		startSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				Integer val = (Integer) startSpinner.getValue();
+				Integer val = (Integer) startSpinner.getValue() - 1;
 				startLbl.setText(Utilities.formatShortDate(dateModel.getDate(val.intValue())));
 			}
 		});
 
 		endSpinner.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				Integer val = (Integer) endSpinner.getValue();
+				Integer val = (Integer) endSpinner.getValue() - 1;
 				endLbl.setText(Utilities.formatShortDate(dateModel.getDate(val.intValue())));
 			}
 		});
@@ -317,8 +317,8 @@ public class MultiPlotAnimation extends JPanel implements AnimationListener {
 		for (Object obj : objs) {
 			PlotData data = (PlotData) obj;
 			Axes<DataFrameAxis> axes = data.getPlot().getData().get(0).getAxes();
-			int val = ((Integer) startSpinner.getValue()).intValue();
-			int val2 = ((Integer) endSpinner.getValue()).intValue();
+			int val = ((Integer) startSpinner.getValue()).intValue() - 1;
+			int val2 = ((Integer) endSpinner.getValue()).intValue() - 1;
 			int startIndex = Math.min(val, val2);
 			int endIndex = Math.max(val, val2);
 			int start = axes.getTimeStep(dateModel.getDate(startIndex));
@@ -339,25 +339,25 @@ public class MultiPlotAnimation extends JPanel implements AnimationListener {
 		if (currentRange == null) {
 			startLbl.setText("");
 			endLbl.setText("");
-			startSpinner.setValue(0);
+			startSpinner.setValue(1);
 			startSpinner.setEnabled(false);
 			startLbl.setEnabled(false);
 			endSpinner.setEnabled(false);
-			endSpinner.setValue(0);
+			endSpinner.setValue(1);
 			endLbl.setEnabled(false);
 		} else {
 			long start = currentRange.getStart();
 			long end = currentRange.getEnd();
 			boolean changed = dateModel.init(start, end, (end - start) / currentSteps);
 			if (changed) {
-				((SpinnerNumberModel) startSpinner.getModel()).setMinimum(0);
-				((SpinnerNumberModel) startSpinner.getModel()).setMaximum(currentSteps);
-				((SpinnerNumberModel) endSpinner.getModel()).setMaximum(0);
-				((SpinnerNumberModel) endSpinner.getModel()).setMaximum(currentSteps);
-				startSpinner.setValue(0);
-				endSpinner.setValue(currentSteps);
+				((SpinnerNumberModel) startSpinner.getModel()).setMinimum(1);
+				((SpinnerNumberModel) startSpinner.getModel()).setMaximum(currentSteps + 1);
+				((SpinnerNumberModel) endSpinner.getModel()).setMaximum(1);
+				((SpinnerNumberModel) endSpinner.getModel()).setMaximum(currentSteps + 1);
+				startSpinner.setValue(1);
+				endSpinner.setValue(currentSteps + 1);
 				startLbl.setText(Utilities.formatShortDate(dateModel.getDate(0)));
-				endLbl.setText(Utilities.formatShortDate(dateModel.getDate(currentSteps)));
+				endLbl.setText(Utilities.formatShortDate(dateModel.getDate(currentSteps + 1)));
 			}
 		}
 	}

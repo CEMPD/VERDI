@@ -1,15 +1,56 @@
 package saf.core.ui;
-import java.awt.event.ActionEvent;import java.awt.event.WindowAdapter;import java.awt.event.WindowEvent;import java.io.File;import java.io.FileInputStream;import java.io.FileNotFoundException;import java.io.IOException;import java.io.InputStream;import java.lang.reflect.InvocationTargetException;import java.lang.reflect.Method;import java.util.ArrayList;import java.util.List;import java.util.Properties;import javax.swing.JMenu;import javax.swing.JMenuBar;import javax.swing.JToolBar;import saf.core.ui.actions.ActionFactory;import saf.core.ui.actions.ExitAction;import saf.core.ui.dock.DockingFactory;import saf.core.ui.dock.DockingManager;import saf.core.ui.dock.Perspective;import saf.core.ui.help.Help;import saf.core.ui.util.FileChooserUtilities;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JToolBar;
+
+import org.apache.logging.log4j.LogManager;             // 2014
+import org.apache.logging.log4j.Logger;                 // 2014 replacing System.out.println with logger messages
+
+import saf.core.runtime.Boot;
+import saf.core.ui.actions.ActionFactory;
+import saf.core.ui.actions.ExitAction;
+import saf.core.ui.dock.DockingFactory;
+import saf.core.ui.dock.DockingManager;
+import saf.core.ui.dock.Perspective;
+import saf.core.ui.help.Help;
+import saf.core.ui.util.FileChooserUtilities;
 /**
  * @author Nick Collier * @version $Revision: 1.11 $ $Date: 2006/06/01 18:05:01 $ */
-public class GUICreatorDelegate {	private static GUICreatorDelegate instance = new GUICreatorDelegate();	private java.util.List<BarItemDescriptor> descriptors = new ArrayList<BarItemDescriptor>();	private MenuTreeDescriptor mtDescriptor;	private List<Perspective> perspectives;	private Properties props;	private AppPreferences prefs;	private Help help;	private StatusBarDescriptor statusBarDescriptor;	private DockingFactory dockingFactory;
-	private GUICreatorDelegate() {		// load properties		InputStream strm = null;		try {			props = new Properties();			File file = new File(System.getProperty("applicationRoot"), "ui.properties");			if (file.exists()) {				strm = new FileInputStream(file);			} else {				strm = getClass().getClassLoader().getResourceAsStream("ui.properties");			}
+public class GUICreatorDelegate {
+	
+    static final Logger Logger = LogManager.getLogger(GUICreatorDelegate.class.getName());
+	private static GUICreatorDelegate instance = new GUICreatorDelegate();	private java.util.List<BarItemDescriptor> descriptors = new ArrayList<BarItemDescriptor>();	private MenuTreeDescriptor mtDescriptor;	private List<Perspective> perspectives;	private Properties props;	private AppPreferences prefs;	private Help help;	private StatusBarDescriptor statusBarDescriptor;	private DockingFactory dockingFactory;
+	private GUICreatorDelegate() {		// load properties		InputStream strm = null;		try {			props = new Properties();			File file = new File(Boot.getAppHome() + File.separator + "plugins" + File.separator + "bootstrap", "ui.properties");
+			if (!file.exists()) // eclipse
+				file = new File(Boot.getAppHome() + File.separator + "ui.properties");
+			if (file.exists()) {				strm = new FileInputStream(file);			} else {				strm = getClass().getClassLoader().getResourceAsStream("ui.properties");			}
 			props.load(strm);			String dockingFacClass = props.getProperty(GUIConstants.DOCKING_FACTORY_CLASS, "");
 			if (dockingFacClass.equals("")) {				dockingFactory = new DefaultDockingFactory();			} else {				Class clazz = Class.forName(dockingFacClass);				dockingFactory = (DockingFactory) clazz.newInstance();			}
 			registerMacOSX();		} catch (FileNotFoundException e) {			e.printStackTrace();		} catch (IOException e) {			e.printStackTrace();		} catch (ClassNotFoundException e) {			e.printStackTrace();		} catch (IllegalAccessException e) {			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.		} catch (InstantiationException e) {			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.		} catch (NoSuchMethodException e) {			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.		} catch (InvocationTargetException e) {			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.		} finally {			if (strm != null) {				try {					strm.close();				} catch (IOException e) {					e.printStackTrace();				}			}		}	}
 	private void registerMacOSX() throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException,	InvocationTargetException {
-		if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) {			// we do this with reflection so the mac only code doesn't			// need to be linked here			Class osxAdapter = getClass().getClassLoader().loadClass("saf.core.ui.osx.OSXAdapter");			Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", new Class[0]);			if (registerMethod != null) {				Object[] args = {};				registerMethod.invoke(osxAdapter, args);			}
-			Class[] defArgs = {Boolean.class};			defArgs[0] = boolean.class;			Method prefsEnableMethod = osxAdapter.getDeclaredMethod("enablePrefs", defArgs);			if (prefsEnableMethod != null) {				Object args[] = {Boolean.FALSE};				prefsEnableMethod.invoke(osxAdapter, args);			}		}	}
+		if (System.getProperty("os.name").toLowerCase().startsWith("mac os x")) {
+			new NativeAdapter().registerAdapter();
+			/*try {
+			// we do this with reflection so the mac only code doesn't			// need to be linked here
+				//Removed in Java 9			/*Class osxAdapter = getClass().getClassLoader().loadClass("saf.core.ui.osx.OSXAdapter");			Method registerMethod = osxAdapter.getDeclaredMethod("registerMacOSXApplication", new Class[0]);			if (registerMethod != null) {				Object[] args = {};				registerMethod.invoke(osxAdapter, args);			}
+			Class[] defArgs = {Boolean.class};			defArgs[0] = boolean.class;			Method prefsEnableMethod = osxAdapter.getDeclaredMethod("enablePrefs", defArgs);			if (prefsEnableMethod != null) {				Object args[] = {Boolean.FALSE};				prefsEnableMethod.invoke(osxAdapter, args);			}
+			} catch (Throwable t) {
+				//Logger.error("OSX Specefic function disabled", t);
+			} */		}	}
 	static GUICreatorDelegate getInstance() {		return instance;	}
 	public void addBarItemDescriptor(BarItemDescriptor descriptor) {		descriptors.add(descriptor);	}
 	public DockingFactory getDockingFactory() {		return dockingFactory;	}

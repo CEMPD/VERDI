@@ -23,6 +23,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.gui.VerdiBoundaries;
+import anl.verdi.util.Tools;
 import ucar.unidata.geoloc.Projection;
 
 // Contains a set of VerdiBoundaries and draws them clipped to a domain.
@@ -95,7 +96,7 @@ public class Mapper {
 		if (defaultMapFileDirectory != null )
 			return defaultMapFileDirectory;
 		
-		defaultMapFileDirectory = System.getenv("VERDI_HOME") + "/plugins/bootstrap/data";
+		defaultMapFileDirectory = Tools.getVerdiHome() + "/plugins/bootstrap/data";
 		if (new File(defaultMapFileDirectory).exists())
 			return defaultMapFileDirectory;
 		defaultMapFileDirectory = ".." + "/verdi_bootstrap/data";	

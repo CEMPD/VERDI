@@ -74,7 +74,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
-import javax.vecmath.Point4i;	// 4 integers (x, y, z, w coordinates)
+import org.jogamp.vecmath.Point4i;	// 4 integers (x, y, z, w coordinates)
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -999,7 +999,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		if ( source == statisticsMenu || source == threshold ) {
 			
 			//TAH
-			System.err.println("Stat index " + statisticsMenu.getSelectedIndex() + " pre " + preStatIndex + " item " + statisticsMenu.getSelectedItem());
+//			System.err.println("Stat index " + statisticsMenu.getSelectedIndex() + " pre " + preStatIndex + " item " + statisticsMenu.getSelectedItem());
 			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex || statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile")) {
 				if (statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile") ) {
 					getCustomPercentile();

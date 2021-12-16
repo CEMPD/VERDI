@@ -5,12 +5,12 @@
 # Properties for specify a local distribution directory
 
 # jdk home
-jdk.home=/usr/local/win/jdk-15.0.1
+jdk.home=/usr/local/win/jdk-16
 
 # app
 app.name=VERDI
-app.version=2.1
+app.version=2.1.1
   
 # basic settings - use '/' as a separator
 
-dist.dir=/home/tahoward/VERDI_2.0_win
+dist.dir=/home/tahoward/VERDI_2.1.1_win

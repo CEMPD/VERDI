@@ -100,7 +100,7 @@ public class HelpDialog extends JDialog {
 
 				//======== scrollPane1 ========
 				{
-					String verdiHome = System.getenv("VERDI_HOME");
+					String verdiHome = Tools.getVerdiHome();
 					String path = verdiHome + File.separator + "plugins" + File.separator + "bootstrap" + File.separator + "help" + File.separator;
 					// changed from using URI to File
 				    // old URI was: "http://www.verdi-tool.org/verdiUserManual_URI_uri.htm"

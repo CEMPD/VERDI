@@ -44,6 +44,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
@@ -89,7 +90,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import javax.vecmath.Point4i;
+import org.jogamp.vecmath.Point4i;
 
 import net.sf.epsgraphics.ColorMode;
 import net.sf.epsgraphics.Drawable;
@@ -1776,6 +1777,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		double scaledDiameter;
 		double windAngle;
 		double windVelocity;
+		boolean windHidden = false;
 		
 		MeshCellInfo source;
 		
@@ -1787,6 +1789,14 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 		public double getValue() {
 			return source.getValue(currentVariable, currentDataFrame, cellIndex, timestep - firstTimestep, layer - firstLayer);
+		}
+		
+		public boolean windHidden() {
+			return windHidden;
+		}
+		
+		public void hideWind() {
+			windHidden = true;
 		}
 		
 		public int getId() {
@@ -1803,6 +1813,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 		public void calculateWindVector() {
 			//TODO - cache scaledDiameter after transformCell if needed
+			windHidden = false;
 			scaledDiameter = source.getMaxLat() - source.getMinLat();
 			double d2 = source.getMaxLon() - source.getMinLon();
 			if (d2 < scaledDiameter)
@@ -1837,6 +1848,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			windStart[1] = (int)Math.round((source.getLat() / RAD_TO_DEG * -1 - latMin - panY) * compositeFactor) + yOffset;
 			windEnd[0] = (int)Math.round(windScale * zonal) + windStart[0];
 			windEnd[1] = (int)Math.round(windScale * -meridional) + windStart[1];
+			/*String info = this.getSource().getId() + "," + zonal + "," + meridional + "," + length + "," + windScale + ","
+			+ source.getLat() + "," + source.getLon() + "," + windStart[0] + "," + windStart[1] + "," + windEnd[0] + "," + windEnd[1];
+			windWriter.println(info);*/
 		}
 		
 		public MeshCellInfo getSource() {
@@ -2181,8 +2195,18 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 	}
 	
+	//static java.io.PrintWriter windWriter = null;
+	
+	
+	
 	public void updateWindData() {
 		long start = System.currentTimeMillis();
+		/*try {
+			windWriter = new java.io.PrintWriter(new java.io.FileOutputStream("/tmp" + File.separator + "wind-" + System.currentTimeMillis() + ".csv"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}*/
+
 		for (int i = 0; i < cellsToRender.length; ++i) {
 			LocalCellInfo cell = getCellInfo(i);
 			cell.calculateWindVector();
@@ -2190,7 +2214,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 		for (LocalCellInfo cell : splitCellInfo.keySet()) {
 			cell.calculateWindVector();
+			cell.hideWind();
 		}
+		//windWriter.close();
 		Logger.info("Updated wind data in " + (System.currentTimeMillis() - start) + "ms");
 
 	}
@@ -2297,7 +2323,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					cell.lonTransformed[0], cell.latTransformed[0]);
 		}
 		
-		if (renderWind) {
+		if (renderWind && !cell.windHidden()) {
 			gr.setColor(Color.BLACK);			
 			AffineTransform trx = gr.getTransform();
 			//Render arrow line
@@ -2310,6 +2336,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			gr.setTransform(trx);
 		}
 	}
+	
 	
 	public void exportShapeFile(String filename) {
 		try {

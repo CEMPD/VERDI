@@ -37,7 +37,8 @@ public abstract class AbstractPlotCreator implements PlotCreator {
 		try {
 			preCreatePlot();
 			return doCreatePlot();
-		} finally {
+		}
+		finally {
 			if (postRequired) {
 				postCreatePlot();
 			}
