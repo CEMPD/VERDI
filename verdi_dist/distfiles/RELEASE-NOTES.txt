@@ -1,4 +1,16 @@
 -----------------------------
+RELEASE NOTES FOR VERDI 2.1.1
+-----------------------------
+
+Hot Patch for VERDI with log4j 2.0.16 to remove message lookup capability to eliminate the log4shell security vulnerability: https://logging.apache.org/log4j/2.x/security.html
+
+**REPLACE ALL PRIOR** versions of VERDI with this patched release version.
+
+Additional bug fixes with this patched version.
+
+* Fixed Polar Stereographic Projection Issue for Tile Plot Display of WRF Files.
+
+-----------------------------
 RELEASE NOTES FOR VERDI 2.1
 -----------------------------
 
