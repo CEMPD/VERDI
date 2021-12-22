@@ -1,10 +1,22 @@
 -----------------------------
+RELEASE NOTES FOR VERDI 2.1.2
+-----------------------------
+
+**REPLACE ALL PRIOR** versions of VERDI with this patched release version.
+
+*Updated VERDI to log4j 2.17 to fix security vulnerability: https://logging.apache.org/log4j/2.x/index.html
+
+*Fixed linux build to use openjdk 16.0.2 2021-07-20.
+
+*Re-enabled the splash screen with automatic version numbering.
+
+*The User Manual for VERDI has not been updated. It will be updated for the next Major Release.
+
+-----------------------------
 RELEASE NOTES FOR VERDI 2.1.1
 -----------------------------
 
 Hot Patch for VERDI with log4j 2.0.16 to remove message lookup capability to eliminate the log4shell security vulnerability: https://logging.apache.org/log4j/2.x/security.html
-
-**REPLACE ALL PRIOR** versions of VERDI with this patched release version.
 
 Additional bug fixes with this patched version.
 
