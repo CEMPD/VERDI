@@ -9,8 +9,8 @@ jdk.home=/usr/local/win/jdk-16
 
 # app
 app.name=VERDI
-app.version=2.1.1
+app.version=2.1.2
   
 # basic settings - use '/' as a separator
 
-dist.dir=/home/tahoward/VERDI_2.1.1_win
+dist.dir=/home/tahoward/VERDI_2.1.2_win
