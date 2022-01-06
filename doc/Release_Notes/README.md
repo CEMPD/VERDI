@@ -1,4 +1,13 @@
 -----------------------------
+RELEASE NOTES FOR VERDI 2.1.3
+-----------------------------
+
+**REPLACE ALL PRIOR** versions of VERDI with this patched release version.
+
+*Updated VERDI to log4j 2.17.1 to fix security vulnerability: https://logging.apache.org/log4j/2.x/index.html
+
+
+-----------------------------
 RELEASE NOTES FOR VERDI 2.1.2
 -----------------------------
 
