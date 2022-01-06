@@ -56,15 +56,15 @@
       <export prefix="*"/>
     </library>
 
-	<library id="log4j-1.2" path="../core/lib/log4j-1.2-api-2.16.0.jar" type="code">
+	<library id="log4j-1.2" path="../core/lib/log4j-1.2-api-2.17.0.jar" type="code">
 		<export prefix="*"/>
 	</library>
 
-	<library id="log4j-api" path="../core/lib/log4j-api-2.16.0.jar" type="code">
+	<library id="log4j-api" path="../core/lib/log4j-api-2.17.0.jar" type="code">
 		<export prefix="*"/>
 	</library>
 
-	<library id="log4j-core" path="../core/lib/log4j-core-2.16.0.jar" type="code">
+	<library id="log4j-core" path="../core/lib/log4j-core-2.17.0.jar" type="code">
 		<export prefix="*"/>
 	</library>
 

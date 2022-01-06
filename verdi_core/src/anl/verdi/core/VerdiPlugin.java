@@ -122,7 +122,7 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 				verdi.setSkipSplash(batchmode);
 			}
 
-			verdi.setSkipSplash(true);
+			//verdi.setSkipSplash(true);
 			if (args.length > 0 && (args[0].toLowerCase().startsWith("-help") || args[0].toLowerCase().startsWith("-version")) ) {
 				verdi.setSkipSplash(true);   //NOTE: just to skip the splash window if not running in real batch mode
 			}
