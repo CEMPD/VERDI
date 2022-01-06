@@ -1,10 +1,10 @@
 Saving dmg file to application directory
 
-1. download verdi_2.1.1.dmg and save to your desktop 
+1. download verdi_2.1.3.dmg and save to your desktop 
 2. double-click the .dmg file to open it up.  Another new icon with a name similar to the .dmg file will appear on your desktop.
 3. If a new Finder window doesn't automatically appear, double click on the new icon.  A finder window will appear.  
 4. Find the application directory in the finder window
-5. Drag and drop the verdi_2.1.1.dmg icon into the application directory 
+5. Drag and drop the verdi_2.1.3.dmg icon into the application directory 
 
 Add your new application to the Dock
 Open up a new Finder window.
@@ -19,7 +19,7 @@ For most of the latest Mac versions, one can skip step 6 and go to step 7.
    
    Simply double click the downloaded .dmg file and copy the .jar files to your $JRE_HOME/lib/ext directory. 
 
-7. Edit verdi_2.1.1/verdi.command
+7. Edit verdi_2.1.3/verdi.command
    change path for VERDI_HOME variable to reflect where verdi has been installed,
    change path for JAVA variable to reflect where the java executable has been installed (default JAVA path should work for most Mac platforms).
 
