@@ -1,6 +1,8 @@
 package anl.verdi.core;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -17,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import anl.verdi.util.Tools;
+import anl.verdi.util.VersionInfo;
 
 public class SplashPanel extends JPanel {
 
@@ -38,7 +41,10 @@ public class SplashPanel extends JPanel {
 	File imageInputFile = new File(pathName);
 	try {
 		BufferedImage aBufferedImage = ImageIO.read(imageInputFile);
-		g2d.drawImage(aBufferedImage, null, 0, 0);
+		g2d.drawImage(aBufferedImage, null, 0, 0);		
+		g2d.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 28));
+		g2d.setColor(new Color(Integer.parseInt("d52c16", 16)));
+		g2d.drawChars(VersionInfo.getVersion().toCharArray(), 0,  VersionInfo.getVersion().length(), 310, 75);
 	} catch (IOException e) {
 		System.err.println("Failure reading " + pathName);
 		e.printStackTrace();

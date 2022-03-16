@@ -39,7 +39,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/velocity-1.7.jar" sourcepath="lib_src/velocity-1.7.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xstream-1.4.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2-api-2.16.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2-api-2.17.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-io-2.4.jar" sourcepath="lib_src/commons-io-2.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/unit-api-0.6.1.jar" sourcepath="lib_src/unitsofmeasurement.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.uomo.core_0.7.0.201404240011.jar"/>
@@ -64,8 +64,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.osgi-3.9.1.v20130814-1242.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j-api-2.16.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j-core-2.16.0.jar" sourcepath="/verdi_bootstrap/lib_src/log4j-core-2.16.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-api-2.17.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-core-2.17.0.jar" sourcepath="/verdi_bootstrap/lib_src/log4j-core-2.17.0-sources.jar"/>
 	<classpathentry kind="lib" path="lib/clibwrapper_jiio-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jfreechart-1.0.19.jar" sourcepath="lib_src/jfreechart-1.0.19-sources.zip"/>
 	<classpathentry kind="lib" path="lib/netcdfAll-4.5.5-SNAPSHOT.jar" sourcepath="lib_src/thredds_4.5.5.zip"/>
