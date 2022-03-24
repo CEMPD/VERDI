@@ -1,8 +1,15 @@
 -----------------------------
-RELEASE NOTES FOR VERDI 2.1.3
+RELEASE NOTES FOR VERDI 2.1.4
 -----------------------------
 
 **REPLACE ALL PRIOR** versions of VERDI with this patched release version.
+
+*Updated OpenJDK to version 17.0.2 to fix security vulnerability: https://openjdk.java.net/groups/vulnerability/advisories/2021-10-19
+
+
+-----------------------------
+RELEASE NOTES FOR VERDI 2.1.3
+-----------------------------
 
 *Updated VERDI to log4j 2.17.1 to fix security vulnerability: https://logging.apache.org/log4j/2.x/index.html
 
@@ -10,8 +17,6 @@ RELEASE NOTES FOR VERDI 2.1.3
 -----------------------------
 RELEASE NOTES FOR VERDI 2.1.2
 -----------------------------
-
-**REPLACE ALL PRIOR** versions of VERDI with this patched release version.
 
 *Updated VERDI to log4j 2.17 to fix security vulnerability: https://logging.apache.org/log4j/2.x/index.html
 
