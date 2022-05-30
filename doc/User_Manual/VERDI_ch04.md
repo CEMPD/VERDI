@@ -34,7 +34,9 @@ All other locations are specified relative to the VERDI_HOME or the JAVADIR, so 
 
 ### Linux and Other Non-Windows JRE Supported System Configurations
 
-To start VERDI from Linux and other non-Windows JRE Supported System Configurations, find the directory where VERDI was installed; then run the verdi.sh script. On a Mac go to the /Applications/verdi_2.1 directory and run the verdi.command script. If you have set up the path environment variable on your .cshrc or .bash_profile or set up an alias to specify the full path, then you can run VERDI from any directory.
+To start VERDI from Linux and other non-Windows JRE Supported System Configurations, find the directory where VERDI was installed; then run the verdi.sh script with *sh verdi.sh* command. 
+
+On a Mac go to the /Applications/verdi_2.1 directory and run the verdi.command script. If you have set up the path environment variable on your .cshrc or .bash_profile or set up an alias to specify the full path, then you can run VERDI from any directory.
 
 Main Window
 ------------
@@ -78,6 +80,6 @@ You can also change the amount of the entire VERDI window that is devoted to the
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch03.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch05.md)<br>
-VERDI User Manual (c) 2021<br>
+VERDI User Manual (c) 2022<br>
 
 <!-- END COMMENT -->

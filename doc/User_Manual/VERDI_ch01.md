@@ -401,6 +401,6 @@ As stated in Schwede et al. (2007),[1] “VERDI is intended to be a community-ba
 <!-- BEGIN COMMENT -->
 
 [Home](README.md) - [Next Chapter >>](VERDI_ch02.md)<br>
-VERDI User Manual (c) 2021<br>
+VERDI User Manual (c) 2022<br>
 
 <!-- END COMMENT -->

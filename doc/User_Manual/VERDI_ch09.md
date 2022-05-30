@@ -56,7 +56,7 @@ NOTE: You must check the appropriate boxes to have your selected ranges take eff
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch08.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch10.md)<br>
-VERDI User Manual (c) 2021<br>
+VERDI User Manual (c) 2022<br>
 
 <!-- END COMMENT -->
 
