@@ -55,9 +55,12 @@ Note: Currently, the syntax for the command line script is slightly different th
 Example Command Line Script for Windows Users
 ---------------------------------------------
 
-Edit the run.bat script in the VERDI_2.1 directory by right clicking on the file and selecting edit.
+Edit the run.bat script in the VERDI_2.1.x directory by right clicking on the file and selecting edit.
 
+Add `%1` as pictured below, then Save.
+![%1 Edit](./media/image105.png){#fig:Figure101}
 
+Example Plot
 ![8hO3 Daily Max Plot](./media/image096.png){#fig:Figure99}
 
 
@@ -192,6 +195,6 @@ Script commands that can be used for command line scripting (listed in alphabeti
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch17.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch19.md)<br>
-VERDI User Manual (c) 2021<br>
+VERDI User Manual (c) 2022<br>
 
 <!-- END COMMENT -->
