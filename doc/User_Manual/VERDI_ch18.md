@@ -70,7 +70,7 @@ Enter the following in the Run command: cmd
 
 When a command line window opens do the following:
 
-cd C:\\Program Files\\VERDI_2.1\\
+cd C:\\Program Files\\VERDI_2.1.4\\
 
 run.bat "-f C:\\VERDI\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX -s O3[1] -gtype tile"
 
@@ -168,9 +168,9 @@ Script commands that can be used for command line scripting (listed in alphabeti
 
 **[-system "&lt;system command&gt;"]** sends the specified command to the operating system’s command line.
 
-**[-tfinal &lt;final time step&gt;]** sets the last time step for each formula’s time-step range to the specified step number, where the first step number is denoted by 0.
+**[-tfinal &lt;final time step&gt;]** sets the last time step for each formula’s time-step range to the specified step number, where the first step number is denoted by 1.
 
-**[-tinit &lt;initial time step&gt;]** sets the first time step for each formula’s time-step range to the specified step number, where the first step number is denoted by 0.
+**[-tinit &lt;initial time step&gt;]** sets the first time step for each formula’s time-step range to the specified step number, where the first step number is denoted by 1.
 
 **[-titleFont &lt;fontSize&gt;]** allows you to control the font size of the title of a plot.
 
