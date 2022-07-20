@@ -79,7 +79,7 @@ public class AboutDialog extends JDialog {
 				{
 
 					//---- xHeader1 ----
-					xHeader1.setTitle("Visual Environment For Rich Data Interpretation (VERDI)");
+					xHeader1.setTitle("Visualization Environment For Rich Data Interpretation (VERDI)");
 					xHeader1.setDescription("Version 1.0 06062007\n");
 					scrollPane1.setViewportView(xHeader1);
 				}
