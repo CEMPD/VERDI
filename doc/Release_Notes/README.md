@@ -6,6 +6,11 @@ RELEASE NOTES FOR VERDI 2.1.4
 
 *Updated OpenJDK to version 17.0.2 to fix security vulnerability: https://openjdk.java.net/groups/vulnerability/advisories/2021-10-19
 
+The following issues were fixed.
+    * Ability to display 3-D contour plot (#184, #304)
+    * Ability to display “zgrid” tile plot for MPAS dataset (#257)
+    * Allow user to modify scatter plot dot size (#260)
+    * Allow animate plot to be exported as .mp4 movie format (#270)
 
 -----------------------------
 RELEASE NOTES FOR VERDI 2.1.3
