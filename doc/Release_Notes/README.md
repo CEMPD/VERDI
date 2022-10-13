@@ -16,6 +16,8 @@ The following issues were fixed.
 
 * Allow animate plot to be exported as .mp4 movie format (#270)
 
+*  Fix Tile Plot Legend Placement (#307)
+
 -----------------------------
 RELEASE NOTES FOR VERDI 2.1.3
 -----------------------------
