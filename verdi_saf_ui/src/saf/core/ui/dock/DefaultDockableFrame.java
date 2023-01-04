@@ -96,7 +96,7 @@ public class DefaultDockableFrame implements DockableFrame {
    *
    * @return the wrapped DefaultCDockable.
    */
-  protected DefaultCDockable getDockable() {
+  public DefaultCDockable getDockable() {
     return dockable;
   }
 
@@ -132,8 +132,12 @@ public class DefaultDockableFrame implements DockableFrame {
 			  if (parent != null && parent instanceof StackDockComponent) {
 				  int index = ((StackDockComponent)parent).getSelectedIndex();
 				  try {
-				  Dockable selected = ((StackDockComponent)parent).getDockableAt(index);
-				  if (selected instanceof DefaultCommonDockable) {
+				  Dockable selected = null;
+				  try {
+				  selected = ((StackDockComponent)parent).getDockableAt(index);
+				  } catch (Throwable t) {
+				  }
+				  if (selected != null && selected instanceof DefaultCommonDockable) {
 					  DefaultCDockable internal = (DefaultCDockable) ((DefaultCommonDockable)selected).getDockable();
 					  hidden = !dockable.equals(internal);
 				  } } catch (ArrayIndexOutOfBoundsException t) {

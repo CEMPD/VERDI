@@ -637,7 +637,7 @@ public class TilePlot {
 			graphics.setColor(sColor2);
 			FontMetrics sMetrx2 = graphics.getFontMetrics(sFont2);
 			int xsTitle = xCenter - sMetrx2.stringWidth(sTitle2) / 2;
-			int title2Offset = xsTitle + sMetrx2.stringWidth(sTitle2);
+			int title2Offset = sMetrx2.stringWidth(sTitle2);
 			if (title2Offset > titleOffset)
 				titleOffset = title2Offset;
 			graphics.drawString(sTitle2, xsTitle, yTitle + space * 2 + sFont2.getSize() / 2);

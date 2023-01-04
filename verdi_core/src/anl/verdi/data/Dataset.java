@@ -136,5 +136,10 @@ public interface Dataset {
 	public int getNetcdfCovn();
 	
 	public void setNetcdfConv(int conv);
+	
+	/**
+	 * Returns the value used to indicate a missing reading
+	 */
+	public Double getMissingDataMarker(Variable variable);
 
 }

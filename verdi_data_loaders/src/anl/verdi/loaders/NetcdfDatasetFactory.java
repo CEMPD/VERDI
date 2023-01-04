@@ -5,10 +5,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -17,7 +19,10 @@ import org.jfree.util.Log;
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.Variable;
+import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dataset.VariableEnhanced;
 import ucar.nc2.dataset.conv.COARDSConvention;
 import ucar.nc2.dataset.conv.M3IOConvention;
 import ucar.nc2.dataset.conv.MPASConvention;
@@ -287,9 +292,11 @@ public class NetcdfDatasetFactory {
 		List<Dataset> sets = new ArrayList<Dataset>();
 		// we need to maintain the order in which these are
 		// created so we need the linked hashmap.
+		Set<String> gridVars = new HashSet<String>();
+		GridCoordSystem system = null;
 		Map<GridCoordSystem, List<GridDatatype>> map = new LinkedHashMap<GridCoordSystem, List<GridDatatype>>();
 		for (GridDatatype grid : (List<GridDatatype>) gridDataset.getGrids()) {
-			GridCoordSystem system = grid.getCoordinateSystem();
+			system = grid.getCoordinateSystem();
 			
 			List<GridDatatype> list = map.get(system);
 			if (list == null) {
@@ -297,6 +304,26 @@ public class NetcdfDatasetFactory {
 				map.put(system, list);
 			}
 			list.add(grid);
+			gridVars.add(grid.getVariable().getFullName());
+			//System.out.println("Got grid variable " + grid.getVariable().getFullName());
+		}
+		NetcdfDataset ncd = gridDataset.getNetcdfDataset();
+		List<Variable> vars = ncd.getVariables();
+		Map<String, List<VariableEnhanced>> ncdVarMap = new LinkedHashMap<String, List<VariableEnhanced>>();
+		for (Variable rawVar : vars) {
+			if (!(rawVar instanceof VariableEnhanced))
+				continue;
+			VariableEnhanced var = (VariableEnhanced)rawVar;
+			//System.out.println("Got ncd var " + var.getFullName() + ", issGrid: " + gridVars.contains(var.getFullName()) + " enhanced: " + (var instanceof VariableEnhanced));			
+			if (!gridVars.contains(var.getFullName())) {
+				String dimString = rawVar.getDimensionsString();
+				List<VariableEnhanced> list = ncdVarMap.get(dimString);
+				if (list == null) {
+					list = new ArrayList<VariableEnhanced>();
+					ncdVarMap.put(dimString,  list);
+				}
+				list.add(var);
+			}
 		}
 //		if ( 1==2 ) {
 //			for ( GridCoordSystem system : map.keySet()) {
@@ -308,14 +335,28 @@ public class NetcdfDatasetFactory {
 //			}
 //			
 //		}
-		if (map.values().size() == 1) {
+		int index = 0;
+		if (map.values().size() == 1 && ncdVarMap.size() == 0) {
 			sets.add(new GridNetcdfDataset(url, map.values().iterator().next(), gridDataset));
+		} else if (map.values().size() == 0 && ncdVarMap.size() == 1) {
+			if (system != null && ncdVarMap.get(0).get(0).getDimensions().toString().indexOf("x") > -1) {
+				sets.add(new GridNetcdfDataset(url, gridDataset, ncdVarMap.values().iterator().next(), system));
+			}
 		} else {
-			int index = 1;
+			index = 1;
 			for (List<GridDatatype> grids : map.values()) {
 				GridNetcdfDataset dataset = new GridNetcdfDataset(url, grids, gridDataset, index++);
 				dataset.setNetcdfConv(netcdfConv);
 				sets.add(dataset);
+			}
+			for (List<VariableEnhanced> varList : ncdVarMap.values()) {
+				//System.out.println("Dim " + varList.get(0).getDimensions());
+				if (system != null && varList.get(0).getDimensions().toString().indexOf("x") > -1) {
+					GridNetcdfDataset dataset = new GridNetcdfDataset(url, gridDataset, varList, index++, system);				
+					dataset.setNetcdfConv(netcdfConv);
+					sets.add(dataset);
+				}
+				
 			}
 		}
 		

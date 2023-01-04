@@ -34,6 +34,7 @@ import anl.verdi.plot.color.PavePaletteCreator;
 import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.config.VertCrossPlotConfiguration;
+import anl.verdi.plot.gui.AbstractPlotPanel;
 import anl.verdi.plot.gui.DefaultPlotCreator;
 import anl.verdi.plot.gui.FastTilePlot;
 import anl.verdi.plot.gui.Plot;
@@ -284,6 +285,9 @@ public class ScriptHandler {
 				//assume that the GIF should be the same dimensions as the plot displayed.
 				try{
 					Plot plot = plotMap.get(curView);
+					if (plot instanceof AbstractPlotPanel) {
+						((AbstractPlotPanel)plot).setScriptSize(800, 600);
+					}
 					PlotAnimator animator = new PlotAnimator((TimeAnimatablePlot)plot);
 					DataFrame frame = plot.getData().get(0);
 					Axes<DataFrameAxis> axes = frame.getAxes();
@@ -294,6 +298,11 @@ public class ScriptHandler {
 
 					animator.start(axes.getTimeAxis().getOrigin(), 
 							axes.getTimeAxis().getExtent()-1, null, new File(args.get(1)), null);
+					try {
+						while (animator.isRunning()) {
+							Thread.sleep(1000);
+						}
+					} catch (InterruptedException e) {}
 
 				}catch (NullPointerException e){
 					Logger.error("Error in ScriptHandler.dataMap.put 'ANIMATEDGIF'", e);
@@ -598,6 +607,7 @@ public class ScriptHandler {
 					if (viewList.size() == 0) throw new IllegalArgumentException("Please check your argument sequence (like -g is before -f and/or -s).");
 					curView = viewList.get(viewList.size() - 1);
 					plotMap.put(curView, plot);
+					applyMapLines(plot);
 
 					//only reset the configuration if we are not using a configuration file
 					if(configFile == null)
@@ -1521,37 +1531,44 @@ public class ScriptHandler {
 				}
 			}
 
-
-			//now that all the work has been done to create plots, let's see if we can apply some map layers to these plots
-			//NOTE:  the map layers are only applicable to the areal interp and fast tile plots!
-
-			for (Map.Entry<String, Plot> entry : plotMap.entrySet())
-			{
+			for (Map.Entry<String, Plot> entry : plotMap.entrySet()) {
 				Plot plot = entry.getValue();
-				Formula.Type type = plot.getType();
-
-				if (type == Formula.Type.TILE && mapNames.size() > 0) {
-					VerdiBoundaries mapLine = null;
-					try {
-						for (String mapNameFileURL : mapNames) {
-							mapLine = new VerdiBoundaries();
-							mapLine.setFileName(mapNameFileURL);
-							((anl.verdi.plot.gui.FastTilePlot)plot).setLayerMapLine(mapLine);
-						}
-						//suppress all issues (i.e., wrong file path or wrong format)
-//					} catch (FileNotFoundException e) {
-//						Logger.error("File Not Found Exception in ScriptHandler.handleOptions", e);
-//					} catch (IOException e) {
-//						Logger.error("IOException in ScriptHandler.handleOptions", e);
-					} catch(Exception ex)
-					{
-						Logger.error("Exception in ScriptHandler.handleOptions: " + ex.getMessage());
-					}
+				if (plot instanceof AbstractPlotPanel) {
+					((AbstractPlotPanel)plot).setScriptSize(0, 0);
 				}
 			}
 		}
 	}
 
+	//now that all the work has been done to create plots, let's see if we can apply some map layers to these plots
+	//NOTE:  the map layers are only applicable to the areal interp and fast tile plots!
+	private static void applyMapLines(Plot plot) {
+		Formula.Type type = plot.getType();
+
+		
+		if (type == Formula.Type.TILE && mapNames.size() > 0) {
+			VerdiBoundaries mapLine = null;
+			try {
+				for (String mapNameFileURL : mapNames) {
+					mapLine = new VerdiBoundaries();
+					if (!mapLine.setFileName(mapNameFileURL)) {
+						System.exit(1);
+					}
+					((anl.verdi.plot.gui.FastTilePlot)plot).setLayerMapLine(mapLine);
+				}
+				//suppress all issues (i.e., wrong file path or wrong format)
+//			} catch (FileNotFoundException e) {
+//				Logger.error("File Not Found Exception in ScriptHandler.handleOptions", e);
+//			} catch (IOException e) {
+//				Logger.error("IOException in ScriptHandler.handleOptions", e);
+			} catch(Exception ex)
+			{
+				Logger.error("Exception in ScriptHandler.handleOptions: " + ex.getMessage());
+			}
+		}
+		
+	}
+	
 	public static HashMap getCommands(){
 		return dataMap;
 	}

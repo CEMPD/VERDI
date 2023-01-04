@@ -75,6 +75,7 @@ public class Models3ObsDataset extends AbstractDataset {
 		for (ucar.nc2.Variable var : vars) {
 			String name = var.getShortName();	// getName replaced by either getShortName or getFullName (with escapes)
 			Unit unit = VUnits.MISSING_UNIT;
+			//System.err.println("Models3ObsDataset loading " + name);
 			Logger.debug("in Models3ObsDataset.initVariables, unit = " + unit);
 			for (Attribute attribute : (Iterable<Attribute>) var.getAttributes()) {
 				if (attribute.getShortName().equals("units")) {

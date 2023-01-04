@@ -157,14 +157,22 @@ public class TimeConstantAxisPanel extends JPanel {
 		spinnersOn = false;
 		if (constantAxis.getClass().getName().indexOf("MPAS") != -1)
 			displayIncrement = 0;
+		int minI = 0;
+		int maxI = 0;
 		CoordAxis time = frameAxes.getTimeAxis();
-		int minI = (int) (time.getRange().getOrigin() + 1);
-		int maxI = minI + (int) time.getRange().getExtent() - 1;
+		if (time != null) {
+			minI = (int) (time.getRange().getOrigin() + 1);
+			maxI = minI + (int) time.getRange().getExtent() - 1;
+		}
 		SpinnerNumberModel model = (SpinnerNumberModel) timeSpinner.getModel();
 		model.setMinimum(minI);
 		model.setMaximum(maxI);
 		model.setValue(new Integer(timeStep + 1));
 		GregorianCalendar date = frameAxes.getDate(timeStep);
+		if (date == null) {
+			date = (GregorianCalendar)GregorianCalendar.getInstance();
+			timeSpinner.setEnabled(false);
+		}
 		Logger.debug("in TimeConstantAxisPanel init function, computed GregorianCalendar date" );
 		timeLabel.setText(Utilities.formatShortDate(date));
 

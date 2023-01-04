@@ -33,6 +33,7 @@ public class GridNetcdfReader extends AbstractDataReader<GridNetcdfDataset> {
 	}
 
 	private void createDefaultAxes(DataFrameBuilder builder, GridNetcdfDataset set, ucar.nc2.Variable variableDS) {
+		//System.out.println("VariableDS Dimension String: " + variableDS.getDimensionsString());
 		for (CoordAxis axis : set.getCoordAxes().getAxes()) {
 			int index = variableDS.findDimensionIndex(set.getNetDataset().
 							findCoordinateAxis(axis.getName()).getDimension(0).getShortName());	// .getName() is deprecated

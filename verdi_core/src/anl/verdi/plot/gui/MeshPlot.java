@@ -34,6 +34,8 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
@@ -112,6 +114,7 @@ import org.geotools.swing.JMapPane;
 import org.geotools.swing.data.JFileDataStoreChooser;
 import org.jfree.data.Range;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.unitsofmeasurement.unit.Unit;
 
 import saf.core.ui.event.DockableFrameEvent;
 import ucar.ma2.ArrayLogFactory;
@@ -173,7 +176,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 public class MeshPlot extends AbstractPlotPanel implements ActionListener, Printable,
 		ChangeListener, MouseListener, MinMaxLevelListener,
-		TimeAnimatablePlot, Plot, PopupMenuListener {
+		TimeAnimatablePlot, Plot, PopupMenuListener, FocusListener {
 	
 	//private final MapContent myMapContent = new MapContent();
 	static final Logger Logger = LogManager.getLogger(MeshPlot.class.getName());
@@ -312,6 +315,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 	private final String variable; // "PM25".
 	protected String units; // "ug/m3".
+	protected Unit unitVar;
 	private String unitString; // "ug/m3".
 
 	private boolean withHucs = false; // Draw watersheds on map?
@@ -347,6 +351,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private String customPercentile = null;
 	private int preStatIndex = -1;
 	private JTextField threshold;
+	double thresholdValue = 0;
 	private boolean recomputeStatistics = false;
 
 	private final int DRAW_NONE = 0;
@@ -891,7 +896,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						if (obsAnnotations != null) {
 							for (ObsAnnotation ann : obsAnnotations)
 								ann.draw(offScreenGraphics, xOffset, yOffset, width, height, 
-										legendLevels, legendColors, gridCRS, domain, gridBounds);
+										legendLevels, legendColors, gridCRS, domain, gridBounds, unitVar);
 						}
 						
 						if (vectAnnotation != null) {
@@ -911,7 +916,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 										w = bufferedWidth;
 										h = bufferedHeight;
 									}
-									BufferedImage copiedImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, w, h);
+									BufferedImage copiedImage = null;
+									if (w > 0 && h > 0)
+										copiedImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, w, h);
 									bImage = copiedImage;
 									if (animationHandler != null) {
 										ActionEvent e = new ActionEvent(copiedImage, this.hashCode(), "");
@@ -1720,6 +1727,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			this.timestep = timestep;
 			copySubsetLayerData(this.log);
 			forceDraw();
+			if (!obsData.isEmpty())
+				addObservationData(app.getDataManager(), showObsLegend);
 			drawOverLays();
 		}
 	}
@@ -2396,6 +2405,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		variable = dataFrameVariable.getName();
 		Logger.debug("dataFrameVariable = " + dataFrameVariable);
 		Logger.debug("dataFrameVariable name = " + variable);
+		unitVar = dataFrameVariable.getUnit();
 		units = dataFrameVariable.getUnit().toString();
 		Logger.debug("units of dataFrameVariable = " + units);
 		if ( units==null || units.trim().equals("")) {
@@ -2673,6 +2683,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		statisticsPanel.add( new JLabel( ">" ) );
 		threshold = new JTextField( "0.12" );
 		threshold.addActionListener( this );
+		threshold.addFocusListener(this);
 		statisticsPanel.add( threshold );
 
 		JPanel animate = new JPanel();
@@ -2780,7 +2791,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			}
 		}
 
-		final double threshold = Double.parseDouble( this.threshold.getText() );
+		thresholdValue = Double.parseDouble( this.threshold.getText() );
 		final double hoursPerTimestep = 1.0;
 		
 		try {
@@ -2788,7 +2799,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			if (customPercentile != null)
 				percentile = Double.parseDouble(customPercentile);
 			MeshCellStatistics.computeStatistics( layerData,
-					threshold, hoursPerTimestep,
+					thresholdValue, hoursPerTimestep,
 					statisticsData, this.statisticsMenu.getSelectedIndex()-1, percentile );
 			//GridCellStatistics.computeStatistics( layerDataLog,
 			//		threshold, hoursPerTimestep,
@@ -2972,7 +2983,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					statMinMaxCache[LEVELS_CACHE_MAX_LAT] = cellsToRender[cell].getLat();
 				}
 			}
-			System.err.println("MeshPlot log " + log + " stat " + statistic + " min " + statMinMaxCache[LEVELS_CACHE_MIN_VALUE] + " Max " + statMinMaxCache[LEVELS_CACHE_MAX_VALUE]);
+			//System.err.println("MeshPlot log " + log + " stat " + statistic + " min " + statMinMaxCache[LEVELS_CACHE_MIN_VALUE] + " Max " + statMinMaxCache[LEVELS_CACHE_MAX_VALUE]);
 		}	
 	}
 	
@@ -3940,6 +3951,16 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		return getBufferedImage(null, width, height);
 	}
 	
+	public void setScriptSize(int width, int height) {
+		if (width == 0 || height == 0) {
+			rescaleBuffer = false;
+			return;
+		}
+		rescaleBuffer = true;
+		bufferedWidth = width;
+		bufferedHeight = height;
+	}
+	
 	public BufferedImage getBufferedImage(Graphics2D g, int width, int height) {
 		exportGraphics = g;
 		bImage = null;
@@ -4839,12 +4860,19 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			if (value < DataUtilities.BADVAL3 || value > DataUtilities.NC_FILL_FLOAT)
 				value = DataUtilities.BADVAL3;
 			if (cell != null) {
+				String unitLabel = unitString;
+				final int statisticsSelection = statisticsMenu.getSelectedIndex();
+				if (statisticsSelection != 0 && GridCellStatistics.units( statisticsSelection - 1 ) != null)
+					unitLabel = " " + GridCellStatistics.units( statisticsSelection - 1 );
 				//TODO - Add the cell.getId() line for testing
 				//ret += " " + cell.getId() + " ";
 				ret += " " + cell.getElevation(layerAxisName, layer, timestep) + ") ";
 				if (renderWind)
 					ret += valueFormat.format(localCell.windVelocity) + "m/s" + " " + valueFormat.format(localCell.windAngle) + "\u00B0 ";
-				ret += variable + " " + valueFormat.format(value) + unitString;
+				String valueString = valueFormat.format(value) + unitLabel;
+				if (unitLabel.trim().equals("#"))
+					valueString = unitLabel + " " + valueFormat.format(value);
+				ret += variable + " " + valueString;
 				//ret += ") " + cell.getId() + " " + " " + valueFormat.format(cell.getValue()) + " c " + coordFormat.format(cell.lon) + "," + coordFormat.format(cell.lat) + " " + point.x + "," + point.y;
 
 			}
@@ -5116,9 +5144,20 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 		try {
 			for (OverlayObject obs : obsData) {
-				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
-				ObsAnnotation ann = new ObsAnnotation(eval, axs, initDate, layer, obs);
-				ann.update(timestep);
+				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable(), timestepSize);
+				ObsAnnotation ann = null;
+				try {
+					ann = new ObsAnnotation(eval, axs, initDate, layer, obs);
+					ann.update(timestep);
+				} catch (IllegalArgumentException e) {
+					GregorianCalendar currentDate = getDataFrame().getAxes().getDate(timestep);
+					ann = new ObsAnnotation(eval, axs, currentDate, layer, obs, false);
+					GregorianCalendar endDate = getDataFrame().getAxes().getDate(lastTimestep);
+					if (eval.dataWithin(initDate.getTime(), endDate.getTime()))
+						ann.update(currentDate.getTime());
+					else
+						throw e;
+				}
 				ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
 				obsAnnotations.add(ann);
 				Dataset ds = eval.getVariable().getDataset();
@@ -5159,8 +5198,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private void drawOverLays() {
 		try {
 			if (obsAnnotations != null)  {
+				java.util.Date currentDate = getDataFrame().getAxes().getDate(timestep).getTime();
 				for (ObsAnnotation ann : obsAnnotations) 
-					ann.update(timestep);
+					ann.update(currentDate);
 			}
 			
 			if (vectAnnotation != null) {
@@ -6361,6 +6401,31 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	int gridNum = -1;
 	
 	MeshDataReader renderReader = null;
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getSource() == threshold) {
+			double newValue = Double.parseDouble( this.threshold.getText() );
+			System.err.println("Threshold lost focus old " + thresholdValue + " new " + newValue);
+			if (newValue != thresholdValue) {
+				//ActionEvent evnt = new ActionEvent(threshold, 1, null);
+				//this.actionPerformed(evnt);
+				// this.preStatIndex = -1;
+				//updateLegendLevels();
+				//thresholdValue = newValue;
+				//recomputeStatistics = true;
+				//draw();
+			}
+		}
+		
+	}
 
 
 }

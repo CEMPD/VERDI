@@ -2,6 +2,7 @@ package anl.verdi.data;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.unitsofmeasurement.unit.Unit;
 
 import ucar.ma2.Array;
 import ucar.ma2.IndexIterator;
+import anl.verdi.plot.data.TextDataset;
 import anl.verdi.util.VUnits;
 
 /**
@@ -24,6 +26,7 @@ public class ObsEvaluator {
 	static final Logger Logger = LogManager.getLogger(ObsEvaluator.class.getName());
 	private DataManager manager;
 	private Variable var, lat, lon;
+	long stepSize;
 
 	private static class ObsIterator implements Iterator<ObsData>, Iterable<ObsData> {
 
@@ -62,12 +65,33 @@ public class ObsEvaluator {
 		}
 	}
 
-	public ObsEvaluator(DataManager manager, Variable var) {
+	public ObsEvaluator(DataManager manager, Variable var, long stepSize) {
 		this.manager = manager;
 		this.var = var;
+		this.stepSize = stepSize;
 		Unit deg = VUnits.createUnit("degrees");
-		lat = new DefaultVariable("LAT", "LAT", deg, var.getDataset());
-		lon = new DefaultVariable("LON", "LON", deg, var.getDataset());
+		String latName = "LAT";
+		String lonName = "LON";
+		
+		lat = var.getDataset().getVariable(latName);
+		if (lat == null) {
+			latName = "Latitude";
+			lonName = "Longitude";
+		}
+		lat = var.getDataset().getVariable(latName); //Models3 hides this - use if Latitude / Longitude not found.  If this gets complicated expose hidden variables and search there too.
+		if (lat == null) {
+			Dataset ds = var.getDataset();
+			if (ds instanceof TextDataset) {
+				if (!((TextDataset)ds).hasColumn(latName)) {
+					latName = "LAT";
+					lonName = "LON";						
+				}
+			}
+		
+		}
+
+		lat = new DefaultVariable(latName, latName, deg, var.getDataset());
+		lon = new DefaultVariable(lonName, lonName, deg, var.getDataset());
 	}
 
 	public List<ObsData> evaluate(int timestep) {
@@ -76,11 +100,26 @@ public class ObsEvaluator {
 		return getObsDataList(dataset, reader, timestep);
 	}
 	
+	public boolean dataWithin(Date startDate, Date endDate) {
+		TimeCoordAxis timeAxis = (TimeCoordAxis)var.getDataset().getCoordAxes().getTimeAxis();
+		Range range = timeAxis.getRange();
+		Date obsStart = timeAxis.getDate((int)range.getOrigin()).getTime();
+		Date obsEnd = timeAxis.getDate((int)range.getExtent() - 1).getTime();
+		return  ( (obsStart.after(startDate) && obsStart.before(endDate)) ||
+				obsEnd.after(startDate) && obsEnd.before(endDate));
+	}
+	
 	public List<ObsData> evaluate(Date date) {
 		Dataset dataset = var.getDataset();
 		DataReader reader = manager.getDataReader(dataset);
 		TimeCoordAxis timeAxis = (TimeCoordAxis)dataset.getCoordAxes().getTimeAxis();
 		int timestep = timeAxis.getTimeStep(date);
+		if (timestep > -1) {
+			Date obsDate = timeAxis.getDate(timestep).getTime();
+			if (date.getTime() + stepSize < obsDate.getTime())
+				timestep = Axes.TIME_STEP_NOT_FOUND;
+		}
+			
 
 		return getObsDataList(dataset, reader, timestep);
 	}	
@@ -105,19 +144,34 @@ public class ObsEvaluator {
 		}
 
 		DataFrame obsFrame = reader.getValues(dataset, range, var);
-		if (obsFrame == null)
-			throw new IllegalArgumentException("OBS data does not contain readings for the times within the data file.");		
+		if (obsFrame == null) {
+			for (CoordAxis axis : dataset.getCoordAxes().getAxes()) {	
+				if (axis.getAxisType() == AxisType.TIME ) {
+					TimeCoordAxis timeAxis = (TimeCoordAxis)dataset.getCoordAxes().getTimeAxis();
+					long lower = timeAxis.getRange().getLowerBound();
+					long upper = timeAxis.getRange().getUpperBound();
+					GregorianCalendar gc1 = timeAxis.getDate((int)lower);
+					GregorianCalendar gc2 = timeAxis.getDate((int)upper);
+					if (gc1 != null && gc2 != null)
+						throw new IllegalArgumentException("OBS data does not contain readings for the times within the data file.  Observational data is from " + gc1.getTime() + " to " + gc2.getTime());
+				}
+			}
+			throw new IllegalArgumentException("OBS data does not contain readings for the times within the data file.");
+		}
 		DataFrame latFrame = reader.getValues(dataset, range, lat);
 		DataFrame lonFrame = reader.getValues(dataset, range, lon);
 		if (latFrame == null || lonFrame == null)
 			
-			throw new IllegalArgumentException("OBS data does not cover the are of the data file.");
+			throw new IllegalArgumentException("OBS data does not cover the area of the data file.");
 		Iterable<ObsData> iter = new ObsIterator(latFrame.getArray(), lonFrame.getArray(),
 						obsFrame.getArray(), var.getUnit());
 		List<ObsData> list = new ArrayList<ObsData>();
 		
-		for (ObsData data : iter)
-			list.add(data);
+		Double invalidValue = dataset.getMissingDataMarker(var);
+		for (ObsData data : iter) {
+			if (invalidValue == null || !invalidValue.equals(data.getValue()))
+				list.add(data);
+		}
 
 		return list;
 	}

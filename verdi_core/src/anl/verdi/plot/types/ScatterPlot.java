@@ -12,6 +12,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -72,6 +73,7 @@ import anl.verdi.plot.config.PlotConfiguration;
 import anl.verdi.plot.config.PlotConfigurationIO;
 import anl.verdi.plot.config.SaveConfiguration;
 import anl.verdi.plot.config.SaveTheme;
+import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.config.TimeSeriesPlotConfiguration;
 import anl.verdi.plot.config.UnitsConfigurator;
 import anl.verdi.plot.data.IMPASDataset;
@@ -548,6 +550,16 @@ public class ScatterPlot extends AbstractPlot implements MinMaxLevelListener {
 		if (color != null)
 	//		renderer.setFillPaint(color);	// 2014 deprecated; changed to setSeriesFillPaint for series=0
 			renderer.setSeriesFillPaint(0, color);
+		
+		Object sz = config.getString(TilePlotConfiguration.SCATTER_SHAPE_SIZE);
+		Object seriesShape = renderer.getSeriesShape(0);
+		if (sz != null && seriesShape != null && seriesShape instanceof Ellipse2D) {
+			double size = Double.parseDouble(sz.toString());
+			Ellipse2D shape = (Ellipse2D)seriesShape;
+			Rectangle2D frame = shape.getFrame();
+			shape.setFrame(new Rectangle2D.Double(frame.getX(), frame.getY(), size, size));
+		}
+		
 
 		this.config = config;
 	}
@@ -571,6 +583,9 @@ public class ScatterPlot extends AbstractPlot implements MinMaxLevelListener {
 		config.putObject(PlotConfiguration.FOOTER1_SHOW_LINE, true);
 		config.putObject(PlotConfiguration.FOOTER2_SHOW_LINE, true);
 		config.putObject(PlotConfiguration.OBS_SHOW_LEGEND, false);
+		
+		if (this.config != null)
+			config.putObject(TilePlotConfiguration.SCATTER_SHAPE_SIZE, this.config.getObject(TilePlotConfiguration.SCATTER_SHAPE_SIZE));
 
 		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) ((XYPlot) chart
 				.getPlot()).getRenderer();

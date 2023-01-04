@@ -33,6 +33,7 @@ import org.jfree.data.Range;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.unitsofmeasurement.unit.Unit;
 
 import anl.verdi.area.AreaTilePlot;
 import anl.verdi.area.MapPolygon;
@@ -77,6 +78,7 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	Date baseDate = null;
 	int baseTimestep = 0;
 	OverlayObject overlay = null;
+	boolean requireDataMatch = true;;
 
 	public ObsAnnotation(ObsEvaluator eval, Axes<DataFrameAxis> axes,
 			int timeStep, int layer) {
@@ -96,12 +98,19 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 
 	public ObsAnnotation(ObsEvaluator eval, Axes<DataFrameAxis> axes,
 			GregorianCalendar aCalendar, int layer, OverlayObject overlay) {
+		this(eval, axes, aCalendar, layer, overlay, true);
+	}
+
+	public ObsAnnotation(ObsEvaluator eval, Axes<DataFrameAxis> axes,
+			GregorianCalendar aCalendar, int layer, OverlayObject overlay, boolean requireDataMatch) {
 		Logger.debug("in ObsAnnotation constructor using GregorianCalendar");
 		this.eval = eval;
 		this.axes = axes;
 		this.overlay = overlay;
 		baseDate = aCalendar.getTime();
-		update(aCalendar.getTime());
+		this.requireDataMatch = requireDataMatch;
+		if (requireDataMatch)
+			update(aCalendar.getTime());
 	}
 	
 	public void updateDrawingParams(ColorMap cmap) {
@@ -147,8 +156,13 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	}
 
 	public synchronized void update(Date date) {
-		list = eval.evaluate(date);
-		updateList();
+		try {
+			list = eval.evaluate(date);
+			updateList();
+		} catch (IllegalArgumentException e) {
+			if (requireDataMatch)
+				throw e;
+		}
 	}
 
 	private void updateList() {
@@ -297,20 +311,22 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	public synchronized void draw(Graphics graphics, int xOffset, int yOffset, int width,
 			int height, double[] legendLevels, Color[] legendColors,
 			final CoordinateReferenceSystem gridCRS, final double[][] domain,
-			final double[][] gridBounds) {
-		draw(graphics, xOffset, yOffset, width, height, legendLevels, legendColors, gridCRS, domain, gridBounds, null);		
+			final double[][] gridBounds, Unit dataUnit) {
+		draw(graphics, xOffset, yOffset, width, height, legendLevels, legendColors, gridCRS, domain, gridBounds, null, dataUnit);		
 	}
 	
 	public synchronized void draw(Graphics graphics, int xOffset, int yOffset, int width,
 			int height, double[] legendLevels, Color[] legendColors,
 			final CoordinateReferenceSystem gridCRS, final double[][] domain,
-			final double[][] gridBounds, Projection proj) {
+			final double[][] gridBounds, Projection proj, Unit dataUnit) {
 	
 	/*public void draw( TilePlot plot,final double[][] domain, final double[][] gridBounds,
 			final CoordinateReferenceSystem gridCRS, Projection projection, double[] legendLevels,Color[] legendColors, 
 			final Graphics graphics,Object data, MeshDataReader reader, String units,int firstColumn,int firstRow,
 			int xOffset, int yOffset, int width, int height,int currentView, boolean showSelectedOnly ) {*/
 		
+		if (!requireDataMatch && list == null)
+			return;
 		MapContent vMap = new MapContent();
 		//Shape oldclip = graphics.getClip();
 		//graphics.setClip(new Rectangle((int)xOffset, (int)yOffset, (int)width, (int)height));
@@ -324,16 +340,16 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 			
 			//graphics.setColor(Color.BLACK); //TODO - vColor from VerdiBoundaries
 						
-		    FeatureSource source = VerdiShapefileUtil.projectObsData(proj, list, gridCRS);
+		    FeatureSource source = VerdiShapefileUtil.projectObsData(proj, list, gridCRS, dataUnit);
 		    		//VerdiShapefileUtil.projectShapefile(style.getShapePath(), (SimpleFeatureSource)source, projection, PLACEHOLDER_CRS, true);
 		    
 		    //System.err.println("OBSAnnootation: " + source.getClass());
 			//System.out.println(source.getSchema().getCoordinateReferenceSystem());
-			try {
+			/*try {
 				System.out.println(source.getFeatures().features().next());
 			} catch (Exception e) {
 				e.printStackTrace();
-			}
+			}*/
 
 		    //source = Mapper.staticSource;
 			Layer aLayer = new FeatureLayer(source, shapeStyle);

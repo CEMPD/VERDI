@@ -29,6 +29,7 @@ import anl.verdi.data.Dataset;
 import anl.verdi.data.DatasetMetadata;
 import anl.verdi.data.DefaultVariable;
 import anl.verdi.data.Variable;
+import anl.verdi.plot.data.TextDataset;
 import anl.verdi.util.VUnits;
 
 /**
@@ -38,7 +39,7 @@ import anl.verdi.util.VUnits;
  * @author Eric Tatara
  * @version $Revision$ $Date$
  */
-public class CSVDataset extends AbstractDataset {
+public class CSVDataset extends AbstractDataset implements TextDataset {
 	static final Logger Logger = LogManager.getLogger(CSVDataset.class.getName());
 
 	private static Map<ucar.nc2.constants.AxisType, AxisType> types = new HashMap<ucar.nc2.constants.AxisType, AxisType>();
@@ -251,6 +252,10 @@ public class CSVDataset extends AbstractDataset {
 			vars.add(var.getName());
 		}
 		return vars;
+	}
+	
+	public boolean hasColumn(String name) {
+		return name != null && columnNames.contains(name);
 	}
 
 	/**

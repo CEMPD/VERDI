@@ -54,7 +54,10 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.eclipse.uomo.units.AbstractUnit;
 import org.eclipse.uomo.units.SI;
+import org.eclipse.uomo.units.SymbolMap;
 import org.eclipse.uomo.units.impl.BaseUnit;
+import org.eclipse.uomo.units.impl.TransformedUnit;
+import org.eclipse.uomo.units.impl.format.LocalUnitFormatImpl;
 import org.eclipse.uomo.units.impl.system.Imperial;
 import org.eclipse.uomo.units.impl.system.USCustomary;
 //import org.unitsofmeasurement.*;
@@ -105,9 +108,29 @@ public class VUnits {
 		unitMap.put("m3", SI.CUBIC_METRE);
 		unitMap.put("in3", USCustomary.CUBIC_INCH);
 
+		SymbolMap symbols = LocalUnitFormatImpl.getInstance().getSymbolMap();
+		Unit unit = null;
 		// parts per million
-		unitMap.put("PPM", ONE.divide(1000000));
-		unitMap.put("ppm", ONE.divide(1000000));
+		unit = ONE.divide(1000000);
+		symbols.label(unit,  "PPM");
+		unitMap.put("PPM", unit);
+		unit = ONE.divide(1000000);
+		symbols.label(unit, "ppm");
+		unitMap.put("ppm", unit);
+		unitMap.put("ppmV", unit);
+		unitMap.put("ppmv", unit);
+		
+		// parts per billion
+		unit = ONE.divide(1000000000);
+		symbols.label(unit, "PPB");
+		unitMap.put("PPB", unit);
+		unit = ONE.divide(1000000000);
+		symbols.label(unit, "ppb");
+		unitMap.put("ppb", unit);
+		unit = ONE.divide(1000000000);
+		symbols.label(unit, "ppbV");
+		unitMap.put("ppbV", unit);
+		unitMap.put("ppbv", unit);
 		
 		// length
 		unitMap.put("cm", (SI.Prefix.CENTI(SI.METRE)));		// CENTI:	.divide(100)
@@ -222,6 +245,7 @@ public class VUnits {
 
 	private String getName(Unit unit) {
 		if (unit.equals(unitMap.get("PPM"))) return "PPM";
+		else if (unit.equals(unitMap.get("PPB"))) return "PPM";
 		else return unit.toString();
 	}
 

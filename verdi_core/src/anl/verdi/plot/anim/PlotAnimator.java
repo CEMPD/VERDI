@@ -21,9 +21,11 @@ import anl.verdi.plot.gui.AbstractPlotPanel;
 //import simphony.util.messages.MessageCenter;
 import anl.verdi.plot.types.TimeAnimatablePlot;
 import anl.verdi.plot.util.AnimationListener;
+import anl.verdi.plot.util.MP4Creator;
 import anl.verdi.plot.util.MovieMaker;
 import anl.verdi.plot.util.VideoMaker;
 import anl.verdi.plot.util.WriteAnimatedGif;
+import repast.simphony.relogo.ide.dynamics.NetLogoSystemDynamicsParser.file_return;
 
 /**
  * Animates a plot over a series of time ranges.
@@ -37,12 +39,14 @@ public class PlotAnimator {
 	private TimeAnimatablePlot plot;
 	private MovieMaker maker;
 	private VideoMaker videoMaker;
+	private MP4Creator mp4Creator;
 //	private AnimatedGifEncoder gifEncoder;
 	private WriteAnimatedGif writeAnimatedGif;
 	private Timer timer;
 	private List<AnimationListener> listeners = new ArrayList<AnimationListener>();
 	private UpdatePlotAction action;
 	private int width, height;
+	private boolean running = false;
 	
 
 	/**
@@ -91,6 +95,7 @@ public class PlotAnimator {
 	 * @param delay delay between frames in milliseconds
 	 */
 	public void start(int start, int end, int delay) {
+		running = true;
 		//MinMaxLevelListeners animate asynchronously, and must be drawn through callbacks, not through timers.  Also, since
 		//The plot is updated, THEN the image is stored, increase start so the 1st frame isn't duplicated and increase end
 		//so the animator doesn't stop before saving the last frame
@@ -125,7 +130,11 @@ public class PlotAnimator {
 	}
 	
 	public void start(int start, int end, int delay, File movieFile, File animatedGifFile, File aviFile) {
-		if (movieFile != null) maker = new MovieMaker(1, movieFile, FileTypeDescriptor.QUICKTIME);
+		if (movieFile != null && movieFile.getName().toLowerCase().endsWith("mov")) maker = new MovieMaker(1, movieFile, FileTypeDescriptor.QUICKTIME);
+		else if (movieFile != null) {
+			mp4Creator = new MP4Creator();
+			mp4Creator.init(movieFile.getAbsolutePath());
+		}
 		
 		if (animatedGifFile != null) {
 //			gifEncoder = new AnimatedGifEncoder();
@@ -158,11 +167,19 @@ public class PlotAnimator {
 	 */
 	public void stop() {
 		if (action != null) action.stop();
+		if (mp4Creator != null) {
+			mp4Creator.finish();
+			mp4Creator = null;
+		}
 		maker = null;
 //		for (BufferedImage bi : bufferedImages) bi = null;
 		writeAnimatedGif = null;
 //		gifEncoder = null;
 		videoMaker = null;
+	}
+	
+	public boolean isRunning() {
+		return running;
 	}
 
 	// ActionListener that the timer fires to
@@ -183,6 +200,10 @@ public class PlotAnimator {
 			else
 				((AbstractPlotPanel)plot).setAnimationHandler(null);
 			if (maker != null) maker.cleanUp();
+			if (mp4Creator != null) {
+				mp4Creator.finish();
+				mp4Creator = null;
+			}
 			if (writeAnimatedGif != null) {
 //			if (gifEncoder != null) {
 //				gifEncoder.finish();
@@ -196,6 +217,7 @@ public class PlotAnimator {
 			}
 			if (videoMaker != null) videoMaker.cleanUp();
 			fireStopped();
+			running = false;
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -205,7 +227,7 @@ public class PlotAnimator {
 				if (timer != null)
 					plot.updateTimeStep(current++);
 				try {
-					if (maker != null || writeAnimatedGif/*gifEncoder*/ != null || videoMaker != null) {
+					if (maker != null || writeAnimatedGif/*gifEncoder*/ != null || videoMaker != null || mp4Creator != null) {
 						BufferedImage bufferedImage = (BufferedImage)e.getSource();
 						if (maker != null) maker.addImageAsFrame(bufferedImage);
 						if (writeAnimatedGif/*gifEncoder*/ != null) {
@@ -218,6 +240,7 @@ public class PlotAnimator {
 							}
 						}
 						if (videoMaker != null) videoMaker.addImageAsFrame(bufferedImage);
+						if (mp4Creator != null) mp4Creator.addImage(bufferedImage);
 					}
 				} catch (IOException ex) {
 					maker = null;

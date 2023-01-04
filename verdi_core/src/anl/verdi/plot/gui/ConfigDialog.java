@@ -108,7 +108,8 @@ public class ConfigDialog extends JDialog {
 
 	// writes the plot configuration to the PlotConfiguration object (read and used by other parts of VERDI)
 	private void commit() throws Exception {
-		colorMapPanel.rebuild();
+		if (tabbedPanel.indexOfTab("Color Map") != -1)
+			colorMapPanel.rebuild();
 		PlotConfiguration config = new PlotConfiguration();
 		config.putObject(PlotConfiguration.PLOT_TYPE, plot.getType()); //NOTE: to differentiate plot types
 		if (tabbedPanel.indexOfTab("Color Map") != -1) {
@@ -220,6 +221,10 @@ public class ConfigDialog extends JDialog {
 			otherPanel.setSeriesColorEnabled(false);
 		else
 			otherPanel.initSeries(color);
+
+		size = config.getString(TilePlotConfiguration.SCATTER_SHAPE_SIZE);
+		if (size != null)
+			otherPanel.initPlotPoints(Integer.parseInt(size.toString()));
 	}
 
 	private void initLabels(PlotConfiguration config) {

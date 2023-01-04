@@ -11,6 +11,7 @@ import org.jfree.data.xy.XYDataset;
 import anl.verdi.data.Axes;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameIndex;
+import anl.verdi.data.MPASCellAxis;
 import anl.verdi.data.MPASDataFrameIndex;
 
 /**
@@ -42,7 +43,8 @@ public class ScatterXYDataset extends AbstractDataset implements XYDataset {
 			if (frame.getAxes().getZAxis() == null) {
 				if (index instanceof MPASDataFrameIndex) {
 					((MPASDataFrameIndex)index).set(timeStep,  0,  0);
-					xExtent = (int)frame.getAxes().getCellAxis().getRange().getExtent();
+					Object cellAxis = frame.getAxes().getCellAxis().getAxis();
+					xExtent = (int)((MPASCellAxis)frame.getAxes().getCellAxis().getAxis()).getYAxis().getRange().getExtent();
 					yExtent = 1;
 					return;
 				}
@@ -51,15 +53,20 @@ public class ScatterXYDataset extends AbstractDataset implements XYDataset {
 			} else {
 				if (index instanceof MPASDataFrameIndex) {
 					((MPASDataFrameIndex)index).set(timeStep,  layer,  0);
-					xExtent = (int)getAxes().getCellAxis().getRange().getExtent();
+					xExtent = (int)((MPASCellAxis)frame.getAxes().getCellAxis().getAxis()).getXAxis().getRange().getExtent();
 					yExtent = 1;
 					return;
 				}
 				else
 					index.set(timeStep, layer, 0, 0);
 			}
-			xExtent = (int)getAxes().getXAxis().getRange().getExtent();
-			yExtent = (int)getAxes().getYAxis().getRange().getExtent();
+			if (index instanceof MPASDataFrameIndex) {
+				xExtent = (int)((MPASCellAxis)frame.getAxes().getCellAxis().getAxis()).getXAxis().getRange().getExtent();
+				yExtent = (int)((MPASCellAxis)frame.getAxes().getCellAxis().getAxis()).getYAxis().getRange().getExtent();
+			} else {			
+				xExtent = (int)getAxes().getXAxis().getRange().getExtent();
+				yExtent = (int)getAxes().getYAxis().getRange().getExtent();
+			}
 		}
 
 		public double getValue(int item) {

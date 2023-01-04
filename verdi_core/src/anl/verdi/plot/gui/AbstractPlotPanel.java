@@ -13,6 +13,8 @@ public abstract class AbstractPlotPanel extends JPanel implements ComponentListe
 	
 	protected ActionListener animationHandler = null;
 	
+	protected long timestepSize;
+	
 	/**
 	 * 
 	 */
@@ -56,6 +58,9 @@ public abstract class AbstractPlotPanel extends JPanel implements ComponentListe
 
 	public void componentMoved(ComponentEvent unused) {	}
 	
+	//Set GUI size when called from headless script
+	public void setScriptSize(int width, int height) { }
+	
 	// Paint/draw:
 
 	public void paintComponent(final Graphics graphics) {
@@ -67,5 +72,8 @@ public abstract class AbstractPlotPanel extends JPanel implements ComponentListe
 		animationHandler = listener;
 	}
 
+	public long getTimestepSize() {
+		return timestepSize;
+	}
 
 }

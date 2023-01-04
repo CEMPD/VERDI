@@ -92,8 +92,10 @@ public class Models3Loader implements DataLoader {
 //			else if (dim.getName().equals("COL")) hasCol = true;	// Based on code examples selected getShortName()
 			if (dim.getShortName().equals("ROW")) hasRow = true;
 			else if (dim.getShortName().equals("ny")) hasRow = true;
+			else if (dim.getShortName().equals("nyp1")) hasRow = true;
 			else if (dim.getShortName().equals("COL")) hasCol = true;
 			else if (dim.getShortName().equals("nx")) hasCol = true;
+			else if (dim.getShortName().equals("nxp1")) hasCol = true;
 		}
 
 		return hasRow &&  hasCol;

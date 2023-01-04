@@ -1,6 +1,7 @@
 package saf.core.ui.dock;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -144,6 +146,8 @@ public class DefaultDockingManager extends DockableFrameAdapter implements Docki
       MessageCenter.getMessageCenter(getClass()).error("Unable to add dockable frame to group. " + message, new IllegalArgumentException(message));
       return;
     }
+    dockable.putClientProperty("PERSPECTIVE_ID", perspectiveID);
+    dockable.putClientProperty("GROUP_ID", groupID);
     boolean show = perspectiveID.equals(currentPerspective.getID());
     Logger.debug("ready to call addDockableFrame with show = " + show);
     perspective.addDockableFrame(groupID, dockable, show);
@@ -300,16 +304,19 @@ public class DefaultDockingManager extends DockableFrameAdapter implements Docki
     return currentPerspective;
   }
   private void updateWindowsMenu() {
-    JMenu menu = barManager.clearMenu(GUIConstants.WINDOW_MENU_ID);
+    JMenu menu = barManager.getMenu(GUIConstants.WINDOW_MENU_ID);
     // user may not want a windows menu and so doesn't exist
     if (menu != null) {
       List<DockableFrame> dockables = currentPerspective.getDockables();
       for (DockableFrame dockable : dockables) {
-        barManager.addMenuItem(dockable.getID(), GUIConstants.WINDOW_MENU_ID,
-                new WindowMenuAction(dockable));
+    	JMenuItem oldItem = barManager.getMenuItem(dockable.getID());
+    	if (oldItem == null)
+    		barManager.addMenuItem(dockable.getID(), GUIConstants.WINDOW_MENU_ID,
+                new WindowMenuAction(dockable, this));
       }
       barManager.updateWindowMenu();
       barManager.sortMenu(GUIConstants.WINDOW_MENU_ID);
+      
     }
   }
   /**
@@ -369,11 +376,17 @@ public class DefaultDockingManager extends DockableFrameAdapter implements Docki
     DockableFrame frame = getDockableFrameFor(dockable);
     Perspective perspective = getPerspective(perspectiveID);
     perspective.removeDockable(frame);
-    if (perspective.equals(currentPerspective)) {
-      barManager.removeMenuItem(frame.getID());
-    }
+    //if (perspective.equals(currentPerspective)) {
+      //barManager.removeMenuItem(frame.getID());
+    //}
     idToFrameMap.remove(frame.getID());
     cDockToFrameMap.remove(dockable);
+  }
+  
+  public DockableFrame readdDockable(String id, JComponent component) {
+	  if (idToFrameMap.containsKey(id)) // already present
+		  return null;
+	  return createDockable(id, component);
   }
 
   /**

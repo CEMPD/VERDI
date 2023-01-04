@@ -137,4 +137,12 @@ public abstract class AbstractDataset implements Dataset {
 		return false;
 	}
 	
+	/**
+	 * Returns the value used to indicate a missing reading
+	 */
+	
+	public Double getMissingDataMarker(Variable variable) {
+		return null;
+	}
+	
 }

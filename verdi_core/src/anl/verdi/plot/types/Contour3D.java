@@ -408,7 +408,11 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLev
 
 		} else {
 			this.map = map;
-			legend.initLegend(this.map, minMax.getMin(), minMax.getMax(), zMap.getAxisScale().getTitle());	// 2014 get scalar name of the scalar map ???
+			try {
+				legend.initLegend(this.map, map.getMin(), map.getMax(), zMap.getAxisScale().getTitle());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}	// 2014 get scalar name of the scalar map ???
 		}
 		int colorCount = this.map.getColorCount();
 		float[][] cMap = new float[3][colorCount];
@@ -422,6 +426,13 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLev
 
 		ColorControl colorControl = (ColorControl) valueMap.getControl();
 		colorControl.setTable(cMap);
+		try {
+			valueMap.setRange(this.map.getMin(), this.map.getMax());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
 	}
 
 	private void enableIsoContours(boolean enable) {
@@ -794,7 +805,7 @@ public class Contour3D implements Plot, TimeAnimatablePlot, Printable, MinMaxLev
 
 			public void actionPerformed(ActionEvent e) {
 				PlotConfiguration defaultConfig = getPlotConfiguration();
-				File file = FileChooserUtilities.getSaveFile(Tools.getConfigFolder(defaultConfig));
+				File file = FileChooserUtilities.getOpenFile(Tools.getConfigFolder(defaultConfig));
 				
 				if (file != null) {
 					try {
