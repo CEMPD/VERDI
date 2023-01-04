@@ -24,9 +24,15 @@ VERDI can use observational data in either using ASCII file or created using Mod
 
 Observational data in ASCII format can be obtained from many data sources. Data can be downloaded 
 from the CMAS Center Google Drive 
-(https://drive.google.com/drive/u/1/folders/1YIcmYtPH_DRyN51dDEQDh3r5Q_4iNLuu) 
+
+
+<https://drive.google.com/drive/u/1/folders/1YIcmYtPH_DRyN51dDEQDh3r5Q_4iNLuu>
+
+
 or  EPA’s Remote Sensing Information Gateway - RSIG
-(<https://www.epa.gov/hesc/remote-sensing-information-gateway>). 
+
+<https://www.epa.gov/hesc/remote-sensing-information-gateway>
+
 To use a consistent set of units for the model data and the observational data, you may need to import the ASCII data into a tool (e.g., a spreadsheet or database program) and perform a unit conversion. VERDI doesn’t allow the user to use an observational variable to create a formula, so conversions to different units must be performed before loading the data into VERDI.
 
 <!-- BEGIN COMMENT -->
@@ -187,6 +193,6 @@ As noted in Section 5.1.2, lists of datasets and formulas can be saved as “pro
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch05.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch07.md)<br>
-VERDI User Manual (c) 2021<br>
+VERDI User Manual (c) 2022<br>
 
 <!-- END COMMENT -->

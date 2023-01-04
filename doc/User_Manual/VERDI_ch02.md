@@ -36,15 +36,17 @@ Three-dimensional contour plots require a graphics card with OpenGL or DirectX c
 Display Properties
 ------------------
 
-VERDI works best on screen displays that have been set to a high or perhaps the highest screen resolution (1440 × 900 for Mac, or 1920 x 1080 for Windows 10). Follow these general instructions to adjust your screen resolution on the following types of computers.
+VERDI works best on screen displays that have been set to a high or perhaps the highest screen resolution (1440 × 900 for Mac, or 1920 x 1080 for Windows 10/Linux). Follow these general instructions to adjust your screen resolution on the following types of computers.
 
--   Windows 10: Click on the Start button and select Control Panel. Select Display, then Adjust resolution. Use the drop-down boxes to select your type of display, screen resolution, etc. (it may already be set at the higest resolution by default)
+-   Windows 10: Click on the Start button and select Control Panel. Select Display, then Adjust resolution. Use the drop-down boxes to select your type of display, screen resolution, etc. (it may already be set at the higest resolution by default). Select Scale and layout. Change the size of text, apps, and other items - select 100% rather than the default 150%.  (the 150% setting makes the VERDI app take up the entire screen, and this results in the footer information of the Tile Plot getting cut off.) Select Display Resolution: 1920x1080.
 
 -   Mac: Go to Applications and double-click on System Preferences. Under Hardware select Displays and then Select 1440 × 900.
+
+-   Linux: Right-click on desktop and select Display Settings. Under Resolution select option greater than (or equal to) 1920 x 1080 (16:9).
 
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch01.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch03.md)<br>
-VERDI User Manual (c) 2021<br>
+VERDI User Manual (c) 2022<br>
 
 <!-- END COMMENT -->

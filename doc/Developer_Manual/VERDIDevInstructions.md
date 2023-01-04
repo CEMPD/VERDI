@@ -621,9 +621,15 @@ NOTE: Any options that you set here are for all of the projects in this workspac
 
 If you want Eclipse to automatically rebuild your projects as you change a file, check the Build Automatically checkbox ([Figure 8‑1](#Figure8-1)). Note that this option can slow down your development if you are making several changes because your projects will rebuild after each change.
 
+NOTE: As of Eclipse IDE 2019-12 (v4.14.0, build id: 20191212-1212) *Build automatically* checkbox checked by default. 
+
 There is also a setting to automatically recognize files that are added to the workspace. To automatically synchronize the workspace with the underlying file system, check the Refresh on Access option ([Figure 8‑1](#Figure8-1).
 
+NOTE: As of Eclipse IDE 2019-12 (v4.14.0, build id: 20191212-1212) *Refresh on access* checkbox checked by default. 
+
 If your code is to be used on multiple platforms, go to “Text File Encoding” near the bottom of the window. Click the radio button to the left of “Other” and select “UTF-8”. Click the Apply button and then the OK button.
+
+NOTE: As of Eclipse IDE 2019-12 (v4.14.0, build id: 20191212-1212) *Text file encoding* is "UTF-8" by default. 
 
 Verdi_core Properties
 ----------------------

@@ -105,7 +105,7 @@ The **Help** pull-down menu contains two items that you can use to learn more ab
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch04.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch06.md)<br>
-VERDI User Manual (c) 2021<br>
+VERDI User Manual (c) 2022<br>
 
 <!-- END COMMENT -->
 

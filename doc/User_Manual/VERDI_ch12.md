@@ -103,7 +103,7 @@ Figure 84. MPAS Plot of the 3-d Zonal and Meridional Wind components from a dail
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch11.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch13.md)<br>
-VERDI User Manual (c) 2021<br>
+VERDI User Manual (c) 2022<br>
 
 <!-- END COMMENT -->
 
