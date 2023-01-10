@@ -116,6 +116,7 @@ FormulaElementCreator, ListDataListener {
 	private boolean guiMode = true;
 
 	public boolean skipSplash() {
+		//showSplash = true;
 		return showSplash;
 	}
 
@@ -843,6 +844,10 @@ FormulaElementCreator, ListDataListener {
 
 			TilePlot plot = request.getPlot();
 			FastTilePlot fastPlot = request.getFastTilePlot();
+			
+			long timestepSize = 0;
+			if (fastPlot != null)
+				timestepSize = fastPlot.getTimestepSize();
 
 			ObsOverlayDialog dialog = null;
 			DataFrame data = null;
@@ -865,7 +870,7 @@ FormulaElementCreator, ListDataListener {
 			try {
 				if (!dialog.isCanceled()) {
 					if (plot != null) {
-						ObsEvaluator eval = new ObsEvaluator(manager, dialog.getSelectedVar());
+						ObsEvaluator eval = new ObsEvaluator(manager, dialog.getSelectedVar(), timestepSize);
 						plot.addObsAnnotation(eval, dialog.getShapeSize(), dialog.getStrokeSize(), dialog.getSymbol());
 					}
 

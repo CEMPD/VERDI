@@ -502,7 +502,11 @@ public class VerdiStyle implements Callable<Boolean> {
 		Rule[] rules = new Rule[numRules];
 		for (int i = 0; i < numRules; ++i) {
 			rules[i] = styleFactory.createRule();
-	        rules[i].setFilter(new RangeLevelFilter(map.getIntervalStart(numRules - i - 1), false));
+			RangeLevelFilter f = new RangeLevelFilter(map.getIntervalStart(numRules - i - 1), false);
+			f.setDebug(true);
+	        rules[i].setFilter(f);
+	        //rules[i].setFilter(new RangeLevelFilter(map.getIntervalStart(numRules - i - 1), false));
+	        //rules[i].setFilter(new RangeLevelFilter(0, false));
 			rules[i].symbolizers().add(getObsSymbolizer(i, strokeSize, shapeSize, map, symbol));
 		}
 		

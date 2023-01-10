@@ -23,6 +23,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import ucar.nc2.dataset.CoordinateAxis1D;
+import ucar.nc2.dataset.VariableEnhanced;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
 import ucar.unidata.geoloc.LatLonPointImpl;
@@ -55,6 +56,8 @@ public class NetcdfBoxer implements BoundingBoxer {
 	ReferencingFactoryContainer factories = new ReferencingFactoryContainer(null);
 
 	private GridDatatype grid;
+	private VariableEnhanced var;
+	
 	/** 
 	 * This is now a placeholder only, and is never used - any valid Geotools projection
 	 * could be created here.  Instead, VERDI's VerdiShapefileUtil converts all shapefiles
@@ -78,14 +81,21 @@ public class NetcdfBoxer implements BoundingBoxer {
 	
 	CoordinateReferenceSystem origCRS = null;
 	protected boolean isLatLon;
+	GridCoordSystem system = null;
 	
 	protected NetcdfBoxer() {
+	}
+	
+	public NetcdfBoxer(VariableEnhanced var, GridCoordSystem system) {
+		this.system = system;
+		this.isLatLon = system.isLatLon();
 	}
 
 	public NetcdfBoxer(GridDatatype grid) {
 		Logger.debug("in constructor for NetcdfBoxer for a GridDatatype");
 		this.grid = grid;
-		this.isLatLon = grid.getCoordinateSystem().isLatLon();
+		this.system = grid.getCoordinateSystem();
+		this.isLatLon = system.isLatLon();
 	}
 	
 	/**
@@ -94,8 +104,8 @@ public class NetcdfBoxer implements BoundingBoxer {
 	 * @return the Projection associated with this BoundingBoxer.
 	 */
 	public Projection getProjection() {
-		Logger.debug("in NetcdfBoxer.getProjection = " + grid.getCoordinateSystem().getProjection().getName());
-		return grid.getCoordinateSystem().getProjection();
+		Logger.debug("in NetcdfBoxer.getProjection = " + system.getProjection().getName());
+		return system.getProjection();
 	}
 	
 	public Point2D axisPointToLatLonPoint(double x, double y) {
@@ -411,12 +421,10 @@ public class NetcdfBoxer implements BoundingBoxer {
 	}
 
 	protected CoordinateAxis1D getXAxis() {
-		GridCoordSystem gcs = grid.getCoordinateSystem();
-		return (CoordinateAxis1D) gcs.getXHorizAxis();
+		return (CoordinateAxis1D) system.getXHorizAxis();		
 	}
 
 	protected CoordinateAxis1D getYAxis() {
-		GridCoordSystem gcs = grid.getCoordinateSystem();
-		return (CoordinateAxis1D) gcs.getYHorizAxis();
+		return (CoordinateAxis1D) system.getYHorizAxis();
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -250,11 +251,12 @@ public class ColorMap implements Serializable {
 			int last = intervals.length - 1;
 
 			if (paletteType == PaletteType.SEQUENTIAL && index > 0) {
-				if (index < last && start <= intervals[index - 1])
+				/*if (index < last && start <= intervals[index - 1])
 					return;
 
 				if (index < last && start >= intervals[index + 1])
 					return;
+					*/
 
 				if (index == 0)
 					min = start;
@@ -264,6 +266,7 @@ public class ColorMap implements Serializable {
 			}
 
 			intervals[index] = start;
+			Arrays.sort(intervals);
 		} else {
 			int last = logIntervals.length - 1;
 

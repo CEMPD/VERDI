@@ -93,6 +93,12 @@
 	</extension>
 
 	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
+	           id="ict">
+		<parameter id="class" value="anl.verdi.loaders.ICTLoader"/>
+		<parameter id="description" value="ICT data loader"/>
+	</extension>
+
+	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
 	           id="obs">
 		<parameter id="class" value="anl.verdi.loaders.Models3ObsLoader"/>
 		<parameter id="description" value="Observations data loader"/>

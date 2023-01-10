@@ -399,8 +399,10 @@ public class PalettePanel extends JPanel {
 					lblLogBase.setVisible( false);
 					fldLogBase.setVisible( false);
 				} else if (intervalInx==1) { // custom
-					minFld.setEnabled(false);
-					maxFld.setEnabled(false);
+					//minFld.setEnabled(false);
+					//maxFld.setEnabled(false);
+					minFld.setEnabled(true);
+					maxFld.setEnabled(true);
 					rebuildBtn.setEnabled(false);
 					lblLogBase.setVisible( false);
 					fldLogBase.setVisible( false);
@@ -588,7 +590,7 @@ public class PalettePanel extends JPanel {
 		resetBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				model.resetColors();
-				initMap(defaultColorMap,  defaultMinMax);
+				initMap(defaultColorMap,  defaultMinMax, true);
 			}
 		});
 	}
@@ -729,6 +731,10 @@ public class PalettePanel extends JPanel {
 	}
 
 	public void initMap(ColorMap colorMap, DataUtilities.MinMax minMax) {
+		initMap(colorMap, minMax, false);
+	}
+
+	public void initMap(ColorMap colorMap, DataUtilities.MinMax minMax, boolean resetRange) {
 		Logger.debug("in PalettePanel.initMap");
 		defaultMinMax = minMax;
 		try {
@@ -767,6 +773,16 @@ public class PalettePanel extends JPanel {
 		String maxConv = "f";
 		double min = minMax.getMin();
 		double max = minMax.getMax();
+		
+		if (!resetRange) {
+			try {
+				min = defaultColorMap.getMin();
+				max = defaultColorMap.getMax();
+			} catch (Exception e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+		}
 
 		if ( intervalType.getSelectedIndex() == 2) { // logarithm
 			min = Math.log(min)/Math.log(baseValue);

@@ -567,7 +567,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		renderVarList.add("indexToCellID");
 		renderVarList.add("latCell");
 		renderVarList.add("lonCell");
-		renderVarList.add("zgrid");
+		//renderVarList.add("zgrid");
 		renderVarList.add("zs");
 		renderVarList.add("xtime");
 	}

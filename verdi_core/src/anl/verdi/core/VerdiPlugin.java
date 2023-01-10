@@ -53,6 +53,18 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 
 	protected void doStop() throws Exception {
 	}
+	
+	private boolean shouldSkipSplash(String[] args) {
+		for (String arg : args) {
+			if (/*arg.toLowerCase().startsWith("-f") ||*/
+					arg.toLowerCase().startsWith("-help") ||
+					arg.toLowerCase().startsWith("-quit") ||
+					arg.toLowerCase().startsWith("-version"))
+				return true;
+		}
+					
+		return false;
+	}
 
 	public void run(String[] args) {
  		IAppConfigurator configurator = null;
@@ -119,13 +131,9 @@ public class VerdiPlugin extends Plugin implements IApplicationRunnable {
 
 			if (args.length > 0 && args[0].toLowerCase().startsWith("-b")) {
 				batchmode = true;
-				verdi.setSkipSplash(batchmode);
 			}
 
-			//verdi.setSkipSplash(true);
-			if (args.length > 0 && (args[0].toLowerCase().startsWith("-help") || args[0].toLowerCase().startsWith("-version")) ) {
-				verdi.setSkipSplash(true);   //NOTE: just to skip the splash window if not running in real batch mode
-			}
+			verdi.setSkipSplash(shouldSkipSplash(args));
 
 			// for debugging verdi.setSkipSplash(true);
 

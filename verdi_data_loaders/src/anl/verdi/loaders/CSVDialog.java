@@ -21,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
+import anl.verdi.plot.data.TextDataset;
+
 /**
  * Simple dialog for user mapping of CSV file columns to data axis
  *
@@ -32,11 +34,11 @@ public class CSVDialog extends JDialog {
 	
 	private static final long serialVersionUID = 7124452230090946348L;
 	private JPanel mainPane;
-	private CSVDataset dataset;
+	private TextDataset dataset;
 	private String[] fields;
 	private Map<String,String> columnNameMap;
 
-	public CSVDialog(CSVDataset dataset, List<String> columnNames, String[] fields){
+	public CSVDialog(TextDataset dataset, List<String> columnNames, String[] fields){
 		this.dataset = dataset;
     this.fields = fields;
 		
@@ -116,10 +118,11 @@ public class CSVDialog extends JDialog {
 
 			if (e.getActionCommand().equals("ok") ){ 
 
-				if (columnNameMap.keySet().size() == fields.length){
+				if (columnNameMap.keySet().size() == fields.length ||
+						(columnNameMap.size() + 1 == fields.length && !columnNameMap.containsKey("Layer Axis Column"))){
 					dataset.setColumnNameMap(columnNameMap);
 					dialog.setVisible(false);
-				}
+				} 
 				else
 					JOptionPane.showMessageDialog(null, "Please enter all column names");
 			}

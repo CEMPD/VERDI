@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.measure.unit.BaseUnit;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -75,7 +76,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 import org.jogamp.vecmath.Point4i;	// 4 integers (x, y, z, w coordinates)
-
+import org.jsoup.select.Evaluator;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.data.DataStoreFactorySpi;
@@ -92,6 +93,7 @@ import org.geotools.styling.StyleBuilder;
 import org.geotools.swing.JMapPane;			// JEB Sept 2015; for mapping support in GeoTools
 import org.geotools.swing.data.JFileDataStoreChooser;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.unitsofmeasurement.unit.Unit;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -131,6 +133,7 @@ import anl.verdi.plot.util.PlotExporter;
 import anl.verdi.plot.util.PlotExporterAction;
 import anl.verdi.util.Tools;
 import anl.verdi.util.Utilities;
+import anl.verdi.util.VUnits;
 import gov.epa.emvl.ASCIIGridWriter;
 import gov.epa.emvl.GridCellStatistics;
 import gov.epa.emvl.GridShapefileWriter;
@@ -187,7 +190,6 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	// 2D grid parameters:
 
 	protected GregorianCalendar startDate;
-	protected long timestepSize;
 	protected int timesteps; 
 	protected int layers; 
 	protected int rows;
@@ -266,6 +268,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 
 	private final String variable; // "PM25".
 	protected String units; // "ug/m3".
+	protected Unit unitVar;
 
 	private boolean withHucs = false; // Draw watersheds on map?
 	private boolean withRivers = false; // Draw rivers on map?
@@ -409,7 +412,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 				
 				VerdiGUI.unlock();
 				if ( drawMode != DRAW_NONE &&
-					 ! VerdiGUI.isHidden( (Plot) threadParent ) ) {
+					 (! VerdiGUI.isHidden( (Plot) threadParent ) || forceBufferedImage)) {
 Logger.debug("within drawMode != DRAW_NONE && !VerdiGUI.isHidden((Plot) threadParent)");
 					VerdiGUI.lock();
 					if (drawMode == DRAW_ONCE) {
@@ -504,8 +507,9 @@ Logger.debug("set up drawing space, titles, fonts, etc.");
 Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
 					Image offScreenImage =	null; // get actual size after call to AddPlotListener
 					try {
-						if (rescaleBuffer)
+						if (rescaleBuffer) {
 							offScreenImage = new BufferedImage(bufferedWidth, bufferedHeight, BufferedImage.TYPE_INT_RGB);
+						}
 						else
 							offScreenImage = repaintManager.getOffscreenBuffer(threadParent, canvasWidth, canvasHeight);
 					} catch (NullPointerException e) {}
@@ -673,7 +677,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						if (obsAnnotations != null) {
 							for (ObsAnnotation ann : obsAnnotations)
 								ann.draw(offScreenGraphics, xOffset, yOffset, width, height, 
-										legendLevels, legendColors, gridCRS, domain, gridBounds, projection);
+										legendLevels, legendColors, gridCRS, domain, gridBounds, projection, unitVar);
 						}
 						
 						if (vectAnnotation != null) {
@@ -695,7 +699,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 									w = bufferedWidth;
 									h = bufferedHeight;
 								}
-								bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, w, h);
+								if (w > 0 && h > 0)
+									bImage = toBufferedImage(offScreenImage, BufferedImage.TYPE_INT_RGB, w, h);
 								Logger.debug("back from toBufferedImage, ready to call VerdiGUI.showIfVisible");
 							
 								if (animationHandler != null) {
@@ -710,6 +715,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						} finally {
 							if (graphics != null)
 								graphics.dispose();
+							
 							Logger.debug("just did graphics.dispose in finally block");
 							offScreenGraphics.dispose();
 							Logger.debug("just did offScreenGraphics.dispose in finally block");
@@ -908,6 +914,12 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	public void mouseClicked( MouseEvent unused_ ) { }
 
 	public void viewClosed() { 
+		super.viewClosed();
+		stopThread();
+		try {
+			Thread.sleep(500);
+		} catch( Exception e) {
+		}
 		// 
 		mapper.dispose();
 		mapper = null;
@@ -1364,6 +1376,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			Logger.debug("ready to call copySubsetLayerData from setTimestep");
 			copySubsetLayerData(this.log);
 			draw();
+			if (!obsData.isEmpty())
+				addObservationData(app.getDataManager(), showObsLegend);
 			drawOverLays();
 		}
 	}
@@ -1428,6 +1442,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		Logger.debug("dataFrameVariable = " + dataFrameVariable);
 		Logger.debug("dataFrameVariable name = " + variable);
 		units = dataFrameVariable.getUnit().toString();
+		unitVar = dataFrameVariable.getUnit();
+
 		Logger.debug("units of dataFrameVariable = " + units);
 		if ( units==null || units.trim().equals(""))
 			units = "none";
@@ -2779,6 +2795,15 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		return getBufferedImage(null, width, height);
 	}
 	
+	public void setScriptSize(int width, int height) {
+		if (width == 0 || height == 0) {
+			rescaleBuffer = false;
+			return;
+		}
+		rescaleBuffer = true;
+		bufferedWidth = width;
+		bufferedHeight = height;
+	}
 	
 	public BufferedImage getBufferedImage(Graphics2D g, int width, int height) {
 		exportGraphics = g;
@@ -3660,9 +3685,20 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		
 		try {
 			for (OverlayObject obs : obsData) {
-				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
-				ObsAnnotation ann = new ObsAnnotation(eval, axs, initDate, layer, obs);
-				ann.update(timestep);
+				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable(), timestepSize);
+				ObsAnnotation ann = null;
+				try {
+					ann = new ObsAnnotation(eval, axs, initDate, layer, obs);
+					ann.update(timestep);
+				} catch (IllegalArgumentException e) {
+					GregorianCalendar currentDate = getDataFrame().getAxes().getDate(timestep);
+					ann = new ObsAnnotation(eval, axs, currentDate, layer, obs, false);
+					GregorianCalendar endDate = getDataFrame().getAxes().getDate(lastTimestep);
+					if (eval.dataWithin(initDate.getTime(), endDate.getTime())) {
+						ann.update(currentDate.getTime());
+					}else
+						throw e;
+				}
 				ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
 				obsAnnotations.add(ann);
 				Dataset ds = eval.getVariable().getDataset();
@@ -3692,7 +3728,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			draw();
 		} catch (Exception e) {
 			app.getGui().showError("Error", e.getMessage());
-			Logger.error("", e);
+			Logger.error(e.getMessage(), e);
 			drawMode = DRAW_NONE;
 		}
 	}
@@ -3704,8 +3740,9 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	private void drawOverLays() {
 		try {
 			if (obsAnnotations != null)  {
+				java.util.Date currentDate = getDataFrame().getAxes().getDate(timestep).getTime();
 				for (ObsAnnotation ann : obsAnnotations) 
-					ann.update(timestep);
+					ann.update(currentDate);
 			}
 			
 			if (vectAnnotation != null) {

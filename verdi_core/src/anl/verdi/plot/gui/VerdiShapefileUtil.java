@@ -33,6 +33,8 @@ import org.opengis.feature.type.Name;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.unitsofmeasurement.unit.Unit;
+import org.unitsofmeasurement.unit.UnitConverter;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -46,6 +48,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import anl.verdi.area.target.Target;
 import anl.verdi.data.ObsData;
+import anl.verdi.util.VUnits;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.Projection;
 import ucar.unidata.geoloc.ProjectionPointImpl;
@@ -139,33 +142,6 @@ public class VerdiShapefileUtil {
 		
         SimpleFeatureCollection featureCollection = sourceShapefile.getFeatures();
         SimpleFeatureIterator iterator = featureCollection.features();
-
-        while (iterator.hasNext()) {
-            SimpleFeature feature = iterator.next();
-            List<Object> attrs = feature.getAttributes();
-            if (attrs.contains("CT")) {
-            	System.out.println("Found CT");
-            
-
-	            
-	            Geometry geometry = (Geometry) feature.getDefaultGeometry();
-	
-	            double yMax = 0;
-	            int maxIndex = 0;
-            	System.err.println("VerdiShapefileLoader Found Connecticut"); //DBG
-            	Coordinate[] c1 = geometry.getCoordinates();
-            	for (int i = 0; i < c1.length; ++i) {
-            		if (c1[i].y > yMax) {
-            			yMax = c1[i].y;
-            			maxIndex = i;
-            		}
-            	}
-            	System.out.println("Max " + c1[maxIndex].x + ", " + c1[maxIndex].y);
-	            
-            }
-
-        }
-
 	}
 	
 	public static SimpleFeatureSource transformFeature(SimpleFeatureSource sourceShapefile, MathTransform transform, boolean mapTargets) {
@@ -385,7 +361,7 @@ public class VerdiShapefileUtil {
     	return convertedSource;
     }
     
-    public static FeatureSource projectObsData(Projection proj, List<ObsData> list, CoordinateReferenceSystem targetCRS) {
+    public static FeatureSource projectObsData(Projection proj, List<ObsData> list, CoordinateReferenceSystem targetCRS, Unit dataUnit) {
     	//long start = System.currentTimeMillis();
     	//System.err.println("VerdiShapefileUtil projectShapefile " + Thread.currentThread().getId() + " "+ format.format( new Date()) + " " + filename + " to " + targetProjection.getName());
     	/*SimpleFeatureSource convertedSource = getCachedShapefile(filename, targetProjection, sourceShapefile);
@@ -437,6 +413,12 @@ public class VerdiShapefileUtil {
 	                        dataStore.getFeatureWriterAppend(createdName, transaction);
 	              ){
 	        	
+	        	UnitConverter unitConverter = null;
+	        	try {
+	        		Unit obsUnit = list.get(0).getUnit();
+	        		unitConverter = obsUnit.getConverterTo(dataUnit);
+	        	} catch (Throwable t) {}
+	        	
 		        for (int i = 0; i < list.size(); ++i) {
 		        	ObsData data = list.get(i);
 		        
@@ -447,7 +429,10 @@ public class VerdiShapefileUtil {
 		        		point = projectPoint(point, proj);
 		        	}
 	                SimpleFeature copy = writer.next();
-	                point.setUserData(data.getValue());
+	                double v = data.getValue();
+	                if (unitConverter != null)
+	                	v = unitConverter.convert(v);
+	                point.setUserData(v);
 	                copy.setDefaultGeometry(point);
 	                writer.write();
 		        }

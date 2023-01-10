@@ -122,10 +122,15 @@ public class VerdiBoundaries {
 		//vTransform = null;
 	}
 	
+	Exception creation = new Exception();
 	public void draw(double[][] domain, double[][] gridBounds, CoordinateReferenceSystem gridCRS, Graphics graphics,
 			int xOffset, int yOffset, int width, int height)	// execute the draw function for this VerdiBoundaries layer
 	{	
 		Logger.debug("in VerdiBoundaries.draw; ready to getStyle() and return theStyle");
+		if (aVerdiStyle == null) {
+			System.out.println("Pending failure: " + this);
+			creation.printStackTrace();
+		}
 		Style theStyle = aVerdiStyle.getStyle();
 		graphics.setColor(vColor);		// set color for this graphics drawing to color stored for this VerdiBoundaries object
 		Logger.debug("just back from getting style");

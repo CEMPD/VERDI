@@ -49,15 +49,15 @@ public class CSVLoader implements DataLoader {
 			reader  = new BufferedReader(new FileReader(file));
 			
 //			return WRFConvention.isMine(file);
-      if (urlString.contains(".csv"))
+      if (urlString.toLowerCase().contains(".csv"))
 			  return true; // TODO how to check for CSV file type?
 			
 		} catch (IOException io) {
 			// just warn here because it be correct that
 			// this is not a netcdf file
-			Logger.error("Error reading csv file " + io.getMessage());
+			Logger.error("Error reading csv file", io);
 		} catch (URISyntaxException e) {
-			Logger.error("Error reading csv file " + e.getMessage());
+			Logger.error("Error reading csv file ", e);
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}

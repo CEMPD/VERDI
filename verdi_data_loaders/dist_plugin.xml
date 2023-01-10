@@ -94,6 +94,11 @@
 		<parameter id="class" value="anl.verdi.loaders.CSVLoader"/>
 		<parameter id="description" value="CSV data loader"/>
 	</extension>
+	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
+	           id="ict">
+		<parameter id="class" value="anl.verdi.loaders.ICTLoader"/>
+		<parameter id="description" value="ICT data loader"/>
+	</extension>
 
 	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
 	           id="obs">

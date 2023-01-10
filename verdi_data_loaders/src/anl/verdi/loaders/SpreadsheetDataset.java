@@ -308,6 +308,10 @@ public class SpreadsheetDataset implements Dataset {
 	public void setNetcdfConv(int conv) {
 		this.conv = conv;
 	}
+	
+	public Double getMissingDataMarker(Variable variable) {
+		return null;
+	}
 
 }
 

@@ -17,6 +17,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -148,7 +149,28 @@ public class AnimationPanel extends JPanel {
 	}
 
 	private void getGifFile() {
-		JFileChooser chooser = new JFileChooser();
+		JFileChooser chooser = new JFileChooser() {
+			public void approveSelection() {
+				File f = getSelectedFile();
+				String name = f.getName();
+				if (name.indexOf(".") == -1)
+					f = new File(f.getAbsolutePath() + ".gif");
+				if (f.exists()) {
+					int result = JOptionPane.showConfirmDialog(this, f.getName() +  " exists, overwrite?", "Existing file", JOptionPane.YES_NO_CANCEL_OPTION);
+					switch (result) {
+					case JOptionPane.YES_OPTION:
+						super.approveSelection();
+						return;
+					case JOptionPane.CANCEL_OPTION:
+						cancelSelection();
+						return;
+					default:
+						return;
+					}
+				}
+				super.approveSelection();				
+			}
+		};
 		
 		if (lastChosenFolder != null)
 			chooser.setCurrentDirectory(lastChosenFolder);
@@ -180,11 +202,33 @@ public class AnimationPanel extends JPanel {
 		}
 		if (f == null && gifFile == null) {
 			gifFileBtn.setSelected(false);
+			gifChk.setSelected(false);
 		}
 	}
 	
 	private void getAviFile() {
-		JFileChooser chooser = new JFileChooser();
+		JFileChooser chooser = new JFileChooser() {
+			public void approveSelection() {
+				File f = getSelectedFile();
+				String name = f.getName();
+				if (name.indexOf(".") == -1)
+					f = new File(f.getAbsolutePath() + ".avi");
+				if (f.exists()) {
+					int result = JOptionPane.showConfirmDialog(this, f.getName() +  " exists, overwrite?", "Existing file", JOptionPane.YES_NO_CANCEL_OPTION);
+					switch (result) {
+					case JOptionPane.YES_OPTION:
+						super.approveSelection();
+						return;
+					case JOptionPane.CANCEL_OPTION:
+						cancelSelection();
+						return;
+					default:
+						return;
+					}
+				}
+				super.approveSelection();				
+			}
+		};
 		
 		if (lastChosenFolder != null)
 			chooser.setCurrentDirectory(lastChosenFolder);
@@ -216,11 +260,33 @@ public class AnimationPanel extends JPanel {
 		}
 		if (f == null && aviFile == null) {
 			aviFileBtn.setSelected(false);
+			aviChk.setSelected(false);
 		}
 	}
 
 	private void getMovieFile() {
-		JFileChooser chooser = new JFileChooser();
+		JFileChooser chooser = new JFileChooser() {
+			public void approveSelection() {
+				File f = getSelectedFile();
+				String name = f.getName();
+				if (name.indexOf(".") == -1)
+					f = new File(f.getAbsolutePath() + ".mp4");
+				if (f.exists()) {
+					int result = JOptionPane.showConfirmDialog(this, f.getName() +  " exists, overwrite?", "Existing file", JOptionPane.YES_NO_CANCEL_OPTION);
+					switch (result) {
+					case JOptionPane.YES_OPTION:
+						super.approveSelection();
+						return;
+					case JOptionPane.CANCEL_OPTION:
+						cancelSelection();
+						return;
+					default:
+						return;
+					}
+				}
+				super.approveSelection();				
+			}
+		};
 		
 		if (lastChosenFolder != null)
 			chooser.setCurrentDirectory(lastChosenFolder);
@@ -230,11 +296,11 @@ public class AnimationPanel extends JPanel {
 
 			public boolean accept(File f) {
 				if (f.isDirectory()) return true;
-				return f.getName().toLowerCase().endsWith(".mov");
+				return f.getName().toLowerCase().endsWith(".mp4");
 			}
 
 			public String getDescription() {
-				return "Quicktime (*.mov)";
+				return "MPEG-4 (*.mp4)";
 			}
 		});
 
@@ -242,8 +308,8 @@ public class AnimationPanel extends JPanel {
 		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
 			f = chooser.getSelectedFile();
 			if (f != null) {
-				if (!f.getName().endsWith(".mov")) {
-					f = new File(f.getAbsolutePath() + ".mov");
+				if (!f.getName().endsWith(".mp4")) {
+					f = new File(f.getAbsolutePath() + ".mp4");
 				}
 				movieFile = f;
 				fileLbl.setText(movieFile.getName());
@@ -252,6 +318,7 @@ public class AnimationPanel extends JPanel {
 		}
 		if (f == null && movieFile == null) {
 			fileBtn.setSelected(false);
+			movieChk.setSelected(false);
 		}
 	}
 

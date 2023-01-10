@@ -252,7 +252,7 @@ public class VerdiAppConfigurator implements IAppConfigurator {
 					screen.setProgress(i);
 			}
 		} else {
-			customizer.useStoredFrameBounds(0, 0);
+			customizer.useStoredFrameBounds(800, 800);
 			customizer.useSavedLayout();
 			customizer.setTitle("VERDI");
 		}

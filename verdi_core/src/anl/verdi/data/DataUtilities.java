@@ -362,7 +362,11 @@ public class DataUtilities {
 			rangeCount++;
 			ranges[yAxis.getArrayIndex()] = new ucar.ma2.Range(0, yAxis.getExtent() - 1);
 		}
-
+		DataFrameAxis cellAxis = axes.getCellAxis();
+		if (cellAxis != null) {
+			rangeCount++;
+			ranges[cellAxis.getArrayIndex()] = new ucar.ma2.Range(0, cellAxis.getExtent() - 1);
+		}
 
 		ucar.ma2.Range[] validRanges = new ucar.ma2.Range[rangeCount];
 		System.arraycopy(ranges, 0, validRanges, 0, rangeCount);

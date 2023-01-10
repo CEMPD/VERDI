@@ -18,6 +18,7 @@ public class TilePlotConfiguration extends PlotConfiguration {
 	public static final String GRID_LINE_COLOR = TilePlotConfiguration.class.getName() + "_grid_line_color";
 	public static final String OBS_SHAPE_SIZE = TilePlotConfiguration.class.getName() + "_obs_shape_size";
 	public static final String OBS_STROKE_SIZE = TilePlotConfiguration.class.getName() + "_obs_stroke_size";
+	public static final String SCATTER_SHAPE_SIZE = TilePlotConfiguration.class.getName() + "_scatter_shape_size";
 	
 	public static final String LAYER_LINE_SIZE = TilePlotConfiguration.class.getName() + "_layer_line_size";
 	public static final String LAYER_LINE_COLOR = TilePlotConfiguration.class.getName() + "_layer_line_color";

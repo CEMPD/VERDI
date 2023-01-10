@@ -21,8 +21,8 @@ import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
-import javax.vecmath.Point4d;
-import javax.vecmath.Point4i;
+import org.jogamp.vecmath.Point4d;
+import org.jogamp.vecmath.Point4i;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -221,8 +221,11 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		timePanel = new TimeConstantAxisPanel(meshInput);
 		timePanel.setConstantAxisLabel(getRowOrCol() + ":");
 		double column = constant;
+		int origin = 0;
+		if (frame.getAxes().getTimeAxis() != null)
+			origin = frame.getAxes().getTimeAxis().getOrigin();
 		timePanel.init(getAxes(), constantAxis, frame.getAxes(),
-						timeStep + frame.getAxes().getTimeAxis().getOrigin(),
+						timeStep + origin,
 						column + (double)constantAxis.getRange().getOrigin());
 		ChangeListener changeListener = new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -482,7 +485,9 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 				yAxis.setRange(lower, upper);
 				//yAxis.setRange(1, 10000);
 			}
-			timeStep = (int)frame.getAxes().getTimeAxis().getRange().getOrigin();
+			timeStep = 0;
+			if (frame.getAxes().getTimeAxis() != null)
+				timeStep = (int)frame.getAxes().getTimeAxis().getRange().getOrigin();
 			if (renderer == null)
 				renderer = new MPASXYBlockRenderer(type, frame, renderPlot, timeStep, constant, sliceSize);
 			else
@@ -712,7 +717,12 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 		title.setText("Min = " + Utilities.formatNumber(rangedMinMax.getMin()) + ", Max = " +
 						Utilities.formatNumber(rangedMinMax.getMax()));
 
-		GregorianCalendar aCalendar = frame.getAxes().getDate(timeStep + frame.getAxes().getTimeAxis().getOrigin());
+		int origin = 0;
+		if (frame.getAxes().getTimeAxis() != null)
+			origin = frame.getAxes().getTimeAxis().getOrigin();
+		GregorianCalendar aCalendar = frame.getAxes().getDate(timeStep + origin);
+		if (aCalendar == null)
+			aCalendar = (GregorianCalendar)GregorianCalendar.getInstance();
 		Logger.debug("in VerticalCrossSectionPlot createSubtitle set GregorianCalendar aCalendar = " + aCalendar);
 		title = (TextTitle) chart.getSubtitle(bottomTitle1Index);
 		title.setText(Utilities.formatDate(aCalendar));

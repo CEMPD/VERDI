@@ -19,6 +19,7 @@ import org.unitsofmeasurement.unit.Unit;
 import ucar.nc2.Attribute;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateAxis1DTime;
+import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.VariableEnhanced;
 import ucar.nc2.dt.GridCoordSystem;
@@ -64,6 +65,7 @@ public class GridNetcdfDataset extends AbstractDataset {
 	private Axes<CoordAxis> coordAxes;
 	private int urlIndex = Dataset.SINGLE_DATASET;
 	private List<Variable> vars;
+	private GridCoordSystem system = null;
 	private String name = "";
 	private int conv = -1;
 
@@ -81,6 +83,11 @@ public class GridNetcdfDataset extends AbstractDataset {
 	protected GridNetcdfDataset(URL url, List<GridDatatype> grids,
 			GridDataset gridDataset) {
 		this(url, grids, gridDataset, Dataset.SINGLE_DATASET);
+	}
+
+	protected GridNetcdfDataset(URL url, GridDataset gridDataset,
+			List<VariableEnhanced> vars, GridCoordSystem system) {
+		this(url, gridDataset, vars, Dataset.SINGLE_DATASET, system);
 	}
 
 	/**
@@ -102,6 +109,15 @@ public class GridNetcdfDataset extends AbstractDataset {
 		this.gridDataset = gridDataset;
 		this.urlIndex = urlIndex;
 		init(grids);
+	}
+
+	protected GridNetcdfDataset(URL url, GridDataset gridDataset, 
+			List<VariableEnhanced> vars, int urlIndex, GridCoordSystem system) {
+		super(url);
+		this.gridDataset = gridDataset;
+		this.urlIndex = urlIndex;
+		this.system = system;
+		initVars(vars);
 	}
 
 	/**
@@ -135,6 +151,25 @@ public class GridNetcdfDataset extends AbstractDataset {
 		}
 		return null;
 	}
+	
+	private void initVars(List<VariableEnhanced> setVars) {
+		Collections.sort(setVars, new Comparator<VariableEnhanced>() {
+			public int compare(VariableEnhanced o1, VariableEnhanced o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+	
+		createAxes(setVars.get(0));
+		
+		
+
+		
+		vars = new ArrayList<Variable>();
+
+		for (VariableEnhanced var : setVars) {
+			createVerdiVar(var);
+		}
+	}
 
 	private void init(List<GridDatatype> grids) {
 		Collections.sort(grids, new Comparator<GridDatatype>() {
@@ -148,6 +183,14 @@ public class GridNetcdfDataset extends AbstractDataset {
 		vars = new ArrayList<Variable>();
 		for (GridDatatype grid : grids) {
 			VariableEnhanced var = grid.getVariable();
+			
+			createVerdiVar(var);
+		}
+	}
+	
+	private void createVerdiVar(VariableEnhanced var) {
+			
+			//System.out.println("GridNetcdfDataset checking var " + var.getName() + " dims " + var.getDimensions());
 			if (!(var instanceof CoordinateAxis)) {
 				// ignore the TSTEP variable and any vars (such as
 				// projection vars) that have a dimensionality of 0
@@ -170,13 +213,23 @@ public class GridNetcdfDataset extends AbstractDataset {
 					vars.add(new DefaultVariable(var.getShortName(), var.getShortName(),	// 2014 replaced deprecated getName with getShortName
 							aUnit, (Dataset)this));	// trying it with a cast to Dataset
 				}
-			}
-		}
+			}		
+	}
+	
+	private void createAxes(VariableEnhanced var) {
+		List<CoordinateAxis> coords = system.getCoordinateAxes();
+		NetcdfBoxer boxer = new NetcdfBoxer(var, system);		
+		createAxes(coords, boxer);
 	}
 
 	private void createAxes(GridDatatype grid) {
 		GridCoordSystem system = grid.getCoordinateSystem();
-		List coords = system.getCoordinateAxes();
+		List<CoordinateAxis> coords = system.getCoordinateAxes();
+		NetcdfBoxer boxer = new NetcdfBoxer(grid);
+		createAxes(coords, boxer);
+	}
+	
+	private void createAxes(List<CoordinateAxis> coords, NetcdfBoxer boxer) {
 		List<CoordAxis> axes = new ArrayList<CoordAxis>();
 		
 		for (CoordinateAxis axis : (List<CoordinateAxis>) coords) {
@@ -192,6 +245,9 @@ public class GridNetcdfDataset extends AbstractDataset {
 				if (type == null)
 					type = AxisType.OTHER;
 				if (type == AxisType.TIME) {
+					/*if (!(axis instanceof CoordinateAxis1DTime)) {
+						System.err.println("Found non time axis");
+					}*/
 					axes.add(new NetcdfTimeAxis((CoordinateAxis1DTime) axis));
 				} else {
 					axes.add(new NetCdfCoordAxis(axis, type));
@@ -201,7 +257,6 @@ public class GridNetcdfDataset extends AbstractDataset {
 				}
 			}
 		}
-		NetcdfBoxer boxer = new NetcdfBoxer(grid);
 		//coordAxes = new Axes<CoordAxis>(axes, new NetcdfBoxer(grid));
 		coordAxes = new Axes<CoordAxis>(axes, boxer);
 	}

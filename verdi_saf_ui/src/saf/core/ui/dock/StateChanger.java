@@ -17,6 +17,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JPanel;
 import javax.swing.LayoutFocusTraversalPolicy;
 import javax.swing.SwingUtilities;
 
@@ -24,8 +25,10 @@ import saf.core.ui.event.DockableFrameEvent;
 import saf.core.ui.event.DockableFrameListener;
 import bibliothek.gui.dock.common.CControl;
 import bibliothek.gui.dock.common.CLocation;
+import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.action.predefined.CCloseAction;
 import bibliothek.gui.dock.common.intern.CDockable;
+import bibliothek.gui.dock.common.intern.DefaultCDockable;
 import bibliothek.gui.dock.common.location.CFlapIndexLocation;
 import bibliothek.gui.dock.common.mode.ExtendedMode;
 import bibliothek.gui.dock.displayer.DisplayerFocusTraversalPolicy;
@@ -127,6 +130,9 @@ public class StateChanger {
 	 */
 	public void closeDockable(CDockable dockable) {
 
+		DefaultSingleCDockable sub = (DefaultSingleCDockable)dockable;
+		String id = sub.getUniqueId();
+		Object comp = ((JPanel)sub.getContentPane().getComponent(0)).getComponent(0);
 		DockableFrameEvent evt = createEvent(dockable, CLOSE);
 		fire(evt, new Fire() {
 			public void fire(DockableFrameListener listener,

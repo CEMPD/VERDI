@@ -39,10 +39,18 @@ public class OtherConfigPanel extends JPanel {
 		if (seriesColorPanel.isEnabled()) {
 			config.putObject(TimeSeriesPlotConfiguration.SERIES_COLOR, seriesColorPanel.getSelectedColor());
 		}
+		
+		if (plotPointPanel.isEnabled()) {
+			plotPointPanel.fillConfiguration(config);
+		}
 		return config;
 
 	}
 
+	public void setPlotPointPanelEnabled(boolean enabled) {
+		plotPointPanel.setEnabled(enabled);
+	}
+	
 	public void setGridLinePanelEnabled(boolean enabled) {
 		gridLinePanel.setEnabled(enabled);
 	}
@@ -53,6 +61,10 @@ public class OtherConfigPanel extends JPanel {
 
 	public void setSeriesColorEnabled(boolean enabled) {
 		seriesColorPanel.setEnabled(enabled);
+	}
+
+	public void initPlotPoints(int size) {
+		plotPointPanel.init(size);
 	}
 
 	public void initGridLines(Color color, boolean showLines) {
@@ -76,6 +88,7 @@ public class OtherConfigPanel extends JPanel {
 		// Generated using JFormDesigner non-commercial license
 		gridLinePanel = new GridLinePanel();
 		gisLinePanel = new GISLinePanel();
+		plotPointPanel = new PlotPointPanel();
 //		vectorPanel = new SimpleColorPanel();
 		seriesColorPanel = new SimpleColorPanel();
 		CellConstraints cc = new CellConstraints();
@@ -86,6 +99,8 @@ public class OtherConfigPanel extends JPanel {
 		setLayout(new FormLayout(
 			aColumnSpec,
 			new RowSpec[] {
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.LINE_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.LINE_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
@@ -114,6 +129,8 @@ public class OtherConfigPanel extends JPanel {
 		//---- seriesColorPanel ----
 		seriesColorPanel.setBorder(new TitledBorder("Series Color"));
 		add(seriesColorPanel, cc.xy(1, 5));
+		
+		add(plotPointPanel, cc.xy(1, 7));
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
 
@@ -121,6 +138,7 @@ public class OtherConfigPanel extends JPanel {
 	// Generated using JFormDesigner non-commercial license
 	private GridLinePanel gridLinePanel;
 	private GISLinePanel gisLinePanel;
+	private PlotPointPanel plotPointPanel;
 //	private SimpleColorPanel vectorPanel;
 	private SimpleColorPanel seriesColorPanel;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
