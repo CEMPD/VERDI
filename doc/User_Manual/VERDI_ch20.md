@@ -6,7 +6,7 @@
 
  Visualize Fine Scale Model Outputs
 ==========================
-  Data from fine scale (neighborhood, or street level) model can be visualized on the street-level maps in VERDI.  Given user can provide fine scale map GIS layers (shapefiles) to be loaded in VERDI.  Here is an step by step example:
+  Data from fine scale (neighborhood, or street level) model can be visualized on the street-level maps into VERDI.  Given user can provide fine scale map GIS layers (shapefiles) to be loaded in VERDI.  Here is a step by step example:
   
 Step 1: Open VERDI GUI and load your fine scale model gridded datasets. you can get access to some sample model files at the following link. /work/MOD3DEV/jherwehe/wrf/urban/UACM-WRF-4.5/test/run.LISTOS_444m.nondguv28/wrfout_d01_2018-05-20_00:00:00
 
