@@ -6,29 +6,23 @@
 
  Visualize Fine Scale Model Outputs
 ==========================
-
-  To visualize fine scale model outputs in VERDI. 
-
-	Open VERDI GUI and load your fine scale model gridded datasets.  You can get access to some sample model files at the following link.
-  /work/MOD3DEV/jherwehe/wrf/urban/UACM-WRF-4.5/test/run.LISTOS_444m.nondguv28/wrfout_d01_2018-05-20_00:00:00 
-  Figure ??. Load fine scale model dataset<br>
+  Data from fine scale (neighborhood, or street level) model can be visualized on the street-level maps in VERDI.  Given user can provide fine scale map GIS layers (shapefiles) to be loaded in VERDI.  Here is an step by step example:
   
-	Select variable "T2" and create a "tile plot" (such as T2 at 15UTC or “Time Step 16” in the example shown as below).
-  Figure ??. Create a tile plot for T2<br>
+Step 1: Open VERDI GUI and load your fine scale model gridded datasets. you can get access to some sample model files at the following link. /work/MOD3DEV/jherwehe/wrf/urban/UACM-WRF-4.5/test/run.LISTOS_444m.nondguv28/wrfout_d01_2018-05-20_00:00:00
+
+Step 2: Select variable "T2" and create a "tile plot".  To turn on USA States lines and turn off the USA County lines,  click on GIS Layers → Add Map Layers, then check the box in front of "USA States" and go back in again to uncheck the box in front of "USA Counties".	
+  
+  Figure 106. VERDI GIS Layers UI<br>
+     
+Step 3: To add your own fine scale GIS layers, click on GIS Layers → Add Map Layers → Other…
+A pop-up file browser window will show up for you to navigate to the street-level shapefiles, click on "open".    	
+  
+  Figure 107. The pop-up window to load other GIS Layers UI<br> 
+
+Step 4: Wait for a few seconds until the GIS layers are added to the tile plot, then zoom into your area of interest and explore.
+The sample shapefiles are used to create the following map can be found at VERDI/verdi_dist/distfiles/data/release/DCMStreetCenterLine.zip    
 	
-  To turn on USA States lines and turn off the USA County lines,  click on GIS Layers → Add Map Layers, then check the box in front of "USA States" and uncheck the box in front of "USA Counties".
-  Figure ??. VERDI GIS Layers UI<br>
-     need a screenshot for GIS Layers UI.
-     
-	Then click on GIS Layers → Add Map Layers → Other…
-  Figure ??. The pop-up window to load other GIS Layers UI<br>
-     need a screenshot for the pop-up window. 
-     
-	Then navigate to open the street-level shapefiles you obtained from other sources, click on "open"
-     The sample shapefiles are used to create the following map can be found at 
-     /work/MOD3DEV/jherwehe/wrf/urban/NYC_data/DCM_20230430/DCM_StreetCenterLine.shp.
-     need a screenshot for the tile plot with NYC street centerlines. 
-     Figure ??. The tile plot with NYC street centerlines<br>
+  Figure 108. The tile plot with NYC street centerlines<br>
 
 
 
