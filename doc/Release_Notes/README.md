@@ -13,6 +13,7 @@ The following issues were fixed.
 * Support sub-domain on a Vertical Cross Section Plot (#326)
 * Save tile plot as shapefile from GUI (#322)
 * Tile Plot Statistics for MPAS (#255)
+* Enable "Metadata Me" for MPAS (#320)
 
 
 -----------------------------
