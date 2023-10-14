@@ -8,7 +8,7 @@
 ==========================
   Data from fine scale (neighborhood, or street level) model can be visualized on the street-level maps in VERDI.  Given user can provide fine scale map GIS layers (shapefiles) to be loaded into VERDI.  Here is a step by step example:
   
-Step 1: Open VERDI GUI and load your fine scale model gridded datasets. you can get access to some sample model files at the following link. /work/MOD3DEV/jherwehe/wrf/urban/UACM-WRF-4.5/test/run.LISTOS_444m.nondguv28/wrfout_d01_2018-05-20_00:00:00
+Step 1: Open VERDI GUI and load your fine scale model gridded datasets. you can get access to some sample model files under the folder: VERDI/data/model/wrfout_d01_2018-T2-05-20_00_00_00
 
 Step 2: Select variable "T2" and create a "tile plot".  To turn on USA States lines and turn off the USA County lines,  click on GIS Layers → Add Map Layers, then check the box in front of "USA States" and go back in again to uncheck the box in front of "USA Counties".	
   
