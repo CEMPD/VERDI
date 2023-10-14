@@ -29,6 +29,6 @@ A<sub>i</sub> = Area of the polygon segment i
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch18.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch20.md)<br>
-VERDI User Manual (c) 2022<br>
+VERDI User Manual (c) 2023<br>
 
 <!-- END COMMENT -->

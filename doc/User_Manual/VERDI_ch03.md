@@ -123,6 +123,6 @@ Starting in VERDI version 1.4, the ui.properties file was removed and the user-c
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch02.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch04.md)<br>
-VERDI User Manual (c) 2022<br>
+VERDI User Manual (c) 2023<br>
 
 <!-- END COMMENT -->

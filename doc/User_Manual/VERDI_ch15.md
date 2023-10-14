@@ -12,6 +12,6 @@ You are encouraged to review the VERDI FAQ <http://www.cmascenter.org/help/faq.c
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch14.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch16.md)<br>
-VERDI User Manual (c) 2022<br>
+VERDI User Manual (c) 2023<br>
 
 <!-- END COMMENT -->

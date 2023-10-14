@@ -195,6 +195,6 @@ Script commands that can be used for command line scripting (listed in alphabeti
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch17.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch19.md)<br>
-VERDI User Manual (c) 2022<br>
+VERDI User Manual (c) 2023<br>
 
 <!-- END COMMENT -->
