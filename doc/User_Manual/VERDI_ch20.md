@@ -20,7 +20,7 @@ A pop-up file browser window will show up for you to navigate to the street-leve
   ![The pop-up window to load other GIS Layers UI](./media/image107.png){fig:Figure107} <br> 
 
 Step 4: Wait for a few seconds until the GIS layers are added to the tile plot, then zoom into your area of interest and explore.
-The sample shapefiles are used to create the following map can be found at VERDI/verdi_dist/distfiles/data/release/DCMStreetCenterLine.zip    
+The sample shapefiles are used to create the following map can be found at VERDI/data/DCMStreetCenterLine.zip    
 	
   ![The tile plot with NYC street centerlines](./media/image108.png){fig:Figure108} <br>
 
