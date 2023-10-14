@@ -1,4 +1,21 @@
 -----------------------------
+RELEASE NOTES FOR VERDI 2.1.5
+-----------------------------
+
+The following new features were added:
+
+* Open and display a MPAS Mesh File (#324)
+* Temporal and spatial accuracy when overlay aircraft data in a tile plot (#312)
+* Documentation on how to visualize fine scale model output datafiles with GIS layers
+
+The following issues were fixed.
+
+* Support sub-domain on a Vertical Cross Section Plot (#326)
+* Save tile plot as shapefile from GUI (#322)
+* Tile Plot Statistics for MPAS (#255)
+
+
+-----------------------------
 RELEASE NOTES FOR VERDI 2.1.4
 -----------------------------
 
