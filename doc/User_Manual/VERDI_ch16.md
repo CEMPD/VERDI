@@ -138,7 +138,7 @@ A time step index can be specified after a variable name. For example, “O3[1]:
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch15.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch17.md)<br>
-VERDI User Manual (c) 2022<br>
+VERDI User Manual (c) 2023<br>
 
 <!-- END COMMENT -->
 

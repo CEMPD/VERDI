@@ -188,13 +188,13 @@ Script commands that can be used for command line scripting (listed in alphabeti
 
 **[-version]** prints out information about the VERDI version being used on the standard output stream.
 
-**[-verticalCrossPlot X|Y &lt;row/column&gt; (NEW)]** creates a vertical cross-section plot. You indicate whether this will be an *x* or *y* cross-section plot and what row or column to use as the base.
+**[-verticalCrossPlot "X|Y" "&lt;column/row&gt;"]** creates a vertical cross-section plot. You indicate whether this will be an *x* or *y* cross-section plot and what row or column to use as the base.
 
 **[-windowid]** prints the window ID of the currently selected plot.
 
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch17.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch19.md)<br>
-VERDI User Manual (c) 2022<br>
+VERDI User Manual (c) 2023<br>
 
 <!-- END COMMENT -->

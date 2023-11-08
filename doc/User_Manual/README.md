@@ -43,4 +43,6 @@ The following sections are included in this manual:
 
 [Chapter 19 (Areal Interpolation Calculations).](VERDI_ch19.md) How VERDI does areal interpolation.
 
-[Chapter 20 (Licenses for JAVA Libraries used by VERDI).](VERDI_ch20.md) JAVA licenses used by VERDI.
+[Chapter 20 (Visualize Fine Scale Model).](VERDI_ch20.md) How to use VERDI to visualize fine scale model outputs.
+
+[Chapter 21 (Licenses for JAVA Libraries used by VERDI).](VERDI_ch21.md) JAVA licenses used by VERDI.

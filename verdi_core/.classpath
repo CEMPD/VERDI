@@ -5,12 +5,12 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="org/geotools/verdi/referencing/" kind="src" path="src">
+	<classpathentry excluding="org/geotools/verdi/referencing/|anl/verdi/area/target/DebugHashMap.java" kind="src" path="src">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="verdi_core/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="test"/>
+	<classpathentry excluding="anl/verdi/data/DataTests.java" kind="src" path="test"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/verdi_bootstrap"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/verdi_saf_ui"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>

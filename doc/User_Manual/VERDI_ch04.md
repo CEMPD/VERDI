@@ -80,6 +80,6 @@ You can also change the amount of the entire VERDI window that is devoted to the
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch03.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch05.md)<br>
-VERDI User Manual (c) 2022<br>
+VERDI User Manual (c) 2023<br>
 
 <!-- END COMMENT -->
