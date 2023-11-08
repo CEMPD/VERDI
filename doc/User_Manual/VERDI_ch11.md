@@ -330,7 +330,7 @@ Figure 64. Lat/Lon Values Shown in Lower Right of VERDI<br>
 ### Show Cell Borders (MPAS files)
 
 VERDI can visualize the model grid structure to verify that the mesh generated is what was intended for MPAS files that only contain the mesh (no model data) or for MPAS files that contain both the mesh and the model data.
-To visualize the MPAS mesh, select the MPAS file, and then if it is a MPAS file with only the mesh, select the meshStructure variable and then create a Tile Plot. For regular MPAS files with model output, you can click on any variable and create a tile plot. From the Tile Plot menu, use the **Controls** menu, then select the Show Cell Borders, and then zoom in or zoom out to the regionof interest to visualize the mesh or grid for the MPAS file.
+To visualize the MPAS mesh, select the MPAS file, and then if it is a MPAS file with only the mesh, select the meshStructure variable and then create a Tile Plot. For regular MPAS files with model output, you can click on any variable and create a tile plot. From the Tile Plot menu, use the **Controls** menu, then select the Show Cell Borders, and then zoom in or zoom out to visualize the mesh or grid for the region of interest in the MPAS file.
 
 <!-- BEGIN COMMENT -->
 
