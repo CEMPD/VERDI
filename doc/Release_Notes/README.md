@@ -4,7 +4,7 @@ RELEASE NOTES FOR VERDI 2.1.5
 
 **REPLACE ALL PRIOR** versions of VERDI with this patched release version.
 
-*Updated OpenJDK to version 21 to fix security vulnerability.
+*Updated OpenJDK to version java 21.0.1 2023-10-17 LTS to fix security vulnerability.
 
 The following new features were added:
 
