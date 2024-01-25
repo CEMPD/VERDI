@@ -8,7 +8,7 @@ RELEASE NOTES FOR VERDI 2.1.5
 
 The following new features were added:
 
-* Open and display a MPAS Mesh File from GUI (#324)
+* Open and display a MPAS Mesh File (#324)
 * Documentation on how to visualize fine scale model output datafiles with GIS layers
 * Support sub-domain on a Vertical Cross Section Plot from the command line (#326)
 
