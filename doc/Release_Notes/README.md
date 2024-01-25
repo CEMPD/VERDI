@@ -16,8 +16,12 @@ The following issues were fixed.
 
 * Save tile plot as shapefile from GUI (#322)
 * MPAS scatterplot tool from GUI (#255)
-* Enable "Metadata Me" for MPAS (#320)
 * Saving and Opening a Project (#318)
+* Read zgrid variable from MPAS using VERDI CLI (#257)
+
+The following features were depreciated
+
+* Disabled Domain Window including "Metadata Me" (#320)
 
 
 -----------------------------
