@@ -19,6 +19,10 @@ The following issues were fixed.
 * Saving and Opening a Project (#318)
 * Read zgrid variable from MPAS using VERDI CLI (#257)
 
+The following enhancement was made (#200).
+
+* VERDI saves color values using six digit hex color codes to a saved configuration file and reads configure files using either 32 bit integer codes or the hex color codes.
+
 The following features were depreciated
 
 * Disabled Domain Window including "Metadata Me" (#320)
