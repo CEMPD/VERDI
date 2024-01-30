@@ -170,7 +170,7 @@ When you choose to save your configuration, VERDI displays a popup box asking if
 
 #### Configuration file xml format
 
-This example configuration file contains 11 colors, with a color scheme that diverges, from a minimum value of -2.5 to a meximum value of 2.5. An enhancement was made to use the hexidecimal format to save the color values, beginning in VERDI_2.1.5. VERDI can read a configuration file that uses either hexademicimal values or 32 bit integer values saved prior to this enhancement. This allows the user to use color wheels available online to customize their plots.
+This example configuration file contains 11 colors, with a color scheme that diverges, from a minimum value of -2.5 to a maximum value of 2.5. An enhancement was made to use the hexidecimal format to save the color values, beginning in VERDI_2.1.5. VERDI can read a configuration file that uses either hexademicimal values or 32 bit integer values saved prior to this enhancement. This allows the user to use color wheels available online to customize their plots.
 
 ```
 <PlotConfig>
