@@ -52,6 +52,10 @@ public class Palette implements Serializable {
 	public Color[] getOriginalColors() {
 		return colors;
 	}
+	
+	public String getHexColor(Color color) {
+		return "#"+Integer.toHexString(color.getRGB()).substring(2).toUpperCase();
+	}
 
 	private Color[] reverseColorMap() {
 		List<Color> reversedColors = new ArrayList<Color>();

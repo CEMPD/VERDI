@@ -78,7 +78,13 @@ public class TilePlotTask implements AbstractTask {
 
 	@Override
 	public void run() {
-		TilePlotConfiguration tconfig = createConfig();
+		//TilePlotConfiguration tconfig = null;
+		try {
+			createConfig();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
 		int timeStep = 0;
 		int layer = 0;
 
@@ -139,7 +145,7 @@ public class TilePlotTask implements AbstractTask {
 			if (dataFrame != null) {
 	   	
 				plot = new FastTilePlot(verdiApp, dataFrame);
-	        	plot.configure(tconfig, Plot.ConfigSource.FILE);
+	        	plot.configure(config, Plot.ConfigSource.FILE);
 	        	// here handle subdomain
 	        	if(subDomainArgs != null)	// have a subdomain defined
 	        	{
@@ -181,6 +187,7 @@ public class TilePlotTask implements AbstractTask {
 			}
 		} catch (Exception e) {
 			Logger.error("Error in TilePlotTask with saving plot", e);
+			e.printStackTrace();
 		} finally {
 			verdiApp.getProject().getFormulas().clear();
 			verdiApp.getProject().getDatasets().clear();
@@ -297,7 +304,7 @@ public class TilePlotTask implements AbstractTask {
 		}
 	}
 	
-	private TilePlotConfiguration createConfig() {
+	private TilePlotConfiguration createConfig() throws IOException {
 		config = new PlotConfiguration();
 		vConfig = new VertCrossPlotConfiguration();
 //		vectorConfig = new VectorPlotConfiguration();
@@ -306,14 +313,14 @@ public class TilePlotTask implements AbstractTask {
 		
 		File configFile = (configFileStr == null || configFileStr.trim().isEmpty()) ? null : new File(configFileStr);
 		
-		if (configFile != null && configFile.isFile() && configFile.exists()) {
-			try{
+		if (configFile != null) {
+//			try{
 				config = new PlotConfiguration(configFile);
 				vConfig = new VertCrossPlotConfiguration(new PlotConfiguration(configFile));
 //				vectorConfig = new VectorPlotConfiguration(new PlotConfiguration(configFile));
-			} catch (Exception e) {
-				Logger.error("Exception in TilePlotTask.createConfig creating plot configuration", e);
-			} 
+//			} catch (Exception e) {
+//				Logger.error("Exception in TilePlotTask.createConfig creating plot configuration", e);
+//			} 
 		}
 				
 		handleColorMap(map);
@@ -477,6 +484,7 @@ public class TilePlotTask implements AbstractTask {
 		}
 
 		BufferedImage image = plot.getBufferedImage(width, height);
+		System.out.println("Writing: " + file);
 		ImageIO.write(image, ext, file);
 	}
 

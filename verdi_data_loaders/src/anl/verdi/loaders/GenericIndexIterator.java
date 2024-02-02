@@ -7,28 +7,26 @@ import java.util.List;
 import anl.verdi.data.AxisRange;
 import ucar.ma2.IndexIterator;
 
-public class ICTIndexIterator implements IndexIterator {
+public class GenericIndexIterator implements IndexIterator {
 	
 	double[][] list = null;
-	
-	List<Double> times;
 	
 	int index = -1;
 	
 	int dataPosition;
 	
-	Long startIndex;
+	long dataStart;
 	
-	Long endIndex;
+	long dataEnd;
 	
-	List<ICTFieldFilter> rangeFilters = new ArrayList<ICTFieldFilter>();
+	List<GenericFieldFilter> rangeFilters = new ArrayList<GenericFieldFilter>();
 	
-	private class ICTFieldFilter {
+	private class GenericFieldFilter {
 		
 		int	fieldPosition;
 		double min;
 		double max;
-		ICTFieldFilter(int fieldPosition, double min, double max) {
+		GenericFieldFilter(int fieldPosition, double min, double max) {
 			this.fieldPosition = fieldPosition;
 			this.min = min;
 			this.max = max;
@@ -39,21 +37,18 @@ public class ICTIndexIterator implements IndexIterator {
 		}
 	}
 	
-	//Currently interprets dataStart and dataEnd as times.
-	public ICTIndexIterator(double[][] list, List<Double> times, int position, Long dataStart, Long dataEnd) {
+	public GenericIndexIterator(double[][] list, int position, long dataStart, long dataEnd) {
 		this.list = list;
-		this.times = times;
 		this.dataPosition = position;
-		this.startIndex = dataStart;
-		this.endIndex = dataEnd;
+		this.dataStart = dataStart;
+		this.dataEnd = dataEnd;
 		if (dataStart > 0) {
 			//Field position map is hardcoded in ICTDataset String[] fields
-			ICTFieldFilter filter = new ICTFieldFilter(0, startIndex, dataEnd -1);
+			GenericFieldFilter filter = new GenericFieldFilter(0, dataStart, dataEnd -1);
 			rangeFilters.add(filter);
 		}
 	}
 	
-	/*
 	private boolean rowInRange(double[] row) {
 		for (int i = 0; i < rangeFilters.size(); ++i) {
 			if (!rangeFilters.get(i).accept(row)) {
@@ -61,12 +56,6 @@ public class ICTIndexIterator implements IndexIterator {
 			}
 		}
 		return true;
-	}*/
-
-	private boolean timeInRange(Integer i) {
-		if (i < 0 || i >= times.size())
-			return false;
-		return (startIndex == null) || (i >= startIndex && i < endIndex);
 	}
 
 	public boolean getBooleanCurrent() {
@@ -99,7 +88,7 @@ public class ICTIndexIterator implements IndexIterator {
 	}
 	
 	private void rangeCheck() {
-		while (index > -1 && index < list.length && !timeInRange(index)) {
+		while (index > -1 && index < list.length && !rowInRange(list[index])) {
 			++index;
 		}
 			

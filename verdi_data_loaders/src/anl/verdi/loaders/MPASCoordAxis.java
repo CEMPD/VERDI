@@ -26,23 +26,34 @@ public class MPASCoordAxis implements CoordAxis {
 	private Unit unit;
 	protected String name, description;
 	private double minValue;
+	private double maxValue;
 	private int length;
 	
-	public MPASCoordAxis(String name, String description, double min, AxisType type) {
+	public MPASCoordAxis(String name, String description, double min, double max, AxisType type) {
 		this.name = name;
 		this.description = description;
 		this.unit = VUnits.MISSING_UNIT;
 		this.type = type;
 		
-		this.minValue = min;
+		this.minValue = min * MPASDataset.RAD_TO_DEG;
+		this.maxValue = max * MPASDataset.RAD_TO_DEG;
+		double width = maxValue - minValue;
 		
 		if (type == AxisType.X_AXIS) {
-			this.minValue = -180;
-			length = 361;
+			if (width > 360.0 * .95) {
+				this.minValue = -180;
+				length = 361;
+			} else {
+				length = (int)Math.floor(width) + 1;
+			}
 		}
 		else if (type == AxisType.Y_AXIS) {
-			this.minValue = -90;
-			length = 181;
+			if (width > 180.0 * .95) {
+				this.minValue = -90;
+				length = 181;
+			} else {
+				length = (int)Math.floor(width) + 1;
+			}
 		}
 		
 		this.range = new Range(Math.round(this.minValue), length);

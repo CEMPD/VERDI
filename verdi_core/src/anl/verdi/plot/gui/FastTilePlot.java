@@ -1754,7 +1754,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 				for ( int timestep = 0; timestep < timesteps; ++timestep ) {
 					dataFrameIndex.set( timestep, layer, column, dataRow );
-					float value = this.getDataFrame(log).getFloat( dataFrameIndex ); 
+					float value = this.getDataFrame(log).getFloat( dataFrameIndex );
 					layerData[ row ][ column ][ timestep ] = value;
 				}
 			}
@@ -1986,7 +1986,12 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				for (int layer = 0; layer < layers; ++layer) {
 					for (int row = 0; row < rows; ++row) {
 						for (int column = 0; column < columns; ++column) {
+							try {
 							dataFrameIndex.set(timestep, layer, column, row);
+							} catch (Throwable t) {
+								//System.err.println("pause");
+								throw t;
+							}
 							final float value = 
 								dataFrame.getFloat(dataFrameIndex);
 	
@@ -3218,9 +3223,9 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			slice.setTimeRange(timestep - firstTimestep, 1);
 			if (!hasNoLayer) slice.setLayerRange(layer - firstLayer, 1);
 			Axes<DataFrameAxis> axes = getDataFrame().getAxes();
-			final int probeFirstColumn = axisRect.x - axes.getXAxis().getOrigin(); 
+			final int probeFirstColumn = axisRect.x + 1- axes.getXAxis().getOrigin(); 
 			final int probeColumns = axisRect.width + 1;
-			final int probeFirstRow = axisRect.y - axisRect.height - axes.getYAxis().getOrigin();
+			final int probeFirstRow = axisRect.y + 1 - axisRect.height - axes.getYAxis().getOrigin();
 			final int probeRows = axisRect.height + 1;
 
 			slice.setXRange( probeFirstColumn, probeColumns );
@@ -3685,22 +3690,27 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		
 		try {
 			for (OverlayObject obs : obsData) {
-				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable(), timestepSize);
+				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
 				ObsAnnotation ann = null;
+				ann = new ObsAnnotation(eval, axs, layer, obs, timestepSize);
 				try {
-					ann = new ObsAnnotation(eval, axs, initDate, layer, obs);
-					ann.update(timestep);
-				} catch (IllegalArgumentException e) {
 					GregorianCalendar currentDate = getDataFrame().getAxes().getDate(timestep);
+
+					ann.update(currentDate.getTime());
+					ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
+					obsAnnotations.add(ann);
+				} catch (IllegalArgumentException e) {
+					GregorianCalendar endDate = getDataFrame().getAxes().getDate(lastTimestep);
+					if (!eval.dataWithin(initDate.getTime(), endDate.getTime()))						
+						throw e;
+					/*GregorianCalendar currentDate = getDataFrame().getAxes().getDate(timestep);
 					ann = new ObsAnnotation(eval, axs, currentDate, layer, obs, false);
 					GregorianCalendar endDate = getDataFrame().getAxes().getDate(lastTimestep);
 					if (eval.dataWithin(initDate.getTime(), endDate.getTime())) {
 						ann.update(currentDate.getTime());
 					}else
-						throw e;
+						throw e;*/
 				}
-				ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
-				obsAnnotations.add(ann);
 				Dataset ds = eval.getVariable().getDataset();
 				
 				if (showST1 && ds != null) {

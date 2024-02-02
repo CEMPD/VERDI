@@ -23,6 +23,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import ucar.nc2.dataset.CoordinateAxis1D;
+import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.VariableEnhanced;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
@@ -81,21 +82,36 @@ public class NetcdfBoxer implements BoundingBoxer {
 	
 	CoordinateReferenceSystem origCRS = null;
 	protected boolean isLatLon;
-	GridCoordSystem system = null;
+	Projection proj;
+	CoordinateAxis1D xAxis = null;
+	CoordinateAxis1D yAxis = null;
 	
 	protected NetcdfBoxer() {
 	}
 	
+	public NetcdfBoxer(NetcdfDataset ds, Projection proj,CoordinateAxis1D x, CoordinateAxis1D y) {
+		this.proj = proj;
+	    int projType = ds.findGlobalAttribute("MAP_PROJ").getNumericValue().intValue();
+	    isLatLon = projType == 6;
+	    xAxis = x;
+	    yAxis = y;
+	}
+	
 	public NetcdfBoxer(VariableEnhanced var, GridCoordSystem system) {
-		this.system = system;
 		this.isLatLon = system.isLatLon();
+		proj = system.getProjection();
+		xAxis = (CoordinateAxis1D) system.getXHorizAxis();
+		yAxis = (CoordinateAxis1D) system.getYHorizAxis();
 	}
 
 	public NetcdfBoxer(GridDatatype grid) {
 		Logger.debug("in constructor for NetcdfBoxer for a GridDatatype");
 		this.grid = grid;
-		this.system = grid.getCoordinateSystem();
+		GridCoordSystem system = grid.getCoordinateSystem();
 		this.isLatLon = system.isLatLon();
+		proj = system.getProjection();
+		xAxis = (CoordinateAxis1D) system.getXHorizAxis();
+		yAxis = (CoordinateAxis1D) system.getYHorizAxis();
 	}
 	
 	/**
@@ -104,8 +120,8 @@ public class NetcdfBoxer implements BoundingBoxer {
 	 * @return the Projection associated with this BoundingBoxer.
 	 */
 	public Projection getProjection() {
-		Logger.debug("in NetcdfBoxer.getProjection = " + system.getProjection().getName());
-		return system.getProjection();
+		Logger.debug("in NetcdfBoxer.getProjection = " + proj.getName());
+		return proj;
 	}
 	
 	public Point2D axisPointToLatLonPoint(double x, double y) {
@@ -421,10 +437,10 @@ public class NetcdfBoxer implements BoundingBoxer {
 	}
 
 	protected CoordinateAxis1D getXAxis() {
-		return (CoordinateAxis1D) system.getXHorizAxis();		
+		return xAxis;		
 	}
 
 	protected CoordinateAxis1D getYAxis() {
-		return (CoordinateAxis1D) system.getYHorizAxis();
+		return yAxis;
 	}
 }

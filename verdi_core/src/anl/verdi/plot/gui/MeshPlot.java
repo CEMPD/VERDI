@@ -1624,7 +1624,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		if (popZoom)
 			panX = xClickDistance - visibleDataWidth / 2;
 		if (panX < 0)
-			panX = 0;
+			panX = defaultPanX;
 		if (panX > dataWidth - visibleDataWidth)
 			panX = dataWidth - visibleDataWidth;
 		
@@ -1633,7 +1633,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		if (popZoom)
 			panY = yClickDistance - visibleDataHeight / 2;
 		if (panY < 0)
-			panY = 0;
+			panY = defaultPanY;
 		if (panY > dataHeight - visibleDataHeight)
 			panY = dataHeight - visibleDataHeight;
 				
@@ -2060,11 +2060,14 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	//Distance in radians image is panned
 	double panX = 0;
 	double panY = 0;
+	double defaultPanX = 0;
+	double defaultPanY = 0;
 	double previousPanX = 0;
 	double previousPanY = 0;
 	final double MAX_ZOOM = Double.POSITIVE_INFINITY;
 	final double MIN_ZOOM = 1.0;
 	double zoomFactor = 1;
+	double defaultZoomFactor = 1;
 	double compositeFactor;
 	double dataWidth = 0;
 	double dataHeight = 0;
@@ -2347,7 +2350,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	}
 	
 	
-	public void exportShapeFile(String filename) {
+	public void exportShapefile(String filename) throws IOException{
 		try {
 			MPASShapefileWriter.write(filename, 
 					(double)firstColumn + columnOrigin,
@@ -2512,6 +2515,13 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			
 		dataWidth = dataset.getDataWidth();
 		dataHeight = dataset.getDataHeight();
+		
+		defaultPanX = dataset.getLonMin() - Math.PI * -1;
+		defaultPanY = Math.PI / 2 - dataset.getLatMax();
+		defaultZoomFactor = dataWidth / (Math.PI * 2);
+		
+		panX = defaultPanX;
+		panY = defaultPanY;
 		
 		//We need these accurate to build correct gridBounds, but zooming expects them to be 0 until loadCellStructure runs
 		visibleDataWidth = dataWidth;
@@ -3350,12 +3360,12 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		locChanged = true;
 		dataChanged = true;
 		clippedDataRatio = dataRatio;
-		zoomFactor = 1;
+		zoomFactor = defaultZoomFactor;
 		compositeFactor = screenWidth / dataWidth;
 		previousPanX = panX;
 		previousPanY = panY;
-		panX = 0;
-		panY = 0;
+		panX = defaultPanX;
+		panY = defaultPanY;
 		firstRow = 0;
 		lastRow = rows - 1;
 		firstColumn = 0;
@@ -4117,9 +4127,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				
 				previousPanX = -1;
 				previousPanY = -1;
-				panX = 0;
-				panY = 0;
-				zoomFactor = 1;
+				panX = defaultPanX;
+				panY = defaultPanY;
+				zoomFactor = defaultZoomFactor;
 				compositeFactor = screenWidth / dataWidth;
 				
 				int x = (int)Math.round((lonLow - columnOrigin) / RAD_TO_DEG / dataWidth * screenWidth);
@@ -4354,7 +4364,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	 */
 	protected void calculateVisibleMinMax() {
 		// If not zoomed use default zoom
-		if (zoomFactor == 1) {
+		if (zoomFactor == defaultZoomFactor) {
 			MinMaxInfo info = dataset.getTimestepMinMax(currentDataFrame, layer, timestep);
 			if (info != null && info.getCompletion() == 100) {
 				int index = info.getMinIndex();
@@ -5144,22 +5154,20 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 		try {
 			for (OverlayObject obs : obsData) {
-				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable(), timestepSize);
+				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
 				ObsAnnotation ann = null;
+				ann = new ObsAnnotation(eval, axs, layer, obs, timestepSize);
 				try {
-					ann = new ObsAnnotation(eval, axs, initDate, layer, obs);
-					ann.update(timestep);
-				} catch (IllegalArgumentException e) {
 					GregorianCalendar currentDate = getDataFrame().getAxes().getDate(timestep);
-					ann = new ObsAnnotation(eval, axs, currentDate, layer, obs, false);
+
+					ann.update(currentDate.getTime());
+					ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
+					obsAnnotations.add(ann);
+				} catch (IllegalArgumentException e) {				
 					GregorianCalendar endDate = getDataFrame().getAxes().getDate(lastTimestep);
-					if (eval.dataWithin(initDate.getTime(), endDate.getTime()))
-						ann.update(currentDate.getTime());
-					else
+					if (!eval.dataWithin(initDate.getTime(), endDate.getTime()))						
 						throw e;
 				}
-				ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
-				obsAnnotations.add(ann);
 				Dataset ds = eval.getVariable().getDataset();
 				
 				if (showST1 && ds != null) {

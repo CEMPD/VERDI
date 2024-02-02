@@ -24,15 +24,15 @@ import anl.verdi.data.Variable;
  * @version $Revision$ $Date$
  * @see anl.verdi.data.Dataset , DataLoader
  */
-public class Models3ObsReader extends AbstractDataReader<Models3ObsDataset> {
-	static final Logger Logger = LogManager.getLogger(Models3ObsReader.class.getName());
+public class WRFObsReader extends AbstractDataReader<WRFObsDataset> {
+	static final Logger Logger = LogManager.getLogger(WRFObsReader.class.getName());
 
-	public Models3ObsReader(Models3ObsDataset set) {
+	public WRFObsReader(WRFObsDataset set) {
 		super(set);
 	}
 
 	private void createDefaultAxes(DataFrameBuilder builder,
-			Models3ObsDataset set, ucar.nc2.Variable variableDS) {
+			WRFObsDataset set, ucar.nc2.Variable variableDS) {
 		for (CoordAxis axis : set.getCoordAxes().getAxes()) {
 			int index = variableDS.findDimensionIndex(set.getNetDataset()
 					.findCoordinateAxis(axis.getName()).getDimension(0)
@@ -44,7 +44,7 @@ public class Models3ObsReader extends AbstractDataReader<Models3ObsDataset> {
 	/**
 	 * get the values for the given data parameters
 	 */
-	public synchronized DataFrame getValues(Models3ObsDataset set, List<AxisRange> ranges,
+	public synchronized DataFrame getValues(WRFObsDataset set, List<AxisRange> ranges,
 			Variable variable) {
 		ucar.nc2.Variable varDS = set.getVariableDS(variable);
 		
@@ -71,8 +71,8 @@ public class Models3ObsReader extends AbstractDataReader<Models3ObsDataset> {
 				int maxExt = shape[dimIndex];
 				int ext = (axis.getExtent() > maxExt ? maxExt : axis.getExtent()); 
 				
-				if (slice.getDimension(dimIndex).getLength() > axis.getOrigin())
-					slice = slice.slice(dimIndex, axis.getOrigin());
+				if (slice.getDimension(0).getLength() > 1)
+					slice = slice.slice(0, ext);
 				
 				DataFrameAxis frameAxis = DataFrameAxis.createDataFrameAxis(
 						axis.getAxis(), axis.getOrigin(), ext, dimIndex);

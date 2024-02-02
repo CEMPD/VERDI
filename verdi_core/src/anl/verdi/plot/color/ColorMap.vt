@@ -8,7 +8,7 @@
     </Scale>
     <Palette description="$map.palette.description" reverseColors="$map.palette.reverseColors">
         #foreach($color in $map.palette.getOriginalColors())
-        <Color>$color.getRGB()</Color>
+        <Color>$map.palette.getHexColor($color)</Color>
         #end
     </Palette>
 </ColorMap>

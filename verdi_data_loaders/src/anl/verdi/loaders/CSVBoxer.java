@@ -40,9 +40,15 @@ public class CSVBoxer implements BoundingBoxer {
 	ReferencingFactoryContainer factories = new ReferencingFactoryContainer(null);
 
 	private CoordinateReferenceSystem crs;
+	
+	private Projection projection = null;
 
 	public CSVBoxer() {
 
+	}
+	
+	public CSVBoxer(Projection proj) {
+		projection = proj;
 	}
 
 	public Point2D axisPointToLatLonPoint(int x, int y) {
@@ -81,6 +87,9 @@ public class CSVBoxer implements BoundingBoxer {
 	}
 	
 	
+	public void setProjection(Projection proj) {
+		projection = proj;
+	}
 
 	/* (non-Javadoc)
 	 * @see anl.verdi.data.BoundingBoxer#getProjection()
@@ -88,7 +97,7 @@ public class CSVBoxer implements BoundingBoxer {
 	 */
 	@Override
 	public Projection getProjection() {
-		return null;
+		return projection;
 	}
 	
 	public CoordinateReferenceSystem getCRS() {

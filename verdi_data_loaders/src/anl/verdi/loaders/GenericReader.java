@@ -26,13 +26,13 @@ import anl.verdi.data.Variable;
  * @version $Revision$ $Date$
  * @see anl.verdi.data.Dataset , DataLoader
  */
-public class ICTReader extends AbstractDataReader<ICTDataset> {
+public class GenericReader extends AbstractDataReader<GenericDataset> {
 
-	public ICTReader(ICTDataset set) {
+	public GenericReader(GenericDataset set) {
 		super(set);
 	}
 
-	private void createDefaultAxes(DataFrameBuilder builder, ICTDataset set) {
+	private void createDefaultAxes(DataFrameBuilder builder, GenericDataset set) {
 		int index = 0;
 		for (CoordAxis axis : set.getCoordAxes().getAxes()) {			
 			builder.addAxis(DataFrameAxis.createDataFrameAxis(axis, index));
@@ -43,7 +43,7 @@ public class ICTReader extends AbstractDataReader<ICTDataset> {
 	/**
 	 * get the values for the given data parameters
 	 */
-	public DataFrame getValues(ICTDataset set, List<AxisRange> ranges, Variable variable) {
+	public DataFrame getValues(GenericDataset set, List<AxisRange> ranges, Variable variable) {
 
 		DataFrameBuilder builder = new DataFrameBuilder();
 
@@ -63,20 +63,16 @@ public class ICTReader extends AbstractDataReader<ICTDataset> {
 		
 		Date dataStart = null;
 		Date dataEnd = null;
-		Long startIndex = null;
-		Long endIndex = null;
 		TimeCoordAxis timeAxis = (TimeCoordAxis)set.getCoordAxes().getTimeAxis();
 		if (timeAxis != null) {
 			for (AxisRange range : ranges) {
 				if (AxisType.TIME.equals(range.getAxisType())) {
 					if (range.getOrigin() < 0)
 						return null;
-					startIndex = range.getRange().getOrigin();
 					GregorianCalendar startCal = timeAxis.getDate(range.getOrigin());
 					if (startCal == null)
 						continue;
 					dataStart = startCal.getTime();
-					endIndex = range.getRange().getExtent() + startIndex + 1;
 					GregorianCalendar endCal = timeAxis.getDate((int)(range.getRange().getOrigin() + range.getRange().getExtent()));
 					if (endCal != null)
 					dataEnd = endCal.getTime();
@@ -85,9 +81,7 @@ public class ICTReader extends AbstractDataReader<ICTDataset> {
 		}
 
 
-		Array array = new ICTDataArrayWrapper((ICTDataArray)set.getArray(), variable, startIndex, endIndex);
-
-		builder.setArray(array);
+		builder.setArray(set.getArray());
 
 		return builder.createDataFrame();
 

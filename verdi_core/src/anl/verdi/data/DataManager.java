@@ -105,6 +105,8 @@ public class DataManager {
 						Logger.debug("Loader " +loader.getClass().getName() + " creating dataset " + url);
 						List<Dataset> data = loader.createDatasets(url);
 						Logger.debug("after creating dataset. Dataset list size: " + data.size());
+						if (data.size() == 0)
+							continue;
 						for (Dataset dataset : data) {
 							setLoaderMap.put(dataset, loader);
 							String alias = aliasGenerator.getNextAlias();

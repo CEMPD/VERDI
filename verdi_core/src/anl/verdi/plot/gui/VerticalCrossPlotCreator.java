@@ -114,11 +114,17 @@ public class VerticalCrossPlotCreator extends AbstractPlotCreator {
 			double x = config.getCrossSectionRowCol() - axes.getXAxis().getRange().getOrigin();
 			if (meshInput)
 				++x;
+			if (x < 0) {
+				throw new RuntimeException("Error: Cross section column (" + (config.getCrossSectionRowCol() + 1) + ") must be at least domain minimum " + (axes.getXAxis().getRange().getOrigin() + 1));
+			}
 			config.setCrossSectionRowCol(x);
 		} else {
 			double y = config.getCrossSectionRowCol() - axes.getYAxis().getRange().getOrigin();
 			if (meshInput)
 				++y;
+			if (y < 0) {
+				throw new RuntimeException("Error: Cross section row (" + (config.getCrossSectionRowCol() + 1)+ ") must be at least range minimum " + (axes.getYAxis().getRange().getOrigin() + 1)); 
+			}
 			config.setCrossSectionRowCol(y);
 		}
 		VerdiGUI gui = app.getGui();

@@ -42,10 +42,12 @@ import anl.verdi.util.VUnits;
  * @author Eric Tatara
  * @version $Revision$ $Date$
  */
-public class ICTDataset extends AbstractDataset implements TextDataset {
-	static final Logger Logger = LogManager.getLogger(ICTDataset.class.getName());
+public class GenericDataset extends AbstractDataset implements TextDataset {
+	static final Logger Logger = LogManager.getLogger(GenericDataset.class.getName());
 
 	private static Map<ucar.nc2.constants.AxisType, AxisType> types = new HashMap<ucar.nc2.constants.AxisType, AxisType>();
+	
+	private GenericDataWrapper wrapper = null;
 
 	static {
 		types.put(ucar.nc2.constants.AxisType.GeoX, AxisType.X_AXIS);
@@ -60,12 +62,19 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 	private int urlIndex = Dataset.SINGLE_DATASET;
 	private List<Variable> vars;
 	private String name = "";
-	private List<String> columnNames;
 	private boolean canceledGuiInput = false;
-	private int numCols, numRows;
+	private int numRows;
 	private boolean latLonDetected = false;
   private Map<String,String> columnNameMap;
-  private String[] fields = {"Time Axis Column","X Axis Column","Y Axis Column","Layer Axis Column","Value Axis Column"};
+  
+  public static final String FIELD_TIME_AXIS = "Time Axis Column";
+  public static final String FIELD_X_AXIS = "X Axis Column";
+  public static final String FIELD_Y_AXIS = "Y Axis Column";
+  public static final String FIELD_LAYER_AXIS = "Layer Axis Column";
+  public static final String FIELD_VALUE_AXIS = "Value Axis Column";
+  
+  public static String[] fields = {FIELD_TIME_AXIS, FIELD_X_AXIS, FIELD_Y_AXIS, FIELD_LAYER_AXIS, FIELD_VALUE_AXIS};
+  private String[] varList = null;
 	
 	Map<String,Double[]> dataMap;
 	Map<String,Double[]> axesMap;
@@ -74,17 +83,17 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 	Map<String,Map<Double,Integer>> axesPosMap;
 
 	/**
-	 * Creates a ICTDataset from the specified url,
+	 * Creates a GenericDataset from the specified url,
 	 *
 	 * @param url         the url of the dataset
 	 */
-	protected ICTDataset(URL url) {
-		this(url, Dataset.SINGLE_DATASET);
+	public GenericDataset(URL url, GenericDataWrapper wrapper) {
+		this(url, wrapper, Dataset.SINGLE_DATASET);
 	}
 
 	private String findField(String[] sourceCols) {
 		for (int i = 0; i < sourceCols.length; ++i) {
-			if (columnNames.contains(sourceCols[i])) {
+			if (wrapper.getValue(sourceCols[i], 0) != null) {
 				return sourceCols[i];
 			}
 		}
@@ -92,25 +101,20 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 	}
 	
 	public boolean hasColumn(String name) {
-		return name != null && columnNames.contains(name);
+		return name != null && wrapper.getValue(name, 0) != null;
 	}
 
 	/**
-	 * Creates a ICTDataset from the specified url
+	 * Creates a GenericDataset from the specified url
 	 * 
 	 * @param url         the url of the dataset
 	 * @param urlIndex the cardinality of this Dataset inside the specified URL.
 	 */
-	protected ICTDataset(URL url, int urlIndex) {
+	protected GenericDataset(URL url, GenericDataWrapper wrapper, int urlIndex) {
 		super(url);
 
+		this.wrapper = wrapper;
 		this.urlIndex = urlIndex;
-
-		try {
-			loadColumnHeaders(url);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 		
 		//TODO - add me
@@ -120,45 +124,51 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 			return;
 
 
-		//TODO - remove me
+		//TODO - replace with csv dialog
 		columnNameMap = new HashMap<String, String>();
 		//columnNameMap.put(fields[0], "Start_UTC");
-		columnNameMap.put(fields[1], "Longitude");
-		columnNameMap.put(fields[2], "Latitude");
+		columnNameMap.put(fields[1], wrapper.getLonVars()[0]);
+		columnNameMap.put(fields[2], wrapper.getLatVars()[0]);
 		
 		
-		String[] sourceCols = new String[] { "Start_UTC", "Mid_UTC", "UTC", "Stop_UTC" };
+		String[] sourceCols = wrapper.getTimeVars() ;
 		columnNameMap.put(fields[0], findField(sourceCols));
-		sourceCols = new String [] { "Longitude", "LONGITUDE", "Lon", "LON" };
+		sourceCols = wrapper.getLonVars();
 		columnNameMap.put(fields[1], findField(sourceCols));
-		sourceCols = new String [] { "Latitude", "LATITUDE", "Lat", "LAT" };
+		sourceCols = wrapper.getLatVars();
 		columnNameMap.put(fields[2], findField(sourceCols));
 
+		varList = wrapper.getVarList();
+		columnNameMap.put(fields[4], varList[0]);
 		
+		latLonDetected = true;
 
-
+		startDate = wrapper.getStartDate();
+		
+		numRows = wrapper.getNumRows();
+		
 		try {
 			load(url);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+
+		
 		init();
 		
 		Set<String> reservedNames = new HashSet<String>();
-		reservedNames.add("UTC");
-		reservedNames.add("Start_UTC");
-		reservedNames.add("Stop_UTC");
-		reservedNames.add("Mid_UTC");
-		reservedNames.add("Longitude");
-		reservedNames.add("Latitude");
+		String[] reserved = wrapper.getReservedVars();
+		for (String str: reserved)
+			reservedNames.add(str);
+
 		
 		vars = new ArrayList<Variable>();
 
 		Unit missing = VUnits.MISSING_UNIT;
 		Unit unit = null;
 		
-		for (String var: columnNames) {
+		for (String var: wrapper.getVarList()) {
 			var = var.trim();
 			if (!reservedNames.contains(var)) {
 				String unitStr = units.get(var);
@@ -168,191 +178,38 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 		}
 	}
 	
-	String investigator = null;
-	String investigatorOrg = null;
-	String description = null;
-	String missionName = null;
-	String volume = null;;
-	
-	String dataInterval = null;
-	String[] independentVar = null;
-	String varCount = null;
-	String scaleFactorList = null;
-	String missingIndicatorList = null;
-	String specialCommentCount = null;
-	List<String> specialComments = new ArrayList<String>();
-	String normalCommentCount = null;
-	List<String> normalComments = new ArrayList<String>();
+
 	Map<String, String> units = new HashMap<String, String>();
 	Map<String, Double> missingIndicators = new HashMap<String, Double>();
 	Map<String, String> scaleFactors = new HashMap<String, String>();
 	
-	
-	
-	private void loadColumnHeaders(URL url) throws IOException {
-		BufferedReader buf  = new BufferedReader(new InputStreamReader(url.openStream()));
-		String line;
-		line = buf.readLine();
-		int headerSize = Integer.parseInt(line.split(",")[0]);
-		
-		investigator = buf.readLine();
-		investigatorOrg = buf.readLine();
-		description = buf.readLine();
-		missionName = buf.readLine();
-		volume = buf.readLine();
-		String dateLine = buf.readLine();
-		String[] dateString = dateLine.split(",");
-		
-		startDate = new GregorianCalendar();
-		startDate.set(GregorianCalendar.YEAR,  Integer.parseInt(dateString[0].trim()));
-		startDate.set(GregorianCalendar.MONTH,  Integer.parseInt(dateString[1].trim()) - 1);
-		startDate.set(GregorianCalendar.DAY_OF_MONTH,  Integer.parseInt(dateString[2].trim()));	
-		startDate.set(GregorianCalendar.HOUR,  0);
-		startDate.set(GregorianCalendar.MINUTE,  0);
-		startDate.set(GregorianCalendar.SECOND,  0);
-		startDate.set(GregorianCalendar.MILLISECOND,  0);
-		startDate.set(GregorianCalendar.AM_PM, GregorianCalendar.AM);
-		
-		jdayBase = new GregorianCalendar();
-		jdayBase.set(GregorianCalendar.YEAR,  Integer.parseInt(dateString[0].trim()));
-		jdayBase.set(GregorianCalendar.MONTH,  0);
-		jdayBase.set(GregorianCalendar.DAY_OF_MONTH,  1);	
-		jdayBase.set(GregorianCalendar.HOUR,  0);
-		jdayBase.set(GregorianCalendar.MINUTE,  0);
-		jdayBase.set(GregorianCalendar.SECOND,  0);
-		jdayBase.set(GregorianCalendar.MILLISECOND,  0);
-		jdayBase.set(GregorianCalendar.AM_PM, GregorianCalendar.AM);
-
-		dataInterval = buf.readLine();
-		independentVar = buf.readLine().split(",");
-		varCount = buf.readLine();
-		scaleFactorList = buf.readLine();
-		missingIndicatorList = buf.readLine();
-		int listLength = Integer.parseInt(varCount);
-		for (int i = 0; i < listLength; ++i) {
-			String[] unitLine = buf.readLine().split(",");
-			units.put(unitLine[0],  unitLine[1]);
-		}
-		specialCommentCount = buf.readLine();
-		listLength = Integer.parseInt(specialCommentCount);
-		for (int i = 0; i < listLength; ++i)
-			specialComments.add(buf.readLine());
-		normalCommentCount = buf.readLine();
-		listLength = Integer.parseInt(normalCommentCount);
-		for (int i = 0; i < listLength; ++i) {
-			normalComments.add(buf.readLine());
-		}
-		String headerLine = normalComments.get(listLength - 1);
-		loadColumnHeaders(headerLine, buf);
-		latLonDetected = true;
-		return;
-		
-	}
-	
 	GregorianCalendar startDate = null;
-	GregorianCalendar jdayBase = null;
 
-	
-	Map<String, Integer> columnMap = new HashMap<String, Integer>();
-	
-	private void loadColumnHeaders(String line, BufferedReader buf) throws IOException {
-		// Read in the column headers from the CSV file and check
-		// the size of the data in the file (rows and columns)
-		
-		columnNames = new ArrayList<String>();
-
-		// Grab the column names from the first line
-		StringTokenizer st = new StringTokenizer(line,","); 
-
-		int idx = 0;
-		int missingIdx = 0;
-		String[] missingMarkers = missingIndicatorList.split(",");
-		while (st.hasMoreTokens()) {
-			String header = st.nextToken().trim();
-			columnNames.add(header);
-			if (!header.equals(independentVar[0]))
-				missingIndicators.put(header, Double.parseDouble(missingMarkers[missingIdx++]));
-			columnMap.put(header, idx++);
-		}
-
-		// count num of rows to allocate storage  
-		while (buf.readLine() != null)
-			numRows++;
-		numCols = columnNames.size();
-
-		buf.close();
-	}
 	
 	private void load(URL url) throws IOException {
-		BufferedReader buf  = new BufferedReader(new InputStreamReader(url.openStream()));
-		String line;
-		buf  = new BufferedReader(new InputStreamReader(url.openStream()));
-		if (latLonDetected) {
-			while((line = buf.readLine()) != null){ //Skip preamble and look for Lat / Lon
-				if (line.toLowerCase().indexOf("lat") != -1 && line.toLowerCase().indexOf("lon") != -1) {
-					if (line.split(",").length > 4) {
-						load(buf);
-						return;
-					}
-				}
-			}			
-		} else {
-			buf.readLine();                     // skip column headers
-			load(buf);
-		}		
-		
-	}
-
-	private void load(BufferedReader buf) throws IOException {
-
-		// Loads data from the CSV file and create the NetCDF Array object 
+		// Loads data from the wrapper and create the NetCDF Array object 
 		// based on the user's data mappings from the CSV dialog.
 		
 		// Read in the data from the CSV file and store in a 2D
 		// double array 
-		double data[][] = new double[numRows][numCols];
+		String[] columnList = wrapper.getColumnList();
+		double data[][] = new double[numRows][columnList.length];  
 
-		String line;
-		StringTokenizer st;
-  
-
-		int row = 0;
 		int col = 0;
-		while((line = buf.readLine()) != null){
-			st = new StringTokenizer(line,",");
-			col = 0;
-			while (st.hasMoreTokens()){
-				data[row][col] = new Double(st.nextToken());
-				col++;
-			}
-			row++;
+		for (int i = 0; i < numRows; ++i) {
+			for (int j = 0; j < columnList.length; ++j) 
+				data[i][j] = wrapper.getValue(columnList[j], i);
 		}
-		buf.close(); 
 
 
 		// build a map of <name, data> for easier access
 		dataMap = new HashMap<String,Double[]>();
 		col = 0;
-		int jdayIndex = -1;
-		if (columnMap.containsKey("JDAY")) {
-			jdayIndex = columnMap.get("JDAY");
-		}
-		for (String varName : columnNames){
+		for (String varName : columnList){
 			Double d[] = new Double[numRows];
 
-			if (varName.indexOf("UTC") != -1) {
-				if (jdayIndex > -1) {
-					for (int i=0; i<numRows; i++)
-						d[i] = buildICTTime(data[i][jdayIndex], data[i][col]);
-				}else {
-					for (int i=0; i<numRows; i++)
-						d[i] = buildICTTime(startDate, data[i][col]);
-				}
-			} else {
-				for (int i=0; i<numRows; i++)
-					d[i] = data[i][col];
-			}
-
+			for (int i=0; i<numRows; i++)
+				d[i] = data[i][col];
 
 			dataMap.put(varName, d);
 
@@ -360,7 +217,7 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 		}
 
 		// Create the NetCDF Array object
-		ArrayList<Double> list;
+		List<Double> list;
 		axesMap = new HashMap<String,Double[]>();
 		axesPosMap = new HashMap<String, Map<Double,Integer>>();
 		Double[] axesData;
@@ -394,7 +251,7 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 				//System.out.println("pause");
 					
 			// Get the entire axis column data from the data map (raw CSV data)
-			list = new ArrayList(Arrays.asList(dataMap.get(columnNameMap.get(fields[i]))));
+			list = wrapper.getValues(columnNameMap.get(fields[i]), 0, -1);
 		
 			// Make a unique set
 			Set<Double> set = new HashSet<Double>();
@@ -420,7 +277,7 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 		}
 		
 		dim[3] =1 ;
-		array = new ICTDataArray();
+		array = new ArrayDouble.D4(dim[0],dim[1],dim[2],dim[3]);
 		
 		// Now actually build the NetCDF Array object
 		
@@ -435,38 +292,17 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 				if (!columnNameMap.containsKey(fields[j]))
 					continue;
 				csvData[j] = dataMap.get(columnNameMap.get(fields[j]))[i];
-				if (j < csvData.length - 1)
-				  csvDataLoc[j] = (Integer)((Map)(axesPosMap.get(columnNameMap.get(fields[j])))).get(csvData[j]);
+				if (j < csvData.length - 1) {
+					Map<Double, Integer> currentAxesPosMap = axesPosMap.get(columnNameMap.get(fields[j]));
+					//if (currentAxesPosMap == null || currentAxesPosMap.get(csvData[j]) == null )
+					//	System.out.println("pause");
+				    csvDataLoc[j] = (Integer)currentAxesPosMap.get(csvData[j]);
+				}
 			}
 				
 			// Set the data in the CDF Array type
-			if (array != null) {
-				array.set(csvDataLoc[0],csvDataLoc[1],csvDataLoc[2],csvDataLoc[3], csvData[4]);
-				((ICTDataArray)array).addRow(csvData[0], csvData[1], csvData[2], (int)csvData[3], csvData[4]);
-			}
-			
+			array.set(csvDataLoc[0],csvDataLoc[1],csvDataLoc[2],csvDataLoc[3], csvData[4]);	
 		}
-		((ICTDataArray)array).setRawData(columnMap, data);
-	}
-	
-	private static final long SECS_IN_DAY = 24*60*60;
-	
-	private double buildICTTime(double jday, double utc) {
-		--jday; //jday seems to be 1 based
-		long ictTime = Math.round(jday * SECS_IN_DAY * 1000 + utc * 1000 + jdayBase.getTimeInMillis());
-		return ictTime;
-		
-	}
-	
-	private double buildICTTime(GregorianCalendar baseDate, double utc) {
-		long ictTime = (long)utc * 1000 + baseDate.getTime().getTime();
-		return ictTime;
-		
-	}
-	
-	public static Set<String> hiddenVars = new HashSet<String>();
-	static {
-		//hiddenVars.add("JDAY");
 	}
 
 	/**
@@ -479,8 +315,7 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 		List<String> vars = new ArrayList<String>();
 		List<Variable> netVars = getVariables();
 		for (Variable var : netVars) {
-			if (!hiddenVars.contains(var.getName()))
-				vars.add(var.getName());
+			vars.add(var.getName());
 		}
 		return vars;
 	}
@@ -510,10 +345,11 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 
 		List<CoordAxis> list = new ArrayList<CoordAxis>();
 		boolean layerFound = false;
+		Double[] d = new Double[0];
 
 		//TODO make generic
 		String var = columnNameMap.get(fields[0]);
-		list.add(new ICTTimeAxis(startDate, axesMap.get(var), var, var));
+		list.add(new CSVTimeAxis(axesMap.get(var), var, var));
 		
 		var = columnNameMap.get(fields[1]);
 		list.add(new CSVCoordAxis(axesMap.get(var), var, var, AxisType.X_AXIS));
@@ -526,12 +362,13 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 			list.add(new CSVCoordAxis(axesMap.get(var), var, var, AxisType.LAYER));
 			layerFound = true;
 			
+			
 			if (!layerFound){
 				var = "layerID";
 				list.add(new CSVCoordAxis(axesMap.get(var), var, var, AxisType.LAYER));
 			}
 		}
-		coordAxes = new Axes<CoordAxis>(list, new CSVBoxer());
+		coordAxes = new Axes<CoordAxis>(list, new CSVBoxer(wrapper.getProjection()));
 	}
 
 
@@ -630,7 +467,7 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 	}
 	
 	public boolean isObs() {
-		return true;
+		return wrapper.isObs();
 	}
 	
 	public Double getMissingDataMarker(Variable variable) {

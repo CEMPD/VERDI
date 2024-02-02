@@ -107,7 +107,6 @@ public class WRFConvention extends CoordSysBuilder {
 
     att = ncfile.findGlobalAttribute("MAP_PROJ");
     if (att == null) return false;
-
     return true;
   }
 
@@ -183,8 +182,15 @@ map_proj =  1: Lambert Conformal
             3: Mercator
             6: latitude and longitude (including global)
 */
+  
+  ProjectionImpl proj = null;
 
+  public Projection getProjection() {
+	  return proj;
+  }
+  
   public void augmentDataset(NetcdfDataset ds, CancelTask cancelTask) {
+	proj = null;
     if (null != ds.findVariable("x")) return; // check if its already been done - aggregating enhanced datasets.
 
     Attribute att = ds.findGlobalAttribute("GRIDTYPE");
@@ -206,7 +212,7 @@ map_proj =  1: Lambert Conformal
     int projType = att.getNumericValue().intValue();
     boolean isLatLon = false;
 
-    if (projType == 203) {
+     if (projType == 203) {
 
       /* centerX = centralLon;
       centerY = centralLat;
@@ -255,7 +261,6 @@ map_proj =  1: Lambert Conformal
       double standardLon = findAttributeDouble(ds, "STAND_LON"); // true longitude
       double standardLat = findAttributeDouble(ds, "MOAD_CEN_LAT");
 
-      ProjectionImpl proj = null;
       switch (projType) {
         case 0: // for diagnostic runs with no georeferencing
           proj = new FlatEarth();

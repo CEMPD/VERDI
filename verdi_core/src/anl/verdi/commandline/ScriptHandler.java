@@ -576,7 +576,8 @@ public class ScriptHandler {
 								//assume the user is passing in the actual number of the 
 								//timestep 1-based
 								Axes<DataFrameAxis> axes = dataFrame.getAxes();
-								((anl.verdi.plot.types.TimeAnimatablePlot)plot).updateTimeStep(selectedTimeStep - 1 - axes.getTimeAxis().getOrigin());
+								if (axes.getTimeAxis() != null)
+									((anl.verdi.plot.types.TimeAnimatablePlot)plot).updateTimeStep(selectedTimeStep - 1 - axes.getTimeAxis().getOrigin());
 								plot.configure(new TilePlotConfiguration(config), Plot.ConfigSource.FILE);
 
 								PlotPanel panel = new PlotPanel( plot, "Tile: " + verdiApp.getProject().getSelectedFormula());
@@ -665,7 +666,8 @@ public class ScriptHandler {
 								//assume the user is passing in the actual number of the 
 								//timestep 1-based
 								Axes<DataFrameAxis> axes = dataFrame.getAxes();
-								((anl.verdi.plot.gui.FastTilePlot)plot).updateTimeStep(selectedTimeStep - 1 - axes.getTimeAxis().getOrigin());
+								if (axes.getTimeAxis() != null)
+									((anl.verdi.plot.gui.FastTilePlot)plot).updateTimeStep(selectedTimeStep - 1 - axes.getTimeAxis().getOrigin());
 								plot.configure(new TilePlotConfiguration(config), Plot.ConfigSource.FILE);
 
 								PlotPanel panel = new PlotPanel( plot, "Tile: " + verdiApp.getProject().getSelectedFormula());
@@ -891,7 +893,7 @@ public class ScriptHandler {
 				mapNames.add(args.get(1));
 			}				
 		});
-		dataMap.put("openProject".toUpperCase(), new CommandScript(){
+		dataMap.put("project".toUpperCase(), new CommandScript(){
 			public void run(ArrayList<String> args){
 				Logger.debug("ScriptHandler.constructMap.OPENPROJECT");
 				try{
@@ -974,7 +976,12 @@ public class ScriptHandler {
 				Plot plot = plotMap.get(curView);
 
 				try{
-					plot.exportImage(args.get(1), new File(args.get(2)), 800, 600);
+					if (args.get(1).toLowerCase().equals("shp")) {
+						
+						((AbstractPlotPanel)plot).drawBatchImage(800, 600);
+						((AbstractPlotPanel)plot).exportShapefile(args.get(2));
+					} else
+						plot.exportImage(args.get(1), new File(args.get(2)), 800, 600);
 				}
 				catch(NullPointerException e){
 					Logger.error("Error in ScriptHandler.dataMap.put 'SAVEIMAGE'", e);
@@ -1443,7 +1450,8 @@ public class ScriptHandler {
 					Axes<DataFrameAxis> axes = frame.getAxes();
 
 					//assume the user is passing in the actual number of the timestep
-					((VerticalCrossSectionPlot)plot).updateTimeStep(selectedTimeStep - axes.getTimeAxis().getOrigin() - 1);
+					if (axes.getTimeAxis() != null)
+						((VerticalCrossSectionPlot)plot).updateTimeStep(selectedTimeStep - axes.getTimeAxis().getOrigin() - 1);
 
 					List<String> viewList = verdiApp.getGui().getViewList();
 					curView = viewList.get(viewList.size() - 1);

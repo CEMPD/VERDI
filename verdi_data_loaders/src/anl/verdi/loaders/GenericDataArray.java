@@ -7,21 +7,20 @@ import java.util.Map;
 
 import ucar.ma2.IndexIterator;
 
-public class ICTDataArray extends ucar.ma2.ArrayDouble.D4 {
+public class GenericDataArray extends ucar.ma2.ArrayDouble.D4 {
 	
 	Map<Integer, Object>[] rankMaps = new Map[4];
 	
-	List<Double> time = new ArrayList<Double>();
-	List<Double> x = new ArrayList<Double>();
-	List<Double> y = new ArrayList<Double>();
+	List<Integer> time = new ArrayList<Integer>();
+	List<Integer> x = new ArrayList<Integer>();
+	List<Integer> y = new ArrayList<Integer>();
 	List<Integer> layer = new ArrayList<Integer>();
 	List<Double> value = new ArrayList<Double>();
 
 
-	Map<String, Integer> columnNameMap = null;
 	double rawData[][] = null;
 	
-	public ICTDataArray() {
+	public GenericDataArray() {
 		super(0, 0, 0, 0);
 		
 		for (int i = 0; i < 4; ++i)
@@ -61,11 +60,11 @@ public class ICTDataArray extends ucar.ma2.ArrayDouble.D4 {
 		
 		childMap.put(layer,  value);
 		
-		/*this.time.add(time);
+		this.time.add(time);
 		this.x.add(x);
 		this.y.add(y);
 		this.layer.add(layer);
-		this.value.add(value);*/
+		this.value.add(value);
 	}
 	
 	public static final int POS_TIME = 0;
@@ -75,13 +74,8 @@ public class ICTDataArray extends ucar.ma2.ArrayDouble.D4 {
 	public static final int POS_VALUE = 4;
 	
 	
-	public void addRow(double time, double x, double y, int layer, double value) {
+	public void addRow(double time, double x, double y, double layer, double value) {
 		double[] row = new double[] { time, x, y, layer, value};
-		this.time.add(time);
-		this.x.add(x);
-		this.y.add(y);
-		this.layer.add(layer);
-		this.value.add(value);
 	}
 	
 	private Map<Integer, Object> getChildMap(int rank, int index, boolean create) {
@@ -100,8 +94,7 @@ public class ICTDataArray extends ucar.ma2.ArrayDouble.D4 {
 	}
 
 
-	public void setRawData(Map<String, Integer> columnMap, double[][] data) {
-		columnNameMap = columnMap;
+	public void setRawData(double[][] data) {
 		rawData = data;
 		
 	}

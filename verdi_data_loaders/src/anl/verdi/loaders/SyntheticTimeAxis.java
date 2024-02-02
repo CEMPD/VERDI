@@ -30,6 +30,7 @@ public class SyntheticTimeAxis implements TimeCoordAxis {
 	static final Logger Logger = LogManager.getLogger(SyntheticTimeAxis.class.getName());
 
 	private static final String SECONDS_SINCE = "seconds since";
+	private static final String SECS_SINCE = "secs since";
 	public static final int TIME_STEP_NOT_FOUND = -1;
 
 	private NetCdfCoordAxis axis;
@@ -54,11 +55,23 @@ public class SyntheticTimeAxis implements TimeCoordAxis {
 			calendarField = Calendar.SECOND;
 		}
 
+		if (tmp.startsWith(SECS_SINCE)) {
+			dateString = unit.substring(SECS_SINCE.length(), unit.length()).trim();
+			calendarField = Calendar.SECOND;
+		}
+
 		if (dateString != null) {
 			try {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
 				date = dateFormat.parse(dateString);
 			} catch (ParseException ex) {
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				try {
+					date = dateFormat.parse(dateString);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -96,12 +109,28 @@ public class SyntheticTimeAxis implements TimeCoordAxis {
 		long dateInMillis = date.getTime();
 		Range range = axis.getRange();
 		int origin = (int)range.getOrigin();
-		for (int i = origin, n = (int)(range.getOrigin() + range.getExtent()); i < n; i++) {
-			GregorianCalendar d = getDate(i);
-			//if (date.equals(d)) return i - origin;
-			if(d.getTimeInMillis() == dateInMillis)
+		GregorianCalendar d = getDate(origin);
+		if (d.getTime().after(date))
+			return TIME_STEP_NOT_FOUND;
+		Long originTime = null;
+		Long tstepSize = null;
+		int i = 0;
+		int n = 0;
+		for (i = origin, n = (int)(range.getOrigin() + range.getExtent()); i < n; i++) {
+			d = getDate(i);
+			if (originTime == null)
+				originTime = d.getTime().getTime();
+			else if (tstepSize == null)
+				tstepSize = d.getTime().getTime() - originTime;
+			if (date.equals(d))
 				return i - origin;
+			if(d.getTime().after(date))
+				return i - origin - 1;
 		}
+		if (d.getTime().getTime() + tstepSize > date.getTime())
+			return i - origin - 2;
+		if (d.getTime().getTime() + tstepSize == date.getTime())
+			return i - origin - 1;
 
 		return TIME_STEP_NOT_FOUND;
 	}

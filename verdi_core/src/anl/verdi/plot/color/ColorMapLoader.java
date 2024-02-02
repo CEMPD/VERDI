@@ -200,8 +200,12 @@ public class ColorMapLoader extends DefaultHandler2 {
 		if (colorOn) {
 			String num = new String(ch, start, length).trim();
 			try {
-				int val = Integer.parseInt(num);
-				colors.add(new Color(val));
+				Color c = null;
+				if (num.startsWith("#"))
+					c = Color.decode(num);
+				else
+					c = new Color(Integer.parseInt(num));
+				colors.add(c);
 			} catch (NumberFormatException ex) {
 				throw new SAXException("Invalid color value", ex);
 			}

@@ -870,7 +870,7 @@ FormulaElementCreator, ListDataListener {
 			try {
 				if (!dialog.isCanceled()) {
 					if (plot != null) {
-						ObsEvaluator eval = new ObsEvaluator(manager, dialog.getSelectedVar(), timestepSize);
+						ObsEvaluator eval = new ObsEvaluator(manager, dialog.getSelectedVar());
 						plot.addObsAnnotation(eval, dialog.getShapeSize(), dialog.getStrokeSize(), dialog.getSymbol());
 					}
 

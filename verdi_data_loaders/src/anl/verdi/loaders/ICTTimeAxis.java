@@ -40,14 +40,14 @@ public class ICTTimeAxis extends CSVCoordAxis implements TimeCoordAxis {
 		if (timestep < 0 || timestep > data.length - 1) 
 			return null;
 		
-		GregorianCalendar aCalendar = (GregorianCalendar)startDate.clone();
-		aCalendar.setTimeInMillis(startDate.getTime().getTime() + data[timestep].longValue() * 1000);
+		GregorianCalendar aCalendar = (GregorianCalendar) GregorianCalendar.getInstance();
+		aCalendar.setTimeInMillis(data[timestep].longValue());
 		return aCalendar;
 	}
 	
 
 	/**
-	 * Gets the timestep that corresponds to the specified date (Date). If no such
+	 * Gets the first timestep equal or after the specified date (Date). If no such
 	 * timestep is found then return Axes.TIME_STEP_NOT_FOUND.
 	 *
 	 * @param date the date whose time step we want
@@ -55,7 +55,9 @@ public class ICTTimeAxis extends CSVCoordAxis implements TimeCoordAxis {
 	 * timestep is found then return Axes.TIME_STEP_NOT_FOUND.
 	 */
 	public int getTimeStep(Date date) {
-		long time = date.getTime();
+		//Date firstDate = getDate(0).getTime();
+		//if (firstDate.after(date))
+			//return Axes.TIME_STEP_NOT_FOUND;
 			
 		//TODO - use start and stop columns instead
 		//double stepSize = (data[1].longValue() - data[0].longValue()) * 1000;
@@ -64,8 +66,9 @@ public class ICTTimeAxis extends CSVCoordAxis implements TimeCoordAxis {
 		
 		for (int i = 0; i < data.length; i++) {
 			stepDate = getDate(i).getTime();
-			if (stepDate.equals(date) || stepDate.after(date))
+			if (stepDate.equals(date) || stepDate.after(date)) {
 				return i;
+			}
 		}
 		return Axes.TIME_STEP_NOT_FOUND;
 	}
@@ -87,5 +90,9 @@ public class ICTTimeAxis extends CSVCoordAxis implements TimeCoordAxis {
 				return i;
 		}
 		return Axes.TIME_STEP_NOT_FOUND;
+	}
+	
+	public GregorianCalendar getStartDate() {
+		return startDate;
 	}
 }
