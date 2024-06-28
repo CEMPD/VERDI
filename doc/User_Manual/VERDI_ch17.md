@@ -307,6 +307,6 @@ Figure 98. Tile Plot of Sum Ozone (aggregated over 25 time steps)
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch16.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch18.md)<br>
-VERDI User Manual (c) 2022<br>
+VERDI User Manual (c) 2023<br>
 
 <!-- END COMMENT -->

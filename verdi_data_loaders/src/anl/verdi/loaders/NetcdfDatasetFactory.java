@@ -219,6 +219,64 @@ public class NetcdfDatasetFactory {
 		return null;
 	}
 
+	public Dataset createWRFObsDataset(URL url) {
+		NetcdfDataset dataset = null;
+		try {
+			String urlString = url.toExternalForm();
+			Logger.debug("External url string " + urlString + " path " + new URI(urlString).getPath());
+			//if (url.getProtocol().equals("file")) {  DEBUG
+				//urlString = new URI(urlString).getPath();
+			//}
+//			dataset = NetcdfDataset.openDataset(urlString, false, new CancelTask() {
+				// 2014 require implementation of interface functions isCancel() and setProgress()
+				// isCancel() previously implemented; no helpful information could be founc for setProgress()
+				// documentation gives option of "null" for the CancelTask argument - see below
+//				public boolean isCancel() {
+//					return false;
+//				}
+//				public void setError(String msg) {}
+//				@Override
+//				public void setProgress(String arg0, int arg1) {
+//					
+//				}
+//			});
+			dataset = NetcdfDataset.openDataset(urlString, false, null);
+			WRFConvention conv = new WRFConvention();
+			conv.augmentDataset(dataset, null);
+			
+			//GridDataset gridDataset = GridDataset.open(urlString);
+			//gridDataset.getGlobalAttributes();
+			
+			
+			/*List<Dataset> sets = new ArrayList<Dataset>();
+			// we need to maintain the order in which these are
+			// created so we need the linked hashmap.
+			Set<String> gridVars = new HashSet<String>();
+			GridCoordSystem system = null;
+			Map<GridCoordSystem, List<GridDatatype>> map = new LinkedHashMap<GridCoordSystem, List<GridDatatype>>();
+			for (GridDatatype grid : (List<GridDatatype>) gridDataset.getGrids()) {
+				system = grid.getCoordinateSystem();
+				
+				List<GridDatatype> list = map.get(system);
+				if (list == null) {
+					list = new ArrayList<GridDatatype>();
+					map.put(system, list);
+				}
+				list.add(grid);
+				gridVars.add(grid.getVariable().getFullName());
+				//System.out.println("Got grid variable " + grid.getVariable().getFullName());
+			}*/
+
+			return new WRFObsDataset(url, dataset, conv.getProjection());
+		} catch (URISyntaxException e) {
+			Logger.error("Error reading netcdf file", e);
+		} catch (IOException e) {
+			Logger.error("Error reading netcdf file", e);
+		}
+
+		return null;
+	}
+
 	/**
 	 * Creates a list of Datasets from the specified URL. The url
 	 * should point to a netcdf file conforming to the Models-3 convention.

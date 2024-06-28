@@ -1,20 +1,72 @@
 package anl.verdi.loaders;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import anl.verdi.data.AxisRange;
 import ucar.ma2.IndexIterator;
 
 public class ICTIndexIterator implements IndexIterator {
 	
 	double[][] list = null;
 	
+	List<Double> times;
+	
 	int index = -1;
 	
 	int dataPosition;
 	
-	public ICTIndexIterator(double[][] list, int position) {
+	Long startIndex;
+	
+	Long endIndex;
+	
+	List<ICTFieldFilter> rangeFilters = new ArrayList<ICTFieldFilter>();
+	
+	private class ICTFieldFilter {
+		
+		int	fieldPosition;
+		double min;
+		double max;
+		ICTFieldFilter(int fieldPosition, double min, double max) {
+			this.fieldPosition = fieldPosition;
+			this.min = min;
+			this.max = max;
+		}
+		
+		boolean accept(double[] row) {
+			return fieldPosition < row.length && row[fieldPosition] >= min && row[fieldPosition] <= max;
+		}
+	}
+	
+	//Currently interprets dataStart and dataEnd as times.
+	public ICTIndexIterator(double[][] list, List<Double> times, int position, Long dataStart, Long dataEnd) {
 		this.list = list;
+		this.times = times;
 		this.dataPosition = position;
+		this.startIndex = dataStart;
+		this.endIndex = dataEnd;
+		if (dataStart > 0) {
+			//Field position map is hardcoded in ICTDataset String[] fields
+			ICTFieldFilter filter = new ICTFieldFilter(0, startIndex, dataEnd -1);
+			rangeFilters.add(filter);
+		}
+	}
+	
+	/*
+	private boolean rowInRange(double[] row) {
+		for (int i = 0; i < rangeFilters.size(); ++i) {
+			if (!rangeFilters.get(i).accept(row)) {
+				return false;
+			}
+		}
+		return true;
+	}*/
+
+	private boolean timeInRange(Integer i) {
+		if (i < 0 || i >= times.size())
+			return false;
+		return (startIndex == null) || (i >= startIndex && i < endIndex);
 	}
 
 	public boolean getBooleanCurrent() {
@@ -45,8 +97,16 @@ public class ICTIndexIterator implements IndexIterator {
 		int[] ret = new int[] { index };
 		return ret;
 	}
+	
+	private void rangeCheck() {
+		while (index > -1 && index < list.length && !timeInRange(index)) {
+			++index;
+		}
+			
+	}
 
 	public double getDoubleCurrent() {
+		rangeCheck();
 		if (index > -1 && index < list.length) {
 			return list[index][dataPosition];
 		}
@@ -68,6 +128,7 @@ public class ICTIndexIterator implements IndexIterator {
 
 	public int getIntCurrent() {
 		Object obj = null;
+		rangeCheck();
 		if (index > -1 && index < list.length)
 			return (int)list[index][dataPosition];			
 		return 0;
@@ -87,6 +148,7 @@ public class ICTIndexIterator implements IndexIterator {
 	}
 
 	public Object getObjectCurrent() {
+		rangeCheck();
 		if (index > -1 && index < list.length) {
 			return list[index][dataPosition];
 		}		
@@ -107,7 +169,11 @@ public class ICTIndexIterator implements IndexIterator {
 	}
 
 	public boolean hasNext() {
-		return index < list.length && list.length > 0;
+		int currentIndex = index;
+		rangeCheck();
+		int newIndex = index;
+		index = currentIndex;
+		return newIndex < list.length && list.length > 0;
 	}
 
 	public Object next() {

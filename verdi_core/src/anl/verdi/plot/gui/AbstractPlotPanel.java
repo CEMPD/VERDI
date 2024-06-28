@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 
@@ -75,5 +76,9 @@ public abstract class AbstractPlotPanel extends JPanel implements ComponentListe
 	public long getTimestepSize() {
 		return timestepSize;
 	}
+	
+	public abstract void exportShapefile( String baseFileName ) throws IOException;
+	
+	public abstract void drawBatchImage(int wdth, int hght);
 
 }

@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
 import ucar.ma2.Array;
+import ucar.ma2.ArrayDouble;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Dimension;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -122,6 +123,7 @@ public class MPASNetcdfReader extends AbstractDataReader<IMPASDataset> {
 
 		@Override
 		public Array getArray() {
+			
 			try {
 				return varMap.get(currentVar).read();
 			} catch (IOException e) {
@@ -200,6 +202,8 @@ public class MPASNetcdfReader extends AbstractDataReader<IMPASDataset> {
 	private class MPASDoubleVariableFrame extends MPASDataFrame {
 		
 		double value;
+		ArrayDouble.D1 arr = new ArrayDouble.D1(1);
+
 		
 		public MPASDoubleVariableFrame(double val) {
 			super(null);
@@ -210,6 +214,19 @@ public class MPASNetcdfReader extends AbstractDataReader<IMPASDataset> {
 		@Override
 		public double getDouble(DataFrameIndex index) {
 			return value;
+		}
+		
+		@Override
+		public Array getArray() {
+			
+			arr.set(0,  value);
+			/*try {
+				return varMap.get(currentVar).read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;*/
+			return arr;
 		}
 		
 	}

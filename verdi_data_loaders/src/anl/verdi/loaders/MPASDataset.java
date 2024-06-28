@@ -73,6 +73,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	static final Logger Logger = LogManager.getLogger(MPASDataset.class.getName());
 	
 	public static final String VAR_AVG_CELL_DIAM = "verdi.avgCellDiam";
+	public static final String VAR_MESH_STRUCTURE = "meshStructure";
+	public static final String VAR_MESH_DENSITY = "meshDensity";
 
 	private NetcdfDataset dataset;
 	private Axes<CoordAxis> coordAxes;
@@ -570,6 +572,7 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		//renderVarList.add("zgrid");
 		renderVarList.add("zs");
 		renderVarList.add("xtime");
+		renderVarList.add("meshDensity");
 	}
 	
 	static {
@@ -581,7 +584,6 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		hiddenVars.add("areaCell");
 		hiddenVars.add("cellsOnCell");
 		hiddenVars.add("verticesOnCell");
-		hiddenVars.add("meshDensity");
 		hiddenVars.add("zz");
 	}
 	
@@ -667,6 +669,9 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 	 */
 	@Override
 	public Variable getVariable(String name) {
+		if (name.equals(VAR_MESH_STRUCTURE)) {
+			return getVariable(VAR_MESH_DENSITY);
+		}
 		List<Variable> vars = getVariables();
 		for (Variable var : vars) {
 			if (var.getName().equals(name))
@@ -908,9 +913,12 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		this.vars = new ArrayList<Variable>();
 		this.verdiRenderVars = new ArrayList<Variable>();
 		this.renderVars = new HashMap<String, ucar.nc2.Variable>();
+		boolean timeFound = false;
 		for (ucar.nc2.Variable var : vars) {
 			String name = var.getShortName();	// getName replaced by either getShortName or getFullName (with escapes)
 			boolean valid = true;
+			if ("xtime".equals(name))
+				timeFound = true;
 			
 			if (!renderVarList.contains(name)) {
 				if (!var.getDimensionsString().contains(nCells))
@@ -966,6 +974,9 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 				}
 
 				
+		}
+		if (!timeFound) {
+			this.vars.add(new DefaultVariable(VAR_MESH_STRUCTURE, VAR_MESH_STRUCTURE, VUnits.createUnit("unitless"), this));
 		}
 		this.verdiRenderVars.add(new DefaultVariable(VAR_AVG_CELL_DIAM, VAR_AVG_CELL_DIAM, VUnits.MISSING_UNIT, this));
 		numCells = dataset.findDimension("nCells").getLength();
@@ -1038,11 +1049,12 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		String units = null;
 		
 		long time_step = 0;
+		int steps = 1;
 
-		if (xtime != null)
+		if (xtime != null) {
 			time_step = (int) getTimestepDuration(xtime, startCal);
-
-		int steps = dataset.findDimension(timeName).getLength();
+			steps = dataset.findDimension(timeName).getLength();
+		}
 
 
 		ArrayDouble.D1 data = new ArrayDouble.D1(steps);
@@ -1054,12 +1066,14 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 
 		// create the coord axis
 		CSVTimeAxis timeAxis = new CSVTimeAxis(timeVals, "Time", "Time");
-		CoordinateAxis1D timeCoord = new CoordinateAxis1D(dataset, null, "time", DataType.DOUBLE, timeName, units,
-						"synthesized time coordinate from SDATE, STIME, STEP global attributes");
-		timeCoord.setCachedData(data, true);
-		timeCoord.addAttribute(new Attribute(ucar.nc2.constants._Coordinate.AxisType, ucar.nc2.constants.AxisType.Time.toString()));
-
-		dataset.addCoordinateAxis(timeCoord);
+		if (xtime != null) {
+			CoordinateAxis1D timeCoord = new CoordinateAxis1D(dataset, null, "time", DataType.DOUBLE, timeName, units,
+							"synthesized time coordinate from SDATE, STIME, STEP global attributes");
+			timeCoord.setCachedData(data, true);
+			timeCoord.addAttribute(new Attribute(ucar.nc2.constants._Coordinate.AxisType, ucar.nc2.constants.AxisType.Time.toString()));
+	
+			dataset.addCoordinateAxis(timeCoord);
+		}
 		defaultTime = timeAxis;
 		return timeAxis;
 	}
@@ -1132,8 +1146,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		
 		//Construct axes for latitude and longitude, using average diameter as spacing
 		
-		list.add(new MPASCoordAxis("x", "x", lonMin, AxisType.X_AXIS));
-		list.add(new MPASCoordAxis("y", "y", latMin, AxisType.Y_AXIS));
+		list.add(new MPASCoordAxis("x", "x", lonMin, lonMax, AxisType.X_AXIS));
+		list.add(new MPASCoordAxis("y", "y", latMin, latMax, AxisType.Y_AXIS));
 
 		coordAxes = new Axes<CoordAxis>(list, boxer);
 		
@@ -1280,6 +1294,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		if (var == null && variable.indexOf("[") != -1) //try without dataset alias
 			var = getVariableDS(getVariable(variable.substring(0, variable.lastIndexOf('['))));
 		Set<String> dimensions = new HashSet<String>();
+		if (var == null)
+			return null;
 		dimensions.addAll(Arrays.asList(var.getDimensionsString().split("\\s+")));
 		for (CoordAxis axis : axisList) {
 			if (axis.getAxisType().equals(AxisType.LAYER) && dimensions.contains(axis.getName()))
@@ -1512,6 +1528,8 @@ public class MPASDataset extends AbstractDataset implements MultiAxisDataset, IM
 		List<CoordAxis> axisList = coordAxes.getAxes();
 		ucar.nc2.Variable var = getVariableDS(getVariable(variable));
 		Set<String> dimensions = new HashSet<String>();
+		if (var == null || var.getDimensionsString() == null)
+			return null;
 		dimensions.addAll(Arrays.asList(var.getDimensionsString().split("\\s+")));
 		for (CoordAxis axis : axisList) {
 			if (axis.getAxisType().equals(AxisType.TIME) && dimensions.contains(axis.getName()))

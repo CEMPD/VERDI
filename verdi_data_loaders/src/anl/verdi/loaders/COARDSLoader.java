@@ -56,15 +56,15 @@ public class COARDSLoader implements DataLoader {
 		} catch (IOException io) {
 			// just warn here because it be correct that
 			// this is not a netcdf file
-			Logger.warn("Error reading netcdf file " + io.getMessage());
-			throw io;
+			//Logger.warn("Error reading netcdf file " + io.getMessage());
+			//throw io;
 		} catch (URISyntaxException e) {
-			Logger.warn("Error reading netcdf file " + e.getMessage());
-			throw e;
+			//Logger.warn("Error reading netcdf file " + e.getMessage());
+			//throw e;
 		}  catch (Exception e) {
-			throw e;
+			//throw e;
 		} catch (Throwable t) {
-			t.printStackTrace();
+			//t.printStackTrace();
 		}
 		finally {
 			try {

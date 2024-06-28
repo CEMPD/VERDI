@@ -4,13 +4,17 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
+import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.Variable;
 import ucar.nc2.dataset.conv.WRFConvention;
 import anl.verdi.data.DataLoader;
 import anl.verdi.data.DataReader;
@@ -75,8 +79,52 @@ public class WRFLoader implements DataLoader {
 	 * @return a Dataset created from the data at the specified URL.
 	 */
 	public List<Dataset> createDatasets(URL url) {
+		//TODO - optimize repeated opens
 		NetcdfDatasetFactory factory = new NetcdfDatasetFactory();
+		NetcdfFile file = null;
+		try {
+			String urlString = url.toExternalForm();
+			if (url.getProtocol().equals("file")) {
+				urlString = new URI(urlString).getPath();
+			}
+			file = NetcdfFile.open(urlString);
+			if (isObs(file)) {
+				Dataset set = factory.createWRFObsDataset(url);
+				List<Dataset> sets = new ArrayList<Dataset>();
+				sets.add(set);
+				return sets;
+			}
+		} catch (Throwable t) {
+			Logger.error("Error reading netcdf file", t);
+			return null;
+		}
+
+
 		return factory.createWRFDatasets(url);
+	}
+	
+	private boolean isObs(NetcdfFile ncfile) {
+		//TODO - see WRFConvention.isMine() for more format info
+	    if (ncfile.findDimension("Time") != null &&
+	    		ncfile.findVariable("Times") != null &&
+	    		ncfile.findGlobalAttribute("Program") != null &&
+	    		ncfile.findGlobalAttribute("Program").getStringValue().toLowerCase().indexOf("satellite") != -1) {
+	        for (Dimension d : ncfile.getDimensions()) {
+	        	System.out.print("Got dimension " + d.getName() + ".");
+	        	System.out.println();
+	        }
+	        for (Variable v : ncfile.getVariables()) {
+	        	System.out.print("Variable " + v + " " + v.getDimensionsString() + " rank " + v.getRank() + " shape " + v.getShape() + " dim " + v.getDimensions());
+	        	System.out.println();
+	        }
+	        for (Attribute g : ncfile.getGlobalAttributes()) {
+	        	System.out.print("Attribute " + g.getName() + ": " + g.getValues());
+	        	System.out.println();
+	        }
+	    	return true;
+	    }
+
+		return false;
 	}
 
 
@@ -87,6 +135,8 @@ public class WRFLoader implements DataLoader {
 	 * @return a DataReader created for the dataset.
 	 */
 	public DataReader createReader(Dataset set) {
+		if (set instanceof WRFObsDataset)
+			return new WRFObsReader((WRFObsDataset)set);
 		return new GridNetcdfReader((GridNetcdfDataset) set);
 	}
 }

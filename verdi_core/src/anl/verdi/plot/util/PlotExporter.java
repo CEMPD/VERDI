@@ -181,7 +181,7 @@ public class PlotExporter {
 			if (extPos > 0)
 				filename = filename.substring(0, extPos);
 			if (currentExt.equalsIgnoreCase(SHP))
-				((MeshPlot)plot).exportShapeFile(filename);
+				((MeshPlot)plot).exportShapefile(filename);
 			else if (currentExt.equalsIgnoreCase(EPS))
 				((MeshPlot)plot).exportEPSImage(filename, width, height);
 			else if (currentExt.equalsIgnoreCase(ASC))

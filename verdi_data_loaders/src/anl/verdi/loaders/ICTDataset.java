@@ -212,6 +212,16 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 		startDate.set(GregorianCalendar.SECOND,  0);
 		startDate.set(GregorianCalendar.MILLISECOND,  0);
 		startDate.set(GregorianCalendar.AM_PM, GregorianCalendar.AM);
+		
+		jdayBase = new GregorianCalendar();
+		jdayBase.set(GregorianCalendar.YEAR,  Integer.parseInt(dateString[0].trim()));
+		jdayBase.set(GregorianCalendar.MONTH,  0);
+		jdayBase.set(GregorianCalendar.DAY_OF_MONTH,  1);	
+		jdayBase.set(GregorianCalendar.HOUR,  0);
+		jdayBase.set(GregorianCalendar.MINUTE,  0);
+		jdayBase.set(GregorianCalendar.SECOND,  0);
+		jdayBase.set(GregorianCalendar.MILLISECOND,  0);
+		jdayBase.set(GregorianCalendar.AM_PM, GregorianCalendar.AM);
 
 		dataInterval = buf.readLine();
 		independentVar = buf.readLine().split(",");
@@ -240,6 +250,7 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 	}
 	
 	GregorianCalendar startDate = null;
+	GregorianCalendar jdayBase = null;
 
 	
 	Map<String, Integer> columnMap = new HashMap<String, Integer>();
@@ -322,11 +333,26 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 		// build a map of <name, data> for easier access
 		dataMap = new HashMap<String,Double[]>();
 		col = 0;
+		int jdayIndex = -1;
+		if (columnMap.containsKey("JDAY")) {
+			jdayIndex = columnMap.get("JDAY");
+		}
 		for (String varName : columnNames){
 			Double d[] = new Double[numRows];
 
-			for (int i=0; i<numRows; i++)
-				d[i] = data[i][col];
+			if (varName.indexOf("UTC") != -1) {
+				if (jdayIndex > -1) {
+					for (int i=0; i<numRows; i++)
+						d[i] = buildICTTime(data[i][jdayIndex], data[i][col]);
+				}else {
+					for (int i=0; i<numRows; i++)
+						d[i] = buildICTTime(startDate, data[i][col]);
+				}
+			} else {
+				for (int i=0; i<numRows; i++)
+					d[i] = data[i][col];
+			}
+
 
 			dataMap.put(varName, d);
 
@@ -416,11 +442,31 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 			// Set the data in the CDF Array type
 			if (array != null) {
 				array.set(csvDataLoc[0],csvDataLoc[1],csvDataLoc[2],csvDataLoc[3], csvData[4]);
-				((ICTDataArray)array).addRow(csvData[0], csvData[1], csvData[2], csvData[3], csvData[4]);
+				((ICTDataArray)array).addRow(csvData[0], csvData[1], csvData[2], (int)csvData[3], csvData[4]);
 			}
 			
 		}
 		((ICTDataArray)array).setRawData(columnMap, data);
+	}
+	
+	private static final long SECS_IN_DAY = 24*60*60;
+	
+	private double buildICTTime(double jday, double utc) {
+		--jday; //jday seems to be 1 based
+		long ictTime = Math.round(jday * SECS_IN_DAY * 1000 + utc * 1000 + jdayBase.getTimeInMillis());
+		return ictTime;
+		
+	}
+	
+	private double buildICTTime(GregorianCalendar baseDate, double utc) {
+		long ictTime = (long)utc * 1000 + baseDate.getTime().getTime();
+		return ictTime;
+		
+	}
+	
+	public static Set<String> hiddenVars = new HashSet<String>();
+	static {
+		//hiddenVars.add("JDAY");
 	}
 
 	/**
@@ -433,7 +479,8 @@ public class ICTDataset extends AbstractDataset implements TextDataset {
 		List<String> vars = new ArrayList<String>();
 		List<Variable> netVars = getVariables();
 		for (Variable var : netVars) {
-			vars.add(var.getName());
+			if (!hiddenVars.contains(var.getName()))
+				vars.add(var.getName());
 		}
 		return vars;
 	}

@@ -1,10 +1,52 @@
 -----------------------------
+RELEASE NOTES FOR VERDI 2.1.5
+-----------------------------
+
+**REPLACE ALL PRIOR** versions of VERDI with this patched release version.
+
+*Updated OpenJDK to version java 21.0.1 2023-10-17 LTS to fix security vulnerability.
+
+The following new features were added:
+
+* Open and display a MPAS Mesh File (#324)
+* Documentation on how to visualize fine scale model output datafiles with GIS layers
+* Support sub-domain on a Vertical Cross Section Plot from the command line (#326)
+
+The following issues were fixed.
+
+* Save tile plot as shapefile from GUI (#322)
+* MPAS scatterplot tool from GUI (#255)
+* Saving and Opening a Project (#318)
+* Read zgrid variable from MPAS using VERDI CLI (#257)
+
+The following enhancement was made (#200).
+
+* VERDI saves color values using six digit hex color codes to a saved configuration file and reads configure files using either 32 bit integer codes or the hex color codes.
+
+The following features were depreciated
+
+* Disabled Domain Window including "Metadata Me" (#320)
+
+
+-----------------------------
 RELEASE NOTES FOR VERDI 2.1.4
 -----------------------------
 
 **REPLACE ALL PRIOR** versions of VERDI with this patched release version.
 
 *Updated OpenJDK to version 17.0.2 to fix security vulnerability: https://openjdk.java.net/groups/vulnerability/advisories/2021-10-19
+
+The following issues were fixed.
+
+* Ability to display 3-D contour plot (#184, #304)
+
+* Ability to display “zgrid” tile plot for MPAS dataset (#257)
+
+* Allow user to modify scatter plot dot size (#260)
+
+* Allow animate plot to be exported as .mp4 movie format (#270)
+
+*  Fix Tile Plot Legend Placement (#307)
 
 -----------------------------
 RELEASE NOTES FOR VERDI 2.1.3

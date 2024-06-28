@@ -176,6 +176,7 @@ public class DomainPanel extends JPanel {
 		toolBar.setFloatable(false);
 		toolBar.add(Box.createHorizontalGlue());
 		toolBar.add(infoLb1);
+		setVisible(false);
 	}
 
 //	public void unsetDomainValues() {	// 2014 appears to not be used

@@ -58,8 +58,9 @@ public class DataFrameIndex {
 			cellIndex = -1;
 		}
 
-		indices = new int[count];
 		index = frame.getArray().getIndex();
+		//indices = new int[count];
+		indices = new int[index.getRank()];
 	}
 
 	/**
@@ -76,7 +77,12 @@ public class DataFrameIndex {
 			}
 		} else {
 			indices[tIndex] = timeStep;
+			try {
 			index.set(indices);
+			}catch (Throwable t) {
+				throw t;
+			}
+			
 		}
 	}
 

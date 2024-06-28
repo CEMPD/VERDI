@@ -75,42 +75,35 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 	private static final int MINIMUM = 0;
 	private static final int MAXIMUM = 1;
 	
-	Date baseDate = null;
-	int baseTimestep = 0;
 	OverlayObject overlay = null;
-	boolean requireDataMatch = true;;
+	long timestepSize;
 
+	/* Timestep is ambiguous due to difference in timestep origin / length of base data and observations.
+	 * All calls should accept a base date and use included timestepSize
+	 * Update(date) should be called after constructor
 	public ObsAnnotation(ObsEvaluator eval, Axes<DataFrameAxis> axes,
-			int timeStep, int layer) {
+			int timeStep, int layer, long timestepSize) {
 		Logger.debug("in constructor for ObsAnnotation");
 		this.eval = eval;
 		this.axes = axes;
+		this.timestepSize = timestepSize;
 		update(timeStep);
-	}
+	}*/
 
 	public ObsAnnotation(ObsEvaluator eval, Axes<DataFrameAxis> axes,
-			Date date, int layer) {
+			int layer, long timestepSize) {
 		this.eval = eval;
 		this.axes = axes;
-		baseDate = date;
-		update(date);
+		this.timestepSize = timestepSize;
 	}
 
 	public ObsAnnotation(ObsEvaluator eval, Axes<DataFrameAxis> axes,
-			GregorianCalendar aCalendar, int layer, OverlayObject overlay) {
-		this(eval, axes, aCalendar, layer, overlay, true);
-	}
-
-	public ObsAnnotation(ObsEvaluator eval, Axes<DataFrameAxis> axes,
-			GregorianCalendar aCalendar, int layer, OverlayObject overlay, boolean requireDataMatch) {
+			int layer, OverlayObject overlay, long timestepSize) {
 		Logger.debug("in ObsAnnotation constructor using GregorianCalendar");
 		this.eval = eval;
 		this.axes = axes;
 		this.overlay = overlay;
-		baseDate = aCalendar.getTime();
-		this.requireDataMatch = requireDataMatch;
-		if (requireDataMatch)
-			update(aCalendar.getTime());
+		this.timestepSize = timestepSize;
 	}
 	
 	public void updateDrawingParams(ColorMap cmap) {
@@ -148,21 +141,17 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 		return map.getColor(map.getColorCount() - 1);
 	}
 
+	/* Remove timestep based calls
 	public synchronized void update(int timeStep) {
 		//System.out.println("ObsAnnotation timestep " + timeStep);
 		list = eval.evaluate(baseDate, timeStep);
 		//list = eval.evaluate(null, timeStep);
 		updateList();
-	}
+	}*/
 
 	public synchronized void update(Date date) {
-		try {
-			list = eval.evaluate(date);
-			updateList();
-		} catch (IllegalArgumentException e) {
-			if (requireDataMatch)
-				throw e;
-		}
+		list = eval.evaluate(date, timestepSize);
+		updateList();
 	}
 
 	private void updateList() {
@@ -325,8 +314,8 @@ public class ObsAnnotation extends AbstractXYAnnotation {
 			final Graphics graphics,Object data, MeshDataReader reader, String units,int firstColumn,int firstRow,
 			int xOffset, int yOffset, int width, int height,int currentView, boolean showSelectedOnly ) {*/
 		
-		if (!requireDataMatch && list == null)
-			return;
+		//if (!requireDataMatch && list == null)
+		//	return;
 		MapContent vMap = new MapContent();
 		//Shape oldclip = graphics.getClip();
 		//graphics.setClip(new Rectangle((int)xOffset, (int)yOffset, (int)width, (int)height));

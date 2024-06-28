@@ -1,14 +1,19 @@
 package anl.verdi.loaders;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import ucar.ma2.Array;
 import anl.verdi.data.AbstractDataReader;
 import anl.verdi.data.AxisRange;
+import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.DataFrame;
 import anl.verdi.data.DataFrameAxis;
 import anl.verdi.data.DataFrameBuilder;
+import anl.verdi.data.Range;
+import anl.verdi.data.TimeCoordAxis;
 import anl.verdi.data.Variable;
 
 /**
@@ -55,8 +60,32 @@ public class ICTReader extends AbstractDataReader<ICTDataset> {
 
 			builder.addAxis(frameAxis);
 		}
+		
+		Date dataStart = null;
+		Date dataEnd = null;
+		Long startIndex = null;
+		Long endIndex = null;
+		TimeCoordAxis timeAxis = (TimeCoordAxis)set.getCoordAxes().getTimeAxis();
+		if (timeAxis != null) {
+			for (AxisRange range : ranges) {
+				if (AxisType.TIME.equals(range.getAxisType())) {
+					if (range.getOrigin() < 0)
+						return null;
+					startIndex = range.getRange().getOrigin();
+					GregorianCalendar startCal = timeAxis.getDate(range.getOrigin());
+					if (startCal == null)
+						continue;
+					dataStart = startCal.getTime();
+					endIndex = range.getRange().getExtent() + startIndex + 1;
+					GregorianCalendar endCal = timeAxis.getDate((int)(range.getRange().getOrigin() + range.getRange().getExtent()));
+					if (endCal != null)
+					dataEnd = endCal.getTime();
+				}
+			}
+		}
 
-		Array array = new ICTDataArrayWrapper((ICTDataArray)set.getArray(), variable);
+
+		Array array = new ICTDataArrayWrapper((ICTDataArray)set.getArray(), variable, startIndex, endIndex);
 
 		builder.setArray(array);
 

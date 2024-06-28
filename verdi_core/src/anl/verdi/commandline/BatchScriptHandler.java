@@ -147,9 +147,7 @@ public class BatchScriptHandler {
 			} catch (Throwable e) {
 				Logger.error("Error in BatchScriptHandler.processTasks: Task is null. " + e.getMessage());
 				System.out.println("BatchScriptHandler: Error in BatchScriptHandler.processTasks: Task is null. " + e.getMessage());
-				e.printStackTrace();
-				throw new Exception(e == null ? "Error running task: "
-						+ task.toString() : e.getMessage());
+				throw e;
 			}
 		}
 	}
@@ -165,7 +163,7 @@ public class BatchScriptHandler {
 				if (isComment(str))			// strip out comment lines
 					continue;
 
-				scripts.add(str);
+				scripts.add(str.trim());
 			}
 
 			in.close();
@@ -173,7 +171,6 @@ public class BatchScriptHandler {
 			return processBatchScript(scripts.toArray(new String[0]));
 		} catch (IOException e) {
 			Logger.error("IOException in  BatchScriptHandler.processBatchFile: " + batchFile.getAbsolutePath(), e);
-			System.out.println("BatchScriptHandler: IOException in BatchScriptHandler.processBatchFile: " + e.getMessage());
 			throw e;
 		}
 	}

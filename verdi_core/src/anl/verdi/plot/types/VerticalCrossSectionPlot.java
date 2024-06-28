@@ -432,7 +432,9 @@ public class VerticalCrossSectionPlot extends AbstractTilePlot implements MinMax
 	
 	protected Axes getAxes() {
 		//return frame.getAxes();//frame.getDataset().get(0).getCoordAxes();
-		return frame.getDataset().get(0).getCoordAxes();
+		if (meshInput)
+			return frame.getDataset().get(0).getCoordAxes();
+		return frame.getAxes();
 	}
 	
 	private int getOffset() {

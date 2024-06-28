@@ -158,8 +158,12 @@ public class MPASMinMaxCalculator implements Runnable {
 	private boolean calculateStep(MPASDataFrameIndex index, int layer, int step, MinMaxInfo layerInfo, MinMaxInfo stepInfo) {
 		if (stepInfo.getCount() == numCells) //Already calculated
 			return false;
-		for (int i = 0; i < numCells; ++i) {
-			stepInfo.visitValue(getValue(index, layer, step, i), i);
+		if (dataFrame.getVariable().getName().startsWith(MPASDataset.VAR_MESH_STRUCTURE + "[")) {
+			stepInfo.visitValue(0, 0);
+		} else {
+			for (int i = 0; i < numCells; ++i) {
+				stepInfo.visitValue(getValue(index, layer, step, i), i);
+			}
 		}
 		stepInfo.incrementCount(numCells);
 		

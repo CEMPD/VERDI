@@ -26,7 +26,6 @@ public class ObsEvaluator {
 	static final Logger Logger = LogManager.getLogger(ObsEvaluator.class.getName());
 	private DataManager manager;
 	private Variable var, lat, lon;
-	long stepSize;
 
 	private static class ObsIterator implements Iterator<ObsData>, Iterable<ObsData> {
 
@@ -64,11 +63,10 @@ public class ObsEvaluator {
 			return this;
 		}
 	}
-
-	public ObsEvaluator(DataManager manager, Variable var, long stepSize) {
+	
+	public ObsEvaluator(DataManager manager, Variable var) {
 		this.manager = manager;
 		this.var = var;
-		this.stepSize = stepSize;
 		Unit deg = VUnits.createUnit("degrees");
 		String latName = "LAT";
 		String lonName = "LON";
@@ -80,12 +78,24 @@ public class ObsEvaluator {
 		}
 		lat = var.getDataset().getVariable(latName); //Models3 hides this - use if Latitude / Longitude not found.  If this gets complicated expose hidden variables and search there too.
 		if (lat == null) {
+			Axes<CoordAxis> ax = var.getDataset().getCoordAxes();
+			if (ax.getXAxis() != null) {
+				lonName = ax.getXAxis().getName();
+				latName = ax.getYAxis().getName();
+				lat = var.getDataset().getVariable(latName);
+			}
+		}
+		if (lat == null) {
 			Dataset ds = var.getDataset();
 			if (ds instanceof TextDataset) {
 				if (!((TextDataset)ds).hasColumn(latName)) {
 					latName = "LAT";
 					lonName = "LON";						
 				}
+			}
+			if (ds.getClass().getName().endsWith(".Models3ObsDataset")) {
+				latName = "LAT";
+				lonName = "LON";
 			}
 		
 		}
@@ -94,11 +104,13 @@ public class ObsEvaluator {
 		lon = new DefaultVariable(lonName, lonName, deg, var.getDataset());
 	}
 
+	/* Timestep is ambiguous due to differences ebetween base data and obs data timesteps.  Use 
+	 * update(Date, long) instead
 	public List<ObsData> evaluate(int timestep) {
 		Dataset dataset = var.getDataset();
 		DataReader reader = manager.getDataReader(dataset);
 		return getObsDataList(dataset, reader, timestep);
-	}
+	}*/
 	
 	public boolean dataWithin(Date startDate, Date endDate) {
 		TimeCoordAxis timeAxis = (TimeCoordAxis)var.getDataset().getCoordAxes().getTimeAxis();
@@ -109,22 +121,43 @@ public class ObsEvaluator {
 				obsEnd.after(startDate) && obsEnd.before(endDate));
 	}
 	
-	public List<ObsData> evaluate(Date date) {
+	public List<ObsData> evaluate(Date date, long timestepSize) {
 		Dataset dataset = var.getDataset();
 		DataReader reader = manager.getDataReader(dataset);
 		TimeCoordAxis timeAxis = (TimeCoordAxis)dataset.getCoordAxes().getTimeAxis();
-		int timestep = timeAxis.getTimeStep(date);
-		if (timestep > -1) {
-			Date obsDate = timeAxis.getDate(timestep).getTime();
-			if (date.getTime() + stepSize < obsDate.getTime())
-				timestep = Axes.TIME_STEP_NOT_FOUND;
+		int firstTimestep = timeAxis.getTimeStep(date);
+		int numTimesteps = 0;
+		if (firstTimestep >= -1) {
+			Date obsDate = timeAxis.getDate((int)timeAxis.getRange().getOrigin()).getTime();
+ 			if (date.getTime() + timestepSize < obsDate.getTime()) {
+				firstTimestep = Axes.TIME_STEP_NOT_FOUND;
+				throw new IllegalArgumentException("Date " + date + " not present in observation data");
+			}
+			else {
+				if (timeAxis.getDate(firstTimestep) != null) {
+					Date firstTimestepDate = timeAxis.getDate(firstTimestep).getTime();
+					//first measurement is after the end of this timestep
+					if (date.getTime() + timestepSize < firstTimestepDate.getTime())
+						firstTimestep = Axes.TIME_STEP_NOT_FOUND;
+				}
+				int lastTimestep = timeAxis.getTimeStep(new Date(date.getTime() + timestepSize));
+				//if (lastTimestep > 0)
+				//	--lastTimestep;
+				if (lastTimestep > -1) //TODO - maybe this should only be for first Timestep == last timestep.  Check ICTTimeAxis
+					numTimesteps = lastTimestep - firstTimestep;
+				else
+					numTimesteps = (int)(timeAxis.getRange().getExtent() - firstTimestep);
+				if (lastTimestep == firstTimestep)
+					++numTimesteps;
+			}
 		}
 			
 
-		return getObsDataList(dataset, reader, timestep);
+		return getObsDataList(dataset, reader, firstTimestep, numTimesteps);
 	}	
 	
-	public List<ObsData> evaluate(Date date, int timestep) {
+	/* Ambuguous - replace with evaluate(Date, long)
+	 * public List<ObsData> evaluate(Date date, int timestep) {
 		Dataset dataset = var.getDataset(); // date is current timestep
 		DataReader reader = manager.getDataReader(dataset);
 		TimeCoordAxis timeAxis = (TimeCoordAxis)dataset.getCoordAxes().getTimeAxis();
@@ -133,12 +166,14 @@ public class ObsEvaluator {
 			baseTimestep = timeAxis.getTimeStep(date);
 
 		return getObsDataList(dataset, reader, baseTimestep + timestep);
-	}
+	}*/
 
 	private List<ObsData> getObsDataList(Dataset dataset, DataReader reader,
-			int timestep) {
+			int timestep, int numTimesteps) {
+		if (timestep == Axes.TIME_STEP_NOT_FOUND)
+			return new ArrayList<ObsData>();
 		List<AxisRange> range = new ArrayList<AxisRange>();
-		range.add(new AxisRange(dataset.getCoordAxes().getTimeAxis(), 0, timestep));
+		range.add(new AxisRange(dataset.getCoordAxes().getTimeAxis(), timestep, numTimesteps));
 		if (dataset.getCoordAxes().getZAxis() != null) {
 			range.add(new AxisRange(dataset.getCoordAxes().getZAxis(), 0, 1)); //could add layer if observation data is layered
 		}

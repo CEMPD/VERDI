@@ -71,8 +71,8 @@ public class Models3ObsReader extends AbstractDataReader<Models3ObsDataset> {
 				int maxExt = shape[dimIndex];
 				int ext = (axis.getExtent() > maxExt ? maxExt : axis.getExtent()); 
 				
-				if (slice.getDimension(0).getLength() > 1)
-					slice = slice.slice(0, ext);
+				if (slice.getDimension(dimIndex).getLength() > axis.getOrigin())
+					slice = slice.slice(dimIndex, axis.getOrigin());
 				
 				DataFrameAxis frameAxis = DataFrameAxis.createDataFrameAxis(
 						axis.getAxis(), axis.getOrigin(), ext, dimIndex);

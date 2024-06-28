@@ -52,12 +52,16 @@ public class PlotConfigurationIO extends DefaultHandler2 {
 		// assumes String is the string rep of the
 		// int returned by Color.getRBG
 		public Color convertFromString(String str) {
+			if (str != null && str.startsWith("#")) {
+				return Color.decode(str);
+			}
 			return new Color(Integer.parseInt(str));
 		}
 
 		public String convertToString(Object obj) {
 			Color color = (Color) obj;
-			return String.valueOf(color.getRGB());
+			String hex = "#"+Integer.toHexString(color.getRGB()).substring(2).toUpperCase();
+			return hex;
 		}
 	}
 

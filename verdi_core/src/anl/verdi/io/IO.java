@@ -144,6 +144,8 @@ public class IO {
 		xstream.alias(DATASET_ELEMENT_ALIAS, DatasetElementDescriptor.class);
 		xstream.alias(FORMULA_ELEMENT_ALIAS, FormulaElementDescriptor.class);
 		xstream.alias(PROJECT_ALIAS, ProjectDescriptor.class);
+		xstream.allowTypes(new Class[] { ProjectDescriptor.class, DatasetElementDescriptor.class, FormulaElementDescriptor.class } );
+		//
 
 		Logger.debug("ready to insantiate fileReader");
 		FileReader fileReader = new FileReader(file);
