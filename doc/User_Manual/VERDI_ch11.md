@@ -65,9 +65,9 @@ Figure 48. Configure Plot, Titles Tab<br>
 ![Configure Plot, Titles Tab](./media/image048.png){#fig:Figure48}
 
 -   **Text:** Enter the desired text directly in the textbox. You can enter text for the plot’s title and up to two optional subtitles.
--   **Use Unicode in Text:** Unicode characters can be used with text, for example, if you want to display "2.5" as subscripts in PM2.5, you can insert Unicode "u2082" for subscripted 2, Unicode "u2024" for a dot and Unicode "u2085" for subscripted 5) in the **Text** field.
-  <a id=Figure48a></a>
-  <a id=Figure48b></a>
+-   **Use Unicode in Text:** Unicode characters can be used with text, for example, if you want to display "2.5" as subscripts in PM2.5, you can insert Unicode "\u2082" for subscripted 2, Unicode "\u2024" for a dot and Unicode "\u2085" for subscripted 5) in the **Text** field.
+ ![Configure Plot, Titles Tab](./media/image048a.png){#fig:Figure48a}
+ ![Configure Plot, Titles Tab](./media/image048b.png){#fig:Figure48b}
 
 -   **Font:** Press the **Select** button to the right of the Font line for the title or subtitle you wish to change. Your system’s standard Select Font dialog box is then displayed for you. Select a font family, font style, and size; press the **OK** button to return to the Configure Plot tab.
 
