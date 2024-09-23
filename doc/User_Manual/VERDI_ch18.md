@@ -160,9 +160,9 @@ Script commands that can be used for command line scripting (listed in alphabeti
 
 **[-subDomain &lt;xmin&gt; &lt;ymin&gt; &lt;xmax&gt; &lt;ymax&gt;]** sets the VERDI domain matching the currently selected dataset to the bounding box specified by its arguments. The currently selected dataset is the most recently added dataset. It is often handy to type **-subdomain** commands into VERDI’s standard input if you are trying to select a very precise subdomain (such as that needed for a vertical cross-section plot).
 
-**[-subTitle1 "&lt;sub title 1 string&gt;"]** allow you to control a plot’s subtitles if desired. Subsequent plots will use the default subtitles, unless these arguments are used again.
+**[-subTitle1 "&lt;sub title 1 string&gt;"]** allow you to control a plot’s subtitles if desired. Subsequent plots will use the default subtitles, unless these arguments are used again.   
 
-**[-subTitle2"&lt;sub title 2 string&gt;"]** allow you to control a plot’s subtitles if desired. Subsequent plots will use the default subtitles, unless these arguments are used again.
+**[-subTitle2"&lt;sub title 2 string&gt;"]** allow you to control a plot’s subtitles if desired. Subsequent plots will use the default subtitles, unless these arguments are used again. 
 
 **[-subTitleFont &lt;fontSize&gt;]** allow you to control the font size of the subtitle of a plot.
 
@@ -174,7 +174,7 @@ Script commands that can be used for command line scripting (listed in alphabeti
 
 **[-titleFont &lt;fontSize&gt;]** allows you to control the font size of the title of a plot.
 
-**[-titleString "&lt;title string&gt;"]** sets the title for the next plot made to the specified title. Subsequent plots will use the default VERDI title, unless this argument is used again.
+**[-titleString "&lt;title string&gt;"]** sets the title for the next plot made to the specified title. Subsequent plots will use the default VERDI title, unless this argument is used again.  Unicode characters can be used together with text in title string. For example, if you want to display "2.5" as subscripts in PM2.5, you can insert Unicode "\u2082" for subscripted 2, Unicode "\u2024" for a dot and Unicode "\u2085" for subscripted 5, such as **-titleString "PM\u2082\u2024\u2085"**. 
 
 **[-ts &lt;time step&gt;]** sets the selected time step for each formula in VERDI’s memory to the specified step number, where the first step number is denoted by 0. This will remain the selected time step until you change it. It affects only tile plots and vertical cross-section plots.
 
