@@ -77,6 +77,8 @@ VERDI calculates the grid cell time aggregate statistics as follows: For each ce
 -   fourth_max:  fourth highest value for each grid cell (used to obtain the 4th highest value of your rolling 8 hr maximum CMAQ output file)
 
 -   custom_percentile: default is > .12 (use the text box) value at custom <sup>th</sup> percentile of( sorted (var(i,j,k,tmin), var(i,j,k,tmin+1), ..., var(i,j,k,tmax)))
+-   layer_sum: Sum all layers (by default) or layers within the user's layer range set by "Use Layer Range" for each grid cell at each time step
+-   layer_mean: layer_sum/number of layers
 
 Areal Interpolation Plot
 ------------------------
