@@ -80,6 +80,10 @@ VERDI calculates the grid cell time aggregate statistics as follows: For each ce
 -   layer_sum: Sum all layers (by default) or layers within the user's layer range set by "Use Layer Range" for each grid cell at each time step
 -   layer_mean: layer_sum/number of layers
 
+### Specify Layer Range when use 'layer_sum' and 'layer_mean' from the above aggregated Statistics dropdown menu in a tile plot
+
+User should check the checkbox of 'use layer range' and specify the layer range before clicking on the 'Tile Plot' button on the top menu for the specified layer range to take effect.  
+
 Areal Interpolation Plot
 ------------------------
 
