@@ -1,4 +1,19 @@
 -----------------------------
+RELEASE NOTES FOR VERDI 2.1.6
+-----------------------------
+**REPLACE ALL PRIOR** versions of VERDI
+
+* Updated netCDF-Java to version 5.5.3 (https://github.com/Unidata/netcdf-java/releases/tag/v5.3.3)
+
+The following new features were added:
+*calculate layer (sum and mean) statistics for all layers or a subset of layers chosen in the dataset panel followed by creation of a new tile plot. (#345)
+
+The following issues were fixed.
+
+*Incorrect values for probed grid cells for statistics "maximum 8hr mean" in tile plot (#325)
+*Reading netCDF files with unconventional dimension names (#344)
+*Batch script does not turn off column/row labels and legends as specified in the configuration file (#347)
+
 RELEASE NOTES FOR VERDI 2.1.5
 -----------------------------
 
