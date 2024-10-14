@@ -57,6 +57,6 @@ Instructions for using the **Time Steps** and **Layers** panels are discussed in
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch06.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch08.md)<br>
-VERDI User Manual (c) 2023<br>
+VERDI User Manual (c) 2024<br>
 
 <!-- END COMMENT -->
