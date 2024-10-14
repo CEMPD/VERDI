@@ -8,8 +8,10 @@ RELEASE NOTES FOR VERDI 2.1.6
 The following new features were added:
 
 *Visualize differences between time-independent model files (#341)
+
 *Reading netCDF files with unconventional dimension names (#344)
-*calculate layer (sum and mean) statistics for all layers or a subset of layers chosen in the dataset panel followed by creation of a new tile plot. (#345)
+
+*Calculate layer (sum and mean) statistics for all layers or a subset of layers chosen in the dataset panel followed by creation of a new tile plot. (#345)
 
 
 The following issues were fixed:
