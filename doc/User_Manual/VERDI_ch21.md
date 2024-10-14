@@ -66,6 +66,6 @@ Michael Geigert, Connecticut Department of Energy and Environmental Protection, 
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch19.md) - [Home](README.md)<br>
-VERDI User Manual (c) 2023<br>
+VERDI User Manual (c) 2024<br>
 
 <!-- END COMMENT -->

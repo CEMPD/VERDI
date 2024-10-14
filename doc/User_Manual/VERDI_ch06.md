@@ -193,6 +193,6 @@ As noted in Section 5.1.2, lists of datasets and formulas can be saved as “pro
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch05.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch07.md)<br>
-VERDI User Manual (c) 2023<br>
+VERDI User Manual (c) 2024<br>
 
 <!-- END COMMENT -->

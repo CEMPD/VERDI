@@ -14,7 +14,7 @@ Figure 85. File: View Script Editor<br>
 ![File: View Script Editor](./media/image081.png){#fig:Figure85}
 
 
-An **Open** popup window will be displayed, click on a sample script file in the VERDI_2.1/data/scripts directory ([Figure 86](#Figure86)).
+An **Open** popup window will be displayed, click on a sample script file in the VERDI_2.1.6/data/scripts directory ([Figure 86](#Figure86)).
 
 
 Figure 86. Open Popup Window<br>
@@ -25,13 +25,13 @@ After you select a script file and click Open in the Open popup window, the Scri
 
 Unload all datasets before running a batch script within the Script Editor. If any dataset is not unloaded a warning message will pop up see Figure 85. requesting that you close all datasets before running your batch script.
 
-Figure 87. Top of Sample Script File – VERDI_2.1/data/scripts/file_patterns.txt<br>
+Figure 87. Top of Sample Script File – VERDI_2.1.6/data/scripts/file_patterns.txt<br>
 
 ![Top of Sample Script File of file_patterns.txt](./media/image083.png){#fig:Figure87}
 
 Figure 88 appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.
 
-Figure 88. Bottom of Sample Script File – VERDI_2.1/data/scripts/tile_patterns.txt
+Figure 88. Bottom of Sample Script File – VERDI_2.1.6/data/scripts/tile_patterns.txt
 
 ![Bottom of Sample Script File: file_patterns.txt](./media/image084.png){#fig:Figure88}
 
@@ -145,9 +145,9 @@ Batch Script Example:
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.1/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1.6/data/model/**
 
-**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1.6/data/images**
 
 **saveImage=jpeg**
 
@@ -190,11 +190,11 @@ The mathematical functions operate over all time steps at each grid cell. Exampl
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.1/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1.6/data/model/**
 
 **gtype=tile**
 
-**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1.6/data/images**
 
 **saveImage=jpeg**
 
@@ -219,11 +219,11 @@ Figure 94. Tile Plot of Ozone at Time step 17, Layer 1
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.1/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1.6/data/model/**
 
 **gtype=tile**
 
-**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1.6/data/images**
 
 **saveImage=jpeg**
 
@@ -247,11 +247,11 @@ Figure 95. Tile Plot of Maximum Ozone (aggregated over 25 time steps)
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.1/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1.6/data/model/**
 
 **gtype=tile**
 
-**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1.6/data/images**
 
 **saveImage=jpeg**
 
@@ -275,11 +275,11 @@ Figure 97. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
 
 **&lt;Global&gt;**
 
-**dir=$LOCAL_DIR/verdi_2.1/data/model/**
+**dir=$LOCAL_DIR/verdi_2.1.6/data/model/**
 
 **gtype=tile**
 
-**imageDir=$LOCAL_DIR/verdi_2.1/data/images**
+**imageDir=$LOCAL_DIR/verdi_2.1.6/data/images**
 
 **saveImage=jpeg**
 
@@ -307,6 +307,6 @@ Figure 98. Tile Plot of Sum Ozone (aggregated over 25 time steps)
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch16.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch18.md)<br>
-VERDI User Manual (c) 2023<br>
+VERDI User Manual (c) 2024<br>
 
 <!-- END COMMENT -->
