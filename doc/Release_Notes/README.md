@@ -7,17 +7,17 @@ RELEASE NOTES FOR VERDI 2.1.6
 
 The following new features were added:
 
-*Visualize differences between time-independent model files (#341)
+* Visualize differences between time-independent model files (#341)
 
-*Reading netCDF files with unconventional dimension names (#344)
+* Reading netCDF files with unconventional dimension names (#344)
 
-*Calculate layer (sum and mean) statistics for all layers or a subset of layers chosen in the dataset panel followed by creation of a new tile plot. (#345)
+* Calculate layer (sum and mean) statistics for all layers or a subset of layers chosen in the dataset panel followed by creation of a new tile plot. (#345)
 
 
 The following issues were fixed:
 
-*Incorrect values for probed grid cells for statistics "maximum 8hr mean" in tile plot (#325)
-*Batch script does not turn off column/row labels and legends as specified in the configuration file (#347)
+* Incorrect values for probed grid cells for statistics "maximum 8hr mean" in tile plot (#325)
+* Batch script does not turn off column/row labels and legends as specified in the configuration file (#347)
 
 RELEASE NOTES FOR VERDI 2.1.5
 -----------------------------
