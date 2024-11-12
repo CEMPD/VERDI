@@ -130,9 +130,9 @@ Script commands that can be used for command line scripting (listed in alphabeti
 
 **[-legendBins "&lt;bin0,bin1,...,bin_n&gt;"]** causes VERDI to use the specified numbers as breaks between colors on subsequent plots. The value of this argument is a comma-separated list of numbers. For example, **-legendBins “1,10,100,1000”** will cause plots to be created with three colors that correspond to values of 1-10, 10-100, and 100-1000. To go back to the default method for determining breaks between bins, enter **-legendBins DEFAULT**.
 
-**[-level &lt;level&gt;]** sets the level range of all formulas to the single level specified.
+**[-layer &lt;layer&gt;]** sets the layer range of all formulas to the single level specified.
 
-**[-levelRange &lt;levelMax&gt; &lt;levelMin&gt;\]** sets the level range of all formulas to the range specified.
+**[-layerRange &lt;layerMax&gt; &lt;layerMin&gt;\]** sets the level range of all formulas to the range specified.
 
 **\[-openProject &lt;VERDIProjectName&gt;\]** opens a previously save VERDI project.
 
