@@ -132,7 +132,7 @@ Script commands that can be used for command line scripting (listed in alphabeti
 
 **[-layer &lt;layer&gt;]** sets the layer range of all formulas to the single level specified.
 
-**[-layerRange &lt;layerMax&gt; &lt;layerMin&gt;\]** sets the level range of all formulas to the range specified.
+**[-layerRange &lt;layerMin&gt; &lt;layerMax&gt;\]** sets the level range of all formulas to the range specified.
 
 **\[-openProject &lt;VERDIProjectName&gt;\]** opens a previously save VERDI project.
 
