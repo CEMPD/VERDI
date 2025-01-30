@@ -16,6 +16,9 @@ public abstract class AbstractPlotPanel extends JPanel implements ComponentListe
 	
 	protected long timestepSize;
 	
+	protected boolean matchObsTimesteps = false;
+
+	
 	/**
 	 * 
 	 */
@@ -61,6 +64,10 @@ public abstract class AbstractPlotPanel extends JPanel implements ComponentListe
 	
 	//Set GUI size when called from headless script
 	public void setScriptSize(int width, int height) { }
+	
+	public boolean getMatchObsTimesteps() {
+		return matchObsTimesteps;
+	}
 	
 	// Paint/draw:
 

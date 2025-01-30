@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
@@ -300,7 +301,10 @@ public class PlotConfiguration {
 	 * @return subtitle 1.
 	 */
 	public String getSubtitle1() {
-		return props.getProperty(SUBTITLE_1);
+		String str = props.getProperty(SUBTITLE_1);
+		if (str != null)
+			str = StringEscapeUtils.unescapeJava(str);
+		return str;
 	}
 
 	/**
@@ -309,7 +313,10 @@ public class PlotConfiguration {
 	 * @return subtitle 2.
 	 */
 	public String getSubtitle2() {
-		return props.getProperty(SUBTITLE_2);
+		String str = props.getProperty(SUBTITLE_2);
+		if (str != null)
+			str = StringEscapeUtils.unescapeJava(str);
+		return str;
 	}
 
 	/**
@@ -318,7 +325,10 @@ public class PlotConfiguration {
 	 * @return the title.
 	 */
 	public String getTitle() {
-		return props.getProperty(TITLE);
+		String str =  props.getProperty(TITLE);
+		if (str != null)
+			str = StringEscapeUtils.unescapeJava(str);
+		return str;
 	}
 
 	/**

@@ -49,10 +49,22 @@
 			<export prefix="*"/>
 		</library>
 		
-		<library id="netcdf" path="../verdi_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar" type="code">
+		<library id="netcdf" path="../verdi_core/lib/netcdfAll-5.5.3.jar" type="code">
 			<export prefix="*"/>
 		</library>
-		
+
+		<library id="jsoup" path="../verdi_core/lib/jsoup-1.15.3.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jgoodiesn" path="../verdi_core/lib/jgoodies.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="commons-lang3" path="../verdi_core/lib/commons-lang3-3.14.0.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
 		<library id="jgoodies" path="../verdi_core/lib/forms-1.0.5.jar" type="code">
 			<export prefix="*"/>
 		</library>
@@ -141,7 +153,7 @@
 			<export prefix="*"/>
 		</library>
 
-		<library id="xstream" path="../verdi_core/lib/xstream-1.4.7.jar" type="code">
+		<library id="xstream" path="../verdi_core/lib/xstream-1.4.20.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
@@ -162,11 +174,23 @@
 			<export prefix="*"/>
 		</library>
 
+		<library id="gt-coverage-api" path="../verdi_core/lib/geo-19/gt-coverage-api-19.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
 		<library id="gt-main" path="../verdi_core/lib/geo-19/gt-main-19.1.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
 		<library id="gt-cql" path="../verdi_core/lib/geo-19/gt-cql-19.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-image" path="../verdi_core/lib/geo-19/gt-image-19.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="gt-imageio-ext-gdal" path="../verdi_core/lib/geo-19/gt-imageio-ext-gdal-19.1.jar" type="code">
 			<export prefix="*"/>
 		</library>
 
@@ -190,7 +214,43 @@
 			<export prefix="*"/>
 		</library-->
 
+		<library id="jt-classifier" path="../verdi_core/lib/geo-19/jt-classifier-1.0.22.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jt-colorconvert" path="../verdi_core/lib/geo-19/jt-colorconvert-1.0.22.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jt-piecewise" path="../verdi_core/lib/geo-19/jt-piecewise-1.0.22.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jt-stats" path="../verdi_core/lib/geo-19/jt-stats-1.0.22.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jt-vectorbin" path="../verdi_core/lib/geo-19/jt-vectorbin-1.0.22.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jt-zonal" path="../verdi_core/lib/geo-19/jt-zonal-1.0.22.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jt-utilities" path="../verdi_core/lib/geo-19/jt-utilities-1.0.22.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
 		<library id="gt-opengis" path="../verdi_core/lib/geo-19/gt-opengis-19.1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="imageio-ext-streams" path="../verdi_core/lib/geo-19/imageio-ext-streams-1.1.20.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="imageio-ext-utilities" path="../verdi_core/lib/geo-19/imageio-ext-utilities-1.1.20.jar" type="code">
 			<export prefix="*"/>
 		</library>
 

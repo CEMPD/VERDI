@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayFloat;
 import ucar.ma2.ArrayInt;
+import ucar.ma2.DataType;
 import ucar.ma2.Index;
 import ucar.ma2.InvalidRangeException;
 import ucar.ma2.Range;
@@ -17,8 +18,8 @@ import ucar.ma2.Range;
 public class UtilitiesTest extends TestCase {
 
 	public void testArrayFactory() {
-		Array array1 = ArrayInt.factory(int.class, new int[]{2, 2});
-		Array array2 = ArrayFloat.factory(float.class, new int[]{2, 2});
+		Array array1 = ArrayInt.factory(DataType.INT, new int[]{2, 2});
+		Array array2 = ArrayFloat.factory(DataType.FLOAT, new int[]{2, 2});
 
 		Array array = ArrayFactory.createArray(array1, array2);
 		assertEquals(float.class, array.getElementType());
@@ -26,7 +27,7 @@ public class UtilitiesTest extends TestCase {
 	}
 
 	public void testSection() throws InvalidRangeException {
-		Array array1 = ArrayInt.factory(int.class, new int[]{4, 4, 2, 2});
+		Array array1 = ArrayInt.factory(DataType.INT, new int[]{4, 4, 2, 2});
 		int val = 0;
 		Index index = array1.getIndex();
 		for (int t = 0; t < 4; t++) {

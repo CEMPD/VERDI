@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 import ucar.ma2.Array;
 import ucar.ma2.ArrayByte;
 import ucar.ma2.ArrayFloat;
+import ucar.ma2.DataType;
 import ucar.ma2.Index;
 import ucar.ma2.IndexIterator;
 import ucar.ma2.MAMath;
@@ -431,7 +432,7 @@ public class GeotiffWriterUnc {
 		MAMath.MinMax dataMinMax = grid.getMinMaxSkipMissingData(data);
 		float minValue = (float) (dataMinMax.min - 1.0);
 
-		ArrayFloat floatArray = (ArrayFloat) Array.factory(float.class, data.getShape());
+		ArrayFloat floatArray = (ArrayFloat) Array.factory(DataType.FLOAT, data.getShape());
 		IndexIterator dataIter = data.getIndexIterator();
 		IndexIterator floatIter = floatArray.getIndexIterator();
 		while (dataIter.hasNext()) {
@@ -459,7 +460,7 @@ public class GeotiffWriterUnc {
 		MAMath.MinMax dataMinMax = grid.getMinMaxSkipMissingData(data);
 		double scale = 254.0 / (dataMinMax.max - dataMinMax.min);
 
-		ArrayByte byteArray = (ArrayByte) Array.factory(byte.class, data.getShape());
+		ArrayByte byteArray = (ArrayByte) Array.factory(DataType.BYTE, data.getShape());
 		IndexIterator dataIter = data.getIndexIterator();
 		IndexIterator resultIter = byteArray.getIndexIterator();
 

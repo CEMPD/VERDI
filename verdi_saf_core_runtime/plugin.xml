@@ -20,7 +20,7 @@
       <library id="jpf-tools" path="../verdi_bootstrap/lib/jpf-tools.jar" type="code">
           <export prefix="*"/>
      </library>
-     <library id="xstream" path="../verdi_core/lib/xstream-1.4.7.jar" type="code">
+     <library id="xstream" path="../verdi_core/lib/xstream-1.4.20.jar" type="code">
           <export prefix="*"/>
      </library>
      <library id="log4j-1.2" path="../verdi_core/lib/log4j-1.2-api-2.17.1.jar" type="code">
@@ -36,6 +36,9 @@
           <export prefix="*"/>
      </library>
      <library id="log4j-taglib" path="../verdi_core/lib/log4j-taglib-2.17.1.jar" type="code">
+          <export prefix="*"/>
+     </library>
+     <library id="slf4jnop" path="../verdi_core/lib/slf4j-nop-1.8.0-beta4.jar" type="code">
           <export prefix="*"/>
      </library>
     <!--

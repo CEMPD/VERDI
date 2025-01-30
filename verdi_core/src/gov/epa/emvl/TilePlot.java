@@ -22,6 +22,7 @@ import java.util.TimeZone;
 
 import javax.swing.ImageIcon;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 
@@ -84,6 +85,7 @@ public class TilePlot {
 	private int plotWidth = 0;
 	private int plotHeight = 0;
 	
+	private boolean transparentBackground = false;
 	private boolean log = false;
 	private int logBase = 10; //Math.E;
 	protected int xTranslation = 0;
@@ -149,10 +151,10 @@ public class TilePlot {
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data) {
+			final Color gridLineColor, final double[][] data, String selectedStat) {
 		draw(graphics, xOffset, yOffset, width, height, steplapse, layer, firstRow,
 				lastRow, firstColumn, lastColumn, projection, legendLevels, legendColors, axisColor,
-				labelColor, variable, units, config, format, gridLineColor, data, null);
+				labelColor, variable, units, config, format, gridLineColor, data, null, selectedStat);
 	}
 	
 	public synchronized void draw(final Graphics graphics, int xOffset, int yOffset,
@@ -162,7 +164,7 @@ public class TilePlot {
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data, final byte[][] colorIndexCache) 
+			final Color gridLineColor, final double[][] data, final byte[][] colorIndexCache, String selectedStat) 
 	{
 		Logger.debug("in gov.epa.emvl.TilePlot.draw(lots of parameters), thread = " + Thread.currentThread().toString());
 		//System.out.println("In TilePlot draw");
@@ -180,16 +182,20 @@ public class TilePlot {
 		//System.out.println("yMinimum" + yMinimum);
 		//System.out.println("height" + height);
 		final int yMaximum = yHeightOffset;
+		
 
 		// Draw grid boundary rectangle, labeled row/column axis and legend:
 		Logger.debug("ready to call graphics.setColor");
 		graphics.setColor(axisColor);
 		Logger.debug("ready to call drawGridBoundary");
+		System.out.println("Drawing grid boundary");
 		drawGridBoundary(graphics, xMinimum, xMaximum, yMinimum, yMaximum);		// draw 4 lines
 		Logger.debug("ready to call drawAxis");
+		System.out.println("Drawing axis");
 		drawAxis(graphics, xMinimum, xMaximum, yMinimum, yMaximum, firstRow,
 				lastRow, firstColumn, lastColumn);
 		Logger.debug("ready to call drawLegend");
+		System.out.println("Drawing legend");
 		drawLegend(graphics, xMaximum, yMinimum, yMaximum, legendLevels,
 				legendColors, units);
 
@@ -197,18 +203,21 @@ public class TilePlot {
 		Logger.debug("ready to call graphics.setColor");
 		graphics.setColor(labelColor);
 		Logger.debug("ready to call drawLabels");
+		System.out.println("Drawing labels");
 		drawLabels(graphics, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
 				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn,
-				data);	// anl.verdi.gui.DatasetListModel - in DatasetListModel getElementAt
+				data, selectedStat);	// anl.verdi.gui.DatasetListModel - in DatasetListModel getElementAt
 
 		// Draw legend-colored grid cells:
 		Logger.debug("ready to call drawGridCells");
+		System.out.println("Drawing cells");
 		drawGridCells(graphics, xMinimum, xMaximum, yMinimum, yMaximum,
 				firstRow, lastRow, firstColumn, lastColumn, legendLevels,
 				legendColors, data, colorIndexCache);
 		
 		// Draw grid lines:
 
+		System.out.println("Drawing grid lines");
 		if ( gridLineColor != null ) {
 			Logger.debug("ready to call drawGridLines");	// 2015 not printed in log file for fast tile plot
 															// apparently gridLineColor == null
@@ -225,7 +234,7 @@ public class TilePlot {
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data
+			final Color gridLineColor, final double[][] data, String selectedStat
 			)
 	{
 
@@ -269,7 +278,7 @@ public class TilePlot {
 
 		drawLabels(graphics, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
 				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn,
-				data);
+				data, selectedStat);
 
 		// Draw legend-colored grid cells:
 
@@ -357,6 +366,7 @@ public class TilePlot {
 		final int yspace = 16; // Space between two visual components
 		final Color gColor = graphics.getColor();
 		final Font gFont = graphics.getFont();
+		
 
 		String domainX = config.getString(PlotConfiguration.DOMAIN_LABEL);
 		Boolean dShowTick = (Boolean) config.getObject(PlotConfiguration.DOMAIN_SHOW_TICK);
@@ -439,7 +449,9 @@ public class TilePlot {
 			i++;
 		}
 		
-		footerYOffset = xTicLength + yspace + graphics.getFontMetrics().getHeight() + yspace;
+		footerYOffset = graphics.getFontMetrics().getHeight() + yspace;
+		if (dShowTick)
+			footerYOffset += xTicLength + yspace;
 		
 		// Resume graphics default settings
 		graphics.setColor(gColor);
@@ -551,24 +563,28 @@ public class TilePlot {
 	protected void drawLabels(final Graphics graphics, Color labelColor, int xMinimum,
 			int xMaximum, int yMinimum, int yMaximum, final String variable,
 			int steplapse, int layer, int firstRow, int lastRow,
-			int firstColumn, int lastColumn, final float[][] data) {
+			int firstColumn, int lastColumn, final double[][] data, String selectedStat) {
 		// NOTE: steplapse = timestep - firstTimestep (from FastTilePlot.java code)
 		// where firstTimestep is either 0 or the origin of the time axis
 
 		final int xRange = xMaximum - xMinimum;
 		final int xCenter = xMinimum + xRange / 2;
-		final int space = 20; // Space between visual components
+		int space = 20; // Space between visual components
 		final Font gFont = graphics.getFont();
 		final Color gColor = graphics.getColor();
 		String title;
-		
+				
 		// Title label:
 		String TITLE = "";
 		if (!"FALSE".equals(config.getShowTitle()))
 			TITLE = config.getProperty(PlotConfiguration.TITLE);
 //		final String titleStr = "Layer " + (layer + 1) + " " + variable;	// do NOT want to recalculate title here
 																			// part of bug where user blanks title and it shows up again
-		String defaultTitle = "Layer " + (layer + 1) + " " + variable;
+		String defaultTitle = null;
+		if (selectedStat == null)
+			defaultTitle = "Layer " + (layer + 1) + " " + variable;
+		else
+			defaultTitle = selectedStat + " " + variable;
 		Font tFont = config.getFont(PlotConfiguration.TITLE_FONT);
 		Color tColor = config.getColor(PlotConfiguration.TITLE_COLOR);
 		tColor = (tColor == null) ? labelColor : tColor;
@@ -587,10 +603,10 @@ public class TilePlot {
 		//look for Layer 1, if present keep with the same trend but update with current the Layer Number
 //		final String title = (TITLE == null || TITLE.isEmpty() ? titleStr : TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
 
-		if((TITLE == null || TITLE.length()<2) && !"FALSE".equals(config.getShowTitle()))	// rest of fix for allowing user to blank out a title
+		if(selectedStat != null || (TITLE == null || TITLE.length()<2) && !"FALSE".equals(config.getShowTitle()))	// rest of fix for allowing user to blank out a title
 			title = ScriptManager.parseScript(defaultTitle); // TODO: needs more work
 		else
-			title = ScriptManager.parseScript(TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1));
+			title = StringEscapeUtils.unescapeJava(ScriptManager.parseScript(TITLE).replaceAll("\\b(?i)Layer\\b\\s\\b\\d+\\b", "Layer " + (layer + 1)));
 		
 		Font currentFont = new Font(gFont.getFontName(), Font.BOLD, gFont.getSize() * 2);
 		tFont = (tFont == null ? currentFont : tFont);
@@ -706,7 +722,7 @@ public class TilePlot {
 		graphics.setFont(currentFont); // Restore original font.
 
 		//config.setShowTitle("TRUE");
-		if (title != null && !title.equals(""))
+		if (title != null && !title.equals("") && selectedStat == null)
 			config.putObject(PlotConfiguration.TITLE, title);
 //		config.putObject(PlotConfiguration.TITLE, (!title.equals(titleStr) && preLayer == layer) ? title : "");
 		config.putObject(PlotConfiguration.TITLE_FONT, tFont);
@@ -735,10 +751,10 @@ public class TilePlot {
 	}
 	
 	protected String getMinMaxLabel(int firstRow, int lastRow,
-			int firstColumn, int lastColumn, final float[][] data) {
+			int firstColumn, int lastColumn, final double[][] data) {
 		final int[] minimumCell = { 0, 0 };
 		final int[] maximumCell = { 0, 0 };
-		final float[] range = { 0.0f, 0.0f };
+		final double[] range = { 0.0d, 0.0d };
 
 		layerMinimumMaximum(firstRow, lastRow, firstColumn, lastColumn, data,
 				minimumCell, maximumCell, range);
@@ -1048,7 +1064,7 @@ public class TilePlot {
 			int xMaximum, int yMinimum, int yMaximum, int firstRow,
 			int lastRow, int firstColumn, int lastColumn,
 			final double[] legendLevels, final Color[] legendColors,
-			final float[][] data) {
+			final double[][] data) {
 		drawGridCells(graphics, xMinimum, xMaximum, yMinimum, yMaximum,
 				firstRow, lastRow, firstColumn, lastColumn, legendLevels,
 				legendColors, data, null);
@@ -1058,7 +1074,7 @@ public class TilePlot {
 			int xMaximum, int yMinimum, int yMaximum, int firstRow,
 			int lastRow, int firstColumn, int lastColumn,
 			final double[] legendLevels, final Color[] legendColors,
-			final float[][] data, final byte[][] colorIndexCache) {
+			final double[][] data, final byte[][] colorIndexCache) {
 		if (data == null)
 			return;
 
@@ -1080,12 +1096,14 @@ public class TilePlot {
 		graphics.setColor(backgroundColor);
 		
 		if (rows == 1 && columns == 1) {
-			float dat = data[0][0];
+			double dat = data[0][0];
 			int index = colorIndexCache == null ? indexOfValue(dat, legendLevels) : colorIndexCache[0][0];
 			graphics.setColor(index == -1 ? Color.WHITE : legendColors[index]);
 		}
 		
-		graphics.fillRect(xMinimum, yMinimum, (int) width, (int) height);
+		//TAH - dont' do this if showing satellite
+		if (!transparentBackground)
+			graphics.fillRect(xMinimum, yMinimum, (int) width, (int) height);
 		
 		// Draw only non-background color cells.
 		// Draw cells as rectangles whose width is extended to cover consecutive
@@ -1104,7 +1122,7 @@ public class TilePlot {
 			for (int column = firstColumn; column <= lastColumn; ++column) {
 				final int dataColumn = column - firstColumn;
 				//final 
-				float datum = data[dataRow][dataColumn];
+				double datum = data[dataRow][dataColumn];
 				
 				final int colorIndex = colorIndexCache == null ? indexOfValue(datum, legendLevels) : colorIndexCache[dataRow][dataColumn];
 
@@ -1151,7 +1169,7 @@ public class TilePlot {
 		graphics.setColor(gColor);
 	}
 	
-	public byte[][] calculateColorIndices(final float[][] data, final double[] legendLevels) {
+	public byte[][] calculateColorIndices(final double[][] data, final double[] legendLevels) {
 		byte[][] indices = new byte[data.length][data[0].length];
 		for (int i = 0; i < data.length; ++i)
 			for (int j = 0; j < data[i].length; ++j)
@@ -1211,6 +1229,10 @@ public class TilePlot {
 			graphics.drawLine( xpMinimum, yp, xpMaximum, yp );
 		}
 	}
+	
+	public void setTransparentBackground(boolean transparent) {
+		transparentBackground = transparent;
+	}
 
 	/**
 	 * indexOfValue - Clamped index of value within range.
@@ -1224,8 +1246,8 @@ public class TilePlot {
 	 * @post value <= values[ return ]
 	 */
 
-	private static byte indexOfValue(float value, final double[] values) { // TODO: log color legend: take log on value
-		if (new Float(value).toString().equals("NaN") || value <= DataUtilities.AMISS3 || value <= DataUtilities.BADVAL3 || value >= DataUtilities.NC_FILL_FLOAT)
+	private static byte indexOfValue(double value, final double[] values) { // TODO: log color legend: take log on value
+		if (new Double(value).toString().equals("NaN") || value <= DataUtilities.AMISS3 || value <= DataUtilities.BADVAL3 || value >= DataUtilities.NC_FILL_FLOAT)
 			return -1;
 		
 		final int count = values.length;
@@ -1320,11 +1342,11 @@ public class TilePlot {
 	 */
 
 	private static void layerMinimumMaximum(int firstRow, int lastRow,
-			int firstColumn, int lastColumn, final float[][] data,
-			int[] minimumCell, int[] maximumCell, float[] range) {
+			int firstColumn, int lastColumn, final double[][] data,
+			int[] minimumCell, int[] maximumCell, double[] range) {
 
-		float minimumValue = (float)Double.POSITIVE_INFINITY;
-		float maximumValue = (float)Double.NEGATIVE_INFINITY;;
+		double minimumValue = (double)Double.POSITIVE_INFINITY;
+		double maximumValue = (double)Double.NEGATIVE_INFINITY;;
 		range[MINIMUM] = range[MAXIMUM] = minimumValue;
 		minimumCell[ROW] = maximumCell[ROW] = firstRow;
 		minimumCell[COLUMN] = maximumCell[COLUMN] = firstColumn;
@@ -1334,7 +1356,7 @@ public class TilePlot {
 
 			for (int column = firstColumn; column <= lastColumn; ++column) {
 				final int dataColumn = column - firstColumn;
-				final float value = data[dataRow][dataColumn];
+				final double value = data[dataRow][dataColumn];
 
 				if (value <= DataUtilities.BADVAL3 || value <= DataUtilities.AMISS3 || value >= DataUtilities.NC_FILL_FLOAT)
 					continue;

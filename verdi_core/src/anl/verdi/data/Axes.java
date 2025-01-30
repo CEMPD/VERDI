@@ -46,6 +46,14 @@ public class Axes<T extends CoordAxis> {
 		}
 	}
 
+	public void addAxis(T axis) {		
+		if (axis.getAxisType() == AxisType.X_AXIS) this.xAxis = axis;
+		else if (axis.getAxisType() == AxisType.Y_AXIS) this.yAxis = axis;
+		else if (axis.getAxisType() == AxisType.TIME && this.timeAxis == null) this.timeAxis = axis;
+		else if (axis.getAxisType() == AxisType.LAYER) this.layerAxis = axis;
+		else if (axis.getAxisType() == AxisType.CELL_AXIS) this.cellAxis = axis;
+		axes.add(axis);
+	}
 
 	/**
 	 * Gets the geographical bounding box as defined by
@@ -166,6 +174,11 @@ public class Axes<T extends CoordAxis> {
 	public int getTimeStep(GregorianCalendar date) {
 		if (timeAxis != null) return ((TimeCoordAxis)timeAxis).getTimeStep(date);
 		return TIME_STEP_NOT_FOUND;
+	}
+	
+	public GregorianCalendar getDate(int timestep) {
+		if (timeAxis != null) return ((TimeCoordAxis)timeAxis).getDate(timestep);
+		return null;
 	}
 
 	/**

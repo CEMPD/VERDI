@@ -77,6 +77,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 import org.jogamp.vecmath.Point4i;	// 4 integers (x, y, z, w coordinates)
 import org.jsoup.select.Evaluator;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 import org.geotools.data.DataStoreFactorySpi;
@@ -140,6 +141,7 @@ import gov.epa.emvl.GridShapefileWriter;
 import gov.epa.emvl.Mapper;
 import gov.epa.emvl.Numerics;
 import gov.epa.emvl.Projector;
+import gov.epa.emvl.SatelliteImageManager;
 import gov.epa.emvl.TilePlot;
 import net.sf.epsgraphics.ColorMode;
 import net.sf.epsgraphics.Drawable;
@@ -157,6 +159,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	static final Logger Logger = LogManager.getLogger(FastTilePlot.class.getName());
 	private static final long serialVersionUID = 5835232088528761729L;
 	public static final int NO_VAL = Integer.MIN_VALUE;
+	private static final String SATELLITE_LAYER = "SATELLITE";
 	private static final String STATES_LAYER = "STATES";
 	private static final String COUNTIES_LAYER = "COUNTIES";
 	private static final String WORLD_LAYER = "WORLD";
@@ -238,21 +241,28 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	private Color labelColor = Color.black;
 	
 	Graphics2D exportGraphics = null;
+	
+	private Envelope envelope = null;
+	
+	private String satellitePath = null;
 
 
 	// subsetLayerData[ 1 + lastRow - firstRow ][ 1 + lastColumn - firstColumn ]
 	// at current timestep and layer.
-	private float[][] subsetLayerData = null;
+	private double[][] subsetLayerData = null;
 	private byte[][] colorIndexCache = null;
 
 	// layerData[ rows ][ columns ][ timesteps ]
-	private float[][][] layerData = null;
+	private double[][][][] layerData = null;
 	//private float[][][] layerDataLog = null;
-	private float[][][] statisticsData = null;
+	private double[][][][] statisticsData = null;
 	//private float[][][] statisticsDataLog = null;
 	protected CoordinateReferenceSystem gridCRS = null;	// axes -> ReferencedEnvelope -> gridCRS
 	protected CoordinateReferenceSystem originalCRS = null;
 	Projection projection = null;
+	
+	private int plotWidth = 0;
+	private int plotHeight = 0;
 
 	// For clipped/projected/clipped map lines:
 
@@ -318,6 +328,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	protected final Rubberband rubberband = new Rubberband(this);
 	protected boolean zoom = true;
 	protected boolean probe = false;
+	boolean statPointProbed = false;
 	private boolean hasNoLayer = false;
 	private int delay = 50; // In milliseconds.
 	private final int MAXIMUM_DELAY = 3000; // 3 seconds per frame.
@@ -339,7 +350,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	protected Slice probedSlice;
 	protected JCheckBoxMenuItem showGridLines;
 	final JMenu mapLayersMenu = new JMenu("Add Map Layers");
-	
+		
 	private ConfigDialog dialog = null;
 	@SuppressWarnings("unused")										// had been out; put back in
 	private Plot.ConfigSource configSource = Plot.ConfigSource.GUI;	// had been out; put back in
@@ -552,11 +563,12 @@ Logger.debug("here create offScreenImage");		// SEE THIS MSG 3 times
 					assert graphics != null;
 
 					if (drawMode == DRAW_CONTINUOUS) {
-						prevTimestep = timestep;
-						timestep = nextValue(1, timestep, firstTimestep, lastTimestep);
+						doStep(1);
+						//prevTimestep = timestep;
+						//timestep = nextValue(1, timestep, firstTimestep, lastTimestep);
 						Logger.debug("in DRAW_CONTINUOUS for timestep = " + timestep);
-						timeLayerPanel.setTime(timestep);
-						drawOverLays();
+						//timeLayerPanel.setTime(timestep);
+						//drawOverLays();
 						Logger.debug("back from drawOverLays() & done with DRAW_CONTINUOUS block");
 					}
 					
@@ -597,9 +609,10 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 						final String statisticsUnits =
 							statisticsSelection == 0 ? null : GridCellStatistics.units( statisticsSelection - 1 );
 						Logger.debug("statisticsUnits = " + statisticsUnits);
-						final String plotVariable =
-							statisticsSelection == 0 ? variable
-							: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
+						//final String plotVariable =
+						//	statisticsSelection == 0 ? variable
+						//	: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
+						String plotVariable = variable;
 						final String plotUnits =
 							statisticsUnits != null ? statisticsUnits : units;
 						Logger.debug("units = " + units);
@@ -635,6 +648,12 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							Logger.debug("subsetLayerData.length = " + aSubsetLayerDataLength);
 							Logger.debug("ready to make revised function call to tilePlot.draw, thread = " + Thread.currentThread().toString());
 
+							double percentile = 0;
+							if (customPercentile != null)
+								percentile = Double.parseDouble(customPercentile);
+							String selectedStat = GridCellStatistics.getDisplayString(statisticsMenu.getSelectedIndex(), percentile, firstLayer, lastLayer);
+							plotWidth = width;
+							plotHeight = height;
 //							tilePlot.draw(offScreenGraphics, (FastTilePlotPanel)this, // HOW TO GET TO FastTilePlotPanel FROM HERE???
 //									xOffset, yOffset,
 //									width, height, stepsLapsed, layer, aRow,
@@ -643,12 +662,20 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 //									aPlotUnits, 
 //									config, aNumberFormat, gridLineColor,
 //									subsetLayerData);
+							mapper.drawSatellite(domain, gridBounds, gridCRS,	// NOTE: JEB
+									// 1st time here gridCRS is baseCRS: DefaultGeographicCRS
+									// conversionFromBase: DefaultConicProjection
+									// coordinateSystem: DefaultCartesianCS
+									// datum: DefaultGeodeticDatum
+										offScreenGraphics, xOffset, yOffset, width,
+										height, withHucs, withRivers, withRoads);
+							
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									width, height, stepsLapsed, layer, firstRow + rowOrigin,
 									lastRow + rowOrigin, firstColumn + columnOrigin, lastColumn + columnOrigin, projection, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
 									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
-									subsetLayerData, colorIndexCache);
+									subsetLayerData, colorIndexCache, selectedStat);
 						} catch (Exception e) {
 							Logger.debug("FastTilePlot's run method", e);
 						}
@@ -842,14 +869,20 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		final String statisticsUnits =
 				statisticsSelection == 0 ? null : GridCellStatistics.units( statisticsSelection - 1 );
 		Logger.debug("statisticsUnit = " + statisticsUnits);
-		final String plotVariable =
-				statisticsSelection == 0 ? variable
-						: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
+		//final String plotVariable =
+		//		statisticsSelection == 0 ? variable
+		//				: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
+		String plotVariable = variable;
 		Logger.debug("plotVariable = " + plotVariable);
 		final String plotUnits = statisticsUnits != null ? statisticsUnits : units;
 		Logger.debug("plotUnits = " + plotUnits);
 		final int stepsLapsed = timestep - firstTimestep;
 		try {
+			double percentile = 0;
+			if (customPercentile != null)
+				percentile = Double.parseDouble(customPercentile);
+			String selectedStat = GridCellStatistics.getDisplayString(statisticsMenu.getSelectedIndex(), percentile, firstLayer, lastLayer);
+
 			tilePlot.drawBatchImage(offScreenGraphics,
 					xOffset, yOffset,
 					canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
@@ -857,7 +890,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 					legendColors, axisColor, labelColor, plotVariable,
 					((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config,
 					map.getNumberFormat(), gridLineColor,
-					subsetLayerData);
+					subsetLayerData, selectedStat);
 		} catch (Exception e) {
 			Logger.error("FastTilePlot's drawBatch method", e);
 			e.printStackTrace();
@@ -1007,11 +1040,19 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 	public void actionPerformed(ActionEvent event) {
 		final Object source = event.getSource();
+				
+		if (statisticsMenu.getSelectedItem().toString().startsWith("layer_mean") || 
+				statisticsMenu.getSelectedItem().toString().startsWith("layer_sum")) {
+			timeLayerPanel.setLayerEnabled(false);
+			threshold.setEnabled(false);
+		} else {
+			timeLayerPanel.setLayerEnabled(layers > 1);
+			threshold.setEnabled(true);
+		}
 
 		if ( source == statisticsMenu || source == threshold ) {
-			
+								
 			//TAH
-//			System.err.println("Stat index " + statisticsMenu.getSelectedIndex() + " pre " + preStatIndex + " item " + statisticsMenu.getSelectedItem());
 			if ( statisticsMenu.getSelectedIndex() != this.preStatIndex || statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile")) {
 				if (statisticsMenu.getSelectedItem().toString().startsWith("custom_percentile") ) {
 					getCustomPercentile();
@@ -1373,6 +1414,11 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		if (timestep >= firstTimestep && timestep <= lastTimestep && timestep != this.timestep) {
 			prevTimestep = this.timestep;
 			this.timestep = timestep;
+			/*final int selection = statisticsMenu.getSelectedIndex() - 1;
+			if (selection == GridCellStatistics.LAYER_MEAN ||
+					selection == GridCellStatistics.LAYER_SUM) {
+				recomputeStatistics = true;
+			}*/
 			Logger.debug("ready to call copySubsetLayerData from setTimestep");
 			copySubsetLayerData(this.log);
 			draw();
@@ -1509,7 +1555,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		columnOrigin = columnAxis != null ? columnAxis.getOrigin() : 0;
 		firstColumn = 0;
 		lastColumn = firstColumn + columns - 1;
-		final Envelope envelope = axes.getBoundingBox(dataFrame.getDataset().get(0).getNetcdfCovn());
+		envelope = axes.getBoundingBox(dataFrame.getDataset().get(0).getNetcdfCovn());
 		VerdiApplication.getInstance().setLastBounds((ReferencedEnvelope)envelope);
 
 		westEdge = envelope.getMinX(); // E.g., -420000.0.
@@ -1737,15 +1783,20 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	private boolean statError = false;	// JEB WHY IS THIS HERE INSTEAD OF WITH THE OTHER CLASS DATA MEMBERS?
 
 	private void computeStatistics(boolean log) {
+		
+		if (log != this.log)
+			return;
 
 		if ( layerData == null ) {
-			layerData = new float[ rows ][ columns ][ timesteps ];
-			statisticsData = new float[ GridCellStatistics.STATISTICS ][ rows ][ columns ];
+			layerData = new double[ rows ][ columns ][ timesteps ][ lastLayer + 1 ];
+			statisticsData = new double[timesteps][ GridCellStatistics.STATISTICS ][ rows ][ columns ];
 		}
 			
+		// System.out.println("FastTilePlot computeStatistics log " + log + " thislog " + this.log + " prevlog " + this.prevLog + " layer " + firstLayer + " to " + lastLayer);
 		// Copy from dataFrame into layerData[ rows ][ columns ][ timesteps ]:
 
 		final DataFrameIndex dataFrameIndex = getDataFrame(log).getIndex();
+
 
 		for ( int row = 0; row < rows; ++row ) {
 			final int dataRow = ! invertRows ? row : rows - 1 - row;
@@ -1753,9 +1804,22 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			for ( int column = 0; column < columns; ++column ) {
 
 				for ( int timestep = 0; timestep < timesteps; ++timestep ) {
-					dataFrameIndex.set( timestep, layer, column, dataRow );
-					float value = this.getDataFrame(log).getFloat( dataFrameIndex );
-					layerData[ row ][ column ][ timestep ] = value;
+					
+					//for (int dataLayer = 0; dataLayer < layers; ++dataLayer) {
+					for (int dataLayer = firstLayer; dataLayer <= lastLayer; ++dataLayer) {
+						try {
+							dataFrameIndex.set( timestep, dataLayer - firstLayer, column, dataRow );
+						} catch (Throwable t) {
+							System.err.println("Error setting timestep " + timestep + " layer " + dataLayer + " column " + column + " row " + dataRow);
+							dataFrameIndex.set( timestep, dataLayer - firstLayer, column, dataRow );
+						}
+						double value = this.getDataFrame(log).getDouble( dataFrameIndex );
+						/*if (value < 0 && !log) {
+							System.err.println("Negative value log " + log + " timestep " + timestep + " layer " + dataLayer + " column " + column + " row " + dataRow + " value " + value + " Inf: " + Double.isInfinite(value) + " nan " + Double.isNaN(value));
+
+						}*/
+						layerData[ row ][ column ][ timestep ][ dataLayer ] = value;
+					}
 				}
 			}
 		}
@@ -1767,7 +1831,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			double percentile = 0;
 			if (customPercentile != null)
 				percentile = Double.parseDouble(customPercentile);
-			GridCellStatistics.computeStatistics( layerData,
+			GridCellStatistics.computeStatistics( layer, firstLayer, lastLayer, timestep, layerData,
 					threshold, hoursPerTimestep,
 					statisticsData, this.statisticsMenu.getSelectedIndex()-1 , percentile);
 			this.statError = false;
@@ -1852,6 +1916,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				longitudeLatitude[LONGITUDE]);
 		mapDomain[LATITUDE][MAXIMUM] = Math.max(mapDomain[LATITUDE][MAXIMUM],
 				longitudeLatitude[LATITUDE]);
+		
+		// System.err.println("FastTilePLot lon min "+ mapDomain[LONGITUDE][MINIMUM] + " max " + mapDomain[LONGITUDE][MAXIMUM] + " lat min " + mapDomain[LATITUDE][MINIMUM] + " max " + mapDomain[LATITUDE][MAXIMUM]);
 
 		if ( projector.getProjection() instanceof
 				ucar.unidata.geoloc.projection.Stereographic ) {	// JEB 2016 probably need to change
@@ -1918,7 +1984,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		if (subsetLayerData == null
 				|| subsetLayerData.length != subsetLayerRows * subsetLayerColumns
 				|| subsetLayerData[0].length != subsetLayerColumns) {
-			subsetLayerData = new float[subsetLayerRows][subsetLayerColumns];
+			subsetLayerData = new double[subsetLayerRows][subsetLayerColumns];
 		}
 		
 		if ( selection == 0 ) {
@@ -1932,7 +1998,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 				for ( int column = firstColumn; column <= lastColumn; ++column ) {
 					dataFrameIndex.set( timestep-firstTimestep, layer-firstLayer, column, dataRow ) ;
-					final float value = getDataFrame(log).getFloat( dataFrameIndex );
+					final double value = getDataFrame(log).getDouble( dataFrameIndex );
 					subsetLayerData[row - firstRow][column - firstColumn] = value;
 				}
 			}
@@ -1946,10 +2012,15 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 
 			// Copy from statisticsData into subsetLayerData[ rows ][ columns ]:
 
+			int tsIndex = 0;
+			
+			if (statistic == GridCellStatistics.LAYER_MEAN ||
+					statistic == GridCellStatistics.LAYER_SUM)
+				tsIndex = timestep;
 			for ( int row = firstRow; row <= lastRow; ++row ) {
 
 				for ( int column = firstColumn; column <= lastColumn; ++column ) {
-					final float value = statisticsData[ statistic ][ row ][ column ];
+					final double value = statisticsData[tsIndex][ statistic ][ row ][ column ];
 					subsetLayerData[row - firstRow][column - firstColumn] = value;
 				}
 			}
@@ -1992,8 +2063,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 								//System.err.println("pause");
 								throw t;
 							}
-							final float value = 
-								dataFrame.getFloat(dataFrameIndex);
+							final double value = 
+								dataFrame.getDouble(dataFrameIndex);
 	
 							if (value > MINIMUM_VALID_VALUE) {
 	
@@ -2019,23 +2090,26 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			
 			final int statistic = selection - 1;
 
-			for ( int row = firstRow; row <= lastRow; ++row ) {
+			for (int timestep = 0; timestep < timesteps; ++timestep) {
 
-				for ( int column = firstColumn; column <= lastColumn; ++column ) {
-					final float value = statisticsData[ statistic ][ row ][ column ];
-					
-					if (value > MINIMUM_VALID_VALUE) {
+				for ( int row = firstRow; row <= lastRow; ++row ) {
+	
+					for ( int column = firstColumn; column <= lastColumn; ++column ) {
+						final double value = statisticsData[timestep][ statistic ][ row ][ column ];
 						
-						if (initialized) {
-
-							if (value < minmax[0]) {
-								minmax[0] = value;
-							} else if (value > minmax[1]) {
-								minmax[1] = value;
+						if (value > MINIMUM_VALID_VALUE) {
+							
+							if (initialized) {
+	
+								if (value < minmax[0]) {
+									minmax[0] = value;
+								} else if (value > minmax[1]) {
+									minmax[1] = value;
+								}
+							} else {
+								minmax[0] = minmax[1] = value;
+								initialized = true;
 							}
-						} else {
-							minmax[0] = minmax[1] = value;
-							initialized = true;
 						}
 					}
 				}
@@ -2309,6 +2383,11 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		item.addActionListener(listener);
 		mapLayersMenu.add(item);
 		
+		item = new JCheckBoxMenuItem("Satellite", false);
+		item.setActionCommand(SATELLITE_LAYER);
+		item.addActionListener(listener);
+		mapLayersMenu.add(item);
+		
 		JMenuItem otheritem = new JMenuItem("Other...");
 		otheritem.setActionCommand(OTHER_MAPS);
 		otheritem.addActionListener(listener);
@@ -2505,6 +2584,22 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			if (!show && layerKey.equals(ROADS)) {
 				withRoads = show;
 				mapper.removeUSRoadsMap();
+			}
+			
+			if (show && layerKey.equals(SATELLITE_LAYER)) {
+				try {
+				if (satellitePath == null)
+					satellitePath = SatelliteImageManager.prepareImage(envelope, domain[LATITUDE][MINIMUM], domain[LATITUDE][MAXIMUM], domain[LONGITUDE][MINIMUM], domain[LONGITUDE][MAXIMUM], plotWidth, plotHeight);
+				mapper.showSatelliteMap(satellitePath);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				tilePlot.setTransparentBackground(true);
+			}
+			
+			if (!show && layerKey.equals(SATELLITE_LAYER)) {
+				mapper.removeSatelliteMap();
+				tilePlot.setTransparentBackground(false);
 			}
 			
 			if (layerKey.equals(OTHER_MAPS)) {
@@ -3222,11 +3317,24 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			Slice slice = new Slice();
 			slice.setTimeRange(timestep - firstTimestep, 1);
 			if (!hasNoLayer) slice.setLayerRange(layer - firstLayer, 1);
+			Axes<CoordAxis> fullAxes = dataFrame.getDataset().get(0).getCoordAxes();
+			CoordAxis fullXAxis = fullAxes.getXAxis();
+			CoordAxis fullYAxis = fullAxes.getYAxis();
 			Axes<DataFrameAxis> axes = getDataFrame().getAxes();
-			final int probeFirstColumn = axisRect.x + 1- axes.getXAxis().getOrigin(); 
+			int subdomainXOffset = axes.getXAxis().getOrigin() - (int)fullXAxis.getRange().getOrigin();
+			int subdomainYOffset = axes.getYAxis().getOrigin() - (int)fullYAxis.getRange().getOrigin();
+			int probeFirstColumn = axisRect.x - axes.getXAxis().getOrigin() + subdomainXOffset; 
 			final int probeColumns = axisRect.width + 1;
-			final int probeFirstRow = axisRect.y + 1 - axisRect.height - axes.getYAxis().getOrigin();
+			int probeFirstRow = axisRect.y - axisRect.height - axes.getYAxis().getOrigin() + subdomainYOffset;
 			final int probeRows = axisRect.height + 1;
+			if (statisticsMenu.getSelectedIndex() != 0) {
+				++probeFirstColumn;
+				++probeFirstRow;
+			}
+			if (statisticsMenu.getSelectedIndex() != 0 && (probeColumns == 1 && probeRows ==1))
+				statPointProbed = true;
+			else
+				statPointProbed = false;
 
 			slice.setXRange( probeFirstColumn, probeColumns );
 			slice.setYRange( probeFirstRow, probeRows );
@@ -3263,8 +3371,8 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 							final int sliceColumn = (probeFirstColumn - firstColumn) +  (column - probeFirstColumn) -1;
 							final int sliceColumnIndex = (column - probeFirstColumn);
 							index.set3( sliceColumnIndex );
-							final float value = subsetLayerData[ sliceRow ][ sliceColumn ];
-							array.setFloat( index, value );
+							final double value = subsetLayerData[ sliceRow ][ sliceColumn ];
+							array.setDouble( index, value );
 						}
 					}
 
@@ -3398,10 +3506,15 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		vals[2] = point.x;
 		vals[3] = point.y;
 		boolean addComma = false;
+		int offsetAmount = 1;
+		if (statPointProbed) {
+			offsetAmount = 0;
+			statPointProbed = false;
+		}
 		for (int val : vals) {
 			if (val != NO_VAL) {
 				if (addComma) builder.append(", ");
-				builder.append(val + 1);
+				builder.append(val + offsetAmount);
 				addComma = true;
 			}
 		}
@@ -3587,7 +3700,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 				filterVariableName(variable), subsetLayerData, originalCRS );
 	}
 	
-	protected float[][] getLayerData() {
+	protected double[][] getLayerData() {
 		return subsetLayerData;
 	}
 	
@@ -3690,7 +3803,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		
 		try {
 			for (OverlayObject obs : obsData) {
-				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
+				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable(), matchObsTimesteps);
 				ObsAnnotation ann = null;
 				ann = new ObsAnnotation(eval, axs, layer, obs, timestepSize);
 				try {
@@ -3699,6 +3812,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 					ann.update(currentDate.getTime());
 					ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
 					obsAnnotations.add(ann);
+					matchObsTimesteps = eval.getMatchTimesteps();
 				} catch (IllegalArgumentException e) {
 					GregorianCalendar endDate = getDataFrame().getAxes().getDate(lastTimestep);
 					if (!eval.dataWithin(initDate.getTime(), endDate.getTime()))						
@@ -3792,17 +3906,17 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		IndexIterator iter1 = this.dataFrame.getArray().getIndexIterator();
 		if ( doDebug) 
 			Logger.debug( "debug print 2:");
-		float val1, val2;
+		double val1, val2;
 		double currentLogBase = Math.log(this.logBase);
 		while (iter2.hasNext()) {
-			val1 = iter1.getFloatNext(); 
-			val2 = iter2.getFloatNext(); 
+			val1 = iter1.getDoubleNext(); 
+			val2 = iter2.getDoubleNext(); 
 			if ( doDebug && count<100) 
 				Logger.debug(val1 + " " + val2);
-			val2 = (float)(Math.log(val1) / currentLogBase);
-			iter2.setFloatCurrent( (float)( val2));
+			val2 = (double)(Math.log(val1) / currentLogBase);
+			iter2.setDoubleCurrent( (double)( val2));
 
-			val2 = iter2.getFloatCurrent();
+			val2 = iter2.getDoubleCurrent();
 
 			if ( doDebug && count++<100) 
 				Logger.debug( " : " + val1 + " " + val2);
@@ -3831,11 +3945,13 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			app.getGui().busyCursor(); 
 		}
 		synchronized(this) {
+			System.err.println("FastTilePlot showBusyCursor");
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		}
 	}
 	
 	public void restoreCursor() {
+		System.err.println("FastTilePlot restoreCursor - zoom: " + zoom);
 		//   cursor restored
 		//synchronized(this) {
 		VerdiGUI gui = app.getGui();
@@ -3846,6 +3962,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 		else 
 			setCursor(Cursor.getDefaultCursor());
+		System.err.println("RestoreCursor end");
 	}
 	
 	private void increase_draw_once_requests() {

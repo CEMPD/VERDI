@@ -5,8 +5,8 @@ package anl.verdi.util;
  * @version $Revision$ $Date$
  */
 public class VersionInfo {
-	public static final String version = "2.1.5";
-	public static final String date = "2024-01-31";
+	public static final String version = "2.1.6";
+	public static final String date = "2025-01-08";
 
 	public static String getVersion() {
 		return version;

@@ -425,6 +425,7 @@ FormulaElementCreator, ListDataListener {
 			String strFormula = listElement.getFormula();
 			Formula formula = new FormulaFactory().createFormula(type, strFormula, null);
 			List<AxisRange> ranges = project.createRanges(listElement);
+			//
 			ValidationResult result = formula.validate(manager, ranges);
 			ValidationResult.Status status = result.getStatus();
 			boolean success = true;
@@ -870,7 +871,7 @@ FormulaElementCreator, ListDataListener {
 			try {
 				if (!dialog.isCanceled()) {
 					if (plot != null) {
-						ObsEvaluator eval = new ObsEvaluator(manager, dialog.getSelectedVar());
+						ObsEvaluator eval = new ObsEvaluator(manager, dialog.getSelectedVar(), fastPlot.getMatchObsTimesteps());
 						plot.addObsAnnotation(eval, dialog.getShapeSize(), dialog.getStrokeSize(), dialog.getSymbol());
 					}
 

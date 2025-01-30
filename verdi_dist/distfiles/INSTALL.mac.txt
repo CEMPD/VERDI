@@ -1,5 +1,5 @@
-1. tar -xzvf VERDI_2.1.4_mac_*.tar.gz into the appropriate place.
+1. tar -xzvf VERDI_2.1.6_mac_*.tar.gz into the appropriate place.
 
-2. Java is provided in VERDI_2.1.4_mac_<date>.tar.gz file
+2. Java is provided in VERDI_2.1.6_mac_<date>.tar.gz file
 
 3. VERDI can be run using the verdi.command executable script.

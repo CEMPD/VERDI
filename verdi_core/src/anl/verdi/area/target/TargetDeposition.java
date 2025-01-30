@@ -2,7 +2,7 @@ package anl.verdi.area.target;
 
 public class TargetDeposition {
 	
-	public float total = 0;
-	public float average = 0;
+	public double total = 0;
+	public double average = 0;
 
 }

@@ -17,6 +17,7 @@ import org.unitsofmeasurement.unit.Unit;
 import ucar.nc2.Attribute;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dataset.VariableDS;
 import ucar.nc2.dataset.VariableEnhanced;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
@@ -137,7 +138,7 @@ public abstract class AbstractNetcdfDataset extends AbstractDataset {
 				axesList.add(axes);
 			}
 
-			VariableEnhanced var = grid.getVariable();
+			VariableDS var = grid.getVariable();
 			if (!(var instanceof CoordinateAxis)) {
 				// ignore the TSTEP variable and any vars (such as
 				// projection vars) that have a dimensionality of 0

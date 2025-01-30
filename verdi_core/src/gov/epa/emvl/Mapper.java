@@ -9,10 +9,14 @@ package gov.epa.emvl;
 //import org.geotools.referencing.CRS;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -46,6 +50,8 @@ public class Mapper {
 	private static final String roadsMapFileName = "map_roads/tl_2015_us_primaryroads.shp";
 	private static final Color mapColor = Color.black;
 	private final String mapFileDirectory; // URL/dir containing above files.
+	private boolean showSatelliteMap = false;
+	private VerdiBoundaries satelliteMap = null;
 	private VerdiBoundaries worldMap = null;
 	private VerdiBoundaries northAmericaMap = null;
 	private VerdiBoundaries stateMap = null;
@@ -53,6 +59,7 @@ public class Mapper {
 	private VerdiBoundaries hucsMap = null;
 	private VerdiBoundaries riversMap = null;
 	private VerdiBoundaries roadsMap = null;
+	private VerdiBoundaries satellieMap = null;
 	private List<VerdiBoundaries> layers = new CopyOnWriteArrayList<VerdiBoundaries>();
 	private boolean initialDraw = true;
 	private static String defaultMapFileDirectory = null;
@@ -102,6 +109,17 @@ public class Mapper {
 		defaultMapFileDirectory = ".." + "/verdi_bootstrap/data";	
 		return defaultMapFileDirectory;			
 	}
+	
+	public void drawSatellite(final double[][] domain, final double[][] gridBounds,
+			final CoordinateReferenceSystem gridCRS, final Graphics graphics, int xOffset,
+			int yOffset, int width, int height, boolean withHucs,
+			boolean withRivers, boolean withRoads) {
+		System.out.println("Mapper drawing satellite");
+		if (!showSatelliteMap)
+			return;
+		satelliteMap.draw(domain, gridBounds, gridCRS, graphics, xOffset,
+				yOffset, width, height);	// execute the draw function for this VerdiBoundaries layer
+	}
 
 
 	// Draw a domain-clipped, projected, grid-clipped map to graphics screen.
@@ -110,6 +128,7 @@ public class Mapper {
 			final CoordinateReferenceSystem gridCRS, final Graphics graphics, int xOffset,
 			int yOffset, int width, int height, boolean withHucs,
 			boolean withRivers, boolean withRoads) {
+		System.out.println("Mapper drawing base");
 		// 2015 get to this upon completion of gov.epa.emvl.TilePlot - all done with TilePlot.draw
 		// gov.epa.emvl.Projector projector: projection of the overall map to be drawn
 		// java.awt.Graphics graphics
@@ -158,6 +177,7 @@ public class Mapper {
 			layers.remove(roadsMap);
 		}
 		Logger.debug("number of layers now = " + layers.size());	// now = 1
+		System.out.println("number of layers now = " + layers.size());	// now = 1
 
 		// start looping through the VerdiBoundaries
 		for (VerdiBoundaries layer : layers) {
@@ -409,6 +429,58 @@ public class Mapper {
 			throw new Exception("Error removing USA states layer ("
 					+ e.getLocalizedMessage() + ").");
 		}
+	}
+	
+	public void showSatelliteMap(String path ) {
+		getSatelliteMap(path);
+		showSatelliteMap = true;
+	}
+	
+	public VerdiBoundaries getSatelliteMap(String path) {
+		if (satelliteMap == null) {
+			//Get Coordinates
+			//download map for coordinates
+			//write map to temp dir
+			
+			//String downloadedMap = System.getProperty("java.io.tmpdir") + File.separator + "dat.jpg";
+			//downloadedMap = flipVertically(downloadedMap);
+			//create world file /tmp/data.wld
+			//create projection file /tmp/data.prj
+			satelliteMap = new VerdiBoundaries();
+			satelliteMap.setFileName(path);
+		}
+		return satelliteMap;
+	}
+	
+    private static String flipVertically(String imagePath) {
+    	File imageFile = new File(imagePath);
+    	BufferedImage image = null;
+		try {
+			image = ImageIO.read(imageFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        int width = image.getWidth();
+        int height = image.getHeight();
+        BufferedImage flippedImage = new BufferedImage(width, height, image.getType());
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                flippedImage.setRGB(x, height - 1 - y, image.getRGB(x, y));
+            }
+        }
+
+        File outputFile = new File(System.getProperty("java.io.tmpdir") + File.separator + "data.jpg");
+        try {
+			ImageIO.write(flippedImage, "jpg", outputFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        return outputFile.getAbsolutePath();
+    }
+	
+	public void removeSatelliteMap() throws Exception {
+		showSatelliteMap = false;
 	}
 
 	public VerdiBoundaries getUsaCountiesMap() throws Exception {

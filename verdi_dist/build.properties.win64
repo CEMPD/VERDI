@@ -5,7 +5,7 @@
 # Properties for specify a local distribution directory
 
 # jdk home
-jdk.home=/usr/local/win/jdk-17.0.2
+jdk.home=/usr/local/win/jdk-21.0.1
 
 # app
 app.name=VERDI

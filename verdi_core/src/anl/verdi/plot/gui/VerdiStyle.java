@@ -21,13 +21,18 @@ import java.util.concurrent.Future;
 
 import org.apache.logging.log4j.LogManager;		// using log4j instead of System.out.println for messages
 import org.apache.logging.log4j.Logger;
+import org.geotools.coverage.grid.io.AbstractGridFormat;
+import org.geotools.coverage.grid.io.GridCoverage2DReader;
+import org.geotools.coverage.grid.io.GridFormatFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.FeatureLayer;
+import org.geotools.map.GridReaderLayer;
 import org.geotools.map.Layer;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
@@ -36,10 +41,13 @@ import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
+import org.geotools.styling.RasterSymbolizer;
 import org.geotools.styling.Rule;
+import org.geotools.styling.SLD;
 import org.geotools.styling.SLDParser;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
+import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
 import org.geotools.swing.styling.JSimpleStyleDialog;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -68,6 +76,7 @@ public class VerdiStyle implements Callable<Boolean> {
 	private Style vStyle = null;		// Style associated with this Shapefile
 	private Stroke vStroke = null;
 	private FeatureSource vFeatureSource = null;
+	public GridCoverage2DReader imageReader = null;
 	private File vFile = null;			// File associated with this Shapefile
 	private String shpPath = null;		// path (as a String) to this Shapefile
 	private Layer vLayer = null;
@@ -76,6 +85,7 @@ public class VerdiStyle implements Callable<Boolean> {
 	private CoordinateReferenceSystem vCRS = null;	// CRS for this Shapefile
 	private FileDataStore vStore = null;	// this is used despite what Eclipse says!
 	private Projection vProjection = null;
+	private boolean isShapefile = true;
 
 	public VerdiStyle(File shpFile)		// File must previously exist and be for a .shp file
 	{									// constructor called from VerdiBoundaries.java
@@ -92,6 +102,7 @@ public class VerdiStyle implements Callable<Boolean> {
 
 		Logger.debug("stored shpFile as vFile = " + vFile.toString());	// JEB YES
 		shpPath = vFile.getAbsolutePath();
+		isShapefile = !shpPath.toLowerCase().endsWith(".jpg");
 		Logger.debug("shpPath set to: " + shpPath);	// JEB YES
 		calcVerdiStyle();			// JEB YES
 	}			// JEB YES returning to calling pgm (VerdiBoundaries)
@@ -121,16 +132,17 @@ public class VerdiStyle implements Callable<Boolean> {
 	{
 		Logger.debug("starting calcVerdiStyle");		// JEB YES
 		findFeatureSource();	// gets the FeatureSource for the shapefile
-		Logger.debug("vFeatureSource = " + vFeatureSource.toString());		// JEB YES (back from findFeatureSource()
-		if (vFeatureSource == null)
+		Logger.debug("vFeatureSource = " + vFeatureSource);		// JEB YES (back from findFeatureSource()
+		if (vFeatureSource == null && imageReader == null)
 		{
 			Logger.debug("vFeatureSource is null");
 			return;
 		}
 		createVerdiStyle();			// JEB YES
-		Logger.debug("vStyle = " + vStyle.toString());		// JEB YES StyleImpl[ name=Default Styler]
-		vCRS = vFeatureSource.getSchema().getCoordinateReferenceSystem();
-		Logger.debug("vCRS = " + vCRS.toString());			// JEB YES GEOGCS["SPHERE",
+		Logger.debug("vStyle = " + vStyle);		// JEB YES StyleImpl[ name=Default Styler]
+		if (isShapefile)
+			vCRS = vFeatureSource.getSchema().getCoordinateReferenceSystem();
+		Logger.debug("vCRS = " + vCRS);			// JEB YES GEOGCS["SPHERE",
 	}
 
 	private void reset()	// reset member variables to null
@@ -223,6 +235,12 @@ public class VerdiStyle implements Callable<Boolean> {
 			return;
 		
 		try{
+			if (!isShapefile) {
+				AbstractGridFormat format = GridFormatFinder.findFormat( vFile );
+				Hints hints = new Hints();
+				imageReader = format.getReader( vFile , hints);
+				return;
+			}
 			vStore = FileDataStoreFinder.getDataStore(vFile);
 			Logger.debug("got FileDataStore = " + vStore);		// JEB YES
 			vFeatureSource = vStore.getFeatureSource();
@@ -232,11 +250,28 @@ public class VerdiStyle implements Callable<Boolean> {
 		}
 	}
 
+	private static StyleFactory sf = CommonFactoryFinder.getStyleFactory();
+	
+    private Style createImageStyle() {
+        /*StyleBuilder sb = new StyleBuilder();
+        Style rasterstyle = sb.createStyle();
+        RasterSymbolizer raster = sb.createRasterSymbolizer();
+        rasterstyle.featureTypeStyles().add(sb.createFeatureTypeStyle(raster));
+        rasterstyle.featureTypeStyles().get(0).setName("GridCoverage");*/
+        RasterSymbolizer sym = sf.getDefaultRasterSymbolizer();
+
+        return SLD.wrapSymbolizers(sym);
+    }
+    
 	private void createVerdiStyle()	// create the style from the SLD file, type of geometry, or dialog box
 	{
 		Logger.debug("in createStyle; ready to create Style vStyle as null");		// JEB YES
 		vStyle = null;
 		vStroke = null;
+		if (!isShapefile) {
+			vStyle = createImageStyle();
+			return;
+		}
 		File sld = toSLDFile();			// JEB YES, there & returned with a null
 		if(sld != null)
 		{
@@ -602,8 +637,13 @@ public class VerdiStyle implements Callable<Boolean> {
 	{
 		if(vLayer == null)
 		{
-			waitForProjection();
-			vLayer = new FeatureLayer(vFeatureSource, vStyle);
+			if (isShapefile) {
+				waitForProjection();
+				vLayer = new FeatureLayer(vFeatureSource, vStyle);
+			} else {
+				vLayer =
+		                new GridReaderLayer(imageReader, vStyle);
+			}
 		}
 		if (layerList == null) {
 			layerList = new ArrayList<Layer>();

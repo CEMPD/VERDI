@@ -89,7 +89,7 @@ public final class GridShapefileWriter {
                             final double cellWidth,
                             final double cellHeight,
                             final String variable,
-                            final float[][] data,
+                            final double[][] data,
                             final CoordinateReferenceSystem gridCRS ) throws IOException {
 
 		// create the feature type
@@ -98,7 +98,7 @@ public final class GridShapefileWriter {
 		typeBuilder.setCRS(gridCRS);
 		
 		typeBuilder.add("the_geom", Polygon.class);
-		typeBuilder.add(variable, Float.class);
+		typeBuilder.add(variable, Double.class);
 		
 		final SimpleFeatureType GRID_TYPE = typeBuilder.buildFeatureType();
 		
@@ -173,7 +173,7 @@ public final class GridShapefileWriter {
 	   * final String fileName  Base name of file to create. "example".
 	   * final String variable		 Name of the data variable
 	   * List<Polygon> areas         List of polygons to write.
-	   * List<Float> data            Numeric values to write.
+	   * List<Double> data            Numeric values to write.
 	   * final CoordinateReferenceSystem gridCRS   Gridded data projection.
 	   * OUTPUTS:
 	   * fileName.shp  Contains the grid cell polygons.
@@ -191,7 +191,7 @@ public final class GridShapefileWriter {
 		public static void write( final String fileName,
 	                            String variable,
 	                            List<Polygon> areas,
-	                            List<Float> data,
+	                            List<Double> data,
 	                            final CoordinateReferenceSystem gridCRS ) throws IOException {
 
 			if (variable.length() > 0)
@@ -202,7 +202,7 @@ public final class GridShapefileWriter {
 			typeBuilder.setCRS(gridCRS);
 			
 			typeBuilder.add("the_geom", Polygon.class);
-			typeBuilder.add(variable, Float.class);
+			typeBuilder.add(variable, Double.class);
 			
 			final SimpleFeatureType GRID_TYPE = typeBuilder.buildFeatureType();
 			

@@ -23,6 +23,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import ucar.nc2.dataset.CoordinateAxis1D;
+import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.VariableEnhanced;
 import ucar.nc2.dt.GridCoordSystem;

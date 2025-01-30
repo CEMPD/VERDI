@@ -35,8 +35,14 @@ public class GridNetcdfReader extends AbstractDataReader<GridNetcdfDataset> {
 	private void createDefaultAxes(DataFrameBuilder builder, GridNetcdfDataset set, ucar.nc2.Variable variableDS) {
 		//System.out.println("VariableDS Dimension String: " + variableDS.getDimensionsString());
 		for (CoordAxis axis : set.getCoordAxes().getAxes()) {
-			int index = variableDS.findDimensionIndex(set.getNetDataset().
+			int index = 0;
+			if (set.getNetDataset().findCoordinateAxis(axis.getName()) == null) {
+				index = variableDS.findDimensionIndex(axis.getName());
+			}
+			else {
+				index = variableDS.findDimensionIndex(set.getNetDataset().
 							findCoordinateAxis(axis.getName()).getDimension(0).getShortName());	// .getName() is deprecated
+			}
 			builder.addAxis(DataFrameAxis.createDataFrameAxis(axis, index));
 		}
 	}
@@ -58,8 +64,13 @@ public class GridNetcdfReader extends AbstractDataReader<GridNetcdfDataset> {
 			// each rank in the variable.
 			System.arraycopy(varDS.getShape(), 0, shape, 0, rank);
 			for (AxisRange axis : ranges) {
-				int dimIndex = varDS.findDimensionIndex(set.getNetDataset().
+				int dimIndex = -1;
+				try {
+					dimIndex = varDS.findDimensionIndex(set.getNetDataset().
 							findCoordinateAxis(axis.getName()).getDimension(0).getShortName());	// getName() is deprecated
+				} catch (Throwable t) {
+					dimIndex = varDS.findDimensionIndex(axis.getName());
+				}
 				origin[dimIndex] = axis.getOrigin();
 				shape[dimIndex] = axis.getExtent();
 				DataFrameAxis frameAxis = DataFrameAxis.createDataFrameAxis(axis.getAxis(), axis.getOrigin(), axis.getExtent(), dimIndex);

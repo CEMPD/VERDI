@@ -36,9 +36,12 @@ package ucar.nc2.dataset.conv;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -65,6 +68,7 @@ import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateFormatter;
 import ucar.nc2.units.SimpleUnit;
 import ucar.nc2.util.CancelTask;
+import ucar.nc2.write.Ncdump;
 import ucar.unidata.geoloc.*;
 import ucar.unidata.geoloc.projection.*;
 import ucar.unidata.util.StringUtil2;
@@ -184,6 +188,17 @@ map_proj =  1: Lambert Conformal
 */
   
   ProjectionImpl proj = null;
+  
+  private static Set<String> KNOWN_DIMENSIONS = new HashSet<String>();
+  
+  static {
+	  KNOWN_DIMENSIONS.add("west_east");
+	  KNOWN_DIMENSIONS.add("west_east_stag");
+	  KNOWN_DIMENSIONS.add("south_north");
+	  KNOWN_DIMENSIONS.add("south_north_stag");
+	  KNOWN_DIMENSIONS.add("bottom_top");
+	  KNOWN_DIMENSIONS.add("bottom_top_stag");
+	  }
 
   public Projection getProjection() {
 	  return proj;
@@ -243,7 +258,7 @@ map_proj =  1: Lambert Conformal
 
       VariableDS v = new VariableDS(ds, null, null, "LatLonCoordSys", DataType.CHAR, "", null, null);
       v.addAttribute(new Attribute(_Coordinate.Axes, "GLAT GLON Time"));
-      Array data = Array.factory(DataType.CHAR.getPrimitiveClassType(), new int[]{}, new char[]{' '});
+      Array data = Array.factory(DataType.CHAR, new int[]{}, new char[]{' '});
       v.setCachedData(data, true);
       ds.addVariable(null, v);
 
@@ -342,6 +357,8 @@ map_proj =  1: Lambert Conformal
 //          Logger.debug("centerY=" + centerY);
 //      }
       }
+      
+
 
       // make axes
       if (!isLatLon) {
@@ -353,11 +370,19 @@ map_proj =  1: Lambert Conformal
       ds.addCoordinateAxis(makeZCoordAxis(ds, "z", ds.findDimension("bottom_top")));
       ds.addCoordinateAxis(makeZCoordAxis(ds, "z_stag", ds.findDimension("bottom_top_stag")));
       
+      List<Dimension> dimensions = ds.getDimensions();
+      for (Dimension d : dimensions) {
+    	  
+    	  String dim = d.getName();
+    	  if (!KNOWN_DIMENSIONS.contains(d.getName())) {
+    	      ds.addCoordinateAxis(makeZCoordAxis(ds, d.getName(), ds.findDimension(d.getName())));    		  
+    	  }
+      }
       // added for WRF geo_em type file
-      ds.addCoordinateAxis(makeZCoordAxis(ds, "land_cat", ds.findDimension("land_cat")));
+      /*ds.addCoordinateAxis(makeZCoordAxis(ds, "land_cat", ds.findDimension("land_cat")));
       ds.addCoordinateAxis(makeZCoordAxis(ds, "soil_cat", ds.findDimension("soil_cat")));
       ds.addCoordinateAxis(makeZCoordAxis(ds, "month", ds.findDimension("month")));
-      ds.addCoordinateAxis(makeZCoordAxis(ds, "land_cat_stag", ds.findDimension("land_cat_stag")));
+      ds.addCoordinateAxis(makeZCoordAxis(ds, "land_cat_stag", ds.findDimension("land_cat_stag")));*/
 
       if (projCT != null) {
         VariableDS v = makeCoordinateTransformVariable(ds, projCT);
@@ -696,7 +721,7 @@ map_proj =  1: Lambert Conformal
     if (!v.getShortName().equals(soilDim.getShortName()))
       v.addAttribute(new Attribute(_Coordinate.AliasForDimension, soilDim.getShortName()));
 
-    //read first time slice
+    //read )first time slice
     int n = coordVar.getShape(1);
     int[] origin = new int[]{0, 0};
     int[] shape = new int[]{1, n};
@@ -762,8 +787,9 @@ map_proj =  1: Lambert Conformal
     while (ii.hasNext()) {
       ii.setDoubleCurrent(Math.toDegrees(ii.getDoubleNext()));
     }
-    PrintWriter pw = new PrintWriter( new OutputStreamWriter(System.out, CDM.utf8Charset));
-    NCdumpW.printArray(glatData, "GLAT", pw, null);
+    PrintWriter pw = new PrintWriter( new OutputStreamWriter(System.out, StandardCharsets.UTF_8 ));
+    //NCdumpW.printArray(glatData, "GLAT", pw, null);
+    NCdumpW.printArray(glatData, pw);
 
     Variable glon = ncd.findVariable("GLON");
     Array glonData = glon.read();
@@ -771,7 +797,8 @@ map_proj =  1: Lambert Conformal
     while (ii.hasNext()) {
       ii.setDoubleCurrent(Math.toDegrees(ii.getDoubleNext()));
     }
-    NCdumpW.printArray(glonData, "GLON", pw, null);
+    //NCdumpW.printArray(glonData, "GLON", pw, null);
+    NCdumpW.printArray(glonData, pw);
 
 
     Index index = glatData.getIndex();
@@ -794,8 +821,10 @@ map_proj =  1: Lambert Conformal
       diff_x.set(x, val);
     }
 
-    NCdumpW.printArray(diff_y, "diff_y", pw, null);
-    NCdumpW.printArray(diff_x, "diff_x", pw, null);
+    NCdumpW.printArray(diff_y, pw);
+   // NCdumpW.printArray(diff_x, "diff_x", pw, null);
+   // Ncdump.printArray(diff_y, pw);
+    NCdumpW.printArray(diff_x, pw);
     ncd.close();
 
   }

@@ -286,11 +286,11 @@ public class TilePlot extends AbstractTilePlot {
 		dataset.addSeries(frame, timeStep, layer);
 		createSubtitle();
 		chart.setTitle(createTitle());
-
+		java.util.Date date = frame.getAxes().getDate(timeStep).getTime();
 		java.util.List annotations = ((XYPlot)chart.getPlot()).getAnnotations();
 		for(Object obj : annotations) {
 			if (obj instanceof ObsAnnotation) {
-				((ObsAnnotation)obj).update(timeStep);
+				((ObsAnnotation)obj).update(date);
 			} else if (obj instanceof VectorAnnotation) {
 				((VectorAnnotation)obj).update(timeStep);
 			}

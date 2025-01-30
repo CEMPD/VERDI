@@ -157,7 +157,10 @@ public class ColorMapLoader extends DefaultHandler2 {
 			map.setPaletteType(ColorMap.getPaletteType(paletteType));
 			map.setIntervalType(ColorMap.getIntervalType(intervalType));
 			map.setScaleType(scaleTypeObj);
-			map.setMinMax(min, max, true);
+			if (scaleType.equals(ColorMap.ScaleType.LOGARITHM.toString()))
+				map.setLogMinMax(min,  max, true);
+			else
+				map.setMinMax(min, max, true);
 			
 			try{
 				if (ColorMap.getScaleType(scaleType) == ColorMap.ScaleType.LOGARITHM) {

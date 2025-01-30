@@ -12,7 +12,7 @@ public class ArrayIntLog extends ArrayInt {
 	double logBase;
 
 	public ArrayIntLog(ArrayInt source, double base) {
-		super(source.getIndex(), (int[])source.getStorage());
+		super(source.getIndex(), false, (int[])source.getStorage());
 		setLogBase(base);
 		
 	}
