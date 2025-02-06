@@ -72,7 +72,7 @@ public class ImageLab {
 
     public static void main(String[] args) throws Exception {
     	PropertyUtil p = null;
-    	InterpolationNearest n = null;
+    	/*InterpolationNearest n = null;
     	try {
     		//which("javax.media.jai.InterpolationNearest");
     		which("it.geosolutions.imageio.utilities.ImageIOUtilities");
@@ -97,7 +97,7 @@ public class ImageLab {
     			pr.printStackTrace();
     		}
     		t.printStackTrace();
-    	}
+    	}*/
         ImageLab me = new ImageLab();
         me.getLayersAndDisplay();
     }
@@ -132,7 +132,8 @@ public class ImageLab {
         }
 */        //File imageFile = (File) wizard.getConnectionParameters().get("image");
         //File shapeFile = (File) wizard.getConnectionParameters().get("shape");
-        File imageFile = new File("/home/tahoward/share/verdi/data/clouds.jpg");
+        //File imageFile = new File("/home/tahoward/share/verdi/data/clouds.jpg");
+        File imageFile = new File("/home/tahoward/share/verdi/data2.jpg");
         File shapeFile = new File("/home/tahoward/share/verdi/data/countries.shp");
         displayLayers(imageFile, shapeFile);
     }
