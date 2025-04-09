@@ -322,6 +322,10 @@
 			<export prefix="*"/>
 		</library>
 
+		<library id="jt-warp" path="../core/lib/geo-19/jt-warp-1.0.22.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
 		<library id="ejml-core" path="../core/lib/geo-19/ejml-core-0.34.jar" type="code">
 			<export prefix="*"/>
 		</library>
