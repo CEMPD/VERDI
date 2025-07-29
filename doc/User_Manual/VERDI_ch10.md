@@ -77,7 +77,7 @@ VERDI calculates the grid cell time aggregate statistics as follows: For each ce
 -   fourth_max:  fourth highest value for each grid cell (used to obtain the 4th highest value of your rolling 8 hr maximum CMAQ output file)
 
 -   custom_percentile: default is > .12 (use the text box) value at custom <sup>th</sup> percentile of( sorted (var(i,j,k,tmin), var(i,j,k,tmin+1), ..., var(i,j,k,tmax)))
--   layer_sum: Sum all layers (by default) or layers within the user's layer range set by "Use Layer Range" for each grid cell at each time step
+-   layer_sum: Sum values at all layers (by default) or at layers within the user selected layer range set by "Use Layer Range" for each grid cell at each time step
 -   layer_mean: layer_sum/number of layers
 
 ### Specify Layer Range when use 'layer_sum' and 'layer_mean' from the above aggregated Statistics dropdown menu in a tile plot
@@ -323,6 +323,6 @@ Figure 47. Rotated Contour Plot<br>
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch09.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch11.md)<br>
-VERDI User Manual (c) 2023<br>
+VERDI User Manual (c) 2024<br>
 
 <!-- END COMMENT -->
