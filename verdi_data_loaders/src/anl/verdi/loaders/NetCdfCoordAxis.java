@@ -128,5 +128,9 @@ public class NetCdfCoordAxis implements CoordAxis {
 	public AxisType getAxisType() {
 		return type;
 	}
+	
+	public String getDatasetDimension() {
+		return axis.getDimensionsString();
+	}
 
 }

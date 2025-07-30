@@ -36,10 +36,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -656,7 +658,12 @@ public class GeoTiff implements AutoCloseable {
   private String readSValue(ByteBuffer buffer, IFDEntry ifd) {
     byte[] dst = new byte[ifd.count];
     buffer.get(dst);
-    return new String(dst, CDM.utf8Charset);	// 2nd parameter new in NetCDF-Java v4.5.5
+    try {
+		return new String(dst, StandardCharsets.UTF_8.name());
+	} catch (UnsupportedEncodingException e) {
+		e.printStackTrace();
+		return null;
+	}	// 2nd parameter new in NetCDF-Java v4.5.5
   }
 
   private void printBytes(PrintStream ps, String head, ByteBuffer buffer, int n) {

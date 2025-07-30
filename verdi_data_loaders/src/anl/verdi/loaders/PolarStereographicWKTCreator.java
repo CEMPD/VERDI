@@ -32,7 +32,7 @@ public class PolarStereographicWKTCreator {
 		template = template.replace('.', '/');
 		template = template + "/polar_stereographic_wkt.vt";
 		double projNatOriginLat = proj.getNaturalOriginLat();	// 2014 trying to see what happens when not set to 0.0 in test dataset
-		double projCentralMeridian = proj.getCentralMeridian();
+		double projCentralMeridian = proj.getTangentLon();
 		double projTangentLat = proj.getTangentLat();
 		double projTangentLon = proj.getTangentLon();
 		double projScale = proj.getScale();
