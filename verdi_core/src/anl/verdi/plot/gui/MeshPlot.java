@@ -289,9 +289,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private Color labelColor = Color.black;
 
 	// layerData[ rows ][ columns ][ timesteps ]
-	private float[][] layerData = null;
+	private double[][][] layerData = null;
 	//private float[][][] layerDataLog = null;
-	private float[][][] statisticsData = null;
+	private double[][][][] statisticsData = null;
 	//private float[][][] statisticsDataLog = null;
 	private CoordinateReferenceSystem gridCRS = null;	// axes -> ReferencedEnvelope -> gridCRS
 	
@@ -743,9 +743,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 					if (drawMode == DRAW_CONTINUOUS) {
 						dataChanged = true;
-						timestep = nextValue(1, timestep, firstTimestep, lastTimestep);
-						timeLayerPanel.setTime(timestep);
-						drawOverLays();
+						doStep(1);
+						//timestep = nextValue(1, timestep, firstTimestep, lastTimestep);
+						//timeLayerPanel.setTime(timestep);
+						//drawOverLays();
 					}
 					
 //					synchronized (lock) {
@@ -785,9 +786,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 						final String statisticsUnits =
 							statisticsSelection == 0 ? null : GridCellStatistics.units( statisticsSelection - 1 );
 						Logger.debug("statisticsUnits = " + statisticsUnits);
-						final String plotVariable =
-							statisticsSelection == 0 ? variable
-							: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
+						//final String plotVariable =
+						//	statisticsSelection == 0 ? variable
+						//	: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
+						String plotVariable = variable;
 						final String plotUnits =
 							statisticsUnits != null ? statisticsUnits : units;
 						Logger.debug("units = " + units);
@@ -834,13 +836,18 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 								tilePlot.setRenderVars(xTranslation, coordFormat, layerMinMaxCache[layer]);
 							else*/
 								tilePlot.setRenderVars(xTranslation, coordFormat, currentMinMaxCache);
+								double percentile = 0;
+								if (customPercentile != null)
+									percentile = Double.parseDouble(customPercentile);
+								String selectedStat = GridCellStatistics.getDisplayString(statisticsMenu.getSelectedIndex(), percentile, firstLayer, lastLayer);
+
 							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
 									screenWidth, screenHeight, stepsLapsed, MeshPlot.this.layer, aRow,
 									bRow, aCol, bCol, null, legendLevels,
 									legendColors, axisColor, labelColor, plotVariable,
 									aPlotUnits, 
 									config, aNumberFormat, gridLineColor,
-									null);
+									null, selectedStat);
 							//Cells are sized incorrectly during the first redraw, partially due to tilePlot.getLegendBoxWidth() being wrong before
 							//tilePlot.drawLegend() first called.  Quick workaround is to draw twice.
 							if (!screenInitted) {
@@ -851,8 +858,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 							
 							offScreenGraphics.setFont(defaultFont);
 							offScreenGraphics.setColor(axisColor);
+
 							tilePlot.drawAxis(offScreenGraphics, xOffset, xOffset + screenWidth, yOffset, yOffset + screenHeight, panX * RAD_TO_DEG + columnOrigin, visibleDataWidth * RAD_TO_DEG,
-									panY * RAD_TO_DEG + rowOrigin, visibleDataHeight * RAD_TO_DEG);
+									panY * RAD_TO_DEG + rowOrigin, visibleDataHeight * RAD_TO_DEG, selectedStat);
 
 
 //							tilePlot.draw(offScreenGraphics, xOffset, yOffset,
@@ -1084,20 +1092,26 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				final String statisticsUnits =
 					statisticsSelection == 0 ? null : GridCellStatistics.units( statisticsSelection - 1 );
 				Logger.debug("statisticsUnit = " + statisticsUnits);
-				final String plotVariable =
-					statisticsSelection == 0 ? variable
-					: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
+				//final String plotVariable =
+				//	statisticsSelection == 0 ? variable
+				//	: variable + GridCellStatistics.shortName( statisticsSelection - 1 );
+				String plotVariable = variable;
 				Logger.debug("plotVariable = " + plotVariable);
 				final String plotUnits = statisticsUnits != null ? statisticsUnits : units;
 				Logger.debug("plotUnits = " + plotUnits);
 				final int stepsLapsed = timestep - (firstTimestep >= 0 ? firstTimestep : 0);
 				try {
+					double percentile = 0;
+					if (customPercentile != null)
+						percentile = Double.parseDouble(customPercentile);
+					String selectedStat = GridCellStatistics.getDisplayString(statisticsMenu.getSelectedIndex(), percentile, firstLayer, lastLayer);
+
 					tilePlot.drawBatchImage(offScreenGraphics, xOffset, yOffset,
 							canvasWidth, canvasHeight, stepsLapsed, layer, firstRow,
 							lastRow, firstColumn, lastColumn, legendLevels,
 							legendColors, axisColor, labelColor, plotVariable,
 							((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
-							null);
+							null, selectedStat);
 				} catch (Exception e) {
 					Logger.error("FastTilePlot's drawBatch method" + e.getMessage());
 					e.printStackTrace();
@@ -1288,6 +1302,16 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 
 	public void actionPerformed(ActionEvent event) {
 		final Object source = event.getSource();
+		
+		if (statisticsMenu.getSelectedItem().toString().startsWith("layer_mean") || 
+				statisticsMenu.getSelectedItem().toString().startsWith("layer_sum")) {
+			timeLayerPanel.setLayerEnabled(false);
+			threshold.setEnabled(false);
+		} else {
+			timeLayerPanel.setLayerEnabled(layers > 1);
+			threshold.setEnabled(true);
+		}
+
 
 		if ( source == statisticsMenu || source == threshold ) {
 			
@@ -1725,6 +1749,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		if (timestep >= firstTimestep && timestep <= lastTimestep && timestep != this.timestep) {
 			dataChanged = true;
 			this.timestep = timestep;
+			final int selection = statisticsMenu.getSelectedIndex() - 1;
+			/*if (selection == GridCellStatistics.LAYER_MEAN ||
+					selection == GridCellStatistics.LAYER_SUM) {
+				recomputeStatistics = true;
+			}*/
 			copySubsetLayerData(this.log);
 			forceDraw();
 			if (!obsData.isEmpty())
@@ -1748,8 +1777,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		}
 	}
 	
-	private static byte indexOfObsValue(float value, final double[] values) {
-		if (Float.isNaN(value))
+	private static byte indexOfObsValue(double value, final double[] values) {
+		if (Double.isNaN(value))
 			return -1;
 		
 		if (value <= DataUtilities.BADVAL3 || value <= DataUtilities.AMISS3 || value >= DataUtilities.NC_FILL_FLOAT) 	// 2014 changed AMISS3 comparison from == to <=
@@ -2238,11 +2267,11 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		synchronized (legendLock) {
 		for (int i = 0; i < cellsToRender.length; ++i) {
 			LocalCellInfo cell = getCellInfo(i);
-			cell.colorIndex = indexOfObsValue((float)cell.getValue(), legendLevels);
+			cell.colorIndex = indexOfObsValue((double)cell.getValue(), legendLevels);
 		}
 		
 		for (LocalCellInfo cell : splitCellInfo.keySet()) {
-			cell.colorIndex = indexOfObsValue((float)cell.getValue(), legendLevels);
+			cell.colorIndex = indexOfObsValue((double)cell.getValue(), legendLevels);
 		}
 		}
 		Logger.info("Updated cell data in " + (System.currentTimeMillis() - start) + "ms");
@@ -2317,7 +2346,13 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			gr.setColor(legendColors[cell.colorIndex]);
 		else {
 			try {
-			gr.setColor(legendColors[indexOfObsValue(statisticsData[preStatIndex - 1][0][cell.getId()], legendLevels)]);
+				int tsIndex = 0;
+				if (preStatIndex + 1 == GridCellStatistics.LAYER_MEAN ||
+					preStatIndex + 1 == GridCellStatistics.LAYER_SUM) {
+					tsIndex = timestep;
+				}
+				
+			gr.setColor(legendColors[indexOfObsValue(statisticsData[tsIndex][preStatIndex - 1][0][cell.getId()], legendLevels)]);
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 			}
@@ -2776,11 +2811,14 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	private boolean statError = false;
 
 	private void computeStatistics(boolean log) {
+		
+		if (log != this.log)
+			return;
 
 		if ( layerData == null ) {
-			layerData = new float[ cellsToRender.length ][ timesteps ];
+			layerData = new double[ cellsToRender.length ][ timesteps ][ lastLayer + 1 ];
 			//layerDataLog = new float[ rows ][ columns ][ timesteps ];
-			statisticsData = new float[ GridCellStatistics.STATISTICS ][1][ cellsToRender.length ];
+			statisticsData = new double[timesteps][ GridCellStatistics.STATISTICS ][1][ cellsToRender.length ];
 			//statisticsDataLog = new float[ GridCellStatistics.STATISTICS ][ rows ][ columns ];
 		}
 			
@@ -2788,15 +2826,18 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 		DataFrame dataFrame = getDataFrame(log);
 		final MPASDataFrameIndex dataFrameIndex = new MPASDataFrameIndex(dataFrame);
+
 			
 		for (int timestep = firstTimestep; timestep <= lastTimestep; ++timestep) {
 			for (int cell = 0; cell < cellsToRender.length; ++cell) {
-					dataFrameIndex.set(timestep, layer, cell);
+				for (int currentLayer = firstLayer; currentLayer <= lastLayer; ++ currentLayer) {
+					dataFrameIndex.set(timestep, currentLayer, cell);
 					//float value = this.dataFrame.getFloat( dataFrameIndex ); // do not replace this one with getDataFrame()
-					float value = this.getDataFrame(log).getFloat( dataFrameIndex ); 
-					layerData[ cell ][ timestep ] = value;
+					double value = this.getDataFrame(log).getDouble( dataFrameIndex ); 
+					layerData[ cell ][ timestep ][ currentLayer ] = value;
 					//value = this.dataFrameLog.getFloat( dataFrameIndex );
 					//layerDataLog[ row ][ column ][ timestep ] = value;
+				}
 				
 			}
 		}
@@ -2808,9 +2849,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			double percentile = 0;
 			if (customPercentile != null)
 				percentile = Double.parseDouble(customPercentile);
-			MeshCellStatistics.computeStatistics( layerData,
+			MeshCellStatistics.computeStatistics( layer, firstLayer, lastLayer, timestep, layerData,
 					thresholdValue, hoursPerTimestep,
-					statisticsData, this.statisticsMenu.getSelectedIndex()-1, percentile );
+					statisticsData, this.statisticsMenu.getSelectedIndex(), percentile );
 			//GridCellStatistics.computeStatistics( layerDataLog,
 			//		threshold, hoursPerTimestep,
 			//		statisticsDataLog, this.statisticsMenu.getSelectedIndex()-1 );
@@ -2979,18 +3020,20 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			statMinMaxCache[LEVELS_CACHE_MIN_VALUE] = Double.POSITIVE_INFINITY;
 			statMinMaxCache[LEVELS_CACHE_MAX_VALUE] = Double.NEGATIVE_INFINITY;
 
-			for ( int cell = firstRow; cell < cellsToRender.length; ++cell ) {
-
-				final float value = statisticsData[ statistic ][0][ cell ];
-				if (value < statMinMaxCache[LEVELS_CACHE_MIN_VALUE]) {
-					statMinMaxCache[LEVELS_CACHE_MIN_VALUE] = value;
-					statMinMaxCache[LEVELS_CACHE_MIN_LON] = cellsToRender[cell].getLon();
-					statMinMaxCache[LEVELS_CACHE_MIN_LAT] = cellsToRender[cell].getLat();
-				}
-				else if (value > statMinMaxCache[LEVELS_CACHE_MAX_VALUE]) {
-					statMinMaxCache[LEVELS_CACHE_MAX_VALUE] = value;
-					statMinMaxCache[LEVELS_CACHE_MAX_LON] = cellsToRender[cell].getLon();
-					statMinMaxCache[LEVELS_CACHE_MAX_LAT] = cellsToRender[cell].getLat();
+			for (int ts = 0; ts < statisticsData.length; ++ ts) {
+				for ( int cell = firstRow; cell < cellsToRender.length; ++cell ) {
+	
+					final double value = statisticsData[ts][ statistic ][0][ cell ];
+					if (value < statMinMaxCache[LEVELS_CACHE_MIN_VALUE]) {
+						statMinMaxCache[LEVELS_CACHE_MIN_VALUE] = value;
+						statMinMaxCache[LEVELS_CACHE_MIN_LON] = cellsToRender[cell].getLon();
+						statMinMaxCache[LEVELS_CACHE_MIN_LAT] = cellsToRender[cell].getLat();
+					}
+					else if (value > statMinMaxCache[LEVELS_CACHE_MAX_VALUE]) {
+						statMinMaxCache[LEVELS_CACHE_MAX_VALUE] = value;
+						statMinMaxCache[LEVELS_CACHE_MAX_LON] = cellsToRender[cell].getLon();
+						statMinMaxCache[LEVELS_CACHE_MAX_LAT] = cellsToRender[cell].getLat();
+					}
 				}
 			}
 			//System.err.println("MeshPlot log " + log + " stat " + statistic + " min " + statMinMaxCache[LEVELS_CACHE_MIN_VALUE] + " Max " + statMinMaxCache[LEVELS_CACHE_MAX_VALUE]);
@@ -4620,9 +4663,9 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 			slice.setTimeRange(timestep - firstTimestep, 1);
 			if (!hasNoLayer) slice.setLayerRange(layer - firstLayer, 1);
 			Axes<DataFrameAxis> axes = getDataFrame().getAxes();
-			final int probeFirstColumn = axisRect.x - axes.getXAxis().getOrigin(); 
+			int probeFirstColumn = axisRect.x - axes.getXAxis().getOrigin(); 
 			final int probeColumns = axisRect.width + 1;
-			final int probeFirstRow = axisRect.y - axisRect.height - axes.getYAxis().getOrigin();
+			int probeFirstRow = axisRect.y - axisRect.height - axes.getYAxis().getOrigin();
 			final int probeRows = axisRect.height + 1;
 
 			slice.setXRange( probeFirstColumn, probeColumns );
@@ -4829,8 +4872,8 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				double areaValue = target.getArea();
 
 				if(target.depositionCalculated() && target.containsDeposition()){
-					float value = target.getDeposition();
-					float aveValue = target.getAverageDeposition();
+					double value = target.getDeposition();
+					double aveValue = target.getAverageDeposition();
 
 					if(massUnit!=null)
 						ret = " Area "+target.toString()+": " + areaValue + " " + areaUnit + ", Total: "+value+" "+massUnit+", Average: "+aveValue+" "+units;
@@ -4863,10 +4906,15 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 				return "";
 			MeshCellInfo cell = localCell.getSource();
 			double value;
+			int tsIndex = 0;
+			if (preStatIndex + 1 == GridCellStatistics.LAYER_MEAN ||
+				preStatIndex + 1 == GridCellStatistics.LAYER_SUM) {
+				tsIndex = timestep;
+			}
 			if (preStatIndex < 1)
 				value = cell.getValue(currentVariable, currentDataFrame, hoverCellIndex, timestep - firstTimestep, layer - firstLayer);
 			else
-				value = statisticsData[preStatIndex - 1][0][cell.getId()];
+				value = statisticsData[tsIndex][preStatIndex - 1][0][cell.getId()];
 			if (value < DataUtilities.BADVAL3 || value > DataUtilities.NC_FILL_FLOAT)
 				value = DataUtilities.BADVAL3;
 			if (cell != null) {
@@ -5082,13 +5130,13 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	public void exportASCIIGrid( String baseFileName ) {
 		final double subsetWestEdge = westEdge + firstColumn * cellWidth;
 		final double subsetSouthEdge = southEdge + firstRow * cellWidth;
-		float[][] exportCellData = new float[1][cellsToRender.length];
+		double[][] exportCellData = new double[1][cellsToRender.length];
 		
 		MPASDataFrameIndex index = new MPASDataFrameIndex(currentDataFrame);
 		for ( int cell = 0; cell < cellsToRender.length; ++cell ) {
-			exportCellData[0][cell] = (float)cellsToRender[cell].getValue(currentVariable, currentDataFrame, index, timestep - firstTimestep, layer - firstLayer);
+			exportCellData[0][cell] = (double)cellsToRender[cell].getValue(currentVariable, currentDataFrame, index, timestep - firstTimestep, layer - firstLayer);
 			if (exportCellData[0][cell] < DataUtilities.BADVAL3 || exportCellData[0][cell] > DataUtilities.NC_FILL_FLOAT)
-				exportCellData[0][cell] = (float)DataUtilities.BADVAL3;
+				exportCellData[0][cell] = (double)DataUtilities.BADVAL3;
 		}
 		ASCIIGridWriter.write( baseFileName + ".asc",
 		1, cellsToRender.length,
@@ -5154,7 +5202,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		
 		try {
 			for (OverlayObject obs : obsData) {
-				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable());
+				ObsEvaluator eval = new ObsEvaluator(manager, obs.getVariable(), matchObsTimesteps);
 				ObsAnnotation ann = null;
 				ann = new ObsAnnotation(eval, axs, layer, obs, timestepSize);
 				try {
@@ -5163,6 +5211,7 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 					ann.update(currentDate.getTime());
 					ann.setDrawingParams(obs.getSymbol(), obs.getStrokeSize(), obs.getShapeSize(), map);
 					obsAnnotations.add(ann);
+					matchObsTimesteps = eval.getMatchTimesteps();
 				} catch (IllegalArgumentException e) {				
 					GregorianCalendar endDate = getDataFrame().getAxes().getDate(lastTimestep);
 					if (!eval.dataWithin(initDate.getTime(), endDate.getTime()))						

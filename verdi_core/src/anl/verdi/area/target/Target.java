@@ -72,11 +72,11 @@ public class Target implements Area{
 	Map<Integer, List<MeshCellInfo>> cellIndex;
 	Map<Integer, int[]> rowIndex;
 	Map<Integer, int[]> colIndex;
-	Map<Integer, float[]> cellOverlapArea;
-	Map<Integer, float[]> overlapArea;
+	Map<Integer, double[]> cellOverlapArea;
+	Map<Integer, double[]> overlapArea;
 	static ArrayList <TilePlot> plots=new ArrayList<TilePlot>();
 	Color color;
-	ArrayList<Float> deposition;
+	ArrayList<Double> deposition;
 	double area;
 	double meshArea = -1;
 	String keyName;
@@ -91,15 +91,15 @@ public class Target implements Area{
 	public static UnitConverter converterTargetStandard=null;
 	public static UnitConverter converterTargetGrid=null;
 	
-	float currentDeposition = 0;
+	double currentDeposition = 0;
 	
 	private static Map<Geometry, Target> geometryMap = new HashMap<Geometry, Target>();
 
-	public void setAreaInfo(int gridNum,List<MeshCellInfo> cellIndex, float[] overlapArea){
+	public void setAreaInfo(int gridNum,List<MeshCellInfo> cellIndex, double[] overlapArea){
 		this.cellIndex.put(gridNum,cellIndex);
 		this.cellOverlapArea.put(gridNum,overlapArea);
 	}
-	public void setAreaInfo(int gridNum,int[] rowIndex,int[] colIndex, float[] overlapArea){
+	public void setAreaInfo(int gridNum,int[] rowIndex,int[] colIndex, double[] overlapArea){
 		this.rowIndex.put(gridNum,rowIndex);
 		this.colIndex.put(gridNum,colIndex);
 		this.overlapArea.put(gridNum,overlapArea);
@@ -200,9 +200,9 @@ public class Target implements Area{
 		colIndex=new HashMap<Integer, int[]>();
 		rowIndex=new HashMap<Integer, int[]>();
 		cellIndex = new HashMap<Integer, List<MeshCellInfo>>();
-		deposition=new ArrayList<Float>();
-		cellOverlapArea=new HashMap<Integer, float[]>();
-		overlapArea=new HashMap<Integer, float[]>();
+		deposition=new ArrayList<Double>();
+		cellOverlapArea=new HashMap<Integer, double[]>();
+		overlapArea=new HashMap<Integer, double[]>();
   		if(obj instanceof MultiPolygon){
   			for(int i=0;i<((MultiPolygon)obj).getNumGeometries();i++){
   				Geometry geo=((MultiPolygon)obj).getGeometryN(i);
@@ -680,56 +680,56 @@ public class Target implements Area{
 	 * and the value for selected variables at each grid location.
 	 *
 	 */
-	public float calculateAverageDeposition(MeshCellInfo[] data, MeshDataReader reader) {
+	public double calculateAverageDeposition(MeshCellInfo[] data, MeshDataReader reader) {
 		return handleAvgDeposition(calculateTotalDeposition(data, reader));
 	}
-	public float calculateAverageDeposition(float[][] data) {
+	public double calculateAverageDeposition(double[][] data) {
 		return calculateAverageDeposition(data, 0, 0);
 	}
-	public float calculateAverageDeposition(float[][] data, int xOffset, int yOffset) {
+	public double calculateAverageDeposition(double[][] data, int xOffset, int yOffset) {
 		return handleAvgDeposition(calculateTotalDeposition(data, xOffset, yOffset));
 	}
-	public float handleAvgDeposition(float val) {
+	public double handleAvgDeposition(double val) {
 
-		val= val/(float)(converterTargetGrid.convert((float)getArea()));		// 2014 JEB
-//		val = val / (float)area;
+		val= val/(double)(converterTargetGrid.convert((double)getArea()));		// 2014 JEB
+//		val = val / (double)area;
 		currentDeposition = val;
 		return val;
 	}
-	public float calcAverageDeposition(float[][] data) {
+	public double calcAverageDeposition(double[][] data) {
 		return calcAverageDeposition(data, 0, 0);
 	}
 
-	public float calcAverageDeposition(float[][] data, int xOffset, int yOffset) {
+	public double calcAverageDeposition(double[][] data, int xOffset, int yOffset) {
 
-		float val=calcTotalDeposition(data, xOffset, yOffset);
+		double val=calcTotalDeposition(data, xOffset, yOffset);
 
-		val= val/(float)(converterTargetGrid.convert((float)area));		// 2014 JEB
-//		val = val / (float)area;
+		val= val/(double)(converterTargetGrid.convert((double)area));		// 2014 JEB
+//		val = val / (double)area;
 		currentDeposition = val;
 		return val;
 	}
-	public float getAverageDeposition() {
+	public double getAverageDeposition() {
 
-		float val=getDeposition();
+		double val=getDeposition();
 
-		val= val/(float)(converterTargetGrid.convert((float)getArea()));		// 2014 JEB
-//		val = val / (float)area;
+		val= val/(double)(converterTargetGrid.convert((double)getArea()));		// 2014 JEB
+//		val = val / (double)area;
 		return val;
 	}
 	
-	public float calcTotalDeposition(float[][] data) {
+	public double calcTotalDeposition(double[][] data) {
 		return calcTotalDeposition(data, 0, 0);
 	}
 
 	
-	public float calcTotalDeposition(float[][] data, int xOffset, int yOffset) {
+	public double calcTotalDeposition(double[][] data, int xOffset, int yOffset) {
 		int gridIndex=getCurrentGridNum();
 
 		int[]rows=rowIndex.get(gridIndex);
 		int[]cols=colIndex.get(gridIndex);
-		float[]areas=overlapArea.get(gridIndex);
-		float dep=0.0f;
+		double[]areas=overlapArea.get(gridIndex);
+		double dep=0.0;
 		// skip if there is no overlap with the grid
 		Logger.debug("into Target.calcTotalDeposition");
 		if (rows!=null){
@@ -750,9 +750,9 @@ public class Target implements Area{
 					Logger.debug("stop here");
 					continue;
 				}
-				float dataPoint = data[ xPos ][ yPos ];
+				double dataPoint = data[ xPos ][ yPos ];
 				
-				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
+				if ( "NaN".equalsIgnoreCase(new Double(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
 				{	// 2014 changed comparison to AMISS3 from == to <=
 					//Logger.debug("  === ");
 					continue;
@@ -761,19 +761,19 @@ public class Target implements Area{
 
 //				dep = dep + areas[i] * dataPoint;		// 2014 JEB
 						// 2014 remove unit conversion here 
-				dep = dep + (float) (converterTargetStandard.convert(areas[i]) * converterGrid.convert(dataPoint));
+				dep = dep + (double) (converterTargetStandard.convert(areas[i]) * converterGrid.convert(dataPoint));
 			}
 		}
 //Logger.debug("returning from calcTotalDeposition, dep = " + dep);
 		return dep;
 	}
 	
-	public float calcTotalDeposition(MeshCellInfo[] data, MeshDataReader reader) {
+	public double calcTotalDeposition(MeshCellInfo[] data, MeshDataReader reader) {
 		int gridIndex=getCurrentGridNum();
 
 		List<MeshCellInfo> cells=cellIndex.get(gridIndex);
-		float[]areas=cellOverlapArea.get(gridIndex);
-		float dep=0.0f;
+		double[]areas=cellOverlapArea.get(gridIndex);
+		double dep=0.0;
 		// skip if there is no overlap with the grid
 		Logger.debug("into Target.calcTotalDeposition");
 		if (cells!=null){
@@ -788,9 +788,9 @@ public class Target implements Area{
 					Logger.debug("stop here");
 					continue;		// 2014 nothing was done after previous line saying "stop here"
 				}*/
-				float dataPoint = (float)cells.get(i).getValue(reader);
+				double dataPoint = (double)cells.get(i).getValue(reader);
 				
-				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
+				if ( "NaN".equalsIgnoreCase(new Double(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
 				{	// 2014 changed comparison to AMISS3 from == to <=
 					//Logger.debug("  === ");
 					continue;
@@ -799,37 +799,37 @@ public class Target implements Area{
 
 //				dep = dep + areas[i] * dataPoint;		// 2014 JEB
 						// 2014 remove unit conversion here 
-				dep = dep + (float) (converterTargetStandard.convert(areas[i]) * converterGrid.convert(dataPoint));
+				dep = dep + (double) (converterTargetStandard.convert(areas[i]) * converterGrid.convert(dataPoint));
 			}
 		}
 //Logger.debug("returning from calcTotalDeposition, dep = " + dep);
 		return dep;
 	}
 	
-	public float calculateTotalDeposition(MeshCellInfo[] data, MeshDataReader reader) {
+	public double calculateTotalDeposition(MeshCellInfo[] data, MeshDataReader reader) {
 		return handleCalculateTotalDeposition(calcTotalDeposition(data, reader));
 	}
-	public float calculateTotalDeposition(float[][] data) {
+	public double calculateTotalDeposition(double[][] data) {
 		return calculateTotalDeposition(data, 0, 0);
 	}
 
-	public float calculateTotalDeposition(float[][] data, int xOffset, int yOffset) {
+	public double calculateTotalDeposition(double[][] data, int xOffset, int yOffset) {
 		return handleCalculateTotalDeposition(calcTotalDeposition(data, xOffset, yOffset));
 	}
-	public float handleCalculateTotalDeposition(float dep) {
+	public double handleCalculateTotalDeposition(double dep) {
 
 		int plotIndex=getCurrentPlotNum();
 		// convert final deposition to grid unit
 		while(deposition.size()<(plotIndex+1)){
 			deposition.add(null);
 		}
-		deposition.set(plotIndex,new Float(dep));
+		deposition.set(plotIndex,new Double(dep));
 		currentDeposition = dep;
 
 		return dep;
 	}
 	
-	public float getCurrentDeposition() {
+	public double getCurrentDeposition() {
 		return currentDeposition;
 	}
 
@@ -866,7 +866,7 @@ public class Target implements Area{
 	 * Get the current deposition value
 	 * @return the deposition
 	 */
-	public float getDeposition() {
+	public double getDeposition() {
 		return deposition.get(getCurrentPlotNum());
 	}
 
@@ -1185,12 +1185,12 @@ public class Target implements Area{
 	 * Version: 2012-05-10
 	 */
 	
-	private float computeTotalDeposition(float[][] data, int gridIndex) {
+	private double computeTotalDeposition(double[][] data, int gridIndex) {
 
 		int[]rows=rowIndex.get(gridIndex);
 		int[]cols=colIndex.get(gridIndex);
-		float[]areas=overlapArea.get(gridIndex);
-		float dep=0.0f;
+		double[]areas=overlapArea.get(gridIndex);
+		double dep=0.0;
 		// skip if there is no overlap with the grid
 		if (rows!=null){
 
@@ -1204,42 +1204,42 @@ public class Target implements Area{
 					Logger.debug("stop here");
 					continue;		// 2014 nothing had been done after previous line saying "stop here"
 				}
-				float dataPoint = data[ rows[i] ][ cols[i] ];
+				double dataPoint = data[ rows[i] ][ cols[i] ];
 				
 				// Logger.debug(new Float(dataPoint).toString());
 
-				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
+				if ( "NaN".equalsIgnoreCase(new Double(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
 				{	// 2014 changed AMISS3 comparison from == to <=
 					// Logger.debug("  === ");
 					continue;
 				}
 				// TODO: NaN
 //				dep = dep + (float)(areas[i] * dataPoint);		// 2014 JEB
-				dep = dep + (float) (converterTargetStandard.convert(areas[i]) * converterGrid.convert(dataPoint));
+				dep = dep + (double) (converterTargetStandard.convert(areas[i]) * converterGrid.convert(dataPoint));
 			}
 		}
 		return dep;
 	}
 		
-	public void computeAverageDeposition(float[][] data, int gridIndex, TargetDeposition deposition) {
+	public void computeAverageDeposition(double[][] data, int gridIndex, TargetDeposition deposition) {
 
 		if ( data == null || deposition == null || gridIndex <0) {
 			Logger.error("Target computeAverageDeposition(...): invalid inputs! Check that areas overlay grid cells.");
 			return;
 		}
-		float total=computeTotalDeposition(data, gridIndex);
+		double total=computeTotalDeposition(data, gridIndex);
 
-		float ave = total/(float)(converterTargetGrid.convert((float)area));		// 2014 JEB
-//		float ave = total / (float)area;
+		double ave = total/(double)(converterTargetGrid.convert((double)area));		// 2014 JEB
+//		double ave = total / (double)area;
 		deposition.average = ave;
 		deposition.total = total;
 	}
 	
-	private float computeTotalDeposition(MeshCellInfo[] data, MeshDataReader reader, int gridIndex) {
+	private double computeTotalDeposition(MeshCellInfo[] data, MeshDataReader reader, int gridIndex) {
 
 		List<MeshCellInfo> cells=cellIndex.get(gridIndex);
-		float[]areas=cellOverlapArea.get(gridIndex);
-		float dep=0.0f;
+		double[]areas=cellOverlapArea.get(gridIndex);
+		double dep=0.0;
 		// skip if there is no overlap with the grid
 		if (cells!=null){
 
@@ -1253,18 +1253,18 @@ public class Target implements Area{
 					Logger.debug("stop here");
 					continue;		// 2014 nothing had been done after previous line saying "stop here"
 				}*/
-				float dataPoint = (float)cells.get(i).getValue(reader);
+				double dataPoint = (double)cells.get(i).getValue(reader);
 				
 				// Logger.debug(new Float(dataPoint).toString());
 
-				if ( "NaN".equalsIgnoreCase(new Float(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
+				if ( "NaN".equalsIgnoreCase(new Double(dataPoint).toString())  || dataPoint <= DataUtilities.BADVAL3 || dataPoint <= DataUtilities.AMISS3 || dataPoint >= DataUtilities.NC_FILL_FLOAT) 
 				{	// 2014 changed AMISS3 comparison from == to <=
 					// Logger.debug("  === ");
 					continue;
 				}
 				// TODO: NaN
 //				dep = dep + (float)(areas[i] * dataPoint);		// 2014 JEB
-				dep = dep + (float) (converterTargetStandard.convert(areas[i]) * converterGrid.convert(dataPoint));
+				dep = dep + (double) (converterTargetStandard.convert(areas[i]) * converterGrid.convert(dataPoint));
 			}
 		}
 		return dep;
@@ -1276,16 +1276,16 @@ public class Target implements Area{
 			Logger.error("Target computeAverageDeposition(...): invalid inputs! Check that areas overlay grid cells.");
 			return;
 		}
-		float total=computeTotalDeposition(data, reader, gridIndex);
+		double total=computeTotalDeposition(data, reader, gridIndex);
 
-		float ave = total/(float)(converterTargetGrid.convert((float)area));		// 2014 JEB
+		double ave = total/(double)(converterTargetGrid.convert((double)area));		// 2014 JEB
 		
-		float areas[] = cellOverlapArea.get(gridIndex);
+		double areas[] = cellOverlapArea.get(gridIndex);
 		if (areas != null) {
-			float calcArea = 0;
+			double calcArea = 0;
 			for (int i = 0; i < areas.length; ++i)
 				calcArea += areas[i];
-			float calcAverage = total / calcArea;
+			double calcAverage = total / calcArea;
 			if (calcAverage < 292)
 				System.out.println("ause");
 			meshArea = calcArea;

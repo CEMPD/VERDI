@@ -6,6 +6,8 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
 //import javax.measure.units.Unit;		// JScience changed its hierarchy
@@ -14,6 +16,7 @@ import org.unitsofmeasurement.unit.Unit;
 
 import ucar.ma2.Array;
 import ucar.ma2.IndexIterator;
+import anl.verdi.core.VerdiApplication;
 import anl.verdi.plot.data.TextDataset;
 import anl.verdi.util.VUnits;
 
@@ -25,7 +28,9 @@ public class ObsEvaluator {
 
 	static final Logger Logger = LogManager.getLogger(ObsEvaluator.class.getName());
 	private DataManager manager;
+	long datasetOffset = 0;
 	private Variable var, lat, lon;
+	boolean matchTimesteps;
 
 	private static class ObsIterator implements Iterator<ObsData>, Iterable<ObsData> {
 
@@ -64,9 +69,10 @@ public class ObsEvaluator {
 		}
 	}
 	
-	public ObsEvaluator(DataManager manager, Variable var) {
+	public ObsEvaluator(DataManager manager, Variable var, boolean matchTimesteps) {
 		this.manager = manager;
 		this.var = var;
+		this.matchTimesteps = matchTimesteps;
 		Unit deg = VUnits.createUnit("degrees");
 		String latName = "LAT";
 		String lonName = "LON";
@@ -121,17 +127,80 @@ public class ObsEvaluator {
 				obsEnd.after(startDate) && obsEnd.before(endDate));
 	}
 	
+	public boolean getMatchTimesteps() {
+		return matchTimesteps;
+	}
+	
 	public List<ObsData> evaluate(Date date, long timestepSize) {
 		Dataset dataset = var.getDataset();
 		DataReader reader = manager.getDataReader(dataset);
 		TimeCoordAxis timeAxis = (TimeCoordAxis)dataset.getCoordAxes().getTimeAxis();
+		if (datasetOffset != 0) {
+			date = new Date(date.getTime() + datasetOffset);
+		}
 		int firstTimestep = timeAxis.getTimeStep(date);
 		int numTimesteps = 0;
 		if (firstTimestep >= -1) {
-			Date obsDate = timeAxis.getDate((int)timeAxis.getRange().getOrigin()).getTime();
+			Date obsDate = null;
+			try {			
+				obsDate = timeAxis.getDate((int)timeAxis.getRange().getOrigin()).getTime();
+			} catch (Throwable t) {
+				/*int res = 1;
+				if (datasetOffset == 0) {
+					if (matchTimesteps)
+						res = 0;
+					else
+						res = JOptionPane.showConfirmDialog(VerdiApplication.getInstance().getGui().getFrame(), "Date " + date + " not present in observation data.  Would you like to overlay observation data from " + timeAxis.getDate(0).getTime() + "?",
+							"No observations for current date", JOptionPane.YES_NO_OPTION);
+					if (res == 0) {
+						matchTimesteps = true;
+						long obsOrigin = timeAxis.getDate(0).getTimeInMillis();
+						long obsEnd = timeAxis.getDate((int)timeAxis.getRange().getExtent() - 1).getTimeInMillis();
+						long datasetTime = date.getTime();
+						if (obsOrigin > datasetTime || obsEnd > datasetTime) {
+							datasetOffset = obsOrigin - datasetTime;
+						//long datasetOrigin = 
+						//if (obs start after dataset end)
+						//	datasetOffset = obsStart - dataStart
+						//else if (obsend before dataset begin)
+						//  datasetOffset = obsStart - dataStart
+							date = new Date(date.getTime() + datasetOffset);
+							obsDate = timeAxis.getDate((int)timeAxis.getRange().getOrigin()).getTime();
+						}
+					}
+				}
+				if (res == 1)*/
+					throw t;
+			}
  			if (date.getTime() + timestepSize < obsDate.getTime()) {
-				firstTimestep = Axes.TIME_STEP_NOT_FOUND;
-				throw new IllegalArgumentException("Date " + date + " not present in observation data");
+				int res = 1;
+				/*if (datasetOffset == 0) {
+					if (matchTimesteps)
+						res = 0;
+					else
+					res = JOptionPane.showConfirmDialog(VerdiApplication.getInstance().getGui().getFrame(), "Date " + date + " not present in observation data.  Would you like to overlay observation data from " + timeAxis.getDate(0).getTime() + "?",
+							"No observations for current date", JOptionPane.YES_NO_OPTION);
+					if (res == 0) {
+						matchTimesteps = true;
+						long obsOrigin = timeAxis.getDate(0).getTimeInMillis();
+						long obsEnd = timeAxis.getDate((int)timeAxis.getRange().getExtent() - 1).getTimeInMillis();
+						long datasetTime = date.getTime();
+						if (obsOrigin > datasetTime || obsEnd > datasetTime) {
+							datasetOffset = obsOrigin - datasetTime;
+						//long datasetOrigin = 
+						//if (obs start after dataset end)
+						//	datasetOffset = obsStart - dataStart
+						//else if (obsend before dataset begin)
+						//  datasetOffset = obsStart - dataStart
+							date = new Date(date.getTime() + datasetOffset);
+							obsDate = timeAxis.getDate((int)timeAxis.getRange().getOrigin()).getTime();
+						}
+					}
+				}*/
+				if (res == 1) {
+					firstTimestep = Axes.TIME_STEP_NOT_FOUND;		
+					throw new IllegalArgumentException("Date " + date + " not present in observation data");
+				}
 			}
 			else {
 				if (timeAxis.getDate(firstTimestep) != null) {

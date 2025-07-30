@@ -5,9 +5,9 @@ public class TargetAreaInfo {
 	double area = 0;
 	int[] rowIndex = null;
 	int[] colIndex = null;
-	float[] overlapArea = null;
+	double[] overlapArea = null;
 	
-	public TargetAreaInfo(double area, int[] rowIndex, int[] colIndex, float[] overlapArea) {
+	public TargetAreaInfo(double area, int[] rowIndex, int[] colIndex, double[] overlapArea) {
 		this.area = area;
 		this.rowIndex = rowIndex;
 		this.colIndex = colIndex;
@@ -22,7 +22,7 @@ public class TargetAreaInfo {
 		return colIndex;
 	}
 	
-	public float[] getOverlapArea() {
+	public double[] getOverlapArea() {
 		return overlapArea;
 	}
 

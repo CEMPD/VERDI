@@ -12,15 +12,15 @@ package gov.epa.emvl;
 
 public final class MeshCellStatistics {
 	
-	  public static void computeStatistics( final float[][] data,
+	  public static void computeStatistics( int layer, int firstLayer, int lastLayer, int timestep, final double[][][] data,
               final double threshold,
               final double hoursPerTimestep,
-              final float[][][] statistics,
+              final double[][][][] statistics,
               final int statIndex,
               double customPercentile) throws Exception {
-		  final float[][][] dat = new float[1][][];
+		  final double[][][][] dat = new double[1][][][];
 		  dat[0] = data;
-		  GridCellStatistics.computeStatistics(dat, threshold, hoursPerTimestep, statistics, statIndex, customPercentile);
+		  GridCellStatistics.computeStatistics(layer, firstLayer, lastLayer, timestep, dat, threshold, hoursPerTimestep, statistics, statIndex, customPercentile);
 	  }
 
 };

@@ -145,7 +145,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 			Target.setCurrentGridInfo(((AreaTilePlot)tilePlot).getGridInfo());
 			
 			ArrayList<Polygon> areas = new ArrayList<Polygon>();
-			ArrayList<Float> values = new ArrayList<Float>();
+			ArrayList<Double> values = new ArrayList<Double>();
 			
 			//  get all the selected target polygons
 			for (int targetNum = 0; targetNum < targets.size(); targetNum++) {
@@ -556,17 +556,17 @@ public class FastAreaTilePlot extends FastTilePlot {
 		return bar;
 	}
 
-	public float[][] getAllLayerData() {
+	public double[][] getAllLayerData() {
 		return getAllLayerData(getDataFrame());
 	}
 
-	public float[][] getAllLayerData(DataFrame dataFrame) {
+	public double[][] getAllLayerData(DataFrame dataFrame) {
 
 		// Reallocate the subsetLayerData[][] only if needed:
 
-		float[][] subsetLayerData;
+		double[][] subsetLayerData;
 
-		subsetLayerData = new float[rows][columns];
+		subsetLayerData = new double[rows][columns];
 
 
 		// Copy from dataFrame into subsetLayerData[ rows ][ columns ]:
@@ -577,7 +577,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 
 			for (int column = 0; column < columns; ++column) {
 				dataFrameIndex.set(timestep-firstTimestep, layer-firstLayer, column, row);
-				final float value = dataFrame.getFloat(dataFrameIndex);
+				final double value = dataFrame.getDouble(dataFrameIndex);
 				subsetLayerData[row][column] = value;
 			}
 		}
@@ -703,8 +703,8 @@ public class FastAreaTilePlot extends FastTilePlot {
 						double areaValue = target.getArea();
 
 						if(target.depositionCalculated() && target.containsDeposition()){
-							float value = target.getDeposition();
-							float aveValue = target.getAverageDeposition();
+							double value = target.getDeposition();
+							double aveValue = target.getAverageDeposition();
 
 							if(massUnit!=null)app.getGui().setStatusOneText("Area "+target.toString()+": " + areaValue + " " + areaUnit + ", Total: "+value+" "+massUnit+", Average: "+aveValue+" "+units);
 							else app.getGui().setStatusOneText("Area "+target.toString()+": " + areaValue + " " + areaUnit + ", Average: "+aveValue+" "+units);
@@ -829,14 +829,14 @@ public class FastAreaTilePlot extends FastTilePlot {
 	private DepositionRange range = new DepositionRange();
 	private boolean depositionRangeAlreadySet = false;
 
-	private float[][] getSubsetLayerData(DataFrame dataFrame, 
+	private double[][] getSubsetLayerData(DataFrame dataFrame, 
 			int timestep, int firstTimestep,
 			int layer,    int firstLayer,
 			int rows,     int columns) {
 
-		float[][] subsetLayerData;
+		double[][] subsetLayerData;
 
-		subsetLayerData = new float[rows][columns];
+		subsetLayerData = new double[rows][columns];
 
 		final DataFrameIndex dataFrameIndex = dataFrame.getIndex();
 
@@ -844,7 +844,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 
 			for (int column = 0; column < columns; ++column) {
 				dataFrameIndex.set(timestep-firstTimestep, layer-firstLayer, column, row);
-				final float value = dataFrame.getFloat(dataFrameIndex);
+				final double value = dataFrame.getDouble(dataFrameIndex);
 				subsetLayerData[row][column] = value;
 			}
 		}
@@ -890,7 +890,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 	private void calcGlobalDepositionRange() {
 		for (int timestep=0; timestep<this.timesteps; timestep++) {
 			for (int layer=0; layer<this.layers; layer++) {
-				float[][] subsetLayerData = getSubsetLayerData( this.dataFrame, 
+				double[][] subsetLayerData = getSubsetLayerData( this.dataFrame, 
 						timestep, this.firstTimestep,
 						layer,    this.firstLayer,
 						this.rows,     this.columns);
@@ -903,7 +903,7 @@ public class FastAreaTilePlot extends FastTilePlot {
 		depositionRangeAlreadySet = true;
 	}
 
-	private void calcFrameDepositionRange(float [][] data, int gridIndex, DepositionRange range) {
+	private void calcFrameDepositionRange(double [][] data, int gridIndex, DepositionRange range) {
 		ArrayList polygons=Target.getTargets();
 		
 		TargetDeposition deposition = new TargetDeposition();

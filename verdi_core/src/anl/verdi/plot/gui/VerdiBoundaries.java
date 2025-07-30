@@ -13,18 +13,42 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.geom.AffineTransform;
 import java.io.File;
+import java.io.IOException;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.geotools.coverage.GridSampleDimension;
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
+import org.geotools.map.StyleLayer;
 import org.geotools.renderer.GTRenderer;
 import org.geotools.renderer.lite.StreamingRenderer;
+import org.geotools.styling.ContrastEnhancement;
+import org.geotools.styling.RasterSymbolizer;
+import org.geotools.styling.SLD;
+import org.geotools.styling.SelectedChannelType;
 import org.geotools.styling.Style;
+import org.geotools.styling.StyleFactory;
+import org.geotools.swing.JMapFrame;
+import org.geotools.swing.action.SafeAction;
+import org.opengis.filter.FilterFactory;
 //import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.ChannelSelection;
+import org.opengis.style.ContrastMethod;
+
+import com.vividsolutions.jts.geom.Envelope;
 
 // VerdiBoundaries provides VerdiStyle and CRS for a shapefile (e.g., state boundaries)
 // & transforms it to the CRS of a grid file
@@ -69,14 +93,21 @@ public class VerdiBoundaries {
 		String last3Chars = new String(vFileName.substring(vFileName.length() - 3, vFileName.length()));
 		Logger.debug("fileExtension = " + last3Chars);		// JEB OK done 7 times
 		
-		// check that file name has extension "shp" ignorecase
+		boolean isShapefile = true;
+		// check that file name has extension "shp" or "jpg" ignorecase
 		// if not, reset() and return false;
-		if(last3Chars.compareToIgnoreCase("shp") != 0)
+		if(last3Chars.compareToIgnoreCase("jpg") == 0) {
+			//Check for jgw
+			isShapefile = false;
+		}
+
+		else if(last3Chars.compareToIgnoreCase("shp") != 0)
 		{
-			Logger.error("File name must have extension shp - select a different file.");
+			Logger.error("File name must have extension shp or jpg - select a different file.");
 			reset();
 			return false;
 		}
+		
 		
 		// here check that the file exists
 		// if not, reset() and return false;
@@ -96,7 +127,11 @@ public class VerdiBoundaries {
 			Logger.debug("VerdiBoundaries.setFileName failed; unable to create the aVerdiStyle.");
 			return false;
 		}
-		aVerdiStyle.projectShapefile(vProjection, vCRS, async);
+		if (isShapefile)
+			aVerdiStyle.projectShapefile(vProjection, vCRS, async);
+//		else
+//			aVerdiStyle.projectImage(vProjection,  vCRS);
+		
 		Logger.debug("Successfully completed VerdiBoundaries.setFileName for: " + vPath +
 				" and back from instantiating VerdiStyle.");	// JEB BACK FROM CREATING new VerdiStyle
 		return true;	// successfully set data members		// JEB YES returning to calling pgm (Mapper)
@@ -126,13 +161,18 @@ public class VerdiBoundaries {
 	public void draw(double[][] domain, double[][] gridBounds, CoordinateReferenceSystem gridCRS, Graphics graphics,
 			int xOffset, int yOffset, int width, int height)	// execute the draw function for this VerdiBoundaries layer
 	{	
+		boolean isImage = false;
+		if (vFile.toString().endsWith(".jpg")) {
+			isImage = true;
+		}
 		Logger.debug("in VerdiBoundaries.draw; ready to getStyle() and return theStyle");
 		if (aVerdiStyle == null) {
-			System.out.println("Pending failure: " + this);
+			System.err.println("Pending failure: " + this);
 			creation.printStackTrace();
 		}
 		Style theStyle = aVerdiStyle.getStyle();
-		graphics.setColor(vColor);		// set color for this graphics drawing to color stored for this VerdiBoundaries object
+		if (!vFile.toString().endsWith(".jpg"))
+			graphics.setColor(vColor);		// set color for this graphics drawing to color stored for this VerdiBoundaries object
 		Logger.debug("just back from getting style");
 		Logger.debug("in VerdiBoundaries.draw; aVerdiStyle.getStyle() = " + theStyle.toString());
 		Logger.debug("in VerdiBoundaries.draw, CRS for tile plot (gridCRS) = " + gridCRS);
@@ -144,76 +184,58 @@ public class VerdiBoundaries {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}*/
-		Logger.debug("vFile = " + vFile.toString());
-		Logger.debug("vPath = " + vPath.toString());
-		Logger.debug("vMap = " + vMap.toString());
+		Logger.debug("vFile = " + vFile);
+		Logger.debug("vPath = " + vPath);
+		Logger.debug("vMap = " + vMap);
 		Logger.debug("map Coordinate Reference System (vCRS) = " + aVerdiStyle.getCoordinateReferenceSystem());
-		Logger.debug("Feature Source = " + aVerdiStyle.getFeatureSource().toString());
+		Logger.debug("Feature Source = " + aVerdiStyle.getFeatureSource());
 		//Logger.debug("vStore = " + vStore.toString());
 		//Logger.debug("vFeatureSource = " + vFeatureSource.toString());
 		Logger.debug("Layer = " + aVerdiStyle.getLayers().get(0));
-		Logger.debug("ShapeFile = " + aVerdiStyle.getShapeFile().toString());
+		Logger.debug("ShapeFile = " + aVerdiStyle.getShapeFile());
 		Logger.debug("Shapefile Path = " + aVerdiStyle.getShapePath());
-		Logger.debug("Style = " + aVerdiStyle.getStyle().toString());
+		Logger.debug("Style = " + aVerdiStyle.getStyle());
 		Logger.debug("now set the CRS to gridCRS");	// NOTE: do NOT use Projector method (old UCAR operates point-by-point
-		//Layer aLayer = new FeatureLayer(aVerdiStyle.getFeatureSource(), theStyle);
-		//vMap.addLayer(aLayer);
-		vMap.getViewport().setCoordinateReferenceSystem(gridCRS);
-		Logger.debug("set CRS of Viewport to gridCRS: " + gridCRS.toString());
+		Logger.debug("set CRS of Viewport to gridCRS: " + gridCRS);
 		ReferencedEnvelope displayBounds = new ReferencedEnvelope(gridBounds[0][0], gridBounds[0][1], gridBounds[1][0], gridBounds[1][1], gridCRS);
 		vMap.getViewport().setBounds(displayBounds);
+		
 		for (Layer layer : aVerdiStyle.getLayers()) {
 			layer.setVisible(true);
-			/*System.out.println("VerdiBoundaries; " + layer.getClass());
-			System.err.println(layer.getFeatureSource().getSchema().getCoordinateReferenceSystem());
-			try {
-				System.out.println(layer.getFeatureSource().getFeatures().features().next());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}*/
 		}
-		
-		// set of math transform
-		// NOTE: next commented-out section is possibly the beginnings of writing out a shapefile in a given projection
-		/*boolean lenient = true;		// allow for some error due to different datums
-		try {
-			vTransform = CRS.findMathTransform(aVerdiStyle.getCoordinateReferenceSystem(), gridCRS, lenient);
-		} catch (FactoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Logger.debug("vTransform computed as = " + vTransform.toString());	// nothing yet drawn on map */
-////		// TODO - perform the transform
-//		SimpleFeatureCollection featureCollection = null;
-//		SimpleFeatureCollection newFeatureCollection = null;
-//		try {
-//			featureCollection = (SimpleFeatureCollection) vFeatureSource.getFeatures();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		SimpleFeatureIterator iterator = featureCollection.features();
-//		try {
-//			while (iterator.hasNext())
-//			{
-//				SimpleFeature feature = iterator.next();
-//				Geometry geom1 = (Geometry) feature.getDefaultGeometry();
-//				Geometry geometry2 = JTS.transform(geom1, vTransform);
-//				newFeatureCollection.
-////				// What do I do with the geometry2 object?
-//			}
-//		} catch (Exception ex) {
-//			Logger.error("caught an exception while converting map to new Coordinate Reference System");
-//		} finally {
-//			iterator.close();
-//		}
-		// TODO - create a map layer and add it to the vMap object
+
 		vMap.addLayers(aVerdiStyle.getLayers());	// FIGURE THIS ONE OUT BECAUSE TRANSFORM IS HERE
-		GTRenderer renderer = new StreamingRenderer();
+		
+
+		/*if (frame == null) {
+			//frame = new JMapFrame(vMap);
+			try {
+				//ImageLab.main(null);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}*/
+		
+		/*
+        final GridCoverageRenderer gcr =
+                new GridCoverageRenderer(
+                        destinationCRS,
+                        originalMapExtent,
+                        screenSize,
+                        worldToScreen,
+                        java2dHints);
+                        */
+
+		StreamingRenderer renderer = new StreamingRenderer();
 		renderer.setMapContent(vMap);
 		Rectangle outputArea = new Rectangle(xOffset, yOffset, width, height);
+		
 		renderer.paint((Graphics2D)graphics, outputArea, vMap.getViewport().getBounds());
+		graphics.setClip(null);
 	}	// end of draw function
+		
+	//JMapFrame frame = null;
 		
 	public MapContent getMap()	// send vMap back to calling program
 	{

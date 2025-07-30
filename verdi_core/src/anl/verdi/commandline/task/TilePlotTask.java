@@ -347,26 +347,34 @@ public class TilePlotTask implements AbstractTask {
 		vConfig.setSubtitle2(subtitle2);
 //		vectorConfig.setSubtitle2(subtitle2);
 		
-		config.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
-		vConfig.putObject(VertCrossPlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
-//		vectorConfig.putObject(VectorPlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+		if (config.getObject(PlotConfiguration.UNITS_SHOW_TICK) == null) {
+			config.putObject(PlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+			vConfig.putObject(VertCrossPlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+	//		vectorConfig.putObject(VectorPlotConfiguration.UNITS_SHOW_TICK, showLegendTicks);
+		}
 	
-		config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
-		vConfig.putObject(VertCrossPlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
-//		vectorConfig.putObject(VectorPlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+		if (config.getObject(PlotConfiguration.DOMAIN_SHOW_TICK) == null) {		
+			config.putObject(PlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+			vConfig.putObject(VertCrossPlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+	//		vectorConfig.putObject(VectorPlotConfiguration.DOMAIN_SHOW_TICK, showDomainTicks);
+		}
 		
-		config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
-		vConfig.putObject(VertCrossPlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
-//		vectorConfig.putObject(VectorPlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
+		if (config.getObject(PlotConfiguration.RANGE_SHOW_TICK) == null) {		
+			config.putObject(PlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
+			vConfig.putObject(VertCrossPlotConfiguration.RANGE_SHOW_TICK, showLegendTicks);
+	//		vectorConfig.putObject(VectorPlotConfiguration.RANGE_SHOW_TICK, showRangeTicks);
+		}
 		
-		config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
-		vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
-//		vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+		if (config.getObject(TilePlotConfiguration.SHOW_GRID_LINES) == null) {		
+			config.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+			vConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+	//		vectorConfig.putObject(TilePlotConfiguration.SHOW_GRID_LINES, showGridLines);
+		}
 		
 		if (unitStr==null || unitStr.trim().equals(""))
 			unitStr = "none";
 		
-		if (unitStr != null && !unitStr.trim().isEmpty() && !unitStr.equals("none")) {
+		if (config.getUnits() == null && unitStr != null && !unitStr.trim().isEmpty() && !unitStr.equals("none")) {
 			config.setUnits(unitStr.trim());
 			vConfig.setUnits(unitStr.trim());
 //			vectorConfig.setUnits(unitStr.trim());

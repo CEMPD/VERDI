@@ -156,6 +156,14 @@ public class TimeLayerPanel extends JPanel {
 		spinnersOn = true;
 	}
 
+	public boolean getLayerEnabled() {
+		return layerSpinner.isEnabled();
+	}
+	
+	public void setLayerEnabled(boolean enabled) {
+		layerSpinner.setEnabled(enabled);
+	}
+	
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner non-commercial license

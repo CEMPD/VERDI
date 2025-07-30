@@ -16,6 +16,9 @@ public abstract class AbstractPlotPanel extends JPanel implements ComponentListe
 	
 	protected long timestepSize;
 	
+	protected boolean matchObsTimesteps = false;
+
+	
 	/**
 	 * 
 	 */
@@ -62,6 +65,10 @@ public abstract class AbstractPlotPanel extends JPanel implements ComponentListe
 	//Set GUI size when called from headless script
 	public void setScriptSize(int width, int height) { }
 	
+	public boolean getMatchObsTimesteps() {
+		return matchObsTimesteps;
+	}
+	
 	// Paint/draw:
 
 	public void paintComponent(final Graphics graphics) {
@@ -80,5 +87,7 @@ public abstract class AbstractPlotPanel extends JPanel implements ComponentListe
 	public abstract void exportShapefile( String baseFileName ) throws IOException;
 	
 	public abstract void drawBatchImage(int wdth, int hght);
+	
+	public void setBackgroundImage(String imagePath) {}
 
 }

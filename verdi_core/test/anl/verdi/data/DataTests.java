@@ -348,9 +348,10 @@ public class DataTests extends TestCase {
 		assertEquals("[1]", dataset.getAlias());
 
 		Variable var = dataset.getVariables().get(0);
-		ObsEvaluator eval = new ObsEvaluator(manager, var);
+		ObsEvaluator eval = new ObsEvaluator(manager, var, false);
 		int count = 0;
-		for (ObsData data : eval.evaluate(0)) {
+		Date date = new Date();
+		for (ObsData data : eval.evaluate(date, 0)) {
 			count++;
 		}
 		assertEquals(1166, count);

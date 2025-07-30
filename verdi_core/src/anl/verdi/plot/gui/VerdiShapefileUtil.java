@@ -77,10 +77,10 @@ public class VerdiShapefileUtil {
 	 * 
 	 */
 	
-	static GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+	public static GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
 	
 	public static CoordinateReferenceSystem LAT_LON_CRS = null;
-	private static CoordinateReferenceSystem WEB_MERC_CRS = null;
+	public static CoordinateReferenceSystem WEB_MERC_CRS = null;
 	static {
 		try {
 			LAT_LON_CRS = CRS.decode("EPSG:4326");

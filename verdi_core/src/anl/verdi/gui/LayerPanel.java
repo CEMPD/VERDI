@@ -90,7 +90,7 @@ public class LayerPanel extends JPanel {
 		chkEnable.setSelected(isLayerUsed);
 		setBorder(new TitledBorder("Layers (" + currentAxis + " 1 - " + (maxStep+1) + ")"));
 
-		if (layerMin == layerMax) {
+		if (model.getMinimum().equals(model.getMaximum())) {
 			minSpinner.setEnabled(false);
 			maxSpinner.setEnabled(false);
 			chkEnable.setEnabled(false);

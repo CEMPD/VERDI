@@ -9,10 +9,16 @@ package gov.epa.emvl;
 //import org.geotools.referencing.CRS;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -23,6 +29,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import anl.verdi.plot.config.TilePlotConfiguration;
 import anl.verdi.plot.gui.VerdiBoundaries;
+import anl.verdi.plot.gui.VerdiShapefileUtil;
 import anl.verdi.util.Tools;
 import ucar.unidata.geoloc.Projection;
 
@@ -34,6 +41,8 @@ public class Mapper {
 
 	private static final int X = 0;
 	private static final int Y = 1;
+	public static final int LONGITUDE = 0;
+	public static final int LATITUDE = 1;
 	private static final int MINIMUM = 0;
 	private static final int MAXIMUM = 1;
 	// 2015 removed ".bin" from hard-coded file names & replaced with ".shp"
@@ -46,6 +55,9 @@ public class Mapper {
 	private static final String roadsMapFileName = "map_roads/tl_2015_us_primaryroads.shp";
 	private static final Color mapColor = Color.black;
 	private final String mapFileDirectory; // URL/dir containing above files.
+	private boolean showSatelliteMap = false;
+	private Map<String, VerdiBoundaries> zoomedSatelliteMaps = new HashMap<String, VerdiBoundaries>();
+	VerdiBoundaries activeSatelliteMap = null;
 	private VerdiBoundaries worldMap = null;
 	private VerdiBoundaries northAmericaMap = null;
 	private VerdiBoundaries stateMap = null;
@@ -53,6 +65,7 @@ public class Mapper {
 	private VerdiBoundaries hucsMap = null;
 	private VerdiBoundaries riversMap = null;
 	private VerdiBoundaries roadsMap = null;
+	private VerdiBoundaries satellieMap = null;
 	private List<VerdiBoundaries> layers = new CopyOnWriteArrayList<VerdiBoundaries>();
 	private boolean initialDraw = true;
 	private static String defaultMapFileDirectory = null;
@@ -101,6 +114,33 @@ public class Mapper {
 			return defaultMapFileDirectory;
 		defaultMapFileDirectory = ".." + "/verdi_bootstrap/data";	
 		return defaultMapFileDirectory;			
+	}
+	
+	public void drawSatellite(final double[][] domain, final double[][] gridBounds,
+			final CoordinateReferenceSystem gridCRS, Projector projector, final Graphics graphics, int xOffset,
+			int yOffset, int width, int height, boolean withHucs,
+			boolean withRivers, boolean withRoads) {
+		if (!showSatelliteMap)
+			return;
+		/*double[][] convertedGrid = new double[2][2];
+		convertedGrid[X][MINIMUM] = gridBounds[X][MINIMUM];
+		convertedGrid[Y][MINIMUM] = gridBounds[Y][MINIMUM];
+		convertedGrid[X][MAXIMUM] = gridBounds[X][MAXIMUM];
+		convertedGrid[Y][MAXIMUM] = gridBounds[Y][MAXIMUM];
+		if (projector != null) {
+			double[] min = new double[2];
+			double[] max = new double[2];
+			projector.unproject(gridBounds[X][MINIMUM], gridBounds[Y][MINIMUM], min);
+			projector.unproject(gridBounds[X][MAXIMUM], gridBounds[Y][MAXIMUM], max);
+			
+			convertedGrid[LONGITUDE][MAXIMUM] = max[LONGITUDE];
+			convertedGrid[LATITUDE][MAXIMUM] = max[LATITUDE];
+			convertedGrid[LONGITUDE][MINIMUM] = min[LONGITUDE];
+			convertedGrid[LATITUDE][MINIMUM] = min[LATITUDE];
+
+		}*/
+		activeSatelliteMap.draw(domain, gridBounds, gridCRS, graphics, xOffset,
+				yOffset, width, height);	// execute the draw function for this VerdiBoundaries layer
 	}
 
 
@@ -410,6 +450,53 @@ public class Mapper {
 					+ e.getLocalizedMessage() + ").");
 		}
 	}
+	
+	public void showSatelliteMap(String path ) {
+		getSatelliteMap(path);
+		showSatelliteMap = true;
+	}
+	
+	public VerdiBoundaries getSatelliteMap(String path) {
+		activeSatelliteMap = zoomedSatelliteMaps.get(path);
+		if (activeSatelliteMap == null) {
+			activeSatelliteMap = new VerdiBoundaries();
+			activeSatelliteMap.setProjection(projection, targetCRS);
+			activeSatelliteMap.setFileName(path);
+			zoomedSatelliteMaps.put(path,  activeSatelliteMap);
+		}
+		return activeSatelliteMap;
+	}
+	
+    private static String flipVertically(String imagePath) {
+    	File imageFile = new File(imagePath);
+    	BufferedImage image = null;
+		try {
+			image = ImageIO.read(imageFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        int width = image.getWidth();
+        int height = image.getHeight();
+        BufferedImage flippedImage = new BufferedImage(width, height, image.getType());
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                flippedImage.setRGB(x, height - 1 - y, image.getRGB(x, y));
+            }
+        }
+
+        File outputFile = new File(System.getProperty("java.io.tmpdir") + File.separator + "data.jpg");
+        try {
+			ImageIO.write(flippedImage, "jpg", outputFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        return outputFile.getAbsolutePath();
+    }
+	
+	public void removeSatelliteMap() throws Exception {
+		showSatelliteMap = false;
+	}
 
 	public VerdiBoundaries getUsaCountiesMap() throws Exception {
 		return getUsaCountiesMap(false);
@@ -582,5 +669,7 @@ public class Mapper {
 			riversMap.getMap().dispose();
 		if (roadsMap != null)
 			roadsMap.getMap().dispose();
+		for (VerdiBoundaries satelliteMap : zoomedSatelliteMaps.values())
+			satelliteMap.getMap().dispose();
 	}
 }

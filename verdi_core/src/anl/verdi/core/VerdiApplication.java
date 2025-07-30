@@ -70,6 +70,7 @@ import anl.verdi.plot.gui.Plot;
 import anl.verdi.plot.gui.PlotListener;
 import anl.verdi.plot.gui.PlotRequest;
 import anl.verdi.plot.gui.VectorOverlayDialog;
+import anl.verdi.plot.gui.VerdiTileUtil;
 import anl.verdi.plot.probe.ProbeCreator;
 import anl.verdi.plot.probe.ProbeCreatorFactory;
 import anl.verdi.plot.probe.ProbeEvent;
@@ -287,6 +288,7 @@ FormulaElementCreator, ListDataListener {
 		} catch (IOException e) {
 			Logger.error("Error closing datasets", e);
 		}
+		VerdiTileUtil.purgeTempDirectory();
 		return true;
 	}
 
@@ -425,6 +427,7 @@ FormulaElementCreator, ListDataListener {
 			String strFormula = listElement.getFormula();
 			Formula formula = new FormulaFactory().createFormula(type, strFormula, null);
 			List<AxisRange> ranges = project.createRanges(listElement);
+			//
 			ValidationResult result = formula.validate(manager, ranges);
 			ValidationResult.Status status = result.getStatus();
 			boolean success = true;
@@ -870,7 +873,7 @@ FormulaElementCreator, ListDataListener {
 			try {
 				if (!dialog.isCanceled()) {
 					if (plot != null) {
-						ObsEvaluator eval = new ObsEvaluator(manager, dialog.getSelectedVar());
+						ObsEvaluator eval = new ObsEvaluator(manager, dialog.getSelectedVar(), fastPlot.getMatchObsTimesteps());
 						plot.addObsAnnotation(eval, dialog.getShapeSize(), dialog.getStrokeSize(), dialog.getSymbol());
 					}
 
@@ -973,6 +976,10 @@ FormulaElementCreator, ListDataListener {
 		dialog.pack();
 		dialog.setLocationRelativeTo(gui.getFrame());
 		dialog.setVisible(true);
+	}
+	
+	public static String getTempDirectory() {
+		return System.getProperty("user.home") + File.separator + "verdi" + File.separator + "tmp";
 	}
 
 	/**
