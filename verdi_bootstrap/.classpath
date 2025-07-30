@@ -25,7 +25,7 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-1.2-api-2.17.1.jar" sourcepath="/verdi_core/lib_src/apache-log4j-2.17.1-src/apache-log4j-2.17.1-src"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-api-2.17.1.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-core-2.17.1.jar" sourcepath="lib_src/log4j-core-2.17.1-sources.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/xstream-1.4.7.jar" sourcepath="lib_src/xstream-distribution-1.4.7-src.zip"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/xstream-1.4.20.jar" sourcepath="lib_src/xstream-1.4.20-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/anlBasic.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/bufr-4.3.16.jar" sourcepath="/verdi_core/lib_src/bufr-3.0-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/clibwrapper_jiio-1.1.jar"/>
@@ -74,13 +74,11 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="lib"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/jfreechart-1.0.19.jar" sourcepath="/verdi_core/lib_src/jfreechart-1.0.19-sources.zip"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar" sourcepath="/home/tahoward/Downloads/ncdf/thredds-4.5.5/cdm"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/jcommon-1.0.23.jar" sourcepath="/verdi_core/lib_src/jcommon-1.0.23-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/miglayout-core-5.1-20150404.220010-96.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/miglayout-swing-5.1-20150404.220019-96.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/GeographicLib-Java-1.44.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/core-0.26.jar"/>
 	<classpathentry kind="lib" path="lib/jpf.jar" sourcepath="/verdi_core/lib_src/jpf-1.5-sources.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-api-19.1.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-brewer-19.1.jar"/>
@@ -105,6 +103,9 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/hsqldb-2.3.0.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-cql-19.1.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/jogamp-fat.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-5.5.3.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-coverage-api-19.1.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/jt-utilities-1.0.22.jar"/>
 	<classpathentry kind="output" path="bin"/>
 	<referencedentry exported="true" kind="lib" path="lib/jpf.jar" sourcepath="/verdi_core/lib_src/jpf-1.5-sources.jar"/>
 </classpath>
