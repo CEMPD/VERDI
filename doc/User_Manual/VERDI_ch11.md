@@ -582,9 +582,8 @@ Figure 71. Add Map Layers<br>
 
 <!-- END COMMENT -->
 
-![Add Map Layers](./media/image071.png){#fig:Figure71}
-
-As of VERDI 1.6, the Tile Plot and Areal Interpolation Plot use the Shapefile format for all maps and GIS layers, the bin format is no longer used.
+![Add Map Layers](./media/image071a.png){#fig:Figure71a}
+![Add Map Layers](./media/image071b.png){#fig:Figure71b}
 
 ### Configure GIS Layers
 
