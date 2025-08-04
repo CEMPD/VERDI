@@ -571,7 +571,7 @@ ne_10m_rivers_lake_centerlines, Made with Natural Earth. Free vector and raster 
 ne_10m_roads, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
 ne_50m_admin_0_countries, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
 ne_50m_admin_1_states_provinces_lakes, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
-Department_of_State_Valid_QGIS, Made with U.S. Department of State Large Scale International Boundaries (LSIB) dataset, https://hiu.state.gov/data/
+Department_of_State_Valid_QGIS, Made with U.S. Department of State Large Scale International Boundaries (LSIB) dataset, https://hiu.state.gov/data/<br>
 https://opentopomap.org/about/
 
 
@@ -582,7 +582,7 @@ Figure 71. Add Map Layers<br>
 
 <!-- END COMMENT -->
 
-![Add Map Layers](./media/image071a.png){#fig:Figure71a}
+![Add Map Layers](./media/image071a.png){#fig:Figure71a}<br>
 ![Add Map Layers](./media/image071b.png){#fig:Figure71b}
 
 ### Configure GIS Layers
