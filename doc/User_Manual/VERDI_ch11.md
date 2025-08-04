@@ -564,7 +564,7 @@ The **GIS Layer**s menu contains the following options: Add Map Layers, Configur
 
 Use the **Add Maps Layers** option in the **GIS Layers** menu to add maps to a Tile Plot or Areal Interpolation Plot PDF:([Fig-@fig:Figure71]) or GitHub:([Figure 71](#Figure71)). Note that all GIS layers must be shapefiles.
 
-A selection of default maps—including World, North America. USA States, USA Counties, HUCs, Rivers, and Roads—can be selected or deselected by clicking on the respective menu selection. A check mark then appears or disappears next to the chosen map name, and the selected map appears on the plot.
+A selection of default maps—including World, North America. USA States, USA Counties, HUCs, Rivers, Roads and Satellite images retrieved from opentopomap.org —can be selected or deselected by clicking on the respective menu selection. A check mark then appears or disappears next to the chosen map name, and the selected map appears on the plot.
 Shapefile, Citation:
 cb_2018_us_state_500k, 2018 TIGER/Line Shapefiles(machine-readable data files) prepared by the U.S. Census Bureau, 2018
 ne_10m_rivers_lake_centerlines, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
@@ -572,6 +572,7 @@ ne_10m_roads, Made with Natural Earth. Free vector and raster map data @ natural
 ne_50m_admin_0_countries, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
 ne_50m_admin_1_states_provinces_lakes, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
 Department_of_State_Valid_QGIS, Made with U.S. Department of State Large Scale International Boundaries (LSIB) dataset, https://hiu.state.gov/data/
+https://opentopomap.org/about/
 
 
 <!-- BEGIN COMMENT -->
