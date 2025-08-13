@@ -1,4 +1,20 @@
 -----------------------------
+RELEASE NOTES FOR VERDI 2.2
+-----------------------------
+**REPLACE ALL PRIOR** versions of VERDI
+
+The following new features were added:
+
+* Added ability to add Satellite Map Layer
+
+The following issues were fixed:
+
+* The error associated with layer_sum/layer_mean tile plots for unconventional 3D variables (#352)
+* Incorrect maximum value in tile plot legend when load a configuration file with a logarithmic scale (#353) 
+*  Unable to choose layer ranges with two or more datasets (#356)
+
+
+-----------------------------
 RELEASE NOTES FOR VERDI 2.1.6
 -----------------------------
 **REPLACE ALL PRIOR** versions of VERDI

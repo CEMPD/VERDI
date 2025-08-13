@@ -14,7 +14,7 @@ E243-04 USEPA Mailroom<br>
 Research Triangle Park, NC 27711<br>
 
 Prepared by: Liz Adams (UNC-IE) and Yadong Xu (USEPA)<br>
-Date: October 31, 2024<br>
+Date: Aug 13, 2025<br>
 
 
 <!---
@@ -241,8 +241,8 @@ First comment line...
 * [Figure 12-8. CAMx Example Plot](#Figure12-8)
 * [Figure 17-1. File: View Script Editor](#Figure17-1)
 * [Figure 17-2. Open Popup Window](#Figure17-2)
-* [Figure 17-3. Top of Sample Script File – VERDI_2.1/data/scripts/file\_patterns.txt](#Figure17-3)
-* [Figure 17-4. Bottom of Sample Script File – VERDI_2.1/data/scripts/tile_patterns.txt](#Figure17-4)
+* [Figure 17-3. Top of Sample Script File – VERDI_2.2/data/scripts/file\_patterns.txt](#Figure17-3)
+* [Figure 17-4. Bottom of Sample Script File – VERDI_2.2/data/scripts/tile_patterns.txt](#Figure17-4)
 * [Figure 17-5. Close Datasets Warning Message](#Figure17-5)
 * [Figure 17-6. Highlight Text to Select Task and Click Run](#Figure17-6)
 * [Figure 17-7. Successful Batch Script Message](#Figure17-7)
@@ -274,7 +274,7 @@ This manual describes how to use the Visualization Environment for Rich Data Int
 Initial development of VERDI was done by the Argonne National Laboratory for the U.S. Environmental Protection Agency (EPA) and its user community. Argonne National Laboratory work was supported by the EPA through U.S. Department of Energy contract DE-AC02-06CH11357.  Further development has been performed by the University of North Carolina Institute for the Environment under U.S. EPA Contract No. EP-W-05-045 and EP-W-09-023, by Lockheed Corporation under U.S. EPA contract No. 68-W-04-005, by General Dynamics Information Technology under U.S. EPA contract No. GS00Q09BGD0025 and Argonne National Laboratory.  VERDI is licensed under the GNU General Public License (GPL) version 3, and the source code is available through https://github.com/CEMPD/VERDI.  Instructions for developers within the community are included in the VERDI Developer Instructions (see Section 1.3). VERDI is supported by the Community Modeling and Analysis System (CMAS) Center under U.S. EPA Contract No. EP-W-09-023. The batch script and VERDI Script Editor were developed and documented under U.S. EPA Contract No. EP-D-07-102, through an Office of Air Quality Planning and Standards project managed by Kirk Baker. The CMAS Center is located within the Institute for the Environment at the University of North Carolina at Chapel Hill.
 
 
-This manual describes VERDI version 2.1.6 released in October 2024.
+This manual describes VERDI version 2.2 released in August 2025.
 
 The following are useful web links for obtaining VERDI downloads and support:
 
@@ -377,7 +377,7 @@ Figure 5. VERDI Documentation on the CMAS Web Site<br>
 ![VERDI Documentation on the CMAS Web Site](./media/image005.png){#fig:Figure5}
 
 
--   To go directly to the most recent VERDI documentation click on DOCUMENTATION from the VERDI software: <http://www.cmascenter.org/verdi>. [Figure 6](#Figure6) shows the list of documentation that is available for download for VERDI 2.1.
+-   To go directly to the most recent VERDI documentation click on DOCUMENTATION from the VERDI software: <http://www.cmascenter.org/verdi>. [Figure 6](#Figure6) shows the list of documentation that is available for download for VERDI 2.2.
 
 <!-- BEGIN COMMENT -->
 
@@ -401,6 +401,6 @@ As stated in Schwede et al. (2007),[1] “VERDI is intended to be a community-ba
 <!-- BEGIN COMMENT -->
 
 [Home](README.md) - [Next Chapter >>](VERDI_ch02.md)<br>
-VERDI User Manual (c) 2024<br>
+VERDI User Manual (c) 2025<br>
 
 <!-- END COMMENT -->
