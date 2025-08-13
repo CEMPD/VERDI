@@ -572,7 +572,7 @@ ne_10m_roads, Made with Natural Earth. Free vector and raster map data @ natural
 ne_50m_admin_0_countries, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.<br>
 ne_50m_admin_1_states_provinces_lakes, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.<br>
 Department_of_State_Valid_QGIS, Made with U.S. Department of State Large Scale International Boundaries (LSIB) dataset, https://hiu.state.gov/data/<br>
-Satellite Image Map Layers, Provided by tile provider: https://opentopomap.org/about/<br>
+Satellite Image Layers, Provided by tile provider: https://opentopomap.org/about/<br>
 
 
 <!-- BEGIN COMMENT -->
@@ -587,7 +587,7 @@ Figure 71a. Add Map Layers<br>
 <!-- BEGIN COMMENT -->
 
 <a id=Figure71b></a>
-Figure 71b. Add Satellite Image Layers<br>
+Figure 71b. Add North American State Boundaries and Satellite Image Layers<br>
 
 <!-- END COMMENT -->
 
