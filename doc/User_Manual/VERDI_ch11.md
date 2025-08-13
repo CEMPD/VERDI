@@ -572,7 +572,6 @@ ne_10m_roads, Made with Natural Earth. Free vector and raster map data @ natural
 ne_50m_admin_0_countries, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.<br>
 ne_50m_admin_1_states_provinces_lakes, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.<br>
 Department_of_State_Valid_QGIS, Made with U.S. Department of State Large Scale International Boundaries (LSIB) dataset, https://hiu.state.gov/data/<br>
-Satellite Image Layers, Provided by tile provider: https://opentopomap.org/about/<br>
 
 
 <!-- BEGIN COMMENT -->
@@ -582,7 +581,11 @@ Figure 71a. Add Map Layers<br>
 
 <!-- END COMMENT -->
 
-![Add Map Layers](./media/image071a.png){#fig:Figure71a}<br>
+![Add Map Layers](./media/image071a.png){#fig:Figure71a}
+
+### Add Satellite Image Layer
+
+Use the **Add Maps Layers** option in the **GIS Layers** menu and check the box next to Satellite to add satellite images to a Tile Plot or Areal Interpolation Plot PDF:([Fig-@fig:Figure71b]) or GitHub:([Figure 71b](#Figure71b)). Note that the Satellite Image Layers are provided by the tile provider: https://opentopomap.org/about/<br> 
 
 <!-- BEGIN COMMENT -->
 
@@ -591,7 +594,7 @@ Figure 71b. Add North American State Boundaries and Satellite Image Layers<br>
 
 <!-- END COMMENT -->
 
-![Add Map Layers](./media/image071b.png){#fig:Figure71b}<br>
+![Add Map Layers](./media/image071b.png){#fig:Figure71b}
 
 ### Configure GIS Layers
 
