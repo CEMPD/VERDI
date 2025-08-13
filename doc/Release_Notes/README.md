@@ -5,7 +5,7 @@ RELEASE NOTES FOR VERDI 2.2
 
 The following new features were added:
 
-* Added ability to add Satellite Image Layer using the opentopomap.org as the tile provider.
+* Added ability to add Satellite Image Layer using the https://opentopomap.org as the tile provider.
 
 The following issues were fixed:
 
