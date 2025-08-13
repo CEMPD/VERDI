@@ -264,7 +264,7 @@ To load a plot configuration file, first create a new plot that is of the same t
 
 Note that it is possible to load a saved configuration file that does not apply to the selected plot. VERDI may try to load what it can, which may result in something other than what you expected. Therefore, before loading a saved plot configuration check carefully to be sure the plot type and formula of the configuration file match those of the new plot.
 
-You can also load configuration files in batch or command line scripts by setting the parameter configFile (e.g., configFile=C:\\User\\username\\VERDI_2.1.6\\data\\configs\\o3_10bin.cfg).
+You can also load configuration files in batch or command line scripts by setting the parameter configFile (e.g., configFile=C:\\User\\username\\VERDI_2.2\\data\\configs\\o3_10bin.cfg).
 
 ###  Load Chart Theme
 
@@ -562,27 +562,46 @@ The **GIS Layer**s menu contains the following options: Add Map Layers, Configur
 
 ### Add Map Layers
 
-Use the **Add Maps Layers** option in the **GIS Layers** menu to add maps to a Tile Plot or Areal Interpolation Plot PDF:([Fig-@fig:Figure71]) or GitHub:([Figure 71](#Figure71)). Note that all GIS layers must be shapefiles.
+Use the **Add Maps Layers** option in the **GIS Layers** menu to add maps to a Tile Plot or Areal Interpolation Plot PDF:([Fig-@fig:Figure71a]) or GitHub:([Figure 71a](#Figure71a)). Note that all GIS layers must be shapefiles.
 
 A selection of default maps—including World, North America. USA States, USA Counties, HUCs, Rivers, Roads and Satellite images retrieved from opentopomap.org —can be selected or deselected by clicking on the respective menu selection. A check mark then appears or disappears next to the chosen map name, and the selected map appears on the plot.
-Shapefile, Citation:
-cb_2018_us_state_500k, 2018 TIGER/Line Shapefiles(machine-readable data files) prepared by the U.S. Census Bureau, 2018
-ne_10m_rivers_lake_centerlines, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
-ne_10m_roads, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
-ne_50m_admin_0_countries, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
-ne_50m_admin_1_states_provinces_lakes, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
-Department_of_State_Valid_QGIS, Made with U.S. Department of State Large Scale International Boundaries (LSIB) dataset, https://hiu.state.gov/data/<br>
-https://opentopomap.org/about/
+Shapefile, Citation:<br>
+
+-   cb_2018_us_state_500k, 2018 TIGER/Line Shapefiles(machine-readable data files) prepared by the U.S. Census Bureau, 2018<br>
+
+-   ne_10m_rivers_lake_centerlines, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.<br>
+
+-   ne_10m_roads, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.<br>
+
+-   ne_50m_admin_0_countries, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.<br>
+
+-   ne_50m_admin_1_states_provinces_lakes, Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.<br>
+
+-   Department_of_State_Valid_QGIS, Made with U.S. Department of State Large Scale International Boundaries (LSIB) dataset, https://hiu.state.gov/data/<br>
+
+-   
 
 
 <!-- BEGIN COMMENT -->
 
-<a id=Figure71></a>
-Figure 71. Add Map Layers<br>
+<a id=Figure71a></a>
+Figure 71a. Add Map Layers<br>
 
 <!-- END COMMENT -->
 
-![Add Map Layers](./media/image071a.png){#fig:Figure71a}<br>
+![Add Map Layers](./media/image071a.png){#fig:Figure71a}
+
+### Add Satellite Image Layer
+
+Use the **Add Maps Layers** option in the **GIS Layers** menu and check the box next to Satellite to add satellite images to a Tile Plot or Areal Interpolation Plot PDF:([Fig-@fig:Figure71b]) or GitHub:([Figure 71b](#Figure71b)). Note that the Satellite Image Layers are provided by the tile provider: https://opentopomap.org/about/<br> 
+
+<!-- BEGIN COMMENT -->
+
+<a id=Figure71b></a>
+Figure 71b. Add North American State Boundaries and Satellite Image Layers<br>
+
+<!-- END COMMENT -->
+
 ![Add Map Layers](./media/image071b.png){#fig:Figure71b}
 
 ### Configure GIS Layers
@@ -605,6 +624,6 @@ Figure 72. Manage Layers Dialog Box<br>
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch10.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch12.md)<br>
-VERDI User Manual (c) 2024<br>
+VERDI User Manual (c) 2025<br>
 
 <!-- END COMMENT -->

@@ -47,6 +47,6 @@ The sample shapefiles are used to create the following map can be found at VERDI
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch19.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch21.md)<br>
-VERDI User Manual (c) 2024<br>
+VERDI User Manual (c) 2025<br>
 
 <!-- END COMMENT -->

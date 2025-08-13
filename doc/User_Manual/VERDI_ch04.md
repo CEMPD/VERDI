@@ -26,7 +26,7 @@ Figure 7. Starting VERDI in Windows<br>
 ![Starting VERDI in Windows](./media/image007.png){#fig:Figure7}
 
 
-VERDI_HOME needs to point to the directory where VERDI is installed, which is also the directory containing the run.bat file. In this figure VERDI is installed in the directory C:\\ VERDI\\VERDI_2.1.6.
+VERDI_HOME needs to point to the directory where VERDI is installed, which is also the directory containing the run.bat file. In this figure VERDI is installed in the directory C:\\ VERDI\\VERDI_2.2.
 
 JAVADIR needs to point to the directory where your JRE is installed. In this figure JRE is installed in the jre directory under the VERDI_HOME directory. If you are using a JRE in a different location on your computer, change the path in your run.bat file.
 
@@ -36,7 +36,7 @@ All other locations are specified relative to the VERDI_HOME or the JAVADIR, so 
 
 To start VERDI from Linux and other non-Windows JRE Supported System Configurations, find the directory where VERDI was installed; then run the verdi.sh script with *sh verdi.sh* command. 
 
-On a Mac go to the /Applications/verdi_2.1.6 directory and run the verdi.command script. If you have set up the path environment variable on your .cshrc or .bash_profile or set up an alias to specify the full path, then you can run VERDI from any directory.
+On a Mac go to the /Applications/verdi_2.2 directory and run the verdi.command script. If you have set up the path environment variable on your .cshrc or .bash_profile or set up an alias to specify the full path, then you can run VERDI from any directory.
 
 Main Window
 ------------
@@ -80,6 +80,6 @@ You can also change the amount of the entire VERDI window that is devoted to the
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch03.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch05.md)<br>
-VERDI User Manual (c) 2024<br>
+VERDI User Manual (c) 2025<br>
 
 <!-- END COMMENT -->

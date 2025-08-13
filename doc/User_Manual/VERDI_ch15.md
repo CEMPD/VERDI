@@ -12,6 +12,6 @@ You are encouraged to review, review the latest release notes: https://github.co
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch14.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch16.md)<br>
-VERDI User Manual (c) 2024<br>
+VERDI User Manual (c) 2025<br>
 
 <!-- END COMMENT -->
