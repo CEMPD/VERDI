@@ -7,37 +7,37 @@
  VERDI Batch Script Editor
 ==========================
 
-To open the Script Editor, use File&gt;View Script Editor ([Figure 85](#Figure85)). Prior running a batch script, remove all datasets from the dataset list. To remove a dataset, click on each dataset in the dataset panel and press the yellow minus button.
+To open the Script Editor, use File&gt;View Script Editor ([Figure 89](#Figure89)). Prior running a batch script, remove all datasets from the dataset list. To remove a dataset, click on each dataset in the dataset panel and press the yellow minus button.
 
-Figure 85. File: View Script Editor<br>
+Figure 89. File: View Script Editor<br>
 
-![File: View Script Editor](./media/image081.png){#fig:Figure85}
+![File: View Script Editor](./media/image085.png){#fig:Figure89}
 
 
-An **Open** popup window will be displayed, click on a sample script file in the VERDI_2.2/data/scripts directory ([Figure 86](#Figure86)).
+An **Open** popup window will be displayed, click on a sample script file in the VERDI_2.2/data/scripts directory ([Figure 90](#Figure90)).
 
 
 Figure 86. Open Popup Window<br>
 
-![Open Popup Window](./media/image082.png){#fig:Figure86}
+![Open Popup Window](./media/image086.png){#fig:Figure90}
 
-After you select a script file and click Open in the Open popup window, the Script Editor window ([Figure 87](#Figure87)), the Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
+After you select a script file and click Open in the Open popup window, the Script Editor window ([Figure 91](#Figure91)), the Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
 
 Unload all datasets before running a batch script within the Script Editor. If any dataset is not unloaded a warning message will pop up see Figure 85. requesting that you close all datasets before running your batch script.
 
-Figure 87. Top of Sample Script File – VERDI_2.2/data/scripts/file_patterns.txt<br>
+Figure 91. Top of Sample Script File – VERDI_2.2/data/scripts/file_patterns.txt<br>
 
-![Top of Sample Script File of file_patterns.txt](./media/image083.png){#fig:Figure87}
+![Top of Sample Script File of file_patterns.txt](./media/image087.png){#fig:Figure91}
 
-Figure 88 appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.
+Figure 92 appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.
 
-Figure 88. Bottom of Sample Script File – VERDI_2.2/data/scripts/tile_patterns.txt
+Figure 92. Bottom of Sample Script File – VERDI_2.2/data/scripts/tile_patterns.txt
 
-![Bottom of Sample Script File: file_patterns.txt](./media/image084.png){#fig:Figure88}
+![Bottom of Sample Script File: file_patterns.txt](./media/image088.png){#fig:Figure92}
 
-Figure 89. Script Editor Dataset Warning
+Figure 93. Script Editor Dataset Warning
 
-![Script Editor Dataset Warning](./media/image085.png){#fig:Figure89}
+![Script Editor Dataset Warning](./media/image089.png){#fig:Figure93}
 
 
 The Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
@@ -76,9 +76,9 @@ The output directory where the images will be stored is specified by setting the
 
 The image file name is specified by setting the parameter *imageFile*; imageFile=three_components_36k.O3MAX.
 
-Use the left mouse button to highlight the task that you would like to run and then click **Run** in the Script Editor window. A popup window then appears to indicate the task ran successfully (Figure 90). In this example the title and subtitle were obtained from the definition in the global block. Aspects of the plot defined in the global block are used for multiple tasks and are applied even if only a highlighted task is run.
+Use the left mouse button to highlight the task that you would like to run and then click **Run** in the Script Editor window. A popup window then appears to indicate the task ran successfully (Figure 94). In this example the title and subtitle were obtained from the definition in the global block. Aspects of the plot defined in the global block are used for multiple tasks and are applied even if only a highlighted task is run.
 
-![Script Editor ](./media/image087.png){#fig:Figure90}
+![Script Editor ](./media/image087.png){#fig:Figure94}
 
 Figure 91. Highlight Text to Select Task and Click Run
 
