@@ -9,17 +9,17 @@
 
 To open the Script Editor, use File&gt;View Script Editor ([Figure 89](#Figure89)). Prior running a batch script, remove all datasets from the dataset list. To remove a dataset, click on each dataset in the dataset panel and press the yellow minus button.
 
-Figure 89. File: View Script Editor<br>
+Figure 90. File: View Script Editor<br>
 
-![File: View Script Editor](./media/image085.png){#fig:Figure89}
+![File: View Script Editor](./media/image085.png){#fig:Figure90}
 
 
-An **Open** popup window will be displayed, click on a sample script file in the VERDI_2.2/data/scripts directory ([Figure 90](#Figure90)).
+An **Open** popup window will be displayed, click on a sample script file in the VERDI_2.2/data/scripts directory ([Figure 100](#Figure100)).
 
 
 Figure 86. Open Popup Window<br>
 
-![Open Popup Window](./media/image086.png){#fig:Figure90}
+![Open Popup Window](./media/image086.png){#fig:Figure100}
 
 After you select a script file and click Open in the Open popup window, the Script Editor window ([Figure 91](#Figure91)), the Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
 
