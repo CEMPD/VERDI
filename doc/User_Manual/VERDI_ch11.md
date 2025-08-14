@@ -66,9 +66,24 @@ Figure 48. Configure Plot, Titles Tab<br>
 
 -   **Text:** Enter the desired text directly in the textbox. You can enter text for the plot’s title and up to two optional subtitles.
 -   **Use Unicode in Text:** Unicode characters can be used with text, for example, if you want to display "2.5" as subscripts in PM2.5, you can insert Unicode "\u2082" for subscripted 2, Unicode "\u2024" for a dot and Unicode "\u2085" for subscripted 5 in the **Text** field.
+
+<!-- BEGIN COMMENT -->
+
+<a id=Figure49></a>
+Figure 49. Configure Plot, Titles Tab<br>
+
+<!-- END COMMENT -->
+
  ![Configure Plot, Titles Tab](./media/image049.png){#fig:Figure49}
 
- ![Configure Plot, Titles Tab](./media/image050.png){#fig:Figure50}
+<!-- BEGIN COMMENT -->
+
+<a id=Figure50></a>
+Figure 50. PM2.5 Tile Plot with Title Applied<br>
+
+<!-- END COMMENT -->
+
+ ![PM2.5 Tile Plot with Title Applied](./media/image050.png){#fig:Figure50}
 
 -   **Font:** Press the **Select** button to the right of the Font line for the title or subtitle you wish to change. Your system’s standard Select Font dialog box is then displayed for you. Select a font family, font style, and size; press the **OK** button to return to the Configure Plot tab.
 
@@ -612,7 +627,7 @@ Figure 75. Add North American State Boundaries and Satellite Image Layers<br>
 
 <!-- END COMMENT -->
 
-![Add Map Layers](./media/image075.png){#fig:Figure75}
+![Add Satelitte Image Layer](./media/image075.png){#fig:Figure75}
 
 ### Configure GIS Layers
 
