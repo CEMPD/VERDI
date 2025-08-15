@@ -76,9 +76,10 @@ The image file name is specified by setting the parameter *imageFile*; imageFile
 
 Use the left mouse button to highlight the task that you would like to run and then click **Run** in the Script Editor window. A popup window then appears to indicate the task ran successfully ([Figure 96](#Figure96)). In this example the title and subtitle were obtained from the definition in the global block. Aspects of the plot defined in the global block are used for multiple tasks and are applied even if only a highlighted task is run.
 
+Figure 95. Highlight Text to Select Task and Click Run
+
 ![Script Editor ](./media/image091.png){#fig:Figure95}
 
-Figure 95. Highlight Text to Select Task and Click Run
 
 If you select Run without highlighting a Text Block, then the entire batch script executes and generates the plots. To edit the batch script, highlight a segment that you would like to copy and use Ctrl-C to copy the text; then click in an area where you want to paste the text and use Ctrl-V to insert the copied text. Test your changes to the script by highlighting the text block and click run. When your script executes successfully VERDI displays the popup window shown in ([Figure 96](#Figure96)). If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in ([Figure 97](#Figure97)).
 
@@ -103,10 +104,14 @@ run.bat –batch
 
 ./verdi.sh –batch
 
+Figure 96. Successful Batch Script Run Message 
+
 ![Successful Batch Script Run Message](./media/image093.png){#fig:Figure96}
 
 
 If the user has specified an incorrect path, or incorrect filename for the input dataset, then a series of error messages will appear, starting with the message shown in ([Figure 97](#Figure97)).
+
+Figure 97. Unsuccessful Batch Script Run Message
 
 ![Unsuccessful Batch Script Message: File not found](./media/image094.png){#fig:Figure97}
 
