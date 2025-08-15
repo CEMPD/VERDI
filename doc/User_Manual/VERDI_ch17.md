@@ -267,9 +267,9 @@ Figure 101. Tile Plot of Maximum Ozone (aggregated over 25 time steps)
 
 **&lt;/Task&gt;**
 
-![Tile Plot of Minimum Ozone (aggregated over 25 time steps)](./media/image094.png){#fig:Figure102}
+![Tile Plot of Minimum Ozone (aggregated over 25 time steps)](./media/image098.png){#fig:Figure102}
 
-Figure 103. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
+Figure 102. Tile Plot of Minimum Ozone (aggregated over 25 time steps)
 
 ### Batch Script Example : Sum of Ozone – layer 1 (Figure 104)
 
@@ -297,11 +297,11 @@ s=sum(O3[1])
 
 Figure 103. Tile Plot of Mean Ozone (aggregated over 25 time steps)
 
-![Tile Plot of Mean Ozone (aggregated over 25 time steps)](./media/image095.jpg){#fig:Figure103}
+![Tile Plot of Mean Ozone (aggregated over 25 time steps)](./media/image099.jpg){#fig:Figure103}
 
 Figure 104. Tile Plot of Sum Ozone (aggregated over 25 time steps)
 
-![Tile Plot of Sum Ozone (aggregated over 25 time steps)](./media/image096.png){#fig:Figure104}
+![Tile Plot of Sum Ozone (aggregated over 25 time steps)](./media/image100.png){#fig:Figure104}
 
 
 <!-- BEGIN COMMENT -->
