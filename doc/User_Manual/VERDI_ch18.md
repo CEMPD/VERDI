@@ -64,11 +64,6 @@ Figure 104. Add %1 to run.bat script<br>
 ![%1 Edit](./media/image109.png){#fig:Figure104}
 
 
-Figure 105. Example Plot<br>
-
-![8hO3 Daily Max Plot](./media/image100.png){#fig:Figure105}
-
-
 The current run.bat in notepad contains a “%1” at the end that allows it to accept input following the run.bat script using the Windows run command. Unfortunately, this command does not accept directory names that have a space them, such as the “Program Files”. If you would like to enter the script command line options after run.bat, please move the data directory to C:\\VERDI\\data or some other similar location.
 
 Enter the following in the Run command: cmd
@@ -95,12 +90,12 @@ saf.core.runtime.Boot -f C:\\VERDI_2.2\\data\\model\\CCTM46_P16.baseO2a.36k.O3MA
 
 Run the run.bat script by clicking on Start, then selecting Run, then either using Browse to find the run.bat or typing it in.
 
-Figure 106. Location of the run.bat script<br>
+Figure 105. Location of the run.bat script<br>
 
-![Location of the run.bat script](./media/image101.png){#fig:Figure106}
+![Location of the run.bat script](./media/image101.png){#fig:Figure105}
 
 
-[Figure 106](#Figure106). Submit run.bat script from the Run command. 
+Submit run.bat script from the Run command. 
 
 
 Script commands that can be used for command line scripting (listed in alphabetical order) are described below. Adding support for these script commands in the Script Editor is planned for a future VERDI release.
