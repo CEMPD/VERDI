@@ -25,11 +25,9 @@ After you select a script file and click Open in the Open popup window, the Scri
 
 Unload all datasets before running a batch script within the Script Editor. If any dataset is not unloaded a warning message will pop up see Figure 85. requesting that you close all datasets before running your batch script.
 
-Figure 92. Top of Sample Script File – VERDI_2.2/data/scripts/file_patterns.txt<br>
+Figure 92. Top of Sample Script File – VERDI_2.2/data/scripts/file_patterns.txt appears in the right-hand panel within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.<br>
 
 ![Top of Sample Script File of file_patterns.txt](./media/image088.png){#fig:Figure92}
-
-Figure 92 appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.
 
 Figure 93. Bottom of Sample Script File – VERDI_2.2/data/scripts/tile_patterns.txt
 
