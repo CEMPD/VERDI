@@ -64,7 +64,7 @@ Figure 104. Add %1 to run.bat script<br>
 ![%1 Edit](./media/image109.png){#fig:Figure104}
 
 
-Figure 105. Example 8hO3 Daily Max Plot<br>
+Figure 105. Example Plot<br>
 
 ![8hO3 Daily Max Plot](./media/image100.png){#fig:Figure105}
 
