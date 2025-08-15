@@ -30,7 +30,7 @@ Example script file (Note that quotes (as shown highlighted in red) may be neede
 
 #! /bin/csh -f
 
-#### 8hO3 Daily Max Plot
+# 8hO3 Daily Max Plot
 
 setenv DIR //home//training//verdi_2.2//data/OBS
 
