@@ -28,9 +28,9 @@ The following script options will read in the file as the first dataset, select 
 
 Example script file (Note that quotes (as shown highlighted in red) may be needed around the entire list of parameters” :
 
-#! /bin/csh -f
+### 8hO3 Daily Max Plot
 
-# 8hO3 Daily Max Plot
+#! /bin/csh -f
 
 setenv DIR //home//training//verdi_2.2//data/OBS
 
