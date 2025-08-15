@@ -70,7 +70,7 @@ Figure 48. Configure Plot, Titles Tab<br>
 <!-- BEGIN COMMENT -->
 
 <a id=Figure49></a>
-Figure 49. Configure Plot, Titles Tab<br>
+Figure 49. Configure Plot, Titles Tab with Unicode Text Example for Creating subscript<br>
 
 <!-- END COMMENT -->
 
