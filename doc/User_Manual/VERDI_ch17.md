@@ -37,7 +37,7 @@ Figure 94. Bottom of Sample Script File – VERDI_2.2/data/scripts/tile_patterns
 
 Figure 95. Script Editor Dataset Warning
 
-![Script Editor Dataset Warning](./media/image089.png){#fig:Figure95}
+![Script Editor Dataset Warning](./media/image095.png){#fig:Figure95}
 
 
 The Batch Script File format consists of two blocks – a Global block and a Task Block. The Global block allows you to specify a set of parameters (such as the file and directory names) on which all other tasks are performed. In this block you can specify any parameters that are used to run any other tasks. If the same parameters are specified with different values in a subsequent Task block, those values will overwrite the values specified in the Global block. One Global Block specifies the common parameters shared by all Task blocks, and multiple task blocks can be defined to specify the type of batch operations that will be performed (e.g., defining formulas and creating plots).
