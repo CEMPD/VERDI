@@ -28,9 +28,9 @@ The following script options will read in the file as the first dataset, select 
 
 Example script file (Note that quotes (as shown highlighted in red) may be needed around the entire list of parameters” :
 
-#! /bin/csh -f
+### 8hO3 Daily Max Plot
 
-#### 8hO3 Daily Max Plot
+#! /bin/csh -f
 
 setenv DIR //home//training//verdi_2.2//data/OBS
 
@@ -58,10 +58,10 @@ Example Command Line Script for Windows Users
 Edit the run.bat script in the VERDI_2.2 directory by right clicking on the file and selecting edit.
 
 Add `%1` as pictured below, then Save.
-![%1 Edit](./media/image105.png){#fig:Figure101}
 
-Example Plot
-![8hO3 Daily Max Plot](./media/image096.png){#fig:Figure99}
+Figure 104. Add %1 to run.bat script<br>
+
+![%1 Edit](./media/image109.png){#fig:Figure104}
 
 
 The current run.bat in notepad contains a “%1” at the end that allows it to accept input following the run.bat script using the Windows run command. Unfortunately, this command does not accept directory names that have a space them, such as the “Program Files”. If you would like to enter the script command line options after run.bat, please move the data directory to C:\\VERDI\\data or some other similar location.
@@ -90,10 +90,12 @@ saf.core.runtime.Boot -f C:\\VERDI_2.2\\data\\model\\CCTM46_P16.baseO2a.36k.O3MA
 
 Run the run.bat script by clicking on Start, then selecting Run, then either using Browse to find the run.bat or typing it in.
 
-![Location of the run.bat script](./media/image097.png){#fig:Figure100}
+Figure 105. Location of the run.bat script<br>
+
+![Location of the run.bat script](./media/image101.png){#fig:Figure105}
 
 
-[Figure 100](#Figure100). Submit run.bat script from the Run command. 
+Submit run.bat script from the Run command. 
 
 
 Script commands that can be used for command line scripting (listed in alphabetical order) are described below. Adding support for these script commands in the Script Editor is planned for a future VERDI release.

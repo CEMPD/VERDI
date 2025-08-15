@@ -19,7 +19,7 @@ Next, navigate to where you installed VERDI on your computer. You see the **run.
 <!-- BEGIN COMMENT -->
 
 <a id=Figure7></a>
-Figure 7. Starting VERDI in Windows<br>
+Figure 7. Run.bat used to start VERDI in Windows<br>
 
 <!-- END COMMENT -->
 

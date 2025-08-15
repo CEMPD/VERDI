@@ -35,7 +35,7 @@ Figure 25. Edit Layer Range in Formula Pane<br>
 
 <!-- END COMMENT -->
 
-![Figure25](./media/image025.png){#fig:Figure25}
+![Edit Layer Range in Formula Pane](./media/image025.png){#fig:Figure25}
 
 Specify Domain Range
 --------------------
