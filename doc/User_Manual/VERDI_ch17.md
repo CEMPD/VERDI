@@ -29,7 +29,7 @@ Figure 92. Top of Sample Script File – VERDI_2.2/data/scripts/file_patterns.tx
 
 ![Top of Sample Script File of file_patterns.txt](./media/image088.png){#fig:Figure92}
 
-Figure 93 appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.
+Figure 92 appears in the right-hand side of VERDI. Use the Script Editor to edit, save, and run batch scripts within VERDI. The Batch Scripting Language used for the VERDI Script Editor is described in the header of the sample text format script files.
 
 Figure 94. Bottom of Sample Script File – VERDI_2.2/data/scripts/tile_patterns.txt
 
