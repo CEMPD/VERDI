@@ -43,11 +43,9 @@ CAMx Gridded Data Convention
 The netCDF-java library used in VERDI includes support for CAMx UAM-IV binary files using a preset default projection. CAMx or UAM binary files contain information about the x and y offsets from the center of the projection in meters, but do not contain information about the projection. The projection information is available in separate diagnostic files, which are part of the CAMx output along with the UAM binaries PDF: ([Fig-@fig:Figure81])) or GitHub:[Figure 81](#Figure81).
 
 
-
 Figure 81. Example CAMx diagnostic text file<br>
 
 ![Example CAMx diagnostic text file](./media/image081.png){#fig:Figure81}
-
 
 
 The netCDF-java library writes the default projection information to a text file in the directory where the CAMx binary (UAM-IV) file is located. You can then review and edit the projection information to make it consistent with the projection specified in the CAMx diagnostic text files. The definitions of the projection parameters used in the camxproj.txt file are defined using Models-3 I/O API format https://www.cmascenter.org/ioapi/documentation/all_versions/html/. You must edit the camxproj.txt file to match the grid description information provided in the corresponding camx.diag file.  PDF: ([Fig-@fig:Figure82])) or GitHub:[Figure 82](#Figure82) shows the definition for the grid projection parameters for a Lambert conformal conic projection.
@@ -65,7 +63,7 @@ Figure 83. Edited Example Projection File: camxproj.txt<br>
 
 Figure 84. CAMx Tile Plot<br>
 
-![CAMx Tile Plot](./media/image084.png){#fig:Figure84}
+![CAMx Tile Plot](./media/image084.png){#fig:Figure84} <br>
 
 
 
