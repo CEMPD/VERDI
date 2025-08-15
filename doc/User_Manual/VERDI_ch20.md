@@ -12,24 +12,24 @@ Step 1: Open VERDI GUI and load your fine scale model gridded datasets. you can 
 
 Step 2: Select variable "T2" and create a "tile plot".  To turn on USA States lines and turn off the USA County lines,  click on GIS Layers → Add Map Layers, then check the box in front of "USA States" and go back in again to uncheck the box in front of "USA Counties".	
 
-Figure 107. Tile Plot of Fine Scale Gridded Dataset<br>
+Figure 106. Tile Plot of Fine Scale Gridded Dataset<br>
 
   
-  ![VERDI GIS Layers UI](./media/image110.png){#fig:Figure107} <br>
+  ![VERDI GIS Layers UI](./media/image110.png){#fig:Figure106} <br>
      
 Step 3: To add your own fine scale GIS layers, click on GIS Layers → Add Map Layers → Other…
 A pop-up file browser window will show up for you to navigate to the street-level shapefiles, click on "open".    	
   
-Figure 108. Add Fine Scale GIS layer<br>
+Figure 107. Add Fine Scale GIS layer<br>
 
-  ![The pop-up window to load other GIS Layers UI](./media/image111.png){fig:Figure108} <br> 
+  ![The pop-up window to load other GIS Layers UI](./media/image111.png){fig:Figure107} <br> 
 
 Step 4: Wait for a few seconds until the GIS layers are added to the tile plot, then zoom into your area of interest and explore.
 The sample shapefiles are used to create the following map can be found at VERDI/data/DCMStreetCenterLine.zip    
 
-Figure 109. Tile Plot with NYC Street Centerlines<br>
+Figure 108. Tile Plot with NYC Street Centerlines<br>
 	
-  ![The tile plot with NYC street centerlines](./media/image112.png){fig:Figure109} <br>
+  ![The tile plot with NYC street centerlines](./media/image112.png){fig:Figure108} <br>
 
 
 
