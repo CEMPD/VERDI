@@ -276,7 +276,7 @@ Figure 101. Tile Plot of Min Ozone (aggregated over 25 time steps)
 
 Figure 102. Tile Plot of Mean Ozone (aggregated over 25 time steps)
 
-![Tile Plot of Mean Ozone (aggregated over 25 time steps)](./media/image099.jpg){#fig:Figure102}
+![Tile Plot of Mean Ozone (aggregated over 25 time steps)](./media/image099.png){#fig:Figure102}
 
 ### Batch Script Example : Sum of Ozone – layer 1 (Figure 104)
 
