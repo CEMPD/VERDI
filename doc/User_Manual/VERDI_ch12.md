@@ -15,7 +15,7 @@ Models-3 I/O API Data Convention
 For the Models-3 I/O API, support for Lambert conformal conic (LCC) map projection, Universal Transverse Mercator (UTM) map projection, and polar stereographic map projection was added in VERDI 1.1., and Mercator projection in VERDI 1.2. The grid projections listed on the following website are supported, although not all have been tested: 
 https://www.cmascenter.org/ioapi/documentation/all_versions/html/.
 
-Users that need VERDI to support other projections are encouraged to provide small input datasets as attachments to emails to the m3user listserv, or to github.com/CEMPD/VERDI/issues, for testing and to facilitate future development efforts. PDF: ([Fig-@fig:Figure77])) or GitHub:[Figure 77](#Figure77) through ([Fig-@fig:Figure79])) or GitHub:[Figure 79](#Figure79) illustrate sample plots generated for datasets with LCC, polar stereographic, Mercator, and UTM map projections, respectively.
+Users that need VERDI to support other projections are encouraged to provide small input datasets as attachments to emails to the m3user listserv, or to github.com/CEMPD/VERDI/issues, for testing and to facilitate future development efforts. PDF: ([Fig-@fig:Figure77])) or GitHub:[Figure 77](#Figure77) through ([Fig-@fig:Figure80])) or GitHub:[Figure 80](#Figure80) illustrate sample plots generated for datasets with LCC, polar stereographic, Mercator, and UTM map projections, respectively.
 
 Figure 77. CMAQ Lambert Conformal Conic (GDTYP = 2) Map Projection Example Plot<br>
 
