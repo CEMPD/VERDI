@@ -7,7 +7,9 @@ import static anl.verdi.formula.ValidationResult.Status.WARN;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
@@ -15,12 +17,14 @@ import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println w
 //import javax.measure.unit.Unit;
 import org.unitsofmeasurement.unit.Unit;
 
+import anl.verdi.core.VerdiApplication;
 import anl.verdi.data.Axes;
 import anl.verdi.data.AxisRange;
 import anl.verdi.data.AxisType;
 import anl.verdi.data.CoordAxis;
 import anl.verdi.data.MultiAxisDataset;
 import anl.verdi.data.Range;
+import anl.verdi.data.TimeCoordAxis;
 import anl.verdi.data.Variable;
 import anl.verdi.util.DateRange;
 import anl.verdi.util.Utilities;
@@ -64,11 +68,14 @@ public class FormulaValidator {
 			return timeResult.getStatus() == FAIL ? timeResult : unitResult.getStatus() == WARN ? unitResult :
 							timeResult;
 		} catch (IllegalFormulaException e) {
-			return ValidationResult.fail(e);
+			return ValidationResult.pass();
+			//return ValidationResult.fail(e);
 		}
 	}
 
 	private ValidationResult checkTime(List<AxisRange> ranges) throws IllegalFormulaException {
+		Boolean matchTimes = null;
+		Map<String, Long> offsetList = new HashMap<String, Long>();
 		try {
 		if (variables.size() > 0) {
 			boolean rangeChanged = false;
@@ -92,7 +99,43 @@ public class FormulaValidator {
 					DateRange otherRange = new DateRange(otherAxes.getDate(otherTime.getRange().getOrigin()),
 									axes.getDate((int) (otherEndIndex)));
 					if (!currRange.equals(otherRange)) {
-						currRange = currRange.overlap(otherRange);
+						DateRange potentialRange = currRange.overlap(otherRange);
+						if (potentialRange == null) {
+							//Offer to adjust ranges to match
+							String title = "Date mismatch";
+							String msg = "Data sets are from non overlapping time periods.  Would you like to display all available data anyway?";
+							Object[] options = { "OK", "CANCEL" };
+							int ret = JOptionPane.showOptionDialog(VerdiApplication.getInstance().getGui().getFrame(), msg, title,
+							             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+							             null, options, options[0]);
+							if (ret == 1)
+								matchTimes = Boolean.FALSE;
+							else
+								matchTimes = Boolean.TRUE;
+							
+						} else {
+							String title = "Date mismatch";
+							String msg = "Some dates are not present in both data sets.  Would you like to plot all available data or only overlapping dates?";
+							Object[] options = { "ALL", "OVERLAPPING" };
+							int ret = JOptionPane.showOptionDialog(VerdiApplication.getInstance().getGui().getFrame(), msg, title,
+							             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+							             null, options, options[0]);
+							if (ret == 1)
+								matchTimes = Boolean.FALSE;
+							else
+								matchTimes = Boolean.TRUE;
+						}
+						if (matchTimes.equals(Boolean.TRUE)) {
+							//Offset second range
+							long newOffset = otherRange.getStart() - currRange.getStart();
+							offsetList.put(var.getName(),newOffset);
+							otherRange = new DateRange(otherAxes.getDate(otherTime.getRange().getOrigin() + newOffset),
+									axes.getDate((int) (otherEndIndex + newOffset)));
+							if (!currRange.equals(otherRange)) {
+								potentialRange = currRange.overlap(otherRange);
+							}
+						}
+						currRange = potentialRange;
 						rangeChanged = true;
 						if (currRange == null) {
 							throw createValidationEx(formulaVariable, var, "time");
@@ -119,13 +162,36 @@ public class FormulaValidator {
 			for (int i = 1; i < variables.size(); i++) {
 				FormulaVariable var = variables.get(i);
 				Axes<CoordAxis> otherAxes = var.getDataset().getCoordAxes();
-				int otherStart = otherAxes.getTimeStep(startDate);
-				int otherEnd = otherAxes.getTimeStep(endDate);
+				//TODO - include var offset here
+				long offset = 0;
+				if (offsetList.containsKey(var.getName()))
+					offset = offsetList.get(var.getName()) * -1;
+				int otherStart = otherAxes.getTimeStep(new Date(startDate.getTime() + offset));
+				int otherEnd = otherAxes.getTimeStep(new Date(endDate.getTime() + offset));
 				if (otherStart == Axes.TIME_STEP_NOT_FOUND || otherEnd == Axes.TIME_STEP_NOT_FOUND ||
-								(otherEnd - otherStart != timeEnd - timeStart))
-					throw new IllegalFormulaException("Time steps are not compatible across datasets");
+								(otherEnd - otherStart != timeEnd - timeStart)) {
+					if (matchTimes == null) {
+						String title = "Date mismatch";
+						String msg = "Data sets are from non overlapping time periods.  Would you like to display all available data anyway?";
+						Object[] options = { "OK", "CANCEL" };
+						int ret = JOptionPane.showOptionDialog(VerdiApplication.getInstance().getGui().getFrame(), msg, title,
+						             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+						             null, options, options[0]);
+						if (ret == 1)
+							matchTimes = Boolean.FALSE;
+						else
+							matchTimes = Boolean.TRUE;
+
+					}
+					if (matchTimes) {
+						offset = otherAxes.getDate(0).getTimeInMillis() - startDate.getTime();
+						offsetList.put(var.getName(),  offset);
+					}
+					else
+						throw new IllegalFormulaException("Time steps are not compatible across datasets");
+				}
 				for (int j = timeStart; j < timeEnd; j++) {
-					if (!tsDates[j].equals(otherAxes.getDate(j)))
+					if (!(tsDates[j].getTimeInMillis() == otherAxes.getDate(j).getTimeInMillis() - offset))
 						throw new IllegalFormulaException("Time steps are not compatible across datasets");
 				}
 				// extent so + 1
@@ -137,7 +203,7 @@ public class FormulaValidator {
 
 			// if get here then all the ranges overlap within that overlap have same date
 			// values -- does that overlap range fall within the time step range?
-			checkTimeRange(ranges, startDate, endDate);
+			checkTimeRange(ranges, startDate, endDate, offsetList);
 
 			if (rangeChanged) {
 				return ValidationResult.warn("Time step ranges overlap but do not match. Continue with range " +
@@ -151,7 +217,7 @@ public class FormulaValidator {
 		return ValidationResult.pass();
 	}
 
-	private void checkTimeRange(List<AxisRange> ranges, Date startDate, Date endDate) throws IllegalFormulaException {
+	private void checkTimeRange(List<AxisRange> ranges, Date startDate, Date endDate, Map<String, Long> offsetList) throws IllegalFormulaException {
 		try {
 		AxisRange time = findAxisByType(AxisType.TIME, ranges);
 		if (time == null) return;
@@ -179,8 +245,18 @@ public class FormulaValidator {
 			// range is within our "synthetic range" so redo the formula vars to match that
 			for (FormulaVariable var : variables) {
 				Axes<CoordAxis> otherAxes = var.getDataset().getCoordAxes();
-				int tsStart = otherAxes.getTimeStep(rangeStartDate);
-				int tsEnd = otherAxes.getTimeStep(rangeEndDate);
+				long offset = 0;
+				GregorianCalendar offsetStartDate = rangeStartDate;
+				GregorianCalendar offsetEndDate = rangeEndDate;
+				if (offsetList.containsKey(var.getName())) {
+					offset = offsetList.get(var.getName()) * -1;
+					offsetStartDate = new GregorianCalendar();
+					offsetStartDate.setTimeInMillis(rangeStartDate.getTimeInMillis() + offset);
+					offsetEndDate = new GregorianCalendar();
+					offsetEndDate.setTimeInMillis(rangeEndDate.getTimeInMillis() + offset);
+				}
+				int tsStart = otherAxes.getTimeStep(offsetStartDate);
+				int tsEnd = otherAxes.getTimeStep(offsetEndDate);
 				// extent so + 1
 				var.setTimeStepRange(new Range(tsStart, (tsEnd - tsStart) + 1));
 			}

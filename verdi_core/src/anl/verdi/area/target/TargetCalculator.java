@@ -249,7 +249,7 @@ public class TargetCalculator extends LongTask {
 				// create the arrays to store the grid index data
 	            ArrayList<Integer> rowArray = new ArrayList<Integer>();
 	            ArrayList<Integer> colArray = new ArrayList<Integer>();
-	            ArrayList<Float> areas = new ArrayList<Float>();
+	            ArrayList<Double> areas = new ArrayList<Double>();
 	            if(col1<0&&col2<0)
 	            	continue;
 	            if(row1<0&&row2<0)
@@ -279,12 +279,12 @@ public class TargetCalculator extends LongTask {
 	               Geometry intersection = calculateIntersection(poly, cellPolygon);
 	               
 	               //Geometry intersection = poly.intersection(cellPolygon);
-	               float intersectionArea=(float)intersection.getArea();
+	               double intersectionArea=(double)intersection.getArea();
 	                if (intersectionArea > 0) {
 	                  // get the area of the intersection
 	                  rowArray.add(new Integer(j));
 	                  colArray.add(new Integer(i));
-	                  areas.add(new Float(intersectionArea));
+	                  areas.add(new Double(intersectionArea));
 	                }
 
 	              }
@@ -294,12 +294,12 @@ public class TargetCalculator extends LongTask {
 	            	
 	              int[] rowIndex = new int[rowArray.size()];
 	              int[] colIndex = new int[rowArray.size()];
-	              float[] overlapArea = new float[rowArray.size()];
+	              double[] overlapArea = new double[rowArray.size()];
 	              for (int i = 0; i < rowArray.size(); i++) {
 	                rowIndex[i] = ((Integer)rowArray.get(i)).intValue();
 	                colIndex[i] = ((Integer)colArray.get(i)).intValue();
 	                // convert the area
-	                overlapArea[i] = ((Float)areas.get(i)).floatValue() * (float)areaConversion;
+	                overlapArea[i] = ((Double)areas.get(i)).doubleValue() * (double)areaConversion;
 	                didCalcs = true;
 	              }
 	              // set the areas for that grid
@@ -487,7 +487,7 @@ public class TargetCalculator extends LongTask {
 	            ArrayList<Integer> rowArray = new ArrayList<Integer>();
 	            ArrayList<Integer> colArray = new ArrayList<Integer>();*/
 		  	    List<MeshCellInfo> meshCellArray = new ArrayList<MeshCellInfo>();
-	            ArrayList<Float> areas = new ArrayList<Float>(); 
+	            ArrayList<Double> areas = new ArrayList<Double>(); 
 	            /* if(col1<0&&col2<0)
 	            	continue;
 	            if(row1<0&&row2<0)
@@ -532,10 +532,10 @@ public class TargetCalculator extends LongTask {
 	            		   j*cellHeight+southEdge,
 	            		   (j+1)*cellHeight+southEdge));*/
 	                
-	               float intersectionArea = 0;
+	               double intersectionArea = 0;
 	               try {
 	               Geometry intersection = poly.intersection(cellPolygon);
-	               intersectionArea=(float)intersection.getArea();
+	               intersectionArea=(double)intersection.getArea();
 	               } catch (Throwable t) {
 	            	   t.printStackTrace();
 	               }
@@ -543,7 +543,7 @@ public class TargetCalculator extends LongTask {
 	                  // get the area of the intersection
 		              meshCellArray.add(cellInfo);
 		              cellInfoMap.put(cellInfo.getId(), cellInfo);
-	                  areas.add(new Float(intersectionArea));
+	                  areas.add(new Double(intersectionArea));
 	                }
 
 	              }
@@ -552,11 +552,11 @@ public class TargetCalculator extends LongTask {
 	            if (!meshCellArray.isEmpty()) {
 	            	
 	              List<MeshCellInfo> cellIndex = new ArrayList<MeshCellInfo>();
-	              float[] overlapArea = new float[meshCellArray.size()];
+	              double[] overlapArea = new double[meshCellArray.size()];
 	              for (int i = 0; i < meshCellArray.size(); i++) {
 	                cellIndex.add(meshCellArray.get(i));
 	                // convert the area
-	                overlapArea[i] = ((Float)areas.get(i)).floatValue() * (float)areaConversion;
+	                overlapArea[i] = ((Double)areas.get(i)).doubleValue() * (double)areaConversion;
 	                didCalcs = true;
 	              }
 	              // set the areas for that grid

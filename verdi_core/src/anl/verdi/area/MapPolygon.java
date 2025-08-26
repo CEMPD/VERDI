@@ -76,7 +76,7 @@ public class MapPolygon {
 	
 	public void draw( TilePlot plot,final double[][] domain, final double[][] gridBounds,
 			final CoordinateReferenceSystem gridCRS, Projection projection, double[] legendLevels,Color[] legendColors, 
-			final Graphics graphics,float[][] data,String units,int firstColumn,int firstRow,
+			final Graphics graphics,double[][] data,String units,int firstColumn,int firstRow,
 			int xOffset, int yOffset, int width, int height,int currentView, boolean showSelectedOnly ) {
 		draw(plot, domain, gridBounds, gridCRS, projection, legendLevels, legendColors, graphics, data, null, units,
 				firstColumn, firstRow, xOffset, yOffset, width, height, currentView, showSelectedOnly);
@@ -105,13 +105,13 @@ public class MapPolygon {
 			if (polygon.containsDeposition()) {
 				if (currentView == AreaTilePlot.AVERAGES || currentView == AreaTilePlot.GRID) {
 					if (data instanceof float[][])
-						polygon.calculateAverageDeposition((float[][])data);
+						polygon.calculateAverageDeposition((double[][])data);
 					else
 						polygon.calculateAverageDeposition((MeshCellInfo[])data, reader);
 				}
 				else if (currentView == AreaTilePlot.TOTALS) {
 					if (data instanceof float[][])
-						polygon.calculateTotalDeposition((float[][])data);
+						polygon.calculateTotalDeposition((double[][])data);
 					else
 						polygon.calculateTotalDeposition((MeshCellInfo[])data, reader);
 				}

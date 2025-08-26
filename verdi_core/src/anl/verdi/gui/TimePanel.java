@@ -148,8 +148,6 @@ public class TimePanel extends JPanel {
 
 	public void setEnabled(boolean val) {
 		super.setEnabled(val);
-		maxDate.setText("N/A");
-		minDate.setText("N/A");
 		for (int i = 0; i < getComponentCount(); i++) {
 			getComponent(i).setEnabled(val);
 		}

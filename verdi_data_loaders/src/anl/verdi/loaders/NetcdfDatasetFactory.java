@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -14,15 +15,18 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;		// 2014
 import org.apache.logging.log4j.Logger;			// 2014 replacing System.out.println with logger messages
-import org.jfree.util.Log;
+//import org.jfree.util.Log;
+
+import com.google.common.collect.ImmutableList;
 
 //import simphony.util.messages.MessageCenter;
 import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.dataset.VariableEnhanced;
+import ucar.nc2.dataset.VariableDS;
 import ucar.nc2.dataset.conv.COARDSConvention;
 import ucar.nc2.dataset.conv.M3IOConvention;
 import ucar.nc2.dataset.conv.MPASConvention;
@@ -31,6 +35,9 @@ import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
 import ucar.nc2.dt.grid.GridDataset;
 import anl.verdi.core.VerdiConstants;
+import anl.verdi.data.Axes;
+import anl.verdi.data.AxisType;
+import anl.verdi.data.CoordAxis;
 import anl.verdi.data.Dataset;
 
 /**
@@ -353,6 +360,7 @@ public class NetcdfDatasetFactory {
 		Set<String> gridVars = new HashSet<String>();
 		GridCoordSystem system = null;
 		Map<GridCoordSystem, List<GridDatatype>> map = new LinkedHashMap<GridCoordSystem, List<GridDatatype>>();
+		Map<Integer, GridCoordSystem> dimMap = new HashMap<Integer, GridCoordSystem>();
 		for (GridDatatype grid : (List<GridDatatype>) gridDataset.getGrids()) {
 			system = grid.getCoordinateSystem();
 			
@@ -363,21 +371,22 @@ public class NetcdfDatasetFactory {
 			}
 			list.add(grid);
 			gridVars.add(grid.getVariable().getFullName());
+			dimMap.put(grid.getVariable().getDimensions().size(), system);
 			//System.out.println("Got grid variable " + grid.getVariable().getFullName());
 		}
 		NetcdfDataset ncd = gridDataset.getNetcdfDataset();
 		List<Variable> vars = ncd.getVariables();
-		Map<String, List<VariableEnhanced>> ncdVarMap = new LinkedHashMap<String, List<VariableEnhanced>>();
+		Map<String, List<VariableDS>> ncdVarMap = new LinkedHashMap<String, List<VariableDS>>();
 		for (Variable rawVar : vars) {
-			if (!(rawVar instanceof VariableEnhanced))
+			if (!(rawVar instanceof VariableDS))
 				continue;
-			VariableEnhanced var = (VariableEnhanced)rawVar;
-			//System.out.println("Got ncd var " + var.getFullName() + ", issGrid: " + gridVars.contains(var.getFullName()) + " enhanced: " + (var instanceof VariableEnhanced));			
+			VariableDS var = (VariableDS)rawVar;
+			//System.out.println("Got ncd var " + var.getFullName() + ", issGrid: " + gridVars.contains(var.getFullName()) + " enhanced: " + (var instanceof VariableDS));			
 			if (!gridVars.contains(var.getFullName())) {
 				String dimString = rawVar.getDimensionsString();
-				List<VariableEnhanced> list = ncdVarMap.get(dimString);
+				List<VariableDS> list = ncdVarMap.get(dimString);
 				if (list == null) {
-					list = new ArrayList<VariableEnhanced>();
+					list = new ArrayList<VariableDS>();
 					ncdVarMap.put(dimString,  list);
 				}
 				list.add(var);
@@ -402,19 +411,80 @@ public class NetcdfDatasetFactory {
 			}
 		} else {
 			index = 1;
+			Set<String> xDims = new HashSet<String>();
+			Set<String> yDims = new HashSet<String>();
 			for (List<GridDatatype> grids : map.values()) {
 				GridNetcdfDataset dataset = new GridNetcdfDataset(url, grids, gridDataset, index++);
 				dataset.setNetcdfConv(netcdfConv);
+				anl.verdi.data.CoordAxis x = dataset.getCoordAxes().getXAxis();
+				anl.verdi.data.CoordAxis y = dataset.getCoordAxes().getYAxis();
+				if (x instanceof NetCdfCoordAxis) {
+					xDims.add(((NetCdfCoordAxis)x).getDatasetDimension());
+				}
+				if (y instanceof NetCdfCoordAxis) {
+					yDims.add(((NetCdfCoordAxis)y).getDatasetDimension());
+				}
 				sets.add(dataset);
 			}
-			for (List<VariableEnhanced> varList : ncdVarMap.values()) {
+			Map<String, List<VariableDS>> rawDisplayableVars = new HashMap<String, List<VariableDS>>();
+			for (List<VariableDS> varList : ncdVarMap.values()) {
 				//System.out.println("Dim " + varList.get(0).getDimensions());
-				if (system != null && varList.get(0).getDimensions().toString().indexOf("x") > -1) {
-					GridNetcdfDataset dataset = new GridNetcdfDataset(url, gridDataset, varList, index++, system);				
-					dataset.setNetcdfConv(netcdfConv);
-					sets.add(dataset);
+				boolean containsX = false;
+				boolean containsY = false;
+				for (String dim : xDims) {
+					if (varList.get(0).getDimensions().toString().indexOf(dim) != -1 )
+						containsX = true;
 				}
-				
+				for (String dim : yDims) {
+					if (varList.get(0).getDimensions().toString().indexOf(dim) != -1 )
+						containsY = true;
+				}
+				if (system != null && ((containsX && containsY) || varList.get(0).getDimensions().toString().indexOf("x") > -1)) {
+					String varDimensions = varList.get(0).getDimensions().toString();
+					List<VariableDS> dimVars = rawDisplayableVars.get(varDimensions);
+					if (dimVars == null) {
+						dimVars = new ArrayList<VariableDS>();
+						rawDisplayableVars.put(varDimensions,  dimVars);
+					}
+					dimVars.add(varList.get(0));
+				}			
+			}
+			for (List<VariableDS> varsByDim : rawDisplayableVars.values()) {
+				//system = dimMap.get(varsByDim.get(0).getDimensions().size());
+				String parentDimString = dimMap.get(varsByDim.get(0).getDimensions().size()).getName();
+
+				ImmutableList<Dimension> dims = varsByDim.get(0).getDimensions();
+
+				GridNetcdfDataset dataset = new GridNetcdfDataset(url, gridDataset, varsByDim, index++, system);
+				Axes<CoordAxis> axes = dataset.getCoordAxes();
+				axes.getAxes().get(1).getClass();
+				Set<String> knownDimensions = new HashSet<String>();
+				for (int i = 0; i < dims.size(); ++i) {
+					Dimension dim = dims.get(i);
+					String dimName = dim.getName();
+					boolean dimFound = false;
+					List<CoordAxis> parentAxis = axes.getAxes(); 
+					for (CoordAxis axis : parentAxis) {
+						if (axis.getName().equals(dim.getName()) ||
+								(axis instanceof NetCdfCoordAxis && ((NetCdfCoordAxis)axis).getDatasetDimension().equals(dim.getName()))) {
+							dimFound = true;
+							knownDimensions.add(axis.getName());
+						}
+					}
+					//if (parentDimString.indexOf(dimName) == -1) {
+					if (!dimFound) {
+						CoordAxis newAxis = new DimensionCoordAxis(dim, AxisType.LAYER);
+						axes.addAxis(newAxis);
+						knownDimensions.add(newAxis.getName());
+					}						
+				}
+				List<CoordAxis> parentAxes =axes.getAxes();
+				for (int i = parentAxes.size() - 1; i >= 0; --i) {
+					if (!knownDimensions.contains(parentAxes.get(i).getName()))
+						parentAxes.remove(i);
+				}
+				dataset.setNetcdfConv(netcdfConv);
+				sets.add(dataset);
 			}
 		}
 		

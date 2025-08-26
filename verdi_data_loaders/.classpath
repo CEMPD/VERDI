@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="anl/verdi/loaders/BCONDataset.java" kind="src" path="src"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -22,7 +22,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/verdi_saf_core_runtime"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-api-2.17.1.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/log4j-core-2.17.1.jar" sourcepath="/verdi_core/lib_src/log4j-core-2.17.1-sources.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/bufr-4.3.16.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-api-19.1.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-brewer-19.1.jar"/>
@@ -32,7 +31,7 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-metadata-19.1.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-opengis-19.1.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-referencing-19.1.jar"/>
-	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-render-19.1.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-render-19.1.jar" sourcepath="/verdi_core/lib/geo-19/org"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-shapefile-19.1.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/jts-core-1.14.0.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/repast.simphony.bin_and_src.jar"/>
@@ -44,5 +43,8 @@
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-epsg-wkt-19.1.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/hsqldb-2.3.0.jar"/>
 	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-cql-19.1.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/netcdfAll-5.5.3.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/gt-coverage-api-19.1.jar"/>
+	<classpathentry kind="lib" path="/verdi_core/lib/geo-19/jt-utilities-1.0.22.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

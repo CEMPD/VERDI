@@ -26,7 +26,19 @@
 			<export prefix="*"/>
 		</library>
 		
-		<library id="netcdf" path="../verdi_core/lib/netcdfAll-4.5.5-SNAPSHOT.jar" type="code">
+		<library id="netcdf" path="../verdi_core/lib/netcdfAll-5.5.3.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jsoup" path="../verdi_core/lib/jsoup-1.15.3.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="jgoodiesn" path="../verdi_core/lib/jgoodies.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
+		<library id="commons-lang3" path="../verdi_core/lib/commons-lang3-3.14.0.jar" type="code">
 			<export prefix="*"/>
 		</library>
 		
@@ -90,6 +102,12 @@
 	           id="csv">
 		<parameter id="class" value="anl.verdi.loaders.CSVLoader"/>
 		<parameter id="description" value="CSV data loader"/>
+	</extension>
+
+	<extension plugin-id="anl.verdi" point-id="data.DataLoader"
+	           id="dat">
+		<parameter id="class" value="anl.verdi.loaders.GenericDatasetLoader"/>
+		<parameter id="description" value="Generic data loader"/>
 	</extension>
 
 	<extension plugin-id="anl.verdi" point-id="data.DataLoader"

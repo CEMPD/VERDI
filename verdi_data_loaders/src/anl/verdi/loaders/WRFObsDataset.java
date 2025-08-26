@@ -196,7 +196,7 @@ public class WRFObsDataset extends AbstractDataset {
 
 		try {
 			Date startDate = TIMES_FMT.parse(dataset.findGlobalAttribute("START_DATE").getValue(0).toString());
-			ArrayInt.D1 data = new ArrayInt.D1(numSteps);
+			ArrayInt.D1 data = new ArrayInt.D1(numSteps, false);
 			for (int i = 0; i < numSteps; ++i) {
 				origin[0] = i;
 				String timestep  = String.copyValueOf((char[])times.read(origin, shape).copyTo1DJavaArray());

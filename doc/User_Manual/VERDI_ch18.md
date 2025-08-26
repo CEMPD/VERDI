@@ -18,7 +18,7 @@ Example Command Line Script for Linux Users
 
 Set an environment variable $VERDI_HOME by using
 
-setenv VERDI_HOME //home//a_username//VERDI_2.1.6
+setenv VERDI_HOME //home//a_username//VERDI_2.2
 
 Where a_username is your username.
 
@@ -28,11 +28,11 @@ The following script options will read in the file as the first dataset, select 
 
 Example script file (Note that quotes (as shown highlighted in red) may be needed around the entire list of parameters” :
 
+### 8hO3 Daily Max Plot
+
 #! /bin/csh -f
 
-#### 8hO3 Daily Max Plot
-
-setenv DIR //home//training//verdi_2.1.6//data/OBS
+setenv DIR //home//training//verdi_2.2//data/OBS
 
 ../../verdi.sh \
 
@@ -55,13 +55,13 @@ Note: Currently, the syntax for the command line script is slightly different th
 Example Command Line Script for Windows Users
 ---------------------------------------------
 
-Edit the run.bat script in the VERDI_2.1.6 directory by right clicking on the file and selecting edit.
+Edit the run.bat script in the VERDI_2.2 directory by right clicking on the file and selecting edit.
 
 Add `%1` as pictured below, then Save.
-![%1 Edit](./media/image105.png){#fig:Figure101}
 
-Example Plot
-![8hO3 Daily Max Plot](./media/image096.png){#fig:Figure99}
+Figure 104. Add %1 to run.bat script<br>
+
+![%1 Edit](./media/image109.png){#fig:Figure104}
 
 
 The current run.bat in notepad contains a “%1” at the end that allows it to accept input following the run.bat script using the Windows run command. Unfortunately, this command does not accept directory names that have a space them, such as the “Program Files”. If you would like to enter the script command line options after run.bat, please move the data directory to C:\\VERDI\\data or some other similar location.
@@ -70,11 +70,11 @@ Enter the following in the Run command: cmd
 
 When a command line window opens do the following:
 
-cd C:\\Program Files\\VERDI_2.1.6\\
+cd C:\\Program Files\\VERDI_2.2\\
 
 run.bat "-f C:\\VERDI\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX -s O3[1] -gtype tile"
 
-The other option is to place the script commands within the run.bat itself. Remove the “%1” statement at the end of the run.bat that is provided in the distribution, and add the script options that you would like to use. The following run.bat contains script options that will read in the file C:\\VERDI_2.1.6\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX, select O3[1] as the formula, and create a Tile plot. The changes that you need to make to the run.bat are highlighted in red.
+The other option is to place the script commands within the run.bat itself. Remove the “%1” statement at the end of the run.bat that is provided in the distribution, and add the script options that you would like to use. The following run.bat contains script options that will read in the file C:\\VERDI_2.2\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX, select O3[1] as the formula, and create a Tile plot. The changes that you need to make to the run.bat are highlighted in red.
 
 cd .\\plugins\\bootstrap
 
@@ -84,16 +84,18 @@ SET JAVA=..\\..\\jre1.6.0\\bin\\java
 %JAVA% -Xmx512M -classpath "./bootstrap.jar;./lib/saf.core.runtime.jar;
 ./lib/commons-logging.jar;.//lib//jpf-boot.jar;.//lib//jpf.jar;
 .//lib\\log4j-1.2.13.jar" 
-saf.core.runtime.Boot -f C:\\VERDI_2.1\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX 
+saf.core.runtime.Boot -f C:\\VERDI_2.2\\data\\model\\CCTM46_P16.baseO2a.36k.O3MAX 
 -s O3[1] -gtype fasttile
 ```
 
 Run the run.bat script by clicking on Start, then selecting Run, then either using Browse to find the run.bat or typing it in.
 
-![Location of the run.bat script](./media/image097.png){#fig:Figure100}
+Figure 105. Location of the run.bat script<br>
+
+![Location of the run.bat script](./media/image101.png){#fig:Figure105}
 
 
-[Figure 100](#Figure100). Submit run.bat script from the Run command. 
+Submit run.bat script from the Run command. 
 
 
 Script commands that can be used for command line scripting (listed in alphabetical order) are described below. Adding support for these script commands in the Script Editor is planned for a future VERDI release.
@@ -195,6 +197,6 @@ Script commands that can be used for command line scripting (listed in alphabeti
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch17.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch19.md)<br>
-VERDI User Manual (c) 2024<br>
+VERDI User Manual (c) 2025<br>
 
 <!-- END COMMENT -->

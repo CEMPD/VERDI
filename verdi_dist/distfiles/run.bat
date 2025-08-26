@@ -19,7 +19,7 @@ REM ************************************************************************
 set PREVDIR=%CD%
 CD %VERDI_HOME%\plugins\bootstrap
 SET JAVA=%JAVADIR%\bin\java
-set CLASSPATH=%JAVADIR%/bin/*;%JAVADIR%/lib/*;%VERDI_HOME%/plugins/bootstrap/bootstrap.jar;%VERDI_HOME%/plugins/bootstrap/lib/;%VERDI_HOME%/plugins/bootstrap/lib/saf.core.runtime.jar;%VERDI_HOME%/plugins/bootstrap/lib/*;%VERDI_HOME%/plugins/core/lib/*
+set CLASSPATH=%JAVADIR%/bin/*;%JAVADIR%/lib/*;%VERDI_HOME%/plugins/bootstrap/bootstrap.jar;%VERDI_HOME%/plugins/bootstrap/lib/;%VERDI_HOME%/plugins/bootstrap/lib/saf.core.runtime.jar;%VERDI_HOME%/plugins/bootstrap/lib/*;%VERDI_HOME%/plugins/core/lib/*;%VERDI_HOME%/plugins/core/lib/geo-19/*
 
 REM set PATH based on 32/64 Windows
 set bit64=n
@@ -38,7 +38,7 @@ REM echo set to Win64 path
 
 :proc32
 REM path has been reset for DLLs; continue
-set JAVACMD="%JAVA%" --add-opens=java.desktop/sun.awt=ALL-UNNAMED -Xmx6144M -Dlog4j.debug=false -classpath "%CLASSPATH%" saf.core.runtime.Boot
+set JAVACMD="%JAVA%" --add-exports java.desktop/sun.awt=ALL-UNNAMED --add-exports java.desktop/com.sun.imageio.spi=ALL-UNNAMED -Xmx6144M -Dlog4j.debug=false -classpath "%CLASSPATH%" saf.core.runtime.Boot
 
 IF "%1" == "-b" GOTO scripting
 

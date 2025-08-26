@@ -4,7 +4,10 @@ import ucar.ma2.Index;
 
 public class GenericDataArrayIndex extends Index {
 	
-	public GenericDataArrayIndex() {
+	public GenericDataArrayIndex(int rank) {
+		super(rank);
 	}
+	
+	
 
 }

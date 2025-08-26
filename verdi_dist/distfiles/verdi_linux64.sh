@@ -10,13 +10,13 @@ JAVA=../../jre/bin/java
 JAVAMAXMEM="-Xmx6144M"
 
 # Limit the number of default spawned threads (eca):
-JAVAOPTS="-XX:+UseParallelGC -XX:ParallelGCThreads=1 -Duser.home=$HOME -Dlog4j.debug=false -Djava.library.path=../core/lib --add-exports java.desktop/sun.awt=ALL-UNNAMED"
+JAVAOPTS="-XX:+UseParallelGC -XX:ParallelGCThreads=1 -Duser.home=$HOME -Dlog4j.debug=false -Djava.library.path=../core/lib --add-exports java.desktop/sun.awt=ALL-UNNAMED --add-exports java.desktop/com.sun.imageio.spi=ALL-UNNAMED"
 
 if [ "$DISPLAY" = "" ]; then
   DISPOPTS="-Djava.awt.headless=true"
 fi
 
-JAVACMD="$JAVA $JAVAOPTS $JAVAMAXMEM $DISPOPTS -classpath ./bootstrap.jar:./lib/saf.core.runtime.jar:./lib/jpf.jar:./lib/jpf-boot.jar:./lib/:../core/lib/* saf.core.runtime.Boot"
+JAVACMD="$JAVA $JAVAOPTS $JAVAMAXMEM $DISPOPTS -classpath ./bootstrap.jar:./lib/saf.core.runtime.jar:./lib/jpf.jar:./lib/jpf-boot.jar:./lib/:../core/lib/*:../core/lib/geo-19/* saf.core.runtime.Boot"
 
 BATCHCMD=$1
 

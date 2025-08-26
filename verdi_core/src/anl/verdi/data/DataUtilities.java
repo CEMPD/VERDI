@@ -25,7 +25,7 @@ import anl.verdi.util.ArrayFactory;
 public class DataUtilities {
 
 	public static final int NO_LAYER = -1;
-	public static float NC_FILL_FLOAT = VerdiConstants.NC_FILL_FLOAT;
+	public static double NC_FILL_FLOAT = VerdiConstants.NC_FILL_FLOAT;
 	public static double BADVAL3 = VerdiConstants.BADVAL3; 
 	public static double AMISS3 = VerdiConstants.AMISS3; 
 	static final Logger Logger = LogManager.getLogger(DataUtilities.class.getName());

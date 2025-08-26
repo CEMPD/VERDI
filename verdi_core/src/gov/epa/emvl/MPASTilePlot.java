@@ -100,7 +100,7 @@ public class MPASTilePlot extends TilePlot {
 
 	public void drawAxis(final Graphics graphics, int xMinimum, int xMaximum,
 			int yMinimum, int yMaximum, double panX, double visibleWidth,
-			double panY, double visibleHeight) {
+			double panY, double visibleHeight, String selectedStat ) {
 		final int xAxisOffset = 5; // Pixel offset left of west edge of grid.
 		final int yAxisOffset = 5; // Pixel offset below south edge of grid.
 		final int xTicLength = 5; // Pixel legth of tic mark on X-axis.
@@ -256,7 +256,7 @@ public class MPASTilePlot extends TilePlot {
 		config.putObject(PlotConfiguration.RANGE_TICK_FONT, rangeTickFont == null ? gFont : rangeTickFont);
 
 		super.drawLabels(graphics, labelColor, xMinimum, xMaximum, yMinimum, yMaximum, variable,
-				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn, null);
+				steplapse, layer, firstRow, lastRow, firstColumn, lastColumn, null, selectedStat);
 	}
 	
 	int stepUnits = Calendar.MILLISECOND;

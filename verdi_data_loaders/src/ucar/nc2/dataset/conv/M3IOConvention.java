@@ -346,7 +346,7 @@ return v;
 
     Dimension dimt = ds.findDimension(timeName);
     int nt = dimt.getLength();
-    ArrayInt.D1 data = new ArrayInt.D1(nt);
+    ArrayInt.D1 data = new ArrayInt.D1(nt, true);
     for (int i = 0; i < nt; i++) {
       data.set(i, i * time_step);
     }

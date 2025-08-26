@@ -92,10 +92,10 @@ public class AreaTilePlot extends TilePlot{
 			final Color axisColor, final Color labelColor,
 			final String variable, final String units,
 			PlotConfiguration config, NumberFormat format,
-			final Color gridLineColor, final float[][] data, final byte[][] colorIndexCache) {
+			final Color gridLineColor, final double[][] data, final byte[][] colorIndexCache, String selectedStat) {
 		draw(graphics, xOffset, yOffset, width, height, steplapse, layer, firstRow, lastRow,
 				firstColumn, lastColumn, projection, legendLevels, legendColors, axisColor, labelColor, variable,
-				units, config, format, gridLineColor, data);
+				units, config, format, gridLineColor, data, selectedStat);
 	}
 
 	/** draw - Draw a tile plot: colored rectangles with labels and legend.
@@ -141,7 +141,7 @@ public class AreaTilePlot extends TilePlot{
 			final String variable, String units,
 			PlotConfiguration config, NumberFormat format,
 			final Color gridLineColor, 
-			final float[][] data ) {
+			final double[][] data, String selectedStat) {
 
 		if (units==null || units.trim().equals(""))
 			units = "none";
@@ -180,7 +180,7 @@ public class AreaTilePlot extends TilePlot{
 		drawLabels( graphics, labelColor,xMinimum, xMaximum, yMinimum, yMaximum,
 				variable,
 				timelapse, layer, firstRow, lastRow, firstColumn, lastColumn,
-				data );
+				data, selectedStat );
 
 		//showBusyCursor();
 		switch(currentView){
@@ -196,7 +196,7 @@ public class AreaTilePlot extends TilePlot{
 					xOffset, yOffset, width, height,currentView, tilePlotPanel.isShowSelectedOnly());
 			break;
 		case AVERAGES:
-			float[][] allData=tilePlotPanel.getAllLayerData();
+			double[][] allData=tilePlotPanel.getAllLayerData();
 			// draw the area polygons
 			mapPolygon.draw(this, domain, gridBounds, gridCRS, projection, legendLevels,
 					legendColors,graphics, allData,units,firstColumn,firstRow,
@@ -208,7 +208,7 @@ public class AreaTilePlot extends TilePlot{
 //					xOffset, yOffset, width, height,currentView,tilePlotPanel.isShowSelectedOnly() );
 			break;
 		case TOTALS:
-			float[][] allData2=tilePlotPanel.getAllLayerData();
+			double[][] allData2=tilePlotPanel.getAllLayerData();
 			// draw the area polygons
 			/*mapPolygon.calculateValues(this,domain, gridBounds, gridCRS,legendLevels,
 					legendColors,graphics, allData2,units,firstColumn,firstRow,

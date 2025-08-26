@@ -46,7 +46,7 @@ public final class ASCIIGridWriter {
                             final double westEdge,		
                             final double southEdge,
                             final double cellSize,
-                            final float[][] data ) {
+                            final double[][] data ) {
 
     FileOutputStream file = null;
 
@@ -61,8 +61,8 @@ public final class ASCIIGridWriter {
       for ( int row = rows - 1; row >= 0; --row ) {	// starts in upper-left cell & moves downward
 
         for ( int column = 0; column < columns; ++column ) {	// for a row moves left-to-right
-          final float dataValue = data[ row ][ column ];
-          final float clampedValue = dataValue > -9999.0f ? dataValue : -9999.0f;
+          final double dataValue = data[ row ][ column ];
+          final double clampedValue = dataValue > -9999.0d ? dataValue : -9999.0d;
           final String formattedValue = String.format( "%g ", clampedValue );
           file.write( formattedValue.getBytes( "US-ASCII" ) );
         }

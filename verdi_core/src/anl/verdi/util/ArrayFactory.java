@@ -2,6 +2,7 @@ package anl.verdi.util;
 
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
+import ucar.ma2.DataType;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,8 +75,8 @@ public class ArrayFactory {
 			Map<Class, Class> map = conversionMap.get(type);
 			type = map.get(elementType);
 		}
-
-		return Array.factory(type, shape);
+		
+		return Array.factory(DataType.getType(type, false), shape);
 	}
 
 	/**
@@ -104,7 +105,7 @@ public class ArrayFactory {
 			case 7:
 				return new ArrayDouble.D7(shape[0], shape[1], shape[2], shape[3], shape[4], shape[5], shape[6]);
 			default:
-				return Array.factory(double.class, shape);
+				return Array.factory(DataType.DOUBLE, shape);
 		}
 	}
 }

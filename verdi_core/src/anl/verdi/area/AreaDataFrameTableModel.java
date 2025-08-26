@@ -66,8 +66,8 @@ public class AreaDataFrameTableModel extends AbstractDataFrameTableModel {
 				rows = rowAxis.getExtent();
 			}
 
-			ArrayList<Float>v=new ArrayList(areas.size());
-			ArrayList<Float>vAve=new ArrayList(areas.size());
+			ArrayList<Double>v=new ArrayList(areas.size());
+			ArrayList<Double>vAve=new ArrayList(areas.size());
 			values[i]=v;
 			valuesAve[i]=vAve;
 
@@ -79,7 +79,7 @@ public class AreaDataFrameTableModel extends AbstractDataFrameTableModel {
 			TargetCalculator calc = new TargetCalculator();
 			calc.calculateIntersections(Target.getTargets(),frames[i],null);
 
-			float[][] data= getAllLayerData(frames[i],timestep,layer,rows,cols);
+			double[][] data= getAllLayerData(frames[i],timestep,layer,rows,cols);
 
 			for(Target target:(ArrayList<Target>)areas){
 				// calculate the deposition and draw filled
@@ -89,8 +89,8 @@ public class AreaDataFrameTableModel extends AbstractDataFrameTableModel {
 					v.add(target.calculateTotalDeposition(data));
 					vAve.add(target.calculateAverageDeposition(data));
 				}else{
-					v.add(new Float(0.0));
-					vAve.add(new Float(0.0));
+					v.add(new Double(0.0));
+					vAve.add(new Double(0.0));
 				}
 			}
 		}
@@ -124,13 +124,13 @@ public class AreaDataFrameTableModel extends AbstractDataFrameTableModel {
 		return variables;
 	}
 
-	public float[][] getAllLayerData(DataFrame dataFrame,int timestep, int layer,int rows,int columns) {
+	public double[][] getAllLayerData(DataFrame dataFrame,int timestep, int layer,int rows,int columns) {
 
 		// Reallocate the subsetLayerData[][] only if needed:
 
-		float[][] subsetLayerData;
+		double[][] subsetLayerData;
 
-		subsetLayerData = new float[rows][columns];
+		subsetLayerData = new double[rows][columns];
 
 
 		// Copy from dataFrame into subsetLayerData[ rows ][ columns ]:
@@ -141,7 +141,7 @@ public class AreaDataFrameTableModel extends AbstractDataFrameTableModel {
 
 			for (int column = 0; column < columns; ++column) {
 				dataFrameIndex.set(timestep, layer, column, row);
-				final float value = dataFrame.getFloat(dataFrameIndex);
+				final double value = dataFrame.getDouble(dataFrameIndex);
 				subsetLayerData[row][column] = value;
 			}
 		}

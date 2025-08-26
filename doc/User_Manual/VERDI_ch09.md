@@ -35,7 +35,7 @@ Figure 25. Edit Layer Range in Formula Pane<br>
 
 <!-- END COMMENT -->
 
-![Figure25](./media/image025.png){#fig:Figure25}
+![Edit Layer Range in Formula Pane](./media/image025.png){#fig:Figure25}
 
 Specify Domain Range
 --------------------
@@ -56,7 +56,7 @@ NOTE: You must check the appropriate boxes to have your selected ranges take eff
 <!-- BEGIN COMMENT -->
 
 [<< Previous Chapter](VERDI_ch08.md) - [Home](README.md) - [Next Chapter >>](VERDI_ch10.md)<br>
-VERDI User Manual (c) 2024<br>
+VERDI User Manual (c) 2025<br>
 
 <!-- END COMMENT -->
 

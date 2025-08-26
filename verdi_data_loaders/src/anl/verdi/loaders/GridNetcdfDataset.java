@@ -21,6 +21,7 @@ import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateAxis1DTime;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dataset.VariableDS;
 import ucar.nc2.dataset.VariableEnhanced;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
@@ -86,7 +87,7 @@ public class GridNetcdfDataset extends AbstractDataset {
 	}
 
 	protected GridNetcdfDataset(URL url, GridDataset gridDataset,
-			List<VariableEnhanced> vars, GridCoordSystem system) {
+			List<VariableDS> vars, GridCoordSystem system) {
 		this(url, gridDataset, vars, Dataset.SINGLE_DATASET, system);
 	}
 
@@ -112,7 +113,7 @@ public class GridNetcdfDataset extends AbstractDataset {
 	}
 
 	protected GridNetcdfDataset(URL url, GridDataset gridDataset, 
-			List<VariableEnhanced> vars, int urlIndex, GridCoordSystem system) {
+			List<VariableDS> vars, int urlIndex, GridCoordSystem system) {
 		super(url);
 		this.gridDataset = gridDataset;
 		this.urlIndex = urlIndex;
@@ -152,9 +153,9 @@ public class GridNetcdfDataset extends AbstractDataset {
 		return null;
 	}
 	
-	private void initVars(List<VariableEnhanced> setVars) {
-		Collections.sort(setVars, new Comparator<VariableEnhanced>() {
-			public int compare(VariableEnhanced o1, VariableEnhanced o2) {
+	private void initVars(List<VariableDS> setVars) {
+		Collections.sort(setVars, new Comparator<VariableDS>() {
+			public int compare(VariableDS o1, VariableDS o2) {
 				return o1.getName().compareTo(o2.getName());
 			}
 		});
@@ -166,7 +167,7 @@ public class GridNetcdfDataset extends AbstractDataset {
 		
 		vars = new ArrayList<Variable>();
 
-		for (VariableEnhanced var : setVars) {
+		for (VariableDS var : setVars) {
 			createVerdiVar(var);
 		}
 	}
@@ -182,13 +183,13 @@ public class GridNetcdfDataset extends AbstractDataset {
 
 		vars = new ArrayList<Variable>();
 		for (GridDatatype grid : grids) {
-			VariableEnhanced var = grid.getVariable();
+			VariableDS var = grid.getVariable();
 			
 			createVerdiVar(var);
 		}
 	}
 	
-	private void createVerdiVar(VariableEnhanced var) {
+	private void createVerdiVar(VariableDS var) {
 			
 			//System.out.println("GridNetcdfDataset checking var " + var.getName() + " dims " + var.getDimensions());
 			if (!(var instanceof CoordinateAxis)) {
@@ -367,4 +368,5 @@ public class GridNetcdfDataset extends AbstractDataset {
 	public void setNetcdfConv(int conv) {
 		this.conv = conv;
 	}
+
 }

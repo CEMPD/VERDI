@@ -96,7 +96,7 @@ public class CachedTargetList {
 		FILE_ID_MAP.remove(path);
 	}
 	
-    public void cacheAreaInfo(Target target, int[] rowIndex, int[] colIndex, float[] overlapArea) {
+    public void cacheAreaInfo(Target target, int[] rowIndex, int[] colIndex, double[] overlapArea) {
 		String idField = target.getSource().getName();
 		String targetId = target.getName();
 		
