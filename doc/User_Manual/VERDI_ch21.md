@@ -23,10 +23,11 @@ VERDI has been developed using a number of open source Java libraries. Table 20-
 | Piccolo 1.2                | <http://www.cs.umd.edu/hcil/jazz/>                  | <http://www.cs.umd.edu/hcil/jazz/download/open-source.shtml>                                     | <http://opensource.org/licenses/bsd-license.php>        |
 | Ucar_ma2                  | <http://www.unidata.ucar.edu/software/netcdf-java>  | <http://www.unidata.ucar.edu/software/netcdf-java/>                                              | <http://www.gnu.org/copyleft/lesser.html>               |
 | Repast symphony GIS        | <http://repast.sourceforge.net/>                    |                                                                                                  | <http://repast.sourceforge.net/repast-license.html>     |
+| OpenTopoMap         |     <https://opentopomap.org/about>                        | Kartendaten: © OpenStreetMap-Mitwirkende, SRTM | Kartendarstellung: © OpenTopoMap (CC-BY-SA)     | <https://www.openstreetmap.org/copyright> |
 
 <span id="_Ref323231980" class="anchor"></span>Table - JAVA Libraries used by VERDI
 
-Acknowledgments
+Acknowledgments 
 ===============
 
 Contributions to VERDI from the community are greatly appreciated.
