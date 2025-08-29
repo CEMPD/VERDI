@@ -18,18 +18,18 @@ Figure 106. Tile Plot of Fine Scale Gridded Dataset<br>
   
 ![VERDI GIS Layers UI](./media/image110.png){#fig:Figure106}
 
-/new page
-
+\newpage
      
 Step 3: To add your own fine scale GIS layers, click on GIS Layers → Add Map Layers → Other…
 A pop-up file browser window will show up for you to navigate to the street-level shapefiles, click on "open".    	
+
 A Figure to add Fine Scale GIS Layer using the pop-up window to load other GIS Layers UI: ([Fig-@fig:Figure107])) or GitHub:[Figure 107](#Figure107).
   
 Figure 107. Add Fine Scale GIS layer<br>
 
 ![Add Fine Scale GIS Layer using the pop-up window to load other GIS Layers UI](./media/image111.png){fig:Figure107}
 
-/new page
+\newpage
 
 Step 4: Wait for a few seconds until the GIS layers are added to the tile plot, then zoom into your area of interest and explore.
 The sample shapefiles are used to create the following map can be found at VERDI/data/DCMStreetCenterLine.zip    
@@ -40,8 +40,7 @@ Figure 108. Tile Plot with NYC Street Centerlines<br>
 	
 ![The tile plot with NYC street centerlines](./media/image112.png){fig:Figure108}
 
-/new page
-
+\newpage
 
 
 
