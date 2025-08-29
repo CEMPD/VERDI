@@ -27,7 +27,7 @@ cd <your path>/VERDI_2.2/data
 unzip DCMStreetCenterLine.zip
 </pre>
 
-Step 4: To add this fine scale GIS layers, click on GIS Layers → Add Map Layers → Other…
+Step 4: To add this or other fine scale GIS layers, click on GIS Layers → Add Map Layers → Other…
 A pop-up file browser window will show up for you to navigate to the street-level shapefiles, click on "open".
 
 Figure to add Fine Scale GIS Layer using the pop-up window to load other GIS Layers UI: ([Fig-@fig:Figure107])) or GitHub:[Figure 107](#Figure107).
