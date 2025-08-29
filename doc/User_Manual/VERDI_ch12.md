@@ -15,7 +15,7 @@ Models-3 I/O API Data Convention
 For the Models-3 I/O API, support for Lambert conformal conic (LCC) map projection, Universal Transverse Mercator (UTM) map projection, and polar stereographic map projection was added in VERDI 1.1., and Mercator projection in VERDI 1.2. The grid projections listed on the following website are supported, although not all have been tested: 
 https://www.cmascenter.org/ioapi/documentation/all_versions/html/.
 
-Users that need VERDI to support other projections are encouraged to provide small input datasets as attachments to emails to the m3user listserv, or to github.com/CEMPD/VERDI/issues, for testing and to facilitate future development efforts. PDF: ([Fig-@fig:Figure77])) or GitHub:[Figure 77](#Figure77) through ([Fig-@fig:Figure79])) or GitHub:[Figure 79](#Figure79) illustrate sample plots generated for datasets with LCC, polar stereographic, Mercator, and UTM map projections, respectively.
+Users that need VERDI to support other projections are encouraged to provide small input datasets as attachments to emails to the m3user listserv, or to github.com/CEMPD/VERDI/issues, for testing and to facilitate future development efforts. PDF: ([Fig-@fig:Figure77])) or GitHub:[Figure 77](#Figure77) through ([Fig-@fig:Figure80])) or GitHub:[Figure 80](#Figure80) illustrate sample plots generated for datasets with LCC, polar stereographic, Mercator, and UTM map projections, respectively.
 
 Figure 77. CMAQ Lambert Conformal Conic (GDTYP = 2) Map Projection Example Plot<br>
 
@@ -55,7 +55,8 @@ Figure 82. Models-3 I/O API Map Projection Parameters for Lambert Conformal Coni
 
 ![Models-3 I/O API Map Projection Parameters for Lambert Conformal Conic Projection](./media/image082.png){#fig:Figure82}
 
- PDF: ([Fig-@fig:Figure83])) or GitHub:[Figure 83](#Figure83) shows the values of the camxproj.txt after editing it to match the values of the camx.diag file and using the definitions of the Models-3 grid parameters.  PDF: ([Fig-@fig:Figure84])) or GitHub:[Figure 84](#Figure84)  shows the resulting Tile Plot of the CAMx sample dataset.
+Figure PDF: ([Fig-@fig:Figure83])) or GitHub:[Figure 83](#Figure83) shows the values of the camxproj.txt after editing it to match the values of the camx.diag file and using the definitions of the Models-3 grid parameters.   
+Figure PDF: ([Fig-@fig:Figure84])) or GitHub:[Figure 84](#Figure84)  shows the resulting Tile Plot of the CAMx sample dataset.
 
 Figure 83. Edited Example Projection File: camxproj.txt<br>
 
@@ -63,7 +64,7 @@ Figure 83. Edited Example Projection File: camxproj.txt<br>
 
 Figure 84. CAMx Tile Plot<br>
 
-![CAMx Tile Plot](./media/image084.png){#fig:Figure84} <br>
+![CAMx Tile Plot](./media/image084.png){#fig:Figure84}
 
 
 
@@ -95,10 +96,11 @@ Note, the mpas_UV_only.2016-07-04.nc file is too large to be distributed with VE
 
 ![MPAS Plot of the 3-d Zonal and Meridional Wind Components and Control Option to Show Wind Vectors](./media/image107.png){#fig:Figure88}
 
-The resulting wind vector plot of the 3-d Zonal and Meridonal Wind components from a daily MPAS-A output file is available in PDF: ([Fig-@fig:Figure89])) or GitHub:[Figure 89](#Figure89)
-Figure 89. MPAS Plot of the 3-d Zonal and Meridional Wind components from a daily MPAS-A output file (history file) Zoomed into North America<br>
+The resulting wind vector plot of the 3-d Zonal and Meridonal Wind components from a daily MPAS-A output file (history file) along with the necessary mesh definition data zoomed into North America is available in PDF: ([Fig-@fig:Figure89])) or GitHub:[Figure 89](#Figure89)
 
-![MPAS Plot of the 3-d Zonal and Meridional Wind Components and Control Option to Show Wind Vectors](./media/image108.png){#fig:Figure89}
+Figure 89. MPAS Plot of the 3-d Zonal and Meridional Wind components from a daily MPAS-A output file (history file) along with the necessary mesh definition data zoomed into North America<br>
+
+![MPAS Plot of the 3-d Zonal and Meridional Wind components from a daily MPAS-A output file (history file) along with the necessary mesh definition data zoomed into North America](./media/image108.png){#fig:Figure89}
 
 
 
