@@ -25,8 +25,11 @@ VERDI can use observational data in either using ASCII file or created using Mod
 Observational data in ASCII format can be obtained from many data sources. Data can be downloaded 
 from the CMAS Center Google Drive 
 
-
 <https://drive.google.com/drive/u/1/folders/1YIcmYtPH_DRyN51dDEQDh3r5Q_4iNLuu>
+
+or the CMAS Center Data Warehouse on AWS
+
+<https://https://cmas-amet.s3.amazonaws.com/index.html#AMET/obs_overlay/>
 
 
 or  EPA’s Remote Sensing Information Gateway - RSIG

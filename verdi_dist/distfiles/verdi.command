@@ -34,3 +34,4 @@ if [ "$BATCHCMD" = "-b" -o "$BATCHCMD" = "-batch" ]; then
 else
   $JAVACMD ${1+"$@"}
 fi
+

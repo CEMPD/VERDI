@@ -15,11 +15,11 @@ VERDI uses OpenJDK version "21.0.1". The OpenJDK<sup>TM</sup> is provided as par
 Memory and CPU Requirements
 ---------------------------
 
-VERDI’s memory and CPU requirements largely depend on the size of the datasets to be visualized. Small datasets can be visualized and manipulated using less than 1024 megabytes of RAM, while larger datasets may need considerably more. If you are using datasets that require either more or less than 1024 MB of memory, you can change the default maximum memory setting used by VERDI:
+VERDI’s memory and CPU requirements largely depend on the size of the datasets to be visualized. Most datasets can be visualized and manipulated using 6144 megabytes of RAM, while larger datasets may need considerably more. If you are using datasets that require either more or less than 6144 MB of memory, you can change the default maximum memory setting used by VERDI:
 
--   On Windows, edit the run.bat file that you use to launch VERDI. Look for the line that starts “set JAVACMD=” and change the value for the “Xmx” argument from the default heap size of 1024M.
+-   On Windows, edit the run.bat file that you use to launch VERDI. Look for the line that starts “set JAVACMD=” and change the value for the “Xmx” argument from the default heap size of 6144M.
 
--   On Linux or another Unix platform, you can edit verdi.sh and replace the 1024 in –Xmx1024M with a different value; for example, -Xmx2048M will allow VERDI to access up to 2048MB (or 2GB) of RAM.
+-   On Linux or another Unix platform, you can edit verdi.sh and replace the 6144 in –Xmx6144M with a different value; for example, -Xmx6144M will allow VERDI to access up to 6144MB (or 3GB) of RAM.
 
 Note that slower CPUs can quickly view and animate smaller datasets, whereas larger datasets require more time. As a user opens new Tile plots or other plot types, the memory requirements increase. As the user then closes the plots, the memory is released by VERDI.
 
@@ -36,9 +36,9 @@ Three-dimensional contour plots require a graphics card with OpenGL or DirectX c
 Display Properties
 ------------------
 
-VERDI works best on screen displays that have been set to a high or perhaps the highest screen resolution (1440 × 900 for Mac, or 1920 x 1080 for Windows 10/Linux). Follow these general instructions to adjust your screen resolution on the following types of computers.
+VERDI works best on screen displays that have been set to a high or perhaps the highest screen resolution (1440 × 900 for Mac, or 1920 x 1080 for Windows 11/Linux). Follow these general instructions to adjust your screen resolution on the following types of computers.
 
--   Windows 10: Click on the Start button and select Control Panel. Select Display, then Adjust resolution. Use the drop-down boxes to select your type of display, screen resolution, etc. (it may already be set at the higest resolution by default). Select Scale and layout. Change the size of text, apps, and other items - select 100% rather than the default 150%.  (the 150% setting makes the VERDI app take up the entire screen, and this results in the footer information of the Tile Plot getting cut off.) Select Display Resolution: 1920x1080.
+-   Windows 11: Click on the Start button and select Control Panel. Select Display, then Adjust resolution. Use the drop-down boxes to select your type of display, screen resolution, etc. (it may already be set at the higest resolution by default). Select Scale and layout. Change the size of text, apps, and other items - select 100% rather than the default 150%.  (the 150% setting makes the VERDI app take up the entire screen, and this results in the footer information of the Tile Plot getting cut off.) Select Display Resolution: 1920x1080.
 
 -   Mac: Go to Applications and double-click on System Preferences. Under Hardware select Displays and then Select 1440 × 900.
 

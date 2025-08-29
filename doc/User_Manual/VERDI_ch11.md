@@ -627,7 +627,7 @@ Figure 75. Add North American State Boundaries and Satellite Image Layers<br>
 
 <!-- END COMMENT -->
 
-![Add Satelitte Image Layer](./media/image075.png){#fig:Figure75}
+![Add Satellite Image Layer](./media/image075.png){#fig:Figure75}
 
 ### Configure GIS Layers
 

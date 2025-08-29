@@ -61,7 +61,7 @@ Add `%1` as pictured below, then Save.
 
 Figure 104. Add %1 to run.bat script<br>
 
-![%1 Edit](./media/image109.png){#fig:Figure104}
+![Add %1 to the run.bat script](./media/image109.png){#fig:Figure104}
 
 
 The current run.bat in notepad contains a “%1” at the end that allows it to accept input following the run.bat script using the Windows run command. Unfortunately, this command does not accept directory names that have a space them, such as the “Program Files”. If you would like to enter the script command line options after run.bat, please move the data directory to C:\\VERDI\\data or some other similar location.
@@ -114,11 +114,11 @@ Script commands that can be used for command line scripting (listed in alphabeti
 
 **[-drawDomainTicks ON|OFF]** turns the domain axis ticks on and off.
 
-**[-drawGridLines ON|OFF]** turns the plot grid lines on and off.
+**[-drawRangeTicks ON|OFF]** turns the range axis ticks on and off.
 
 **[-drawLegendTicks ON|OFF]** turns the ticks in the legend on and off.
 
-**[-drawRangeTicks ON|OFF]** turns the range axis ticks on and off.
+**[-drawGridLines ON|OFF]** turns the plot grid lines on and off.
 
 **[-f [[host:]&lt;filename&gt;]** tells VERDI to load in this dataset and make it the currently selected dataset. All datasets will stay in memory.
 
@@ -136,17 +136,17 @@ Script commands that can be used for command line scripting (listed in alphabeti
 
 **[-layerRange &lt;layerMin&gt; &lt;layerMax&gt;\]** sets the level range of all formulas to the range specified.
 
-**\[-openProject &lt;VERDIProjectName&gt;\]** opens a previously save VERDI project.
-
 **\[-mapName** &lt;pathname&gt;/&lt;mapFileName&gt; causes VERDI to use the supplied *map name* instead of the default map for tile plots.
+
+**\[-openProject &lt;VERDIProjectName&gt;\]** opens a previously save VERDI project.
 
 **\[-printAlias\]** prints existing alias definitions.
 
 **\[-project “&lt;VERDIProjectName&gt;”\]** save dataset lists and associated formulas as a “project” for later re-use.
 
-**\[-**QuickTime **(NEW)\]** creates a QuickTime movie of the currently selected plot.
+**\[-quit|exit\]** ends the VERDI session.
 
-**\[-quit|exit]** ends the VERDI session.
+**\[-quicktime\]** creates a QuickTime movie of the currently selected plot.
 
 **[-raiseWindow &lt;windowid&gt;]** raises the window with the specified plot ID (i.e., brings it to the front).
 
