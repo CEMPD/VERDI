@@ -4,7 +4,10 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +16,8 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -41,7 +46,7 @@ public class VerdiTileUtil {
 	private static final String WEB_MERCATOR_PRJ = "PROJCS[\"WGS 84 / Pseudo-Mercator\",\n" + 
 			"    GEOGCS[\"WGS 84\", \n" + 
 			"      DATUM[\"World Geodetic System 1984\", \n" + 
-			"        SPHEROID[\"WGS 84\", 6378137.0, 298.257223563, AUTHORITY[\"EPSG\",\"7030\"]], \n" + 
+			"        SPHEROID[\"WGS 84\", 6378137.0, 6378137.0, AUTHORITY[\"EPSG\",\"7030\"]], \n" + 
 			"        AUTHORITY[\"EPSG\",\"6326\"]], \n" + 
 			"      PRIMEM[\"Greenwich\", 0.0, AUTHORITY[\"EPSG\",\"8901\"]], \n" + 
 			"      UNIT[\"degree\", 0.017453292519943295], \n" + 
@@ -172,6 +177,8 @@ public int calculateZoom( double[][] mapDomain, int screenWidth ) {
 		x = Integer.parseInt(tileNumber[1]);
 		y = Integer.parseInt(tileNumber[2]);
 		tile = retrieveTile(Integer.toString(i), tileNumber[1], tileNumber[2]);
+		if (tile == null)
+			break;
 		bb = tile2boundingBox(x, y, i);
 		double tileDeg = bb.east - bb.west;
 		double tilePx = tile.getWidth();
@@ -323,8 +330,15 @@ public static BufferedImage retrieveTile(String zoom, String x, String y) {
 	if (!tileFile.exists()) {
 		try {
 			URL remoteURL = new URL(remotePath);
-			FileUtils.copyURLToFile(remoteURL, tileFile, 60 * 1000, 60 * 1000);
-		} catch (IOException e) {
+			HttpClient client = new HttpClient();
+			org.apache.commons.httpclient.HttpMethod get = new GetMethod(remotePath);
+			int ret = client.executeMethod(get);
+			if (ret == 404)
+				return null;
+			//System.out.println(remotePath + ": " + ret);
+		    FileUtils.copyInputStreamToFile(get.getResponseBodyAsStream(), tileFile);
+
+		} catch (Throwable e) {
 			//TODO - handle java.net.SocketTimeoutException: Read timed out
 			e.printStackTrace();
 		}
