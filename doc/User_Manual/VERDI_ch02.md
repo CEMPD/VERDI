@@ -15,7 +15,7 @@ VERDI uses OpenJDK version "21.0.1". The OpenJDK<sup>TM</sup> is provided as par
 Memory and CPU Requirements
 ---------------------------
 
-VERDI’s memory and CPU requirements largely depend on the size of the datasets to be visualized. Small datasets can be visualized and manipulated using less than 1024 megabytes of RAM, while larger datasets may need considerably more. If you are using datasets that require either more or less than 1024 MB of memory, you can change the default maximum memory setting used by VERDI:
+VERDI’s memory and CPU requirements largely depend on the size of the datasets to be visualized. Most datasets can be visualized and manipulated using 6144 megabytes of RAM, while larger datasets may need considerably more. If you are using datasets that require either more or less than 6144 MB of memory, you can change the default maximum memory setting used by VERDI:
 
 -   On Windows, edit the run.bat file that you use to launch VERDI. Look for the line that starts “set JAVACMD=” and change the value for the “Xmx” argument from the default heap size of 6144M.
 
