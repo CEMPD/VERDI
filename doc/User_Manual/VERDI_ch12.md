@@ -7,7 +7,7 @@
 Supported Grid and Coordinate Systems (Map Projections)
 ======================================
 
-VERDI makes calls to the netCDF Java library to obtain the grid and coordinate system information about the data directly from the model data input files when the input data files are self-describing netCDF files (MCIP, SMOKE, CMAQ, WRF, MPAS). The available tile plot options vary depending on the meta data convention in the files: I/O API (M3IO) data convention (MCIP, SMOKE, CMAQ), CAMx Gridded Data Convention, WRF netCDF Data Convention, and MPAS netCDF Data Convention. 
+VERDI makes calls to the netCDF Java library to obtain the grid and coordinate system information about the data directly from the model data input files when the input data files are self-describing netCDF files (MCIP, SMOKE, CMAQ, WRF, MPAS, MPAS-CMAQ). The available tile plot options vary depending on the meta data convention in the files: I/O API (M3IO) data convention (MCIP, SMOKE, CMAQ), CAMx Gridded Data Convention, WRF netCDF Data Convention, and MPAS netCDF Data Convention. 
 
 Models-3 I/O API Data Convention
 ----------------------
