@@ -61,7 +61,7 @@ Add `%1` as pictured below, then Save.
 
 Figure 104. Add %1 to run.bat script<br>
 
-![%1 Edit](./media/image109.png){#fig:Figure104}
+![Add %1 to the run.bat script](./media/image109.png){#fig:Figure104}
 
 
 The current run.bat in notepad contains a “%1” at the end that allows it to accept input following the run.bat script using the Windows run command. Unfortunately, this command does not accept directory names that have a space them, such as the “Program Files”. If you would like to enter the script command line options after run.bat, please move the data directory to C:\\VERDI\\data or some other similar location.
