@@ -16,7 +16,7 @@ The following issues were fixed:
 
 Known Issues
 
-* Tile plots created from datasets that use a Polar Sterographic Projection may be unable to display the satellite image layer due transforming issues. 
+* Tile plots created from datasets that use a Polar Sterographic Projection may be unable to display the satellite image layer due to transforming issues. 
 
 -----------------------------
 RELEASE NOTES FOR VERDI 2.1.6
