@@ -58,13 +58,13 @@ You can choose to animate a single plot, or animate multiple plots synchronously
 <!-- BEGIN COMMENT -->
 
 <a id=Figure9></a>
-Figure 9. Selected plots must have matching time steps.<br>
+Figure 9. Side-by-side display of Tile Plots with Animate Plots Menu Dialog Box selecting variables from the same dataset (if the plots do not cover the same time range, the start button will be greyed out).<br>
 
 <!-- END COMMENT -->
 
-![Selected plots must have matching time steps](./media/image009.png){#fig:Figure9}
+![Side-by-side display of Tile Plots with Animate Plots Menu Dialog Box](./media/image009.png){#fig:Figure9}
 
-After selecting your plots, **select the time range** by specifying both the **starting time step** and **ending time step** of the animation. The selected plots animate together over the selected time interval.
+After selecting your plots, **select the time range** by specifying both the **starting time step** and **ending time step** of the animation. The selected plots animate together over the selected time interval. If the plots do not cover the same time range, the start button will be greyed out.
 
 To create an animated GIF, check the **Make Animated GIF(s)** option in the **Animate Plots** dialog box. In the **Save** dialog box that appears, select the directory in which to store the file and the name to use for the animated GIF, then click the save button. When saving as an animated GIF, when multiple plots are selected, each animated plot will be saved to a separate animated GIF file. For example, if three plots were selected, the animated plots would be saved as &lt;filename&gt;-1.gif, &lt;filename&gt;-2.gif, &lt;filename&gt;-3.gif. You can view the animated GIF by opening the file in a web browser. see (PDF:([Fig-@fig:Figure10])) or  GitHub: [Figure 10](#Figure10))
 
