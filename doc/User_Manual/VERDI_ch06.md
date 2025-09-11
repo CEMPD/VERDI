@@ -79,6 +79,7 @@ These datasets may be used to recreate example plots that are provided in this u
 
 Adding and Removing a Dataset from a Local File System
 ------------------------------------------------------
+Remote File Access allows VERDI to access NetCDF data sets that are located on other machines included in the verdi.remote.hosts settings using SSH.  To enable remote support, the RemoteFileUtility and ncvariable utilities within RemoteFileReader.tgz must be installed with execute permission on the machine where the remote files are located.  Verdi expects those files to be located in /usr/local/lib but that can be customized through the remote.file.util setting in the config.properties file in the user's home/verdi directory on the local machine.
 
 To load a data set from a local file system, press the yellow **plus** button at the top of the **Datasets** pane. A file browser PDF:([Fig-@fig:Figure12])) or GitHub:([Figure 12](#Figure12)) allows you to select a dataset for use in VERDI. Support for loading data from a remote file system was added beginning in version 1.4. The use of the yellow **plus remote** button will be discussed in Section 6.4.
 
@@ -152,7 +153,7 @@ Figure 16. Remote Dataset Labeled with Number at End of the Filename<br>
 
 VERDI contains the RemoteFileUtility and ncvariable programs that enable VERDI to add your Models-3 I/O API netCDF or WRF netCDF dataset from a remote file system. A gzipped tar file is available in the $VERDI_HOME directory.
 
-1.  The RemoteFileUtility c-shell script and ncvariable binary need to be installed either in /usr/local/bin by the System Administrator, or you can place it in a different location and specify that location in the configure.properties file located in your $USER_HOME/verdi/ directory (see section 3.4 for the specific directory location that is used for each platform [Linux, Windows, Mac]). A template for the configure.properties file called configure.properties.TEMPLATE is provided in the distribution under the $VERDI_HOME directory.
+1.  The RemoteFileUtility c-shell script and ncvariable binary need to be installed with execute permission on the machine where the remote files are located either in /usr/local/bin by the System Administrator, or you can place it in a different location on the remote machine and specify that location in the configure.properties file located in your $USER_HOME/verdi/ directory (see section 3.4 for the specific directory location that is used for each platform [Linux, Windows, Mac]). A template for the configure.properties file called configure.properties.TEMPLATE is provided in the distribution under the $VERDI_HOME directory.
 
 2.  A README file provided with the software contains instructions on how to compile the source code if the binaries provided do not match your operating system.
 
