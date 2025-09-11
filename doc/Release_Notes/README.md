@@ -14,6 +14,9 @@ The following issues were fixed:
 * Incorrect maximum value in tile plot legend when load a configuration file with a logarithmic scale (#353) 
 * Unable to choose layer ranges with two or more datasets in the Dataset Panel (#356)
 
+Known Issues
+
+* Tile plots created from datasets that use a Polar Sterographic Projection may be unable to display the satellite image layer due transforming issues. 
 
 -----------------------------
 RELEASE NOTES FOR VERDI 2.1.6
