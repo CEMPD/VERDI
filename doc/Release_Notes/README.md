@@ -7,6 +7,7 @@ The following new features were added:
 
 * Added ability to add Satellite Image Layer using the https://opentopomap.org as the tile provider.
 * Enabled option to choose layer ranges with two or more datasets in the Formula Panel (#356)
+* Updated the java library to support remote file transfers on secure ssh servers. Apache Mina SSHD https://mina.apache.org/sshd-project/
 
 The following issues were fixed:
 
