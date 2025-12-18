@@ -104,13 +104,13 @@ public class MapPolygon {
 				continue;
 			if (polygon.containsDeposition()) {
 				if (currentView == AreaTilePlot.AVERAGES || currentView == AreaTilePlot.GRID) {
-					if (data instanceof float[][])
-						polygon.calculateAverageDeposition((double[][])data);
+					if (data instanceof float[][] || data instanceof double[][])
+						polygon.calculateAverageDeposition((double[][])data);						
 					else
 						polygon.calculateAverageDeposition((MeshCellInfo[])data, reader);
 				}
 				else if (currentView == AreaTilePlot.TOTALS) {
-					if (data instanceof float[][])
+					if (data instanceof float[][]|| data instanceof double[][])
 						polygon.calculateTotalDeposition((double[][])data);
 					else
 						polygon.calculateTotalDeposition((MeshCellInfo[])data, reader);

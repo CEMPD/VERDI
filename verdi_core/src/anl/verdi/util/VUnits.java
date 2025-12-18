@@ -245,7 +245,7 @@ public class VUnits {
 
 	private String getName(Unit unit) {
 		if (unit.equals(unitMap.get("PPM"))) return "PPM";
-		else if (unit.equals(unitMap.get("PPB"))) return "PPM";
+		else if (unit.equals(unitMap.get("PPB"))) return "PPB";
 		else return unit.toString();
 	}
 

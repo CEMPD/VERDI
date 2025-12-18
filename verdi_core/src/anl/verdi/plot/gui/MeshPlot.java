@@ -1303,14 +1303,16 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 	public void actionPerformed(ActionEvent event) {
 		final Object source = event.getSource();
 		
-		if (statisticsMenu.getSelectedItem().toString().startsWith("layer_mean") || 
-				statisticsMenu.getSelectedItem().toString().startsWith("layer_sum")) {
-			timeLayerPanel.setLayerEnabled(false);
-			threshold.setEnabled(false);
-		} else {
-			timeLayerPanel.setLayerEnabled(layers > 1);
+		if (statisticsMenu.getSelectedItem().toString().startsWith("hours_of_non"))
 			threshold.setEnabled(true);
-		}
+		else
+			threshold.setEnabled(false);
+		
+		if (statisticsMenu.getSelectedItem().toString().startsWith("layer_mean") || 
+				statisticsMenu.getSelectedItem().toString().startsWith("layer_sum"))
+			timeLayerPanel.setLayerEnabled(false);
+		else
+			timeLayerPanel.setLayerEnabled(layers > 1);
 
 
 		if ( source == statisticsMenu || source == threshold ) {
@@ -2726,9 +2728,10 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		statisticsPanel.add( new JLabel( "Stats:" ) );
 		statisticsPanel.add( statisticsMenu );
 		statisticsPanel.add( new JLabel( ">" ) );
-		threshold = new JTextField( "0.12" );
+		threshold = new JTextField( "0.01" );
 		threshold.addActionListener( this );
 		threshold.addFocusListener(this);
+		threshold.setEnabled(false);
 		statisticsPanel.add( threshold );
 
 		JPanel animate = new JPanel();
@@ -6470,15 +6473,13 @@ public class MeshPlot extends AbstractPlotPanel implements ActionListener, Print
 		// TODO Auto-generated method stub
 		if (e.getSource() == threshold) {
 			double newValue = Double.parseDouble( this.threshold.getText() );
-			System.err.println("Threshold lost focus old " + thresholdValue + " new " + newValue);
+			//System.err.println("Threshold lost focus old " + thresholdValue + " new " + newValue);
 			if (newValue != thresholdValue) {
-				//ActionEvent evnt = new ActionEvent(threshold, 1, null);
-				//this.actionPerformed(evnt);
-				// this.preStatIndex = -1;
-				//updateLegendLevels();
-				//thresholdValue = newValue;
-				//recomputeStatistics = true;
-				//draw();
+				ActionEvent evnt = new ActionEvent(threshold, 1, "");
+				this.actionPerformed(evnt);
+				this.preStatIndex = -1;
+				thresholdValue = newValue;
+				draw();
 			}
 		}
 		

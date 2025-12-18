@@ -752,6 +752,10 @@ public class TilePlot {
 
 		layerMinimumMaximum(firstRow, lastRow, firstColumn, lastColumn, data,
 				minimumCell, maximumCell, range);
+		
+		for (int i = 0; i < range.length; ++i)
+			if (range[i] == Double.NEGATIVE_INFINITY || range[i] == Double.POSITIVE_INFINITY)
+				range[i] = 0;
 
 		return "Min (" + (1 + minimumCell[COLUMN]) + ", "
 				+ (1 + minimumCell[ROW]) + ") = " + gFormat(range[0]) + ", "

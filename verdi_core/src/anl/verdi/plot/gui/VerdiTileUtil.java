@@ -465,11 +465,13 @@ class BoundingBox {
 	  File tempDir = new File(getTempDirectory());
 	  Date thresholdDate = new Date(System.currentTimeMillis() - MAX_TEMP_FILE_AGE);	  
 
-      Iterator<File> filesToDelete =
-          FileUtils.iterateFiles(tempDir, new AgeFileFilter(thresholdDate), TrueFileFilter.INSTANCE);
-      while (filesToDelete.hasNext()) {
-          FileUtils.deleteQuietly(filesToDelete.next());
-      }  
+	  if (tempDir.exists()) {
+	      Iterator<File> filesToDelete =
+	          FileUtils.iterateFiles(tempDir, new AgeFileFilter(thresholdDate), TrueFileFilter.INSTANCE);
+	      while (filesToDelete.hasNext()) {
+	          FileUtils.deleteQuietly(filesToDelete.next());
+	      }  
+	  }
 	  
   }
   

@@ -10,6 +10,10 @@ STATUS: unreviewed, tested.
 
 package gov.epa.emvl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
 import org.apache.commons.lang3.text.WordUtils;
 //import anl.verdi.core.VerdiConstants;
 import org.apache.logging.log4j.LogManager;		// 2014
@@ -311,9 +315,9 @@ public final class GridCellStatistics {
 
       for ( int column = 0; column < columns; ++column ) {
         timestepOfMinimum[ row ][ column ] =
-          indexOfMinimum( data[ row ][ column ][ layer ]) + 1;
+          indexOfMinimum( data[ row ][ column ], layer) + 1;
         timestepOfMaximum[ row ][ column ] =
-          indexOfMaximum( data[ row ][ column ][ layer ] ) + 1;
+          indexOfMaximum( data[ row ][ column ], layer) + 1;
       }
     }
   }
@@ -340,11 +344,30 @@ public final class GridCellStatistics {
 
       for ( int column = 0; column < columns; ++column ) {
         maximum8HourMean[ row ][ column ] =
-          maximum8HourMeans( data[ row ][ column ][ layer ], hoursPerTimestep );
+          maximum8HourMeans( data[ row ][ column ], layer, hoursPerTimestep );
       }
     }
   }
+  
+  
 
+  private static class LayerSorter implements Comparator<double[]> {
+	  
+	  int layer;
+	  
+	  LayerSorter(int targetLayer) {
+		  layer = targetLayer;
+	  }
+
+	@Override
+	public int compare(double[] o1, double[] o2) {
+		// TODO Auto-generated method stub
+		return Double.compare(o1[layer], o2[layer]);
+	}
+
+
+	  
+  }
   /**
    * PURPOSE: sortDataAcrossTimesteps - For each cell, sort its timestep data.
    * INPUTS:  final double[][][] data  data[ rows ][ columns][ timesteps ].
@@ -359,7 +382,7 @@ public final class GridCellStatistics {
     for ( int row = 0; row < rows; ++row ) {
 
       for ( int column = 0; column < columns; ++column ) {
-        java.util.Arrays.sort( data[ row ][ column ][ layer ] );
+        java.util.Arrays.sort( data[ row ][ column ], new GridCellStatistics.LayerSorter(layer) );
       }
     }
   }
@@ -435,7 +458,7 @@ public final class GridCellStatistics {
     for ( int row = 0; row < rows; ++row ) {
 
       for ( int column = 0; column < columns; ++column ) {
-        final int firstIndex = firstValidIndex( data[ row ][ column ][ layer ] );
+        final int firstIndex = firstValidIndex( data[ row ][ column ], layer );
 
         if ( firstIndex == -1 ) {
           count[ row ][ column ] = 0;
@@ -483,11 +506,12 @@ public final class GridCellStatistics {
                                         final double customPercentileValue) {
     final int rows    = data.length;
     final int columns = data[ 0 ].length;
-    final int timesteps = data[ 0 ][ 0 ].length;
 
+    ArrayList<Double> sortedValues = new ArrayList<Double>();
     for ( int row = 0; row < rows; ++row ) {
 
       for ( int column = 0; column < columns; ++column ) {
+    	  sortedValues.clear();
         final int numberOfValidTimesteps =
           (int) ( count[ row ][ column ] + 0.5 );
 
@@ -502,34 +526,36 @@ public final class GridCellStatistics {
           interquartileRange[ row ][ column ] = BADVAL3;
           fourthMax[          row ][ column ] = BADVAL3;
           customPercentile[   row ][ column ] = BADVAL3;
-        } else {
-          final int index    = timesteps - numberOfValidTimesteps;
-          final int last     = numberOfValidTimesteps - 1;
-          final int middle   = numberOfValidTimesteps / 2;
-          final int middle_1 = middle > 0 ? middle - 1 : 0;
-          final int lower    = numberOfValidTimesteps / 4;
-          final int lower_1  = lower > 0 ? lower - 1 : 0;
-          final int upper    = numberOfValidTimesteps * 3 / 4;
-          final int upper_1  = upper > 0 ? upper - 1 : 0;
-          final int custom   = (int)Math.round(numberOfValidTimesteps * customPercentileValue / 100.0);
-          final int custom_l = custom > 0 ? custom - 1 : 0;
-          final boolean oddNumberOfTimesteps = numberOfValidTimesteps % 2 != 0;
-          final double firstValue  = data[ row ][ column ][ index          ][ layer ];
-          final double lastValue   = data[ row ][ column ][ index + last   ][ layer ];
+        } else {          
+            final int index    = 0;
+            final int last     = numberOfValidTimesteps - 1;
+            final int middle   = Math.max(numberOfValidTimesteps / 2 - 1, 0);
+            final int lower    = Math.max(numberOfValidTimesteps / 4 - 1, 0);
+            final int upper    = Math.max(numberOfValidTimesteps * 3 / 4 - 1, 0);
+            final int custom   = Math.max((int)Math.round(numberOfValidTimesteps * customPercentileValue / 100.0) - 1, 0);
+            final boolean oddNumberOfTimesteps = numberOfValidTimesteps % 2 != 0;
+            for(int i = 0; i < numberOfValidTimesteps; ++i) {
+            	sortedValues.add(data[row][column][i][layer]);
+            }
+            
+          Collections.sort(sortedValues);
+          
+          final double firstValue  = sortedValues.get(0);
+          final double lastValue   = sortedValues.get(last);
 
-          int fourthMaxIndex = index + last - 3;         
+          int fourthMaxIndex = last - 3;         
           double fourthMaxValue = BADVAL3;
           if (fourthMaxIndex < data[row][column].length && fourthMaxIndex >= 0)
-        		  fourthMaxValue = data[ row ][ column ][ fourthMaxIndex  ][ layer ];
-          final double middleValue = data[ row ][ column ][ index + middle ][ layer ];
-          final double lowerValue  = data[ row ][ column ][ index + lower  ][ layer ];
-          final double upperValue  = data[ row ][ column ][ index + upper  ][ layer ];
+        	  fourthMaxValue = sortedValues.get(fourthMaxIndex);
+          final double middleValue = sortedValues.get(middle);
+          final double lowerValue  = sortedValues.get(lower);
+          final double upperValue  = sortedValues.get(upper);
 
           minimum[ row ][ column ] = firstValue;
           maximum[ row ][ column ] = lastValue;
           fourthMax[ row ][ column ] = fourthMaxValue;
           range[   row ][ column ] = lastValue - firstValue;
-          customPercentile[ row ][ column ] = data[ row ][ column ][ index + custom_l ][ layer ];
+          customPercentile[ row ][ column ] = sortedValues.get(custom);
 
           if ( oddNumberOfTimesteps ) {
             median[             row ][ column ] = middleValue;
@@ -537,13 +563,14 @@ public final class GridCellStatistics {
             thirdQuartile[      row ][ column ] = upperValue;
             interquartileRange[ row ][ column ] = upperValue - lowerValue;
           } else {
-            final double averageLowerValue =
-              ( lowerValue + data[ row ][ column ][ index + lower_1 ][ layer ] ) * 0.5f;
-            final double averageUpperValue =
-              ( upperValue + data[ row ][ column ][ index + upper_1 ][ layer ] ) * 0.5f;
+        	int upper_1 = Math.min(upper + 1,  last);
+        	int lower_1 = Math.min(lower + 1,  last);
+        	int middle_1 = Math.min(middle + 1,  last);
+            final double averageLowerValue = ( lowerValue + sortedValues.get(lower_1 ) ) * 0.5f;
+            final double averageUpperValue = ( upperValue + sortedValues.get( upper_1  )) * 0.5f;
 
             median[             row ][ column ] =
-              ( middleValue + data[ row ][ column ][ index + middle_1][ layer ]) * 0.5f;
+              ( middleValue + sortedValues.get( middle_1) ) * 0.5f;
             firstQuartile[      row ][ column ] = averageLowerValue;
             thirdQuartile[      row ][ column ] = averageUpperValue;
             interquartileRange[ row ][ column ] =
@@ -581,7 +608,7 @@ public final class GridCellStatistics {
         } else {
           final int index = timesteps - numberOfValidTimesteps;
           sum[ row ][ column ] = (float)
-            sumf( data[ row ][ column ][ layer ], index );
+            sumf( data[ row ][ column ],  layer, index );
         }
       }
     }
@@ -645,7 +672,7 @@ public final class GridCellStatistics {
         } else {
           final int index = timesteps - numberOfValidTimesteps;
           geometricMean[ row ][ column ] = (float)
-            geometricMeanf( data[ row ][ column ][ layer ], index );
+            geometricMeanf( data[ row ][ column ], layer, index );
         }
       }
     }
@@ -687,7 +714,7 @@ public final class GridCellStatistics {
           final int index = timesteps - numberOfValidTimesteps;
           final double meanValue = mean[ row ][ column ];
           final double s2 = (float)
-            variancef( data[ row ][ column ][ layer ], index, meanValue );
+            variancef( data[ row ][ column ], layer, index, meanValue );
           final double std = (float) java.lang.Math.sqrt( s2 );
           final double cv = meanValue > 0.0f ? 100.0f * std / meanValue : 0.0f;
           variance[ row ][ column ] = s2;
@@ -729,7 +756,7 @@ public final class GridCellStatistics {
         } else {
           final int index = timesteps - numberOfValidTimesteps;
           final int numberOfTimestepsExceedingThreshhold =
-            exceedance( data[ row ][ column ][ layer ], index, threshold );
+            exceedance( data[ row ][ column ], layer, index, threshold );
           hoursOfNonCompliance[ row ][ column ] = (float)
             ( numberOfTimestepsExceedingThreshhold * hoursPerTimestep );
         }
@@ -743,14 +770,14 @@ public final class GridCellStatistics {
    * RETURNS: int 0-based index into data[] or -1 if all invalid.
    **/
 
-  private static int indexOfMinimum( final double[] data ) {
+  private static int indexOfMinimum( final double[][] data, int layer ) {
 
     final int count = data.length;
     double minimum = 0.0d;
     int result = -1;
 
     for ( int index = 0; index < count; ++index ) {
-      final double value = data[ index ];
+      final double value = data[ index ][layer];
 
       if ( value > AMISS3 ) {
 
@@ -770,14 +797,14 @@ public final class GridCellStatistics {
    * RETURNS: int 0-based index into data[] or -1 if all invalid.
    **/
 
-  private static int indexOfMaximum( final double[] data ) {
+  private static int indexOfMaximum( final double[][] data, int layer ) {
 
     final int count = data.length;
     double maximum = 0.0d;
     int result = -1;
 
     for ( int index = 0; index < count; ++index ) {
-      final double value = data[ index ];
+      final double value = data[ index ][layer];
 
       if ( value > AMISS3 ) {
 
@@ -798,7 +825,7 @@ public final class GridCellStatistics {
    * RETURNS: float maximum of a set of 8-hour means.
    **/
 
-  private static double maximum8HourMeans( final double[] data,
+  private static double maximum8HourMeans( final double[][] data, int layer,
                                           final double hoursPerTimestep ) {
 
     final int count = (int) ( 8.0 / hoursPerTimestep + 0.5 );
@@ -807,7 +834,7 @@ public final class GridCellStatistics {
 
     for ( int timestep = 0; timestep <= timesteps; ++timestep ) {
       final int end = timestep + count;
-      final double windowMean = mean( data, timestep, end );
+      final double windowMean = mean( data, layer, timestep, end );
 
       if ( windowMean > result ) {
         result = windowMean;
@@ -824,14 +851,14 @@ public final class GridCellStatistics {
    * RETURNS: float mean or BADVAL3 if all are invalid.
    **/
 
-  private static double mean( final double[] data,
+  private static double mean( final double[][] data, int layer,
                              final int first, final int end ) {
 
     double result = BADVAL3;
     int count = 0;
 
     for ( int index = first; index < end; ++index ) {
-      final double value = data[ index ];
+      final double value = data[ index ][layer];
 
       if ( value > AMISS3 ) {
         
@@ -855,13 +882,13 @@ public final class GridCellStatistics {
    * RETURNS: int 0-based index into data[] or -1 if all invalid.
    **/
 
-  private static int firstValidIndex( final double[] data ) {
+  private static int firstValidIndex( final double[][] data, int layer ) {
 
     final int count = data.length;
     int result = -1;
 
     for ( int index = 0; index < count; ++index ) {
-      final double value = data[ index ];
+      final double value = data[ index ][layer];
       
       if ( value > AMISS3 ) {
         result = index;
@@ -881,14 +908,14 @@ public final class GridCellStatistics {
    *          C/C++ Users Journal Sept 1996, pp 51-55, by Evan Manning.
    **/
 
-  private static double sumf( final double[] data, final int first ) {
+  private static double sumf( final double[][] data, int layer, final int first ) {
 
     final int count = data.length;
     double sum        = 0.0; // The sum of the values in the array.
     double correction = 0.0; // Kahan corrector subtracts each round-off error
 
     for ( int index = first; index < count; ++index ) {
-      final double nextTerm = data[ index ];
+      final double nextTerm = data[ index ][layer];
       final double correctedNextTerm = nextTerm - correction;
       final double newSum = sum + correctedNextTerm;
       correction = ( newSum - sum ) - correctedNextTerm;
@@ -906,7 +933,7 @@ public final class GridCellStatistics {
    * @throws Exception 
    **/
 
-  private static double geometricMeanf( final double[] data, final int first ) throws Exception {
+  private static double geometricMeanf( final double[][] data, int layer, final int first ) throws Exception {
 
     final int count = data.length;
     final int numberOfValues = count - first;
@@ -914,7 +941,7 @@ public final class GridCellStatistics {
     double geometricMean = numberOfValues > 0 ? 1.0 : 0.0;
 
     for ( int index = first; index < numberOfValues; ++index ) {
-      final double nextTerm = data[ index ];
+      final double nextTerm = data[ index ][layer];
       geometricMean *= java.lang.Math.pow( nextTerm, root );
     }
     
@@ -934,7 +961,7 @@ public final class GridCellStatistics {
    * NOTES:   Based on Kahan summation.
    **/
 
-  private static double variancef( final double[] data, final int first,
+  private static double variancef( final double[][] data, int layer, final int first,
                                    final double mean ) {
 
     final int count = data.length;
@@ -945,7 +972,7 @@ public final class GridCellStatistics {
     double correction = 0.0; // Kahan corrector subtracts each round-off error
 
     for ( int index = first; index < count; ++index ) {
-      final double value             = data[ index ];
+      final double value             = data[ index ][layer];
       final double meanDifference    = value - mean;
       final double nextTerm          = meanDifference * meanDifference;
       final double correctedNextTerm = nextTerm - correction;
@@ -969,14 +996,14 @@ public final class GridCellStatistics {
    * RETURNS: int the number of data values greater than threshold.
    **/
 
-  private static int exceedance( final double[] data, final int first,
+  private static int exceedance( final double[][] data, int layer, final int first,
                                  final double threshold ) {
     final int count = data.length;
     int result = 0;
 
     for ( int index = first; index < count; ++index ) {
       
-      if ( data[ index ] > threshold ) {
+      if ( data[ index ][layer] > threshold ) {
         ++result;
       }
     }

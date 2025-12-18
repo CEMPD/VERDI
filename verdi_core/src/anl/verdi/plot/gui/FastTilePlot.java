@@ -26,6 +26,8 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
@@ -158,7 +160,7 @@ import ucar.unidata.geoloc.ProjectionPoint;
 import ucar.unidata.geoloc.projection.LatLonProjection;
 
 public class FastTilePlot extends AbstractPlotPanel implements ActionListener, Printable,
-		ChangeListener, ComponentListener, MouseListener,
+		ChangeListener, ComponentListener, MouseListener, FocusListener,
 		TimeAnimatablePlot, Plot {
 	//private final MapContent myMapContent = new MapContent();	// JEB Nov 2015
 	static final Logger Logger = LogManager.getLogger(FastTilePlot.class.getName());
@@ -318,6 +320,7 @@ public class FastTilePlot extends AbstractPlotPanel implements ActionListener, P
 	private String customPercentile = null;
 	private int preStatIndex = -1;
 	private JTextField threshold;
+	double thresholdValue = 0;
 	private boolean recomputeStatistics = false;
 	private boolean recomputeLegend = false;
 
@@ -515,7 +518,7 @@ Logger.debug("set up drawing space, titles, fonts, etc.");
 						height = (int)Math.round(width * subsetRows / (double)subsetColumns);
 					}
 
-					if (width == 0 || height == 0) {
+					if (width <= 0 || height <= 0) {
 						if ( get_draw_once_requests() < 0) 
 							restoreCursor();
 						continue;
@@ -685,6 +688,7 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 									((plotUnits==null || plotUnits.trim().equals(""))?"none":plotUnits), config, map.getNumberFormat(), gridLineColor,
 									subsetLayerData, colorIndexCache, selectedStat);
 						} catch (Exception e) {
+							e.printStackTrace();
 							Logger.debug("FastTilePlot's run method", e);
 						}
 // by this point drew panel, panel title (O3[1]), panel menu, and panel bar (time step, layer, etc.)
@@ -1049,14 +1053,16 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	public void actionPerformed(ActionEvent event) {
 		final Object source = event.getSource();
 				
-		if (statisticsMenu.getSelectedItem().toString().startsWith("layer_mean") || 
-				statisticsMenu.getSelectedItem().toString().startsWith("layer_sum")) {
-			timeLayerPanel.setLayerEnabled(false);
-			threshold.setEnabled(false);
-		} else {
-			timeLayerPanel.setLayerEnabled(layers > 1);
+		if (statisticsMenu.getSelectedItem().toString().startsWith("hours_of_non"))
 			threshold.setEnabled(true);
-		}
+		else
+			threshold.setEnabled(false);
+	
+		if (statisticsMenu.getSelectedItem().toString().startsWith("layer_mean") || 
+				statisticsMenu.getSelectedItem().toString().startsWith("layer_sum"))
+			timeLayerPanel.setLayerEnabled(false);
+		else
+			timeLayerPanel.setLayerEnabled(layers > 1);
 
 		if ( source == statisticsMenu || source == threshold ) {
 								
@@ -1725,8 +1731,10 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		statisticsPanel.add( new JLabel( "Stats:" ) );
 		statisticsPanel.add( statisticsMenu );
 		statisticsPanel.add( new JLabel( ">" ) );
-		threshold = new JTextField( "0.12" );
+		threshold = new JTextField( "0.01" );
 		threshold.addActionListener( this );
+		threshold.addFocusListener(this);
+		threshold.setEnabled(false);
 		statisticsPanel.add( threshold );
 
 		JPanel animate = new JPanel();
@@ -1900,7 +1908,9 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 		visibleLatLon[LATITUDE][MINIMUM] = Math.min(bl.getY(), br.getY());
 		visibleLatLon[LONGITUDE][MAXIMUM] = Math.max(tr.getX(), br.getX());
 		visibleLatLon[LATITUDE][MAXIMUM] = Math.max(tl.getY(), tr.getY());
-		
+		if ( projector.getProjection() instanceof
+				ucar.unidata.geoloc.projection.Stereographic )
+			visibleLatLon[LATITUDE][MAXIMUM] = 85.0;
 		/*System.err.println("Visible image domain " + visibleLatLon[LONGITUDE][MINIMUM] + ":" +
 				visibleLatLon[LONGITUDE][MAXIMUM] + ", " +
 				visibleLatLon[LATITUDE][MINIMUM] + ":" + 
@@ -4043,5 +4053,26 @@ Logger.debug("now set up time step, color, statistics, plot units, etc.");
 	
 	private int get_draw_once_requests() {
 		return draw_once_requests;
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		if (e.getSource() == threshold) {
+			double newValue = Double.parseDouble( this.threshold.getText() );
+			//System.err.println("Threshold lost focus old " + thresholdValue + " new " + newValue);
+			if (newValue != thresholdValue) {
+				ActionEvent evnt = new ActionEvent(threshold, 1, "");
+				this.actionPerformed(evnt);
+				this.preStatIndex = -1;
+				thresholdValue = newValue;
+				draw();
+			}
+		}		
 	}
 }

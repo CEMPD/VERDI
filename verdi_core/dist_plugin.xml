@@ -254,10 +254,14 @@
 			<export prefix="*"/>
 		</library-->
 
-		<library id="jaramiko" path="../core/lib/jaramiko-151.jar" type="code">
+		<library id="sshd-common" path="../core/lib/sshd-common-3.0.0-M1.jar" type="code">
 			<export prefix="*"/>
 		</library>
-		
+
+		<library id="sshd-core" path="../core/lib/sshd-core-3.0.0-M1.jar" type="code">
+			<export prefix="*"/>
+		</library>
+
 		<library id="javadbf" path="../core/lib/javadbf-0.4.0.jar" type="code">
 			<export prefix="*"/>
 		</library>
