@@ -79,7 +79,6 @@ These datasets may be used to recreate example plots that are provided in this u
 
 Adding and Removing a Dataset from a Local File System
 ------------------------------------------------------
-Remote File Access allows VERDI to access NetCDF data sets that are located on other machines included in the verdi.remote.hosts settings using SSH.  To enable remote support, the RemoteFileUtility and ncvariable utilities within RemoteFileReader.tgz must be installed with execute permission on the machine where the remote files are located.  Verdi expects those files to be located in /usr/local/lib but that can be customized through the remote.file.util setting in the config.properties file in the user's home/verdi directory on the local machine.
 
 To load a data set from a local file system, press the yellow **plus** button at the top of the **Datasets** pane. A file browser PDF:([Fig-@fig:Figure12])) or GitHub:([Figure 12](#Figure12)) allows you to select a dataset for use in VERDI. Support for loading data from a remote file system was added beginning in version 1.4. The use of the yellow **plus remote** button will be discussed in Section 6.4.
 
@@ -107,6 +106,8 @@ Figure 13. Datasets Pane Displaying Information about a Dataset<br>
 
 Adding and Removing a Dataset from a Remote File System
 -------------------------------------------------------
+
+Remote File Access allows VERDI to access NetCDF data sets that are located on other machines included in the verdi.remote.hosts settings using SSH.  To enable remote support, the RemoteFileUtility and ncvariable utilities within RemoteFileReader.tgz must be installed with execute permission on the machine where the remote files are located.  Verdi expects those files to be located in /usr/local/lib but that can be customized through the remote.file.util setting in the config.properties file in the user's home/verdi directory on the local machine.
 
 VERDI provides users with the ability to select and add variables from datasets on remote file systems. To do this, press the yellow **plus remote** (plus with a diagonal arrow) button at the top of the **Datasets** pane. In the Remote File Access Browser PDF:([Fig-@fig:Figure14])) or GitHub:([Figure 14](#Figure14)) that appears, enter your user name, choose a host from the list, and enter your password, then click **Connect**.
 <!-- BEGIN COMMENT -->
